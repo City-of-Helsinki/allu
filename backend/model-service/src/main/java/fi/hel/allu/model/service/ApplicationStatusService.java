@@ -11,7 +11,6 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
-import fi.hel.allu.model.service.event.ApplicationUpdateEvent;
 
 /**
  * Service class for application status specific operations
@@ -46,7 +45,6 @@ public class ApplicationStatusService {
   public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
     Application application = applicationService.changeApplicationStatus(applicationId, statusType, userId);
     statusChangeEventPublisher.publishEvent(new ApplicationStatusChangeEvent(this, application, statusType, userId));
-    statusChangeEventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userId));
     return applicationService.findById(applicationId);
   }
 

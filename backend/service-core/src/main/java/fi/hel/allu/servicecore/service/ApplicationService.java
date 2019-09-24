@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
-import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -29,6 +29,8 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.event.ApplicationOwnerChangeEvent;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
 
@@ -44,6 +46,7 @@ public class ApplicationService {
   private final PaymentZoneService paymentZoneService;
   private final InvoicingPeriodService invoicingPeriodService;
   private final InvoiceService invoiceService;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Autowired
   public ApplicationService(
@@ -55,7 +58,8 @@ public class ApplicationService {
       PaymentClassService paymentClassService,
       PaymentZoneService paymentZoneService,
       InvoicingPeriodService invoicingPeriodService,
-      InvoiceService invoiceService) {
+      InvoiceService invoiceService,
+      ApplicationEventPublisher eventPublisher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -65,6 +69,7 @@ public class ApplicationService {
     this.paymentZoneService = paymentZoneService;
     this.invoicingPeriodService = invoicingPeriodService;
     this.invoiceService = invoiceService;
+    this.eventPublisher = eventPublisher;
   }
 
 
@@ -194,10 +199,11 @@ public class ApplicationService {
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
     setPaymentClasses(applicationJson);
 
+    Integer currentUserId = userService.getCurrentUser().getId();
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     Application application = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
-        HttpMethod.PUT, requestEntity, Application.class, applicationId, userService.getCurrentUser().getId()).getBody();
-
+        HttpMethod.PUT, requestEntity, Application.class, applicationId, currentUserId).getBody();
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, currentUserId));
     return setInvoicingPeriods(application);
   }
 
@@ -222,9 +228,9 @@ public class ApplicationService {
 
 
   void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
-    restTemplate.exchange(
-        applicationProperties.getApplicationOwnerUpdateUrl(), HttpMethod.PUT, new HttpEntity<>(applicationIds),
-        Void.class, updatedOwner, userService.getCurrentUser().getId());
+    restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
+    Integer currentUserId = userService.getCurrentUser().getId();
+    applicationIds.forEach(id -> eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(id, currentUserId, updatedOwner)));
   }
 
   void removeApplicationOwner(List<Integer> applicationIds) {
@@ -244,6 +250,7 @@ public class ApplicationService {
         userIdRequest,
         Application.class,
         applicationId);
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
     return responseEntity.getBody();
   }
 
@@ -558,5 +565,9 @@ public class ApplicationService {
   public Integer getReplacingApplicationId(Integer applicationId) {
     return restTemplate.getForObject(applicationProperties.getReplacingApplicationIdUrl(), Integer.class,
         applicationId);
+  }
+
+  public Integer getApplicationOwnerId(int applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationOwnerUrl(), Integer.class, applicationId);
   }
 }

@@ -4,9 +4,7 @@ import java.time.ZonedDateTime;
 
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.context.ApplicationEventPublisher;
 
 import com.greghaskins.spectrum.Spectrum;
 
@@ -34,7 +32,6 @@ public class SupervisionTaskServiceSpec {
   private SupervisionTaskDao supervisionTaskDao;
   private ApplicationDao applicationDao;
   private LocationDao locationDao;
-  private ApplicationEventPublisher eventPublisher;
 
 
   {
@@ -43,8 +40,7 @@ public class SupervisionTaskServiceSpec {
         supervisionTaskDao = mock(SupervisionTaskDao.class);
         applicationDao = mock(ApplicationDao.class);
         locationDao = mock(LocationDao.class);
-        eventPublisher = mock(ApplicationEventPublisher.class);
-        service = new SupervisionTaskService(supervisionTaskDao, applicationDao, locationDao, eventPublisher);
+        service = new SupervisionTaskService(supervisionTaskDao, applicationDao, locationDao);
       });
 
       describe("Insert", () -> {

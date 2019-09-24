@@ -324,7 +324,7 @@ public class ApplicationProperties {
    * @return url to update owner of applications.
    */
   public String getApplicationOwnerUpdateUrl() {
-    return getModelServiceUrl("/applications/owner/{ownerId}?userId={userId}");
+    return getModelServiceUrl("/applications/owner/{ownerId}");
   }
 
   public String getApplicationHandlerUpdateUrl() {
@@ -349,6 +349,10 @@ public class ApplicationProperties {
 
   public String getApplicationStatusReturnUrl() {
     return getModelServiceUrl("/applications/{id}/status/return");
+  }
+
+  public String getApplicationOwnerUrl() {
+    return getModelServiceUrl("/applications/{id}/owner");
   }
 
   public String getApplicationExternalOwnerUrl() {

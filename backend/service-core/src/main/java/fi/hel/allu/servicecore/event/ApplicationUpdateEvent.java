@@ -1,4 +1,4 @@
-package fi.hel.allu.model.service.event;
+package fi.hel.allu.servicecore.event;
 
 /**
  * Event published when application or data related to application (comments,

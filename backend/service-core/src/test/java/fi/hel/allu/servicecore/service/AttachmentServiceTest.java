@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,11 @@ import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 
 /**
@@ -40,6 +43,7 @@ public class AttachmentServiceTest {
   private RestTemplate restTemplate;
   private UserService userService;
   private ApplicationHistoryService applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
+  private ApplicationEventPublisher eventPublisher = Mockito.mock(ApplicationEventPublisher.class);
 
   private final int USER_ID = 1;
   private final int APPLICATION_ID = 1234;
@@ -49,7 +53,8 @@ public class AttachmentServiceTest {
     applicationProperties = Mockito.mock(ApplicationProperties.class);
     restTemplate = Mockito.mock(RestTemplate.class);
     userService = Mockito.mock(UserService.class);
-    attachmentService = new AttachmentService(applicationProperties, restTemplate, userService, applicationHistoryService);
+    attachmentService = new AttachmentService(applicationProperties, restTemplate, userService,
+        applicationHistoryService, eventPublisher);
     UserJson userJson = new UserJson();
     userJson.setId(USER_ID);
     userJson.setRealName("real name");
@@ -88,6 +93,14 @@ public class AttachmentServiceTest {
     infoJson.setName("attachment name");
     attachmentService.addAttachment(APPLICATION_ID, infoJson, new MockMultipartFile("attachment.bin", generateMockData(30)));
     Mockito.verify(applicationHistoryService, times(1)).addAttachmentAdded(APPLICATION_ID, infoJson.getName());
+  }
+
+  @Test
+  public void shouldPublishApplicationEventWhenAdded() throws IOException {
+    AttachmentInfoJson infoJson = new AttachmentInfoJson();
+    infoJson.setName("attachment name");
+    attachmentService.addAttachment(APPLICATION_ID, infoJson, new MockMultipartFile("attachment.bin", generateMockData(30)));
+    Mockito.verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
   }
 
   @Test

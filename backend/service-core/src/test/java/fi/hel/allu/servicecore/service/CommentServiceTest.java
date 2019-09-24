@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,10 @@ import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -35,6 +38,9 @@ public class CommentServiceTest {
   private UserService userService;
   @Mock
   private ApplicationHistoryService applicationHistoryService;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
+
   @InjectMocks
   private CommentService commentService;
 
@@ -102,6 +108,16 @@ public class CommentServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(newUserJson("user", USER_ID));
     commentService.addApplicationComment(APPLICATION_ID, newCommentJson(CommentType.INTERNAL, "comment", USER_ID));
     verify(applicationHistoryService, times(1)).addCommentAdded(APPLICATION_ID);
+  }
+
+  @Test
+  public void shouldPublishApplicationEventWhenAdded() {
+    Comment comment = newComment(CommentType.INTERNAL, "comment", USER_ID);
+    Mockito.when(restTemplate.postForEntity(Mockito.eq(COMMENTS_CREATE_URL), Mockito.any(Comment.class),
+        Mockito.eq(Comment.class), Mockito.eq(APPLICATION_ID))).thenReturn(new ResponseEntity<>(comment, HttpStatus.OK));
+    Mockito.when(userService.getCurrentUser()).thenReturn(newUserJson("user", USER_ID));
+    commentService.addApplicationComment(APPLICATION_ID, newCommentJson(CommentType.INTERNAL, "comment", USER_ID));
+    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
   }
 
   @Test

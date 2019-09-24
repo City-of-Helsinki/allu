@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.service.event.ApplicationUpdateEvent;
 
 import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
 
@@ -35,15 +33,12 @@ public class SupervisionTaskService {
   private SupervisionTaskDao supervisionTaskDao;
   private ApplicationDao applicationDao;
   private LocationDao locationDao;
-  private ApplicationEventPublisher eventPublisher;
 
   @Autowired
-  public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, ApplicationDao applicationDao, LocationDao locationDao,
-      ApplicationEventPublisher eventPublisher) {
+  public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, ApplicationDao applicationDao, LocationDao locationDao) {
     this.supervisionTaskDao = supervisionTaskDao;
     this.applicationDao = applicationDao;
     this.locationDao = locationDao;
-    this.eventPublisher = eventPublisher;
   }
 
   @Transactional(readOnly = true)
@@ -76,7 +71,6 @@ public class SupervisionTaskService {
   public SupervisionTask insert(SupervisionTask supervisionTask) {
     SupervisionTask inserted = supervisionTaskDao.insert(supervisionTask);
     updateTags(inserted);
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(supervisionTask.getApplicationId(), supervisionTask.getCreatorId()));
     return inserted;
   }
 

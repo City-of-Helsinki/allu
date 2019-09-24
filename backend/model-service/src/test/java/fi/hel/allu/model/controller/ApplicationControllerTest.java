@@ -132,7 +132,7 @@ public class ApplicationControllerTest {
     Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Owner"));
     User changedUser = testCommon.insertUser("changed");
     appInResult.setOwner(changedUser.getId());
-    wtc.perform(put(String.format("/applications/owner/%d?userId=%d", appInResult.getOwner(), testUser.getId())), Collections.singletonList(appInResult.getId()))
+    wtc.perform(put(String.format("/applications/owner/%d", appInResult.getOwner())), Collections.singletonList(appInResult.getId()))
         .andExpect(status().isOk());
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
         .andExpect(status().isOk());

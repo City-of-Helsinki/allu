@@ -22,23 +22,30 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationOwnerChangeEvent;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
@@ -65,6 +72,8 @@ public class ApplicationServiceTest extends MockServices {
   private InvoicingPeriodService invoicingPeriodService;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
 
   private ApplicationService applicationService;
 
@@ -95,7 +104,7 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService,
-        personAuditLogService, paymentClassService, paymentZoneService, invoicingPeriodService, invoiceService);
+        personAuditLogService, paymentClassService, paymentZoneService, invoicingPeriodService, invoiceService, eventPublisher);
   }
 
   @Test
@@ -146,11 +155,29 @@ public class ApplicationServiceTest extends MockServices {
   }
 
   @Test
+  public void shouldPublishApplicationEventOnUpdate() {
+    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(HttpEntity.class),
+        Mockito.eq(Application.class), Mockito.anyInt(), Mockito.anyInt())).thenAnswer(
+            (Answer<ResponseEntity<Application>>) invocation -> new ResponseEntity<>(createMockApplicationModel(),
+                HttpStatus.CREATED));
+
+    ApplicationJson applicationJson = createMockApplicationJson(1);
+    applicationService.updateApplication(1, applicationJson);
+    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+  }
+
+  @Test
   public void testUpdateApplicationOwner() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()));
-    Mockito.verify(restTemplate, Mockito.times(1)).exchange(null, HttpMethod.PUT,
-        new HttpEntity<>(Collections.singletonList(applicationJson.getId())), Void.class, 2, USER_ID);
+    Mockito.verify(restTemplate, Mockito.times(1)).put(null, Collections.singletonList(applicationJson.getId()), 2);
+  }
+
+  @Test
+  public void shouldPublishApplicationEventOnOwnerUpdate() {
+    ApplicationJson applicationJson = createMockApplicationJson(1);
+    applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()));
+    verify(eventPublisher, times(1)).publishEvent(any(ApplicationOwnerChangeEvent.class));
   }
 
   @Test
@@ -214,5 +241,17 @@ public class ApplicationServiceTest extends MockServices {
   public void testFindApplicationsById() {
     List<Application> response = applicationService.findApplicationsById(Collections.singletonList(123));
     assertEquals(2, response.size());
+  }
+
+  @Test
+  public void shouldPublishApplicationEventOnStatusChange() {
+    Mockito.when(restTemplate.exchange(
+        anyString(),
+        eq(HttpMethod.PUT),
+        any(HttpEntity.class),
+        eq(Application.class),
+        anyInt())).thenReturn(new ResponseEntity<Application>(createMockApplicationModel(), HttpStatus.OK));
+    applicationService.changeApplicationStatus(1, StatusType.DECISIONMAKING);
+    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
   }
 }

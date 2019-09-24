@@ -28,6 +28,7 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
@@ -102,6 +103,7 @@ public class SupervisionTaskService {
         applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);
     applicationServiceComposer.refreshSearchTags(task.getApplicationId());
     applicationHistoryService.addSupervisionAdded(task.getApplicationId(), task.getType());
+    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(task.getApplicationId(), task.getCreatorId()));
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
@@ -26,6 +28,7 @@ public class CommentService {
   private RestTemplate restTemplate;
   private UserService userService;
   private ApplicationHistoryService applicationHistoryService;
+  private ApplicationEventPublisher eventPublisher;
 
 
   private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -36,11 +39,12 @@ public class CommentService {
 
   @Autowired
   public CommentService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      UserService userService, ApplicationHistoryService applicationHistoryService) {
+      UserService userService, ApplicationHistoryService applicationHistoryService, ApplicationEventPublisher eventPublisher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationHistoryService = applicationHistoryService;
+    this.eventPublisher = eventPublisher;
   }
 
   public List<CommentJson> findByApplicationId(int applicationId) {
@@ -60,8 +64,8 @@ public class CommentService {
     CommentJson comment = addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
     updateSearchServiceNrOfComments(applicationId);
     applicationHistoryService.addCommentAdded(applicationId);
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
     return comment;
-
   }
 
   public CommentJson addProjectComment(int projectId, CommentJson commentJson) {

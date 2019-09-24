@@ -20,6 +20,7 @@ import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.mockito.Matchers.any;
@@ -61,6 +62,14 @@ public class SupervisionTaskServiceTest {
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     supervisionTaskService.insert(taskJson);
     verify(historyService, times(1)).addSupervisionAdded(APPLICATION_ID, taskJson.getType());
+  }
+
+  @Test
+  public void shouldPublishApplicationEventWhenAdded() {
+    setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
+    supervisionTaskService.insert(taskJson);
+    verify(applicationEventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
   }
 
   @Test

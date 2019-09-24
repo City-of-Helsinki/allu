@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,8 +23,6 @@ import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.model.service.event.ApplicationOwnerChangeEvent;
-import fi.hel.allu.model.service.event.ApplicationUpdateEvent;
 
 /**
  *
@@ -43,13 +40,12 @@ public class ApplicationService {
   private final ApplicationDefaultValueService defaultValueService;
   private final UserDao userDao;
   private final InvoicingPeriodService invoicingPeriodService;
-  private final ApplicationEventPublisher eventPublisher;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
     ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
     LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
-    InvoicingPeriodService invoicingPeriodService, ApplicationEventPublisher eventPublisher) {
+    InvoicingPeriodService invoicingPeriodService) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -59,7 +55,6 @@ public class ApplicationService {
     this.defaultValueService = defaultValueService;
     this.userDao = userDao;
     this.invoicingPeriodService = invoicingPeriodService;
-    this.eventPublisher = eventPublisher;
   }
 
   /**
@@ -155,7 +150,6 @@ public class ApplicationService {
     } else {
       updateChargeBasis(id, result);
     }
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(id, userId));
     return result;
   }
 
@@ -179,9 +173,8 @@ public class ApplicationService {
    * @param   applications  Applications whose owner is updated.
    */
   @Transactional
-  public void updateOwner(int ownerId, int userId, List<Integer> applications) {
+  public void updateOwner(int ownerId, List<Integer> applications) {
     applicationDao.updateOwner(ownerId, applications);
-    applications.forEach(applicationId -> eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationId, userId, ownerId)));
   }
 
   /**

@@ -121,8 +121,8 @@ public class ApplicationController {
    * @param   applications  Applications whose owner is updated.
    */
   @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.PUT)
-  public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestParam int userId, @RequestBody List<Integer> applications) {
-    applicationService.updateOwner(ownerId, userId, applications);
+  public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestBody List<Integer> applications) {
+    applicationService.updateOwner(ownerId, applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -369,6 +369,14 @@ public class ApplicationController {
   @RequestMapping(value = "/notes/finished", method = RequestMethod.GET)
   public ResponseEntity<List<Integer>> findFinishedNotes() {
     return new ResponseEntity<>(applicationService.findFinishedNotes(), HttpStatus.OK);
+  }
+
+  /**
+   * Finds id of the owner (user) of the application.
+   */
+  @RequestMapping(value = "/{id}/owner", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getApplicationOwner(@PathVariable Integer id) {
+    return new ResponseEntity<>(applicationService.getApplicationOwner(id), HttpStatus.OK);
   }
 
   /**

@@ -1,31 +1,26 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.CommentDao;
-import fi.hel.allu.model.domain.Comment;
-import fi.hel.allu.model.service.event.ApplicationUpdateEvent;
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import java.util.List;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.CommentDao;
+import fi.hel.allu.model.domain.Comment;
 
 @RestController
 public class CommentController {
 
   private CommentDao commentDao;
-  private ApplicationEventPublisher eventPublisher;
-
 
   @Autowired
-  public CommentController(CommentDao commentDao, ApplicationEventPublisher eventPublisher) {
+  public CommentController(CommentDao commentDao) {
     this.commentDao = commentDao;
-    this.eventPublisher = eventPublisher;
   }
 
   @RequestMapping(value = "/comments/{id}", method = RequestMethod.GET)
@@ -68,7 +63,6 @@ public class CommentController {
   public ResponseEntity<Comment> insertForApplication(@PathVariable int applicationId,
       @Valid @RequestBody(required = true) Comment comment) {
     Comment created = commentDao.insertForApplication(comment, applicationId);
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, comment.getUserId()));
     return new ResponseEntity<>(created, HttpStatus.OK);
   }
 

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
@@ -41,14 +43,17 @@ public class AttachmentService {
   private final RestTemplate restTemplate;
   private final UserService userService;
   private final ApplicationHistoryService applicationHistoryService;
+  private final ApplicationEventPublisher eventPublisher;
+
 
   @Autowired
   public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
-      ApplicationHistoryService applicationHistoryService) {
+      ApplicationHistoryService applicationHistoryService, ApplicationEventPublisher eventPublisher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationHistoryService = applicationHistoryService;
+    this.eventPublisher = eventPublisher;
   }
 
   public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
@@ -202,12 +207,14 @@ public class AttachmentService {
       throws IOException {
     // Create the attachment info for model-service:
     AttachmentInfo toModel = toAttachmentInfo(info);
-    toModel.setUserId(userService.getCurrentUser().getId());
+    Integer currentUserId = userService.getCurrentUser().getId();
+    toModel.setUserId(currentUserId);
     HttpEntity<?> requestEntity = createMultipartRequest(toModel, data);
     // ...then execute the request
     ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
         applicationProperties.getAddAttachmentUrl(), HttpMethod.POST, requestEntity, AttachmentInfo.class, applicationId);
     applicationHistoryService.addAttachmentAdded(applicationId, info.getName());
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, currentUserId));
     return toAttachmentInfoJson(response.getBody());
   }
 

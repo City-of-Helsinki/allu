@@ -597,4 +597,8 @@ public class ApplicationServiceComposer {
     applicationService.removeOwnerNotification(id);
     searchService.updateApplicationField(id, "ownerNotification", false);
   }
+
+  public Integer getApplicationOwnerId(int applicationId) {
+    return applicationService.getApplicationOwnerId(applicationId);
+  }
 }
