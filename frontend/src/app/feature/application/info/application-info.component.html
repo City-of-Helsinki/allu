@@ -1,6 +1,12 @@
-<div fxLayout="row" *ngIf="notificationType$ | async as notificationType">
+<div fxLayout="row">
   <div fxFlex="50%" class="gap-single-9">
-    <application-notification [type]="notificationType"></application-notification>
+    <application-notification>
+      <external-update-notification
+        *ngIf="notificationType$ | async as notificationType"
+        application-notification-entry
+        [type]="notificationType">
+      </external-update-notification>
+    </application-notification>
   </div>
 </div>
 

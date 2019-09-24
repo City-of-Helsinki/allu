@@ -1,13 +1,1 @@
-<div class="notification">
-  <div class="notification-content" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
-    <div fxFlex="none">
-      <mat-icon>warning</mat-icon>
-    </div>
-    <div fxFlex="none">
-      {{['application.notification.type', type] | translation}}
-    </div>
-    <div fxFlex="none">
-      <a class="clickable" (click)="show()">{{'application.notification.show' | translation}}</a>
-    </div>
-  </div>
-</div>
+<ng-content select="[application-notification-entry]"></ng-content>

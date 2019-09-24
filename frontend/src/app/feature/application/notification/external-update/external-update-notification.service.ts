@@ -1,51 +1,51 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/internal/operators';
-import {ApplicationNotificationType} from '@feature/application/notification/application-notification.component';
 import {combineLatest, Observable} from 'rxjs/index';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {Store} from '@ngrx/store';
 import {InformationRequest} from '@model/information-request/information-request';
+import {ExternalUpdateNotificationType} from '@feature/application/notification/external-update/external-update-notification.component';
 
 @Injectable()
-export class ApplicationNotificationService {
+export class ExternalUpdateNotificationService {
 
   constructor(private store: Store<fromApplication.State>) {}
 
-  public getNotificationType(): Observable<ApplicationNotificationType> {
+  public getNotificationType(): Observable<ExternalUpdateNotificationType> {
     return combineLatest(
       this.pendingClientData(),
       this.informationRequest()
     ).pipe(
-      map((types: ApplicationNotificationType[]) => this.pickType(types))
+      map((types: ExternalUpdateNotificationType[]) => this.pickType(types))
     );
   }
 
-  private pendingClientData(): Observable<ApplicationNotificationType> {
+  private pendingClientData(): Observable<ExternalUpdateNotificationType> {
     return this.store.select(fromApplication.hasPendingClientData).pipe(
-      map(pending => pending ? ApplicationNotificationType.PENDING_CLIENT_DATA : undefined)
+      map(pending => pending ? ExternalUpdateNotificationType.PENDING_CLIENT_DATA : undefined)
     );
   }
 
-  private informationRequest(): Observable<ApplicationNotificationType> {
+  private informationRequest(): Observable<ExternalUpdateNotificationType> {
     return this.store.select(fromInformationRequest.getInformationRequest).pipe(
       map(request => request ? this.activeInformationRequestNotificationType(request) : undefined)
     );
   }
 
-  private pickType(types: ApplicationNotificationType[] = []): ApplicationNotificationType {
+  private pickType(types: ExternalUpdateNotificationType[] = []): ExternalUpdateNotificationType {
     return types.reduce((acc, cur) => cur !== undefined ? cur : acc, undefined);
   }
 
-  private activeInformationRequestNotificationType(request: InformationRequest): ApplicationNotificationType {
+  private activeInformationRequestNotificationType(request: InformationRequest): ExternalUpdateNotificationType {
     switch (request.status) {
       case InformationRequestStatus.OPEN:
-        return ApplicationNotificationType.INFORMATION_REQUEST_PENDING;
+        return ExternalUpdateNotificationType.INFORMATION_REQUEST_PENDING;
       case InformationRequestStatus.DRAFT:
-        return ApplicationNotificationType.INFORMATION_REQUEST_DRAFT;
+        return ExternalUpdateNotificationType.INFORMATION_REQUEST_DRAFT;
       case InformationRequestStatus.RESPONSE_RECEIVED:
-        return ApplicationNotificationType.INFORMATION_REQUEST_RESPONSE;
+        return ExternalUpdateNotificationType.INFORMATION_REQUEST_RESPONSE;
       default:
         return undefined;
     }

@@ -1,20 +1,30 @@
 import {NgModule} from '@angular/core';
 import {AlluCommonModule} from '../../common/allu-common.module';
-import {ApplicationNotificationComponent} from '@feature/application/notification/application-notification.component';
-import {ApplicationNotificationService} from '@feature/application/notification/application-notification.service';
+import {
+  ApplicationNotificationComponent,
+  ApplicationNotificationEntryDirective
+} from '@feature/application/notification/application-notification.component';
+import {ExternalUpdateNotificationService} from '@feature/application/notification/external-update/external-update-notification.service';
+import {
+  ExternalUpdateNotificationComponent
+} from '@feature/application/notification/external-update/external-update-notification.component';
 
 @NgModule({
   imports: [
     AlluCommonModule
   ],
   declarations: [
-    ApplicationNotificationComponent
+    ApplicationNotificationComponent,
+    ApplicationNotificationEntryDirective,
+    ExternalUpdateNotificationComponent
   ],
   providers: [
-    ApplicationNotificationService
+    ExternalUpdateNotificationService
   ],
   exports: [
-    ApplicationNotificationComponent
+    ApplicationNotificationComponent,
+    ApplicationNotificationEntryDirective,
+    ExternalUpdateNotificationComponent
   ]
 })
 export class NotificationModule {}

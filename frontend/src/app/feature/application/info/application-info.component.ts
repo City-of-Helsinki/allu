@@ -7,7 +7,6 @@ import {ActivatedRoute} from '@angular/router';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {findTranslation} from '../../../util/translations';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
-import {ApplicationNotificationType} from '@feature/application/notification/application-notification.component';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
@@ -34,13 +33,14 @@ import {
 } from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
-import {ApplicationNotificationService} from '@feature/application/notification/application-notification.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {applicationForm} from '@feature/application/info/application-form';
 import {RoleType} from '@model/user/role-type';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {ClientApplicationData} from '@model/application/client-application-data';
 import {ApplicationType} from '@model/application/type/application-type';
+import {ExternalUpdateNotificationType} from '@feature/application/notification/external-update/external-update-notification.component';
+import {ExternalUpdateNotificationService} from '@feature/application/notification/external-update/external-update-notification.service';
 
 @Component({
   selector: 'application-info',
@@ -54,7 +54,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   type: string;
   showDraftSelection: boolean;
   readonly: boolean;
-  notificationType$: Observable<ApplicationNotificationType>;
+  notificationType$: Observable<ExternalUpdateNotificationType>;
 
   private destroy = new Subject<boolean>();
 
@@ -63,7 +63,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private store: Store<fromRoot.State>,
               private dialog: MatDialog,
               private modalState: InformationRequestModalEvents,
-              private applicationNotificationService: ApplicationNotificationService,
+              private applicationNotificationService: ExternalUpdateNotificationService,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
