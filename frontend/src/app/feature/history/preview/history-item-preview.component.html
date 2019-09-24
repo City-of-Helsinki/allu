@@ -4,12 +4,21 @@
   </div>
   <div fxFlex="0 0 calc(60% - 12px)" class="text-primary">
     <ng-container *ngIf="change.changeSpecifier; else changeTypeInfo">
-      {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
+      <div [ngSwitch]="change.changeType">
+        <ng-container *ngSwitchCase="'ATTACHMENT_ADDED'">
+          {{'history.change.typeWithSpecifier.ATTACHMENT_ADDED' | translation:{attachmentName: change.changeSpecifier} }}
+        </ng-container>
+        <ng-container *ngSwitchCase="'ATTACHMENT_REMOVED'">
+          {{'history.change.typeWithSpecifier.ATTACHMENT_REMOVED' | translation:{attachmentName: change.changeSpecifier} }}
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
+        </ng-container>
+      </div>
     </ng-container>
     <ng-template #changeTypeInfo>
       {{['history.change.type', change.changeType] | translation}}
     </ng-template>
-
     <ng-container *ngIf="description">
       <ng-container *ngIf="description.single; else newItem">
         <history-item-description [changeItem]="description.single"></history-item-description>
