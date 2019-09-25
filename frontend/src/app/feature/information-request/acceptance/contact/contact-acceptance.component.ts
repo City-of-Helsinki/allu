@@ -110,8 +110,8 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   createNewContact(): void {
     this.store.pipe(
       select(this.config.getCustomer),
-      filter(customer => NumberUtil.isExisting(customer)),
       take(1),
+      filter(customer => NumberUtil.isExisting(customer)),
       map(customer => this.createModalConfig(customer.id)),
       switchMap(config => this.dialog.open(ContactModalComponent, config).afterClosed()),
       filter(contact => !!contact)
