@@ -4,7 +4,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
-import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs/index';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
@@ -24,6 +24,8 @@ import {
   config as acceptanceConfig,
   CustomerAcceptanceConfig
 } from '@feature/information-request/acceptance/customer/customer-acceptance-config';
+import {findTranslation} from '@util/translations';
+import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'customer-acceptance',
@@ -137,7 +139,9 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       ...CUSTOMER_MODAL_CONFIG,
       data: {customer: this.newCustomer}
     };
-    this.dialog.open(CustomerModalComponent, config).afterClosed().pipe(
+    this.customerCreationConfirmation().pipe(
+      filter(confirmed => confirmed),
+      switchMap(() => this.dialog.open(CustomerModalComponent, config).afterClosed()),
       filter(customer => !!customer)
     ).subscribe(customer => {
       this.selectReferenceCustomer(customer);
@@ -184,5 +188,21 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     }
 
     this.store.dispatch(new SearchByType(this.actionTargetType, {type, query}));
+  }
+
+  private customerCreationConfirmation(): Observable<boolean> {
+    // We already might have a matching customer so ask confirmation from
+    // user if they really want to create user since it is usually a mistake
+    if (NumberUtil.isExisting(this.referenceCustomer$.getValue())) {
+      const data = {
+        title: findTranslation(['customer.confirmCreate.title']),
+        description: findTranslation(['customer.confirmCreate.description']),
+        confirmText: findTranslation(['customer.confirmCreate.confirmText']),
+        cancelText: findTranslation(['customer.confirmCreate.cancelText'])
+      };
+      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+    } else {
+      return of(true);
+    }
   }
 }

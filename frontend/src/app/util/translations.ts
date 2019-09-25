@@ -893,6 +893,13 @@ export const translations = {
       info: 'Nimi yhdistetään samoilla tiedoilla löytyneeseen asiakkaaseen. Voit myös hakea vaihtoehtoa tai luoda nimellä uuden asiakkaan.'
     },
     useForInvoicing: 'Käytä laskutettavana asiakkaana',
+    confirmCreate: {
+      title: 'Haluatko varmasti luoda uuden asiakkaan',
+      description: 'Vastaava asiakas löytyy jo asiakasrekisteristä. ' +
+        'Voit päivittää olemassaolevan asiakkaan tietoja Hyväksy tietopäivitykset näkymästä.',
+      confirmText: 'Siirry lisäämään asiakas',
+      cancelText: 'Peruuta'
+    },
     createNew: 'Luo uusi asiakas'
   },
   contact: {
