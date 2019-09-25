@@ -939,6 +939,13 @@ export const translations = {
       info: `Nimi yhdistetään samoilla tiedoilla löytyneeseen yhteyshenkilöön.
        Voit myös hakea vaihtoehtoa tai luoda nimellä uuden yhteyshenkilön.`
     },
+    confirmCreate: {
+      title: 'Haluatko varmasti luoda uuden yhteyshenkilön',
+      description: 'Vastaava yhteyshenkilö löytyy jo asiakkaalta. ' +
+        'Voit päivittää olemassaolevan yhteyshenkilön tietoja Hyväksy tietopäivitykset näkymästä.',
+      confirmText: 'Siirry lisäämään yhteyshenkilö',
+      cancelText: 'Peruuta'
+    },
     createNew: 'Luo uusi yhteyshenkilö',
     search: 'Hae yhteyshenkilöä',
     addToDistribution: 'Lisää jakeluun'

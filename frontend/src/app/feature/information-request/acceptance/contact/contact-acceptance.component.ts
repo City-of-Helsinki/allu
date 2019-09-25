@@ -4,7 +4,7 @@ import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs/index';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs/index';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
@@ -17,6 +17,8 @@ import {
   config as acceptanceConfig,
   ContactAcceptanceConfig
 } from '@feature/information-request/acceptance/contact/contact-acceptance-config';
+import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import {findTranslation} from '@util/translations';
 
 @Component({
   selector: 'contact-acceptance',
@@ -108,8 +110,9 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   createNewContact(): void {
-    this.store.pipe(
-      select(this.config.getCustomer),
+    this.contactCreationConfirmation().pipe(
+      filter(confirmed => confirmed),
+      switchMap(() => this.store.pipe(select(this.config.getCustomer))),
       take(1),
       filter(customer => NumberUtil.isExisting(customer)),
       map(customer => this.createModalConfig(customer.id)),
@@ -140,5 +143,21 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
         contact: this._newContact
       }
     };
+  }
+
+  private contactCreationConfirmation(): Observable<boolean> {
+    // We already might have a matching contact so ask confirmation from
+    // user if they really want to create user since it is usually a mistake
+    if (NumberUtil.isExisting(this.referenceContact$.getValue())) {
+      const data = {
+        title: findTranslation(['contact.confirmCreate.title']),
+        description: findTranslation(['contact.confirmCreate.description']),
+        confirmText: findTranslation(['contact.confirmCreate.confirmText']),
+        cancelText: findTranslation(['contact.confirmCreate.cancelText'])
+      };
+      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+    } else {
+      return of(true);
+    }
   }
 }
