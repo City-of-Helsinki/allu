@@ -17,7 +17,7 @@ import {
   config as acceptanceConfig,
   ContactAcceptanceConfig
 } from '@feature/information-request/acceptance/contact/contact-acceptance-config';
-import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import {CONFIRM_DIALOG_MODAL_CONFIG, ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {findTranslation} from '@util/translations';
 
 @Component({
@@ -155,7 +155,11 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
         confirmText: findTranslation(['contact.confirmCreate.confirmText']),
         cancelText: findTranslation(['contact.confirmCreate.cancelText'])
       };
-      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+      const config = {
+        ...CONFIRM_DIALOG_MODAL_CONFIG,
+        data
+      };
+      return this.dialog.open(ConfirmDialogComponent, config).afterClosed();
     } else {
       return of(true);
     }

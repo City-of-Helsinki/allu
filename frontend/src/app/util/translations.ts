@@ -895,9 +895,9 @@ export const translations = {
     useForInvoicing: 'Käytä laskutettavana asiakkaana',
     confirmCreate: {
       title: 'Haluatko varmasti luoda uuden asiakkaan',
-      description: 'Vastaava asiakas löytyy jo asiakasrekisteristä. ' +
-        'Voit päivittää olemassaolevan asiakkaan tietoja Hyväksy tietopäivitykset näkymästä.',
-      confirmText: 'Siirry lisäämään asiakas',
+      description: 'Tarjottuja tietoja vastaava asiakas löytyy jo asiakasrekisteristä. ' +
+        'Voit päivittää valitun asiakkaan tiedot valitsemalla päivitettävät tietokentät ja hyväksymällä tietopäivitykset.',
+      confirmText: 'Siirry lisäämään uusi asiakas',
       cancelText: 'Peruuta'
     },
     createNew: 'Luo uusi asiakas'
@@ -941,9 +941,9 @@ export const translations = {
     },
     confirmCreate: {
       title: 'Haluatko varmasti luoda uuden yhteyshenkilön',
-      description: 'Vastaava yhteyshenkilö löytyy jo asiakkaalta. ' +
-        'Voit päivittää olemassaolevan yhteyshenkilön tietoja Hyväksy tietopäivitykset näkymästä.',
-      confirmText: 'Siirry lisäämään yhteyshenkilö',
+      description: 'Tarjottuja tietoja vastaava yhteyshenkilö löytyy jo asiakkaalta. ' +
+        'Voit päivittää valitun yhteyshenkilön tiedot valitsemalla päivitettävät tietokentät ja hyväksymällä tietopäivitykset.',
+      confirmText: 'Siirry lisäämään uusi yhteyshenkilö',
       cancelText: 'Peruuta'
     },
     createNew: 'Luo uusi yhteyshenkilö',

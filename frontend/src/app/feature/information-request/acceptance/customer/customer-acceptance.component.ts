@@ -25,7 +25,7 @@ import {
   CustomerAcceptanceConfig
 } from '@feature/information-request/acceptance/customer/customer-acceptance-config';
 import {findTranslation} from '@util/translations';
-import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import {CONFIRM_DIALOG_MODAL_CONFIG, ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'customer-acceptance',
@@ -200,7 +200,11 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
         confirmText: findTranslation(['customer.confirmCreate.confirmText']),
         cancelText: findTranslation(['customer.confirmCreate.cancelText'])
       };
-      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+      const config = {
+        ...CONFIRM_DIALOG_MODAL_CONFIG,
+        data
+      };
+      return this.dialog.open(ConfirmDialogComponent, config).afterClosed();
     } else {
       return of(true);
     }
