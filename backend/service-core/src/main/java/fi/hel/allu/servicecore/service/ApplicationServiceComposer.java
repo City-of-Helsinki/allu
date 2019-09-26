@@ -590,12 +590,12 @@ public class ApplicationServiceComposer {
 
   public void addOwnerNotification(Integer id) {
     applicationService.addOwnerNotification(id);
-    searchService.updateApplicationField(id, "ownerNotification", true);
+    searchService.updateApplicationField(id, "ownerNotification", true, true);
   }
 
   public void removeOwnerNotification(Integer id) {
     applicationService.removeOwnerNotification(id);
-    searchService.updateApplicationField(id, "ownerNotification", false);
+    searchService.updateApplicationField(id, "ownerNotification", false, true);
   }
 
   public Integer getApplicationOwnerId(int applicationId) {

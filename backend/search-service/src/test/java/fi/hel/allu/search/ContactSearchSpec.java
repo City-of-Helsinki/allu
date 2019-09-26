@@ -182,7 +182,7 @@ public class ContactSearchSpec {
                     applicationES.getId(), CustomerRoleType.CONTRACTOR, Collections.singletonList(new ContactES(100, "kontraktori", true)));
             Map contactsMap =
                     CustomersIndexUtil.getContactsUpdateStructure(Arrays.asList(applicationWithContactsES1, applicationWithContactsES2));
-            applicationSearchService.partialUpdate(contactsMap);
+            applicationSearchService.partialUpdate(contactsMap, false);
             applicationSearchService.refreshIndex();
           });
 

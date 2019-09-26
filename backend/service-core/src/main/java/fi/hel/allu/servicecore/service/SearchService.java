@@ -101,10 +101,13 @@ public class SearchService {
   /**
    * Updates field of application with given value in search index
    */
-  public <T> void updateApplicationField(int applicationId, String fieldName, T fieldValue) {
+  public <T> void updateApplicationField(int applicationId, String fieldName, T fieldValue, boolean waitRefresh) {
     HashMap<Integer, Map<String, T>> applicationFields = new HashMap<>();
     applicationFields.put(applicationId, Collections.singletonMap(fieldName, fieldValue));
-    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), applicationFields);
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdatePartialUrl())
+        .queryParam("waitRefresh", waitRefresh)
+        .buildAndExpand().toUri();
+    restTemplate.put(uri.toString(), applicationFields, waitRefresh);
   }
 
   /**

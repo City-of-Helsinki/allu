@@ -61,7 +61,7 @@ public class CustomerController {
     Map<Integer, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
         acrt -> acrt.getKey(),
         acrt -> CustomersIndexUtil.getCustomerUpdateStructure(acrt.getValue(), customerES)));
-    applicationSearchService.partialUpdate(idToCustomer);
+    applicationSearchService.partialUpdate(idToCustomer, false);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

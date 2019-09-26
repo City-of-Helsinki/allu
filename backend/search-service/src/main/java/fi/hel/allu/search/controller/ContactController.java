@@ -54,7 +54,7 @@ public class ContactController {
     Map<Integer, Object> contactsUpdateStructure =
         CustomersIndexUtil.getContactsUpdateStructure(applicationWithContacts).entrySet().stream().collect(
             Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<Integer, Map> to Map<Integer, Object>
-    applicationSearchService.partialUpdate(contactsUpdateStructure);
+    applicationSearchService.partialUpdate(contactsUpdateStructure, false);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

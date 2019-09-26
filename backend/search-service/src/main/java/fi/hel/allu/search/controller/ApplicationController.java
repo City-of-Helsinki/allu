@@ -53,8 +53,8 @@ public class ApplicationController {
    * @return Nothing.
    */
   @RequestMapping(value = "/partialupdate", method = RequestMethod.PUT)
-  public ResponseEntity<Void> partialUpdate(@RequestBody Map<Integer, Object> idToPartialUpdateObj) {
-    applicationSearchService.partialUpdate(idToPartialUpdateObj);
+  public ResponseEntity<Void> partialUpdate(@RequestBody Map<Integer, Object> idToPartialUpdateObj, @RequestParam(required = false) Boolean waitRefresh) {
+    applicationSearchService.partialUpdate(idToPartialUpdateObj, waitRefresh);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

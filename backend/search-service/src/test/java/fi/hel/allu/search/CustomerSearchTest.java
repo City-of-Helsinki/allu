@@ -201,7 +201,7 @@ public class CustomerSearchTest {
     assertEquals(1, appList.size());
 
     Map customersMap = CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.APPLICANT), customerES);
-    applicationSearchService.partialUpdate(Collections.singletonMap(applicationES.getId(), customersMap));
+    applicationSearchService.partialUpdate(Collections.singletonMap(applicationES.getId(), customersMap), false);
     applicationSearchService.refreshIndex();
 
     // should find by name
@@ -256,7 +256,7 @@ public class CustomerSearchTest {
     idToUpdateData.put(
         applicationES2.getId(),
         CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.PROPERTY_DEVELOPER), customerES2));
-    applicationSearchService.partialUpdate(idToUpdateData);
+    applicationSearchService.partialUpdate(idToUpdateData, false);
     applicationSearchService.refreshIndex();
 
     // should find by updated name

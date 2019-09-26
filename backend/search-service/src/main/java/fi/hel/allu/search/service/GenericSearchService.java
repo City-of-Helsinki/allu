@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -256,19 +257,19 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    *          partially update and value is an object (or map) containing the
    *          fields to modify and their new values.
    */
-  public void partialUpdate(Map<Integer, Object> idToPartialUpdateObj) {
-    partialUpdateInto(indexConductor.getIndexAliasName(), idToPartialUpdateObj);
+  public void partialUpdate(Map<Integer, Object> idToPartialUpdateObj, Boolean waitRefresh) {
+    partialUpdateInto(indexConductor.getIndexAliasName(), idToPartialUpdateObj, waitRefresh);
     if (indexConductor.isSyncActive()) {
-      partialUpdateInto(indexConductor.getNewIndexName(), idToPartialUpdateObj);
+      partialUpdateInto(indexConductor.getNewIndexName(), idToPartialUpdateObj, waitRefresh);
     }
   }
 
-  public void partialUpdateInto(String indexName, Map<Integer, Object> idToPartialUpdateObj) {
+  public void partialUpdateInto(String indexName, Map<Integer, Object> idToPartialUpdateObj, Boolean waitRefresh) {
     List<DocWriteRequest<?>> updateRequests = idToPartialUpdateObj.entrySet().stream()
         .map(entry -> updateRequestInto(indexName, entry.getKey().toString(), entry.getValue()))
         .collect(Collectors.toList());
-
-    executeBulk(updateRequests, null);
+    RefreshPolicy refreshPolicy = BooleanUtils.isTrue(waitRefresh) ? RefreshPolicy.WAIT_UNTIL : null;
+    executeBulk(updateRequests, refreshPolicy);
   }
 
   /**
