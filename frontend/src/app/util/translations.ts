@@ -1884,7 +1884,8 @@ export const translations = {
           FINISHED: 'Hakemus valmistunut',
           CANCELLED: 'Hakemus peruttu',
           REPLACED: 'Hakemus korvattu',
-          ARCHIVED: 'Hakemus arkistoitu'
+          ARCHIVED: 'Hakemus arkistoitu',
+          TERMINATED: 'Hakemus irtisanottu'
         },
         CONTRACT_STATUS_CHANGED: {
           APPROVED: 'Sopimus hyväksytty',
