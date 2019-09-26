@@ -15,6 +15,7 @@ public class ChangeHistoryItemJson {
   private ChangeHistoryItemInfoJson info;
   private ChangeType changeType;
   private String changeSpecifier;
+  private String changeSpecifier2;
   private ZonedDateTime changeTime;
   private List<FieldChangeJson> fieldChanges;
 
@@ -22,11 +23,12 @@ public class ChangeHistoryItemJson {
   }
 
   public ChangeHistoryItemJson(UserJson user, ChangeHistoryItemInfoJson info, ChangeType changeType,
-      String newStatus, ZonedDateTime changeTime, List<FieldChangeJson> fieldChanges) {
+      String changeSpecifier, String changeSpecifier2, ZonedDateTime changeTime, List<FieldChangeJson> fieldChanges) {
     this.user = user;
     this.info = info;
     this.changeType = changeType;
-    this.changeSpecifier = newStatus;
+    this.changeSpecifier = changeSpecifier;
+    this.changeSpecifier2 = changeSpecifier2;
     this.changeTime = changeTime;
     this.fieldChanges = fieldChanges;
   }
@@ -70,6 +72,17 @@ public class ChangeHistoryItemJson {
 
   public void setChangeSpecifier(String changeSpecifier) {
     this.changeSpecifier = changeSpecifier;
+  }
+
+  /**
+   * Contains target status of application when change is status change.
+   */
+  public String getChangeSpecifier2() {
+    return changeSpecifier2;
+  }
+
+  public void setChangeSpecifier2(String changeSpecifier2) {
+    this.changeSpecifier2 = changeSpecifier2;
   }
 
   /**

@@ -9,6 +9,7 @@ export class ChangeHistoryItem {
     public info?: ChangeHistoryItemInfo,
     public changeType?: string,
     public changeSpecifier?: string,
+    public changeSpecifier2?: string,
     public changeTime?: Date,
     public fieldChanges?: Array<FieldChange>
   ) {

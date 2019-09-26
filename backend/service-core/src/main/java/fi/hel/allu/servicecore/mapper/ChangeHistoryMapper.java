@@ -35,6 +35,7 @@ public class ChangeHistoryMapper {
         mapToJson(c.getInfo()),
         c.getChangeType(),
         c.getChangeSpecifier(),
+        c.getChangeSpecifier2(),
         c.getChangeTime(),
         mapToJson(c.getFieldChanges()));
   }

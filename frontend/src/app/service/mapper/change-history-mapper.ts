@@ -24,6 +24,7 @@ export class ChangeHistoryMapper {
       this.mapBackendInfo(backendChange.info),
       backendChange.changeType,
       backendChange.changeSpecifier,
+      backendChange.changeSpecifier2,
       TimeUtil.dateFromBackend(backendChange.changeTime),
       backendChange.fieldChanges ? backendChange.fieldChanges.map(fc => FieldChangeMapper.mapBackend(fc)) : []
     );
