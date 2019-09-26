@@ -14,6 +14,9 @@
         <ng-container *ngSwitchCase="'ATTACHMENT_REMOVED'">
           {{'history.change.typeWithSpecifier.ATTACHMENT_REMOVED' | translation:{attachmentName: change.changeSpecifier} }}
         </ng-container>
+        <ng-container *ngSwitchCase="'STATUS_CHANGED'">
+          <history-item-status [change]="change"></history-item-status>
+        </ng-container>
         <ng-container *ngSwitchDefault>
           {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
         </ng-container>

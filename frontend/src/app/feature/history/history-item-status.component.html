@@ -1,0 +1,26 @@
+<div [ngSwitch]="change.changeSpecifier">
+  <ng-container *ngSwitchCase="'DECISIONMAKING'">
+    {{['history.change.decisionMakingTo', change.changeSpecifier2] | translation}}
+  </ng-container>
+  <ng-container *ngSwitchCase="'DECISION'">
+    <ng-container *ngIf="change.changeSpecifier2; else toDecision">
+      {{['history.change.returnTo', change.changeSpecifier] | translation}}
+    </ng-container>
+    <ng-template #toDecision>
+      {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
+    </ng-template>
+  </ng-container>
+  <ng-container *ngSwitchCase="'OPERATIONAL_CONDITION'">
+    <ng-container *ngIf="change.changeSpecifier2; else toOperationalCondition">
+      {{['history.change.returnTo', change.changeSpecifier] | translation}}
+    </ng-container>
+    <ng-template #toOperationalCondition>
+      {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
+    </ng-template>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
+  </ng-container>
+</div>
+
+

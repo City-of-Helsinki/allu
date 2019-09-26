@@ -1943,6 +1943,16 @@ export const translations = {
         ATTACHMENT_REMOVED: 'Liite {{attachmentName}} poistettu',
         LOCATION_CHANGED: 'Aluetta {{locationKey}} päivitetty'
       },
+      decisionMakingTo: {
+        DECISION: 'Hakemus siirretty odottamaan päätöstä',
+        OPERATIONAL_CONDITION: 'Hakemus siirretty odottamaan toiminnallisen kunnon hyväksyntää',
+        FINISHED: 'Hakemus siirretty odottamaan työ valmis hyväksyntää',
+        TERMINATION: 'Hakemus siirretty odottamaan irtisanomisen päätöstä',
+      },
+      returnTo: {
+        DECISION: 'Hakemus palautettu päätetyksi',
+        OPERATIONAL_CONDITION: 'Hakemus palautettu toiminnalliseen kuntoon',
+      },
       field: {
         CUSTOMER: 'Asiakas',
         CONTACT: 'Yhteyshenkilö'
