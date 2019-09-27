@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.ApplicationDateReport;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,13 @@ public class LocationService {
     assignOwner(application, newLocations, userId);
     updateProject(application, userId);
     return newLocations;
+  }
+
+  @Transactional
+  public List<Location> update(List<Location> locations, int userId) {
+    List<Location> updatedLocations = locations.stream().map(locationDao::update).collect(Collectors.toList());
+    updateApplicationAndProject(getApplicationId(updatedLocations), userId);
+    return updatedLocations;
   }
 
   private void assignOwner(Application application, List<Location> locations, int userId) {

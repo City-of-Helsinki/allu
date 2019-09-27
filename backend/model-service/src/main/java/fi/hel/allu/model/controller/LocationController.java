@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,6 +80,21 @@ public class LocationController {
   public ResponseEntity<List<Location>> insert(@RequestParam(required = true) int userId,
       @Valid @RequestBody List<Location> locations) {
     return new ResponseEntity<>(locationService.insert(locations, userId), HttpStatus.OK);
+  }
+
+  /**
+   * Update existing location.
+   *
+   * @param   location Location to update.
+   * @return  Updated location.
+   */
+  @RequestMapping(value = "/{locationId}", method = RequestMethod.PUT)
+  public ResponseEntity<Location> update(@RequestParam int userId,
+                                         @PathVariable int locationId,
+                                         @Valid @RequestBody Location location) {
+    location.setId(locationId);
+    List<Location> updated = locationService.update(Collections.singletonList(location), userId);
+    return ResponseEntity.ok(updated.stream().findFirst().orElse(null));
   }
 
   @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)

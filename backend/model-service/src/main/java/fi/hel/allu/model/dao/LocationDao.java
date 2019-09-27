@@ -162,7 +162,7 @@ public class LocationDao {
     }
   }
 
-  private Location update(Location locationData) {
+  public Location update(Location locationData) {
     transformCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
     int id = locationData.getId();
     Optional<Location> currentLocationOpt = findById(id);

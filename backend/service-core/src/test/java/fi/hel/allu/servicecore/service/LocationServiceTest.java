@@ -27,6 +27,7 @@ public class LocationServiceTest {
   private static Validator validator;
   protected LocationService locationService;
   protected RestTemplate restTemplate;
+  protected UserService userService;
 
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -37,8 +38,9 @@ public class LocationServiceTest {
   @Before
   public void setUp() {
     restTemplate = Mockito.mock(RestTemplate.class);
+    userService = Mockito.mock(UserService.class);
     ApplicationProperties properties = Mockito.mock(ApplicationProperties.class);
-    locationService = new LocationService(properties, restTemplate);
+    locationService = new LocationService(properties, restTemplate, userService);
     Mockito.when(properties.getFixedLocationUrl()).thenReturn("http://fixedlocations");
   }
 

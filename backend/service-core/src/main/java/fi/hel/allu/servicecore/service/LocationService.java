@@ -37,12 +37,15 @@ public class LocationService {
 
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
+  private final UserService userService;
 
   @Autowired
   public LocationService(ApplicationProperties applicationProperties,
-      RestTemplate restTemplate) {
+                         RestTemplate restTemplate,
+                         UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.userService = userService;
   }
 
 
@@ -157,5 +160,15 @@ public class LocationService {
         .queryParam("srid", srId)
         .buildAndExpand().toUri();
     return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(new GeometryWrapper(geometry)), GeometryWrapper.class).getBody().getGeometry();
+  }
+
+  public Location getLocationById(Integer locationId) {
+    return restTemplate.getForObject(applicationProperties.getLocationUrl(), Location.class, locationId);
+  }
+
+  public Location updateLocation(Location location) {
+    ResponseEntity<Location> result = restTemplate.exchange(applicationProperties.getUpdateLocationUrl(),
+      HttpMethod.PUT, new HttpEntity<>(location), Location.class, location.getId(), userService.getCurrentUser().getId());
+    return result.getBody();
   }
 }

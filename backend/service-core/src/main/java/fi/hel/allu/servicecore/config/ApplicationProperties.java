@@ -552,6 +552,14 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/city-districts/{cityDistrictId}/supervisor/{type}");
   }
 
+  public String getUpdateLocationUrl() {
+    return getModelServiceUrl("/locations/{id}?userId={userId}");
+  }
+
+  public String getLocationUrl() {
+    return getModelServiceUrl("/locations/{id}");
+  }
+
   /**
    * @return url for fetching projects by ids.
    */
