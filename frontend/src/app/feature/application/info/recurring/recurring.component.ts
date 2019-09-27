@@ -4,8 +4,7 @@ import {ComplexValidator} from '@util/complex-validator';
 import {MAX_YEAR, MIN_YEAR} from '@util/time.util';
 import {Subject} from 'rxjs/internal/Subject';
 import {takeUntil} from 'rxjs/operators';
-
-type RecurringType = 'none' | 'forNow' | 'until';
+import {RecurringType} from '@feature/application/info/recurring/recurring-type';
 
 const RECURRING_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -63,11 +62,11 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
 
   writeValue(endYear: number): void {
     if (!endYear) {
-      this.recurringTypeCtrl.patchValue('none');
+      this.recurringTypeCtrl.patchValue(RecurringType.NONE);
     } else if (endYear === MAX_YEAR) {
-      this.recurringTypeCtrl.patchValue('forNow');
+      this.recurringTypeCtrl.patchValue(RecurringType.FOR_NOW);
     } else {
-      this.recurringTypeCtrl.patchValue('until');
+      this.recurringTypeCtrl.patchValue(RecurringType.UNTIL);
       this.endYearCtrl.patchValue(endYear);
     }
   }
@@ -81,11 +80,11 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
   private _onChange = (_: any) => {};
 
   private typeChange(type: RecurringType): void {
-    if (type !== 'until') {
+    if (type !== RecurringType.UNTIL) {
       this.endYearCtrl.reset();
     }
 
-    if (type === 'forNow') {
+    if (type === RecurringType.FOR_NOW) {
       this._onChange(MAX_YEAR);
     }
   }
