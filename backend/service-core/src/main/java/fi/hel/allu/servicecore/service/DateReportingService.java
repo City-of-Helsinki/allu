@@ -64,7 +64,8 @@ public class DateReportingService {
     final ApplicationJson oldApplicationJson = getApplicationJson(id);
 
     final Application newApplication = applicationService.setCustomerOperationalConditionDates(id, dateReport);
-    if (supervisionTaskService.hasSupervisionTask(id, SupervisionTaskType.OPERATIONAL_CONDITION)) {
+
+    if (hasOpenOperationalConditionSupervision(id)) {
       supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.OPERATIONAL_CONDITION,
           SupervisionDates.operationalConditionSupervisionDate(dateReport.getReportedDate()));
     } else {
@@ -72,9 +73,13 @@ public class DateReportingService {
     }
     applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.OPERATIONAL_CONDITION_REPORTED, null));
     final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
-
     applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
     return newApplicationJson;
+  }
+
+  private boolean hasOpenOperationalConditionSupervision(Integer id) {
+    return supervisionTaskService.findByApplicationId(id).stream()
+        .anyMatch(t -> t.getType() == SupervisionTaskType.OPERATIONAL_CONDITION && t.getStatus() == SupervisionTaskStatusType.OPEN);
   }
 
   public ApplicationJson reportCustomerWorkFinished(Integer id, ApplicationDateReport dateReport) {
