@@ -114,6 +114,24 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @ApiOperation(value = "Report application changes. Only fields listed in change information are processed in Allu. "
+    + "Also data sent through some separate API (e.g. application attachments) should be included in field list of change. " +
+    "Reporting changes is only allowed for application in \"decision\" or \"operational condition\" states.",
+    produces = "application/json",
+    authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+    @ApiResponse(code = 200, message = "Change reported successfully", response = Void.class),
+    @ApiResponse(code = 400, message = "Invalid change information", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Reported change not allowed", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "{applicationid}/reportchange", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<Void> reportChange(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
+                                           @ApiParam(value = "Contents of the change") @RequestBody @Valid InformationRequestResponseExt<T> change) throws JsonProcessingException {
+    applicationService.reportApplicationChange(applicationService.getApplicationIdForExternalId(applicationId), change, getMapper());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   protected ResponseEntity<byte[]> returnPdfResponse(byte[] bytes) {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));

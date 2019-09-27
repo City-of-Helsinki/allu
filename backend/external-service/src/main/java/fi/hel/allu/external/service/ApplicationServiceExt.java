@@ -6,7 +6,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -32,7 +34,6 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
@@ -174,10 +175,16 @@ public class ApplicationServiceExt {
       InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     validateOwnedByExternalUser(applicationId);
     validateInformationRequestOpen(requestId);
-    ApplicationJson applicationJson = mapper.mapExtApplication(response.getApplicationData(), getExternalUserId());
-    ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
-    informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
+    addResponseForRequest(applicationId, requestId, response, mapper);
     applicationServiceComposer.changeStatus(applicationId, StatusType.INFORMATION_RECEIVED);
+  }
+
+  public <T extends BaseApplicationExt> void reportApplicationChange(Integer applicationId,
+      InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+    validateOwnedByExternalUser(applicationId);
+    validateApplicationChangePossible(applicationId);
+    InformationRequest request = informationRequestService.createForResponse(applicationId, Collections.emptyList());
+    addResponseForRequest(applicationId, request.getId(), response, mapper);
   }
 
   private void validateInformationRequestOpen(Integer requestId) {
@@ -185,6 +192,20 @@ public class ApplicationServiceExt {
     if (request.getStatus() != InformationRequestStatus.OPEN) {
       throw new IllegalOperationException("informationrequest.notopen");
     }
+  }
+
+  private void validateApplicationChangePossible(Integer applicationId) {
+    ApplicationStatusInfo statusInfo = applicationServiceComposer.getApplicationStatus(applicationId);
+    if (!(statusInfo.getStatus() == StatusType.DECISION || statusInfo.getStatus() == StatusType.OPERATIONAL_CONDITION)) {
+      throw new IllegalOperationException("application.addChanges.notAllowed");
+    };
+  }
+
+  private <T extends BaseApplicationExt> void addResponseForRequest(Integer applicationId, Integer requestId,
+      InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+    ApplicationJson applicationJson = mapper.mapExtApplication(response.getApplicationData(), getExternalUserId());
+    ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
+    informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
   }
 
   public void cancelApplication(Integer id) {

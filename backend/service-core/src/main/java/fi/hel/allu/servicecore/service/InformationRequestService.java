@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -70,6 +71,13 @@ public class InformationRequestService {
     return toInformationRequestJson(request);
   }
 
+  public InformationRequest createForResponse(Integer applicationId, List<InformationRequestFieldKey> updatedKeys) {
+    InformationRequest request = createInformationRequestModel(applicationId, updatedKeys);
+    request.setCreatorId(userService.getCurrentUser().getId());
+    return restTemplate
+      .postForEntity(applicationProperties.getInformationRequestCreateUrl(), request, InformationRequest.class, applicationId)
+      .getBody();
+  }
 
   private InformationRequestJson toInformationRequestJson(InformationRequest request) {
     if (request == null) {
@@ -86,6 +94,13 @@ public class InformationRequestService {
     return new InformationRequest(informationRequest.getId(), informationRequest.getApplicationId(),
         informationRequest.getStatus(),
         toInformationRequestModelFields(informationRequest.getId(), informationRequest.getFields()));
+  }
+
+  private InformationRequest createInformationRequestModel(Integer applicationId, List<InformationRequestFieldKey> fieldKeys) {
+    List<InformationRequestField> updatedFields = fieldKeys.stream()
+      .map(key -> new InformationRequestField(null, key, null))
+      .collect(Collectors.toList());
+    return new InformationRequest(null, applicationId, InformationRequestStatus.OPEN, updatedFields);
   }
 
   private List<InformationRequestField> toInformationRequestModelFields(Integer requestId, List<InformationRequestFieldJson> fields) {

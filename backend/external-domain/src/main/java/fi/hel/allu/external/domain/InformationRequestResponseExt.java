@@ -8,7 +8,7 @@ import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Response to information request")
+@ApiModel(value = "Reported application changes")
 public class InformationRequestResponseExt<T extends BaseApplicationExt> {
 
   private T applicationData;
