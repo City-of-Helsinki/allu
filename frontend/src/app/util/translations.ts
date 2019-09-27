@@ -493,7 +493,8 @@ export const translations = {
       recurringYearlyForNow: 'Toistuu vuosittain toistaiseksi',
       recurringYearly: 'Toistuu vuosittain',
       until: 'asti',
-      untilYear: 'vuoteen'
+      untilYear: 'vuoteen',
+      recurringYearlyUntil: 'Toistuu vuosittain {{year}} asti'
     },
     button: {
       copy: 'Kopioi uudeksi',

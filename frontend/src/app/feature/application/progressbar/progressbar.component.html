@@ -23,16 +23,7 @@
           </div>
         </div>
         <div fxFlex="none">
-          <div class="application-info">
-            <span>{{application.startTime | date:'shortDate'}}</span>
-            <ng-container *ngIf="application.endTime">
-              <span>-</span>
-              <span>{{application.endTime | date:'shortDate'}}</span>
-            </ng-container>
-          </div>
-          <div class="text-hint" *ngIf="terminationDate">
-            {{'application.common.terminatedExpires' | translation}} {{terminationDate | date: 'shortDate'}}
-          </div>
+          <validity-time [application]="application" [terminationDate]="terminationDate"></validity-time>
         </div>
         <div fxFlex="none" *ngIf="hasReplacements$ | async">
           <button mat-button [matMenuTriggerFor]="replacementMenu" color="primary" disableRipple class="icon-with-info">
