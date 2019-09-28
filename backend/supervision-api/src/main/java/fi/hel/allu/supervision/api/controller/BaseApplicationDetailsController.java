@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,9 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   private ApplicationServiceComposer applicationServiceComposer;
   @Autowired
   private ApplicationUpdateService applicationUpdateService;
+  @Autowired
+  protected LocationService locationService;
+
 
   @ApiOperation(value = "Get application details",
       authorizations = @Authorization(value ="api_key"),

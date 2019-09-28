@@ -552,6 +552,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/city-districts/{cityDistrictId}/supervisor/{type}");
   }
 
+  public String getInsertLocationUrl() {
+    return getModelServiceUrl("/locations/?userId={userId}");
+  }
+
   public String getUpdateLocationUrl() {
     return getModelServiceUrl("/locations/{id}?userId={userId}");
   }

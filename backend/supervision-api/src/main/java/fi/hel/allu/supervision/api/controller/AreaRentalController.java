@@ -1,8 +1,10 @@
 package fi.hel.allu.supervision.api.controller;
 
+import fi.hel.allu.model.domain.Location;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +15,8 @@ import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.supervision.api.domain.AreaRentalApplication;
 import io.swagger.annotations.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/arearentals")
@@ -44,4 +48,24 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return getApprovalDocument(id, ApprovalDocumentType.WORK_FINISHED);
   }
 
+  @ApiOperation(value = "Create a new location",
+    authorizations = @Authorization(value = "api_key"),
+    consumes = "application/json",
+    produces = "application/json",
+    response = Location.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Location created successfully", response = Location.class),
+    @ApiResponse(code = 400, message = "Invalid location data", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Location addition forbidden", response = ErrorInfo.class)
+  })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @RequestMapping(value = "/{applicationId}/locations", method = RequestMethod.POST,
+    produces = "application/json", consumes = "application/json")
+  public ResponseEntity<Location> createLocation(@PathVariable Integer applicationId,
+                                                 @RequestBody @Valid Location location) {
+    validateType(applicationId);
+    location.setApplicationId(applicationId);
+    Location createdLocation = locationService.insertLocation(location);
+    return ResponseEntity.ok(createdLocation);
+  }
 }

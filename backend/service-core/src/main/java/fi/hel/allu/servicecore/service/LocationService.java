@@ -171,4 +171,11 @@ public class LocationService {
       HttpMethod.PUT, new HttpEntity<>(location), Location.class, location.getId(), userService.getCurrentUser().getId());
     return result.getBody();
   }
+
+  public Location insertLocation(Location location) {
+    ResponseEntity<Location[]> result = restTemplate.exchange(applicationProperties.getInsertLocationUrl(),
+      HttpMethod.POST, new HttpEntity<>(Collections.singletonList(location)), Location[].class, userService.getCurrentUser().getId());
+    Location[] body = result.getBody();
+    return body.length > 0 ? body[0] : null;
+  }
 }
