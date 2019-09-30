@@ -140,9 +140,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
 
   private getPendingData(): Observable<InformationAcceptanceData> {
     return this.store.pipe(
-      select(fromApplication.getCurrentApplication),
-      switchMap(app => {
-        if (ApplicationStatus.INFORMATION_RECEIVED === app.status) {
+      select(fromInformationRequest.getInformationRequestResponsePending),
+      withLatestFrom(this.store.pipe(select(fromApplication.getCurrentApplication))),
+      switchMap(([pendingResponse, app]) => {
+        if (pendingResponse) {
           return this.getPendingResponse(app);
         } else {
           return this.getPendingInitialInfo(app);

@@ -1,6 +1,7 @@
 import {InformationRequestResponse} from '@model/information-request/information-request-response';
 import {InformationRequestAction, InformationRequestActionType} from '../actions/information-request-actions';
 import {InformationRequest} from '@model/information-request/information-request';
+import {NumberUtil} from '@util/number.util';
 
 export interface State {
   request: InformationRequest;
@@ -80,3 +81,5 @@ export const getRequestLoading = (state: State) => state.requestLoading;
 export const getResponse = (state: State) => state.response;
 
 export const getResponseLoading = (state: State) => state.responseLoading;
+
+export const getResponsePending = (state: State) => state.request ? NumberUtil.isDefined(state.request.informationRequestId) : false;

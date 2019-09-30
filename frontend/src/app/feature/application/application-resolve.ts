@@ -68,15 +68,6 @@ export class ApplicationResolve implements Resolve<Application> {
     this.store.dispatch(new invoicingCustomerActions.Load());
     this.store.dispatch(new informationRequestActions.LoadLatestRequest());
     this.store.dispatch(new terminationActions.LoadInfo());
-    this.loadInformationRequestResponse(app.status);
-  }
-
-  private loadInformationRequestResponse(status: ApplicationStatus) {
-    if (ApplicationStatus.INFORMATION_RECEIVED === status) {
-      this.store.dispatch(new informationRequestActions.LoadLatestResponse());
-    } else {
-      this.store.dispatch(new informationRequestActions.LoadLatestResponseSuccess(undefined));
-    }
   }
 
   private handleError(err: any): Observable<Application> {

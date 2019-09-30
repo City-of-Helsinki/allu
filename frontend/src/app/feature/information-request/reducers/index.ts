@@ -48,6 +48,11 @@ export const getInformationRequestResponseLoading = createSelector(
   fromInformationRequest.getResponseLoading
 );
 
+export const getInformationRequestResponsePending = createSelector(
+  getInformationRequestEntityState,
+  fromInformationRequest.getResponsePending
+);
+
 // Information request result selectors
 export const getInformationRequestResultState = createSelector(
   getInformationRequestState,

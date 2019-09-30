@@ -18,6 +18,7 @@ import {ApplicationStatus} from '@model/application/application-status';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {findTranslation} from '@util/translations';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
 
 @Injectable()
 export class InformationRequestEffects {
@@ -114,5 +115,12 @@ export class InformationRequestEffects {
     ofType<InformationRequestResultAction.SaveSuccess>(InformationRequestResultActionType.SaveSuccess),
     filter(action => !!action.payload.application.clientApplicationData),
     map(() => new ApplicationAction.RemoveClientApplicationData())
+  );
+
+  @Effect()
+  onLoadRequestSuccess: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.LoadLatestRequestSuccess>(InformationRequestActionType.LoadLatestRequestSuccess),
+    filter(action => action.payload && action.payload.status === InformationRequestStatus.RESPONSE_RECEIVED),
+    map(() => new InformationRequestAction.LoadLatestResponse())
   );
 }
