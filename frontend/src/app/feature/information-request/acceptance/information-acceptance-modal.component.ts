@@ -47,6 +47,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
   hasLocationChanges: boolean;
   applicationTypeBillable: boolean;
+  requestDataAvailable = false;
   showRequest = true;
 
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
@@ -64,6 +65,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
     this.newInfo = this.data.newInfo;
     this.updatedFields = this.data.updatedFields;
     this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
+    this.requestDataAvailable = this.data.informationRequest && this.data.informationRequest.fields.length > 0;
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();

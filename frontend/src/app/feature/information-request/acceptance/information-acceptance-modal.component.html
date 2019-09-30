@@ -3,7 +3,7 @@
     <h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.acceptance.title' | translation}}</h1>
     <h1 mat-dialog-title *ngIf="readonly">{{'informationRequest.acceptance.readonlyTitle' | translation}}</h1>
   </div>
-  <div fxFlex="none" *ngIf="data.informationRequest">
+  <div fxFlex="none" *ngIf="requestDataAvailable">
     <mat-slide-toggle
       class="text-primary"
       labelPosition="before"
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div *ngIf="data.informationRequest && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
+<div *ngIf="requestDataAvailable && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
   <information-request-summary [request]="data.informationRequest"></information-request-summary>
 </div>
 
