@@ -657,7 +657,8 @@ export const translations = {
       close: 'Sulje',
       existingInfo: 'Nykyiset tiedot',
       providedInfo: 'Tarjotut tiedot',
-      showRequestedInfo: 'Näytä pyydetyt tiedot'
+      showRequestedInfo: 'Näytä pyydetyt tiedot',
+      discard: 'Hylkää tietopäivitys'
     },
     request: {
       title: 'Hyväksy tiedot täydennyspyyntöön',

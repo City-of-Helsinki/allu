@@ -17,6 +17,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequest} from '@model/information-request/information-request';
 import {Some} from '@util/option';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
+import {CloseRequest} from '@feature/information-request/actions/information-request-actions';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -93,6 +94,11 @@ export class InformationAcceptanceModalComponent implements OnInit {
   replace(): void {
     this.applicationStore.replace()
       .subscribe(application => this.onApplicationChange(application));
+  }
+
+  discardChanges(): void {
+    this.store.dispatch(new CloseRequest(this.data.informationRequest.informationRequestId));
+    this.dialogRef.close();
   }
 
   private onApplicationChange(application: Application): void {

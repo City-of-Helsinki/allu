@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -124,7 +125,7 @@ public class InformationRequestService {
         new HttpEntity<>(null),
         InformationRequest.class,
         id);
-    applicationServiceComposer.changeStatus(responseEntity.getBody().getApplicationId(), StatusType.HANDLING);
+    updateStatusAfterClose(responseEntity.getBody().getApplicationId());
     return toInformationRequestJson(responseEntity.getBody());
   }
 
@@ -132,6 +133,13 @@ public class InformationRequestService {
     InformationRequestResponse response = restTemplate.getForObject(
         applicationProperties.getInformationRequestResponseFindUrl(), InformationRequestResponse.class, applicationId);
     return toResponseJson(applicationId, response);
+  }
+
+  private void updateStatusAfterClose(Integer applicationId) {
+    ApplicationStatusInfo statusInfo = applicationServiceComposer.getApplicationStatus(applicationId);
+    if (statusInfo.getStatus() == StatusType.INFORMATION_RECEIVED) {
+      applicationServiceComposer.changeStatus(applicationId, StatusType.HANDLING);
+    }
   }
 
   private static InformationRequestResponseJson toResponseJson(Integer applicationId,

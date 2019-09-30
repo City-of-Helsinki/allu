@@ -119,6 +119,13 @@
           type="button"
           mat-raised-button
           color="primary"
+          (click)="discardChanges()">
+          {{'informationRequest.acceptance.discard' | translation | uppercase}}
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          color="primary"
           (click)="replace()">
           {{'application.button.replace' | translation | uppercase}}
         </button>
