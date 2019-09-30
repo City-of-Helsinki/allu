@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,10 @@ public class ApplicationServiceExt {
   private InformationRequestService informationRequestService;
   @Autowired
   private CustomerExtMapper customerMapper;
+  @Autowired
+  private ApplicationEventPublisher eventPublisher;
+  @Autowired
+  private UserService userService;
 
 
   public <T extends BaseApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
@@ -186,6 +192,7 @@ public class ApplicationServiceExt {
     InformationRequest request = informationRequestService.createForResponse(applicationId, Collections.emptyList());
     addResponseForRequest(applicationId, request.getId(), response, mapper);
     applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.OTHER_CHANGES, ZonedDateTime.now()));
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
   }
 
   private void validateInformationRequestOpen(Integer requestId) {
