@@ -79,21 +79,24 @@ export class InformationRequestEffects {
   saveResult: Observable<Action> = this.actions.pipe(
     ofType<InformationRequestResultAction.Save>(InformationRequestResultActionType.Save),
     switchMap(action => this.applicationStore.saveInformationRequestResult(action.payload).pipe(
-      map(() => new InformationRequestResultAction.SaveSuccess(action.payload)),
+      switchMap(() => [
+        new InformationRequestResultAction.SaveSuccess(action.payload),
+        new InformationRequestAction.CloseRequest(action.payload.informationRequestId)
+      ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
   @Effect()
   closeRequest: Observable<Action> = this.actions.pipe(
-    ofType<InformationRequestResultAction.SaveSuccess>(InformationRequestResultActionType.SaveSuccess),
-    filter(action => NumberUtil.isDefined(action.payload.informationRequestId)),
-    switchMap(action => this.informationRequestService.closeInformationRequest(action.payload.informationRequestId).pipe(
+    ofType<InformationRequestAction.CloseRequest>(InformationRequestActionType.CloseRequest),
+    filter(action => NumberUtil.isDefined(action.payload)),
+    switchMap(action => this.informationRequestService.closeInformationRequest(action.payload).pipe(
       switchMap((closed) => [
         new InformationRequestAction.LoadLatestRequestSuccess(closed),
         new NotifySuccess(findTranslation('informationRequest.action.responseHandled')),
         new InformationRequestAction.LoadLatestResponseSuccess(undefined),
-        new ApplicationAction.Load(action.payload.application.id)
+        new ApplicationAction.Load(closed.applicationId)
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))

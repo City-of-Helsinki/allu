@@ -53,6 +53,7 @@ export class ApplicationEffects {
   removeClientApplicationData: Observable<Action> = this.actions.pipe(
     ofType<ApplicationAction.RemoveClientApplicationData>(ApplicationActionType.RemoveClientApplicationData),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    filter(([action, application]) => !!application.clientApplicationData),
     switchMap(([action, application]) => this.applicationService.removeClientApplicationData(application.id).pipe(
       tap(app => this.applicationStore.setApplication(app)), // TODO: Remove when all api calls use ngrx
       map(app => new ApplicationAction.LoadSuccess(app)),

@@ -15,7 +15,8 @@ export enum InformationRequestActionType {
   CancelRequestSuccess = '[InformationRequest] Cancel information request success',
   LoadLatestResponse = '[InformationRequest] Load latest information request response',
   LoadLatestResponseSuccess= '[InformationRequest] Load latest information request response success',
-  LoadLatestResponseFailed = '[InformationRequest] Load latest information request response failed'
+  LoadLatestResponseFailed = '[InformationRequest] Load latest information request response failed',
+  CloseRequest = '[InformationRequest] Close information request'
 }
 
 export class LoadLatestRequest implements Action {
@@ -70,6 +71,11 @@ export class LoadLatestResponseFailed implements ActionWithPayload<ErrorInfo> {
   constructor(public payload: ErrorInfo) {}
 }
 
+export class CloseRequest implements Action {
+  readonly type = InformationRequestActionType.CloseRequest;
+  constructor(public payload: number) {}
+}
+
 export type InformationRequestAction =
   | LoadLatestRequest
   | LoadLatestRequestSuccess
@@ -80,4 +86,5 @@ export type InformationRequestAction =
   | CancelRequestSuccess
   | LoadLatestResponse
   | LoadLatestResponseSuccess
-  | LoadLatestResponseFailed;
+  | LoadLatestResponseFailed
+  | CloseRequest;
