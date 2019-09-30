@@ -114,6 +114,15 @@
       <button *ngIf="oldInfo.status==='PENDING'" type="button" mat-raised-button color="primary" (click)="moveToHandling()">
         {{'application.button.toHandling' | translation | uppercase}}
       </button>
+      <ng-container *ngIf="oldInfo.status==='DECISION' || oldInfo.status==='OPERATIONAL_CONDITION'">
+        <button
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="replace()">
+          {{'application.button.replace' | translation | uppercase}}
+        </button>
+      </ng-container>
     </ng-container>
     <ng-template #normalActions>
       <button  type="submit" mat-raised-button color="primary" [disabled]="form.status !== 'VALID'">

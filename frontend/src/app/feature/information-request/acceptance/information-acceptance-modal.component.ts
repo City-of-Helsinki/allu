@@ -90,6 +90,11 @@ export class InformationAcceptanceModalComponent implements OnInit {
       .subscribe(application => this.onApplicationChange(application));
   }
 
+  replace(): void {
+    this.applicationStore.replace()
+      .subscribe(application => this.onApplicationChange(application));
+  }
+
   private onApplicationChange(application: Application): void {
     this.store.dispatch(new SetApplication(application));
     this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));

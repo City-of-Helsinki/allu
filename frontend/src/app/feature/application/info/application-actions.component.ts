@@ -187,10 +187,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   replace(): void {
     this.applicationStore.replace()
       .subscribe(
-        (application) => {
-          this.notification.translateSuccess('application.action.replaced');
-          this.router.navigate(['/applications', application.id, 'summary']);
-        },
+        (application) => this.router.navigate(['/applications', application.id, 'summary']),
         (error) => this.notification.translateSuccess(error));
   }
 

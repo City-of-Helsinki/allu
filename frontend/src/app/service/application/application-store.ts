@@ -122,7 +122,10 @@ export class ApplicationStore {
 
   replace(): Observable<Application> {
     return this.applicationService.replace(this.current.application.id).pipe(
-      tap(replacement => this.setAndDispatch(replacement))
+      tap(replacement => {
+        this.notification.translateSuccess('application.action.replaced');
+        this.setAndDispatch(replacement);
+      })
     );
   }
 
