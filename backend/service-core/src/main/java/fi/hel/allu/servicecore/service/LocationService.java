@@ -178,4 +178,8 @@ public class LocationService {
     Location[] body = result.getBody();
     return body.length > 0 ? body[0] : null;
   }
+
+  public void deleteLocation(Integer locationId) {
+    restTemplate.delete(applicationProperties.getDeleteLocationUrl(), locationId, userService.getCurrentUser().getId());
+  }
 }

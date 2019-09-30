@@ -38,7 +38,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   @Autowired
   private ChargeBasisService chargeBasisService;
   @Autowired
-  private ApplicationServiceComposer applicationServiceComposer;
+  protected ApplicationServiceComposer applicationServiceComposer;
   @Autowired
   private ApplicationUpdateService applicationUpdateService;
   @Autowired
@@ -105,7 +105,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     validateType(application);
   }
 
-  private void validateType(ApplicationJson application) {
+  protected void validateType(ApplicationJson application) {
     if (application.getType() != getApplicationType()) {
       throw new IllegalOperationException("applicationtype.invalid");
     }

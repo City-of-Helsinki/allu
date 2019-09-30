@@ -83,6 +83,18 @@ public class LocationController {
   }
 
   /**
+   * Deletes an existing location.
+   *
+   * @param   locationId   Location id to be deleted.
+   */
+  @RequestMapping(value = "/{locationId}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> delete(@RequestParam int userId,
+                                     @PathVariable int locationId) {
+    locationService.delete(Collections.singletonList(locationId), userId);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
    * Update existing location.
    *
    * @param   location Location to update.

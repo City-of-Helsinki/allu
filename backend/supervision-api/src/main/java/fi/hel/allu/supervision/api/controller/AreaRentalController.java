@@ -68,4 +68,29 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     Location createdLocation = locationService.insertLocation(location);
     return ResponseEntity.ok(createdLocation);
   }
+
+  @ApiOperation(value = "Delete an existing location",
+    authorizations = @Authorization(value = "api_key"),
+    response = Location.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Location deleted successfully", response = Location.class),
+    @ApiResponse(code = 400, message = "Invalid location data or attempt to remove the last location", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Location deletion forbidden", response = ErrorInfo.class)
+  })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @RequestMapping(value = "/{applicationId}/locations/{locationId}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> deleteLocation(@PathVariable Integer applicationId,
+                                             @PathVariable Integer locationId) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    validateType(application);
+    if (application.getLocations().stream().noneMatch(locationJson -> locationId.equals(locationJson.getId()))) {
+      return ResponseEntity.notFound().build();
+    }
+    if (application.getLocations().size() <= 1) {
+      // the last location should not be removed
+      throw new IllegalArgumentException("application.location.deleteLastLocationForbidden");
+    }
+    locationService.deleteLocation(locationId);
+    return ResponseEntity.ok().build();
+  }
 }

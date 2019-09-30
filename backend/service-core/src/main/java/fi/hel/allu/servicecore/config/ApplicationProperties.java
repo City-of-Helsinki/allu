@@ -556,6 +556,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/?userId={userId}");
   }
 
+  public String getDeleteLocationUrl() {
+    return getModelServiceUrl("/locations/{id}?userId={userId}");
+  }
+
   public String getUpdateLocationUrl() {
     return getModelServiceUrl("/locations/{id}?userId={userId}");
   }
