@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,6 +24,8 @@ import fi.hel.allu.model.testUtils.TestCommon;
 
 import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -50,6 +53,8 @@ public class ApplicationReplacementServiceTest {
   private AttachmentDao attachmentDao;
   @Autowired
   private UserDao userDao;
+  @Autowired
+  private InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   private TestCommon testCommon;
@@ -191,6 +196,49 @@ public class ApplicationReplacementServiceTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldNotReplaceInInvalidState() {
     applicationReplacementService.replaceApplication(originalApplication.getId(), testUser.getId());
+  }
+
+  @Test
+  public void shouldCreateInvoicingPeriodsForExcavationAnnouncement() {
+    Application excavation = insertApplication(ApplicationType.EXCAVATION_ANNOUNCEMENT, new ExcavationAnnouncement());
+    setToDecisionState(excavation.getId());
+    int applicationId = applicationReplacementService.replaceApplication(excavation.getId(), testUser.getId());
+    assertTrue(invoicingPeriodService.findForApplicationId(applicationId).size() > 0);
+  }
+
+  @Test
+  public void shouldCreateInvoicingPeriodsForAreaRental() {
+    Application areaRental = createApplication(ApplicationType.AREA_RENTAL, new AreaRental());
+    areaRental.setInvoicingPeriodLength(3);
+    Application created = applicationDao.insert(areaRental);
+    List<Location> locations = createLocations(created);
+    locations.get(0).setEndTime(STARTTIME.plusMonths(8));
+    locationService.insert(locations, testUser.getId());
+
+    setToDecisionState(created.getId());
+    int applicationId = applicationReplacementService.replaceApplication(created.getId(), testUser.getId());
+    // 8 month application should contain 3 periods when period length is 3
+    assertEquals(invoicingPeriodService.findForApplicationId(applicationId).size(), 3);
+  }
+
+  private <E extends ApplicationExtension> Application insertApplication(ApplicationType type, E extension) {
+    Application created = applicationDao.insert(createApplication(type, extension));
+    insertLocations(created);
+    return created;
+  }
+
+  private <E extends ApplicationExtension> Application createApplication(ApplicationType type, E extension) {
+    CustomerWithContacts customer = new CustomerWithContacts(CustomerRoleType.APPLICANT, testCommon.insertPerson(), Collections.emptyList());
+    Application application = new Application();
+    application.setCustomersWithContacts(Collections.singletonList(customer));
+    application.setEndTime(ENDTIME);
+    application.setExtension(extension);
+    application.setKind(ApplicationKind.ELECTRICITY);
+    application.setName("Application name");
+    application.setStartTime(STARTTIME);
+    application.setType(type);
+    application.setNotBillable(false);
+    return application;
   }
 
   private void insertAttachment() {
@@ -353,6 +401,11 @@ public class ApplicationReplacementServiceTest {
   }
 
   private void insertLocations(Application originalApplication) {
+    List<Location> locations = createLocations(originalApplication);
+    locationService.insert(locations, testUser.getId());
+  }
+
+  private List<Location> createLocations(Application originalApplication) {
     Location location = new Location();
     location.setAdditionalInfo("Location info");
     location.setApplicationId(originalApplication.getId());
@@ -360,7 +413,8 @@ public class ApplicationReplacementServiceTest {
     location.setEndTime(ENDTIME);
     location.setGeometry(geometrycollection(3879, polygon(ring(c(5, 5), c(5, 7), c(7, 7), c(7, 5), c(5, 5)))));
     location.setStartTime(STARTTIME);
-    locationService.insert(Collections.singletonList(location), testUser.getId());
+    location.setPaymentTariff("1");
+    return Collections.singletonList(location);
   }
 
   private Map<ApplicationKind, List<ApplicationSpecifier>> createKindsWithSpecifiers() {

@@ -110,10 +110,9 @@ public class ApplicationReplacementService {
     applicationDao.updateProject(null, Collections.singletonList(applicationToReplace.getId()));
     // Set replaces and replaced by
     applicationDao.setApplicationReplaced(applicationId, replacingApplication.getId());
-    // Create invoicing periods if excavation announcement
-    if (replacingApplication.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      invoicingPeriodService.setExcavationAnnouncementPeriods(replacingApplication.getId());
-    }
+
+    createInvoicingPeriods(replacingApplication);
+
     return replacingApplication.getId();
   }
 
@@ -170,6 +169,7 @@ public class ApplicationReplacementService {
     application.setExternalOwnerId(applicationToReplace.getExternalOwnerId());
     application.setExternalApplicationId(applicationToReplace.getExternalApplicationId());
     application.setSkipPriceCalculation(applicationToReplace.getSkipPriceCalculation());
+    application.setInvoicingPeriodLength(applicationToReplace.getInvoicingPeriodLength());
     return application;
   }
 
@@ -202,6 +202,16 @@ public class ApplicationReplacementService {
 
     if (ApplicationType.CABLE_REPORT == replacingApplication.getType()) {
       applicationDao.setTargetState(replacingApplication.getId(), StatusType.DECISION);
+    }
+  }
+
+  private void createInvoicingPeriods(Application replacingApplication) {
+    // Invoicing periods need to be re-created when replacing application for types
+    // which have invoicing periods
+    if (replacingApplication.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      invoicingPeriodService.setExcavationAnnouncementPeriods(replacingApplication.getId());
+    } else if (replacingApplication.getType() == ApplicationType.AREA_RENTAL) {
+      invoicingPeriodService.createInvoicingPeriods(replacingApplication.getId(), replacingApplication.getInvoicingPeriodLength());
     }
   }
 }
