@@ -374,12 +374,14 @@ public class ApplicationService {
       return;
     }
     validateInvoiceRecipientChangeAllowed(application);
+    Integer currentUserId = userService.getCurrentUser().getId();
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationInvoiceRecipientUrl())
         .queryParam("invoicerecipientid", invoiceRecipientId)
-        .queryParam("userid", userService.getCurrentUser().getId())
+        .queryParam("userid", currentUserId)
         .buildAndExpand(Collections.singletonMap("id", id)).toUri();
     restTemplate.exchange(uri, HttpMethod.PUT,
         new HttpEntity<>(null), Void.class);
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(id, currentUserId));
   }
 
   private void validateInvoiceRecipientChangeAllowed(Application application) {

@@ -254,4 +254,14 @@ public class ApplicationServiceTest extends MockServices {
     applicationService.changeApplicationStatus(1, StatusType.DECISIONMAKING);
     verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
   }
+
+  @Test
+  public void shouldPublishApplicationEventOnSetInvoiceRecipient() {
+    Application response = applicationService.createApplication(createMockApplicationJson(1));
+    ApplicationProperties ap = Mockito.mock(ApplicationProperties.class);
+    Mockito.when(ap.getApplicationInvoiceRecipientUrl()).thenReturn("http://application/invoicerecipient");
+    applicationService.setApplicationProperties(ap);
+    applicationService.setInvoiceRecipient(response.getId(), 15);
+    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+  }
 }
