@@ -279,6 +279,10 @@ public class ApplicationHistoryService {
     addChange(applicationId, ChangeType.SUPERVISION_ADDED, taskType.name());
   }
 
+  public void addSupervisionUpdated(Integer applicationId, SupervisionTaskType taskType) {
+    addChange(applicationId, ChangeType.SUPERVISION_UPDATED, taskType.name());
+  }
+
   public void addSupervisionRemoved(Integer applicationId, SupervisionTaskType taskType) {
     addChange(applicationId, ChangeType.SUPERVISION_REMOVED, taskType.name());
   }

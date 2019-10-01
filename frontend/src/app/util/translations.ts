@@ -1955,6 +1955,15 @@ export const translations = {
           WARRANTY: 'Takuuvalvonta hylätty',
           TERMINATION: 'Irtisanomisen valvonta hylätty'
         },
+        SUPERVISION_UPDATED: {
+          PRELIMINARY_SUPERVISION: 'Aloitusvalvonta päivitetty',
+          SUPERVISION: 'Valvonta päivitetty',
+          FINAL_SUPERVISION: 'Loppuvalvonta päivitetty',
+          WORK_TIME_SUPERVISION: 'Työnaikainen valvonta päivitetty',
+          OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta päivitetty',
+          WARRANTY: 'Takuuvalvonta päivitetty',
+          TERMINATION: 'Irtisanomisen valvonta päivitetty'
+        },
         ATTACHMENT_ADDED: 'Liite {{attachmentName}} lisätty',
         ATTACHMENT_REMOVED: 'Liite {{attachmentName}} poistettu',
         LOCATION_CHANGED: 'Aluetta {{locationKey}} päivitetty'

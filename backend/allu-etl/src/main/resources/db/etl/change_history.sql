@@ -13,7 +13,7 @@ SELECT
     c.application_id AS hakemus_id,
     c.customer_id AS asiakas_id,
     u.user_name AS kayttaja,
-    CASE 
+    CASE
         WHEN change_type = 'CREATED' THEN 'Luotu'
         WHEN change_type = 'STATUS_CHANGED' THEN 'Siirretty tilaan'
         WHEN change_type = 'CONTENTS_CHANGED' THEN 'Tietoja päivitetty'
@@ -33,6 +33,7 @@ SELECT
         WHEN change_type = 'SUPERVISION_APPROVED' THEN 'Valvonta hyväksytty'
         WHEN change_type = 'SUPERVISION_REJECTED' THEN 'Valvonta hylätty'
         WHEN change_type = 'SUPERVISION_REMOVED' THEN 'Valvonta poistettu'
+        WHEN change_type = 'SUPERVISION_UPDATED' THEN 'Valvonta päivitetty'
     END AS muutostyyppi,
     CASE
         WHEN c.change_specifier = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'
