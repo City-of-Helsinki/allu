@@ -1,11 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
+import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -23,6 +30,8 @@ import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -31,6 +40,7 @@ import static org.mockito.Mockito.*;
 public class SupervisionTaskServiceTest {
 
   private static final int APPLICATION_ID = 17;
+  private static final int USER_ID = 18;
 
   @Mock
   private ApplicationHistoryService historyService;
@@ -53,7 +63,9 @@ public class SupervisionTaskServiceTest {
     when(applicationProperties.getSupervisionTaskApproveUrl()).thenReturn("http://task/id/approve");
     when(applicationProperties.getSupervisionTaskRejectUrl()).thenReturn("http://task/id/reject");
     when(applicationProperties.getSupervisionTaskCreateUrl()).thenReturn("http://task");
+    when(applicationProperties.getSupervisionTaskUpdateUrl()).thenReturn("http://task/id/update");
     when(userService.getCurrentUser()).thenReturn(new UserJson(12));
+    when(userService.findUserById(USER_ID)).thenReturn(new UserJson(USER_ID));
   }
 
   @Test
@@ -69,7 +81,28 @@ public class SupervisionTaskServiceTest {
     setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     supervisionTaskService.insert(taskJson);
-    verify(applicationEventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+    verifyPublishedEvents(Arrays.asList(ApplicationUpdateEvent.class));
+  }
+
+  @Test
+  public void shouldAddHistoryWhenUpdated() {
+    setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
+    SupervisionTaskJson updatedTask = supervisionTaskService.insert(taskJson);
+    onUpdate(SupervisionTaskMapper.mapToModel(updatedTask));
+    supervisionTaskService.update(updatedTask);
+    verify(historyService, times(1)).addSupervisionUpdated(APPLICATION_ID, updatedTask.getType());
+  }
+
+  @Test
+  public void shouldPublishApplicationEventWhenUpdated() {
+    setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
+    SupervisionTaskJson updatedTask = supervisionTaskService.insert(taskJson);
+    onUpdate(SupervisionTaskMapper.mapToModel(updatedTask));
+    supervisionTaskService.update(updatedTask);
+    // Publish one for insert, one for update
+    verifyPublishedEvents(Arrays.asList(ApplicationUpdateEvent.class, ApplicationUpdateEvent.class));
   }
 
   @Test
@@ -80,10 +113,24 @@ public class SupervisionTaskServiceTest {
   }
 
   @Test
+  public void shouldPublishApplicationEventWhenRemoved() {
+    setTaskSearchResult(SupervisionTaskType.OPERATIONAL_CONDITION);
+    supervisionTaskService.delete(1);
+    verifyPublishedEvents(Arrays.asList(ApplicationArchiveEvent.class, ApplicationUpdateEvent.class));
+  }
+
+  @Test
   public void shouldAddHistoryWhenApproved() {
     setTaskApprovedResult(SupervisionTaskType.WARRANTY);
     supervisionTaskService.approve(createTaskJson(SupervisionTaskType.WARRANTY));
     verify(historyService, times(1)).addSupervisionApproved(APPLICATION_ID, SupervisionTaskType.WARRANTY);
+  }
+
+  @Test
+  public void shouldPublishApplicationEventWhenApproved() {
+    setTaskApprovedResult(SupervisionTaskType.WARRANTY);
+    supervisionTaskService.approve(createTaskJson(SupervisionTaskType.WARRANTY));
+    verifyPublishedEvents(Arrays.asList(ApplicationArchiveEvent.class, ApplicationUpdateEvent.class));
   }
 
   @Test
@@ -93,10 +140,18 @@ public class SupervisionTaskServiceTest {
     verify(historyService, times(1)).addSupervisionRejected(APPLICATION_ID, SupervisionTaskType.WARRANTY);
   }
 
+  @Test
+  public void shouldPublishApplicationEventWhenRejected() {
+    setTaskRejectedResult(SupervisionTaskType.WARRANTY);
+    supervisionTaskService.reject(createTaskJson(SupervisionTaskType.WARRANTY), ZonedDateTime.now());
+    verifyPublishedEvents(Arrays.asList(ApplicationUpdateEvent.class));
+  }
+
   private SupervisionTaskJson createTaskJson(SupervisionTaskType type) {
     SupervisionTaskJson taskJson = new SupervisionTaskJson();
     taskJson.setApplicationId(APPLICATION_ID);
     taskJson.setType(type);
+    taskJson.setCreator(new UserJson());
     return taskJson;
   }
 
@@ -142,6 +197,28 @@ public class SupervisionTaskServiceTest {
     SupervisionTask task = new SupervisionTask();
     task.setApplicationId(APPLICATION_ID);
     task.setType(type);
+    task.setCreatorId(USER_ID);
     return task;
+  }
+
+  private void verifyPublishedEvents(List<Class> expectedEventsTypes) {
+    ArgumentCaptor<Object> eventCaptor = ArgumentCaptor.forClass(Object.class);
+    verify(applicationEventPublisher, times(expectedEventsTypes.size())).publishEvent(eventCaptor.capture());
+    List<Object> events = eventCaptor.getAllValues();
+    assertEquals(expectedEventsTypes.size(), events.size());
+    List<Class> actualEventTypes = events.stream()
+      .map(event -> event.getClass())
+      .collect(Collectors.toList());
+    assertEquals(expectedEventsTypes, actualEventTypes);
+  }
+
+  private void onUpdate(SupervisionTask task) {
+    when(restTemplate.exchange(
+      eq("http://task/id/update"),
+      eq(HttpMethod.PUT),
+      any(HttpEntity.class),
+      eq(SupervisionTask.class),
+      eq(task.getId())
+    )).thenReturn(ResponseEntity.ok(task));
   }
 }

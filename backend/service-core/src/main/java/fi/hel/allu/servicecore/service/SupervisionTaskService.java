@@ -84,12 +84,15 @@ public class SupervisionTaskService {
   private ResponseEntity<SupervisionTask> update(Integer id,
       SupervisionTask supervisionTask) {
     HttpEntity<SupervisionTask> supervisionTaskHttpEntity = new HttpEntity<>(supervisionTask);
-    return restTemplate.exchange(
+    ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.exchange(
         applicationProperties.getSupervisionTaskUpdateUrl(),
         HttpMethod.PUT,
         supervisionTaskHttpEntity,
         SupervisionTask.class,
         id);
+    applicationHistoryService.addSupervisionUpdated(supervisionTask.getApplicationId(), supervisionTask.getType());
+    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(supervisionTask.getApplicationId(), supervisionTask.getCreatorId()));
+    return supervisionTasksResult;
   }
 
   public SupervisionTaskJson insert(SupervisionTaskJson supervisionTaskJson) {
@@ -118,6 +121,7 @@ public class SupervisionTaskService {
         taskJson.getId());
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
+    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId()));
     applicationHistoryService.addSupervisionApproved(taskJson.getApplicationId(), taskJson.getType());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
@@ -147,6 +151,7 @@ public class SupervisionTaskService {
 
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     applicationHistoryService.addSupervisionRejected(taskJson.getApplicationId(), taskJson.getType());
+    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId()));
     // TODO: send email to customer about new supervision date and reason of rejection
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
@@ -157,6 +162,7 @@ public class SupervisionTaskService {
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     applicationHistoryService.addSupervisionRemoved(taskJson.getApplicationId(), taskJson.getType());
     applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
+    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId()));
   }
 
   public Page<SupervisionWorkItemJson> searchWorkItems(SupervisionTaskSearchCriteria searchCriteria,
