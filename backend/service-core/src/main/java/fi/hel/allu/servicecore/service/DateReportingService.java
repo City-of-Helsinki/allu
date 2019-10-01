@@ -15,10 +15,12 @@ import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.domain.OperationalConditionDates;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,6 +43,8 @@ public class DateReportingService {
   private final LocationService locationService;
   private final ApplicationHistoryService applicationHistoryService;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final ApplicationEventPublisher eventPublisher;
+  private final UserService userService;
 
   @Autowired
   public DateReportingService(
@@ -50,7 +54,9 @@ public class DateReportingService {
       ApplicationServiceComposer applicationServiceComposer,
       LocationService locationService,
       ApplicationHistoryService applicationHistoryService,
-      InvoicingPeriodService invoicingPeriodService) {
+      InvoicingPeriodService invoicingPeriodService,
+      ApplicationEventPublisher eventPublisher,
+      UserService userService) {
     this.applicationService = applicationService;
     this.applicationJsonService = applicationJsonService;
     this.supervisionTaskService = supervisionTaskService;
@@ -58,6 +64,8 @@ public class DateReportingService {
     this.locationService = locationService;
     this.applicationHistoryService = applicationHistoryService;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.eventPublisher = eventPublisher;
+    this.userService = userService;
   }
 
   public ApplicationJson reportCustomerOperationalCondition(Integer id, ApplicationDateReport dateReport) {
@@ -102,6 +110,7 @@ public class DateReportingService {
 
     applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DATE_CHANGE, null));
     applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(id, userService.getCurrentUser().getId()));
     return newApplicationJson;
   }
 
@@ -160,6 +169,8 @@ public class DateReportingService {
     applicationHistoryService.addLocationChanges(id,
         findLocation(locationId, oldApplicationJson.getLocations()),
         findLocation(locationId, newApplicationJson.getLocations()));
+
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(id, userService.getCurrentUser().getId()));
 
     return newApplicationJson;
   }
