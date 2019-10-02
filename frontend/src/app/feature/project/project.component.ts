@@ -16,7 +16,7 @@ import {map} from 'rxjs/internal/operators';
 export class ProjectComponent implements OnInit {
   project$: Observable<Project>;
   applications$: Observable<Application[]>;
-  relatedProjectCount$: Observable<number>;
+  childProjectCount$: Observable<number>;
   parent$: Observable<Project>;
   sidebarItems: Array<SidebarItem> = [];
 
@@ -25,7 +25,7 @@ export class ProjectComponent implements OnInit {
   ngOnInit(): void {
     this.project$ = this.store.select(fromProject.getCurrentProject);
     this.applications$ = this.store.select(fromProject.getApplications);
-    this.relatedProjectCount$ = this.store.select(fromProject.getRelatedProjects).pipe(map(projects => projects.length));
+    this.childProjectCount$ = this.store.select(fromProject.getChildProjects).pipe(map(projects => projects.length));
     this.parent$ = this.store.select(fromProject.getParentProject);
     this.sidebarItems = this.sidebar();
   }
@@ -33,7 +33,7 @@ export class ProjectComponent implements OnInit {
   sidebar(): Array<SidebarItem> {
     return [
       {type: 'BASIC_INFO'},
-      {type: 'PROJECTS', count: this.relatedProjectCount$},
+      {type: 'PROJECTS', count: this.childProjectCount$},
       {type: 'COMMENTS', count: this.store.select(fromProject.getCommentCount)},
       {type: 'HISTORY'}
     ];
