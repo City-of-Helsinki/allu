@@ -149,7 +149,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="unboxed">
         <section>
           <h2>Yleiset sopimusehdot</h2>
-          <ol>
+          <ol class="children-avoid-pb">
             <li>Sijoittamissuostumuksesta tehdään sopimus ja se on voimassa toistaiseksi, ellei määräaikaisuudesta ole
             erikseen sovittu. Sopimus raukeaa ilman erillistä ilmoitusta myöntämispäivästä lukien yhden (1) vuoden
             kuluttua, ellei toteutusta ole tuona aikana aloitettu. Sopimus on uusittava, mikäli toteutussuunnitelma

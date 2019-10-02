@@ -306,6 +306,10 @@ section.new-page {
   page-break-inside: avoid;
 }
 
+.children-avoid-pb > * {
+  page-break-inside: avoid;
+}
+
 .footer {
   padding-bottom: 30px;
   width: 100%;
