@@ -13,6 +13,24 @@ seeds:
     refresh_before:
       hours: 1
 
+  refresh_kantakartta:
+    caches: [hki_kantakartta_cache]
+    grids: [EPSG_3879]
+    coverages: ['helsinki_coverage']
+    levels:
+      to: 8
+    refresh_before:
+      hours: 1
+
+  refresh_ortoilmakuva:
+    caches: [hki_ortoilmakuva_cache]
+    grids: [EPSG_3879]
+    coverages: ['helsinki_coverage']
+    levels:
+      to: 8
+    refresh_before:
+      hours: 1
+
 cleanups:
   remove_karttasarja_detailed_levels:
     caches: [hki_karttasarja_cache]
@@ -23,10 +41,8 @@ cleanups:
 
   remove_all_to_refresh_cache:
     caches: [
-      hki_kantakartta_cache,
       hki_ajantasa_asemakaava_cache,
       hki_kiinteistokartta_cache,
-      hki_ortoilmakuva_cache,
       hki_maanomistus_vuokrausalueet_yhdistelma_cache,
       hki_maanomistus_vuokrausalueet_cache,
       hki_maanomistus_sisainen_cache,
