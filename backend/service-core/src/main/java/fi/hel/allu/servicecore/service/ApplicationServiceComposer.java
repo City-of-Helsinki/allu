@@ -417,6 +417,7 @@ public class ApplicationServiceComposer {
   private void onTagsChange(int id, List<ApplicationTagJson> oldTags, List<ApplicationTagJson> newTags) {
     searchService.updateTags(id, newTags);
     ApplicationJson withOldTags = new ApplicationJson();
+    
     ApplicationJson withNewTags = new ApplicationJson();
     withOldTags.setApplicationTags(oldTags);
     withNewTags.setApplicationTags(newTags);

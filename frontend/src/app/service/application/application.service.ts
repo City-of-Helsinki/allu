@@ -25,6 +25,9 @@ import {BackendApplication, SearchResultApplication} from '../backend-model/back
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
 import {catchError, map} from 'rxjs/internal/operators';
+import {DistributionEntry} from '@model/common/distribution-entry';
+import {BackendDistributionEntry} from '@service/backend-model/backend-distribution-entry';
+import {DistributionMapper} from '@service/mapper/distribution-mapper';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -246,6 +249,14 @@ export class ApplicationService {
     const url = `${APPLICATIONS_URL}/${id}/ownernotification`;
     return this.http.delete<void>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeOwnerNotification')))
+    );
+  }
+
+  updateDistribution(id: number, distribution: DistributionEntry[] = []): Observable<DistributionEntry[]> {
+    const url = `${APPLICATIONS_URL}/${id}/distribution`;
+    return this.http.put<BackendDistributionEntry[]>(url, JSON.stringify(DistributionMapper.mapFrontendList(distribution))).pipe(
+      map(updatedDistribution => DistributionMapper.mapBackendList(updatedDistribution)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.distribution.error.save')))
     );
   }
 }

@@ -320,6 +320,14 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/distribution", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
+  public ResponseEntity<List<DistributionEntryJson>> updateDistribution(
+    @PathVariable int id,
+    @Valid @RequestBody List<DistributionEntryJson> distribution) {
+    ApplicationJson applicationJson = applicationServiceComposer.replaceDistributionList(id, distribution);
+    return ResponseEntity.ok(applicationJson.getDecisionDistributionList());
+  }
 
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
