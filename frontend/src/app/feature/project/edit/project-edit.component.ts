@@ -160,10 +160,13 @@ export class ProjectEditComponent {
     if (customer && NumberUtil.isDefined(customer.id)) {
       if (customer.projectIdentifierPrefix) {
         this.projectService.getNextProjectNumber().subscribe(nbr => {
-          this.form.patchValue({identifier: customer.projectIdentifierPrefix + nbr});
+          this.form.patchValue({
+            customerType: customer.type,
+            identifier: customer.projectIdentifierPrefix + nbr
+          }, {emitEvent: false});
         });
       } else {
-        this.form.patchValue({identifier: undefined});
+        this.form.patchValue({customerType: customer.type, identifier: undefined}, {emitEvent: false});
       }
     }
   }
