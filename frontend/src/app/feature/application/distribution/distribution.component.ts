@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Application} from '../../../model/application/application';
-import {PublicityType} from '../../../model/application/publicity-type';
-import {EnumUtil} from '../../../util/enum.util';
-import {DistributionType} from '../../../model/common/distribution-type';
-import {DistributionEntry} from '../../../model/common/distribution-entry';
+import {Application} from '@model/application/application';
+import {PublicityType} from '@model/application/publicity-type';
+import {EnumUtil} from '@util/enum.util';
+import {DistributionEntry} from '@model/common/distribution-entry';
 import {Subscription} from 'rxjs';
+import {ApplicationStatus, isSameOrBetween} from '@model/application/application-status';
 
 @Component({
   selector: 'distribution',
@@ -23,6 +23,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
   communicationForm: FormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);
   distributionList: Array<DistributionEntry>;
+  distributionChangeAllowed = false;
 
   private recipientSubscription: Subscription;
 
@@ -38,6 +39,8 @@ export class DistributionComponent implements OnInit, OnDestroy {
     if (this.readonly) {
       this.communicationForm.disable();
     }
+
+    this.distributionChangeAllowed = isSameOrBetween(this.application.status, ApplicationStatus.PRE_RESERVED, ApplicationStatus.TERMINATED);
   }
 
   ngOnDestroy(): void {

@@ -69,6 +69,10 @@ export function isBetween(tested: ApplicationStatus, after: ApplicationStatus, b
   return isAfter(tested, after) && isBefore(tested, before);
 }
 
+export function isSameOrBetween(tested: ApplicationStatus, after: ApplicationStatus, before: ApplicationStatus): boolean {
+  return isSameOrAfter(tested, after) && isSameOrBefore(tested, before);
+}
+
 export function isSameOrBefore(first: ApplicationStatus, second: ApplicationStatus): boolean {
   return !isAfter(first, second);
 }
