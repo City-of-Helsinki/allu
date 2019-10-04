@@ -1,11 +1,11 @@
-import {AfterContentInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
-import {applicationForm, ApplicationForm} from './application-form';
-import {applicationCanBeEdited, ApplicationStatus, isAfter, isSameOrAfter} from '../../../model/application/application-status';
+import {ApplicationForm} from './application-form';
+import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter} from '../../../model/application/application-status';
 import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
@@ -16,7 +16,7 @@ import {Observable, Subject} from 'rxjs';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
-import {distinctUntilChanged, map, takeUntil, tap} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/operators';
 import {ApplicationService} from '../../../service/application/application.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
@@ -24,7 +24,9 @@ import * as fromInformationRequest from '@feature/information-request/reducers';
 import {select, Store} from '@ngrx/store';
 import {InformationRequest} from '@model/information-request/information-request';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
-import {createTranslated, ErrorInfo} from '@service/error/error-info';
+import {createTranslated} from '@service/error/error-info';
+import {DistributionEntry} from '@model/common/distribution-entry';
+import {SaveDistribution} from '@feature/application/actions/application-actions';
 
 /**
  * This component should be used only as base class for other more specific application components.
@@ -187,6 +189,11 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   protected onValidationErrors(): void {
     this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+  }
+
+  protected saveDistribution(distribution: DistributionEntry[]): void {
+    this.store.dispatch(new SaveDistribution(distribution));
+    this.applicationForm.get('communication.distributionRows').markAsPristine();
   }
 
   private getCustomers(form: ApplicationForm): Array<CustomerWithContacts> {

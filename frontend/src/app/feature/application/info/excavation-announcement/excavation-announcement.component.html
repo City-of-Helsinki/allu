@@ -362,7 +362,11 @@
 
   <div fxLayout="row">
     <div fxFlex>
-      <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
+      <distribution
+        [form]="applicationForm"
+        [application]="application"
+        [readonly]="readonly"
+        (distributionChange)="saveDistribution($event)"></distribution>
     </div>
   </div>
 

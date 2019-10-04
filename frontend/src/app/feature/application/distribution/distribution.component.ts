@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {PublicityType} from '../../../model/application/publicity-type';
@@ -17,6 +17,8 @@ export class DistributionComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() application: Application;
   @Input() readonly: boolean;
+
+  @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
   communicationForm: FormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);

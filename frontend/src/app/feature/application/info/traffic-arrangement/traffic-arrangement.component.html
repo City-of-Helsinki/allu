@@ -136,7 +136,11 @@
 
   <div class="row">
     <div class="col s12">
-      <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
+      <distribution
+        [form]="applicationForm"
+        [application]="application"
+        [readonly]="readonly"
+        (distributionChange)="saveDistribution($event)"></distribution>
     </div>
   </div>
 

@@ -1,12 +1,24 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {DistributionType} from '../../../../model/common/distribution-type';
-import {EnumUtil} from '../../../../util/enum.util';
-import {DistributionEntry} from '../../../../model/common/distribution-entry';
-import {postalCodeValidator} from '../../../../util/complex-validator';
+import {DistributionType} from '@model/common/distribution-type';
+import {EnumUtil} from '@util/enum.util';
+import {DistributionEntry} from '@model/common/distribution-entry';
+import {postalCodeValidator} from '@util/complex-validator';
 import {DistributionListEvents} from './distribution-list-events';
 import isEqual from 'lodash/isEqual';
+import {PostalAddress} from '@model/common/postal-address';
+
+interface DistributionEntryForm {
+  id?: number;
+  name?: string;
+  type?: string;
+  email?: string;
+  streetAddress?: string;
+  postalCode?: string;
+  city?: string;
+  edit?: boolean;
+}
 
 @Component({
   selector: 'distribution-list',
@@ -19,6 +31,8 @@ export class DistributionListComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() readonly: boolean;
   @Input() distributionList: Array<DistributionEntry> = [];
+
+  @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
   distributionRows: FormArray;
   distributionTypes = EnumUtil.enumValues(DistributionType);
@@ -58,10 +72,12 @@ export class DistributionListComponent implements OnInit, OnDestroy {
 
   save(control: FormControl): void {
     control.patchValue({edit: false});
+    this.emitDistributionChange();
   }
 
   remove(index: number): void {
     this.distributionRows.removeAt(index);
+    this.emitDistributionChange();
   }
 
   private addContact(entry: DistributionEntry) {
@@ -82,5 +98,15 @@ export class DistributionListComponent implements OnInit, OnDestroy {
       city: [distributionEntry.postalAddress.city],
       edit: [edit]
     });
+  }
+
+  private toEntry(entryForm: DistributionEntryForm): DistributionEntry {
+    const address = new PostalAddress(entryForm.streetAddress, entryForm.postalCode, entryForm.city);
+    return new DistributionEntry(entryForm.id, entryForm.name, DistributionType[entryForm.type], entryForm.email, address);
+  }
+
+  private emitDistributionChange(): void {
+    const current = this.distributionRows.getRawValue().map(row => this.toEntry(row));
+    this.distributionChange.emit(current);
   }
 }
