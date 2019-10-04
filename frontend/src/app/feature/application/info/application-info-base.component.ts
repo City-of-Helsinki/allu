@@ -71,7 +71,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
 
-    this.applicationChanges = this.applicationStore.application;
+    this.applicationChanges = this.store.pipe(select(fromApplication.getCurrentApplication));
 
     this.applicationChanges.pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));

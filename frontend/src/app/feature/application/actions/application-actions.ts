@@ -4,6 +4,7 @@ import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
+import {DistributionEntry} from '@model/common/distribution-entry';
 
 export enum ApplicationActionType {
   Load = '[Application] Load application',
@@ -18,6 +19,8 @@ export enum ApplicationActionType {
   RemoveOwnerSuccess = '[Application] Remove owner from chosen applications success',
   RemoveOwnerNotification = '[Application] Remove owner notification from chosen application',
   RemoveOwnerNotificationSuccess = '[Application] Remove owner notification from chosen application success',
+  SaveDistribution = '[Application] Save distribution',
+  SaveDistributionSuccess = '[Application] Save distribution success',
 }
 
 export class Load implements Action {
@@ -87,6 +90,18 @@ export class RemoveOwnerNotificationSuccess implements Action {
   readonly type = ApplicationActionType.RemoveOwnerNotificationSuccess;
 }
 
+export class SaveDistribution implements Action {
+  readonly type = ApplicationActionType.SaveDistribution;
+
+  constructor(public payload: DistributionEntry[]) {}
+}
+
+export class SaveDistributionSuccess implements Action {
+  readonly type = ApplicationActionType.SaveDistributionSuccess;
+
+  constructor(public payload: DistributionEntry[]) {}
+}
+
 export type ApplicationActions =
   | Load
   | LoadSuccess
@@ -99,4 +114,6 @@ export type ApplicationActions =
   | RemoveOwner
   | RemoveOwnerSuccess
   | RemoveOwnerNotification
-  | RemoveOwnerNotificationSuccess;
+  | RemoveOwnerNotificationSuccess
+  | SaveDistribution
+  | SaveDistributionSuccess;

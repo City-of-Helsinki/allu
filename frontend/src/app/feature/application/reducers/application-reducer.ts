@@ -91,6 +91,15 @@ export function reducer(state: State = initialState, action: HandledActions) {
       };
     }
 
+    case ApplicationActionType.SaveDistributionSuccess: {
+      const copy: Application = ObjectUtil.clone(state.current);
+      copy.decisionDistributionList = action.payload;
+      return {
+        ...state,
+        current: copy
+      };
+    }
+
 
     default:
       return {...state};

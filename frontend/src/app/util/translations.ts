@@ -1060,6 +1060,9 @@ export const translations = {
         fetch: 'Jakelutietojen hakeminen epäonnistui',
         save: 'Jakelutietojen päivittäminen epäonnistui',
         remove: 'Jakelutietojen poistaminen'
+      },
+      action: {
+        save: 'Jakelutiedot päivitetty'
       }
     },
     error: {

@@ -9,7 +9,7 @@ import * as MetaAction from '../actions/application-meta-actions';
 import {ApplicationMetaActionType} from '../actions/application-meta-actions';
 import * as ApplicationAction from '../actions/application-actions';
 import {Injectable} from '@angular/core';
-import {ApplicationActionType} from '@feature/application/actions/application-actions';
+import {ApplicationActionType, SaveDistributionSuccess} from '@feature/application/actions/application-actions';
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
@@ -96,6 +96,19 @@ export class ApplicationEffects {
         new ApplicationAction.RemoveOwnerNotificationSuccess(),
         new ApplicationAction.Load(action.payload),
         new NotifySuccess(findTranslation('application.action.removeOwnerNotification'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  saveDistribution: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.SaveDistribution>(ApplicationActionType.SaveDistribution),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, app]) => this.applicationService.updateDistribution(app.id, action.payload).pipe(
+      switchMap(distribution => [
+        new SaveDistributionSuccess(distribution),
+        new NotifySuccess('decision.distribution.action.save')
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
