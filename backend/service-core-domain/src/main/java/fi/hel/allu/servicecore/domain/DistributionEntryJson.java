@@ -15,11 +15,21 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Distribution entry describing a single distribution target, which will receive application decision")
 @NotFalse(rules = {"email, hasRecipientValidation, Either email or postal address must have values"})
 public class DistributionEntryJson {
+  private Integer id;
   @NotNull(message = "{distributionentry.type}")
   private DistributionType distributionType;
   private String name;
   private String email;
   private PostalAddressJson postalAddress;
+
+  @ApiModelProperty(value = "Id of the distribution entry")
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
   @ApiModelProperty(value = "The media type used to distribute the decision.")
   public DistributionType getDistributionType() {

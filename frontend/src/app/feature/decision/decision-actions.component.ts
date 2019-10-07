@@ -172,7 +172,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
       .map(details => this.sendDecisionDocument(appId, details, confirmation.status).pipe(
-        tap(() => this.application.decisionDistributionList = details.decisionDistributionList),
         catchError(error => this.notification.errorCatch(error, {}))
       ))
       .orElseGet(() => of({}));

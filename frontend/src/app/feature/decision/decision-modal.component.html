@@ -41,7 +41,9 @@
     <div fxLayout="row" *ngIf="type !== 'RETURNED_TO_PREPARATION'">
       <div fxFlex="100">
         <h2>{{'decision.distribution.title' | translation}}</h2>
-        <distribution-list [form]="decisionForm" [distributionList]="distributionList"></distribution-list>
+        <distribution-selection
+          formControlName="distribution"
+          [distributionList]="distributionList"></distribution-selection>
       </div>
     </div>
   </form>

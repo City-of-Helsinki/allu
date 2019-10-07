@@ -3,7 +3,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ApplicationStatus} from '@model/application/application-status';
 import {DistributionEntry} from '@model/common/distribution-entry';
-import {DistributionEntryForm} from '@feature/application/distribution/distribution-list/distribution-entry-form';
 import {User} from '@model/user/user';
 import {Observable} from 'rxjs';
 import {RoleType} from '@model/user/role-type';
@@ -27,6 +26,7 @@ interface DecisionModalData {
 
 export const DECISION_MODAL_CONFIG = {
   width: '800px',
+  autoFocus: false,
   data: {
     type: undefined,
     status: undefined,
@@ -69,7 +69,8 @@ export class DecisionModalComponent implements OnInit {
   ngOnInit(): void {
     this.decisionForm = this.fb.group({
       comment: [''],
-      emailMessage: ['']
+      emailMessage: [''],
+      distribution: [this.data.distributionList]
     });
 
     this.status = this.data.status;
@@ -89,7 +90,7 @@ export class DecisionModalComponent implements OnInit {
 
     this.dialogRef.close({
       status: ApplicationStatus[this.status],
-      distributionList: this.decisionDistribution(),
+      distributionList: formValue.distribution,
       emailMessage: formValue.emailMessage,
       comment: formValue.comment,
       owner: formValue.owner
@@ -111,11 +112,6 @@ export class DecisionModalComponent implements OnInit {
       'decision.type.TERMINATED.rejectDraftConfirm' :
       `decision.type.${this.type}.confirmText`;
 
-  }
-
-  private decisionDistribution(): Array<DistributionEntry> {
-    const rows = this.decisionForm.value.distributionRows || [];
-    return rows.map(d => DistributionEntryForm.to(d));
   }
 
   private initOwners(ownerSelection: boolean): void {

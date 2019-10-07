@@ -437,6 +437,7 @@ public class ApplicationMapper {
 
   private DistributionEntryJson createDistributionEntryJson(DistributionEntry distributionEntry) {
     DistributionEntryJson distributionEntryJson = new DistributionEntryJson();
+    distributionEntryJson.setId(distributionEntry.getId());
     distributionEntryJson.setDistributionType(distributionEntry.getDistributionType());
     distributionEntryJson.setName(distributionEntry.getName());
     distributionEntryJson.setEmail(distributionEntry.getEmail());

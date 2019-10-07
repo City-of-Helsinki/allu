@@ -1,4 +1,4 @@
 export enum DistributionType {
-  EMAIL,
-  PAPER
+  EMAIL = 'EMAIL',
+  PAPER = 'PAPER'
 }

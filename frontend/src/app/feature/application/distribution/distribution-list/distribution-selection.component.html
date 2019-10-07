@@ -1,0 +1,23 @@
+<mat-selection-list [formControl]="selected">
+  <mat-list-option
+    *ngFor="let entry of distributionList"
+    checkboxPosition="before"
+    [value]="entry">
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex="calc(40%-18px)">{{entry.name}}</div>
+      <div fxFlex="calc(20%-18px)">{{['decision.distribution.type', entry.distributionType] | translation}}</div>
+      <div fxFlex="calc(40%-18px)">
+        <ng-container *ngIf="entry.distributionType === 'EMAIL'; else normalAddress">
+          {{entry.email}}
+        </ng-container>
+        <ng-template #normalAddress>
+          <ng-container *ngIf="entry.postalAddress as address">
+            <span>{{address.streetAddress}}</span>
+            <span *ngIf="address.postalCode">, {{address.postalCode}}</span>
+            <span *ngIf="address.city"> {{address.city}}</span>
+          </ng-container>
+        </ng-template>
+      </div>
+    </div>
+  </mat-list-option>
+</mat-selection-list>
