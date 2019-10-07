@@ -400,21 +400,18 @@ public class ApplicationServiceComposer {
   }
 
   /**
-   * Send the decision PDF for application as email to an updated distribution
+   * Send the decision PDF for application as email to an specified distribution
    * list.
    *
    * @param applicationId        the application's Id.
    * @param decisionDetailsJson  details about the decision
    */
   public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
-    ApplicationJson applicationJson = replaceDistributionList(applicationId,
-        decisionDetailsJson.getDecisionDistributionList());
-
     if (hasPaperDistribution(decisionDetailsJson)) {
       ApplicationTagJson tag = new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now());
       applicationService.addTag(applicationId, tag);
     }
-    mailComposerService.sendDecision(applicationJson, decisionDetailsJson, type);
+    mailComposerService.sendDecision(findApplicationById(applicationId), decisionDetailsJson, type);
   }
 
   private void onTagsChange(int id, List<ApplicationTagJson> oldTags, List<ApplicationTagJson> newTags) {
@@ -430,25 +427,6 @@ public class ApplicationServiceComposer {
     return decisionDetailsJson.getDecisionDistributionList() != null
         && decisionDetailsJson.getDecisionDistributionList().stream().anyMatch(d -> DistributionType.PAPER.equals(d.getDistributionType()));
   }
-
-  /*
-   * Replaces distribution list of an application.
-   *
-   * @param applicationId Application whose distribution list is replaced.
-   *
-   * @param distributionEntryJsons Replacing distribution list.
-   *
-   * @return The updated application
-   */
-  private ApplicationJson replaceDistributionList(int applicationId,
-      List<DistributionEntryJson> distributionEntryJsons) {
-    ApplicationJson oldApplication = findApplicationById(applicationId);
-    applicationService.replaceDistributionList(applicationId, distributionEntryJsons);
-    ApplicationJson updatedApplication = findApplicationById(applicationId);
-    applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
-    return updatedApplication;
-  }
-
 
   private void changeOwnerOnStatusChange(Application application, StatusChangeInfoJson info) {
     Integer newOwner = Optional.ofNullable(info).map(i -> i.getOwner()).orElse(null);
