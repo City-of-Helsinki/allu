@@ -417,11 +417,29 @@ public class ApplicationServiceComposer {
   private void onTagsChange(int id, List<ApplicationTagJson> oldTags, List<ApplicationTagJson> newTags) {
     searchService.updateTags(id, newTags);
     ApplicationJson withOldTags = new ApplicationJson();
-    
+
     ApplicationJson withNewTags = new ApplicationJson();
     withOldTags.setApplicationTags(oldTags);
     withNewTags.setApplicationTags(newTags);
     applicationHistoryService.addFieldChanges(id, withOldTags, withNewTags);
+  }
+
+  /*
+   * Replaces distribution list of an application.
+   *
+   * @param applicationId Application whose distribution list is replaced.
+   *
+   * @param distributionEntryJsons Replacing distribution list.
+   *
+   * @return The updated application
+   */
+  public ApplicationJson replaceDistributionList(int applicationId,
+      List<DistributionEntryJson> distributionEntryJsons) {
+    ApplicationJson oldApplication = findApplicationById(applicationId);
+    applicationService.replaceDistributionList(applicationId, distributionEntryJsons);
+    ApplicationJson updatedApplication = findApplicationById(applicationId);
+    applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
+    return updatedApplication;
   }
 
   private boolean hasPaperDistribution(DecisionDetailsJson decisionDetailsJson) {
