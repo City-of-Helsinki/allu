@@ -120,6 +120,11 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     }
   }
 
+  saveDistribution(distribution: DistributionEntry[]): void {
+    this.store.dispatch(new SaveDistribution(distribution));
+    this.applicationForm.get('communication.distributionRows').markAsPristine();
+  }
+
   get hasPropertyDeveloper(): boolean {
     return this.hasPropertyDeveloperCtrl.value;
   }
@@ -189,11 +194,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   protected onValidationErrors(): void {
     this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
-  }
-
-  protected saveDistribution(distribution: DistributionEntry[]): void {
-    this.store.dispatch(new SaveDistribution(distribution));
-    this.applicationForm.get('communication.distributionRows').markAsPristine();
   }
 
   private getCustomers(form: ApplicationForm): Array<CustomerWithContacts> {
