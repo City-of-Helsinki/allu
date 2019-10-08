@@ -38,6 +38,14 @@ public class PdfService {
   private static final String HEADER_ARG = "--header-html";
   private static final String FOOTER_ARG = "--footer-html";
 
+  private static final String MARGIN_TOP_ARG = "-T";
+  private static final String MARGIN_BOTTOM_ARG = "-B";
+  private static final String MARGIN_LEFT_ARG = "-L";
+  private static final String MARGIN_RIGHT_ARG = "-R";
+
+  private static final String MARGIN_TOP_BOTTOM_VALUE = "10mm";
+  private static final String MARGIN_LEFT_RIGHT_VALUE = "10mm";
+
   private final ApplicationProperties applicationProperties;
   private final FileSysAccessor fileSysAccessor;
   private final Executioner executioner;
@@ -106,16 +114,24 @@ public class PdfService {
   private Path writePdf(Path contentPath, Path headerPath, Path footerPath) throws IOException {
     Path pdfPath = fileSysAccessor.createTempFile(tempDir, "output-", ".pdf");
     final CommandLine cmdLine = new CommandLine(applicationProperties.getPdfGenerator());
+
+    addArgument(cmdLine, MARGIN_TOP_ARG, MARGIN_TOP_BOTTOM_VALUE);
+    addArgument(cmdLine, MARGIN_BOTTOM_ARG, MARGIN_TOP_BOTTOM_VALUE);
+    addArgument(cmdLine, MARGIN_LEFT_ARG, MARGIN_LEFT_RIGHT_VALUE);
+    addArgument(cmdLine, MARGIN_RIGHT_ARG, MARGIN_LEFT_RIGHT_VALUE);
+
     cmdLine.addArgument(contentPath.toString());
+
     if (headerPath != null) {
-      cmdLine.addArgument(HEADER_ARG);
-      cmdLine.addArgument(headerPath.toString());
+      addArgument(cmdLine, HEADER_ARG, headerPath.toString());
     }
+
     if (footerPath != null) {
-      cmdLine.addArgument(FOOTER_ARG);
-      cmdLine.addArgument(footerPath.toString());
+      addArgument(cmdLine, FOOTER_ARG, footerPath.toString());
     }
+
     cmdLine.addArgument(pdfPath.toString());
+
     try {
       executioner.execute(cmdLine);
     } catch (IOException e) {
@@ -129,5 +145,10 @@ public class PdfService {
     String[] parts = styleSheet.split(STYLESHEET_SEPARATOR);
     parts[0] = COMMON_STYLESHEET;
     return String.join("-", parts);
+  }
+
+  private void addArgument(CommandLine commandLine, String name, String argument) {
+    commandLine.addArgument(name);
+    commandLine.addArgument(argument);
   }
 }
