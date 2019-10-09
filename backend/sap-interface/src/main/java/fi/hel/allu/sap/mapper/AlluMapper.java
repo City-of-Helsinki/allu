@@ -240,18 +240,9 @@ public class AlluMapper {
     }
     switch (Optional.ofNullable(application.getKind()).orElse(ApplicationKind.OTHER)) {
       case OUTDOOREVENT:
+        return mapOutdoorEventToSapMaterial((Event)application.getExtension());
       case BIG_EVENT:
-        Event evt = (Event) application.getExtension();
-        switch (evt.getNature()) {
-          case PUBLIC_FREE:
-            return SAP_MATERIAL_FREE_EVENT;
-          case PUBLIC_NONFREE:
-            return SAP_MATERIAL_NONFREE_EVENT;
-          case CLOSED:
-            return SAP_MATERIAL_CLOSED_EVENT;
-          case PROMOTION:
-            return SAP_MATERIAL_PROMOTION;
-        }
+        return SAP_MATERIAL_NONFREE_EVENT;
       case BRIDGE_BANNER:
         return SAP_MATERIAL_BRIDGE_BANNER;
       case PROMOTION_OR_SALES:
@@ -277,6 +268,21 @@ public class AlluMapper {
         return SAP_MATERIAL_TERRACE;
       case PARKLET:
         return SAP_MATERIAL_PARKLET;
+      default:
+        return SAP_MATERIAL_OTHER_RENTAL;
+    }
+  }
+
+  private static String mapOutdoorEventToSapMaterial(Event event) {
+    switch (event.getNature()) {
+      case PUBLIC_FREE:
+        return SAP_MATERIAL_FREE_EVENT;
+      case PUBLIC_NONFREE:
+        return SAP_MATERIAL_NONFREE_EVENT;
+      case CLOSED:
+        return SAP_MATERIAL_CLOSED_EVENT;
+      case PROMOTION:
+        return SAP_MATERIAL_PROMOTION;
       default:
         return SAP_MATERIAL_OTHER_RENTAL;
     }
