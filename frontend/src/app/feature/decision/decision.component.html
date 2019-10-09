@@ -1,14 +1,9 @@
-<ng-container *ngIf="applicationChanges | async as application">
+<ng-container *ngIf="applicationChanges$ | async as application">
   <div fxLayout="row" fxLayoutGap="18px" class="content-main">
     <div fxFlex="calc(33% - 18px)">
       <div fxLayout="row">
         <div fxFlex>
           <application-basic-info [application]="application"></application-basic-info>
-        </div>
-      </div>
-      <div fxLayout="row">
-        <div fxFlex>
-          <decision-proposal></decision-proposal>
         </div>
       </div>
       <div fxLayout="row">
@@ -21,9 +16,26 @@
               {{'decision.decisionAttachments' | translation}}
             </mat-card-title>
             <mat-card-content>
-              <attachment-thumbnails [attachments]="decisionAttachments | async"></attachment-thumbnails>
+              <attachment-thumbnails [attachments]="decisionAttachments$ | async"></attachment-thumbnails>
             </mat-card-content>
           </allu-card>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
+          <allu-card>
+            <mat-card-title>{{'decision.distribution.title' | translation}}</mat-card-title>
+            <mat-card-content>
+              <distribution-list
+                [readonly]="true"
+                [distributionList]="distributionList$ | async"></distribution-list>
+            </mat-card-content>
+          </allu-card>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
+          <decision-proposal></decision-proposal>
         </div>
       </div>
     </div>

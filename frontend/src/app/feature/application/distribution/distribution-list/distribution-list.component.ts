@@ -45,6 +45,9 @@ export class DistributionListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Initialize form if none was passed as input
+    this.form = this.form || this.fb.group({});
+
     this.form.addControl('distributionRows', this.distributionRows);
     this.distributionList
       .map(d => this.createDistribution(d))
