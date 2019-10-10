@@ -47,7 +47,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
 
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
     if (extension.getWinterTimeOperation() != null &&
-        !hasSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION)) {
+        !hasOpenSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION)) {
       createSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION, userId,
           SupervisionDates.operationalConditionSupervisionDate(extension.getWinterTimeOperation()));
     }

@@ -252,6 +252,12 @@ public class ApplicationStatusChangeHandler {
     return !supervisionTaskService.findByApplicationIdAndType(application.getId(), type).isEmpty();
   }
 
+  protected boolean hasOpenSupervisionTask(Application application, SupervisionTaskType taskType) {
+    return supervisionTaskService.findByApplicationIdAndType(application.getId(), taskType)
+        .stream()
+        .anyMatch(task -> task.getStatus() == SupervisionTaskStatusType.OPEN);
+  }
+
   protected void cancelOpenSupervisionTasks(Integer applicationId) {
     supervisionTaskService.cancelOpenTasksOfApplication(applicationId);
   }
