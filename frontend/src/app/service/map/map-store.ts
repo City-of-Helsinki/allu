@@ -11,10 +11,11 @@ import {ObjectUtil} from '@util/object.util';
 import {StoredFilter} from '@model/user/stored-filter';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
-import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, filter, map, take} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromMap from '@feature/map/reducers';
+import * as fromAuth from '@feature/auth/reducers';
 import {Search} from '@feature/map/actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
@@ -57,12 +58,17 @@ export class MapStore {
   constructor(private locationService: LocationService,
               private storedFilterStore: StoredFilterStore,
               private store: Store<fromMap.State>) {
+    this.store.pipe(
+      select(fromAuth.getLoggedIn),
+      filter(loggedIn => loggedIn),
+      take(1),
+    ).subscribe(() => {
+      this.mapSearchFilter.subscribe(storedFilter => this.store.dispatch(new Search(ActionTargetType.Home, storedFilter)));
+      this.locationSearchFilter.subscribe(storedFilter => this.store.dispatch(new Search(ActionTargetType.Location, storedFilter)));
 
-    this.mapSearchFilter.subscribe(storedFilter => this.store.dispatch(new Search(ActionTargetType.Home, storedFilter)));
-    this.locationSearchFilter.subscribe(storedFilter => this.store.dispatch(new Search(ActionTargetType.Location, storedFilter)));
-
-    this.storedFilterStore.getCurrent(StoredFilterType.MAP)
-      .subscribe(sf => this.storedFilterChange(sf));
+      this.storedFilterStore.getCurrent(StoredFilterType.MAP)
+        .subscribe(sf => this.storedFilterChange(sf));
+    });
   }
 
   reset(): void {
