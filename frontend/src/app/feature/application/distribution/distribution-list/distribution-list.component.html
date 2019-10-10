@@ -71,8 +71,8 @@
         <td *ngIf="distribution.value.type === 'PAPER'">
           <div *ngIf="!distribution.value.edit">
             <span>{{distribution.value.streetAddress}}</span>
-            <span>{{distribution.value.postalCode}}</span>
-            <span>{{distribution.value.city}}</span>
+            <span *ngIf="distribution.value.postalCode">, {{distribution.value.postalCode}}</span>
+            <span *ngIf="distribution.value.city"> {{distribution.value.city}}</span>
           </div>
           <div class="table-flex-field" *ngIf="distribution.value.edit">
             <input-box>
