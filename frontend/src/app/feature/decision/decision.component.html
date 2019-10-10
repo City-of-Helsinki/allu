@@ -26,9 +26,24 @@
           <allu-card>
             <mat-card-title>{{'decision.distribution.title' | translation}}</mat-card-title>
             <mat-card-content>
-              <distribution-list
-                [readonly]="true"
-                [distributionList]="distributionList$ | async"></distribution-list>
+              <div fxLayout="row">
+                <div fxFlex>
+                  <distribution-list
+                    [readonly]="true"
+                    [distributionList]="distributionList$ | async"></distribution-list>
+                </div>
+              </div>
+              <div fxLayout="row" *ngIf="distributionChangeAllowed$ | async">
+                <div fxFlex>
+                  <button
+                    type="button"
+                    mat-raised-button
+                    color="primary"
+                    (click)="editDistribution()">
+                    {{'common.button.edit' | translation | uppercase}}
+                  </button>
+                </div>
+              </div>
             </mat-card-content>
           </allu-card>
         </div>

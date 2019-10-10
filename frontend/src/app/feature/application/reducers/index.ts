@@ -74,6 +74,11 @@ export const getApplicationLoaded = createSelector(
   fromApplication.getLoaded
 );
 
+export const getDistributionList = createSelector(
+  getCurrentApplication,
+  application => application ? application.decisionDistributionList : []
+);
+
 export const getType = createSelector(
   getApplicationEntitiesState,
   fromApplication.getType

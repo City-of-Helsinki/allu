@@ -6,6 +6,7 @@ import {DistributionComponent} from './distribution.component';
 import {DistributionListComponent} from './distribution-list/distribution-list.component';
 import {DistributionListEvents} from './distribution-list/distribution-list-events';
 import {DistributionSelectionComponent} from '@feature/application/distribution/distribution-list/distribution-selection.component';
+import {DistributionModalComponent} from '@feature/application/distribution/distribution-modal.component';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {DistributionSelectionComponent} from '@feature/application/distribution/
   declarations: [
     DistributionComponent,
     DistributionListComponent,
-    DistributionSelectionComponent
+    DistributionSelectionComponent,
+    DistributionModalComponent,
   ],
   providers: [
     DistributionListEvents
@@ -25,7 +27,11 @@ import {DistributionSelectionComponent} from '@feature/application/distribution/
   exports: [
     DistributionComponent,
     DistributionListComponent,
-    DistributionSelectionComponent
+    DistributionSelectionComponent,
+    DistributionModalComponent
+  ],
+  entryComponents: [
+    DistributionModalComponent
   ]
 })
 export class DistributionModule {}

@@ -8,6 +8,7 @@ import {postalCodeValidator} from '@util/complex-validator';
 import {DistributionListEvents} from './distribution-list-events';
 import isEqual from 'lodash/isEqual';
 import {PostalAddress} from '@model/common/postal-address';
+import {FormUtil} from '@util/form.util';
 
 interface DistributionEntryForm {
   id?: number;
@@ -30,7 +31,6 @@ interface DistributionEntryForm {
 export class DistributionListComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() readonly: boolean;
-  @Input() distributionList: Array<DistributionEntry> = [];
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
@@ -41,6 +41,7 @@ export class DistributionListComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder,
               private distributionListEvents: DistributionListEvents) {
+    this.form = this.fb.group({});
     this.distributionRows = fb.array([]);
   }
 
@@ -49,13 +50,6 @@ export class DistributionListComponent implements OnInit, OnDestroy {
     this.form = this.form || this.fb.group({});
 
     this.form.addControl('distributionRows', this.distributionRows);
-    this.distributionList
-      .map(d => this.createDistribution(d))
-      .forEach(row => this.distributionRows.push(row));
-
-    if (this.readonly) {
-      this.distributionRows.disable();
-    }
 
     this.addContactSubscription = this.distributionListEvents.distributionList$
       .subscribe(entry => this.addContact(entry));
@@ -63,6 +57,20 @@ export class DistributionListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.addContactSubscription.unsubscribe();
+  }
+
+  @Input() set distributionList(distributionList: DistributionEntry[]) {
+    if (distributionList) {
+      FormUtil.clearArray(this.distributionRows);
+
+      distributionList
+        .map(d => this.createDistribution(d))
+        .forEach(row => this.distributionRows.push(row));
+
+      if (this.readonly) {
+        this.distributionRows.disable();
+      }
+    }
   }
 
   add(): void {
