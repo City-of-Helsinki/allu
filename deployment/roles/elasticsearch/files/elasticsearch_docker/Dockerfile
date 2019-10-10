@@ -12,4 +12,7 @@ RUN mv /usr/share/elasticsearch /tmp/silly_aufs_fix && \
     groupmod -g $CUSTOM_UID elasticsearch && \
     usermod -u $CUSTOM_GID elasticsearch && \
     chown -R elasticsearch:elasticsearch /usr/share/elasticsearch
+
+# Remove x-pack since it requires a license
+RUN elasticsearch-plugin remove x-pack
 USER elasticsearch

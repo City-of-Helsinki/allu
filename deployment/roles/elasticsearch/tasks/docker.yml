@@ -69,11 +69,6 @@
       - "9200:9200"
       - "9300:9300"
     env:
-      xpack.security.enabled: "false"
-      xpack.graph.enabled: "false"
-      xpack.ml.enabled: "false"
-      xpack.monitoring.enabled: "false"
-      xpack.watcher.enabled: "false"
       cluster.name: allu-cluster
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
       bootstrap.memory_lock: "true"
