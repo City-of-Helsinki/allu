@@ -72,6 +72,10 @@
       xpack.security.enabled: "false"
       cluster.name: allu-cluster
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
+      bootstrap.memory_lock: "true"
+    ulimits:
+      - "nofile:65536:65536"
+      - "memlock:-1:-1"
   become: yes
 
 - name: remove Docker image tar file
