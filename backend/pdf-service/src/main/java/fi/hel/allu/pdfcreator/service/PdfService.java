@@ -115,7 +115,6 @@ public class PdfService {
     Path pdfPath = fileSysAccessor.createTempFile(tempDir, "output-", ".pdf");
     final CommandLine cmdLine = new CommandLine(applicationProperties.getPdfGenerator());
 
-    addArgument(cmdLine, MARGIN_TOP_ARG, MARGIN_TOP_BOTTOM_VALUE);
     addArgument(cmdLine, MARGIN_BOTTOM_ARG, MARGIN_TOP_BOTTOM_VALUE);
     addArgument(cmdLine, MARGIN_LEFT_ARG, MARGIN_LEFT_RIGHT_VALUE);
     addArgument(cmdLine, MARGIN_RIGHT_ARG, MARGIN_LEFT_RIGHT_VALUE);
