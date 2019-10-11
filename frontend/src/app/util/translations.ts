@@ -561,6 +561,7 @@ export const translations = {
     address: 'Osoite',
     startTime: 'Alkupäivä',
     endTime: 'Loppupäivä',
+    receivedTime: 'Saapunut'
   },
   applicationInfo: {
     title: 'Hakemuksen perustiedot',
