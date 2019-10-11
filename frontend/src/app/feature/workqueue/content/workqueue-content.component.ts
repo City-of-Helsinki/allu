@@ -32,7 +32,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
     'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.identifier',
     'customers.applicant.customer.name', 'locations.address', 'locations.cityDistrictId',
-    'creationTime', 'startTime', 'ownerNotification'
+    'receivedTime', 'startTime', 'ownerNotification'
   ];
   dataSource: ApplicationWorkItemDatasource;
   allSelected$: Observable<boolean>;

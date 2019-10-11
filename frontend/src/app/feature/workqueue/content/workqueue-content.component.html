@@ -68,9 +68,9 @@
       <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="creationTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.creationTime' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.creationTime | date:'shortDate'}}</mat-cell>
+    <ng-container matColumnDef="receivedTime">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.receivedTime' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.receivedTime | date:'shortDate'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="startTime">
