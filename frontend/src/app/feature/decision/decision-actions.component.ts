@@ -24,6 +24,7 @@ import {validForDecision} from '@feature/application/application-util';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
+  ApplicationStatus.OPERATIONAL_CONDITION,
   ApplicationStatus.FINISHED,
   ApplicationStatus.ARCHIVED,
 ];
