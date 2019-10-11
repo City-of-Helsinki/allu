@@ -46,6 +46,10 @@ public class CommentController {
     return new ResponseEntity<>(commentDao.getCountByApplicationId(applicationId), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/applications/{applicationId}/comments/latest", method = RequestMethod.GET)
+  public ResponseEntity<Comment> getLatestCommentByApplicationId(@PathVariable int applicationId) {
+    return new ResponseEntity<>(commentDao.getLatestCommentByApplicationId(applicationId), HttpStatus.OK);
+  }
 
   @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.GET)
   public ResponseEntity<List<Comment>> findByProjectId(@PathVariable int projectId) {

@@ -1,5 +1,16 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
@@ -7,16 +18,6 @@ import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QComment.comment;
@@ -137,5 +138,13 @@ public class CommentDao {
   public Integer getCountByApplicationId(int applicationId) {
     return (int)queryFactory.select(commentBean).from(comment)
         .where(comment.applicationId.eq(applicationId)).fetchCount();
+  }
+
+  @Transactional(readOnly = true)
+  public Comment getLatestCommentByApplicationId(int applicationId) {
+    return findByApplicationId(applicationId)
+        .stream()
+        .max(Comparator.comparing(Comment::getCreateTime))
+        .orElse(null);
   }
 }

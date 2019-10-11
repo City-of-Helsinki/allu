@@ -445,6 +445,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{applicationId}/comments/count");
   }
 
+  public String getLatestApplicationCommentUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/comments/latest");
+  }
+
   public String getCommentsFindByApplicationUrl() {
     return getModelServiceUrl("/applications/{applicationId}/comments");
   }

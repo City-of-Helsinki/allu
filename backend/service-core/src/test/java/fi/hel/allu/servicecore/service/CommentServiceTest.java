@@ -50,6 +50,7 @@ public class CommentServiceTest {
   private static final String COMMENTS_DELETE_URL = "CommentsDeleteUrl";
   private static final String COMMENTS_COUNT_URL = "CommentsCountUrl";
   private static final String COMMENTS_FIND_BY_ID_URL = "CommentsFindByIdUrl";
+  private static final String COMMENTS_LATEST_URL = "CommentsFindLatestUrl";
   private static final int APPLICATION_ID = 11;
   private static final int USER_ID = 7;
 
@@ -62,10 +63,14 @@ public class CommentServiceTest {
     Mockito.when(applicationProperties.getCommentsDeleteUrl()).thenReturn(COMMENTS_DELETE_URL);
     Mockito.when(applicationProperties.getCommentsFindCountByApplicationUrl()).thenReturn(COMMENTS_COUNT_URL);
     Mockito.when(applicationProperties.getCommentsFindByIdUrl()).thenReturn(COMMENTS_FIND_BY_ID_URL);
+    Mockito.when(applicationProperties.getLatestApplicationCommentUrl()).thenReturn(COMMENTS_LATEST_URL);
     Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_COUNT_URL), Mockito.eq(Integer.class), Mockito.any(Integer.class)))
     .thenReturn(ResponseEntity.ok(Integer.valueOf(1)));
     Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_ID_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
     .thenReturn(ResponseEntity.ok(new Comment()));
+    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_LATEST_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
+    .thenReturn(ResponseEntity.ok(null));
+
 
   }
 

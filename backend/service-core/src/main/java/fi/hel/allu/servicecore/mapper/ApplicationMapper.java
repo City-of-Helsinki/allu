@@ -1,12 +1,10 @@
 package fi.hel.allu.servicecore.mapper;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.codehaus.jackson.map.util.Comparators;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +143,15 @@ public class ApplicationMapper {
     applicationES.setNrOfComments(applicationJson.getComments() != null ? applicationJson.getComments().size() : 0);
     applicationES.setIdentificationNumber(applicationJson.getIdentificationNumber());
     applicationES.setOwnerNotification(applicationJson.getOwnerNotification());
+    applicationES.setLatestComment(getLatestComment(applicationJson.getComments()));
     return applicationES;
+  }
+
+  private String getLatestComment(List<CommentJson> comments) {
+    return Optional.ofNullable(comments)
+        .flatMap(commentList -> commentList.stream().max(Comparator.comparing(CommentJson::getCreateTime))
+        .map(comment -> comment.getText()))
+        .orElse(null);
   }
 
   /**

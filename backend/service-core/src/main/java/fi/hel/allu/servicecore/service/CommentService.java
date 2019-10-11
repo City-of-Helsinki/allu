@@ -62,7 +62,6 @@ public class CommentService {
   public CommentJson addApplicationComment(int applicationId, CommentJson commentJson) {
     validateCommentType(commentJson.getType());
     CommentJson comment = addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
-    updateSearchServiceNrOfComments(applicationId);
     applicationHistoryService.addCommentAdded(applicationId);
     eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
     return comment;
@@ -98,9 +97,12 @@ public class CommentService {
 
   private CommentJson updateComment(int id, Comment comment) {
     HttpEntity<Comment> request = new HttpEntity<>(comment);
-    ResponseEntity<Comment> result = restTemplate.exchange(applicationProperties.getCommentsUpdateUrl(), HttpMethod.PUT,
-        request, Comment.class, id);
-    return mapToJson(result.getBody());
+    Comment updated  = restTemplate.exchange(applicationProperties.getCommentsUpdateUrl(), HttpMethod.PUT,
+        request, Comment.class, id).getBody();
+    if (updated.getApplicationId() != null) {
+      updateSearchServiceComments(updated.getApplicationId());
+    }
+    return mapToJson(updated);
   }
 
   public void deleteComment(int id) {
@@ -108,7 +110,7 @@ public class CommentService {
     validateCommentType(comment.getType());
     restTemplate.delete(applicationProperties.getCommentsDeleteUrl(), id);
     if (comment.getApplicationId() != null) {
-      updateSearchServiceNrOfComments(comment.getApplicationId());
+      updateSearchServiceComments(comment.getApplicationId());
       applicationHistoryService.addCommentRemoved(comment.getApplicationId());
     }
   }
@@ -169,18 +171,31 @@ public class CommentService {
 
   private CommentJson addComment(String url, int targetId, CommentJson commentJson) {
     Comment comment = mapToModel(commentJson, userService.getCurrentUser());
-    ResponseEntity<Comment> result = restTemplate.postForEntity(url, comment, Comment.class, targetId);
-    return mapToJson(result.getBody());
+    comment = restTemplate.postForEntity(url, comment, Comment.class, targetId).getBody();
+    if (comment.getApplicationId() != null) {
+      updateSearchServiceComments(comment.getApplicationId());
+    }
+    return mapToJson(comment);
   }
 
-  private void updateSearchServiceNrOfComments(int applicationId) {
-    HashMap<Integer, Map<String, Integer>> idToNrOfComments= new HashMap<>();
-    idToNrOfComments.put(applicationId, Collections.singletonMap("nrOfComments", getNumberOfApplicationComments(applicationId)));
-    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), idToNrOfComments);
+  private void updateSearchServiceComments(int applicationId) {
+    HashMap<Integer, Map<String, Object>> idToCommentInfo = new HashMap<>();
+    Map<String, Object> commentInfo = new HashMap<>();
+    commentInfo.put("nrOfComments", getNumberOfApplicationComments(applicationId));
+    commentInfo.put("latestComment", getLatestApplicationComment(applicationId));
+    idToCommentInfo.put(applicationId, commentInfo);
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), idToCommentInfo);
   }
 
   private Integer getNumberOfApplicationComments(int applicationId) {
     return restTemplate.getForEntity(applicationProperties.getCommentsFindCountByApplicationUrl(), Integer.class, applicationId).getBody();
+  }
+
+  private String getLatestApplicationComment(int applicationId) {
+    Comment comment = restTemplate.getForEntity(applicationProperties.getLatestApplicationCommentUrl(), Comment.class, applicationId).getBody();
+    return Optional.ofNullable(comment)
+        .map(c -> c.getText())
+        .orElse(null);
   }
 
   public void validateIsOwnedByCurrentUser(Integer id) {

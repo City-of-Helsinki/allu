@@ -33,6 +33,7 @@ public class ApplicationES {
   private Integer nrOfComments;
   private String identificationNumber;
   private Boolean ownerNotification;
+  private String latestComment;
 
   public Integer getId() {
     return id;
@@ -192,6 +193,14 @@ public class ApplicationES {
 
   public void setOwnerNotification(Boolean ownerNotification) {
     this.ownerNotification = ownerNotification;
+  }
+
+  public String getLatestComment() {
+    return latestComment;
+  }
+
+  public void setLatestComment(String latestComment) {
+    this.latestComment = latestComment;
   }
 
 }
