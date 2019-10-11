@@ -98,7 +98,7 @@ public class InvoicingService {
     salesOrderContainer.setSalesOrders(salesOrders);
     if (sendToSap(salesOrderContainer)) {
       markInvoicesSent(invoices.stream().map(i -> i.getId()).collect(Collectors.toList()));
-      sendNotificationEmail(applicationsById.values().stream().map(a -> a.getApplicationId()).collect(Collectors.toList()));
+      sendNotificationEmail(applicationsById.values().stream().map(a -> a.getApplicationId()).collect(Collectors.toList()), invoices.size());
       applicationStatusUpdaterService.archiveApplications(new ArrayList<>(applicationsById.keySet()));
     }
   }
@@ -153,7 +153,7 @@ public class InvoicingService {
     restTemplate.postForObject(applicationProperties.getMarkInvoicesSentUrl(), invoiceIds, Void.class);
   }
 
-  private void sendNotificationEmail(List<String> applicationIds) {
+  private void sendNotificationEmail(List<String> applicationIds, int nrOfInvoices) {
     List<String> receiverEmails = getInvoiceNotificationReceiverEmails();
     if (receiverEmails.isEmpty()) {
       return;
@@ -162,17 +162,17 @@ public class InvoicingService {
     String subject = applicationProperties.getInvoiceNotificationSubject();
     try {
       String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
-      String body = StrSubstitutor.replace(mailTemplate, mailVariables(applicationIds));
+      String body = StrSubstitutor.replace(mailTemplate, mailVariables(applicationIds, nrOfInvoices));
       alluMailService.sendEmail(receiverEmails, subject, body, null, null);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
   }
 
-  private Map<String, String> mailVariables(List<String> applicationIds) {
+  private Map<String, String> mailVariables(List<String> applicationIds, int nrOfInvoices) {
     Map<String, String> result = new HashMap<>();
     result.put("sentDate", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-    result.put("nrOfInvoices", String.valueOf(applicationIds.size()));
+    result.put("nrOfInvoices", String.valueOf(nrOfInvoices));
     result.put("invoiceApplicationIds", String.join(", ", applicationIds));
     return result;
   }
