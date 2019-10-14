@@ -38,6 +38,12 @@ public class LocationController {
     return new ResponseEntity<>(locationValue, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/multi", method = RequestMethod.POST)
+  public ResponseEntity<List<Location>> findMultiple(@RequestBody List<Integer> ids) {
+    List<Location> locations = locationDao.findByIds(ids);
+    return ResponseEntity.ok(locations);
+  }
+
   /**
    * Finds locations of given application.
    *

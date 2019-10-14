@@ -572,6 +572,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/{id}");
   }
 
+  public String getLocationsUrl() {
+    return getModelServiceUrl("/locations/multi");
+  }
+
   /**
    * @return url for fetching projects by ids.
    */

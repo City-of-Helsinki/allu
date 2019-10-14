@@ -166,6 +166,10 @@ public class LocationService {
     return restTemplate.getForObject(applicationProperties.getLocationUrl(), Location.class, locationId);
   }
 
+  public List<Location> getLocationsByIds(List<Integer> locationIds) {
+    return Arrays.asList(restTemplate.postForObject(applicationProperties.getLocationsUrl(), locationIds, Location[].class));
+  }
+
   public Location updateLocation(Location location) {
     ResponseEntity<Location> result = restTemplate.exchange(applicationProperties.getUpdateLocationUrl(),
       HttpMethod.PUT, new HttpEntity<>(location), Location.class, location.getId(), userService.getCurrentUser().getId());

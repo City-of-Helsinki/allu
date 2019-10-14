@@ -96,6 +96,13 @@ public class LocationDao {
   }
 
   @Transactional(readOnly = true)
+  public List<Location> findByIds(List<Integer> ids) {
+    return ids.stream()
+      .map(id -> findById(id).get())
+      .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
   public List<Location> findByApplication(int applicationId) {
     return findByApplication(applicationId, Constants.ALLU_DEFAULT_SRID);
   }
