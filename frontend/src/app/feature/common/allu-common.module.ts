@@ -38,6 +38,7 @@ import {KeysPipe} from '@app/pipe/keys-pipe';
 import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
 import {CountryNamePipe} from '@app/pipe/country-name-pipe';
 import {PartialListDisplayComponent} from '@feature/common/partial-list-display/partial-list-display.component';
+import {ValidityTimeComponent} from '@feature/common/validity-time/validity-time.component';
 
 @NgModule({
   imports: [
@@ -62,7 +63,8 @@ import {PartialListDisplayComponent} from '@feature/common/partial-list-display/
     AvailableToDirective,
     BottomBarComponent,
     AlluCardComponent,
-    PartialListDisplayComponent
+    PartialListDisplayComponent,
+    ValidityTimeComponent
   ],
   providers: [],
   exports: [
@@ -104,7 +106,8 @@ import {PartialListDisplayComponent} from '@feature/common/partial-list-display/
     KeysPipe,
     CentsToEurosPipe,
     CountryNamePipe,
-    PartialListDisplayComponent
+    PartialListDisplayComponent,
+    ValidityTimeComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

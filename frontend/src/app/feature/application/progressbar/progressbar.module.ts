@@ -5,7 +5,6 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {ValidityTimeComponent} from '@feature/application/progressbar/validity-time.component';
 
 @NgModule({
   imports: [
@@ -16,8 +15,7 @@ import {ValidityTimeComponent} from '@feature/application/progressbar/validity-t
     RouterModule
   ],
   declarations: [
-    ProgressbarComponent,
-    ValidityTimeComponent
+    ProgressbarComponent
   ],
   exports: [
     ProgressbarComponent

@@ -23,7 +23,12 @@
           </div>
         </div>
         <div fxFlex="none">
-          <validity-time [application]="application" [terminationDate]="terminationDate"></validity-time>
+          <validity-time
+            class="application-info"
+            [startTime]="application.startTime"
+            [endTime]="application.endTime"
+            [recurringEndTime]="application.recurringEndTime"
+            [terminationDate]="terminationDate"></validity-time>
         </div>
         <div fxFlex="none" *ngIf="hasReplacements$ | async">
           <button mat-button [matMenuTriggerFor]="replacementMenu" color="primary" disableRipple class="icon-with-info">

@@ -1,0 +1,14 @@
+<div class="validity-period-container">
+  <span>{{startTime | date:'shortDate'}}</span>
+  <ng-container *ngIf="endTime">
+    <span>-</span>
+    <ng-container>
+      <span>{{endTime | date:'shortDate'}}</span>
+      <span *ngIf="recurringType === 'until'">, {{'application.recurring.recurringYearlyUntil' | translation:{year: recurringEndTime.getFullYear()} | lowercase }}</span>
+      <span *ngIf="recurringType === 'forNow'">, {{'application.recurring.recurringYearlyForNow' | translation | lowercase}}</span>
+    </ng-container>
+  </ng-container>
+</div>
+<div class="text-hint" *ngIf="terminationDate">
+  {{'application.common.terminatedExpires' | translation}} {{terminationDate | date: 'shortDate'}}
+</div>
