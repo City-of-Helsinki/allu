@@ -116,7 +116,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   public resendDecision(): void {
-    this.confirmDecisionSend('RESEND_EMAIL')
+    this.confirmDecisionSend('RESEND_EMAIL', this.application.status)
       .pipe(
         filter(result => !!result),
         switchMap(result => this.sendDecision(this.application.id, result)),
