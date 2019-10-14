@@ -1,6 +1,10 @@
 package fi.hel.allu.servicecore.domain;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import io.swagger.annotations.ApiModel;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ApiModel(value = "CreateExcavationAnnouncementApplication", description = "Model for creating new excavation announcements")
 public class CreateExcavationAnnouncementApplicationJson extends CreateApplicationJson {
@@ -31,5 +35,20 @@ public class CreateExcavationAnnouncementApplicationJson extends CreateApplicati
 
   public void setCustomerRepresentativeId(Integer customerRepresentativeId) {
     this.customerRepresentativeId = customerRepresentativeId;
+  }
+
+  public Map<CustomerRoleType, Integer> getAllCustomerIdsByCustomerRoleType() {
+    Map<CustomerRoleType, Integer> ids = new HashMap<>();
+    ids.putAll(super.getAllCustomerIdsByCustomerRoleType());
+    if (customerPropertyDeveloperId != null) {
+      ids.put(CustomerRoleType.PROPERTY_DEVELOPER, customerPropertyDeveloperId);
+    }
+    if (customerContractorId != null) {
+      ids.put(CustomerRoleType.CONTRACTOR, customerContractorId);
+    }
+    if (customerRepresentativeId != null) {
+      ids.put(CustomerRoleType.REPRESENTATIVE, customerRepresentativeId);
+    }
+    return ids;
   }
 }

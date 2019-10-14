@@ -1,5 +1,6 @@
 package fi.hel.allu.supervision.api.controller;
 
+import fi.hel.allu.servicecore.domain.CreateEventApplicationJson;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +12,7 @@ import io.swagger.annotations.Api;
 @RestController
 @RequestMapping("/v1/events")
 @Api(tags = "Applications")
-public class EventController extends BaseApplicationDetailsController<EventApplication> {
+public class EventController extends BaseApplicationDetailsController<EventApplication, CreateEventApplicationJson> {
 
   @Override
   protected ApplicationType getApplicationType() {

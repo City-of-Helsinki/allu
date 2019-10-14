@@ -1,5 +1,6 @@
 package fi.hel.allu.supervision.api.controller;
 
+import fi.hel.allu.servicecore.domain.CreateExcavationAnnouncementApplicationJson;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ import io.swagger.annotations.*;
 @RestController
 @RequestMapping("/v1/excavationannouncements")
 @Api(tags = "Applications")
-public class ExcavationAnnouncementController extends BaseApplicationDetailsController<ExcavationAnnouncementApplication> {
+public class ExcavationAnnouncementController extends BaseApplicationDetailsController<ExcavationAnnouncementApplication, CreateExcavationAnnouncementApplicationJson> {
 
   @Override
   protected ApplicationType getApplicationType() {

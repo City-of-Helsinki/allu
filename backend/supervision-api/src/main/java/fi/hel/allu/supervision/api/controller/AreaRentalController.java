@@ -1,6 +1,7 @@
 package fi.hel.allu.supervision.api.controller;
 
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.servicecore.domain.CreateAreaRentalApplicationJson;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/v1/arearentals")
 @Api(tags = "Applications")
-public class AreaRentalController extends BaseApplicationDetailsController<AreaRentalApplication> {
+public class AreaRentalController extends BaseApplicationDetailsController<AreaRentalApplication, CreateAreaRentalApplicationJson> {
 
   @Override
   protected ApplicationType getApplicationType() {

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.domain.CreateApplicationJson;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +30,7 @@ import fi.hel.allu.supervision.api.domain.BaseApplication;
 import fi.hel.allu.supervision.api.service.ApplicationUpdateService;
 import io.swagger.annotations.*;
 
-public abstract class BaseApplicationDetailsController<A extends BaseApplication<?>> {
+public abstract class BaseApplicationDetailsController<A extends BaseApplication<?>, U extends CreateApplicationJson> {
 
 
   protected abstract ApplicationType getApplicationType();
@@ -43,6 +46,11 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   private ApplicationUpdateService applicationUpdateService;
   @Autowired
   protected LocationService locationService;
+  @Autowired
+  protected ApplicationMapper applicationMapper;
+  @Autowired
+  protected CustomerService customerService;
+
 
 
   @ApiOperation(value = "Get application details",
@@ -98,6 +106,27 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     validateType(id);
     ApplicationJson updatedApplication = applicationUpdateService.update(id, version, fields);
     return ResponseEntity.ok(mapApplication(updatedApplication));
+  }
+
+  @ApiOperation(value = "Create new application",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Application created successfully"),
+    @ApiResponse(code = 400, message = "Invalid application data", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Application creation forbidden", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<A> createApplication(@RequestBody @ApiParam("New application") U application) {
+    application.setType(getApplicationType());
+
+    // TODO validations
+    ApplicationJson newApplication = applicationMapper.mapCreateJsonToApplicationJson(application, customerService);
+    ApplicationJson createdApplication = applicationServiceComposer.createApplication(newApplication);
+    return ResponseEntity.ok(mapApplication(createdApplication));
   }
 
   protected void validateType(Integer applicationId) {

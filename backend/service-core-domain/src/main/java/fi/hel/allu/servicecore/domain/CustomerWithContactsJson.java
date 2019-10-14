@@ -14,6 +14,14 @@ public class CustomerWithContactsJson {
   private CustomerJson customer;
   private List<ContactJson> contacts = new ArrayList<>();
 
+  public CustomerWithContactsJson() {
+  }
+
+  public CustomerWithContactsJson(CustomerRoleType roleType, CustomerJson customer) {
+    this.roleType = roleType;
+    this.customer = customer;
+  }
+
   @ApiModelProperty(value = "Id of the customer (if present)")
   public Integer getId() {
     return (customer == null) ? null : customer.getId();

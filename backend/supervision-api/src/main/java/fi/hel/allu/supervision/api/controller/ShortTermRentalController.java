@@ -1,5 +1,6 @@
 package fi.hel.allu.supervision.api.controller;
 
+import fi.hel.allu.servicecore.domain.CreateShortTermRentalApplicationJson;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +12,7 @@ import io.swagger.annotations.Api;
 @RestController
 @RequestMapping("/v1/shorttermrentals")
 @Api(tags = "Applications")
-public class ShortTermRentalController extends BaseApplicationDetailsController<ShortTermRentalApplication> {
+public class ShortTermRentalController extends BaseApplicationDetailsController<ShortTermRentalApplication, CreateShortTermRentalApplicationJson> {
 
   @Override
   protected ApplicationType getApplicationType() {

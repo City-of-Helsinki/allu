@@ -1,5 +1,6 @@
 package fi.hel.allu.supervision.api.controller;
 
+import fi.hel.allu.servicecore.domain.CreatePlacementContractApplicationJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +19,7 @@ import io.swagger.annotations.*;
 @RestController
 @RequestMapping("/v1/placementcontracts")
 @Api(tags = "Applications")
-public class PlacementContractController extends BaseApplicationDetailsController<PlacementContractApplication> {
+public class PlacementContractController extends BaseApplicationDetailsController<PlacementContractApplication, CreatePlacementContractApplicationJson> {
 
   @Autowired
   private ContractService contractService;
