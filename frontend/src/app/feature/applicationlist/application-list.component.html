@@ -23,7 +23,12 @@
       <div matLine>{{['application.status', application.status] | translation}}</div>
       <div matLine>{{application.address}}</div>
       <div matLine *ngIf="application.applicant.customer as applicant">{{applicant.name}}</div>
-      <div matLine>{{application.startTime | date:'shortDate'}} - {{application.endTime | date:'shortDate'}}</div>
+      <div matLine>
+        <validity-time
+          [startTime]="application.startTime"
+          [endTime]="application.endTime"
+          [recurringEndTime]="application.recurringEndTime"></validity-time>
+      </div>
     </mat-list-item>
   </ng-container>
   <ng-container *ngIf="remaining$ | async as remaining">

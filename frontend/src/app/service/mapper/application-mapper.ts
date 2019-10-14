@@ -41,6 +41,7 @@ export class ApplicationMapper {
     application.nrOfComments = backendApplication.nrOfComments;
     application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);
     application.ownerNotification = backendApplication.ownerNotification;
+    application.recurringEndTime = getRecurringEndDate(backendApplication);
     return application;
   }
 
@@ -141,3 +142,16 @@ export class ApplicationMapper {
     };
   }
 }
+
+export const getRecurringEndDate = (searchResult: SearchResultApplication) => {
+  const appEndTime = TimeUtil.dateFromBackend(searchResult.endTime);
+  const recurringEndTime = searchResult.recurringApplication
+    ? TimeUtil.dateFromBackend(searchResult.recurringApplication.endTime)
+    : undefined;
+
+  if (TimeUtil.isAfter(recurringEndTime, appEndTime)) {
+    return recurringEndTime;
+  } else {
+    return undefined;
+  }
+};

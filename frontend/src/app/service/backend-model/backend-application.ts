@@ -77,4 +77,14 @@ export interface SearchResultApplication {
   nrOfComments: number;
   applicationTags: ApplicationTagType[];
   ownerNotification: boolean;
+  recurringApplication?: RecurringApplication;
+}
+
+export interface RecurringApplication {
+  startTime: string;
+  endTime: string;
+  period1Start: string;
+  period1End: string;
+  period2Start: string;
+  period2End: string;
 }
