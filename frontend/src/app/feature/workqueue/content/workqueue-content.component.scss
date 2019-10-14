@@ -1,6 +1,7 @@
 @import '../../../../assets/colors';
 
-.content-row {
+.content-row,
+.details-row:not(.details-row-last) {
   border-bottom: none;
 }
 
@@ -8,7 +9,7 @@
   background-color: mat-color($allu-primary, 50);
 }
 
-.tag-row {
+.details-row {
   min-height: 0px;
 }
 
@@ -17,17 +18,38 @@
   color: mat-color($allu-primary, 500);
 }
 
-.tag-details-row {
-  margin-left: 50px;
+.mat-cell:first-of-type .details-cell {
+  padding-left: 42px;
+}
+
+.mat-cell:not(:first-of-type) .details-cell {
+  padding-left: 2px;
+}
+
+.details-cell {
   min-height: 48px;
 }
 
-.tag-details-row .tag-details-row-title {
+.details-cell .details-cell-title {
   font-weight: bold;
+}
+
+.details-cell.details-cell-text {
+  overflow: auto;
+  text-overflow: ellipsis;
+  color: mat-color($allu-primary, 500);
 }
 
 .mat-chip.slim-chip {
   margin: 0px 2px;
   line-height: 1.43;
   font-size: 14px;
+}
+
+.comment-content {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 80vw;
+  padding-right: 8px;
 }

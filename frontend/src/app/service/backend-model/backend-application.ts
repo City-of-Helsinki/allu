@@ -75,6 +75,7 @@ export interface SearchResultApplication {
   customers: SearchResultCustomersWithContacts;
   locations: Array<SearchResultLocation>;
   nrOfComments: number;
+  latestComment: string;
   applicationTags: ApplicationTagType[];
   ownerNotification: boolean;
   recurringApplication?: RecurringApplication;

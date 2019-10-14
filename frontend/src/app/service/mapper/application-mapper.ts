@@ -39,6 +39,7 @@ export class ApplicationMapper {
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
     application.receivedTime = TimeUtil.dateFromBackend(backendApplication.receivedTime);
     application.nrOfComments = backendApplication.nrOfComments;
+    application.latestComment = backendApplication.latestComment;
     application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);
     application.ownerNotification = backendApplication.ownerNotification;
     application.recurringEndTime = getRecurringEndDate(backendApplication);

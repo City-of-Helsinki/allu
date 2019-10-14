@@ -5,7 +5,7 @@
 
   <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort [trackBy]="trackById">
     <ng-container matColumnDef="selected">
-      <mat-header-cell *matHeaderCellDef>
+      <mat-header-cell *matHeaderCellDef class="mat-cell-selection">
         <div>
           <mat-checkbox
             [checked]="(someSelected$ | async) && (allSelected$ | async)"
@@ -13,7 +13,7 @@
             (change)="checkAll()"></mat-checkbox>
         </div>
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">
+      <mat-cell *matCellDef="let row" class="mat-cell-selection">
         <mat-checkbox
           [checked]="selected(row.id) | async"
           (change)="checkSingle(row.id)"></mat-checkbox>
@@ -91,12 +91,29 @@
       </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="latestComment">
+      <mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+        <div fxLayout="row"
+             fxLayoutGap="8px"
+             fxLayoutAlign="start center"
+             class="details-cell details-cell-text"
+             *ngIf="row.latestComment">
+          <button mat-icon-button color="primary">
+            <mat-icon >chat_bubble_outline</mat-icon>
+          </button>
+          <div fxFlex
+               class="text-italic comment-content">
+            {{row.latestComment}}
+          </div>
+        </div>
+      </mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="tags">
       <mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
         <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="18px"
-             class="tag-details-row"
+             class="details-cell"
              *ngIf="row.applicationTags?.length">
-          <div fxFlex="none" class="tag-details-row-title">{{'application.tags' | translation}}</div>
           <div fxFlex>
             <mat-chip-list>
               <mat-chip *ngFor="let tag of row.applicationTags"
@@ -118,8 +135,8 @@
              [class.row-highlight]="highlight(i)"
              (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave()"></mat-row>
 
-    <mat-row *matRowDef="let row; columns: ['tags']; let i = dataIndex;"
-             class="tag-row" [class.row-highlight]="highlight(i)"
+    <mat-row *matRowDef="let row; columns: ['latestComment', 'tags']; let i = dataIndex;"
+             class="details-row details-row-last" [class.row-highlight]="highlight(i)"
              (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave()"></mat-row>
   </mat-table>
 

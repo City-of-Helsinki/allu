@@ -82,6 +82,12 @@ mat-cell.mat-cell-4 {
   flex: 4;
 }
 
+mat-header-cell.mat-cell-selection,
+mat-cell.mat-cell-selection {
+  flex: none;
+  padding-right: 34px;
+}
+
 .mat-cell-text-limit {
   text-overflow: ellipsis;
   white-space: nowrap;
