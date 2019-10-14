@@ -1,14 +1,29 @@
-<div class="validity-period-container">
-  <span>{{startTime | date:'shortDate'}}</span>
-  <ng-container *ngIf="endTime">
-    <span>-</span>
-    <ng-container>
+<div [ngSwitch]="recurringType" class="validity-period-container">
+  <ng-container *ngSwitchCase="'until'">
+    <span>{{startTime | date:'dd.MM.'}}</span>
+    <ng-container *ngIf="endTime">
+      <span>-</span>
+      <span>{{endTime | date:'dd.MM.'}}</span>
+      <span>{{'application.recurring.betweenYears' | translation:{startYear: startTime.getFullYear(), endYear: recurringEndTime.getFullYear() } }}</span>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngSwitchCase="'forNow'">
+    <span>{{startTime | date:'dd.MM.'}}</span>
+    <ng-container *ngIf="endTime">
+      <span>-</span>
+      <span>{{endTime | date:'dd.MM.'}}</span>
+      <span>{{'application.recurring.recurringFromYear' | translation:{startYear: startTime.getFullYear()} }}</span>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    <span>{{startTime | date:'shortDate'}}</span>
+    <ng-container *ngIf="endTime">
+      <span>-</span>
       <span>{{endTime | date:'shortDate'}}</span>
-      <span *ngIf="recurringType === 'until'">, {{'application.recurring.recurringYearlyUntil' | translation:{year: recurringEndTime.getFullYear()} | lowercase }}</span>
-      <span *ngIf="recurringType === 'forNow'">, {{'application.recurring.recurringYearlyForNow' | translation | lowercase}}</span>
     </ng-container>
   </ng-container>
 </div>
+
 <div class="text-hint" *ngIf="terminationDate">
   {{'application.common.terminatedExpires' | translation}} {{terminationDate | date: 'shortDate'}}
 </div>
