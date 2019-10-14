@@ -9,7 +9,7 @@ import * as fromApplication from '@feature/application/reducers';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {MatDialog} from '@angular/material';
 import {DISTRIBUTION_MODAL_CONFIG, DistributionModalComponent} from '@feature/application/distribution/distribution-modal.component';
-import {ApplicationStatus, isSameOrBetween} from '@model/application/application-status';
+import {distributionChangeAllowed} from '@model/application/application-status';
 
 @Component({
   selector: 'decision',
@@ -38,7 +38,7 @@ export class DecisionComponent implements OnInit {
 
     this.distributionChangeAllowed$ = this.store.pipe(
       select(fromApplication.getCurrentApplication),
-      map(app => isSameOrBetween(app.status, ApplicationStatus.PRE_RESERVED, ApplicationStatus.TERMINATED))
+      map(app => distributionChangeAllowed(app.status))
     );
   }
 

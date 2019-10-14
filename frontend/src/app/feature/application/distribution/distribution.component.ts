@@ -5,7 +5,7 @@ import {PublicityType} from '@model/application/publicity-type';
 import {EnumUtil} from '@util/enum.util';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {Subscription} from 'rxjs';
-import {ApplicationStatus, isSameOrBetween} from '@model/application/application-status';
+import {distributionChangeAllowed} from '@model/application/application-status';
 
 @Component({
   selector: 'distribution',
@@ -40,7 +40,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
       this.communicationForm.disable();
     }
 
-    this.distributionChangeAllowed = isSameOrBetween(this.application.status, ApplicationStatus.PRE_RESERVED, ApplicationStatus.TERMINATED);
+    this.distributionChangeAllowed = distributionChangeAllowed(this.application.status);
   }
 
   ngOnDestroy(): void {

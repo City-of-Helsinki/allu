@@ -152,3 +152,6 @@ export enum ApplicationStatusGroup {
   DECISION = 'DECISION',
   HISTORY = 'HISTORY'
 }
+
+export const distributionChangeAllowed = (status: ApplicationStatus) =>
+  isSameOrBetween(status, ApplicationStatus.PRE_RESERVED, ApplicationStatus.FINISHED);
