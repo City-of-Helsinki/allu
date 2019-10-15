@@ -1,0 +1,2 @@
+<ng-container *ngIf="recurring; else normalStartTime">{{startTime | date:'dd.MM.'}}</ng-container>
+<ng-template #normalStartTime>{{startTime | date:'shortDate'}}</ng-template>

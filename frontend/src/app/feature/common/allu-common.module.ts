@@ -39,6 +39,8 @@ import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
 import {CountryNamePipe} from '@app/pipe/country-name-pipe';
 import {PartialListDisplayComponent} from '@feature/common/partial-list-display/partial-list-display.component';
 import {ValidityTimeComponent} from '@feature/common/validity-time/validity-time.component';
+import {ValidityEndTimeComponent} from '@feature/common/validity-time/validity-end-time.component';
+import {ValidityStartTimeComponent} from '@feature/common/validity-time/validity-start-time.component';
 
 @NgModule({
   imports: [
@@ -64,7 +66,9 @@ import {ValidityTimeComponent} from '@feature/common/validity-time/validity-time
     BottomBarComponent,
     AlluCardComponent,
     PartialListDisplayComponent,
-    ValidityTimeComponent
+    ValidityTimeComponent,
+    ValidityStartTimeComponent,
+    ValidityEndTimeComponent
   ],
   providers: [],
   exports: [
@@ -107,7 +111,9 @@ import {ValidityTimeComponent} from '@feature/common/validity-time/validity-time
     CentsToEurosPipe,
     CountryNamePipe,
     PartialListDisplayComponent,
-    ValidityTimeComponent
+    ValidityTimeComponent,
+    ValidityStartTimeComponent,
+    ValidityEndTimeComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

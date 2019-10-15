@@ -1,0 +1,13 @@
+<ng-container [ngSwitch]="recurringType">
+  <ng-container *ngSwitchCase="'until'">
+    <span>{{endTime | date:'dd.MM.'}}</span>
+    <span>{{'application.recurring.betweenYears' | translation:{startYear: startTime.getFullYear(), endYear: recurringEndTime.getFullYear() } }}</span>
+  </ng-container>
+  <ng-container *ngSwitchCase="'forNow'">
+    <span>{{endTime | date:'dd.MM.'}}</span>
+    <span>{{'application.recurring.recurringFromYear' | translation:{startYear: startTime.getFullYear()} }}</span>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    <span>{{endTime | date:'shortDate'}}</span>
+  </ng-container>
+</ng-container>

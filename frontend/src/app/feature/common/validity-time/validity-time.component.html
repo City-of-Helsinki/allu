@@ -1,25 +1,32 @@
 <div [ngSwitch]="recurringType" class="validity-period-container">
   <ng-container *ngSwitchCase="'until'">
-    <span>{{startTime | date:'dd.MM.'}}</span>
+    <span><validity-start-time [startTime]="startTime" [recurring]="true"></validity-start-time></span>
     <ng-container *ngIf="endTime">
-      <span>-</span>
-      <span>{{endTime | date:'dd.MM.'}}</span>
-      <span>{{'application.recurring.betweenYears' | translation:{startYear: startTime.getFullYear(), endYear: recurringEndTime.getFullYear() } }}</span>
+      <span class="date-separator">-</span>
+      <validity-end-time
+          [startTime]="startTime"
+          [endTime]="endTime"
+          [recurringEndTime]="recurringEndTime"></validity-end-time>
     </ng-container>
   </ng-container>
   <ng-container *ngSwitchCase="'forNow'">
     <span>{{startTime | date:'dd.MM.'}}</span>
     <ng-container *ngIf="endTime">
-      <span>-</span>
-      <span>{{endTime | date:'dd.MM.'}}</span>
-      <span>{{'application.recurring.recurringFromYear' | translation:{startYear: startTime.getFullYear()} }}</span>
+      <span class="date-separator">-</span>
+      <validity-end-time
+        [startTime]="startTime"
+        [endTime]="endTime"
+        [recurringEndTime]="recurringEndTime"></validity-end-time>
     </ng-container>
   </ng-container>
   <ng-container *ngSwitchDefault>
     <span>{{startTime | date:'shortDate'}}</span>
     <ng-container *ngIf="endTime">
-      <span>-</span>
-      <span>{{endTime | date:'shortDate'}}</span>
+      <span class="date-separator">-</span>
+      <validity-end-time
+        [startTime]="startTime"
+        [endTime]="endTime"
+        [recurringEndTime]="recurringEndTime"></validity-end-time>
     </ng-container>
   </ng-container>
 </div>
