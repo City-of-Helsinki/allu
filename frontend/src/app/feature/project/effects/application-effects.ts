@@ -104,7 +104,15 @@ export class ApplicationEffects {
     map(action => action.payload),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     switchMap(([payload, project]) => this.projectService.addProjectApplications(project.id, payload).pipe(
-      switchMap((applications) => [new AddSuccess(applications), new Clear()]),
+      switchMap((applications) => {
+        if (applications && applications.length) {
+          // Only clear application basket when applications in basket
+          // were added to project
+          return [new AddSuccess(applications), new Clear()];
+        } else {
+          return [new AddSuccess(applications)];
+        }
+      }),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
