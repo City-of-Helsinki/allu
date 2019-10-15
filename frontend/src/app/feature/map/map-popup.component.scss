@@ -1,5 +1,9 @@
 @import '../../../assets/colors';
 
+:host {
+  display: block;
+}
+
 h1.popup-header {
   font-size: 15px;
   line-height: 20px;
@@ -25,4 +29,8 @@ h1.popup-header {
 
 .popup-content .content-row-bold {
   font-weight: bold;
+}
+
+.popup-content .single-line {
+  white-space: nowrap;
 }

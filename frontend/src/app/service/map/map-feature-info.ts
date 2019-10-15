@@ -3,7 +3,8 @@ export interface MapFeatureInfo {
   applicationId?: string;
   type?: string;
   name?: string;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
+  recurringEndTime?: Date;
   applicant?: string;
 }

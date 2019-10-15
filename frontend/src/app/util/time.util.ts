@@ -8,6 +8,7 @@ export const MAX_DATE: Date = new Date('9999-12-31T23:59:59');
 export const UI_PIPE_DATE_FORMAT = 'dd.MM.yyyy'; // Used by angular date pipe
 export const UI_DATE_FORMAT = 'DD.MM.YYYY';
 export const UI_DATE_TIME_FORMAT = 'DD.MM.YYYY HH:mm';
+export const DATE_MONTH_FORMAT = 'dd.MM.';
 const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
 const DAYS_IN_WEEK = 7;

@@ -1,17 +1,21 @@
 import * as L from 'leaflet';
 import {ALLU_PREFIX, isWinkkiId} from './map-layer-id';
 import {findTranslation} from '@util/translations';
-import {ApplicationRef, ComponentFactoryResolver, Injectable, Injector} from '@angular/core';
+import {ApplicationRef, ComponentFactoryResolver, Inject, Injectable, Injector, LOCALE_ID} from '@angular/core';
 import {MapPopupComponent, MapPopupContentRow} from '@feature/map/map-popup.component';
 import {Feature, GeometryObject} from 'geojson';
 import {ArrayUtil} from '@util/array-util';
+import {recurringDateString, RecurringType, recurringTypeFromDate} from '@feature/application/info/recurring/recurring-type';
+import {formatDate} from '@angular/common';
+import {DATE_MONTH_FORMAT, TimeUtil} from '@util/time.util';
 
 @Injectable()
 export class MapPopupService {
 
   constructor(private cfr: ComponentFactoryResolver,
               private injector: Injector,
-              private appRef: ApplicationRef) {
+              private appRef: ApplicationRef,
+              @Inject(LOCALE_ID) private localeId: string) {
   }
 
   create(features: Feature<GeometryObject>[]): HTMLElement {
@@ -61,7 +65,7 @@ export class MapPopupService {
       contentRows = [
         this.createContentRowLink(properties.name, properties.id, 'content-row-bold'),
         this.createContentRow(properties.applicant),
-        this.createContentRow(`${properties.startTime} - ${properties.endTime}`)
+        this.createDateContentRow(properties.startTime, properties.endTime, this.localeId, properties.recurringEndTime)
       ];
     } else if (isWinkkiId(featureId)) {
       contentRows = [
@@ -84,7 +88,7 @@ export class MapPopupService {
         contentRows.push(
           this.createContentRowLink(properties.applicationId, properties.id, 'content-row-bold'),
           this.createContentRow(properties.applicant),
-          this.createContentRow(`${properties.startTime} - ${properties.endTime}`));
+          this.createDateContentRow(properties.startTime, properties.endTime, this.localeId, properties.recurringEndTime));
       } else if (isWinkkiId(featureId)) {
         contentRows.push(
           this.createContentRow(properties.licence_identifier, 'content-row-bold'),
@@ -108,6 +112,13 @@ export class MapPopupService {
       class: className,
       idForBasket: id
     };
+  }
+
+  private createDateContentRow(startTime: Date, endTime: Date, localeId: string, recurringEndTime?: Date): MapPopupContentRow {
+    return this.createContentRow(
+      recurringDateString(startTime, endTime, localeId, recurringEndTime),
+      'single-line'
+    );
   }
 
   private createPopup(header: string, contentRows: MapPopupContentRow[]): HTMLElement {

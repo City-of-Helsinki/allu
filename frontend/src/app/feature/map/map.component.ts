@@ -147,8 +147,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       id: application.id,
       name: application.name,
       applicationId: application.applicationId,
-      startTime: TimeUtil.getUiDateString(application.startTime),
-      endTime: TimeUtil.getUiDateString(application.endTime),
+      startTime: application.startTime,
+      endTime: application.endTime,
+      recurringEndTime: application.recurringEndTime,
       applicant: Some(application.applicant.customer).map(c => c.name).orElse(undefined)
     };
   }
