@@ -12,6 +12,7 @@ import {WorkQueueContentComponent} from '../workqueue/content/workqueue-content.
 import {
   WorkQueueContentComponent as SupervisionWorkQueueContentComponent
 } from '../supervision-workqueue/content/workqueue-content.component';
+import {ErrorPageComponent} from '@feature/common/error-page/error-page.component';
 
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -31,5 +32,6 @@ export const rootRoutes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [CanActivateLogin] },
   { path: 'logout', component: LoginComponent },
   { path: 'oauth2', component: Oauth2Component, canActivate: [AuthGuard]},
+  { path: 'error', component: ErrorPageComponent },
   { path: '**', redirectTo: 'home' }
 ];

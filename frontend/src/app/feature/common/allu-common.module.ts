@@ -41,6 +41,8 @@ import {PartialListDisplayComponent} from '@feature/common/partial-list-display/
 import {ValidityTimeComponent} from '@feature/common/validity-time/validity-time.component';
 import {ValidityEndTimeComponent} from '@feature/common/validity-time/validity-end-time.component';
 import {ValidityStartTimeComponent} from '@feature/common/validity-time/validity-start-time.component';
+import {LocalLoaderService} from '@feature/common/local-loader/local-loader.service';
+import {ErrorPageComponent} from '@feature/common/error-page/error-page.component';
 
 @NgModule({
   imports: [
@@ -68,9 +70,12 @@ import {ValidityStartTimeComponent} from '@feature/common/validity-time/validity
     PartialListDisplayComponent,
     ValidityTimeComponent,
     ValidityStartTimeComponent,
-    ValidityEndTimeComponent
+    ValidityEndTimeComponent,
+    ErrorPageComponent
   ],
-  providers: [],
+  providers: [
+    LocalLoaderService
+  ],
   exports: [
     CommonModule,
     MatToolbarModule,
@@ -113,7 +118,8 @@ import {ValidityStartTimeComponent} from '@feature/common/validity-time/validity
     PartialListDisplayComponent,
     ValidityTimeComponent,
     ValidityStartTimeComponent,
-    ValidityEndTimeComponent
+    ValidityEndTimeComponent,
+    ErrorPageComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

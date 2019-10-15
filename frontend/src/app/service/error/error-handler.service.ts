@@ -1,5 +1,4 @@
-
-import {throwError, Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {ErrorInfo} from './error-info';
 import {Router} from '@angular/router';
@@ -19,9 +18,8 @@ export class ErrorHandler {
 
     const title = this.mapStatusToTitle(error);
 
-    if (HttpStatus.UNAUTHORIZED === error.status) {
-      this.router.navigate(['/home']);
-    }
+    this.handleRouting(error.status);
+
     return throwError(new ErrorInfo(title, message));
   }
 
@@ -37,6 +35,14 @@ export class ErrorHandler {
         return findTranslation(['httpStatus', HttpStatus[error.status]]);
       default:
         return findTranslation('httpStatus.UNKNOWN');
+    }
+  }
+
+  private handleRouting(status: HttpStatus): void {
+    if (HttpStatus.UNAUTHORIZED === status) {
+      this.router.navigate(['/home']);
+    } else if (HttpStatus.GATEWAY_TIMEOUT === status) {
+      this.router.navigate(['/error']);
     }
   }
 }

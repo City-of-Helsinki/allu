@@ -2029,7 +2029,7 @@ export const translations = {
     FORBIDDEN: 'Oikeutesi eivät riitä',
     NOT_FOUND: 'Haku epäonnistui',
     INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
-    GATEWAY_TIMEOUT: 'Palvelimeen ei saatu yhteyttä',
+    GATEWAY_TIMEOUT: 'Palveluun ei saada yhteyttä',
     CONFLICT: 'Tallennus epäonnistui',
     UNKNOWN: 'Tuntematon virhe'
   },
@@ -2074,7 +2074,11 @@ export const translations = {
     field: {
       valueMissing: 'Arvo puuttuu'
     }
-  }
+  },
+  error: {
+    header: 'Tapahtui virhe',
+    inCaseOfLongDowntime: 'Ongelman jatkuessa ota yhteys {{contactInfo}}',
+  },
 };
 
 const toKey = (path: string | Array<string>): Option<Array<string>> => {

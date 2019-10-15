@@ -1,0 +1,9 @@
+<div>
+  <h1>{{'error.header' | translation}}</h1>
+  <div *ngIf="error$ | async as error">
+    <h3>{{error.title}}</h3>
+    <p *ngIf="contactInfo$ | async as contactInfo">
+      {{'error.inCaseOfLongDowntime' | translation:{contactInfo: contactInfo} }}
+    </p>
+  </div>
+</div>
