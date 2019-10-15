@@ -2029,7 +2029,8 @@ export const translations = {
     FORBIDDEN: 'Oikeutesi eivät riitä',
     NOT_FOUND: 'Haku epäonnistui',
     INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
-    GATEWAY_TIMEOUT: 'Palveluun ei saada yhteyttä',
+    GATEWAY_TIMEOUT: 'Palvelin ei vastaa pyyntöihin riittävän nopeasti',
+    SERVICE_UNAVAILABLE: 'Palvelimeen ei saada yhteyttä',
     CONFLICT: 'Tallennus epäonnistui',
     UNKNOWN: 'Tuntematon virhe'
   },

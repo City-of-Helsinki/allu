@@ -31,6 +31,7 @@ export class ErrorHandler {
       case HttpStatus.NOT_FOUND:
       case HttpStatus.INTERNAL_SERVER_ERROR:
       case HttpStatus.GATEWAY_TIMEOUT:
+      case HttpStatus.SERVICE_UNAVAILABLE:
       case HttpStatus.CONFLICT:
         return findTranslation(['httpStatus', HttpStatus[error.status]]);
       default:
@@ -41,7 +42,7 @@ export class ErrorHandler {
   private handleRouting(status: HttpStatus): void {
     if (HttpStatus.UNAUTHORIZED === status) {
       this.router.navigate(['/home']);
-    } else if (HttpStatus.GATEWAY_TIMEOUT === status) {
+    } else if ([HttpStatus.GATEWAY_TIMEOUT, HttpStatus.SERVICE_UNAVAILABLE].indexOf(status) >= 0) {
       this.router.navigate(['/error']);
     }
   }
