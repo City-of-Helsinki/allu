@@ -30,6 +30,8 @@ import fi.hel.allu.supervision.api.domain.BaseApplication;
 import fi.hel.allu.supervision.api.service.ApplicationUpdateService;
 import io.swagger.annotations.*;
 
+import javax.validation.Valid;
+
 public abstract class BaseApplicationDetailsController<A extends BaseApplication<?>, U extends CreateApplicationJson> {
 
 
@@ -120,10 +122,9 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   })
   @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<A> createApplication(@RequestBody @ApiParam("New application") U application) {
+  public ResponseEntity<A> createApplication(@RequestBody @Valid @ApiParam("New application") U application) {
     application.setType(getApplicationType());
 
-    // TODO validations
     ApplicationJson newApplication = applicationMapper.mapCreateJsonToApplicationJson(application, customerService);
     ApplicationJson createdApplication = applicationServiceComposer.createApplication(newApplication);
     return ResponseEntity.ok(mapApplication(createdApplication));

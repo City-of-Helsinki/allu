@@ -202,6 +202,9 @@ public class LocationJson {
 
   @JsonIgnore
   public boolean getStartTimeNotAfterEndTimeValidation() {
+    if (startTime == null || endTime == null) {
+      return true; // this prevents npe in this validator, the null values will trigger separate validations
+    }
     return !startTime.isAfter(endTime);
   }
 

@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.domain.validator;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.BaseApplicationJson;
 import fi.hel.allu.servicecore.domain.EventJson;
 
 import javax.validation.ConstraintValidator;
@@ -20,11 +21,11 @@ public class ApplicationJsonValidator implements ConstraintValidator<ValidApplic
 
   @Override
   public boolean isValid(Object t, ConstraintValidatorContext cvc) {
-    if (t == null || !(t instanceof ApplicationJson)) {
+    if (t == null || !(t instanceof BaseApplicationJson)) {
       return false;
     }
 
-    final ApplicationJson app = (ApplicationJson)t;
+    final BaseApplicationJson app = (BaseApplicationJson)t;
 
     if (ApplicationType.EVENT != app.getType()) {
       return true;
