@@ -2,7 +2,7 @@
   <ng-container *ngSwitchCase="'until'">
     <span><validity-start-time [startTime]="startTime" [recurring]="true"></validity-start-time></span>
     <ng-container *ngIf="endTime">
-      <span class="date-separator">-</span>
+      <span>–</span>
       <validity-end-time
           [startTime]="startTime"
           [endTime]="endTime"
@@ -12,7 +12,7 @@
   <ng-container *ngSwitchCase="'forNow'">
     <span>{{startTime | date:'dd.MM.'}}</span>
     <ng-container *ngIf="endTime">
-      <span class="date-separator">-</span>
+      <span>–</span>
       <validity-end-time
         [startTime]="startTime"
         [endTime]="endTime"
@@ -22,7 +22,7 @@
   <ng-container *ngSwitchDefault>
     <span>{{startTime | date:'shortDate'}}</span>
     <ng-container *ngIf="endTime">
-      <span class="date-separator">-</span>
+      <span>–</span>
       <validity-end-time
         [startTime]="startTime"
         [endTime]="endTime"

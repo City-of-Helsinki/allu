@@ -43,5 +43,5 @@ export function recurringDateString(startTime: Date, endTime: Date, localeId: st
 function recurringDateStringWithDescription(startTime: Date, endTime: Date, localeId: string, description: string): string {
   const startDayMonth = formatDate(startTime, DATE_MONTH_FORMAT, localeId);
   const endDayMonth = formatDate(endTime, DATE_MONTH_FORMAT, localeId);
-  return `${startDayMonth} - ${endDayMonth} ${description}`;
+  return `${startDayMonth}–${endDayMonth} ${description}`;
 }
