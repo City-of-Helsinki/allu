@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.mapper;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.codehaus.jackson.map.util.Comparators;
@@ -30,7 +29,6 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.domain.history.ApplicationForHistory;
 import fi.hel.allu.servicecore.domain.history.ApplicationTagForHistory;
 import fi.hel.allu.servicecore.mapper.extension.*;
-import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
 
@@ -487,21 +485,19 @@ public class ApplicationMapper {
 
   /**
    *
-   * @param createJson
-   * @param customerService customer service is passed as a parameter to prevent circular reference between services
    * @param <T>
+   * @param createJson
    * @return
    */
-  public <T extends CreateApplicationJson> ApplicationJson mapCreateJsonToApplicationJson(T createJson, CustomerService customerService) {
+  public <T extends CreateApplicationJson> ApplicationJson mapCreateJsonToApplicationJson(T createJson) {
     // map base class part
     ApplicationJson applicationJson = new ApplicationJson(createJson);
 
     // map customers
-    Map<CustomerRoleType, Integer> idsByRoleType = createJson.getAllCustomerIdsByCustomerRoleType();
-    Map<Integer, CustomerJson> customersById = getCustomersById(idsByRoleType, customerService);
+    Map<CustomerRoleType, CreateCustomerWithContactsJson> customersByRoleType = createJson.getAllCustomersWithContactsByCustomerRoleType();
 
-    List<CustomerWithContactsJson> customersWithContacts = idsByRoleType.entrySet().stream()
-      .map(entry -> new CustomerWithContactsJson(entry.getKey(), customersById.get(entry.getValue())))
+    List<CustomerWithContactsJson> customersWithContacts = customersByRoleType.entrySet().stream()
+      .map(entry -> createCustomerWithContactsJson(entry.getKey(), entry.getValue()))
       .collect(Collectors.toList());
 
     applicationJson.setCustomersWithContacts(customersWithContacts);
@@ -509,8 +505,10 @@ public class ApplicationMapper {
     return applicationJson;
   }
 
-  private Map<Integer, CustomerJson> getCustomersById(Map<CustomerRoleType, Integer> idsByRoleType, CustomerService customerService) {
-    List<CustomerJson> customers = customerService.getCustomersById(new ArrayList<>(idsByRoleType.values()));
-    return customers.stream().collect(Collectors.toMap(CustomerJson::getId, Function.identity()));
+  private CustomerWithContactsJson createCustomerWithContactsJson(CustomerRoleType roleType, CreateCustomerWithContactsJson customerWithContacts) {
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson(roleType, new CustomerJson(customerWithContacts.getCustomerId()));
+    customerWithContactsJson.setContacts(customerWithContacts.getContactIds().stream()
+      .map(ContactJson::new).collect(Collectors.toList()));
+    return customerWithContactsJson;
   }
 }

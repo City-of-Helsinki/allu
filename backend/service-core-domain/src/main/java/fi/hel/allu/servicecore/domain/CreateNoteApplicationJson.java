@@ -7,8 +7,8 @@ import java.util.Map;
 
 @ApiModel(value = "CreateNoteApplicationJson", description = "Model for creating new notes")
 public class CreateNoteApplicationJson extends CreateApplicationJson {
-  public Map<CustomerRoleType, Integer> getAllCustomerIdsByCustomerRoleType() {
-    return super.getAllCustomerIdsByCustomerRoleType();
+  public Map<CustomerRoleType, CreateCustomerWithContactsJson> getAllCustomersWithContactsByCustomerRoleType() {
+    return super.getAllCustomersWithContactsByCustomerRoleType();
   }
 }
 

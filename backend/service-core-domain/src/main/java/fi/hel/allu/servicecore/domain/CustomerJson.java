@@ -32,6 +32,13 @@ public class CustomerJson {
   private String country;
   private String projectIdentifierPrefix;
 
+  public CustomerJson() {
+  }
+
+  public CustomerJson(Integer id) {
+    this.id = id;
+  }
+
   @ApiModelProperty(value = "Id of the customer")
   public Integer getId() {
     return id;

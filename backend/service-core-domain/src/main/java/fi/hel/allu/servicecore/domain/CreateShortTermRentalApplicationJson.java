@@ -9,22 +9,22 @@ import java.util.Map;
 @ApiModel(value = "CreateShortTermRentalApplicationJson", description = "Model for creating short term rentals")
 public class CreateShortTermRentalApplicationJson extends CreateApplicationJson {
 
-  private Integer customerRepresentativeId;
+  private CreateCustomerWithContactsJson customerRepresentativeWithContacts;
 
-  public Integer getCustomerRepresentativeId() {
-    return customerRepresentativeId;
+  public CreateCustomerWithContactsJson getCustomerRepresentativeWithContacts() {
+    return customerRepresentativeWithContacts;
   }
 
-  public void setCustomerRepresentativeId(Integer customerRepresentativeId) {
-    this.customerRepresentativeId = customerRepresentativeId;
+  public void setCustomerRepresentativeWithContacts(CreateCustomerWithContactsJson customerRepresentativeWithContacts) {
+    this.customerRepresentativeWithContacts = customerRepresentativeWithContacts;
   }
 
-  public Map<CustomerRoleType, Integer> getAllCustomerIdsByCustomerRoleType() {
-    Map<CustomerRoleType, Integer> ids = new HashMap<>();
-    ids.putAll(super.getAllCustomerIdsByCustomerRoleType());
-    if (customerRepresentativeId != null) {
-      ids.put(CustomerRoleType.REPRESENTATIVE, customerRepresentativeId);
+  public Map<CustomerRoleType, CreateCustomerWithContactsJson> getAllCustomersWithContactsByCustomerRoleType() {
+    Map<CustomerRoleType, CreateCustomerWithContactsJson> customersWithContacts = new HashMap<>();
+    customersWithContacts.putAll(super.getAllCustomersWithContactsByCustomerRoleType());
+    if (customerRepresentativeWithContacts != null) {
+      customersWithContacts.put(CustomerRoleType.REPRESENTATIVE, customerRepresentativeWithContacts);
     }
-    return ids;
+    return customersWithContacts;
   }
 }

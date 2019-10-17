@@ -9,46 +9,46 @@ import java.util.Map;
 @ApiModel(value = "CreateAreaRentalApplicationJson", description = "Model for creating new area rentals")
 public class CreateAreaRentalApplicationJson extends CreateApplicationJson {
 
-  private Integer customerPropertyDeveloperId;
-  private Integer customerContractorId;
-  private Integer customerRepresentativeId;
+  private CreateCustomerWithContactsJson customerPropertyDeveloperWithContacts;
+  private CreateCustomerWithContactsJson customerContractorWithContacts;
+  private CreateCustomerWithContactsJson customerRepresentativeWithContacts;
 
-  public Integer getCustomerPropertyDeveloperId() {
-    return customerPropertyDeveloperId;
+  public CreateCustomerWithContactsJson getCustomerPropertyDeveloperWithContacts() {
+    return customerPropertyDeveloperWithContacts;
   }
 
-  public void setCustomerPropertyDeveloperId(Integer customerPropertyDeveloperId) {
-    this.customerPropertyDeveloperId = customerPropertyDeveloperId;
+  public void setCustomerPropertyDeveloperWithContacts(CreateCustomerWithContactsJson customerPropertyDeveloperWithContacts) {
+    this.customerPropertyDeveloperWithContacts = customerPropertyDeveloperWithContacts;
   }
 
-  public Integer getCustomerContractorId() {
-    return customerContractorId;
+  public CreateCustomerWithContactsJson getCustomerContractorWithContacts() {
+    return customerContractorWithContacts;
   }
 
-  public void setCustomerContractorId(Integer customerContractorId) {
-    this.customerContractorId = customerContractorId;
+  public void setCustomerContractorWithContacts(CreateCustomerWithContactsJson customerContractorWithContacts) {
+    this.customerContractorWithContacts = customerContractorWithContacts;
   }
 
-  public Integer getCustomerRepresentativeId() {
-    return customerRepresentativeId;
+  public CreateCustomerWithContactsJson getCustomerRepresentativeWithContacts() {
+    return customerRepresentativeWithContacts;
   }
 
-  public void setCustomerRepresentativeId(Integer customerRepresentativeId) {
-    this.customerRepresentativeId = customerRepresentativeId;
+  public void setCustomerRepresentativeWithContacts(CreateCustomerWithContactsJson customerRepresentativeWithContacts) {
+    this.customerRepresentativeWithContacts = customerRepresentativeWithContacts;
   }
 
-  public Map<CustomerRoleType, Integer> getAllCustomerIdsByCustomerRoleType() {
-    Map<CustomerRoleType, Integer> ids = new HashMap<>();
-    ids.putAll(super.getAllCustomerIdsByCustomerRoleType());
-    if (customerPropertyDeveloperId != null) {
-      ids.put(CustomerRoleType.PROPERTY_DEVELOPER, customerPropertyDeveloperId);
+  public Map<CustomerRoleType, CreateCustomerWithContactsJson> getAllCustomersWithContactsByCustomerRoleType() {
+    Map<CustomerRoleType, CreateCustomerWithContactsJson> customersWithContacts = new HashMap<>();
+    customersWithContacts.putAll(super.getAllCustomersWithContactsByCustomerRoleType());
+    if (customerPropertyDeveloperWithContacts != null) {
+      customersWithContacts.put(CustomerRoleType.PROPERTY_DEVELOPER, customerPropertyDeveloperWithContacts);
     }
-    if (customerContractorId != null) {
-      ids.put(CustomerRoleType.CONTRACTOR, customerContractorId);
+    if (customerContractorWithContacts != null) {
+      customersWithContacts.put(CustomerRoleType.CONTRACTOR, customerContractorWithContacts);
     }
-    if (customerRepresentativeId != null) {
-      ids.put(CustomerRoleType.REPRESENTATIVE, customerRepresentativeId);
+    if (customerRepresentativeWithContacts != null) {
+      customersWithContacts.put(CustomerRoleType.REPRESENTATIVE, customerRepresentativeWithContacts);
     }
-    return ids;
+    return customersWithContacts;
   }
 }

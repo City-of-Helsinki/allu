@@ -20,6 +20,13 @@ public class ContactJson {
   private boolean active;
   private Boolean orderer;
 
+  public ContactJson() {
+  }
+
+  public ContactJson(Integer id) {
+    this.id = id;
+  }
+
   @ApiModelProperty(value = "Id of the contact")
   public Integer getId() {
     return id;

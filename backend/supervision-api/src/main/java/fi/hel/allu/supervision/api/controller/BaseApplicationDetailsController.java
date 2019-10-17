@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.servicecore.domain.CreateApplicationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,8 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
@@ -50,9 +47,6 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   protected LocationService locationService;
   @Autowired
   protected ApplicationMapper applicationMapper;
-  @Autowired
-  protected CustomerService customerService;
-
 
 
   @ApiOperation(value = "Get application details",
@@ -125,7 +119,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   public ResponseEntity<A> createApplication(@RequestBody @Valid @ApiParam("New application") U application) {
     application.setType(getApplicationType());
 
-    ApplicationJson newApplication = applicationMapper.mapCreateJsonToApplicationJson(application, customerService);
+    ApplicationJson newApplication = applicationMapper.mapCreateJsonToApplicationJson(application);
     ApplicationJson createdApplication = applicationServiceComposer.createApplication(newApplication);
     return ResponseEntity.ok(mapApplication(createdApplication));
   }

@@ -7,21 +7,21 @@ import java.util.Map;
 
 public abstract class CreateApplicationJson extends BaseApplicationJson {
 
-  private Integer customerApplicantId;
+  private CreateCustomerWithContactsJson customerApplicantWithContacts;
 
-  public Integer getCustomerApplicantId() {
-    return customerApplicantId;
+  public CreateCustomerWithContactsJson getCustomerApplicantWithContacts() {
+    return customerApplicantWithContacts;
   }
 
-  public void setCustomerApplicantId(Integer customerApplicantId) {
-    this.customerApplicantId = customerApplicantId;
+  public void setCustomerApplicantWithContacts(CreateCustomerWithContactsJson customerApplicantWithContacts) {
+    this.customerApplicantWithContacts = customerApplicantWithContacts;
   }
 
-  public Map<CustomerRoleType, Integer> getAllCustomerIdsByCustomerRoleType() {
-    Map<CustomerRoleType, Integer> ids = new HashMap<>();
-    if (customerApplicantId != null) {
-      ids.put(CustomerRoleType.APPLICANT, customerApplicantId);
+  public Map<CustomerRoleType, CreateCustomerWithContactsJson> getAllCustomersWithContactsByCustomerRoleType() {
+    Map<CustomerRoleType, CreateCustomerWithContactsJson> customersWithContacts = new HashMap<>();
+    if (customerApplicantWithContacts != null) {
+      customersWithContacts.put(CustomerRoleType.APPLICANT, customerApplicantWithContacts);
     }
-    return ids;
+    return customersWithContacts;
   }
 }
