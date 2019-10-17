@@ -169,7 +169,7 @@ describe('SupervisionTaskComponent', () => {
     const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
     editBtn.click();
     detectAndTick();
-    const valueBeforeReset = comp.form.value;
+    const valueBeforeReset = comp.form.getRawValue();
     comp.form.patchValue(validTask);
     detectAndTick();
     const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel'));
