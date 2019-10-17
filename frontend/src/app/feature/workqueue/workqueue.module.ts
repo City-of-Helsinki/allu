@@ -17,6 +17,7 @@ import {RouterModule} from '@angular/router';
 import {StoredFilterModule} from '../stored-filter/stored-filter.module';
 import {StoreModule} from '@ngrx/store';
 import {reducersProvider, reducersToken} from '@feature/workqueue/reducers';
+import {CommentModule} from '@feature/comment/comment.module';
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import {reducersProvider, reducersToken} from '@feature/workqueue/reducers';
     SelectionGroupModule,
     OwnerModalModule,
     StoredFilterModule,
-    StoreModule.forFeature('workQueue', reducersToken)
+    StoreModule.forFeature('workQueue', reducersToken),
+    CommentModule
   ],
   declarations: [
     WorkQueueComponent,

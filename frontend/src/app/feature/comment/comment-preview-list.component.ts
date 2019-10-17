@@ -10,12 +10,23 @@ import {Comment} from '../../model/application/comment/comment';
 export class CommentPreviewListComponent {
   visibleComments: Comment[];
   @Input() commentLink: (string | number)[];
+  @Input() visibleCount: number;
+  @Input() showFull = false;
+  @Input() noCommentText: string;
 
   constructor() {}
 
   @Input('comments') set comments(comments: Comment[]) {
     this.visibleComments = comments
-      ? comments.slice(0, 3) // Take only 3 first comments
+      ? this.getVisibleComments(comments)
       : [];
+  }
+
+  getVisibleComments(allComments: Comment[] = []): Comment[] {
+    if (this.visibleCount === undefined || this.visibleCount >= allComments.length) {
+      return allComments;
+    } else {
+      return allComments.slice(0, this.visibleCount);
+    }
   }
 }

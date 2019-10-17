@@ -1542,7 +1542,9 @@ export const translations = {
   },
   comment: {
     title: 'Kommentit',
+    noComments: 'Ei näytettäviä kommentteja',
     noProjectComments: 'Hanketta ei ole kommentoitu',
+    noApplicationComments: 'Hakemusta ei ole kommentoitu',
     showComments: 'Näytä kommentit',
     type: {
       INTERNAL: 'Sisäinen kommentti',

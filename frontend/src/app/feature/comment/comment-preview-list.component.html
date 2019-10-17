@@ -1,5 +1,10 @@
 <div *ngIf="!visibleComments.length">
-  {{'comment.noProjectComments' | translation}}
+  <ng-container *ngIf="noCommentText; else defaultNoCommentText">
+    {{noCommentText}}
+  </ng-container>
+  <ng-template #defaultNoCommentText>
+    {{'comment.noComments' | translation}}
+  </ng-template>
 </div>
 
 <div *ngIf="visibleComments.length">
@@ -19,13 +24,16 @@
 
       <div fxLayout="row">
         <div fxFlex="100%">
-          <div class="text-preview">{{comment.text}}</div>
+          <div [ngClass]="{
+          'text-preview-full': showFull,
+          'text-preview': !showFull
+          }">{{comment.text}}</div>
         </div>
       </div>
     </li>
   </ul>
 
-  <div fxLayout="row">
+  <div fxLayout="row" *ngIf="commentLink">
     <div fxFlex class="comments-link">
       <a [routerLink]="commentLink">{{'comment.showComments' | translation}}</a>
     </div>

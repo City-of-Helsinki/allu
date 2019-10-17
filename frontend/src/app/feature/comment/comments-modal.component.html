@@ -1,22 +1,12 @@
 <h1 mat-dialog-title>{{'application.comments' | translation}}</h1>
 <div mat-dialog-content>
-  <ul>
-    <li *ngFor="let comment of comments | async">
-      <div fxLayout="row" fxLayoutGap="12px">
-        <div fxFlex="none">
-          <ng-container *ngIf="comment.updateTime; else createTime">
-            {{comment.updateTime | date:'short'}}
-          </ng-container>
-          <ng-template #createTime>
-            {{comment.createTime | date:'short'}}
-          </ng-template>
-        </div>
-        <div fxFlex="0 0 calc(60% - 12px)" class="text-primary">{{comment.text}}</div>
-        <div fxFlex="0 0 calc(20% - 12px)" class="text-primary">{{comment.user?.realName}}</div>
-      </div>
-    </li>
-  </ul>
-
+  <ng-container *ngIf="comments$ | async as comments">
+    <comment-preview-list
+      [comments]="comments"
+      [visibleCount]="comments.length"
+      [showFull]="true"
+      [noCommentText]="'comment.noApplicationComments | translation'"></comment-preview-list>
+  </ng-container>
 </div>
 <div mat-dialog-actions>
   <button

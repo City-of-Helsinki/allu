@@ -20,7 +20,7 @@ export interface CommentsModalData {
   styleUrls: []
 })
 export class CommentsModalComponent implements OnInit {
-  comments: Observable<Array<Comment>>;
+  comments$: Observable<Array<Comment>>;
 
   constructor(public dialogRef: MatDialogRef<CommentsModalComponent>,
               private commentService: CommentService,
@@ -29,7 +29,7 @@ export class CommentsModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.comments = this.commentService.getCommentsFor(ActionTargetType.Application, this.data.applicationId).pipe(
+    this.comments$ = this.commentService.getCommentsFor(ActionTargetType.Application, this.data.applicationId).pipe(
       catchError(err => {
         this.notification.errorInfo(err);
         return of([]);
