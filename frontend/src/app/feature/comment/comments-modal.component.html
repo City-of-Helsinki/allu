@@ -1,20 +1,29 @@
-<h1 mat-dialog-title>Hakemuksen kommentit</h1>
+<h1 mat-dialog-title>{{'application.comments' | translation}}</h1>
 <div mat-dialog-content>
-  <div *ngFor="let comment of comments | async">
-    <h1>{{['comment.type', comment.type] | translation}}</h1>
-    <div class="row">
-      <div class="col s12 text-faint">
-        <span>{{comment.user.realName}} {{comment.uiCreateTime}}</span>
-        <span *ngIf="comment.updateTime">- Päivitetty {{comment.uiUpdateTime}}</span>
+  <ul>
+    <li *ngFor="let comment of comments | async">
+      <div fxLayout="row" fxLayoutGap="12px">
+        <div fxFlex="none">
+          <ng-container *ngIf="comment.updateTime; else createTime">
+            {{comment.updateTime | date:'short'}}
+          </ng-container>
+          <ng-template #createTime>
+            {{comment.createTime | date:'short'}}
+          </ng-template>
+        </div>
+        <div fxFlex="0 0 calc(60% - 12px)" class="text-primary">{{comment.text}}</div>
+        <div fxFlex="0 0 calc(20% - 12px)" class="text-primary">{{comment.user?.realName}}</div>
       </div>
+    </li>
+  </ul>
 
-      <div class="col s12">
-        {{comment.text}}
-      </div>
-    </div>
-    <hr>
-  </div>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button type="button" color="primary" (click)="close()">SULJE</button>
+  <button
+    mat-raised-button
+    type="button"
+    color="primary"
+    (click)="close()">
+    {{'common.button.close' | translation | uppercase}}
+  </button>
 </div>
