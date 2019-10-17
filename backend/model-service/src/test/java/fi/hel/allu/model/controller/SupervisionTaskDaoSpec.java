@@ -113,16 +113,27 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
             TimeUtil.dateToMillis(created.getPlannedFinishingTime()));
       });
 
-      it("Update", () -> {
-        existingSupervisionTask.setResult("Testing was ok!");
-        existingSupervisionTask.setStatus(SupervisionTaskStatusType.APPROVED);
-        existingSupervisionTask.setActualFinishingTime(existingSupervisionTask.getPlannedFinishingTime().plusDays(1));
-        SupervisionTask updatedST = supervisionTaskDao.update(existingSupervisionTask);
-        assertEquals(existingSupervisionTask.getResult(), updatedST.getResult());
-        assertEquals(existingSupervisionTask.getStatus(), updatedST.getStatus());
-        assertEquals(
+      context("Update", () -> {
+        it("Basic update", () -> {
+          existingSupervisionTask.setResult("Testing was ok!");
+          existingSupervisionTask.setStatus(SupervisionTaskStatusType.APPROVED);
+          existingSupervisionTask.setActualFinishingTime(existingSupervisionTask.getPlannedFinishingTime().plusDays(1));
+          SupervisionTask updatedST = supervisionTaskDao.update(existingSupervisionTask);
+          assertEquals(existingSupervisionTask.getResult(), updatedST.getResult());
+          assertEquals(existingSupervisionTask.getStatus(), updatedST.getStatus());
+          assertEquals(
             TimeUtil.dateToMillis(existingSupervisionTask.getActualFinishingTime()), TimeUtil.dateToMillis(updatedST.getActualFinishingTime()));
+        });
+
+        it("should not update type", () -> {
+          SupervisionTaskType originalType = existingSupervisionTask.getType();
+          existingSupervisionTask.setResult("Testing was ok!");
+          existingSupervisionTask.setType(SupervisionTaskType.FINAL_SUPERVISION);
+          SupervisionTask updatedST = supervisionTaskDao.update(existingSupervisionTask);
+          assertEquals(originalType, updatedST.getType());
+        });
       });
+
 
       it("Delete", () -> {
         supervisionTaskDao.delete(existingSupervisionTask.getId());

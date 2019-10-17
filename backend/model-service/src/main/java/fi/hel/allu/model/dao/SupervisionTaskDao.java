@@ -58,7 +58,8 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 public class SupervisionTaskDao {
 
   /** Fields that won't be updated in regular updates */
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(supervisionTask.id, supervisionTask.creationTime);
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
+    supervisionTask.id, supervisionTask.creationTime, supervisionTask.type);
 
   final static QStructureMeta typeStructure = new QStructureMeta("typeStructure");
   final static QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");

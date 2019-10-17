@@ -163,7 +163,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.editing = true;
     this.form.enable();
     this.originalEntry = this.form.value;
-    if (this.form.value.automatic) {
+    if (this.originalEntry.automatic || this.originalEntry.id) {
       this.form.controls['type'].disable();
     }
   }
