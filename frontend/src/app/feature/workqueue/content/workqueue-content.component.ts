@@ -22,6 +22,7 @@ import {
   OWNER_NOTIFICATION_MODAL_CONFIG,
   OwnerNotificationModalComponent
 } from '@feature/application/owner-notification/owner-notification-modal.component';
+import {COMMENTS_MODAL_CONFIG, CommentsModalComponent} from '@feature/comment/comments-modal.component';
 
 @Component({
   selector: 'workqueue-content',
@@ -129,6 +130,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   showChanges(id) {
     const config = { ...OWNER_NOTIFICATION_MODAL_CONFIG, data: { applicationId: id } };
     this.dialog.open(OwnerNotificationModalComponent, config);
+  }
+
+  showComments(id: number) {
+    const config = { ...COMMENTS_MODAL_CONFIG, data: { applicationId: id } };
+    this.dialog.open(CommentsModalComponent, config);
   }
 
   private updateDisplayedColumns(tab: WorkQueueTab): void {

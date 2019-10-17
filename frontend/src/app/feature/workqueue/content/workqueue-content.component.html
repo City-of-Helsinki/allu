@@ -98,8 +98,12 @@
              fxLayoutAlign="start center"
              class="details-cell details-cell-text"
              *ngIf="row.latestComment">
-          <button mat-icon-button color="primary">
-            <mat-icon >chat_bubble_outline</mat-icon>
+          <button
+            mat-icon-button
+            type="button"
+            color="primary"
+            (click)="showComments(row.id)">
+            <mat-icon [matBadge]="row.nrOfComments">chat_bubble_outline</mat-icon>
           </button>
           <div fxFlex
                class="text-italic comment-content">
