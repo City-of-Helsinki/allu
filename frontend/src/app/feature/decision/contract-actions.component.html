@@ -14,7 +14,7 @@
            [matTooltip]="decisionBlockedReasons$ | async"
            [matTooltipDisabled]="!(decisionBlocked$ | async)">
         <button mat-raised-button type="button" color="primary"
-                [disabled]="!isValidForDecision"
+                [disabled]="decisionBlocked$ | async"
                 (click)="createProposal()">
           {{'contract.createProposal' | translation | uppercase}}
         </button>
@@ -23,7 +23,7 @@
            [matTooltip]="decisionBlockedReasons$ | async"
            [matTooltipDisabled]="!(decisionBlocked$ | async)">
         <button mat-raised-button type="button" color="primary"
-                [disabled]="!isValidForDecision"
+                [disabled]="decisionBlocked$ | async"
                 (click)="approve()">
           {{'contract.proposeApproval' | translation | uppercase}}
         </button>
