@@ -31,9 +31,14 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     handleReplacedApplicationOnDecision(application, userId);
     clearTargetState(application);
 
-    application.getLocations().stream().forEach(l ->
-      createSupervisionTask(application, SupervisionTaskType.WORK_TIME_SUPERVISION, userId,
-                            TimeUtil.nextDay(l.getEndTime()), l.getId()));
+    // There is no need to create work time supervision task for each location when
+    // there is only single location
+    if (application.getLocations().size() > 1) {
+      application.getLocations().stream().forEach(l ->
+        createSupervisionTask(application, SupervisionTaskType.WORK_TIME_SUPERVISION, userId,
+          TimeUtil.nextDay(l.getEndTime()), l.getId()));
+    }
+
     createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
                           TimeUtil.nextDay(application.getEndTime()));
     removeTag(application.getId(), ApplicationTagType.PRELIMINARY_SUPERVISION_DONE);
