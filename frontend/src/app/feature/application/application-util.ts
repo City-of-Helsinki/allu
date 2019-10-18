@@ -1,6 +1,9 @@
 import {Application} from '@model/application/application';
 import {ApplicationStatus} from '@model/application/application-status';
 import {NumberUtil} from '@util/number.util';
+import {Some} from '@util/option';
+
+export type DecisionBlockedReason = 'requiredInvoicingInfoMissing' | 'changesNotHandled';
 
 export class ApplicationUtil {
   public static validForInformationRequest(app: Application): boolean {
@@ -11,6 +14,15 @@ export class ApplicationUtil {
   }
 }
 
-export function validForDecision(app: Application, hasInvoicing: boolean): boolean {
+export function validInvoicingForDecision(app: Application, hasInvoicing: boolean): boolean {
   return app.notBillable || (NumberUtil.isDefined(app.invoiceRecipientId) && hasInvoicing);
+}
+
+export function decisionBlockedByReasons(app: Application, hasInvoicing: boolean, hasBlockingTags: boolean): DecisionBlockedReason[] {
+  const validInvoicing = validInvoicingForDecision(app, hasInvoicing);
+
+  return Some([])
+    .map(reasons => validInvoicing ? reasons : reasons.concat('requiredInvoicingInfoMissing'))
+    .map(reasons => !hasBlockingTags ? reasons : reasons.concat('changesNotHandled'))
+    .orElse([]);
 }

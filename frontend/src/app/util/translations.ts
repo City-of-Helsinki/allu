@@ -1018,6 +1018,10 @@ export const translations = {
       WORK_FINISHED: 'Työ valmis',
       TERMINATION: 'Irtisanominen'
     },
+    blockedBy: {
+      requiredInvoicingInfoMissing: 'Hakemuksen laskutustiedot ovat puutteelliset.',
+      changesNotHandled: 'Aikamuutos tai/ja muut muutokset käsittelemättä.'
+    },
     field: {
       handlerMissing: 'Käsittelijä puuttuuu',
       commentMissing: 'Perustelut puuttuvat'

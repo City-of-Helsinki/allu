@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {Observable, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ApplicationStatus, inHandling} from '@model/application/application-status';
-import {findTranslation} from '@util/translations';
+import {findTranslation, translateArray} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
 import {DecisionService} from '@service/decision/decision.service';
@@ -14,13 +14,14 @@ import {StatusChangeInfo} from '@model/application/status-change-info';
 import {Some} from '@util/option';
 import {DecisionDetails} from '@model/decision/decision-details';
 import * as fromApplication from '@feature/application/reducers';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
-import {validForDecision} from '@feature/application/application-util';
+import {decisionBlockedByReasons, DecisionBlockedReason} from '@feature/application/application-util';
+import {DECISION_BLOCKING_TAGS} from '@model/application/tag/application-tag-type';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -46,7 +47,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   showDecision = false;
   showToOperationalCondition = false;
   showResend = false;
-  isValidForDecision = false;
+  decisionBlockedReasons$: Observable<string>;
+  decisionBlocked$: Observable<boolean>;
   type: ApplicationType;
 
   constructor(private applicationStore: ApplicationStore,
@@ -57,6 +59,11 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
               private notification: NotificationService) {}
 
   ngOnInit(): void {
+    this.decisionBlockedReasons$ = this.decisionBlockedReasons().pipe(
+      map((reasons: DecisionBlockedReason[]) => translateArray('decision.blockedBy', reasons)),
+      map(reasons => reasons.join(' '))
+    );
+    this.decisionBlocked$ = this.decisionBlockedReasons().pipe(map(reasons => reasons.length > 0));
   }
 
 
@@ -69,7 +76,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
     this.showToOperationalCondition = this.approvedOperationalCondition && this.application.targetState === ApplicationStatus.DECISION;
-    this.isValidForDecision = validForDecision(this.application, this.hasInvoicing);
     this.type = this.application.type;
   }
 
@@ -204,6 +210,15 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
           comment: undefined
         })
       )
+    );
+  }
+
+  private decisionBlockedReasons(): Observable<DecisionBlockedReason[]> {
+    return combineLatest([
+      this.store.pipe(select(fromApplication.getCurrentApplication)),
+      this.store.pipe(select(fromApplication.hasTags(DECISION_BLOCKING_TAGS)))
+    ]).pipe(
+      map(([app, hasBlockingTags]) => decisionBlockedByReasons(app, this.hasInvoicing, hasBlockingTags))
     );
   }
 }

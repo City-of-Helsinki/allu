@@ -60,6 +60,11 @@ export const removableTagTypes = manuallyAddedTagTypes.concat([
   ApplicationTagType.DATE_CHANGE
 ]);
 
+export const DECISION_BLOCKING_TAGS = [
+  ApplicationTagType.DATE_CHANGE,
+  ApplicationTagType.OTHER_CHANGES
+];
+
 export function allowedTagsByRoles(roles: RoleType[]): ApplicationTagType[] {
   if (ArrayUtil.anyMatch(roles, [RoleType.ROLE_CREATE_APPLICATION, RoleType.ROLE_PROCESS_APPLICATION])) {
     return manuallyAddedTagTypes;

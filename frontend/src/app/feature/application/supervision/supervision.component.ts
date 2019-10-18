@@ -4,7 +4,6 @@ import {FormUtil} from '@util/form.util';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
-import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskForm} from './supervision-task-form';
 import {Observable, Subscription} from 'rxjs';
 import {select, Store} from '@ngrx/store';
@@ -13,7 +12,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Application} from '@model/application/application';
 import {UserService} from '@service/user/user-service';
-import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {DECISION_BLOCKING_TAGS} from '@model/application/tag/application-tag-type';
 
 
 @Component({
@@ -46,7 +45,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
 
     this.userService.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
     this.hasDisablingTags$ = this.store.pipe(
-      select(fromApplication.hasTags([ApplicationTagType.DATE_CHANGE, ApplicationTagType.OTHER_CHANGES]))
+      select(fromApplication.hasTags(DECISION_BLOCKING_TAGS))
     );
   }
 

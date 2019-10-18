@@ -8,7 +8,7 @@ import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@f
 import {Observable, Subject} from 'rxjs/index';
 import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Application} from '@model/application/application';
-import {validForDecision} from '@feature/application/application-util';
+import {validInvoicingForDecision} from '@feature/application/application-util';
 import {findTranslation} from '@util/translations';
 import {ApplicationStatus} from '@model/application/application-status';
 
@@ -36,7 +36,7 @@ export class ContractActionsComponent implements OnInit, OnDestroy {
     this.store.select(fromApplication.getCurrentApplication).pipe(
       takeUntil(this.destroy)
     ).subscribe(app => {
-      this.isValidForDecision = validForDecision(app, this.hasInvoicing);
+      this.isValidForDecision = validInvoicingForDecision(app, this.hasInvoicing);
       this.isWaitingForContract = ApplicationStatus.WAITING_CONTRACT_APPROVAL === app.status;
     });
   }
