@@ -32,6 +32,7 @@ import {TerminationEffects} from '@feature/decision/effects/termination-effects'
 import {TerminationService} from '@feature/decision/termination/termination-service';
 import {TerminationActionsComponent} from '@feature/decision/termination/termination-actions.component';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
+import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 
 @NgModule({
   imports: [
@@ -63,7 +64,8 @@ import {TerminationModalService} from '@feature/decision/termination/termination
     AttachmentThumbnailsComponent,
     ContractApprovalModalComponent,
     TerminationModalComponent,
-    TerminationActionsComponent
+    TerminationActionsComponent,
+    BaseDecisionActionsComponent
   ],
   providers: [
     DecisionService,

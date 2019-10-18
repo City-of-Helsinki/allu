@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Store} from '@ngrx/store';
@@ -8,35 +8,35 @@ import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@f
 import {Observable, Subject} from 'rxjs/index';
 import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Application} from '@model/application/application';
-import {validInvoicingForDecision} from '@feature/application/application-util';
 import {findTranslation} from '@util/translations';
 import {ApplicationStatus} from '@model/application/application-status';
+import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 
 @Component({
   selector: 'contract-actions',
   templateUrl: './contract-actions.component.html',
   styleUrls: ['./contract-actions.component.scss']
 })
-export class ContractActionsComponent implements OnInit, OnDestroy {
-
-  @Input() hasInvoicing = false;
-
+export class ContractActionsComponent extends BaseDecisionActionsComponent implements OnInit, OnDestroy {
   isFromExternalSystem$: Observable<boolean>;
-  isValidForDecision: boolean;
   isWaitingForContract: boolean;
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private store: Store<fromRoot.State>,
-              private dialog: MatDialog) {}
+  constructor(
+    private myStore: Store<fromRoot.State>,
+    private dialog: MatDialog
+  ) {
+    super(myStore);
+  }
 
   ngOnInit(): void {
+    this.watchDecisionBlocked();
     this.isFromExternalSystem$ = this.store.select(fromApplication.isFromExternalSystem);
 
     this.store.select(fromApplication.getCurrentApplication).pipe(
       takeUntil(this.destroy)
     ).subscribe(app => {
-      this.isValidForDecision = validInvoicingForDecision(app, this.hasInvoicing);
       this.isWaitingForContract = ApplicationStatus.WAITING_CONTRACT_APPROVAL === app.status;
     });
   }

@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {combineLatest, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ApplicationStatus, inHandling} from '@model/application/application-status';
-import {findTranslation, translateArray} from '@util/translations';
+import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
 import {DecisionService} from '@service/decision/decision.service';
@@ -13,15 +13,14 @@ import {ApplicationStore} from '@service/application/application-store';
 import {StatusChangeInfo} from '@model/application/status-change-info';
 import {Some} from '@util/option';
 import {DecisionDetails} from '@model/decision/decision-details';
-import * as fromApplication from '@feature/application/reducers';
-import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import {Store} from '@ngrx/store';
 import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
-import {decisionBlockedByReasons, DecisionBlockedReason} from '@feature/application/application-util';
-import {DECISION_BLOCKING_TAGS} from '@model/application/tag/application-tag-type';
+import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -35,10 +34,9 @@ const RESEND_ALLOWED = [
   templateUrl: './decision-actions.component.html',
   styleUrls: ['./decision-actions.component.scss']
 })
-export class DecisionActionsComponent implements OnInit, OnChanges {
+export class DecisionActionsComponent extends BaseDecisionActionsComponent implements OnInit, OnChanges {
   @Input() application: Application;
   @Input() approvedOperationalCondition = false;
-  @Input() hasInvoicing = false;
   @Input() isTerminationTab = false;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
@@ -47,25 +45,20 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   showDecision = false;
   showToOperationalCondition = false;
   showResend = false;
-  decisionBlockedReasons$: Observable<string>;
-  decisionBlocked$: Observable<boolean>;
   type: ApplicationType;
 
   constructor(private applicationStore: ApplicationStore,
-              private store: Store<fromApplication.State>,
+              private myStore: Store<fromRoot.State>,
               private decisionService: DecisionService,
               private router: Router,
               private dialog: MatDialog,
-              private notification: NotificationService) {}
-
-  ngOnInit(): void {
-    this.decisionBlockedReasons$ = this.decisionBlockedReasons().pipe(
-      map((reasons: DecisionBlockedReason[]) => translateArray('decision.blockedBy', reasons)),
-      map(reasons => reasons.join(' '))
-    );
-    this.decisionBlocked$ = this.decisionBlockedReasons().pipe(map(reasons => reasons.length > 0));
+              private notification: NotificationService) {
+    super(myStore);
   }
 
+  ngOnInit(): void {
+    this.watchDecisionBlocked();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     const status = this.application.status;
@@ -210,15 +203,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
           comment: undefined
         })
       )
-    );
-  }
-
-  private decisionBlockedReasons(): Observable<DecisionBlockedReason[]> {
-    return combineLatest([
-      this.store.pipe(select(fromApplication.getCurrentApplication)),
-      this.store.pipe(select(fromApplication.hasTags(DECISION_BLOCKING_TAGS)))
-    ]).pipe(
-      map(([app, hasBlockingTags]) => decisionBlockedByReasons(app, this.hasInvoicing, hasBlockingTags))
     );
   }
 }
