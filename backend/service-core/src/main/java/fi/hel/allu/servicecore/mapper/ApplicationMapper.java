@@ -493,6 +493,12 @@ public class ApplicationMapper {
     // map base class part
     ApplicationJson applicationJson = new ApplicationJson(createJson);
 
+    // map simple id reference properties
+    applicationJson.setProject(new ProjectJson(createJson.getProjectId()));
+    applicationJson.setOwner(new UserJson(createJson.getOwnerId()));
+    applicationJson.setHandler(new UserJson(createJson.getHandlerId()));
+    applicationJson.setDecisionMaker(new UserJson(createJson.getDecisionMakerId()));
+
     // map customers
     Map<CustomerRoleType, CreateCustomerWithContactsJson> customersByRoleType = createJson.getAllCustomersWithContactsByCustomerRoleType();
 

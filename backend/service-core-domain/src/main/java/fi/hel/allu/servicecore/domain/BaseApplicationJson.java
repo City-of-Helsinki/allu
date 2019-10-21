@@ -37,10 +37,6 @@ public abstract class BaseApplicationJson {
 
   private Integer id;
   private String applicationId;
-  @Valid
-  private ProjectJson project;
-  private UserJson owner;
-  private UserJson handler;
   private StatusType status;
   @NotNull(message = "{application.type}", groups = {Draft.class, Default.class})
   private ApplicationType type;
@@ -63,14 +59,6 @@ public abstract class BaseApplicationJson {
   @NotNull
   private PublicityType decisionPublicityType;
   private ZonedDateTime decisionTime;
-  @Valid
-  private UserJson decisionMaker;
-  @Valid
-  private List<DistributionEntryJson> decisionDistributionList;
-  @Valid
-  private List<AttachmentInfoJson> attachmentList;
-  @Valid
-  private List<CommentJson> comments;
   private Integer calculatedPrice;
   @NotNull
   private Boolean notBillable;
@@ -88,7 +76,6 @@ public abstract class BaseApplicationJson {
 
   private boolean skipPriceCalculation = false;
 
-  private ClientApplicationDataJson clientApplicationData;
   private String identificationNumber;
   private Boolean invoicingChanged;
   private StatusType targetState;
@@ -110,9 +97,6 @@ public abstract class BaseApplicationJson {
   public <U extends BaseApplicationJson> BaseApplicationJson(U application) {
     this.id = application.getId();
     this.applicationId = application.getApplicationId();
-    this.project = application.getProject();
-    this.owner = application.getOwner();
-    this.handler = application.getHandler();
     this.status = application.getStatus();
     this.type = application.getType();
     this.applicationTags = application.getApplicationTags();
@@ -127,10 +111,6 @@ public abstract class BaseApplicationJson {
     this.extension = application.getExtension();
     this.decisionPublicityType = application.getDecisionPublicityType();
     this.decisionTime = application.getDecisionTime();
-    this.decisionMaker = application.getDecisionMaker();
-    this.decisionDistributionList = application.getDecisionDistributionList();
-    this.attachmentList = application.getAttachmentList();
-    this.comments = application.getComments();
     this.calculatedPrice = application.getCalculatedPrice();
     this.notBillable = application.getNotBillable();
     this.notBillableReason = application.getNotBillableReason();
@@ -142,7 +122,6 @@ public abstract class BaseApplicationJson {
     this.invoicingDate = application.getInvoicingDate();
     this.invoiced = application.getInvoiced();
     this.skipPriceCalculation = application.getSkipPriceCalculation();
-    this.clientApplicationData = application.getClientApplicationData();
     this.identificationNumber = application.getIdentificationNumber();
     this.invoicingChanged = application.getInvoicingChanged();
     this.targetState = application.getTargetState();
@@ -170,34 +149,6 @@ public abstract class BaseApplicationJson {
 
   public void setApplicationId(String applicationId) {
     this.applicationId = applicationId;
-  }
-
-  @ApiModelProperty(value = "Project this application belongs to")
-  public ProjectJson getProject() {
-    return project;
-  }
-
-  @UpdatableProperty
-  public void setProject(ProjectJson project) {
-    this.project = project;
-  }
-
-  @ApiModelProperty(value = "Owner of the application", readOnly = true)
-  public UserJson getOwner() {
-    return owner;
-  }
-
-  public void setOwner(UserJson owner) {
-    this.owner = owner;
-  }
-
-  @ApiModelProperty(value = "Handler of the application", readOnly = true)
-  public UserJson getHandler() {
-    return handler;
-  }
-
-  public void setHandler(UserJson handler) {
-    this.handler = handler;
   }
 
   @ApiModelProperty(value = "Status of the application", readOnly = true)
@@ -324,42 +275,6 @@ public abstract class BaseApplicationJson {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
-  }
-
-  @ApiModelProperty(value = "The user who made the decision", readOnly = true)
-  public UserJson getDecisionMaker() {
-    return decisionMaker;
-  }
-
-  public void setDecisionMaker(UserJson decisionMaker) {
-    this.decisionMaker = decisionMaker;
-  }
-
-  @ApiModelProperty(value = "Decision distribution list", readOnly = true)
-  public List<DistributionEntryJson> getDecisionDistributionList() {
-    return decisionDistributionList;
-  }
-
-  public void setDecisionDistributionList(List<DistributionEntryJson> decisionDistributionList) {
-    this.decisionDistributionList = decisionDistributionList;
-  }
-
-  @ApiModelProperty(value = "Attachments of the application", readOnly = true)
-  public List<AttachmentInfoJson> getAttachmentList() {
-    return attachmentList;
-  }
-
-  public void setAttachmentList(List<AttachmentInfoJson> attachmentList) {
-    this.attachmentList = attachmentList;
-  }
-
-  @ApiModelProperty(value = "Comments of the application", readOnly = true)
-  public List<CommentJson> getComments() {
-    return comments;
-  }
-
-  public void setComments(List<CommentJson> comments) {
-    this.comments = comments;
   }
 
   @ApiModelProperty(value = "Calculated price of the application (in cents)", readOnly = true)
@@ -526,14 +441,6 @@ public abstract class BaseApplicationJson {
 
   public void setExternalOwnerId(Integer externalOwnerId) {
     this.externalOwnerId = externalOwnerId;
-  }
-
-  public ClientApplicationDataJson getClientApplicationData() {
-    return clientApplicationData;
-  }
-
-  public void setClientApplicationData(ClientApplicationDataJson clientApplicationData) {
-    this.clientApplicationData = clientApplicationData;
   }
 
   @ApiModelProperty(value = "Application identification number (asiointitunnus)")

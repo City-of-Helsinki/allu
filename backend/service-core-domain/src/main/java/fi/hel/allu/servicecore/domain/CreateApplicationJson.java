@@ -1,13 +1,57 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class CreateApplicationJson extends BaseApplicationJson {
 
+  private Integer projectId;
+  private Integer ownerId;
+  private Integer handlerId;
+  private Integer decisionMakerId;
+
   private CreateCustomerWithContactsJson customerApplicantWithContacts;
+
+  @ApiModelProperty(value = "Project this application belongs to")
+  public Integer getProjectId() {
+    return projectId;
+  }
+
+  @UpdatableProperty
+  public void setProjectId(Integer projectId) {
+    this.projectId = projectId;
+  }
+
+  @ApiModelProperty(value = "Owner of the application", readOnly = true)
+  public Integer getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(Integer ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  @ApiModelProperty(value = "Handler of the application", readOnly = true)
+  public Integer getHandlerId() {
+    return handlerId;
+  }
+
+  public void setHandlerId(Integer handlerId) {
+    this.handlerId = handlerId;
+  }
+
+  @ApiModelProperty(value = "The user who made the decision", readOnly = true)
+  public Integer getDecisionMakerId() {
+    return decisionMakerId;
+  }
+
+  public void setDecisionMakerId(Integer decisionMakerId) {
+    this.decisionMakerId = decisionMakerId;
+  }
 
   public CreateCustomerWithContactsJson getCustomerApplicantWithContacts() {
     return customerApplicantWithContacts;
