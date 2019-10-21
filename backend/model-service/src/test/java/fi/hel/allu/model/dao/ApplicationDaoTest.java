@@ -130,12 +130,10 @@ public class ApplicationDaoTest {
         Arrays.asList(ApplicationSpecifier.ASPHALT, ApplicationSpecifier.BRIDGE));
     application.setKindsWithSpecifiers(kindsWithSpecifiers);
     application.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
-    application.setDecisionDistributionList(Collections.singletonList(testDistributionEntry));
     Application applOut = applicationDao.insert(application);
 
     assertEquals(application.getName(), applOut.getName());
     assertNotEquals(application.getCreationTime(), applOut.getCreationTime());
-    assertEquals(1, applOut.getDecisionDistributionList().size());
     assertEquals(application.getKindsWithSpecifiers().size(), applOut.getKindsWithSpecifiers().size());
   }
 
@@ -145,12 +143,10 @@ public class ApplicationDaoTest {
     Application applOut = applicationDao.insert(application);
     applOut.setName("Updated application");
     applOut.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
-    applOut.setDecisionDistributionList(Collections.singletonList(testDistributionEntry));
     Application updated = applicationDao.update(applOut.getId(), applOut);
 
     assertEquals("Updated application", updated.getName());
     assertNotEquals(applOut.getCreationTime(), updated.getCreationTime());
-    assertEquals(1, updated.getDecisionDistributionList().size());
   }
 
   @Test

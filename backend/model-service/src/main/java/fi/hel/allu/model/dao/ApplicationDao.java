@@ -277,7 +277,6 @@ public class ApplicationDao {
       throw new QueryException("Failed to insert record");
     }
     setExternalApplicationId(appl, id);
-    insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
@@ -460,8 +459,6 @@ public class ApplicationDao {
     if (changed == 0) {
       throw new OptimisticLockException("application.stale");
     }
-    distributionEntryDao.deleteByApplication(id);
-    insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
@@ -523,14 +520,6 @@ public class ApplicationDao {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
     return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
-  }
-
-  private void insertDistributionEntries(Integer id, List<DistributionEntry> decisionDistributionList) {
-    if (decisionDistributionList != null) {
-      // make sure id is not set and nothing is updated in wrong application
-      decisionDistributionList.forEach(dEntry -> { dEntry.setId(null); dEntry.setApplicationId(id); });
-      distributionEntryDao.insert(decisionDistributionList);
-    }
   }
 
   private List<Application> populateDependencies(List<Application> applications) {

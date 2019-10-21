@@ -82,10 +82,6 @@ public class ApplicationMapper {
       applicationDomain.setExtension(createExtensionModel(applicationJson));
     }
     applicationDomain.setDecisionPublicityType(applicationJson.getDecisionPublicityType());
-    if (applicationJson.getDecisionDistributionList() != null) {
-      applicationDomain.setDecisionDistributionList(applicationJson.getDecisionDistributionList().stream()
-          .map(dEntry -> createDistributionEntryModel(dEntry)).collect(Collectors.toList()));
-    }
     applicationDomain.setCalculatedPrice(applicationJson.getCalculatedPrice());
     applicationDomain.setNotBillable(applicationJson.getNotBillable());
     applicationDomain.setNotBillableReason(applicationJson.getNotBillableReason());

@@ -75,6 +75,12 @@ public class DistributionEntryDao {
     insert(dEntries);
   }
 
+  @Transactional
+  public void copy(int fromApplication, int toApplication) {
+    List<DistributionEntry> existing = findByApplicationId(fromApplication);
+    replaceEntries(toApplication, existing);
+  }
+
   private List<DistributionEntry> findByPredicate(Predicate predicate) {
     List<Tuple> dEntryPostalAddress = queryFactory
         .select(distributionEntryBean, postalAddressBean)

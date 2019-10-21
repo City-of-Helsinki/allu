@@ -57,11 +57,12 @@ public class ApplicationReplacementService {
   private final ChargeBasisDao chargeBasisDao;
   private final InvoiceDao invoiceDao;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final DistributionEntryDao distributionEntryDao;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
       LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao, ChargeBasisDao chargeBasisDao,
-      InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService) {
+      InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService, DistributionEntryDao distributionEntryDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
@@ -71,6 +72,7 @@ public class ApplicationReplacementService {
     this.chargeBasisDao = chargeBasisDao;
     this.invoiceDao = invoiceDao;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.distributionEntryDao = distributionEntryDao;
   }
 
   /**
@@ -122,6 +124,7 @@ public class ApplicationReplacementService {
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
     supervisionTaskDao.copyApprovedSupervisionTasks(applicationId, replacingApplication.getId());
     chargeBasisDao.copyManualChargeBasisEntries(applicationId, replacingApplication.getId(), invoiceDao.getInvoicedChargeBasisIds(applicationId));
+    distributionEntryDao.copy(applicationId, replacingApplication.getId());
   }
 
   private Application addReplacingApplication(Application applicationToReplace, int userId) {

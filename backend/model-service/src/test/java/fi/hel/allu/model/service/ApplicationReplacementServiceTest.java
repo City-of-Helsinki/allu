@@ -55,6 +55,8 @@ public class ApplicationReplacementServiceTest {
   private UserDao userDao;
   @Autowired
   private InvoicingPeriodService invoicingPeriodService;
+  @Autowired
+  private DistributionEntryDao distributionEntryDao;
 
   @Autowired
   private TestCommon testCommon;
@@ -380,7 +382,6 @@ public class ApplicationReplacementServiceTest {
     CustomerWithContacts customer = new CustomerWithContacts(CustomerRoleType.APPLICANT, testCommon.insertPerson(), Collections.emptyList());
     originalApplication = new Application();
     originalApplication.setCustomersWithContacts(Collections.singletonList(customer));
-    originalApplication.setDecisionDistributionList(Collections.singletonList(createDistributionEntry()));
     originalApplication.setDecisionPublicityType(PublicityType.CONFIDENTIAL_PARTIALLY);
     originalApplication.setEndTime(ENDTIME);
     originalApplication.setExtension(createExtension());
@@ -398,6 +399,14 @@ public class ApplicationReplacementServiceTest {
     originalApplication.setType(ApplicationType.EVENT);
     originalApplication = applicationDao.insert(originalApplication);
     insertLocations(originalApplication);
+    insertDistribution(originalApplication);
+  }
+
+  private void insertDistribution(Application originalApplication) {
+    List<DistributionEntry> distributionEntries = Collections.singletonList(createDistributionEntry(originalApplication.getId()));
+    List<DistributionEntry> inserted = this.distributionEntryDao.insert(distributionEntries);
+    this.originalApplication.setDecisionDistributionList(inserted);
+
   }
 
   private void insertLocations(Application originalApplication) {
@@ -432,8 +441,9 @@ public class ApplicationReplacementServiceTest {
     return extension;
   }
 
-  private DistributionEntry createDistributionEntry() {
+  private DistributionEntry createDistributionEntry(int applicationId) {
     DistributionEntry distributionEntry = new DistributionEntry();
+    distributionEntry.setApplicationId(applicationId);
     distributionEntry.setEmail("foo@bar.fi");
     distributionEntry.setDistributionType(DistributionType.EMAIL);
     return distributionEntry;
