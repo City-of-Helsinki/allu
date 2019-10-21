@@ -38,12 +38,9 @@ public class PdfService {
   private static final String HEADER_ARG = "--header-html";
   private static final String FOOTER_ARG = "--footer-html";
 
-  private static final String MARGIN_TOP_ARG = "-T";
-  private static final String MARGIN_BOTTOM_ARG = "-B";
   private static final String MARGIN_LEFT_ARG = "-L";
   private static final String MARGIN_RIGHT_ARG = "-R";
 
-  private static final String MARGIN_TOP_BOTTOM_VALUE = "10mm";
   private static final String MARGIN_LEFT_RIGHT_VALUE = "10mm";
 
   private final ApplicationProperties applicationProperties;
@@ -115,7 +112,6 @@ public class PdfService {
     Path pdfPath = fileSysAccessor.createTempFile(tempDir, "output-", ".pdf");
     final CommandLine cmdLine = new CommandLine(applicationProperties.getPdfGenerator());
 
-    addArgument(cmdLine, MARGIN_BOTTOM_ARG, MARGIN_TOP_BOTTOM_VALUE);
     addArgument(cmdLine, MARGIN_LEFT_ARG, MARGIN_LEFT_RIGHT_VALUE);
     addArgument(cmdLine, MARGIN_RIGHT_ARG, MARGIN_LEFT_RIGHT_VALUE);
 
@@ -142,8 +138,13 @@ public class PdfService {
 
   private String getFallbackStyleSheetName(String styleSheet) {
     String[] parts = styleSheet.split(STYLESHEET_SEPARATOR);
-    parts[0] = COMMON_STYLESHEET;
-    return String.join("-", parts);
+    // We have some suffix like -footer or -header
+    if (parts.length > 1) {
+      // we also might have multiple suffixes eg. -approval-header, so take last
+      return String.join("-", COMMON_STYLESHEET, parts[parts.length - 1]);
+    } else {
+      return COMMON_STYLESHEET;
+    }
   }
 
   private void addArgument(CommandLine commandLine, String name, String argument) {
