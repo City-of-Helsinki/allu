@@ -89,7 +89,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </div>
       </xsl:if>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section>
           <h2>Perittävät maksut</h2>
           <xsl:choose>
@@ -204,7 +204,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               <xsl:value-of select="data/deciderName"/>
             </p>
           </xsl:if>
-          
+
           <xsl:choose>
             <xsl:when test="data/frameAgreement = 'true'">
               <p class="indented space-above">
