@@ -3,7 +3,7 @@
 # process specific Java -Xmx settings for limiting memory usage. If nothing is specified here for a service, service will use the default
 # value specified elsewhere
 allu_service_memory_limit:
-  search-service: 512m
+  search-service: 1024m
   allu-ui-service: 512m
   model-service: 512m
   external-service: 1024m
