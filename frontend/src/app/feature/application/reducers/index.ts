@@ -75,8 +75,8 @@ export const getApplicationLoaded = createSelector(
 );
 
 export const getDistributionList = createSelector(
-  getCurrentApplication,
-  application => application ? application.decisionDistributionList : []
+  getApplicationEntitiesState,
+  fromApplication.getDistribution
 );
 
 export const getType = createSelector(

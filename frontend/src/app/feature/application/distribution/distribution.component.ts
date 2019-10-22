@@ -16,13 +16,13 @@ export class DistributionComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
   @Input() application: Application;
+  @Input() distributionList: DistributionEntry[];
   @Input() readonly: boolean;
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
   communicationForm: FormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);
-  distributionList: Array<DistributionEntry>;
   distributionChangeAllowed = false;
 
   private recipientSubscription: Subscription;
@@ -34,7 +34,6 @@ export class DistributionComponent implements OnInit, OnDestroy {
       publicityType: [this.application.decisionPublicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
     });
     this.form.addControl('communication', this.communicationForm);
-    this.distributionList = this.application.decisionDistributionList;
 
     if (this.readonly) {
       this.communicationForm.disable();

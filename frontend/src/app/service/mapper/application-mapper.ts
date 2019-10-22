@@ -126,7 +126,6 @@ export class ApplicationMapper {
       decisionTime: TimeUtil.dateToBackend(application.decisionTime),
       decisionMaker: application.decisionMaker,
       decisionPublicityType: application.decisionPublicityType,
-      decisionDistributionList: DistributionMapper.mapFrontendList(application.decisionDistributionList),
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application
       calculatedPrice: application.calculatedPrice,
       applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags),

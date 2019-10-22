@@ -16,6 +16,7 @@ import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notifi
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {ClearCoordinates} from '@feature/map/actions/address-search-actions';
 import {findTranslation} from '@util/translations';
+import {DistributionEntry} from '@model/common/distribution-entry';
 
 @Injectable()
 export class ApplicationEffects {
@@ -103,13 +104,12 @@ export class ApplicationEffects {
 
   @Effect()
   saveDistribution: Observable<Action> = this.actions.pipe(
-    ofType<ApplicationAction.SaveDistribution>(ApplicationActionType.SaveDistribution),
+    ofType<ApplicationAction.SaveDistribution | ApplicationAction.SaveInitialDistribution>(
+      ApplicationActionType.SaveDistribution, ApplicationActionType.SaveInitialDistribution
+    ),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.applicationService.updateDistribution(app.id, action.payload).pipe(
-      switchMap(distribution => [
-        new SaveDistributionSuccess(distribution),
-        new NotifySuccess('decision.distribution.action.save')
-      ]),
+      switchMap(distribution => this.onSaveDistributionSuccess(action, distribution)),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
@@ -119,4 +119,10 @@ export class ApplicationEffects {
     ofType<ApplicationAction.Load>(ApplicationActionType.Load),
     map(() => new ClearCoordinates())
   );
+
+  private onSaveDistributionSuccess(action: Action, result: DistributionEntry[]): Action[] {
+    return action.type === ApplicationActionType.SaveInitialDistribution
+      ? [new SaveDistributionSuccess(result)]
+      : [new SaveDistributionSuccess(result), new NotifySuccess('decision.distribution.action.save')];
+  }
 }

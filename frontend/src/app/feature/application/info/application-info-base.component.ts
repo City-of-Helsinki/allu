@@ -9,7 +9,6 @@ import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter} from '../../..
 import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
-import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {Observable, Subject} from 'rxjs';
@@ -47,6 +46,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   pendingClientData$: Observable<boolean>;
   pendingCustomerInfo$: Observable<boolean>;
   pendingInformationRequestResponse$: Observable<boolean>;
+  distribution$: Observable<DistributionEntry[]>;
 
   protected completeFormStructure: { [key: string]: any; } = {};
   protected draftFormStructure:  { [key: string]: any; } = {};
@@ -92,6 +92,8 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       takeUntil(this.destroy),
       distinctUntilChanged()
     ).subscribe(draft => this.onDraftChange(draft));
+
+    this.distribution$ = this.store.pipe(select(fromApplication.getDistributionList));
   }
 
   ngAfterContentInit(): void {
@@ -187,7 +189,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
     Some(form.communication).map(c => {
       application.decisionPublicityType = c.publicityType;
-      application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
     });
     return application;
   }

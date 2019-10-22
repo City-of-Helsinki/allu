@@ -7,6 +7,7 @@ import {ClientApplicationData} from '@model/application/client-application-data'
 import {ApplicationType} from '@model/application/type/application-type';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {InvoicingCustomerActions, InvoicingCustomerActionType} from '@feature/application/invoicing/actions/invoicing-customer-actions';
+import {DistributionEntry} from '@model/common/distribution-entry';
 
 export interface State {
   loaded: boolean;
@@ -16,6 +17,7 @@ export interface State {
   clientData: ClientApplicationData;
   type: ApplicationType;
   kindsWithSpecifiers: KindsWithSpecifiers;
+  distribution: DistributionEntry[];
 }
 
 const initialState: State = {
@@ -25,7 +27,8 @@ const initialState: State = {
   meta: undefined,
   clientData: undefined,
   type: undefined,
-  kindsWithSpecifiers: undefined
+  kindsWithSpecifiers: undefined,
+  distribution: []
 };
 
 type HandledActions = ApplicationActions | InvoicingCustomerActions | ApplicationMetaActions;
@@ -49,7 +52,8 @@ export function reducer(state: State = initialState, action: HandledActions) {
         current: application,
         clientData: application.clientApplicationData,
         type: application.type,
-        kindsWithSpecifiers: application.kindsWithSpecifiers
+        kindsWithSpecifiers: application.kindsWithSpecifiers,
+        distribution: application.decisionDistributionList
       };
     }
 
@@ -92,11 +96,9 @@ export function reducer(state: State = initialState, action: HandledActions) {
     }
 
     case ApplicationActionType.SaveDistributionSuccess: {
-      const copy: Application = ObjectUtil.clone(state.current);
-      copy.decisionDistributionList = action.payload;
       return {
         ...state,
-        current: copy
+        distribution: action.payload
       };
     }
 
@@ -117,4 +119,6 @@ export const getKindsWithSpecifiers = (state: State) => state.kindsWithSpecifier
 export const getClientData = (state: State) => state.clientData;
 
 export const getMeta = (state: State) => state.meta;
+
+export const getDistribution = (state: State) => state.distribution;
 

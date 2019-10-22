@@ -120,6 +120,7 @@
       <distribution
         [form]="applicationForm"
         [application]="application"
+        [distributionList]="distribution$ | async"
         [readonly]="readonly"
         (distributionChange)="saveDistribution($event)"></distribution>
     </div>

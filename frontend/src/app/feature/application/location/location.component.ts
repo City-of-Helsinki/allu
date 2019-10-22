@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
-import {Observable, Subject} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {MapUtil} from '@service/map/map.util';
@@ -29,7 +29,7 @@ import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {select, Store} from '@ngrx/store';
-import {filter, map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
@@ -56,6 +56,7 @@ import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
 import {ObjectUtil} from '@util/object.util';
+import {SaveInitialDistribution} from '@feature/application/actions/application-actions';
 
 @Component({
   selector: 'type',
@@ -325,14 +326,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
       application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
 
-      this.initDistribution(application);
-      this.addCurrentUserToDistribution(application);
-
-      const urlSuffix = this.applicationStore.isNew ? 'edit' : 'summary';
+      const isNew = this.applicationStore.isNew;
+      const urlSuffix = isNew ? 'edit' : 'summary';
 
       this.applicationStore.save(application)
         .subscribe(
           app => {
+            this.createInitialDistribution(app.type, isNew).pipe(
+              take(1)
+            ).subscribe(distribution => this.store.dispatch(new SaveInitialDistribution(distribution)));
             this.destroy.next(true);
             this.notification.success(findTranslation('location.action.saved'));
             this.router.navigate(['/applications', app.id, urlSuffix]);
@@ -517,26 +519,34 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.fixedLocationsCtrl.reset([]);
   }
 
-  private initDistribution(application: Application): void {
-    this.defaultRecipientHub.defaultRecipientsByApplicationType(application.type).pipe(
-      takeWhile(() => this.applicationStore.isNew), // Only add default attachments if it is a new application
-      takeUntil(this.destroy),
-      map(recipients => recipients.map(r => this.toDistributionEntry(r)))
-    ).subscribe(distributionEntries => {
-      application.decisionDistributionList.push(...distributionEntries);
-      this.applicationStore.applicationChange(application);
-    }, err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+  private createInitialDistribution(type: ApplicationType, isNew: boolean): Observable<DistributionEntry[]> {
+    if (isNew) {
+      return combineLatest([
+        this.getDefaultRecipients(type),
+        this.getCurrentUserDistribution(type)
+      ]).pipe(
+        take(1),
+        map(([defaultRecipients, currentUser]) => defaultRecipients.concat(currentUser))
+      );
+    } else {
+      return EMPTY;
+    }
+
   }
 
-  private addCurrentUserToDistribution(application: Application): void {
-    const existingApplication = NumberUtil.isDefined(application.id);
-    if (!existingApplication && (application.type === ApplicationType.EVENT
-      || application.type === ApplicationType.SHORT_TERM_RENTAL)) {
-      this.currentUser.user.subscribe(user => {
-        const entry = new DistributionEntry(null, user.realName, DistributionType.EMAIL, user.emailAddress);
-        application.decisionDistributionList.push(entry);
-        this.applicationStore.applicationChange(application);
-      });
+  private getDefaultRecipients(type: ApplicationType): Observable<DistributionEntry[]> {
+    return this.defaultRecipientHub.defaultRecipientsByApplicationType(type).pipe(
+      map(recipients => recipients.map(r => this.toDistributionEntry(r)))
+    );
+  }
+
+  private getCurrentUserDistribution(type: ApplicationType): Observable<DistributionEntry[]> {
+    if ((type === ApplicationType.EVENT || type === ApplicationType.SHORT_TERM_RENTAL)) {
+      return this.currentUser.user.pipe(
+        map(user => [new DistributionEntry(null, user.realName, DistributionType.EMAIL, user.emailAddress)])
+      );
+    } else {
+      return of([]);
     }
   }
 
