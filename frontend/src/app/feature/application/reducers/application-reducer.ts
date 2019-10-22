@@ -52,8 +52,7 @@ export function reducer(state: State = initialState, action: HandledActions) {
         current: application,
         clientData: application.clientApplicationData,
         type: application.type,
-        kindsWithSpecifiers: application.kindsWithSpecifiers,
-        distribution: application.decisionDistributionList
+        kindsWithSpecifiers: application.kindsWithSpecifiers
       };
     }
 
