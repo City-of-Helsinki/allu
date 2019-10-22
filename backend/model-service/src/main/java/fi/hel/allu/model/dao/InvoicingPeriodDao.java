@@ -76,4 +76,11 @@ public class InvoicingPeriodDao {
         .where(invoicingPeriod.id.eq(invoicingPeriodId)).execute();
    }
 
+  @Transactional
+  public void removeEntriesFromPeriod(Integer periodId) {
+    queryFactory.update(chargeBasis)
+       .setNull(chargeBasis.invoicingPeriodId)
+       .where(chargeBasis.invoicingPeriodId.eq(periodId))
+       .execute();
+  }
 }

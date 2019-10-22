@@ -182,6 +182,7 @@ public class InvoicingPeriodService {
     if (invoicingPeriod.isClosed()) {
       throw new IllegalOperationException("invoicingPeriod.invoiced");
     }
+    invoicingPeriodDao.removeEntriesFromPeriod(invoicingPeriod.getId());
     invoicingPeriodDao.deletePeriod(invoicingPeriod.getId());
   }
 
