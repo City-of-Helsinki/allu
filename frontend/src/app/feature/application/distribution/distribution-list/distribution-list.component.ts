@@ -29,11 +29,11 @@ interface DistributionEntryForm {
   ]
 })
 export class DistributionListComponent implements OnInit, OnDestroy {
-  @Input() form: FormGroup;
   @Input() readonly: boolean;
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
+  form: FormGroup;
   distributionRows: FormArray;
   distributionTypes = EnumUtil.enumValues(DistributionType);
 

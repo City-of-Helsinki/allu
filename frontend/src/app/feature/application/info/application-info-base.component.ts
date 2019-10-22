@@ -124,7 +124,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   saveDistribution(distribution: DistributionEntry[]): void {
     this.store.dispatch(new SaveDistribution(distribution));
-    this.applicationForm.get('communication.distributionRows').markAsPristine();
   }
 
   get hasPropertyDeveloper(): boolean {
