@@ -7,6 +7,8 @@ import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 import org.geolatte.geom.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -35,22 +41,26 @@ import fi.hel.allu.servicecore.util.RestResponsePage;
 @Service
 public class SearchService {
 
-
   private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
+  private AsyncRestTemplate restTemplate;
   private ApplicationMapper applicationMapper;
   private CustomerMapper customerMapper;
   private ProjectMapper projectMapper;
   private LocationService locationService;
 
+  private static final Logger logger = LoggerFactory.getLogger(SearchService.class);
+  private static final long DELAY = 500l;
+  private static final long MAX_DELAY = 5000l;
+  private static final long DELAY_MULTIPLIER = 2;
+
   @Autowired
   public SearchService(
-      ApplicationProperties applicationProperties,
-      RestTemplate restTemplate,
-      ApplicationMapper applicationMapper,
-      CustomerMapper customerMapper,
-      ProjectMapper projectMapper,
-      LocationService locationService) {
+    ApplicationProperties applicationProperties,
+    AsyncRestTemplate restTemplate,
+    ApplicationMapper applicationMapper,
+    CustomerMapper customerMapper,
+    ProjectMapper projectMapper,
+    LocationService locationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -59,11 +69,12 @@ public class SearchService {
     this.locationService = locationService;
   }
 
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void insertApplication(ApplicationJson applicationJson) {
-    restTemplate.postForObject(
-        applicationProperties.getApplicationSearchCreateUrl(),
-        applicationMapper.createApplicationESModel(applicationJson),
-        ApplicationES.class);
+    restTemplate.postForEntity(
+      applicationProperties.getApplicationSearchCreateUrl(),
+      new HttpEntity<>(applicationMapper.createApplicationESModel(applicationJson)),
+      ApplicationES.class);
   }
 
   /**
@@ -71,20 +82,20 @@ public class SearchService {
    *
    * @param applicationJsons Applications to be updated.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateApplications(List<ApplicationJson> applicationJsons) {
     updateApplications(applicationJsons, false);
   }
 
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateApplications(List<ApplicationJson> applicationJsons, boolean waitRefresh) {
     List<ApplicationES> applications =
-        applicationJsons.stream().map(a -> applicationMapper.createApplicationESModel(a)).collect(Collectors.toList());
+      applicationJsons.stream().map(a -> applicationMapper.createApplicationESModel(a)).collect(Collectors.toList());
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdateUrl())
-        .queryParam("waitRefresh", waitRefresh)
-        .buildAndExpand().toUri();
-    restTemplate.put(
-        uri.toString(),
-        applications,
-        waitRefresh);
+      .queryParam("waitRefresh", waitRefresh)
+      .buildAndExpand().toUri();
+
+    put(uri.toString(), applications, waitRefresh);
   }
 
   /**
@@ -92,22 +103,25 @@ public class SearchService {
    * @param applicationId id of application to update
    * @param tagJsons list jsons containing tags which replace old tags
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateTags(int applicationId, List<ApplicationTagJson> tagJsons) {
     HashMap<Integer, Map<String, List<String>>> idToTags = new HashMap<>();
     idToTags.put(applicationId, Collections.singletonMap("applicationTags", applicationMapper.createTagES(tagJsons)));
-    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), idToTags);
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), new HttpEntity<>(idToTags));
   }
 
   /**
    * Updates field of application with given value in search index
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public <T> void updateApplicationField(int applicationId, String fieldName, T fieldValue, boolean waitRefresh) {
     HashMap<Integer, Map<String, T>> applicationFields = new HashMap<>();
     applicationFields.put(applicationId, Collections.singletonMap(fieldName, fieldValue));
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdatePartialUrl())
-        .queryParam("waitRefresh", waitRefresh)
-        .buildAndExpand().toUri();
-    restTemplate.put(uri.toString(), applicationFields, waitRefresh);
+      .queryParam("waitRefresh", waitRefresh)
+      .buildAndExpand().toUri();
+
+    put(uri.toString(), applicationFields, waitRefresh);
   }
 
   /**
@@ -115,6 +129,7 @@ public class SearchService {
    *
    * @param applicationId note application's database ID
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void deleteNote(int applicationId) {
     restTemplate.delete(applicationProperties.getApplicationSearchRemoveUrl(), applicationId);
   }
@@ -123,6 +138,7 @@ public class SearchService {
    * Delete a draft froms search-service's database.
    * @param applicationId draft's database ID.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void deleteDraft(int applicationId) {
     restTemplate.delete(applicationProperties.getApplicationSearchRemoveUrl(), applicationId);
   }
@@ -132,11 +148,12 @@ public class SearchService {
    *
    * @param projectJson Project to be indexed.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void insertProject(ProjectJson projectJson) {
-    restTemplate.postForObject(
-        applicationProperties.getProjectSearchCreateUrl(),
-        projectMapper.createProjectESModel(projectJson),
-        ApplicationES.class);
+    restTemplate.postForEntity(
+      applicationProperties.getProjectSearchCreateUrl(),
+      new HttpEntity<>(projectMapper.createProjectESModel(projectJson)),
+      ApplicationES.class);
   }
 
   /**
@@ -144,11 +161,12 @@ public class SearchService {
    *
    * @param projectJson Project to be updated.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateProject(ProjectJson projectJson) {
     restTemplate.put(
-        applicationProperties.getProjectSearchUpdateUrl(),
-        projectMapper.createProjectESModel(projectJson),
-        projectJson.getId().intValue());
+      applicationProperties.getProjectSearchUpdateUrl(),
+      new HttpEntity<>(projectMapper.createProjectESModel(projectJson)),
+      projectJson.getId().intValue());
   }
 
   /**
@@ -156,13 +174,15 @@ public class SearchService {
    *
    * @param projectJsons Projects to be updated.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateProjects(List<ProjectJson> projectJsons) {
     List<ProjectES> projects = projectJsons.stream().map(p -> projectMapper.createProjectESModel(p)).collect(Collectors.toList());
     restTemplate.put(
-        applicationProperties.getProjectsSearchUpdateUrl(),
-        projects);
+      applicationProperties.getProjectsSearchUpdateUrl(),
+      new HttpEntity<>(projects));
   }
 
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void deleteProject(int id) {
     restTemplate.delete(applicationProperties.getProjectSearchDeleteUrl(), id);
   }
@@ -172,11 +192,12 @@ public class SearchService {
    *
    * @param customerJson Customer to be indexed.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void insertCustomer(CustomerJson customerJson) {
-    restTemplate.postForObject(
-        applicationProperties.getCustomerSearchCreateUrl(),
-        customerMapper.createCustomerES(customerJson),
-        Void.class);
+    restTemplate.postForEntity(
+      applicationProperties.getCustomerSearchCreateUrl(),
+      new HttpEntity<>(customerMapper.createCustomerES(customerJson)),
+      Void.class);
   }
 
   /**
@@ -184,13 +205,14 @@ public class SearchService {
    *
    * @param customerJsons Customers to be updated.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateCustomers(List<CustomerJson> customerJsons) {
     List<CustomerES> customers = customerJsons.stream()
-        .map(a -> customerMapper.createCustomerES(a))
-        .collect(Collectors.toList());
+      .map(a -> customerMapper.createCustomerES(a))
+      .collect(Collectors.toList());
     restTemplate.put(
-        applicationProperties.getCustomersSearchUpdateUrl(),
-        customers);
+      applicationProperties.getCustomersSearchUpdateUrl(),
+      new HttpEntity<>(customers));
   }
 
   /**
@@ -198,13 +220,16 @@ public class SearchService {
    *
    * @param contactJson Customer to be indexed.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void insertContacts(List<ContactJson> contactJson) {
-    restTemplate.postForObject(
-        applicationProperties.getContactSearchCreateUrl(),
-        contactJson.stream()
-            .map(cJson -> new ContactES(cJson.getId(), cJson.getName(), cJson.isActive()))
-            .collect(Collectors.toList()),
-        Void.class);
+    List<ContactES> contactESList = contactJson.stream()
+      .map(cJson -> new ContactES(cJson.getId(), cJson.getName(), cJson.isActive()))
+      .collect(Collectors.toList());
+
+    restTemplate.postForEntity(
+      applicationProperties.getContactSearchCreateUrl(),
+      new HttpEntity<>(contactESList),
+      Void.class);
   }
 
   /**
@@ -212,11 +237,12 @@ public class SearchService {
    *
    * @param contactJsons Contacts to be updated.
    */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateContacts(List<ContactJson> contactJsons) {
     List<ContactES> contacts = customerMapper.createContactES(contactJsons);
     restTemplate.put(
-        applicationProperties.getContactSearchUpdateUrl(),
-        contacts);
+      applicationProperties.getContactSearchUpdateUrl(),
+      new HttpEntity<>(contacts));
   }
 
 
@@ -235,7 +261,7 @@ public class SearchService {
       queryParameters.setIntersectingGeometry(intersectingGeometry);
     }
     return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity(),
-        new ParameterizedTypeReference<RestResponsePage<ApplicationES>>() {});
+      new ParameterizedTypeReference<RestResponsePage<ApplicationES>>() {});
   }
 
   /**
@@ -248,9 +274,9 @@ public class SearchService {
    * @return List of found projects.
    */
   public Page<ProjectJson> searchProject(QueryParameters queryParameters, Pageable pageRequest,
-      Function<List<Integer>, List<ProjectJson>> mapper) {
+                                         Function<List<Integer>, List<ProjectJson>> mapper) {
     return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest, false, mapper,
-        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
+      new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
   }
 
   /**
@@ -263,15 +289,15 @@ public class SearchService {
    * @return List of found customers.
    */
   public Page<CustomerJson> searchCustomer(QueryParameters queryParameters, Pageable pageRequest,
-      Function<List<Integer>, List<CustomerJson>> mapper) {
+                                           Function<List<Integer>, List<CustomerJson>> mapper) {
     return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, false, mapper,
-        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
+      new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
   }
 
   public Page<CustomerJson> searchCustomerByType(CustomerType type, QueryParameters queryParameters,
-      Pageable pageRequest, Boolean matchAny, Function<List<Integer>, List<CustomerJson>> mapper) {
+                                                 Pageable pageRequest, Boolean matchAny, Function<List<Integer>, List<CustomerJson>> mapper) {
     return search(applicationProperties.getCustomerSearchByTypeUrl(type), queryParameters, pageRequest, matchAny, mapper,
-        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
+      new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
   }
 
   /**
@@ -284,25 +310,27 @@ public class SearchService {
    * @return List of found contacts.
    */
   public Page<ContactJson> searchContact(QueryParameters queryParameters, Pageable pageRequest,
-      Function<List<Integer>, List<ContactJson>> mapper) {
+                                         Function<List<Integer>, List<ContactJson>> mapper) {
     return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, false, mapper,
-        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
+      new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
 
   }
 
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateCustomerOfApplications(
-      CustomerJson updatedCustomer, Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleType) {
+    CustomerJson updatedCustomer, Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleType) {
     restTemplate.put(
-        applicationProperties.getCustomerApplicationsSearchUpdateUrl(),
-        applicationIdToCustomerRoleType,
-        updatedCustomer.getId());
+      applicationProperties.getCustomerApplicationsSearchUpdateUrl(),
+      new HttpEntity<>(applicationIdToCustomerRoleType),
+      updatedCustomer.getId());
   }
 
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
   public void updateContactsOfApplications(List<ApplicationWithContactsES> applicationWithContactsESs) {
     if (!applicationWithContactsESs.isEmpty()) {
       restTemplate.put(
-          applicationProperties.getContactApplicationsSearchUpdateUrl(),
-          applicationWithContactsESs);
+        applicationProperties.getContactApplicationsSearchUpdateUrl(),
+        new HttpEntity<>(applicationWithContactsESs));
     }
   }
 
@@ -323,18 +351,30 @@ public class SearchService {
 
 
   private <T, R> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
-      Function<List<R>, List<T>> mapper, ParameterizedTypeReference<RestResponsePage<R>> typeref) {
+                                Function<List<R>, List<T>> mapper, ParameterizedTypeReference<RestResponsePage<R>> typeref) {
     URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest, matchAny);
-    ResponseEntity<RestResponsePage<R>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
-        new HttpEntity<>(queryParameters), typeref);
+    ResponseEntity<RestResponsePage<R>> response = restTemplate.getRestOperations().exchange(targetUri, HttpMethod.POST,
+      new HttpEntity<>(queryParameters), typeref);
 
     final Page<R> responsePage = response.getBody();
     final PageRequest responsePageRequest = new PageRequest(responsePage.getNumber(),
-        Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
+      Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
 
     final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
-        responsePage.getTotalElements());
+      responsePage.getTotalElements());
     return result;
   }
 
+  private void put(String url, Object request, boolean waitRefresh, Object... uriVariables) {
+    if (waitRefresh) {
+      restTemplate.getRestOperations().put(url, request, uriVariables);
+    } else {
+      restTemplate.put(url, new HttpEntity<>(request), uriVariables);
+    }
+  }
+
+  @Recover
+  public void recover(Exception e) {
+    logger.error("Search update operation failed", e);
+  }
 }
