@@ -159,6 +159,7 @@ public class InformationRequestDao {
     // Close request after response
     queryFactory.update(informationRequest)
       .set(informationRequest.status, InformationRequestStatus.RESPONSE_RECEIVED)
+      .set(informationRequest.responseReceived, ZonedDateTime.now())
       .where(informationRequest.id.eq(requestId)).execute();
   }
 

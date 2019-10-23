@@ -9,6 +9,7 @@ SELECT
     i.id AS id,
     i.application_id AS hakemus_id,
     i.creation_time AS luontiaika,
+    i.response_received AS vastaus_saapunut,
     u.user_name AS lisaaja,
     CASE
         WHEN i.status = 'OPEN' THEN 'Avoin'

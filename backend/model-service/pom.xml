@@ -350,6 +350,11 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>information_request</table>
+                            <column>response_received</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>mail_sender_log</table>
                             <column>sent_time</column>
                             <type>java.time.ZonedDateTime</type>
