@@ -4,6 +4,8 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +15,8 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
   private Integer ownerId;
   private Integer handlerId;
 
+  @NotNull
+  @Valid
   private CreateCustomerWithContactsJson customerApplicantWithContacts;
 
   @ApiModelProperty(value = "Project this application belongs to")

@@ -3,12 +3,14 @@ package fi.hel.allu.servicecore.domain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 @ApiModel(value = "Application customer id and related contacts' ids")
 public class CreateCustomerWithContactsJson {
 
+  @NotNull
   private Integer customerId;
   private List<Integer> contactIds = new ArrayList<>();
 

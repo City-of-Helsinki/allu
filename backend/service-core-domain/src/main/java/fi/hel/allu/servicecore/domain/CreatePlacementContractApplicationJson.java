@@ -3,12 +3,14 @@ package fi.hel.allu.servicecore.domain;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import io.swagger.annotations.ApiModel;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
 @ApiModel(value = "CreatePlacementContractApplicationJson", description = "Model for creating new placement contracts")
 public class CreatePlacementContractApplicationJson extends CreateApplicationJson {
 
+  @Valid
   private CreateCustomerWithContactsJson customerRepresentativeWithContacts;
 
   public CreateCustomerWithContactsJson getCustomerRepresentativeWithContacts() {
