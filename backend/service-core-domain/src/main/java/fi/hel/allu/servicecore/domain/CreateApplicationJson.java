@@ -12,7 +12,6 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
   private Integer projectId;
   private Integer ownerId;
   private Integer handlerId;
-  private Integer decisionMakerId;
 
   private CreateCustomerWithContactsJson customerApplicantWithContacts;
 
@@ -42,15 +41,6 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
 
   public void setHandlerId(Integer handlerId) {
     this.handlerId = handlerId;
-  }
-
-  @ApiModelProperty(value = "The user who made the decision", readOnly = true)
-  public Integer getDecisionMakerId() {
-    return decisionMakerId;
-  }
-
-  public void setDecisionMakerId(Integer decisionMakerId) {
-    this.decisionMakerId = decisionMakerId;
   }
 
   public CreateCustomerWithContactsJson getCustomerApplicantWithContacts() {
