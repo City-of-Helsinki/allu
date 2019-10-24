@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -61,7 +62,7 @@ public class InformationRequestDao {
   }
 
   private boolean applicationHasActiveInformationRequest(Integer applicationId) {
-    return findByApplicationId(applicationId) != null;
+    return findClosedApplicationId(applicationId) != null;
   }
 
   @Transactional
@@ -96,7 +97,7 @@ public class InformationRequestDao {
   }
 
   @Transactional(readOnly = true)
-  public InformationRequest findByApplicationId(int applicationId) {
+  public InformationRequest findClosedApplicationId(int applicationId) {
     return find(informationRequest.applicationId.eq(applicationId), informationRequest.status.ne(InformationRequestStatus.CLOSED));
   }
 
@@ -108,6 +109,19 @@ public class InformationRequestDao {
     }
     return request;
 
+  }
+
+  @Transactional(readOnly = true)
+  public List<InformationRequest> findAllByApplicationId(Integer applicationId) {
+    return queryFactory.select(informationRequestBean)
+      .from(informationRequest)
+      .where(informationRequest.applicationId.eq(applicationId))
+      .orderBy(informationRequest.creationTime.desc())
+      .fetch().stream()
+      .map(request -> {
+        request.setFields(getInformationRequestFields(request.getId()));
+        return request;
+      }).collect(Collectors.toList());
   }
 
 
@@ -124,6 +138,7 @@ public class InformationRequestDao {
     return new InformationRequestResponse(informationRequestId, responseFields, applicationData);
   }
 
+  @Transactional(readOnly = true)
   public List<InformationRequestFieldKey> getResponseFields(Integer informationRequestId) {
     List<InformationRequestFieldKey> responseFields =
         queryFactory.select(informationRequestResponseField.fieldKey).from(informationRequestResponseField).
@@ -165,7 +180,7 @@ public class InformationRequestDao {
 
   @Transactional
   public InformationRequest move(int fromApplicationId, int toApplicationId) {
-    InformationRequest existing = findByApplicationId(fromApplicationId);
+    InformationRequest existing = findClosedApplicationId(fromApplicationId);
     if (existing != null) {
       queryFactory
         .update(informationRequest)

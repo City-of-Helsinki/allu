@@ -1381,8 +1381,12 @@ public class ApplicationProperties {
     return getModelServiceUrl("applications/{id}/informationrequest/open");
   }
 
-  public String getApplicationInformationRequestFindUrl() {
-    return getModelServiceUrl("applications/{id}/informationrequest");
+  public String getApplicationClosedInformationRequestFindUrl() {
+    return getModelServiceUrl("applications/{id}/informationrequest/closed");
+  }
+
+  public String getApplicationInformationRequestFindAllUrl() {
+    return getModelServiceUrl("/applications/{id}/informationrequest");
   }
 
 
@@ -1400,6 +1404,10 @@ public class ApplicationProperties {
 
   public String getInformationRequestResponseFindUrl() {
     return getModelServiceUrl("/applications/{id}/informationrequests/response");
+  }
+
+  public String getInformationRequestResponseFieldsFindUrl() {
+    return getModelServiceUrl("/informationrequests/{id}/responsefields");
   }
 
   public String getApplicationInvoiceRecipientUrl() {

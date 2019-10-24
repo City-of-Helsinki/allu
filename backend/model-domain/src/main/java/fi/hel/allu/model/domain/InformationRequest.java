@@ -9,6 +9,7 @@ public class InformationRequest {
   private Integer id;
   private Integer applicationId;
   private ZonedDateTime creationTime;
+  private ZonedDateTime responseReceived;
   private int creatorId;
   private InformationRequestStatus status;
   private List<InformationRequestField> fields;
@@ -45,6 +46,14 @@ public class InformationRequest {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
+  }
+
+  public ZonedDateTime getResponseReceived() {
+    return responseReceived;
+  }
+
+  public void setResponseReceived(ZonedDateTime responseReceived) {
+    this.responseReceived = responseReceived;
   }
 
   public int getCreatorId() {

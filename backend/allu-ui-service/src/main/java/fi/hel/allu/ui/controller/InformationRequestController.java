@@ -1,9 +1,11 @@
 package fi.hel.allu.ui.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.validation.Valid;
 
+import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestSummaryJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,4 +62,9 @@ public class InformationRequestController {
     return new ResponseEntity<>(informationRequestService.findResponseForApplication(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/applications/{id}/informationrequests/summaries", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<InformationRequestSummaryJson>> findSummariesForApplication(@PathVariable Integer id) throws IOException {
+    return new ResponseEntity<>(informationRequestService.findSummariesByApplicationId(id), HttpStatus.OK);
+  }
 }

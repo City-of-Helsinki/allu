@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.common.domain.InformationRequestResponse;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.InformationRequest;
+
+import java.util.List;
 
 @RestController
 public class InformationRequestController {
@@ -24,7 +27,7 @@ public class InformationRequestController {
     return new ResponseEntity<>(informationRequestDao.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "applications/{id}/informationrequest", method = RequestMethod.POST)
+  @RequestMapping(value = "/applications/{id}/informationrequest", method = RequestMethod.POST)
   public ResponseEntity<InformationRequest> insertInformationRequest(@PathVariable Integer id,
       @RequestBody(required = true) InformationRequest informationRequest) {
     informationRequest.setApplicationId(id);
@@ -67,10 +70,18 @@ public class InformationRequestController {
     return new ResponseEntity<>(informationRequestDao.findOpenByApplicationId(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "applications/{id}/informationrequest", method = RequestMethod.GET)
-  public ResponseEntity<InformationRequest> findByApplicationId(@PathVariable int id) {
-    return new ResponseEntity<>(informationRequestDao.findByApplicationId(id), HttpStatus.OK);
+  @RequestMapping(value = "applications/{id}/informationrequest/closed", method = RequestMethod.GET)
+  public ResponseEntity<InformationRequest> findClosedByApplicationId(@PathVariable int id) {
+    return new ResponseEntity<>(informationRequestDao.findClosedApplicationId(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/applications/{id}/informationrequest", method = RequestMethod.GET)
+  public ResponseEntity<List<InformationRequest>> findAllByApplicationId(@PathVariable int id) {
+    return new ResponseEntity<>(informationRequestDao.findAllByApplicationId(id), HttpStatus.OK);
+  }
 
+  @RequestMapping(value = "/informationrequests/{id}/responsefields", method = RequestMethod.GET)
+  public ResponseEntity<List<InformationRequestFieldKey>> findResponseFieldsForByRequest(@PathVariable int id) {
+    return ResponseEntity.ok(informationRequestDao.getResponseFields(id));
+  }
 }

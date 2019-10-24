@@ -1,11 +1,16 @@
 package fi.hel.allu.servicecore.service;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
+import fi.hel.allu.common.domain.user.Constants;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestSummaryJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -32,15 +37,17 @@ public class InformationRequestService {
   private final RestTemplate restTemplate;
   private final ApplicationProperties applicationProperties;
   private final UserService userService;
+  private final ExternalUserService externalUserService;
   private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
   public InformationRequestService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      UserService userService, ApplicationServiceComposer applicationServiceComposer) {
+      UserService userService, ApplicationServiceComposer applicationServiceComposer, ExternalUserService externalUserService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationServiceComposer = applicationServiceComposer;
+    this.externalUserService = externalUserService;
   }
 
   public InformationRequestJson createForApplication(int id, InformationRequestJson informationRequest) {
@@ -68,8 +75,16 @@ public class InformationRequestService {
   }
 
   public InformationRequestJson findByApplicationId(int id) {
-    InformationRequest request = restTemplate.getForObject(applicationProperties.getApplicationInformationRequestFindUrl(), InformationRequest.class, id);
+    InformationRequest request = restTemplate.getForObject(applicationProperties.getApplicationClosedInformationRequestFindUrl(), InformationRequest.class, id);
     return toInformationRequestJson(request);
+  }
+
+  public List<InformationRequestSummaryJson> findSummariesByApplicationId(int id) {
+    ResponseEntity<InformationRequest[]> result = restTemplate.getForEntity(
+      applicationProperties.getApplicationInformationRequestFindAllUrl(), InformationRequest[].class, id);
+    return Arrays.stream(result.getBody())
+      .map(this::createSummary)
+      .collect(Collectors.toList());
   }
 
   public InformationRequest createForResponse(Integer applicationId, List<InformationRequestFieldKey> updatedKeys) {
@@ -150,4 +165,32 @@ public class InformationRequestService {
         response.getResponseFields());
   }
 
+  private InformationRequestSummaryJson createSummary(InformationRequest request) {
+    InformationRequestFieldKey[] response = restTemplate.getForObject(
+      applicationProperties.getInformationRequestResponseFieldsFindUrl(), InformationRequestFieldKey[].class, request.getId());
+    InformationRequestSummaryJson summary = new InformationRequestSummaryJson();
+    summary.setInformationRequestId(request.getId());
+    summary.setApplicationId(request.getApplicationId());
+    summary.setStatus(request.getStatus());
+    summary.setCreationTime(request.getCreationTime());
+    summary.setResponseReceived(request.getResponseReceived());
+
+    Optional.ofNullable(userService.findUserById(request.getCreatorId())).ifPresent(creator -> {
+      summary.setCreator(creator.getRealName());
+      summary.setUpdateWithoutRequest(creator.getUserName().equals(Constants.EXTERNAL_USER_USERNAME));
+    });
+
+    Optional.ofNullable(applicationServiceComposer.getApplicationExternalOwner(request.getApplicationId()))
+      .map(ownerId -> this.externalUserService.findUserById(ownerId))
+      .ifPresent(externalOwner -> summary.setRespondent(externalOwner.getName()));
+
+    summary.setRequestedFields(toInformationRequestJsonFields(request.getFields()));
+
+    List<InformationRequestFieldJson> responseFields = Arrays.stream(response)
+      .map(fieldKey -> new InformationRequestFieldJson(fieldKey, null))
+      .collect(Collectors.toList());
+    summary.setResponseFields(responseFields);
+
+    return summary;
+  }
 }
