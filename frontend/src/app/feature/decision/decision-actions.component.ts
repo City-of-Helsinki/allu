@@ -14,11 +14,12 @@ import {StatusChangeInfo} from '@model/application/status-change-info';
 import {Some} from '@util/option';
 import {DecisionDetails} from '@model/decision/decision-details';
 import * as fromRoot from '@feature/allu/reducers';
-import {Store} from '@ngrx/store';
+import * as fromApplication from '@feature/application/reducers';
+import {select, Store} from '@ngrx/store';
 import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 
@@ -143,17 +144,21 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
   }
 
   private confirmDecisionSend(type: string, status?: ApplicationStatus): Observable<DecisionConfirmation> {
-    const config = {
-      ...DECISION_MODAL_CONFIG,
-      data: {
-        type,
-        status,
-        distributionList: this.application.decisionDistributionList,
-        isTerminationDraftRejection: this.isTerminationTab && status === ApplicationStatus.RETURNED_TO_PREPARATION
-      }
-    };
-    return this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config)
-      .afterClosed().pipe(filter(result => !!result));
+    return this.store.pipe(
+      select(fromApplication.getDistributionList),
+      take(1),
+      map(distributionList => ({
+        ...DECISION_MODAL_CONFIG,
+        data: {
+          type,
+          status,
+          distributionList,
+          isTerminationDraftRejection: this.isTerminationTab && status === ApplicationStatus.RETURNED_TO_PREPARATION
+        }
+      })),
+      switchMap(config => this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config).afterClosed()),
+      filter(result => !!result)
+    );
   }
 
   private changeStatus(confirmation?: DecisionConfirmation): Observable<Application> {
