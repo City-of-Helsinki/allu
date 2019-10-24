@@ -213,7 +213,8 @@ public class ApplicationReplacementService {
     // which have invoicing periods
     if (replacingApplication.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       invoicingPeriodService.setExcavationAnnouncementPeriods(replacingApplication.getId());
-    } else if (replacingApplication.getType() == ApplicationType.AREA_RENTAL) {
+    } else if (replacingApplication.getType() == ApplicationType.AREA_RENTAL
+      && replacingApplication.getInvoicingPeriodLength() != null) {
       invoicingPeriodService.createInvoicingPeriods(replacingApplication.getId(), replacingApplication.getInvoicingPeriodLength());
     }
   }

@@ -223,6 +223,15 @@ public class ApplicationReplacementServiceTest {
     assertEquals(invoicingPeriodService.findForApplicationId(applicationId).size(), 3);
   }
 
+  @Test
+  public void shouldNotCreateInvoicingPeriodsForAreaRentalWithoutPeriodLength() {
+    Application areaRental = insertApplication(ApplicationType.AREA_RENTAL, new AreaRental());
+    setToDecisionState(areaRental.getId());
+    int applicationId = applicationReplacementService.replaceApplication(areaRental.getId(), testUser.getId());
+    // No periods should have been copied since original did not have any
+    assertEquals(invoicingPeriodService.findForApplicationId(applicationId).size(), 0);
+  }
+
   private <E extends ApplicationExtension> Application insertApplication(ApplicationType type, E extension) {
     Application created = applicationDao.insert(createApplication(type, extension));
     insertLocations(created);
