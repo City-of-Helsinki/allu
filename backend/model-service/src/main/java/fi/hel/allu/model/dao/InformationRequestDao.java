@@ -162,6 +162,19 @@ public class InformationRequestDao {
       .where(informationRequest.id.eq(requestId)).execute();
   }
 
+  @Transactional
+  public InformationRequest move(int fromApplicationId, int toApplicationId) {
+    InformationRequest existing = findByApplicationId(fromApplicationId);
+    if (existing != null) {
+      queryFactory
+        .update(informationRequest)
+        .set(informationRequest.applicationId, toApplicationId)
+        .where(informationRequest.id.eq(existing.getId())).execute();
+      return findById(existing.getId());
+    }
+    return null;
+  }
+
   public void insertResponseFields(Integer requestId, List<InformationRequestFieldKey> responseFields) {
     deleteResponseFields(requestId);
     responseFields.stream().forEach(f -> insertSingleResponseField(requestId, f));

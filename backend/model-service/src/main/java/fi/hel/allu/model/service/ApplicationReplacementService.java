@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
@@ -58,11 +57,13 @@ public class ApplicationReplacementService {
   private final InvoiceDao invoiceDao;
   private final InvoicingPeriodService invoicingPeriodService;
   private final DistributionEntryDao distributionEntryDao;
+  private final InformationRequestDao informationRequestDao;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
       LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao, ChargeBasisDao chargeBasisDao,
-      InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService, DistributionEntryDao distributionEntryDao) {
+      InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService, DistributionEntryDao distributionEntryDao,
+      InformationRequestDao informationRequestDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
@@ -73,6 +74,7 @@ public class ApplicationReplacementService {
     this.invoiceDao = invoiceDao;
     this.invoicingPeriodService = invoicingPeriodService;
     this.distributionEntryDao = distributionEntryDao;
+    this.informationRequestDao = informationRequestDao;
   }
 
   /**
@@ -125,6 +127,8 @@ public class ApplicationReplacementService {
     supervisionTaskDao.copyApprovedSupervisionTasks(applicationId, replacingApplication.getId());
     chargeBasisDao.copyManualChargeBasisEntries(applicationId, replacingApplication.getId(), invoiceDao.getInvoicedChargeBasisIds(applicationId));
     distributionEntryDao.copy(applicationId, replacingApplication.getId());
+    informationRequestDao.move(applicationId, replacingApplication.getId());
+
   }
 
   private Application addReplacingApplication(Application applicationToReplace, int userId) {

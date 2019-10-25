@@ -18,6 +18,8 @@ import {InformationRequest} from '@model/information-request/information-request
 import {Some} from '@util/option';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 import {CloseRequest} from '@feature/information-request/actions/information-request-actions';
+import {Location} from '@angular/common';
+import {Router} from '@angular/router';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -32,6 +34,8 @@ export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcc
   disableClose: true,
   autoFocus: false
 };
+
+const applicationIdPart = /[0-9]+/;
 
 @Component({
   selector: 'information-acceptance-modal',
@@ -56,9 +60,11 @@ export class InformationAcceptanceModalComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
               private fb: FormBuilder,
               private resultService: InformationRequestResultService,
-              private applicationStore: ApplicationStore) {
+              private applicationStore: ApplicationStore,
+              private location: Location,
+              private router: Router) {
     this.form = this.fb.group({});
-    this.readonly = data.readonly;
+    this.readonly = true;
   }
 
   ngOnInit(): void {
@@ -67,6 +73,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
     this.updatedFields = this.data.updatedFields;
     this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
     this.requestDataAvailable = this.data.informationRequest && this.data.informationRequest.fields.length > 0;
+    this.readonly = this.isReadOnly(this.oldInfo);
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();
@@ -93,7 +100,11 @@ export class InformationAcceptanceModalComponent implements OnInit {
 
   replace(): void {
     this.applicationStore.replace()
-      .subscribe(application => this.onApplicationChange(application));
+      .subscribe(application => {
+        const path = this.location.path().replace(applicationIdPart, application.id.toString());
+        this.router.navigate([path]);
+        this.dialogRef.close();
+      });
   }
 
   discardChanges(): void {
@@ -105,7 +116,11 @@ export class InformationAcceptanceModalComponent implements OnInit {
     this.store.dispatch(new SetApplication(application));
     this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));
     this.store.dispatch(new SetLocations(application.locations));
-    this.readonly = this.data.readonly
+    this.readonly = this.isReadOnly(application);
+  }
+
+  private isReadOnly(application: Application): boolean {
+    return this.data.readonly
       || !isBetween(application.status, ApplicationStatus.WAITING_INFORMATION, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
   }
 }
