@@ -9,7 +9,6 @@ import {ContactComponent} from '../contact/contact.component';
 import {ALWAYS_ENABLED_FIELDS} from '@feature/customerregistry/customer/customer-info.component';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 import {CustomerType} from '@model/customer/customer-type';
-import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {CustomerService} from '@service/customer/customer.service';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
@@ -43,7 +42,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
   private _customerWithContacts: CustomerWithContacts;
 
   constructor(private fb: FormBuilder,
-              private modalState: InformationRequestModalEvents,
               private customerService: CustomerService,
               private notification: NotificationService) {
   }
@@ -76,10 +74,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.contacts.onCustomerRemove();
     this.parentForm.removeControl(CustomerWithContactsForm.formName(this.customerWithContacts.roleType));
-  }
-
-  showPending(): void {
-    this.modalState.openAcceptance();
   }
 
   onCustomerChange(customer: Customer): void {

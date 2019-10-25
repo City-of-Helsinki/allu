@@ -1,11 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {
-  ApplicationType,
-  getAvailableKinds,
-  getAvailableSpecifiers,
-  hasMultipleKinds
-} from '@model/application/type/application-type';
+import {ApplicationType, getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
 import {ApplicationStore} from '@service/application/application-store';
 import {ArrayUtil} from '@util/array-util';
 import {Observable, of, Subject} from 'rxjs';
@@ -22,7 +17,6 @@ import {
   toKindsWithSpecifiers
 } from '@model/application/type/application-specifier';
 import {SetKindsWithSpecifiers, SetType} from '@feature/application/actions/application-actions';
-import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
 import {FormUtil} from '@util/form.util';
@@ -59,8 +53,7 @@ export class TypeComponent implements OnInit, OnDestroy {
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
-              private fb: FormBuilder,
-              private modalEvents: InformationRequestModalEvents) {
+              private fb: FormBuilder) {
   }
 
   ngOnInit(): any {
@@ -120,10 +113,6 @@ export class TypeComponent implements OnInit, OnDestroy {
 
   showSpecifierSelection(): boolean {
     return hasSpecifiers(this.availableKindsWithSpecifiers);
-  }
-
-  showPending(): void {
-    this.modalEvents.openAcceptance();
   }
 
   validate(): void {

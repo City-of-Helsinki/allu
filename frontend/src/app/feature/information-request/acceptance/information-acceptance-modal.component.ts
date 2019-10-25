@@ -102,8 +102,8 @@ export class InformationAcceptanceModalComponent implements OnInit {
     this.applicationStore.replace()
       .subscribe(application => {
         const path = this.location.path().replace(applicationIdPart, application.id.toString());
-        this.router.navigate([path]);
         this.dialogRef.close();
+        this.router.navigate([path], {replaceUrl: true});
       });
   }
 

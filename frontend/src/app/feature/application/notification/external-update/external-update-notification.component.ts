@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 
 export enum ExternalUpdateNotificationType {
   INFORMATION_REQUEST_DRAFT = 'INFORMATION_REQUEST_DRAFT',
@@ -19,21 +18,21 @@ const informationRequestTypes = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExternalUpdateNotificationComponent {
+  routePath = 'pending_info';
   private _type: ExternalUpdateNotificationType = ExternalUpdateNotificationType.INFORMATION_REQUEST_DRAFT;
 
-  constructor(private modalEvents: InformationRequestModalEvents) {
-  }
+  constructor() {}
 
   show(): void {
-    if (informationRequestTypes.indexOf(this._type) >= 0) {
-      this.modalEvents.openRequest();
-    } else {
-      this.modalEvents.openAcceptance();
-    }
   }
 
   @Input() set type(type: ExternalUpdateNotificationType) {
     this._type = type;
+    if (informationRequestTypes.indexOf(this._type) >= 0) {
+      this.routePath = 'information_request';
+    } else {
+      this.routePath = 'pending_info';
+    }
   }
 
   get type() {

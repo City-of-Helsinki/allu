@@ -16,6 +16,7 @@ import {ApplicationCommentsComponent} from './comment/application-comments.compo
 import {DecisionDocumentComponent} from '@feature/decision/documents/decision-document.component';
 import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
+import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
 
 export const decisionTabs: Routes = [
   { path: '', redirectTo: 'contract', pathMatch: 'full'},
@@ -26,9 +27,15 @@ export const decisionTabs: Routes = [
   { path: 'termination', component: DecisionDocumentComponent, canActivate: [AuthGuard], resolve: {tab: DecisionTabResolve} },
 ];
 
+export const informationRequest: Routes = [
+  { path: 'pending_info', component: InformationAcceptanceEntryComponent, canActivate: [AuthGuard]},
+  { path: 'information_request', component: InformationAcceptanceEntryComponent, canActivate: [AuthGuard]}
+];
+
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
-  { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
+  { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard],
+    children: informationRequest },
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'comments', component: ApplicationCommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
@@ -54,3 +61,4 @@ export const applicationRoutes: Routes = [
     { path: 'summary', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs }
   ]}
 ];
+

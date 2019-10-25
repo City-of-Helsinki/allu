@@ -6,7 +6,7 @@
           <div fxLayout="row" fxLayoutGap=2px fxLayoutAlign="start center">
             <mat-icon color="accent">warning</mat-icon>
             <div>{{'application.clientData.newData' | translation}}</div>
-            <a class="clickable" (click)="showPending()">{{'application.clientData.show' | translation}}</a>
+            <a class="clickable" [routerLink]="'pending_info'">{{'application.clientData.show' | translation}}</a>
           </div>
         </mat-card-content>
         <mat-card-title>

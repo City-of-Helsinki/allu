@@ -7,7 +7,7 @@
       {{['application.notification.type', type] | translation}}
     </div>
     <div fxFlex="none">
-      <a class="clickable" (click)="show()">{{'application.notification.show' | translation}}</a>
+      <a class="clickable" [routerLink]="routePath">{{'application.notification.show' | translation}}</a>
     </div>
   </div>
 </div>

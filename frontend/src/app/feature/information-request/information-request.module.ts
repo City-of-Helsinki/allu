@@ -11,7 +11,6 @@ import {FieldValueComponent} from './acceptance/field-select/field-value.compone
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind/kind-acceptance.component';
-import {InformationRequestModalEvents} from './information-request-modal-events';
 import {CustomerWithContactsAcceptanceComponent} from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
 import {ContactsAcceptanceComponent} from '@feature/information-request/acceptance/contact/contacts-acceptance-component';
 import {ContactAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-acceptance.component';
@@ -32,6 +31,8 @@ import {MapModule} from '@feature/map/map.module';
 import {AttachmentsAcceptanceComponent} from '@feature/information-request/acceptance/attachment/attachments-acceptance.component';
 import {InformationRequestSummaryComponent} from '@feature/information-request/request/display/information-request-summary.component';
 import {CustomerRegistryModule} from '@feature/customerregistry/customer-registry.module';
+import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ import {CustomerRegistryModule} from '@feature/customerregistry/customer-registr
     MatDialogModule,
     AlluCommonModule,
     MapModule,
-    CustomerRegistryModule
+    CustomerRegistryModule,
+    RouterModule.forChild([])
   ],
   declarations: [
     InformationAcceptanceModalComponent,
@@ -65,15 +67,16 @@ import {CustomerRegistryModule} from '@feature/customerregistry/customer-registr
     LocationAcceptanceComponent,
     LocationInfoAcceptanceComponent,
     AttachmentsAcceptanceComponent,
-    InformationRequestSummaryComponent
+    InformationRequestSummaryComponent,
+    InformationAcceptanceEntryComponent
   ],
   providers: [
     InformationRequestService,
-    InformationRequestModalEvents,
     InformationRequestResultService
   ],
   exports: [
-    InformationAcceptanceModalComponent
+    InformationAcceptanceModalComponent,
+    InformationAcceptanceEntryComponent
   ],
   entryComponents: [
     InformationAcceptanceModalComponent,

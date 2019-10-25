@@ -16,9 +16,9 @@ import {CustomerService} from '../../../../../src/app/service/customer/customer.
 import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
 import {Observable, of} from 'rxjs/index';
-import {InformationRequestModalEvents} from '../../../../../src/app/feature/information-request/information-request-modal-events';
 import {NotificationService} from '@feature/notification/notification.service';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const headerText = 'Hakija';
 
@@ -77,7 +77,12 @@ describe('CustomerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
+      imports: [
+        AlluCommonModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        RouterTestingModule.withRoutes([])
+      ],
       declarations: [
         CustomerComponent,
         MockContactComponent,
@@ -88,8 +93,7 @@ describe('CustomerComponent', () => {
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock},
-        {provide: NotificationService, useClass: NotificationServiceMock},
-        InformationRequestModalEvents
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     }).compileComponents();
   }));

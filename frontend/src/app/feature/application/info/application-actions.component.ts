@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ApplicationStore} from '@service/application/application-store';
 import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '@model/application/application-status';
 import {ApplicationType} from '@model/application/type/application-type';
@@ -16,7 +16,6 @@ import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
 import {filter, map} from 'rxjs/operators';
-import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
@@ -78,8 +77,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private userService: UserService,
               private notification: NotificationService,
-              private modalState: InformationRequestModalEvents,
-              private terminationModalService: TerminationModalService) {
+              private terminationModalService: TerminationModalService,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -230,11 +229,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   showExternalUpdates(): void {
-    this.modalState.openAcceptance();
+    this.router.navigate(['pending_info'], {relativeTo: this.route});
   }
 
   showInformationRequestInfo(): void {
-    this.modalState.openRequest();
+    this.router.navigate(['information_request'], {relativeTo: this.route});
   }
 
   cancelInformationRequest(): void {

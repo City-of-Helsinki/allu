@@ -25,7 +25,6 @@ import {ApplicationStatus} from '@model/application/application-status';
 import {MatDialog} from '@angular/material/dialog';
 import {User} from '@model/user/user';
 import {EMPTY, Observable, of} from 'rxjs/index';
-import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
 import {NotificationService} from '@feature/notification/notification.service';
@@ -98,8 +97,7 @@ describe('ApplicationActionsComponent', () => {
         {provide: UserService, useClass: UserServiceMock},
         {provide: NotificationService, useClass: NotificationServiceMock},
         {provide: TerminationService, useClass: TerminationServiceMock},
-        {provide: TerminationModalService, useValue: {}},
-        InformationRequestModalEvents
+        {provide: TerminationModalService, useValue: {}}
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
     .compileComponents();

@@ -9,10 +9,12 @@ import {
   ExternalUpdateNotificationComponent
 } from '@feature/application/notification/external-update/external-update-notification.component';
 import {OwnerNotificationComponent} from '@feature/application/notification/owner-notification/owner-notification.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
-    AlluCommonModule
+    AlluCommonModule,
+    RouterModule.forChild([])
   ],
   declarations: [
     ApplicationNotificationComponent,
