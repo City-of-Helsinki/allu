@@ -29,7 +29,7 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
     this.projectId = projectId;
   }
 
-  @ApiModelProperty(value = "Owner of the application", readOnly = true)
+  @ApiModelProperty(value = "Owner of the application")
   public Integer getOwnerId() {
     return ownerId;
   }
@@ -38,7 +38,7 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
     this.ownerId = ownerId;
   }
 
-  @ApiModelProperty(value = "Handler of the application", readOnly = true)
+  @ApiModelProperty(value = "Handler of the application")
   public Integer getHandlerId() {
     return handlerId;
   }
