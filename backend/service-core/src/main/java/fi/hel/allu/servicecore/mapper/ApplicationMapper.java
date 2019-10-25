@@ -522,18 +522,11 @@ public class ApplicationMapper {
     Map<CustomerRoleType, CreateCustomerWithContactsJson> customersByRoleType = createJson.getAllCustomersWithContactsByCustomerRoleType();
 
     List<CustomerWithContactsJson> customersWithContacts = customersByRoleType.entrySet().stream()
-      .map(entry -> createCustomerWithContactsJson(entry.getKey(), entry.getValue()))
+      .map(entry -> customerMapper.createCustomerWithContactsJson(entry.getKey(), entry.getValue()))
       .collect(Collectors.toList());
 
     applicationJson.setCustomersWithContacts(customersWithContacts);
 
     return applicationJson;
-  }
-
-  private CustomerWithContactsJson createCustomerWithContactsJson(CustomerRoleType roleType, CreateCustomerWithContactsJson customerWithContacts) {
-    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson(roleType, new CustomerJson(customerWithContacts.getCustomerId()));
-    customerWithContactsJson.setContacts(customerWithContacts.getContactIds().stream()
-      .map(ContactJson::new).collect(Collectors.toList()));
-    return customerWithContactsJson;
   }
 }

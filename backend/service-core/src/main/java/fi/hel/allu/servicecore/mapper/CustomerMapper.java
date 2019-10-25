@@ -5,6 +5,8 @@ import fi.hel.allu.common.domain.types.CodeSetType;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
 import org.springframework.stereotype.Component;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.RoleType;
@@ -200,6 +202,12 @@ public class CustomerMapper {
             cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList())) : null;
   }
 
+  public CustomerWithContactsJson createCustomerWithContactsJson(CustomerRoleType roleType, CreateCustomerWithContactsJson customerWithContacts) {
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson(roleType, new CustomerJson(customerWithContacts.getCustomerId()));
+    customerWithContactsJson.setContacts(customerWithContacts.getContactIds().stream()
+      .map(ContactJson::new).collect(Collectors.toList()));
+    return customerWithContactsJson;
+  }
 
   static final String SSN_REPLACEMENT = "***********";
 
