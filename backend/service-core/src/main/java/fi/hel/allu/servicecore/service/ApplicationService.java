@@ -241,6 +241,18 @@ public class ApplicationService {
     restTemplate.put(applicationProperties.getApplicationHandlerUpdateUrl(), null, applicationId, updatedHandler);
   }
 
+  CustomerWithContacts replaceCustomerWithContacts(Integer applicationId,
+                                                   CustomerWithContacts customerWithContacts) {
+    ResponseEntity<CustomerWithContacts> responseEntity = restTemplate.exchange(
+      applicationProperties.getReplaceCustomerWithContactsUrl(), HttpMethod.PUT,
+      new HttpEntity<>(customerWithContacts), CustomerWithContacts.class, applicationId);
+
+    Integer currentUserId = userService.getCurrentUser().getId();
+    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, currentUserId));
+
+    return responseEntity.getBody();
+  }
+
   Application changeApplicationStatus(int applicationId, StatusType statusType) {
     HttpEntity<Integer> userIdRequest = getUserIdRequest(statusType);
 

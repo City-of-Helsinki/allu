@@ -219,6 +219,13 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/drafts/{id}");
   }
 
+  /**
+   * @return url to replace a customer along with contacts for an application
+   */
+  public String getReplaceCustomerWithContactsUrl() {
+    return getModelServiceUrl("/applications/{id}/customerWithContacts");
+  }
+
 
   /**
    * @return url to send application search queries.

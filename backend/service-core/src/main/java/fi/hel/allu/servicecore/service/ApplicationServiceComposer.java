@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class ApplicationServiceComposer {
   private final InvoiceService invoiceService;
   private final CustomerService customerService;
   private final SupervisionTaskService supervisionTaskService;
+  private final CustomerMapper customerMapper;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -55,7 +57,8 @@ public class ApplicationServiceComposer {
       UserService userService,
       InvoiceService invoiceService,
       CustomerService customerService,
-      @Lazy SupervisionTaskService supervisionTaskService) {
+      @Lazy SupervisionTaskService supervisionTaskService,
+      CustomerMapper customerMapper) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
@@ -66,6 +69,7 @@ public class ApplicationServiceComposer {
     this.invoiceService = invoiceService;
     this.customerService = customerService;
     this.supervisionTaskService = supervisionTaskService;
+    this.customerMapper = customerMapper;
   }
 
   /**
@@ -149,6 +153,14 @@ public class ApplicationServiceComposer {
   public void deleteNote(int applicationId) {
     applicationService.deleteNote(applicationId);
     searchService.deleteNote(applicationId);
+  }
+
+  public CustomerWithContactsJson replaceCustomerWithContacts(Integer applicationId, CustomerWithContactsJson customerWithContacts) {
+    CustomerWithContacts cwc = applicationService.replaceCustomerWithContacts(applicationId,
+      customerMapper.createSingleCustomerWithContactsModel(customerWithContacts));
+    // TODO applicationHistoryService
+    // TODO searchService?
+    return customerMapper.createWithContactsJson(cwc);
   }
 
   /**

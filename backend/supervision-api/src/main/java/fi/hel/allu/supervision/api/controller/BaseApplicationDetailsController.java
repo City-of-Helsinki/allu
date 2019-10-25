@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.servicecore.domain.CreateApplicationJson;
+import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +51,8 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   protected LocationService locationService;
   @Autowired
   protected ApplicationMapper applicationMapper;
-
+  @Autowired
+  protected CustomerMapper customerMapper;
 
   @ApiOperation(value = "Get application details",
       authorizations = @Authorization(value ="api_key"),
@@ -146,4 +151,72 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 
+  @ApiOperation(value = "Update applicant customer",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Customer updated successfully"),
+    @ApiResponse(code = 400, message = "Invalid customer data", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class)
+  })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(Integer applicationId, CreateCustomerWithContactsJson customer) {
+    validateType(applicationId);
+    CustomerWithContactsJson result = applicationServiceComposer.replaceCustomerWithContacts(applicationId,
+      customerMapper.createCustomerWithContactsJson(CustomerRoleType.APPLICANT, customer));
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation(value = "Update property developer customer",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Customer updated successfully"),
+    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+  })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerPropertyDeveloper(Integer applicationId, CreateCustomerWithContactsJson customer) {
+    validateType(applicationId);
+    CustomerWithContactsJson result = applicationServiceComposer.replaceCustomerWithContacts(applicationId,
+      customerMapper.createCustomerWithContactsJson(CustomerRoleType.PROPERTY_DEVELOPER, customer));
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation(value = "Update contractor customer",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Customer updated successfully"),
+    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+  })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerContractor(Integer applicationId, CreateCustomerWithContactsJson customer) {
+    validateType(applicationId);
+    CustomerWithContactsJson result = applicationServiceComposer.replaceCustomerWithContacts(applicationId,
+      customerMapper.createCustomerWithContactsJson(CustomerRoleType.CONTRACTOR, customer));
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation(value = "Update representative customer",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Customer updated successfully"),
+    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+  })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(Integer applicationId, CreateCustomerWithContactsJson customer) {
+    validateType(applicationId);
+    CustomerWithContactsJson result = applicationServiceComposer.replaceCustomerWithContacts(applicationId,
+      customerMapper.createCustomerWithContactsJson(CustomerRoleType.REPRESENTATIVE, customer));
+    return ResponseEntity.ok(result);
+  }
 }

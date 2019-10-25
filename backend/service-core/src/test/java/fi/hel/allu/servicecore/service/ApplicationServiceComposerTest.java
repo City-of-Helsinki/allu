@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -34,6 +35,7 @@ public class ApplicationServiceComposerTest {
   private InvoiceService invoiceService;
   private CustomerService customerService;
   private SupervisionTaskService supervisionTaskService;
+  private CustomerMapper customerMapper;
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
@@ -59,6 +61,7 @@ public class ApplicationServiceComposerTest {
     invoiceService = Mockito.mock(InvoiceService.class);
     customerService = Mockito.mock(CustomerService.class);
     supervisionTaskService = Mockito.mock(SupervisionTaskService.class);
+    customerMapper = Mockito.mock(CustomerMapper.class);
 
     applicationServiceComposer = new ApplicationServiceComposer(
         applicationService,
@@ -70,7 +73,8 @@ public class ApplicationServiceComposerTest {
         userService,
         invoiceService,
         customerService,
-        supervisionTaskService
+        supervisionTaskService,
+        customerMapper
     );
 
     info = new StatusChangeInfoJson();
