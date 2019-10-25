@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -28,7 +29,7 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
@@ -41,18 +42,21 @@ public class SupervisionTaskService {
   private final RestTemplate restTemplate;
   private final UserService userService;
   private final ApplicationServiceComposer applicationServiceComposer;
-  private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationEventPublisher archiveEventPublisher;
+  private final ApplicationEventDispatcher applicationEventDispatcher;
   private final ApplicationHistoryService applicationHistoryService;
 
   @Autowired
   public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
                                 UserService userService, ApplicationServiceComposer applicationServiceComposer,
-                                ApplicationEventPublisher archiveEventPublisher, ApplicationHistoryService applicationHistoryService) {
+                                ApplicationEventPublisher archiveEventPublisher, ApplicationHistoryService applicationHistoryService,
+                                ApplicationEventDispatcher applicationEventDispatcher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationServiceComposer = applicationServiceComposer;
-    this.applicationEventPublisher = archiveEventPublisher;
+    this.archiveEventPublisher = archiveEventPublisher;
+    this.applicationEventDispatcher = applicationEventDispatcher;
     this.applicationHistoryService = applicationHistoryService;
   }
 
@@ -91,7 +95,8 @@ public class SupervisionTaskService {
         SupervisionTask.class,
         id);
     applicationHistoryService.addSupervisionUpdated(supervisionTask.getApplicationId(), supervisionTask.getType());
-    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(supervisionTask.getApplicationId(), supervisionTask.getCreatorId()));
+    applicationEventDispatcher.dispatchUpdateEvent(supervisionTask.getApplicationId(), supervisionTask.getCreatorId(),
+        ApplicationNotificationType.SUPERVISION_UPDATED, supervisionTask.getType().name());
     return supervisionTasksResult;
   }
 
@@ -106,7 +111,9 @@ public class SupervisionTaskService {
         applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);
     applicationServiceComposer.refreshSearchTags(task.getApplicationId());
     applicationHistoryService.addSupervisionAdded(task.getApplicationId(), task.getType());
-    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(task.getApplicationId(), task.getCreatorId()));
+    applicationEventDispatcher.dispatchUpdateEvent(task.getApplicationId(), task.getCreatorId(),
+        ApplicationNotificationType.SUPERVISION_ADDED, task.getType().name());
+
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -120,8 +127,9 @@ public class SupervisionTaskService {
         SupervisionTask.class,
         taskJson.getId());
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
-    applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
-    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId()));
+    archiveEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
+    applicationEventDispatcher.dispatchUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId(),
+        ApplicationNotificationType.SUPERVISION_APPROVED, taskJson.getType().name());
     applicationHistoryService.addSupervisionApproved(taskJson.getApplicationId(), taskJson.getType());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
@@ -151,7 +159,9 @@ public class SupervisionTaskService {
 
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     applicationHistoryService.addSupervisionRejected(taskJson.getApplicationId(), taskJson.getType());
-    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId()));
+    applicationEventDispatcher.dispatchUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId(),
+        ApplicationNotificationType.SUPERVISION_REJECTED, taskJson.getType().name());
+
     // TODO: send email to customer about new supervision date and reason of rejection
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
@@ -161,8 +171,9 @@ public class SupervisionTaskService {
     restTemplate.delete(applicationProperties.getSupervisionTaskByIdUrl(), id);
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     applicationHistoryService.addSupervisionRemoved(taskJson.getApplicationId(), taskJson.getType());
-    applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
-    applicationEventPublisher.publishEvent(new ApplicationUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId()));
+    archiveEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
+    applicationEventDispatcher.dispatchUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId(),
+        ApplicationNotificationType.SUPERVISION_REMOVED, taskJson.getType().name());
   }
 
   public Page<SupervisionWorkItemJson> searchWorkItems(SupervisionTaskSearchCriteria searchCriteria,

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -23,14 +22,14 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.event.ApplicationOwnerChangeEvent;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
 
@@ -46,7 +45,7 @@ public class ApplicationService {
   private final PaymentZoneService paymentZoneService;
   private final InvoicingPeriodService invoicingPeriodService;
   private final InvoiceService invoiceService;
-  private final ApplicationEventPublisher eventPublisher;
+  private final ApplicationEventDispatcher applicationEventDispatcher;
 
   @Autowired
   public ApplicationService(
@@ -59,7 +58,7 @@ public class ApplicationService {
       PaymentZoneService paymentZoneService,
       InvoicingPeriodService invoicingPeriodService,
       InvoiceService invoiceService,
-      ApplicationEventPublisher eventPublisher) {
+      ApplicationEventDispatcher applicationEventDispatcher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -69,7 +68,7 @@ public class ApplicationService {
     this.paymentZoneService = paymentZoneService;
     this.invoicingPeriodService = invoicingPeriodService;
     this.invoiceService = invoiceService;
-    this.eventPublisher = eventPublisher;
+    this.applicationEventDispatcher = applicationEventDispatcher;
   }
 
 
@@ -203,7 +202,8 @@ public class ApplicationService {
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     Application application = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
         HttpMethod.PUT, requestEntity, Application.class, applicationId, currentUserId).getBody();
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, currentUserId));
+
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, currentUserId, ApplicationNotificationType.CONTENT_CHANGED, applicationJson.getStatus());
     return setInvoicingPeriods(application);
   }
 
@@ -230,7 +230,7 @@ public class ApplicationService {
   void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
     restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
     Integer currentUserId = userService.getCurrentUser().getId();
-    applicationIds.forEach(id -> eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(id, currentUserId, updatedOwner)));
+    applicationIds.forEach(id -> applicationEventDispatcher.dispatchOwnerChangeEvent(id, currentUserId, updatedOwner));
   }
 
   void removeApplicationOwner(List<Integer> applicationIds) {
@@ -250,7 +250,7 @@ public class ApplicationService {
         userIdRequest,
         Application.class,
         applicationId);
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(), ApplicationNotificationType.STATUS_CHANGED, statusType);
     return responseEntity.getBody();
   }
 
@@ -381,7 +381,8 @@ public class ApplicationService {
         .buildAndExpand(Collections.singletonMap("id", id)).toUri();
     restTemplate.exchange(uri, HttpMethod.PUT,
         new HttpEntity<>(null), Void.class);
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(id, currentUserId));
+    applicationEventDispatcher.dispatchUpdateEvent(id, userService.getCurrentUser().getId(),
+        ApplicationNotificationType.INVOICE_RECIPIENT_CHANGED, application.getStatus());
   }
 
   private void validateInvoiceRecipientChangeAllowed(Application application) {

@@ -666,6 +666,11 @@
                             <column>invoicable_status</column>
                             <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>notification_configuration</table>
+                            <column>notification_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationNotificationType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

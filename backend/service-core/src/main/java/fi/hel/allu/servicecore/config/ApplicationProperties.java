@@ -1431,6 +1431,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/configurations/{id}");
   }
 
+  public String getNotificationConfigurationUrl() {
+    return getModelServiceUrl("/configurations/notification");
+  }
+
   public String getCustomerOperationalConditionUrl() {
     return getModelServiceUrl("/applications/{id}/customeroperationalcondition");
   }

@@ -22,7 +22,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,14 +29,14 @@ import org.springframework.http.ResponseEntity;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.event.ApplicationOwnerChangeEvent;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
@@ -73,7 +72,7 @@ public class ApplicationServiceTest extends MockServices {
   @Mock
   private InvoiceService invoiceService;
   @Mock
-  private ApplicationEventPublisher eventPublisher;
+  private ApplicationEventDispatcher eventDispatcher;
 
   private ApplicationService applicationService;
 
@@ -104,7 +103,7 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService,
-        personAuditLogService, paymentClassService, paymentZoneService, invoicingPeriodService, invoiceService, eventPublisher);
+        personAuditLogService, paymentClassService, paymentZoneService, invoicingPeriodService, invoiceService, eventDispatcher);
   }
 
   @Test
@@ -163,7 +162,7 @@ public class ApplicationServiceTest extends MockServices {
 
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplication(1, applicationJson);
-    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+    verify(eventDispatcher, times(1)).dispatchUpdateEvent(eq(1), anyInt(), eq(ApplicationNotificationType.CONTENT_CHANGED), eq(applicationJson.getStatus()));
   }
 
   @Test
@@ -177,7 +176,7 @@ public class ApplicationServiceTest extends MockServices {
   public void shouldPublishApplicationEventOnOwnerUpdate() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()));
-    verify(eventPublisher, times(1)).publishEvent(any(ApplicationOwnerChangeEvent.class));
+    verify(eventDispatcher, times(1)).dispatchOwnerChangeEvent(eq(1), anyInt(), eq(2));
   }
 
   @Test
@@ -252,7 +251,7 @@ public class ApplicationServiceTest extends MockServices {
         eq(Application.class),
         anyInt())).thenReturn(new ResponseEntity<Application>(createMockApplicationModel(), HttpStatus.OK));
     applicationService.changeApplicationStatus(1, StatusType.DECISIONMAKING);
-    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+    verify(eventDispatcher, times(1)).dispatchUpdateEvent(eq(1), anyInt(), eq(ApplicationNotificationType.STATUS_CHANGED), eq(StatusType.DECISIONMAKING));
   }
 
   @Test
@@ -262,6 +261,6 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(ap.getApplicationInvoiceRecipientUrl()).thenReturn("http://application/invoicerecipient");
     applicationService.setApplicationProperties(ap);
     applicationService.setInvoiceRecipient(response.getId(), 15);
-    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+    verify(eventDispatcher, times(1)).dispatchUpdateEvent(eq(1), anyInt(), eq(ApplicationNotificationType.INVOICE_RECIPIENT_CHANGED), any(StatusType.class));
   }
 }

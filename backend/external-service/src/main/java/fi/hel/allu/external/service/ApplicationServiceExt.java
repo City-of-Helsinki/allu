@@ -6,12 +6,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.common.domain.ApplicationStatusInfo;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -21,12 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Sets;
 
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.ExternalApplication;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
@@ -36,8 +34,10 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
 import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
@@ -70,7 +70,7 @@ public class ApplicationServiceExt {
   @Autowired
   private CustomerExtMapper customerMapper;
   @Autowired
-  private ApplicationEventPublisher eventPublisher;
+  private ApplicationEventDispatcher applicationEventDispatcher;
   @Autowired
   private UserService userService;
 
@@ -192,7 +192,7 @@ public class ApplicationServiceExt {
     InformationRequest request = informationRequestService.createForResponse(applicationId, Collections.emptyList());
     addResponseForRequest(applicationId, request.getId(), response, mapper);
     applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.OTHER_CHANGES, ZonedDateTime.now()));
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(), ApplicationNotificationType.EXTERNAL_OTHER_CHANGE);
   }
 
   private void validateInformationRequestOpen(Integer requestId) {
@@ -206,7 +206,7 @@ public class ApplicationServiceExt {
     ApplicationStatusInfo statusInfo = applicationServiceComposer.getApplicationStatus(applicationId);
     if (!(statusInfo.getStatus() == StatusType.DECISION || statusInfo.getStatus() == StatusType.OPERATIONAL_CONDITION)) {
       throw new IllegalOperationException("application.addChanges.notAllowed");
-    };
+    }
   }
 
   private <T extends BaseApplicationExt> void addResponseForRequest(Integer applicationId, Integer requestId,

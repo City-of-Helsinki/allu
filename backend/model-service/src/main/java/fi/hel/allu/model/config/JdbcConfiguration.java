@@ -1,12 +1,9 @@
 package fi.hel.allu.model.config;
 
-import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.SQLTemplates;
-import com.querydsl.sql.spatial.PostGISTemplates;
-import com.querydsl.sql.spring.SpringConnectionProvider;
-import com.querydsl.sql.spring.SpringExceptionTranslator;
+import java.sql.Connection;
 
-import fi.hel.allu.model.querydsl.*;
+import javax.inject.Provider;
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,10 +13,13 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.inject.Provider;
-import javax.sql.DataSource;
+import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.SQLTemplates;
+import com.querydsl.sql.spatial.PostGISTemplates;
+import com.querydsl.sql.spring.SpringConnectionProvider;
+import com.querydsl.sql.spring.SpringExceptionTranslator;
 
-import java.sql.Connection;
+import fi.hel.allu.model.querydsl.*;
 
 @Configuration
 @EnableTransactionManagement
@@ -73,6 +73,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToContractStatus());
     configuration.register(new StringToApprovalDocumentType());
     configuration.register(new StringToSurfaceHardness());
+    configuration.register(new StringToApplicationNotificationType());
     return configuration;
   }
 

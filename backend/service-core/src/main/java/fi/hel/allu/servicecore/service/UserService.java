@@ -1,11 +1,10 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.common.domain.UserSearchCriteria;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.mapper.UserMapper;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.UserSearchCriteria;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.domain.user.Constants;
+import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.mapper.UserMapper;
 
 @Service
 public class UserService {
@@ -38,6 +40,10 @@ public class UserService {
 
   public UserJson getCurrentUser() {
     return findUserByUserName(identityService.getUsername());
+  }
+
+  public boolean isExternalUser() {
+    return identityService.getUsername().equals(Constants.EXTERNAL_USER_USERNAME);
   }
 
   public List<UserJson> findAllUsers() {

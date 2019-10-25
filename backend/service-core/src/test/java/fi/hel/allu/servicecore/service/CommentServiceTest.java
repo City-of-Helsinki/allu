@@ -10,22 +10,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
-import static org.mockito.Mockito.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -39,7 +39,7 @@ public class CommentServiceTest {
   @Mock
   private ApplicationHistoryService applicationHistoryService;
   @Mock
-  private ApplicationEventPublisher eventPublisher;
+  private ApplicationEventDispatcher eventDispatcher;
 
   @InjectMocks
   private CommentService commentService;
@@ -122,7 +122,7 @@ public class CommentServiceTest {
         Mockito.eq(Comment.class), Mockito.eq(APPLICATION_ID))).thenReturn(new ResponseEntity<>(comment, HttpStatus.OK));
     Mockito.when(userService.getCurrentUser()).thenReturn(newUserJson("user", USER_ID));
     commentService.addApplicationComment(APPLICATION_ID, newCommentJson(CommentType.INTERNAL, "comment", USER_ID));
-    verify(eventPublisher, times(1)).publishEvent(any(ApplicationUpdateEvent.class));
+    verify(eventDispatcher, times(1)).dispatchUpdateEvent(eq(APPLICATION_ID), anyInt(), eq(ApplicationNotificationType.COMMENT_ADDED), anyString());
   }
 
   @Test

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.ConfigurationKey;
+import fi.hel.allu.model.domain.NotificationConfiguration;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,15 @@ public class ConfigurationService {
 
   public List<String> getValues(ConfigurationKey key) {
     return getConfigurations(key).stream().map(Configuration::getValue).collect(Collectors.toList());
+  }
+
+  @Cacheable("notificationConfiguration")
+  public List<NotificationConfiguration> getNotificationConfiguration() {
+    return restTemplate.exchange(
+        applicationProperties.getNotificationConfigurationUrl(),
+        HttpMethod.GET,
+        null,
+        new ParameterizedTypeReference<List<NotificationConfiguration>>() {}).getBody();
   }
 
   public Configuration updateConfiguration(int id, Configuration configuration) {

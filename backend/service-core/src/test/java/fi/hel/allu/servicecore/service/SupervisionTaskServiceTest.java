@@ -1,18 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
-import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -23,17 +17,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
+import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
+import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +47,10 @@ public class SupervisionTaskServiceTest {
   @Mock
   private ApplicationServiceComposer applicationServiceComposer;
   @Mock
-  private ApplicationEventPublisher applicationEventPublisher;
+  private ApplicationEventPublisher archiveEventPublisher;
+  @Mock
+  private ApplicationEventDispatcher eventDispatcher;
+
   @InjectMocks
   private SupervisionTaskService supervisionTaskService;
 
@@ -81,7 +78,7 @@ public class SupervisionTaskServiceTest {
     setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     supervisionTaskService.insert(taskJson);
-    verifyPublishedEvents(Arrays.asList(ApplicationUpdateEvent.class));
+    verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_ADDED);
   }
 
   @Test
@@ -102,7 +99,7 @@ public class SupervisionTaskServiceTest {
     onUpdate(SupervisionTaskMapper.mapToModel(updatedTask));
     supervisionTaskService.update(updatedTask);
     // Publish one for insert, one for update
-    verifyPublishedEvents(Arrays.asList(ApplicationUpdateEvent.class, ApplicationUpdateEvent.class));
+    verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_ADDED, ApplicationNotificationType.SUPERVISION_UPDATED);
   }
 
   @Test
@@ -116,7 +113,8 @@ public class SupervisionTaskServiceTest {
   public void shouldPublishApplicationEventWhenRemoved() {
     setTaskSearchResult(SupervisionTaskType.OPERATIONAL_CONDITION);
     supervisionTaskService.delete(1);
-    verifyPublishedEvents(Arrays.asList(ApplicationArchiveEvent.class, ApplicationUpdateEvent.class));
+    verify(archiveEventPublisher, times(1)).publishEvent(any(ApplicationArchiveEvent.class));
+    verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_REMOVED);
   }
 
   @Test
@@ -130,7 +128,8 @@ public class SupervisionTaskServiceTest {
   public void shouldPublishApplicationEventWhenApproved() {
     setTaskApprovedResult(SupervisionTaskType.WARRANTY);
     supervisionTaskService.approve(createTaskJson(SupervisionTaskType.WARRANTY));
-    verifyPublishedEvents(Arrays.asList(ApplicationArchiveEvent.class, ApplicationUpdateEvent.class));
+    verify(archiveEventPublisher, times(1)).publishEvent(any(ApplicationArchiveEvent.class));
+    verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_APPROVED);
   }
 
   @Test
@@ -144,7 +143,7 @@ public class SupervisionTaskServiceTest {
   public void shouldPublishApplicationEventWhenRejected() {
     setTaskRejectedResult(SupervisionTaskType.WARRANTY);
     supervisionTaskService.reject(createTaskJson(SupervisionTaskType.WARRANTY), ZonedDateTime.now());
-    verifyPublishedEvents(Arrays.asList(ApplicationUpdateEvent.class));
+    verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_REJECTED);
   }
 
   private SupervisionTaskJson createTaskJson(SupervisionTaskType type) {
@@ -201,15 +200,9 @@ public class SupervisionTaskServiceTest {
     return task;
   }
 
-  private void verifyPublishedEvents(List<Class> expectedEventsTypes) {
-    ArgumentCaptor<Object> eventCaptor = ArgumentCaptor.forClass(Object.class);
-    verify(applicationEventPublisher, times(expectedEventsTypes.size())).publishEvent(eventCaptor.capture());
-    List<Object> events = eventCaptor.getAllValues();
-    assertEquals(expectedEventsTypes.size(), events.size());
-    List<Class> actualEventTypes = events.stream()
-      .map(event -> event.getClass())
-      .collect(Collectors.toList());
-    assertEquals(expectedEventsTypes, actualEventTypes);
+  private void verifyApplicationEventDispatched(ApplicationNotificationType... types) {
+    Stream.of(types).forEach(type ->
+        verify(eventDispatcher, times(1)).dispatchUpdateEvent(anyInt(), anyInt(), eq(type), anyString()));
   }
 
   private void onUpdate(SupervisionTask task) {

@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
@@ -28,7 +28,7 @@ public class CommentService {
   private RestTemplate restTemplate;
   private UserService userService;
   private ApplicationHistoryService applicationHistoryService;
-  private ApplicationEventPublisher eventPublisher;
+  private ApplicationEventDispatcher applicationEventDispatcher;
 
 
   private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -38,13 +38,13 @@ public class CommentService {
   )));
 
   @Autowired
-  public CommentService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      UserService userService, ApplicationHistoryService applicationHistoryService, ApplicationEventPublisher eventPublisher) {
+  public CommentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
+      ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationHistoryService = applicationHistoryService;
-    this.eventPublisher = eventPublisher;
+    this.applicationEventDispatcher = applicationEventDispatcher;
   }
 
   public List<CommentJson> findByApplicationId(int applicationId) {
@@ -63,7 +63,8 @@ public class CommentService {
     validateCommentType(commentJson.getType());
     CommentJson comment = addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
     applicationHistoryService.addCommentAdded(applicationId);
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, userService.getCurrentUser().getId()));
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(),
+        ApplicationNotificationType.COMMENT_ADDED, commentJson.getType().name());
     return comment;
   }
 

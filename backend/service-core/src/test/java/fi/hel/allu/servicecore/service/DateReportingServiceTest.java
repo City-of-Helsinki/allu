@@ -1,18 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.ApplicationDateReport;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AreaRental;
-import fi.hel.allu.model.domain.InvoicingPeriod;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
-import fi.hel.allu.servicecore.event.ApplicationUpdateEvent;
-import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,15 +15,23 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.ApplicationEventPublisher;
 
-import static org.mockito.Matchers.eq;
+import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.types.ApplicationNotificationType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AreaRental;
+import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import static org.mockito.Matchers.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,7 +55,7 @@ public class DateReportingServiceTest {
   @Mock
   private InvoicingPeriodService invoicingPeriodService;
   @Mock
-  private ApplicationEventPublisher eventPublisher;
+  private ApplicationEventDispatcher eventDispatcher;
   @Mock
   private UserService userService;
 
@@ -68,7 +69,7 @@ public class DateReportingServiceTest {
     MockitoAnnotations.initMocks(this);
     dateReportingService = new DateReportingService(applicationService, applicationJsonService,
         supervisionTaskService, applicationServiceComposer, locationService,
-        applicationHistoryService, invoicingPeriodService, eventPublisher,
+        applicationHistoryService, invoicingPeriodService, eventDispatcher,
         userService);
 
     final List<LocationJson> locations = new ArrayList<>();
@@ -83,8 +84,10 @@ public class DateReportingServiceTest {
     Application application = new Application();
     application.setId(APP_ID);
     application.setExtension(new AreaRental());
+    application.setStatus(StatusType.DECISION);
 
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.anyObject())).thenReturn(applicationJson);
+    Mockito.when(applicationService.setCustomerValidityDates(eq(APP_ID), any(ApplicationDateReport.class))).thenReturn(application);
     Mockito.when(applicationService.setTargetState(APP_ID, StatusType.FINISHED)).thenReturn(application);
     Mockito.when(userService.getCurrentUser()).thenReturn(new UserJson(15));
   }
@@ -130,13 +133,15 @@ public class DateReportingServiceTest {
   public void shouldPublishApplicationEventOnReportCustomerValidity() {
     final ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
     dateReportingService.reportCustomerValidity(APP_ID, dateReport);
-    Mockito.verify(eventPublisher, Mockito.times(1)).publishEvent(Mockito.any(ApplicationUpdateEvent.class));
+    Mockito.verify(eventDispatcher, Mockito.times(1)).dispatchUpdateEvent(eq(APP_ID), anyInt(),
+        eq(ApplicationNotificationType.CUSTOMER_VALIDITY_PERIOD_CHANGED), any(StatusType.class));
   }
 
   @Test
   public void shouldPublishApplicationEventOnReportCustomerLocationValidity() {
     final ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
     dateReportingService.reportCustomerLocationValidity(APP_ID, LOC_ID, dateReport);
-    Mockito.verify(eventPublisher, Mockito.times(1)).publishEvent(Mockito.any(ApplicationUpdateEvent.class));
+    Mockito.verify(eventDispatcher, Mockito.times(1)).dispatchUpdateEvent(eq(APP_ID), anyInt(),
+        eq(ApplicationNotificationType.CUSTOMER_VALIDITY_PERIOD_CHANGED), any(StatusType.class));
   }
 }
