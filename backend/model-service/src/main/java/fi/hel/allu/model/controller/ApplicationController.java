@@ -114,6 +114,19 @@ public class ApplicationController {
   }
 
   /**
+   * Replace the customer of the given type with their contacts for an application
+   *
+   * @param applicationId
+   * @param customerWithContacts
+   * @return the saved customer with their contacts
+   */
+  @RequestMapping(value = "/{applicationId}/customerWithContacts", method = RequestMethod.PUT)
+  public ResponseEntity<CustomerWithContacts> replaceCustomerWithContacts(@PathVariable int applicationId,
+                                                                          @Valid @RequestBody CustomerWithContacts customerWithContacts) {
+    return ResponseEntity.ok(applicationService.replaceCustomerWithContacts(applicationId, customerWithContacts));
+  }
+
+  /**
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.

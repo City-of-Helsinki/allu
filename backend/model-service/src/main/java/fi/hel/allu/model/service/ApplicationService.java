@@ -218,6 +218,13 @@ public class ApplicationService {
     return applicationDao.findById(result.getId());
   }
 
+  @Transactional
+  public CustomerWithContacts replaceCustomerWithContacts(Integer applicationId,
+                                                          CustomerWithContacts customerWithContacts) {
+    verifyApplicationIsUpdatable(applicationId);
+    return applicationDao.replaceCustomerWithContacts(applicationId, customerWithContacts);
+  }
+
   private void calculateApplicationPrice(Application application) {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisEntries));

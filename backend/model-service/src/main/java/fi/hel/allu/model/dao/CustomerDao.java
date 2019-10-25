@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -114,13 +115,11 @@ public class CustomerDao {
     return new PageImpl<>(customers, pageRequest, customerPostalAddress.getTotal());
   }
 
-  @Transactional(readOnly = true)
-  public List<CustomerWithContacts> findByApplicationWithContacts(int applicationId) {
-
+  private List<Tuple> getCustomersWithContactsTuples(BooleanExpression whereCondition) {
     QPostalAddress customerPostalAddress = new QPostalAddress("customerPostalAddress");
     QPostalAddress contactPostalAddress = new QPostalAddress("contactPostalAddress");
 
-    List<Tuple> tuples = queryFactory
+    return queryFactory
         .select(applicationCustomer.customerRoleType, customerBean,
             bean(PostalAddress.class, customerPostalAddress.all()), contactBean,
             bean(PostalAddress.class, contactPostalAddress.all()), applicationCustomer.id)
@@ -130,11 +129,30 @@ public class CustomerDao {
         .leftJoin(applicationCustomerContact).on(applicationCustomer.id.eq(applicationCustomerContact.applicationCustomerId))
         .leftJoin(contact).on(applicationCustomerContact.contactId.eq(contact.id))
         .leftJoin(contactPostalAddress).on(contact.postalAddressId.eq(contactPostalAddress.id))
-        .where(applicationCustomer.applicationId.eq(applicationId)).fetch();
+      .where(whereCondition).fetch();
+  }
+
+  @Transactional(readOnly = true)
+  public List<CustomerWithContacts> findByApplicationWithContacts(int applicationId) {
+    List<Tuple> tuples = getCustomersWithContactsTuples(applicationCustomer.applicationId.eq(applicationId));
 
     Map<Integer, CustomerWithContacts> customerIdToCwc = new HashMap<>();
     tuples.forEach(t -> mapCustomerWithContactTuple(customerIdToCwc, t));
     return new ArrayList<>(customerIdToCwc.values());
+  }
+
+  @Transactional(readOnly = true)
+  public CustomerWithContacts findByApplicationAndCustomerTypeWithContacts(int applicationId, CustomerRoleType customerRoleType) {
+    BooleanExpression idCondition = applicationCustomer.applicationId.eq(applicationId);
+    BooleanExpression whereCondition = idCondition.and(applicationCustomer.customerRoleType.eq(customerRoleType));
+
+    List<Tuple> tuples = getCustomersWithContactsTuples(whereCondition);
+
+    Map<Integer, CustomerWithContacts> customerIdToCwc = new HashMap<>();
+    tuples.forEach(t -> mapCustomerWithContactTuple(customerIdToCwc, t));
+
+    // exactly one customer of a type should exist for an application
+    return customerIdToCwc.values().stream().findFirst().orElseThrow(() -> new NoSuchEntityException("customer.update.failed"));
   }
 
   private void mapCustomerWithContactTuple(Map<Integer, CustomerWithContacts> customerIdToCwc, Tuple tuple) {
