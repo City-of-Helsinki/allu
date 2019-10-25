@@ -1,7 +1,14 @@
 package fi.hel.allu.supervision.api.controller;
 
+import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.CreateTrafficArrangementApplicationJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import io.swagger.annotations.ApiParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -22,5 +29,29 @@ public class TrafficArrangementController extends BaseApplicationDetailsControll
   @Override
   protected TrafficArrangementApplication mapApplication(ApplicationJson application) {
     return new TrafficArrangementApplication(application);
+  }
+
+  @RequestMapping(value = "/{applicationId}/customerApplicant", method = RequestMethod.PUT, produces = "application/json")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
+                                                                          @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+    return super.updateCustomerApplicant(applicationId, customer);
+  }
+
+  @RequestMapping(value = "/{applicationId}/customerPropertyDeveloper", method = RequestMethod.PUT, produces = "application/json")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerPropertyDeveloper(@PathVariable Integer applicationId,
+                                                                                  @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+    return super.updateCustomerPropertyDeveloper(applicationId, customer);
+  }
+
+  @RequestMapping(value = "/{applicationId}/customerContractor", method = RequestMethod.PUT, produces = "application/json")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerContractor(@PathVariable Integer applicationId,
+                                                                           @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+    return super.updateCustomerContractor(applicationId, customer);
+  }
+
+  @RequestMapping(value = "/{applicationId}/customerRepresentative", method = RequestMethod.PUT, produces = "application/json")
+  public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(@PathVariable Integer applicationId,
+                                                                               @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+    return super.updateCustomerRepresentative(applicationId, customer);
   }
 }
