@@ -1,11 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -18,17 +20,34 @@ public class ApplicationJson extends BaseApplicationJson {
   private ProjectJson project;
   private UserJson owner;
   private UserJson handler;
+  private ZonedDateTime creationTime;
   @Valid
   private UserJson decisionMaker;
   @Valid
   private List<DistributionEntryJson> decisionDistributionList;
-
   @Valid
   private List<AttachmentInfoJson> attachmentList;
   @Valid
   private List<CommentJson> comments;
+  private Integer calculatedPrice;
+
+  private Integer replacesApplicationId;
+  private Integer replacedByApplicationId;
+
+  private ZonedDateTime invoicingDate;
+  private Boolean invoiced;
 
   private ClientApplicationDataJson clientApplicationData;
+  private String identificationNumber;
+  private StatusType targetState;
+
+  /**
+   * Id of the external owner (external_user.id)
+   */
+  private Integer externalOwnerId;
+  private Integer externalApplicationId;
+
+  private Boolean ownerNotification;
 
   @NotEmpty(message = "{application.customersWithContacts}")
   private List<CustomerWithContactsJson> customersWithContacts;
@@ -68,6 +87,15 @@ public class ApplicationJson extends BaseApplicationJson {
     this.handler = handler;
   }
 
+  @ApiModelProperty(value = "Application creation time", readOnly = true)
+  public ZonedDateTime getCreationTime() {
+    return creationTime;
+  }
+
+  public void setCreationTime(ZonedDateTime creationTime) {
+    this.creationTime = creationTime;
+  }
+
   @ApiModelProperty(value = "The user who made the decision", readOnly = true)
   public UserJson getDecisionMaker() {
     return decisionMaker;
@@ -104,12 +132,108 @@ public class ApplicationJson extends BaseApplicationJson {
     this.comments = comments;
   }
 
+  @ApiModelProperty(value = "Calculated price of the application (in cents)", readOnly = true)
+  public Integer getCalculatedPrice() {
+    return calculatedPrice;
+  }
+
+  public void setCalculatedPrice(Integer calculatedPrice) {
+    this.calculatedPrice = calculatedPrice;
+  }
+
+  @ApiModelProperty(value = "ID of the application which is replaced by this application", readOnly = true)
+  public Integer getReplacesApplicationId() {
+    return replacesApplicationId;
+  }
+
+  public void setReplacesApplicationId(Integer replacesApplicationId) {
+    this.replacesApplicationId = replacesApplicationId;
+  }
+
+  @ApiModelProperty(value = "ID of the application which has replaced this application", readOnly = true)
+  public Integer getReplacedByApplicationId() {
+    return replacedByApplicationId;
+  }
+
+  public void setReplacedByApplicationId(Integer replacedByApplicationId) {
+    this.replacedByApplicationId = replacedByApplicationId;
+  }
+
+  @ApiModelProperty(value = "Invoicing date of the application")
+  public ZonedDateTime getInvoicingDate() {
+    return invoicingDate;
+  }
+
+  @UpdatableProperty
+  public void setInvoicingDate(ZonedDateTime invoicingDate) {
+    this.invoicingDate = invoicingDate;
+  }
+
+  @ApiModelProperty(value = "True if application is (completely) invoiced", readOnly = true)
+  public Boolean getInvoiced() {
+    return invoiced;
+  }
+
+  public void setInvoiced(Boolean invoiced) {
+    this.invoiced = invoiced;
+  }
+
   public ClientApplicationDataJson getClientApplicationData() {
     return clientApplicationData;
   }
 
   public void setClientApplicationData(ClientApplicationDataJson clientApplicationData) {
     this.clientApplicationData = clientApplicationData;
+  }
+
+  @ApiModelProperty(value = "Application identification number (asiointitunnus)")
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  @UpdatableProperty
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
+  }
+
+  @ApiModelProperty(hidden = true)
+  public StatusType getTargetState() {
+    return targetState;
+  }
+
+  public void setTargetState(StatusType targetState) {
+    this.targetState = targetState;
+  }
+
+  @ApiModelProperty(hidden = true)
+  public Integer getExternalOwnerId() {
+    return externalOwnerId;
+  }
+
+  public void setExternalOwnerId(Integer externalOwnerId) {
+    this.externalOwnerId = externalOwnerId;
+  }
+
+  @ApiModelProperty(hidden = true)
+  public Integer getExternalApplicationId() {
+    return externalApplicationId;
+  }
+
+  public void setExternalApplicationId(Integer externalApplicationId) {
+    this.externalApplicationId = externalApplicationId;
+  }
+  @ApiModelProperty(value = "Value indicating whether application is received from external system", readOnly = true)
+  public boolean isExternalApplication() {
+    return externalOwnerId != null;
+  }
+
+  @ApiModelProperty(value = "Value indicating whether application requires owners attention (has changes made by other users etc)", readOnly = true)
+  public Boolean getOwnerNotification() {
+    return ownerNotification;
+  }
+
+  public void setOwnerNotification(Boolean ownerNotification) {
+    this.ownerNotification = ownerNotification;
   }
 
   @ApiModelProperty(value = "Application customers with their contacts", readOnly = true)

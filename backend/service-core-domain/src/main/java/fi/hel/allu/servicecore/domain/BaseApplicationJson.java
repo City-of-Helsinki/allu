@@ -44,7 +44,6 @@ public abstract class BaseApplicationJson {
   private Integer metadataVersion;
   @NotBlank(message = "{application.name}")
   private String name;
-  private ZonedDateTime creationTime;
   private ZonedDateTime receivedTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
@@ -59,7 +58,6 @@ public abstract class BaseApplicationJson {
   @NotNull
   private PublicityType decisionPublicityType;
   private ZonedDateTime decisionTime;
-  private Integer calculatedPrice;
   @NotNull
   private Boolean notBillable;
   private String notBillableReason;
@@ -67,29 +65,16 @@ public abstract class BaseApplicationJson {
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers = new HashMap<>();
   private Integer invoiceRecipientId;
 
-  private Integer replacesApplicationId;
-  private Integer replacedByApplicationId;
-
   private String customerReference;
-  private ZonedDateTime invoicingDate;
-  private Boolean invoiced;
 
   private boolean skipPriceCalculation = false;
 
-  private String identificationNumber;
   private Boolean invoicingChanged;
-  private StatusType targetState;
 
-  /**
-   * Id of the external owner (external_user.id)
-   */
-  private Integer externalOwnerId;
-  private Integer externalApplicationId;
   private Integer invoicingPeriodLength;
 
   private Integer version;
 
-  private Boolean ownerNotification;
 
   public BaseApplicationJson() {
   }
@@ -102,7 +87,6 @@ public abstract class BaseApplicationJson {
     this.applicationTags = application.getApplicationTags();
     this.metadataVersion = application.getMetadataVersion();
     this.name = application.getName();
-    this.creationTime = application.getCreationTime();
     this.receivedTime = application.getReceivedTime();
     this.startTime = application.getStartTime();
     this.endTime = application.getEndTime();
@@ -111,26 +95,16 @@ public abstract class BaseApplicationJson {
     this.extension = application.getExtension();
     this.decisionPublicityType = application.getDecisionPublicityType();
     this.decisionTime = application.getDecisionTime();
-    this.calculatedPrice = application.getCalculatedPrice();
     this.notBillable = application.getNotBillable();
     this.notBillableReason = application.getNotBillableReason();
     this.kindsWithSpecifiers = application.getKindsWithSpecifiers();
     this.invoiceRecipientId = application.getInvoiceRecipientId();
-    this.replacesApplicationId = application.getReplacesApplicationId();
-    this.replacedByApplicationId = application.getReplacedByApplicationId();
     this.customerReference = application.getCustomerReference();
-    this.invoicingDate = application.getInvoicingDate();
-    this.invoiced = application.getInvoiced();
     this.skipPriceCalculation = application.getSkipPriceCalculation();
-    this.identificationNumber = application.getIdentificationNumber();
     this.invoicingChanged = application.getInvoicingChanged();
-    this.targetState = application.getTargetState();
-    this.externalOwnerId = application.getExternalOwnerId();
-    this.externalApplicationId = application.getExternalApplicationId();
     this.invoicingPeriodLength = application.getInvoicingPeriodLength();
     this.version = application.getVersion();
-    this.ownerNotification = application.getOwnerNotification();
-  }
+ }
 
   @ApiModelProperty(value = "ID of the application", readOnly = true)
   public Integer getId() {
@@ -200,15 +174,6 @@ public abstract class BaseApplicationJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Application creation time", readOnly = true)
-  public ZonedDateTime getCreationTime() {
-    return creationTime;
-  }
-
-  public void setCreationTime(ZonedDateTime creationTime) {
-    this.creationTime = creationTime;
-  }
-
   @ApiModelProperty(value = "The starting time the application is active i.e. the starting time certain land area is reserved by the application")
   public ZonedDateTime getStartTime() {
     return startTime;
@@ -275,15 +240,6 @@ public abstract class BaseApplicationJson {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
-  }
-
-  @ApiModelProperty(value = "Calculated price of the application (in cents)", readOnly = true)
-  public Integer getCalculatedPrice() {
-    return calculatedPrice;
-  }
-
-  public void setCalculatedPrice(Integer calculatedPrice) {
-    this.calculatedPrice = calculatedPrice;
   }
 
   @ApiModelProperty(value = "True if application is not billed")
@@ -377,24 +333,6 @@ public abstract class BaseApplicationJson {
     return true;
   }
 
-  @ApiModelProperty(value = "ID of the application which is replaced by this application", readOnly = true)
-  public Integer getReplacesApplicationId() {
-    return replacesApplicationId;
-  }
-
-  public void setReplacesApplicationId(Integer replacesApplicationId) {
-    this.replacesApplicationId = replacesApplicationId;
-  }
-
-  @ApiModelProperty(value = "ID of the application which has replaced this application", readOnly = true)
-  public Integer getReplacedByApplicationId() {
-    return replacedByApplicationId;
-  }
-
-  public void setReplacedByApplicationId(Integer replacedByApplicationId) {
-    this.replacedByApplicationId = replacedByApplicationId;
-  }
-
   @ApiModelProperty(value = "Customer reference (to invoice)")
   public String getCustomerReference() {
     return customerReference;
@@ -403,25 +341,6 @@ public abstract class BaseApplicationJson {
   @UpdatableProperty
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
-  }
-
-  @ApiModelProperty(value = "Invoicing date of the application")
-  public ZonedDateTime getInvoicingDate() {
-    return invoicingDate;
-  }
-
-  @UpdatableProperty
-  public void setInvoicingDate(ZonedDateTime invoicingDate) {
-    this.invoicingDate = invoicingDate;
-  }
-
-  @ApiModelProperty(value = "True if application is (completely) invoiced", readOnly = true)
-  public Boolean getInvoiced() {
-    return invoiced;
-  }
-
-  public void setInvoiced(Boolean invoiced) {
-    this.invoiced = invoiced;
   }
 
   @ApiModelProperty(value = "True if the automatic price calculation should not be done for this application")
@@ -434,24 +353,6 @@ public abstract class BaseApplicationJson {
     this.skipPriceCalculation = skipPriceCalculation;
   }
 
-  @ApiModelProperty(hidden = true)
-  public Integer getExternalOwnerId() {
-    return externalOwnerId;
-  }
-
-  public void setExternalOwnerId(Integer externalOwnerId) {
-    this.externalOwnerId = externalOwnerId;
-  }
-
-  @ApiModelProperty(value = "Application identification number (asiointitunnus)")
-  public String getIdentificationNumber() {
-    return identificationNumber;
-  }
-
-  @UpdatableProperty
-  public void setIdentificationNumber(String identificationNumber) {
-    this.identificationNumber = identificationNumber;
-  }
 
   @ApiModelProperty(hidden = true)
   public Boolean getInvoicingChanged() {
@@ -462,15 +363,6 @@ public abstract class BaseApplicationJson {
     this.invoicingChanged = invoicingChanged;
   }
 
-  @ApiModelProperty(hidden = true)
-  public StatusType getTargetState() {
-    return targetState;
-  }
-
-  public void setTargetState(StatusType targetState) {
-    this.targetState = targetState;
-  }
-
   @ApiModelProperty(value = "Time when application was received")
   public ZonedDateTime getReceivedTime() {
     return receivedTime;
@@ -479,15 +371,6 @@ public abstract class BaseApplicationJson {
   @UpdatableProperty
   public void setReceivedTime(ZonedDateTime receivedTime) {
     this.receivedTime= receivedTime;
-  }
-
-  @ApiModelProperty(hidden = true)
-  public Integer getExternalApplicationId() {
-    return externalApplicationId;
-  }
-
-  public void setExternalApplicationId(Integer externalApplicationId) {
-    this.externalApplicationId = externalApplicationId;
   }
 
   @ApiModelProperty(value = "Invoicing period length for this application", readOnly = true)
@@ -506,20 +389,6 @@ public abstract class BaseApplicationJson {
 
   public void setVersion(Integer version) {
     this.version = version;
-  }
-
-  @ApiModelProperty(value = "Value indicating whether application is received from external system", readOnly = true)
-  public boolean isExternalApplication() {
-    return externalOwnerId != null;
-  }
-
-  @ApiModelProperty(value = "Value indicating whether application requires owners attention (has changes made by other users etc)", readOnly = true)
-  public Boolean getOwnerNotification() {
-    return ownerNotification;
-  }
-
-  public void setOwnerNotification(Boolean ownerNotification) {
-    this.ownerNotification = ownerNotification;
   }
 
 }
