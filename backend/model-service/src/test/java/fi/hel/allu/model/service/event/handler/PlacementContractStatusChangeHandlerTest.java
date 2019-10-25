@@ -104,7 +104,7 @@ public class PlacementContractStatusChangeHandlerTest {
   }
 
   private boolean isYearAfterCurrentDate(ZonedDateTime time) {
-    return Duration.between(currentDate().plusYears(1), time).toDays() == 0;
+    return Duration.between(currentDate().plusYears(1), TimeUtil.startOfDay(time)).toDays() == 0;
   }
 
   private boolean isCurrentDate(ZonedDateTime time) {
