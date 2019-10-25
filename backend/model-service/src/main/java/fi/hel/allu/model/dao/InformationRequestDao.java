@@ -170,6 +170,8 @@ public class InformationRequestDao {
         .update(informationRequest)
         .set(informationRequest.applicationId, toApplicationId)
         .where(informationRequest.id.eq(existing.getId())).execute();
+
+      externalApplicationDao.updateApplicationId(existing.getId(), toApplicationId);
       return findById(existing.getId());
     }
     return null;

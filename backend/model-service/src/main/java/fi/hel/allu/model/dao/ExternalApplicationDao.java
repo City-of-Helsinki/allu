@@ -46,7 +46,10 @@ public class ExternalApplicationDao {
         where(externalApplication.informationRequestId.eq(informationRequestId)).fetchOne();
   }
 
-
-
-
+  @Transactional
+  public void updateApplicationId(int requestId, Integer newApplicationId) {
+    queryFactory.update(externalApplication)
+      .set(externalApplication.applicationId, newApplicationId)
+      .where(externalApplication.informationRequestId.eq(requestId));
+  }
 }
