@@ -124,10 +124,10 @@ export function reducer(state: State = initialState, action: InformationRequestR
       const location = action.payload;
       return {
         ...state,
-        locations: ArrayUtil.createOrReplace(
+        locations: ArrayUtil.upsert(
           state.locations,
           action.payload,
-          loc => NumberUtil.isExisting(location) && loc.id === location.id)
+          loc => NumberUtil.isExisting(location) && loc.locationKey === location.locationKey)
       };
     }
 

@@ -84,6 +84,25 @@ export class ArrayUtil {
     }
   }
 
+  static upsert<T extends {id?: number}>(array: Array<T>, item: T, predicate: (item: T) => boolean): Array<T> {
+    if (array) {
+      if (array.some(predicate)) {
+        return array.map(original => {
+          if (predicate.call(this, original)) {
+            item.id = original.id;
+            return item;
+          } else {
+            return original;
+          }
+        });
+      } else {
+        return array.concat(item);
+      }
+    } else {
+      return [item];
+    }
+  }
+
   static createOrReplaceAt<T>(array: T[] = [], item: T, index: number): T[] {
     const result = [...array];
     if (index < result.length) {

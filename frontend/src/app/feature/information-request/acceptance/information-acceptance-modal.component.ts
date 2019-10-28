@@ -2,7 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
-import {Store} from '@ngrx/store';
+import * as fromInformationRequest from '@feature/information-request/reducers';
+import {select, Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
 import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
 import {Observable} from 'rxjs';
@@ -15,11 +16,11 @@ import {ApplicationStatus, isBetween} from '@model/application/application-statu
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequest} from '@model/information-request/information-request';
-import {Some} from '@util/option';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
-import {CloseRequest} from '@feature/information-request/actions/information-request-actions';
+import {CloseRequest, LoadLatestRequest} from '@feature/information-request/actions/information-request-actions';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
+import {map, switchMap, take} from 'rxjs/operators';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -84,9 +85,12 @@ export class InformationAcceptanceModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const requestId = Some(this.data.informationRequest).map(request => request.informationRequestId).orElse(undefined);
-    this.resultService.getResult(requestId)
-      .subscribe(result => this.dialogRef.close(result));
+    this.store.pipe(
+      select(fromInformationRequest.getInformationRequest),
+      take(1),
+      map(request => request ? request.informationRequestId : undefined),
+      switchMap(requestId => this.resultService.getResult(requestId))
+    ).subscribe(result => this.dialogRef.close(result));
   }
 
   cancel(): void {
@@ -102,8 +106,10 @@ export class InformationAcceptanceModalComponent implements OnInit {
     this.applicationStore.replace()
       .subscribe(application => {
         const path = this.location.path().replace(applicationIdPart, application.id.toString());
-        this.dialogRef.close();
-        this.router.navigate([path], {replaceUrl: true});
+        this.router.navigate([path]);
+        this.oldInfo = application;
+        this.onApplicationChange(application);
+        this.store.dispatch(new LoadLatestRequest());
       });
   }
 
