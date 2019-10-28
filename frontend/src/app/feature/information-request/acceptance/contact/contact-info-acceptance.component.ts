@@ -19,7 +19,6 @@ const requiredFields = {
 export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Contact> implements OnInit {
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
-  @Input() readonly: boolean;
   @Input() orderer: boolean;
 
   private _oldContact: Contact;

@@ -19,7 +19,6 @@ import {NumberUtil} from '@util/number.util';
 export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any> implements OnInit {
   @Input() oldLocation: Location;
   @Input() newLocation: Location;
-  @Input() readonly: boolean;
 
   @Output() locationChanges = new EventEmitter<Location>();
 

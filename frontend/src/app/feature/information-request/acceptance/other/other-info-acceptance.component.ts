@@ -26,7 +26,6 @@ const requiredFields = {
 export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> implements OnInit {
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
-  @Input() readonly: boolean;
   @Input() fieldKeys: string[];
   @Input() meta: StructureMeta;
 

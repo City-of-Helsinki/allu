@@ -94,6 +94,7 @@
     <div *ngIf="hasLocationChanges">
       <locations-acceptance
         [parentForm]="form"
+        [readonly]="readonly"
         [oldLocations]="oldInfo?.locations"
         [newLocations]="newInfo?.locations"></locations-acceptance>
     </div>
@@ -102,6 +103,7 @@
         [parentForm]="form"
         [oldInfo]="oldInfo"
         [newInfo]="newInfo"
+        [readonly]="readonly"
         [fieldKeys]="updatedFields"
       ></other-acceptance>
     </div>
