@@ -1,18 +1,20 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {PublicityType} from '@model/application/publicity-type';
 import {EnumUtil} from '@util/enum.util';
 import {DistributionEntry} from '@model/common/distribution-entry';
-import {Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {distributionChangeAllowed} from '@model/application/application-status';
+import {DistributionListComponent} from '@feature/application/distribution/distribution-list/distribution-list.component';
+import {map, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'distribution',
   templateUrl: './distribution.component.html',
   styleUrls: []
 })
-export class DistributionComponent implements OnInit, OnDestroy {
+export class DistributionComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() form: FormGroup;
   @Input() application: Application;
@@ -21,17 +23,20 @@ export class DistributionComponent implements OnInit, OnDestroy {
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
+  @ViewChild(DistributionListComponent, {static: false}) distributionListComponent: DistributionListComponent;
+
   communicationForm: FormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);
   distributionChangeAllowed = false;
 
-  private recipientSubscription: Subscription;
+  private destroy: Subject<boolean> = new Subject<boolean>();
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.communicationForm = this.fb.group({
-      publicityType: [this.application.decisionPublicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
+      publicityType: [this.application.decisionPublicityType || PublicityType[PublicityType.PUBLIC], Validators.required],
+      distributionValid: [false, Validators.requiredTrue]
     });
     this.form.addControl('communication', this.communicationForm);
 
@@ -42,9 +47,19 @@ export class DistributionComponent implements OnInit, OnDestroy {
     this.distributionChangeAllowed = distributionChangeAllowed(this.application.status);
   }
 
+  ngAfterViewInit(): void {
+    this.distributionListComponent.statusChanges.pipe(
+      takeUntil(this.destroy),
+      map(status => status === 'VALID')
+    ).subscribe(valid => this.communicationForm.get('distributionValid').patchValue(valid));
+  }
+
   ngOnDestroy(): void {
-    if (this.recipientSubscription) {
-      this.recipientSubscription.unsubscribe();
-    }
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  savePending(): void {
+    this.distributionListComponent.saveAll();
   }
 }

@@ -86,9 +86,20 @@ export class DistributionListComponent implements OnInit, OnDestroy {
     this.emitDistributionChange();
   }
 
+  saveAll(): void {
+    if (this.form.dirty) {
+      this.distributionRows.controls.forEach(control => control.patchValue({edit: false}, {emitEvent: false}));
+      this.emitDistributionChange();
+    }
+  }
+
   remove(index: number): void {
     this.distributionRows.removeAt(index);
     this.emitDistributionChange();
+  }
+
+  get statusChanges() {
+    return this.form.statusChanges;
   }
 
   private addContact(entry: DistributionEntry) {

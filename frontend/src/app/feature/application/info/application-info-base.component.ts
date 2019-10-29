@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
@@ -26,6 +26,7 @@ import {NotifyFailure} from '@feature/notification/actions/notification-actions'
 import {createTranslated} from '@service/error/error-info';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {SaveDistribution} from '@feature/application/actions/application-actions';
+import {DistributionComponent} from '@feature/application/distribution/distribution.component';
 
 /**
  * This component should be used only as base class for other more specific application components.
@@ -37,6 +38,9 @@ import {SaveDistribution} from '@feature/application/actions/application-actions
 })
 export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
   @Input() applicationForm: FormGroup;
+
+  @ViewChild(DistributionComponent, {static: false}) distributionComponent: DistributionComponent;
+
   readonly: boolean;
   submitPending = false;
   showTerms = false;
@@ -113,6 +117,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   onSubmit(form: FormGroup) {
     if (form.valid) {
       this.submitPending = true;
+      this.distributionComponent.savePending();
       const value = form.getRawValue();
       const application = this.update(value);
       this.save(application);
