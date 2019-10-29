@@ -187,6 +187,11 @@ public class ApplicationHistoryService {
     }
   }
 
+  public void addCustomerChange(Integer applicationId, CustomerWithContactsJson oldCustomer, CustomerWithContactsJson newCustomer, CustomerRoleType role) {
+    final Integer userId = userService.getCurrentUser().getId();
+    addCustomerChange(applicationId, userId, oldCustomer, newCustomer, role);
+  }
+
   private void addCustomerChange(Integer applicationId, Integer userId, CustomerWithContactsJson oldCustomer, CustomerWithContactsJson newCustomer, CustomerRoleType role) {
     final Integer oldCustomerId = oldCustomer != null ? oldCustomer.getCustomer().getId() : null;
     final String oldCustomerName = oldCustomer != null ? oldCustomer.getCustomer().getName() : null;

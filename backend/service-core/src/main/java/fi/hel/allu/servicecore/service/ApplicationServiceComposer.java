@@ -156,9 +156,16 @@ public class ApplicationServiceComposer {
   }
 
   public CustomerWithContactsJson replaceCustomerWithContacts(Integer applicationId, CustomerWithContactsJson customerWithContacts) {
+    CustomerRoleType roleType = customerWithContacts.getRoleType();
+    CustomerWithContacts existingCustomer = applicationService.findApplicationCustomerByRoleType(applicationId, roleType);
+
     CustomerWithContacts cwc = applicationService.replaceCustomerWithContacts(applicationId,
       customerMapper.createSingleCustomerWithContactsModel(customerWithContacts));
-    // TODO applicationHistoryService
+
+    // log change of the customer data
+    applicationHistoryService.addCustomerChange(applicationId,
+      customerMapper.createWithContactsJson(existingCustomer), customerMapper.createWithContactsJson(cwc), roleType);
+
     // TODO searchService?
     return customerMapper.createWithContactsJson(cwc);
   }
