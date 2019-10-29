@@ -49,9 +49,12 @@ export class LocationState implements OnDestroy {
       }
 
       if (clearEdited) {
+        // Need to set edited here to ensure there is
+        // a change from location to undefined, otherwise change
+        // event is not triggered
+        this.mapStore.editedLocationChange(location);
         this.clearEdited();
       }
-
       this.locations$.next(next);
     }
   }
