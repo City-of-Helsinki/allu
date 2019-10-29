@@ -73,6 +73,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       showOnlyApplicationArea: this.showOnlyApplicationArea
     });
     this.initSubscriptions();
+    this.mapController.centerAndZoomOnEditedAndFocused();
   }
 
   ngOnDestroy() {

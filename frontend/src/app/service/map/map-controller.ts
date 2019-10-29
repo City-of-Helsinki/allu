@@ -27,6 +27,7 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {Projection} from '@feature/map/projection';
 import GeoJSONOptions = L.GeoJSONOptions;
+import {LatLngBounds} from 'leaflet';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -130,6 +131,14 @@ export class MapController {
       .filter(items => Object.keys(items.getBounds()).length !== 0)
       .map(items => items.getBounds())
       .do(bounds => this.map.fitBounds(bounds));
+  }
+
+  public centerAndZoomOnEditedAndFocused() {
+    let bounds = this.focusedItems.getBounds();
+    bounds = bounds.extend(this.editedItems.getBounds());
+    if (bounds.isValid()) {
+      this.map.fitBounds(bounds);
+    }
   }
 
   public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup): void {

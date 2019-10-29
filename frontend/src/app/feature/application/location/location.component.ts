@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -66,7 +66,7 @@ import {SaveInitialDistribution} from '@feature/application/actions/application-
     './location.component.scss'
   ]
 })
-export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LocationComponent implements OnInit, OnDestroy {
   locationForm: FormGroup;
   fixedLocationsCtrl: FormControl;
   fixedLocationInfos: string[];
@@ -215,10 +215,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy.next(true);
     this.destroy.unsubscribe();
     this.mapStore.reset();
-  }
-
-  ngAfterViewInit(): void {
-    this.mapStore.selectedApplicationChange(this.application);
   }
 
   get showMap() {

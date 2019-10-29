@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {MapStore} from '@service/map/map-store';
@@ -26,7 +26,7 @@ import {Some} from '@util/option';
   styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LocationDetailsComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
@@ -73,10 +73,6 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     this.availableLayers$ = this.store.pipe(select(fromApplication.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromApplication.getSelectedLayers));
     this.layerTree$ = this.store.pipe(select(fromApplication.getTreeStructure));
-  }
-
-  ngAfterViewInit(): void {
-    this.mapStore.selectedApplicationChange(this.application);
   }
 
   ngOnDestroy(): void {
