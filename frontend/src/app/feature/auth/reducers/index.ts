@@ -1,8 +1,9 @@
-import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector, select, Store} from '@ngrx/store';
 import * as fromAuth from './auth-reducer';
 import * as fromRoot from '@feature/allu/reducers';
 import {User} from '@model/user/user';
 import {allowedTagsByRoles, removableTagsByRoles} from '@model/application/tag/application-tag-type';
+import {filter, switchMap} from 'rxjs/operators';
 
 export interface AuthState {
   status: fromAuth.State;
@@ -31,6 +32,12 @@ export const getUser = createSelector(
 export const getLoggedIn = createSelector(
   getAuthStatusState,
   fromAuth.getLoggedIn
+);
+
+export const getLoggedInUser = (store: Store<fromRoot.State>) => store.pipe(
+  select(getLoggedIn),
+  filter(loggedIn => loggedIn),
+  switchMap(() => store.pipe(select(getUser)))
 );
 
 export const getAllowedApplicationTypes = createSelector(

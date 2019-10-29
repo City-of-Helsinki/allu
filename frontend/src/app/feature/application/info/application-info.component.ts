@@ -10,9 +10,10 @@ import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
+import {getLoggedInUser} from '@feature/auth/reducers';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -41,7 +42,6 @@ import {ClientApplicationData} from '@model/application/client-application-data'
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExternalUpdateNotificationType} from '@feature/application/notification/external-update/external-update-notification.component';
 import {ExternalUpdateNotificationService} from '@feature/application/notification/external-update/external-update-notification.service';
-import {User} from '@model/user/user';
 
 @Component({
   selector: 'application-info',
@@ -89,7 +89,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
 
     this.showOwnerNotification$ = combineLatest([
       this.store.pipe(select(fromApplication.getCurrentApplication)),
-      this.store.pipe(select(fromAuth.getUser))
+      getLoggedInUser(this.store)
     ]).pipe(
       map(([app, user]) => app.ownerNotification && app.owner && app.owner.id === user.id)
     );
