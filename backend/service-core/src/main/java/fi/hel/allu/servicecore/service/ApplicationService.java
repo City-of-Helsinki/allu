@@ -5,6 +5,8 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -516,14 +518,28 @@ public class ApplicationService {
     return findApplicationById(id);
   }
 
-  public List<CustomerWithContacts> findApplicationCustomers(Integer applicationId) {
+  private List<CustomerWithContacts> fetchApplicationCustomers(Integer applicationId) {
     ParameterizedTypeReference<List<CustomerWithContacts>> typeRef =
         new ParameterizedTypeReference<List<CustomerWithContacts>>() {};
     List<CustomerWithContacts> customers = restTemplate
         .exchange(applicationProperties.getCustomerByApplicationIdUrl(), HttpMethod.GET, null, typeRef, applicationId)
         .getBody();
+    return customers;
+  }
+
+  public List<CustomerWithContacts> findApplicationCustomers(Integer applicationId) {
+    List<CustomerWithContacts> customers = fetchApplicationCustomers(applicationId);
     customers.forEach(c -> personAuditLogService.log(c, "ApplicationService"));
     return customers;
+  }
+
+  public CustomerWithContacts findApplicationCustomerByRoleType(Integer applicationId, CustomerRoleType customerRoleType) {
+    List<CustomerWithContacts> customers = fetchApplicationCustomers(applicationId);
+    CustomerWithContacts customerForType = customers.stream()
+      .filter(customerWithContacts -> customerRoleType.equals(customerWithContacts.getRoleType()))
+      .findFirst().orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));
+    personAuditLogService.log(customerForType, "ApplicationService");
+    return customerForType;
   }
 
   public Customer findInvoiceRecipient(Integer applicationId) {
