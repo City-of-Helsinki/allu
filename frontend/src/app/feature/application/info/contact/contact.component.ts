@@ -12,7 +12,6 @@ import {fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
 import {FormUtil} from '@util/form.util';
 import {CustomerService} from '@service/customer/customer.service';
 import {debounceTime, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/internal/operators';
-import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {DistributionType} from '@model/common/distribution-type';
 import {OrdererId} from '@model/application/cable-report/orderer-id';
@@ -20,6 +19,9 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ContactService} from '@service/customer/contact.service';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import {AddToDistribution} from '@feature/application/actions/application-actions';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -52,8 +54,8 @@ export class ContactComponent implements OnInit, OnDestroy {
               private customerService: CustomerService,
               private contactService: ContactService,
               private applicationStore: ApplicationStore,
-              private distributionListEvents: DistributionListEvents,
-              private notification: NotificationService) {}
+              private notification: NotificationService,
+              private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
     this.availableContacts = this.customerIdChanges.pipe(
@@ -187,7 +189,8 @@ export class ContactComponent implements OnInit, OnDestroy {
   addToDistribution(index: number): void {
     const contactFg = <FormGroup>this.contacts.at(index);
     const contact = contactFg.getRawValue();
-    this.distributionListEvents.add(new DistributionEntry(null, contact.name, DistributionType.EMAIL, contact.email));
+    const distributionEntry = new DistributionEntry(null, contact.name, DistributionType.EMAIL, contact.email);
+    this.store.dispatch(new AddToDistribution(distributionEntry));
   }
 
   resetContacts(): void {

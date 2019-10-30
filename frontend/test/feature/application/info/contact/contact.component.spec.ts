@@ -15,9 +15,10 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {Application} from '@model/application/application';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 import {CustomerService} from '@service/customer/customer.service';
-import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ContactService} from '@service/customer/contact.service';
+import {StoreModule} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -55,15 +56,19 @@ describe('ContactComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
+      imports: [
+        AlluCommonModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        StoreModule.forRoot(fromRoot.reducers)
+      ],
       declarations: [ContactComponent],
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: ContactService, useClass: ContactServiceMock},
-        {provide: DistributionListEvents, useClass: DistributionListEvents},
-        {provide: NotificationService, useClass: NotificationServiceMock}
+        {provide: NotificationService, useClass: NotificationServiceMock},
       ]
     }).compileComponents();
   }));

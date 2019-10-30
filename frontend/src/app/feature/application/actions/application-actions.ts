@@ -21,7 +21,8 @@ export enum ApplicationActionType {
   RemoveOwnerNotificationSuccess = '[Application] Remove owner notification from chosen application success',
   SaveDistribution = '[Application] Save distribution',
   SaveInitialDistribution = '[Application] Save initial distribution',
-  SaveDistributionSuccess = '[Application] Save distribution success'
+  SaveDistributionSuccess = '[Application] Save distribution success',
+  AddToDistribution = '[Application] Add to distribution'
 }
 
 export class Load implements Action {
@@ -109,6 +110,12 @@ export class SaveDistributionSuccess implements Action {
   constructor(public payload: DistributionEntry[]) {}
 }
 
+export class AddToDistribution implements Action {
+  readonly type = ApplicationActionType.AddToDistribution;
+
+  constructor(public payload: DistributionEntry) {}
+}
+
 export type ApplicationActions =
   | Load
   | LoadSuccess
@@ -124,4 +131,5 @@ export type ApplicationActions =
   | RemoveOwnerNotificationSuccess
   | SaveDistribution
   | SaveInitialDistribution
-  | SaveDistributionSuccess;
+  | SaveDistributionSuccess
+  | AddToDistribution;

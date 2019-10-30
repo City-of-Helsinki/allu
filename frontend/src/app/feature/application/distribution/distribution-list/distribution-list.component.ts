@@ -5,8 +5,6 @@ import {DistributionType} from '@model/common/distribution-type';
 import {EnumUtil} from '@util/enum.util';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {postalCodeValidator} from '@util/complex-validator';
-import {DistributionListEvents} from './distribution-list-events';
-import isEqual from 'lodash/isEqual';
 import {PostalAddress} from '@model/common/postal-address';
 import {FormUtil} from '@util/form.util';
 
@@ -28,7 +26,7 @@ interface DistributionEntryForm {
     './distribution-list.component.scss'
   ]
 })
-export class DistributionListComponent implements OnInit, OnDestroy {
+export class DistributionListComponent implements OnInit {
   @Input() readonly: boolean;
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
@@ -37,10 +35,7 @@ export class DistributionListComponent implements OnInit, OnDestroy {
   distributionRows: FormArray;
   distributionTypes = EnumUtil.enumValues(DistributionType);
 
-  private addContactSubscription: Subscription;
-
-  constructor(private fb: FormBuilder,
-              private distributionListEvents: DistributionListEvents) {
+  constructor(private fb: FormBuilder) {
     this.form = this.fb.group({});
     this.distributionRows = fb.array([]);
   }
@@ -50,13 +45,7 @@ export class DistributionListComponent implements OnInit, OnDestroy {
     this.form = this.form || this.fb.group({});
 
     this.form.addControl('distributionRows', this.distributionRows);
-
-    this.addContactSubscription = this.distributionListEvents.distributionList$
-      .subscribe(entry => this.addContact(entry));
-  }
-
-  ngOnDestroy(): void {
-    this.addContactSubscription.unsubscribe();
+    this.form.markAsPristine();
   }
 
   @Input() set distributionList(distributionList: DistributionEntry[]) {
@@ -67,6 +56,7 @@ export class DistributionListComponent implements OnInit, OnDestroy {
         .map(d => this.createDistribution(d))
         .forEach(row => this.distributionRows.push(row));
 
+      this.form.markAsDirty();
       if (this.readonly) {
         this.distributionRows.disable();
       }
@@ -100,13 +90,6 @@ export class DistributionListComponent implements OnInit, OnDestroy {
 
   get statusChanges() {
     return this.form.statusChanges;
-  }
-
-  private addContact(entry: DistributionEntry) {
-    if (this.distributionRows.controls.filter(
-        control => isEqual(control.value.email, entry.email)).length === 0) {
-      this.distributionRows.insert(0, this.createDistribution(entry));
-    }
   }
 
   private createDistribution(distributionEntry: DistributionEntry, edit: boolean = false): FormGroup {

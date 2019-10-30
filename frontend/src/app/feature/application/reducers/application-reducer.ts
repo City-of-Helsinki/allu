@@ -101,6 +101,12 @@ export function reducer(state: State = initialState, action: HandledActions) {
       };
     }
 
+    case ApplicationActionType.AddToDistribution: {
+      return {
+        ...state,
+        distribution: [...state.distribution, action.payload]
+      };
+    }
 
     default:
       return {...state};

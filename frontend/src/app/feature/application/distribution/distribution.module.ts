@@ -4,7 +4,6 @@ import {MatRadioModule} from '@angular/material/radio';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {DistributionComponent} from './distribution.component';
 import {DistributionListComponent} from './distribution-list/distribution-list.component';
-import {DistributionListEvents} from './distribution-list/distribution-list-events';
 import {DistributionSelectionComponent} from '@feature/application/distribution/distribution-list/distribution-selection.component';
 import {DistributionModalComponent} from '@feature/application/distribution/distribution-modal.component';
 
@@ -20,9 +19,6 @@ import {DistributionModalComponent} from '@feature/application/distribution/dist
     DistributionListComponent,
     DistributionSelectionComponent,
     DistributionModalComponent,
-  ],
-  providers: [
-    DistributionListEvents
   ],
   exports: [
     DistributionComponent,
