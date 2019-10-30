@@ -39,7 +39,7 @@ public class CommentController {
                                             @ApiParam(value = "Comments to add") @RequestBody @Valid CommentExt comment) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    return new ResponseEntity<>(commentService.addComment(id, comment), HttpStatus.OK);
+    return new ResponseEntity<>(commentService.addComment(applicationId, comment), HttpStatus.OK);
   }
 
   @ApiOperation(value = "Removes given comment from application",
