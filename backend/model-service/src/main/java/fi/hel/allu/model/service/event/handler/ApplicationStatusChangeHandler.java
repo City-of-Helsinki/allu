@@ -177,6 +177,7 @@ public class ApplicationStatusChangeHandler {
     supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
     informationRequestDao.closeInformationRequestOf(application.getId());
     invoiceService.deleteUninvoicedInvoices(application.getId());
+    applicationService.removeTags(application.getId());
     if (application.getReplacesApplicationId() != null) {
       // If replacing application cancelled, clear replacing application ID from replaced application
       applicationDao.setApplicationReplaced(application.getReplacesApplicationId(), null);

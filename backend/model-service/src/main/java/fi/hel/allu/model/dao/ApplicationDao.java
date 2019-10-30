@@ -516,6 +516,17 @@ public class ApplicationDao {
         .execute();
   }
 
+  /**
+   * Removes all tags of from application
+   * @param applicationId Application's database ID*
+   */
+  @Transactional
+  public void removeTags(int applicationId) {
+    queryFactory.delete(applicationTag)
+      .where(applicationTag.applicationId.eq(applicationId))
+      .execute();
+  }
+
   String createApplicationId(ApplicationType applicationType) {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));

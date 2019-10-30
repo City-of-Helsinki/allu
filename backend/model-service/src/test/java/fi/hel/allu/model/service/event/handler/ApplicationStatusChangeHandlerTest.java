@@ -113,6 +113,12 @@ public class ApplicationStatusChangeHandlerTest {
   }
 
   @Test
+  public void onCancelShouldRemoveTags() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
+    verify(applicationService, times(1)).removeTags(application.getId());
+  }
+
+  @Test
   public void onFinishedShouldClearOwner() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(applicationDao, times(1)).removeOwner(eq(Collections.singletonList(application.getId())));

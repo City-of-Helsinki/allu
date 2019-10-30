@@ -313,6 +313,11 @@ public class ApplicationService {
     applicationDao.removeTagByType(applicationId, type);
   }
 
+  @Transactional
+  public void removeTags(int applicationId) {
+    applicationDao.removeTags(applicationId);
+  }
+
   /**
    * Update (replace) applications tags with new ones
    * @param applicationId Id of the application to be changed.
