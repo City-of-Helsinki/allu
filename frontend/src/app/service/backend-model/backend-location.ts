@@ -38,5 +38,5 @@ export interface SearchResultLocation {
   locationKey: number;
   address: string;
   cityDistrictId: number;
-  geometry: GeoJSON.GeometryCollection;
+  geometry: string;
 }

@@ -54,7 +54,7 @@ export class LocationMapper {
       location.locationKey = backendLocation.locationKey;
       location.address = backendLocation.address;
       location.cityDistrictId = backendLocation.cityDistrictId;
-      location.geometry = backendLocation.geometry;
+      location.geometry = JSON.parse(backendLocation.geometry);
       return location;
     } else {
       return undefined;

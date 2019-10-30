@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.codehaus.jackson.map.util.Comparators;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
 import fi.hel.allu.common.domain.geometry.Constants;
+import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.EventNature;
@@ -40,12 +43,19 @@ public class ApplicationMapper {
   private final CustomerMapper customerMapper;
   private final UserService userService;
   private final LocationService locationService;
+  private final ObjectWriter geometryWriter;
 
   @Autowired
   public ApplicationMapper(CustomerMapper customerMapper, UserService userService, LocationService locationService) {
     this.customerMapper = customerMapper;
     this.userService = userService;
     this.locationService = locationService;
+    ObjectMapper mapper = new ObjectMapper();
+    SimpleModule module = new SimpleModule("CustomGeometrySerializer", new Version(1, 0, 0, null, null, null));
+    module.addSerializer(Geometry.class, new GeometrySerializerProxy());
+    mapper.registerModule(module);
+    geometryWriter = mapper.writerFor(Geometry.class);
+
   }
 
   /**
@@ -427,10 +437,19 @@ public class ApplicationMapper {
     locationEs.setAddress(json.getAddress());
     locationEs.setCityDistrictId(getCityDistrictId(json));
     locationEs.setAdditionalInfo(json.getAdditionalInfo());
-    locationEs.setGeometry(json.getGeometry());
+    locationEs.setGeometry(toJsonString(json.getGeometry()));
     Geometry searchGeometry = locationService.transformCoordinates(json.getGeometry(), Constants.ELASTIC_SEARCH_SRID);
     locationEs.setSearchGeometry(searchGeometry);
     return locationEs;
+  }
+
+  private String toJsonString(Geometry geometry) {
+     try {
+      return geometryWriter.writeValueAsString(geometry);
+    } catch (JsonProcessingException e) {
+      logger.warn("Failed to write geometry to ES model", e);
+      return null;
+    }
   }
 
   private Integer getCityDistrictId(LocationJson locationJson) {

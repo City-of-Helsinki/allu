@@ -25,9 +25,7 @@ public class LocationES {
   private Integer cityDistrictId;
   private String additionalInfo;
   private String address;
-  @JsonSerialize(using = GeometrySerializerProxy.class)
-  @JsonDeserialize(using = GeometryDeserializerProxy.class)
-  private Geometry geometry;
+  private String geometry;
 
   /**
    * ElasticSearch uses different coordinate system. Save search coordinates
@@ -108,11 +106,11 @@ public class LocationES {
     this.address = address;
   }
 
-  public Geometry getGeometry() {
+  public String getGeometry() {
     return geometry;
   }
 
-  public void setGeometry(Geometry geometry) {
+  public void setGeometry(String geometry) {
     this.geometry = geometry;
   }
 

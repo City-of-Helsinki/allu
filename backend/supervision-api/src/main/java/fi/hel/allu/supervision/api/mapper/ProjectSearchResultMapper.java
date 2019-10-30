@@ -40,7 +40,7 @@ public class ProjectSearchResultMapper {
     Page<ApplicationES> result = applicationServiceComposer.search(queryParameters, MapperUtil.DEFAULT_PAGE_REQUEST, Boolean.FALSE);
     return result.getContent().stream()
         .flatMap(a -> a.getLocations().stream())
-        .map(l -> new LocationSearchResult(l.getAddress(), l.getAdditionalInfo(), l.getCityDistrictId(), l.getGeometry()))
+        .map(l -> new LocationSearchResult(l.getAddress(), l.getAdditionalInfo(), l.getCityDistrictId(), MapperUtil.toGeometry(l.getGeometry())))
         .collect(Collectors.toList());
   }
 }
