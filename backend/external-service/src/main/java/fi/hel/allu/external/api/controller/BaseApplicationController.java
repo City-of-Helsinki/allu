@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import fi.hel.allu.servicecore.service.TerminationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,9 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
 
   @Autowired
   private DecisionService decisionService;
+
+  @Autowired
+  private TerminationService terminationService;
 
   protected abstract M getMapper();
 
@@ -140,7 +144,6 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
 
   @ApiOperation(value = "Gets decision document for application with given ID",
       authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
       responseContainer = "Array")
   @ApiResponses( value = {
       @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
@@ -177,4 +180,11 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return ResponseEntity.ok(new DecisionExt(handler, decisionMaker));
   }
 
+  protected ResponseEntity<byte[]> getTerminationDocument(Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] termination = terminationService.getFinalTermination(applicationId);
+
+    return returnPdfResponse(termination);
+  }
 }

@@ -146,6 +146,20 @@ public class PlacementContractController extends BaseApplicationController<Place
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @ApiOperation(value = "Gets termination document for application with given ID",
+    authorizations = @Authorization(value ="api_key"),
+    response = byte.class,
+    responseContainer = "Array")
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Termination document retrieved successfully", response = byte.class, responseContainer = "Array"),
+    @ApiResponse(code = 404, message = "No termination document found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/termination", method = RequestMethod.GET, produces = "application/pdf")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<byte[]> getTermination(@PathVariable Integer id) {
+    return getTerminationDocument(id);
+  }
+
   @Override
   protected List<byte[]> getDecisionAttachments(Integer applicationId) {
     // For placement contract attachments are for contracts, not for decisions
