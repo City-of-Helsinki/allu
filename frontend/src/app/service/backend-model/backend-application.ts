@@ -58,6 +58,7 @@ export interface BackendApplication {
   invoicingPeriodLength?: InvoicingPeriodLength;
   version: number;
   ownerNotification?: boolean;
+  terminationTime?: string;
 }
 
 export interface SearchResultApplication {
@@ -79,6 +80,7 @@ export interface SearchResultApplication {
   applicationTags: ApplicationTagType[];
   ownerNotification: boolean;
   recurringApplication?: RecurringApplication;
+  terminationTime?: string;
 }
 
 export interface RecurringApplication {

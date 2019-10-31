@@ -150,6 +150,7 @@ public class ApplicationMapper {
     applicationES.setIdentificationNumber(applicationJson.getIdentificationNumber());
     applicationES.setOwnerNotification(applicationJson.getOwnerNotification());
     applicationES.setLatestComment(getLatestComment(applicationJson.getComments()));
+    applicationES.setTerminationTime(TimeUtil.dateToMillis(applicationJson.getTerminationTime()));
     return applicationES;
   }
 

@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -27,6 +28,7 @@ public class ApplicationJsonServiceTest {
   private LocationService locationService;
   private AttachmentService attachmentService;
   private CommentService commentService;
+  private TerminationService terminationService;
 
   private static final int applicationId = 1;
   private static final int customerId = 12;
@@ -50,6 +52,7 @@ public class ApplicationJsonServiceTest {
     locationService = Mockito.mock(LocationService.class);
     attachmentService = Mockito.mock(AttachmentService.class);
     commentService = Mockito.mock(CommentService.class);
+    terminationService = Mockito.mock(TerminationService.class);
 
     Mockito.when(application.getId()).thenReturn(applicationId);
     Customer customer = new Customer();
@@ -83,7 +86,8 @@ public class ApplicationJsonServiceTest {
         userService,
         locationService,
         attachmentService,
-        commentService);
+        commentService,
+        terminationService);
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     Assert.assertEquals(projectJson, applicationJson.getProject());
     Assert.assertEquals(userJson, applicationJson.getOwner());

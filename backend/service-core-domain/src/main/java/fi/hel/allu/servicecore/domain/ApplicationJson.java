@@ -49,6 +49,8 @@ public class ApplicationJson extends BaseApplicationJson {
 
   private Boolean ownerNotification;
 
+  private ZonedDateTime terminationTime;
+
   @NotEmpty(message = "{application.customersWithContacts}")
   private List<CustomerWithContactsJson> customersWithContacts;
 
@@ -243,5 +245,13 @@ public class ApplicationJson extends BaseApplicationJson {
 
   public void setCustomersWithContacts(List<CustomerWithContactsJson> customersWithContacts) {
     this.customersWithContacts = customersWithContacts;
+  }
+
+  public ZonedDateTime getTerminationTime() {
+    return terminationTime;
+  }
+
+  public void setTerminationTime(ZonedDateTime terminationTime) {
+    this.terminationTime = terminationTime;
   }
 }

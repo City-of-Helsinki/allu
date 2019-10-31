@@ -34,6 +34,7 @@ public class ApplicationES {
   private String identificationNumber;
   private Boolean ownerNotification;
   private String latestComment;
+  private Long terminationTime;
 
   public Integer getId() {
     return id;
@@ -203,4 +204,11 @@ public class ApplicationES {
     this.latestComment = latestComment;
   }
 
+  public Long getTerminationTime() {
+    return terminationTime;
+  }
+
+  public void setTerminationTime(Long terminationTime) {
+    this.terminationTime = terminationTime;
+  }
 }

@@ -43,6 +43,7 @@ export class ApplicationMapper {
     application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);
     application.ownerNotification = backendApplication.ownerNotification;
     application.recurringEndTime = getRecurringEndDate(backendApplication);
+    application.terminationTime = TimeUtil.dateFromBackend(backendApplication.terminationTime);
     return application;
   }
 
@@ -100,6 +101,7 @@ export class ApplicationMapper {
     application.invoicingPeriodLength = backendApplication.invoicingPeriodLength;
     application.version = backendApplication.version;
     application.ownerNotification = backendApplication.ownerNotification;
+    application.terminationTime = TimeUtil.dateFromBackend(backendApplication.terminationTime);
     return application;
   }
 

@@ -24,15 +24,13 @@ public class TerminationService {
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final TerminationJsonMapper terminationJsonMapper;
-  private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
   public TerminationService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-    TerminationJsonMapper terminationJsonMapper, ApplicationServiceComposer applicationServiceComposer) {
+    TerminationJsonMapper terminationJsonMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.terminationJsonMapper = terminationJsonMapper;
-    this.applicationServiceComposer = applicationServiceComposer;
   }
 
   public TerminationInfo getTerminationInfo(int applicationId) {
@@ -66,10 +64,9 @@ public class TerminationService {
         MultipartRequestBuilder.buildByteArrayRequest("file", pdfData), Void.class, applicationId);
   }
 
-  public byte[] getTermination(int applicationId) {
-    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+  public byte[] getTermination(ApplicationJson application) {
     if (StatusType.TERMINATED.equals(application.getStatus())) {
-      return getFinalTermination(applicationId);
+      return getFinalTermination(application.getId());
     } else {
       // otherwise return preview
       return getTerminationPreview(application);

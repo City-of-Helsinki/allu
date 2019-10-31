@@ -1,7 +1,9 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.TerminationService;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,10 +19,12 @@ import javax.validation.Valid;
 public class TerminationController {
 
   private final TerminationService terminationService;
+  private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
-  public TerminationController(TerminationService terminationService) {
+  public TerminationController(TerminationService terminationService, ApplicationServiceComposer applicationServiceComposer) {
     this.terminationService = terminationService;
+    this.applicationServiceComposer = applicationServiceComposer;
   }
 
   @RequestMapping(value = "/{applicationId}/termination/info", method = RequestMethod.GET)
@@ -53,7 +57,8 @@ public class TerminationController {
   @RequestMapping(value = "/{applicationId}/termination", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getTermination(@PathVariable Integer applicationId) {
-    return pdfResult(terminationService.getTermination(applicationId));
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    return pdfResult(terminationService.getTermination(application));
   }
 
   private ResponseEntity<byte[]> pdfResult(byte[] data) {

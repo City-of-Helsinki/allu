@@ -64,6 +64,7 @@ export class Application {
     public invoicingChanged: boolean = false,
     public targetState?: ApplicationStatus,
     public invoicingPeriodLength?: InvoicingPeriodLength,
+    public terminationTime?: Date,
     public version?: number) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];

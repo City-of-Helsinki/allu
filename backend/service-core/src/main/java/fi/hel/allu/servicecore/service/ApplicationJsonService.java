@@ -1,7 +1,8 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationMapItemJson;
@@ -12,6 +13,7 @@ import fi.hel.allu.servicecore.mapper.LocationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +31,7 @@ public class ApplicationJsonService {
   private final AttachmentService attachmentService;
   private final CommentService commentService;
   private final LocationService locationService;
+  private final TerminationService terminationService;
   private volatile Map<Integer, FixedLocationJson> fixedLocations;
 
   @Autowired
@@ -38,13 +41,15 @@ public class ApplicationJsonService {
       UserService userService,
       LocationService locationService,
       AttachmentService attachmentService,
-      CommentService commentService) {
+      CommentService commentService,
+      TerminationService terminationService) {
     this.applicationMapper = applicationMapper;
     this.projectService = projectService;
     this.userService = userService;
     this.attachmentService = attachmentService;
     this.commentService = commentService;
     this.locationService = locationService;
+    this.terminationService = terminationService;
     this.fixedLocations = null;
   }
 
@@ -81,6 +86,8 @@ public class ApplicationJsonService {
     setAddress(json);
 
     json.setComments(commentService.findByApplicationId(model.getId()));
+
+    json.setTerminationTime(terminationTime(model));
 
     return json;
   }
@@ -143,5 +150,14 @@ public class ApplicationJsonService {
       }
     }
     return fixedLocations;
+  }
+
+  private ZonedDateTime terminationTime(Application application) {
+    if (application.getStatus() == StatusType.TERMINATED || application.getStatus() == StatusType.ARCHIVED) {
+      return Optional.ofNullable(terminationService.getTerminationInfo(application.getId()))
+        .map(TerminationInfo::getExpirationTime)
+        .orElse(null);
+    }
+    return null;
   }
 }
