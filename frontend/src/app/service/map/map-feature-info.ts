@@ -6,5 +6,6 @@ export interface MapFeatureInfo {
   startTime: Date;
   endTime: Date;
   recurringEndTime?: Date;
+  terminationTime?: Date;
   applicant?: string;
 }

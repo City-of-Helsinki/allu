@@ -5,9 +5,8 @@ import {ApplicationRef, ComponentFactoryResolver, Inject, Injectable, Injector, 
 import {MapPopupComponent, MapPopupContentRow} from '@feature/map/map-popup.component';
 import {Feature, GeometryObject} from 'geojson';
 import {ArrayUtil} from '@util/array-util';
-import {recurringDateString, RecurringType, recurringTypeFromDate} from '@feature/application/info/recurring/recurring-type';
+import {recurringDateString} from '@feature/application/info/recurring/recurring-type';
 import {formatDate} from '@angular/common';
-import {DATE_MONTH_FORMAT, TimeUtil} from '@util/time.util';
 
 @Injectable()
 export class MapPopupService {
@@ -67,6 +66,10 @@ export class MapPopupService {
         this.createContentRow(properties.applicant),
         this.createDateContentRow(properties.startTime, properties.endTime, this.localeId, properties.recurringEndTime)
       ];
+
+      if (properties.terminationTime) {
+        contentRows.push(this.createTerminationContentRow(properties.terminationTime, this.localeId));
+      }
     } else if (isWinkkiId(featureId)) {
       contentRows = [
         this.createContentRow(properties.event_description, 'content-row-bold'),
@@ -89,6 +92,10 @@ export class MapPopupService {
           this.createContentRowLink(properties.applicationId, properties.id, 'content-row-bold'),
           this.createContentRow(properties.applicant),
           this.createDateContentRow(properties.startTime, properties.endTime, this.localeId, properties.recurringEndTime));
+
+        if (properties.terminationTime) {
+          contentRows.push(this.createTerminationContentRow(properties.terminationTime, this.localeId));
+        }
       } else if (isWinkkiId(featureId)) {
         contentRows.push(
           this.createContentRow(properties.licence_identifier, 'content-row-bold'),
@@ -119,6 +126,12 @@ export class MapPopupService {
       recurringDateString(startTime, endTime, localeId, recurringEndTime),
       'single-line'
     );
+  }
+
+  private createTerminationContentRow(terminationTime: Date, localeId: string): MapPopupContentRow {
+    const terminatedExpires = findTranslation('application.common.terminatedExpires');
+    const formattedDate = formatDate(terminationTime, 'shortDate', localeId);
+    return this.createContentRow(`${terminatedExpires} ${formattedDate}`);
   }
 
   private createPopup(header: string, contentRows: MapPopupContentRow[]): HTMLElement {
