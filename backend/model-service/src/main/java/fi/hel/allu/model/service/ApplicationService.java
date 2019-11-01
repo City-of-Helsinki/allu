@@ -269,7 +269,7 @@ public class ApplicationService {
         return applicationDao.startDecisionMaking(applicationId, statusType);
       case CANCELLED:
         addCompensationClarificationForInvoiced(applicationId, userId);
-        applicationDao.updateStatus(applicationId, statusType);
+        return applicationDao.updateStatus(applicationId, statusType);
       default:
         return applicationDao.updateStatus(applicationId, statusType);
     }
