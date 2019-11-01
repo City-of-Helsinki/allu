@@ -28,7 +28,7 @@
             [startTime]="application.startTime"
             [endTime]="application.endTime"
             [recurringEndTime]="application.recurringEndTime"
-            [terminationDate]="terminationDate"></validity-time>
+            [terminationDate]="application.terminationTime"></validity-time>
         </div>
         <div fxFlex="none" *ngIf="hasReplacements$ | async">
           <button mat-button [matMenuTriggerFor]="replacementMenu" color="primary" disableRipple class="icon-with-info">
