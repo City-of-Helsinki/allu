@@ -117,7 +117,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   onSubmit(form: FormGroup) {
     if (form.valid) {
       this.submitPending = true;
-      this.distributionComponent.savePending();
+      this.savePendingDistribution();
       const value = form.getRawValue();
       const application = this.update(value);
       this.save(application);
@@ -259,6 +259,13 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
         subGroup.setValidators(validators);
         subGroup.updateValueAndValidity();
       }
+    }
+  }
+
+  private savePendingDistribution(): void {
+    // Application type might not have distribution
+    if (this.distributionComponent) {
+      this.distributionComponent.savePending();
     }
   }
 }
