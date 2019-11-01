@@ -103,8 +103,12 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
   }
 
   public returnToPreparation(): void {
-    this.confirmDecisionSend(ApplicationStatus.RETURNED_TO_PREPARATION, ApplicationStatus.RETURNED_TO_PREPARATION)
-      .subscribe(result => this.decisionConfirmed(result));
+    this.confirmDecisionSend(ApplicationStatus.RETURNED_TO_PREPARATION, ApplicationStatus.RETURNED_TO_PREPARATION).pipe(
+      switchMap(confirmation => this.changeStatus(confirmation))
+    ).subscribe(
+      () => this.router.navigateByUrl('/workqueue'),
+      error => this.notification.errorInfo(error)
+    );
   }
 
   public decisionConfirmed(confirmation: DecisionConfirmation) {
