@@ -895,10 +895,12 @@ public class ApplicationDao {
   @Transactional(readOnly = true)
   public Integer getApplicationIdForExternalId(Integer externalId) {
     // Return latest application ID for external ID i.e. the one that is not replaced
+    BooleanExpression notReplaced = application.replacedByApplicationId.isNull().and(application.status.ne(StatusType.REPLACED));
+    BooleanExpression replacingNotCancelled = application.replacesApplicationId.isNull().or(application.status.ne(StatusType.CANCELLED));
     return queryFactory
         .select(application.id)
         .from(application)
-        .where(application.externalApplicationId.eq(externalId), application.replacedByApplicationId.isNull(), application.status.ne(StatusType.REPLACED))
+        .where(application.externalApplicationId.eq(externalId), notReplaced, replacingNotCancelled)
         .fetchOne();
   }
 
