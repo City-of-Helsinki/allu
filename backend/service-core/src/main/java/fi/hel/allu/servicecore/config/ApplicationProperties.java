@@ -248,6 +248,10 @@ public class ApplicationProperties {
     return getSearchServiceUrl("/applications/partialupdate");
   }
 
+  public String getApplicationsSearchUpdateCustomersWithContactsUrl() {
+    return getSearchServiceUrl("/applications/{id}/customersWithContacts");
+  }
+
   /**
    * @return url to add application to search index.
    */

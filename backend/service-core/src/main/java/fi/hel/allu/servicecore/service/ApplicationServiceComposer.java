@@ -159,15 +159,18 @@ public class ApplicationServiceComposer {
     CustomerRoleType roleType = customerWithContacts.getRoleType();
     CustomerWithContacts existingCustomer = applicationService.findApplicationCustomerByRoleType(applicationId, roleType);
 
-    CustomerWithContacts cwc = applicationService.replaceCustomerWithContacts(applicationId,
+    CustomerWithContacts updatedCustomer = applicationService.replaceCustomerWithContacts(applicationId,
       customerMapper.createSingleCustomerWithContactsModel(customerWithContacts));
+    CustomerWithContactsJson updatedCustomerWithContactsJson = customerMapper.createWithContactsJson(updatedCustomer);
 
     // log change of the customer data
     applicationHistoryService.addCustomerChange(applicationId,
-      customerMapper.createWithContactsJson(existingCustomer), customerMapper.createWithContactsJson(cwc), roleType);
+      customerMapper.createWithContactsJson(existingCustomer), updatedCustomerWithContactsJson, roleType);
 
-    // TODO searchService?
-    return customerMapper.createWithContactsJson(cwc);
+    // update search service
+    searchService.updateApplicationCustomerWithContacts(applicationId, updatedCustomerWithContactsJson);
+
+    return updatedCustomerWithContactsJson;
   }
 
   /**

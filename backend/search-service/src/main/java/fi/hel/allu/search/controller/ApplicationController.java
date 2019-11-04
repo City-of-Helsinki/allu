@@ -5,7 +5,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.search.domain.CustomerWithContactsES;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +56,19 @@ public class ApplicationController {
   @RequestMapping(value = "/partialupdate", method = RequestMethod.PUT)
   public ResponseEntity<Void> partialUpdate(@RequestBody Map<Integer, Object> idToPartialUpdateObj, @RequestParam(required = false) Boolean waitRefresh) {
     applicationSearchService.partialUpdate(idToPartialUpdateObj, waitRefresh);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Update customers and related contacts for an application
+   *
+   * @param id application id
+   * @param customersByRoleType list of customer structures to update for the application
+   */
+  @RequestMapping(value = "/{id}/customersWithContacts", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateCustomersWithContacts(@PathVariable Integer id,
+                                                          @RequestBody Map<CustomerRoleType, CustomerWithContactsES> customersByRoleType) {
+    applicationSearchService.updateCustomersWithContacts(id, customersByRoleType);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

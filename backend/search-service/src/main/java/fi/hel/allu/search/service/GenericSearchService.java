@@ -7,6 +7,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.search.domain.CustomerWithContactsES;
+import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -270,6 +273,17 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         .collect(Collectors.toList());
     RefreshPolicy refreshPolicy = BooleanUtils.isTrue(waitRefresh) ? RefreshPolicy.WAIT_UNTIL : null;
     executeBulk(updateRequests, refreshPolicy);
+  }
+
+  /**
+   * Update customers and their contacts on an application
+   *
+   * @param applicationId application whose customers and contacts to update
+   * @param customersByRoleType new customer and contact data mapped by the role of the customer
+   */
+  public void updateCustomersWithContacts(Integer applicationId, Map<CustomerRoleType, CustomerWithContactsES> customersByRoleType) {
+    Map<String, Map<String, Map<String, Object>>> customerUpdateStructure = CustomersIndexUtil.getCustomerWithContactsUpdateStructure(customersByRoleType);
+    partialUpdate(Collections.singletonMap(applicationId, customerUpdateStructure), false);
   }
 
   /**

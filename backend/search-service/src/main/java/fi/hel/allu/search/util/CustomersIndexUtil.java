@@ -4,6 +4,8 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
+import fi.hel.allu.search.domain.CustomerWithContactsES;
+import fi.hel.allu.search.domain.RoleTypedCustomerES;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,6 +79,32 @@ public class CustomersIndexUtil {
     Map<String, Map<String, List<ContactES>>> customerRoleTypeToContacts = applicationWithContactsESs.stream().collect(Collectors.toMap(
         appWithContact -> customerRoleTypeToPropertyName.get(appWithContact.getCustomerRoleType()),
         appWithContact -> Collections.singletonMap("contacts", appWithContact.getContacts())));
+    return Collections.singletonMap("customers", customerRoleTypeToContacts);
+  }
+
+  /**
+   * Creates a map structure, which allows partial updating of {@link fi.hel.allu.search.domain.CustomerWithContactsES}
+   * customer including their contacts related to an {@link fi.hel.allu.search.domain.ApplicationES}.
+   *
+   * It's assumed that the customer has the following path in elasticsearch: <ApplicationES>.customers.<CustomerRoleType>.customer.
+   *
+   * It's assumed that the contacts have the following path in elasticsearch: <ApplicationES>.customers.<CustomerRoleType>.contacts.
+   *
+   * @param customerRoleToCustomerWithContactsES customer structures mapped by their role in the application to be updated
+   * @return an update structure that can be used for a partial update of an application
+   */
+  public static Map<String, Map<String, Map<String, Object>>> getCustomerWithContactsUpdateStructure(Map<CustomerRoleType, CustomerWithContactsES> customerRoleToCustomerWithContactsES) {
+    Map<String, Map<String, Object>> customerRoleTypeToContacts = customerRoleToCustomerWithContactsES.entrySet().stream().collect(
+      Collectors.toMap(
+        e -> customerRoleTypeToPropertyName.get(e.getKey()),
+        e -> {
+          Map<String, Object> customerUpdateStructure = new HashMap<>();
+          customerUpdateStructure.put("customer", e.getValue().getCustomer());
+          customerUpdateStructure.put("contacts", e.getValue().getContacts());
+          return customerUpdateStructure;
+        }
+      )
+    );
     return Collections.singletonMap("customers", customerRoleTypeToContacts);
   }
 }

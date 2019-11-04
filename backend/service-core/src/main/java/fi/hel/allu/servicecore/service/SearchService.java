@@ -125,6 +125,20 @@ public class SearchService {
   }
 
   /**
+   * Update the customer and related contacts for an application
+   *
+   * @param applicationId application id
+   * @param customerWithContactsJson customer structure to update for the application
+   */
+  @Retryable(maxAttempts = 3, backoff = @Backoff(delay = DELAY, maxDelay = MAX_DELAY, multiplier = DELAY_MULTIPLIER))
+  public void updateApplicationCustomerWithContacts(int applicationId, CustomerWithContactsJson customerWithContactsJson) {
+    Map<CustomerRoleType, CustomerWithContactsES> customersByRoleType = Collections.singletonMap(
+      customerWithContactsJson.getRoleType(), customerMapper.createWithContactsES(customerWithContactsJson));
+
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdateCustomersWithContactsUrl(), new HttpEntity<>(customersByRoleType), applicationId);
+  }
+
+  /**
    * Delete a note from search-service's database.
    *
    * @param applicationId note application's database ID

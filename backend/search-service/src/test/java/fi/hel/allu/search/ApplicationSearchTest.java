@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -345,6 +346,30 @@ public class ApplicationSearchTest {
   }
 
   @Test
+  public void testUpdateCustomerWithContacts() {
+    // create data
+    int applicationId = 100;
+    ApplicationES applicationES = createApplication(applicationId, CustomerRoleType.APPLICANT,
+      "applicant", createContacts(Arrays.asList("kontakti ihminen", "toinen contact")));
+    applicationSearchService.insert(applicationES);
+
+    // update data
+    Map<CustomerRoleType, CustomerWithContactsES> testUpdateData = Collections.singletonMap(
+      CustomerRoleType.APPLICANT,
+      SearchTestUtil.createCustomerWithContacts(
+        createCustomer("anewname"),
+        createContacts(Arrays.asList("uusi nimi", "joku tyyppi"))));
+    applicationSearchService.updateCustomersWithContacts(applicationId, testUpdateData);
+
+    // verify update
+    verifyOneQueryResult("customers.applicant.customer.name", "anewname");
+    verifyOneQueryResult("customers.applicant.contacts.name", "tyyppi");
+
+    // clean up
+    applicationSearchService.delete("100");
+  }
+
+  @Test
   public void testRecurringApplicationWithinOneCalendarYear() {
     ApplicationES applicationES = createApplication(100);
     RecurringApplication recurringApplication = new RecurringApplication(
@@ -577,6 +602,23 @@ public class ApplicationSearchTest {
       idCounter++;
     }
     return contacts;
+  }
+
+  private ApplicationES createApplication(int applicationId, CustomerRoleType customerRoleType,
+                                          String customerName, List<ContactES> contacts) {
+    ApplicationES applicationES = createApplication(applicationId);
+    CustomerES customerES = createCustomer(customerName);
+    RoleTypedCustomerES roleTypedCustomerES =
+      new RoleTypedCustomerES(Collections.singletonMap(customerRoleType,
+        SearchTestUtil.createCustomerWithContacts(customerES, contacts)));
+    applicationES.setCustomers(roleTypedCustomerES);
+    return applicationES;
+  }
+
+  private CustomerES createCustomer(String customerName) {
+    CustomerES customerES = new CustomerES();
+    customerES.setName(customerName);
+    return customerES;
   }
 
   public static UserES createUser() {
