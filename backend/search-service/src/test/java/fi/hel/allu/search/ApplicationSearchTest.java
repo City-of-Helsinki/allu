@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,11 +68,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insert(applicationES);
 
-    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("name", "testi");
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
+    verifyOneQueryResult("name", "testi");
     applicationSearchService.delete("1");
   }
 
@@ -262,11 +259,7 @@ public class ApplicationSearchTest {
     applicationES.setCustomers(roleTypedCustomerES);
     applicationSearchService.insert(applicationES);
 
-    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("customers.applicant.contacts.name", "kontakti");
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
+    verifyOneQueryResult("customers.applicant.contacts.name", "kontakti");
     applicationSearchService.delete("1");
   }
 
@@ -573,13 +566,28 @@ public class ApplicationSearchTest {
   }
 
   public static List<ContactES> createContacts() {
+    return createContacts(Arrays.asList("kontakti ihminen", "toinen contact"));
+  }
+
+  public static List<ContactES> createContacts(Collection<String> contactNames) {
     ArrayList<ContactES> contacts = new ArrayList<>();
-    contacts.add(new ContactES(1, "kontakti ihminen", true));
-    contacts.add(new ContactES(2, "toinen contact", true));
+    Integer idCounter = 1;
+    for (String contactName : contactNames) {
+      contacts.add(new ContactES(idCounter, contactName, true));
+      idCounter++;
+    }
     return contacts;
   }
 
   public static UserES createUser() {
     return new UserES(USERNAME, "real name");
+  }
+
+  private void verifyOneQueryResult(String fieldName, String parameter) {
+    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters(fieldName, parameter);
+    applicationSearchService.refreshIndex();
+    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+    assertNotNull(appList);
+    assertEquals(1, appList.size());
   }
 }
