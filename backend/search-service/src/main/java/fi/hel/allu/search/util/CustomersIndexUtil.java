@@ -34,10 +34,18 @@ public class CustomersIndexUtil {
    * <ApplicationES>.customers.<CustomerRoleType>.customer.
    */
   public static Map getCustomerUpdateStructure(List<CustomerRoleType> customerRoleTypes, CustomerES customerES) {
-    Map<String, Map<String, CustomerES>> customerRoleMap = new HashMap();
-    customerRoleTypes.forEach(crt -> customerRoleMap.put(
-        customerRoleTypeToPropertyName.get(crt), Collections.singletonMap("customer", customerES)));
-    return Collections.singletonMap("customers", customerRoleMap);
+    return getCustomerUpdateStructure(customerRoleTypes.stream().collect(
+      Collectors.toMap(customerRoleType -> customerRoleType, __ -> customerES)));
+  }
+
+  public static Map<String, Object> getCustomerUpdateStructure(Map<CustomerRoleType, CustomerES> customerRoleTypeToCustomerES) {
+    Map<String, Map<String, CustomerES>> customerRoleTypeToCustomer = customerRoleTypeToCustomerES.entrySet().stream().collect(
+      Collectors.toMap(
+        e -> customerRoleTypeToPropertyName.get(e.getKey()),
+        e -> Collections.singletonMap("customer", e.getValue())
+      )
+    );
+    return Collections.singletonMap("customers", customerRoleTypeToCustomer);
   }
 
   /**
