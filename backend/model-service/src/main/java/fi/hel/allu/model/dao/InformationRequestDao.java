@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +43,9 @@ public class InformationRequestDao {
 
   @Autowired
   private ExternalApplicationDao externalApplicationDao;
+
+  @Autowired
+  private HistoryDao historyDao;
 
   private final QBean<InformationRequest> informationRequestBean = bean(InformationRequest.class,
       informationRequest.all());
@@ -113,9 +117,13 @@ public class InformationRequestDao {
 
   @Transactional(readOnly = true)
   public List<InformationRequest> findAllByApplicationId(Integer applicationId) {
+    List<Integer> applicationIds = new ArrayList<>();
+    historyDao.getReplacedApplicationIds(applicationId, applicationIds);
+    applicationIds.add(applicationId);
+
     return queryFactory.select(informationRequestBean)
       .from(informationRequest)
-      .where(informationRequest.applicationId.eq(applicationId))
+      .where(informationRequest.applicationId.in(applicationIds))
       .orderBy(informationRequest.creationTime.desc())
       .fetch().stream()
       .map(request -> {
