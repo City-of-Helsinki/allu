@@ -119,6 +119,7 @@ public class ApplicationServiceExt {
     ApplicationJson application = mapper.mapExtApplication(applicationExt, getExternalUserId());
     // Set optimistic lock version since it's currently not available from ext api
     application.setVersion(applicationServiceComposer.getApplicationVersion(id));
+    application.setStatus(applicationServiceComposer.getApplicationStatus(id).getStatus());
     application.setReceivedTime(ZonedDateTime.now());
     application = applicationServiceComposer.updateApplication(id, application);
     StatusType status = applicationExt.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
