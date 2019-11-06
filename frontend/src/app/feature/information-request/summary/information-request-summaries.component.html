@@ -1,0 +1,5 @@
+<div>
+  <mat-spinner *ngIf="loading$ | async"></mat-spinner>
+  <information-request-summary-list
+    [summaries]="summaries$ | async"></information-request-summary-list>
+</div>

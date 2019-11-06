@@ -1,0 +1,12 @@
+<div>
+  <ng-container *ngIf="!summaries.length; else summaryList">
+    {{'informationRequest.noRequests' | translation}}
+  </ng-container>
+  <ng-template  #summaryList>
+    <ul>
+      <li *ngFor="let summary of summaries">
+        <information-request-summary-pair [summary]="summary"></information-request-summary-pair>
+      </li>
+    </ul>
+  </ng-template>
+</div>

@@ -662,6 +662,15 @@ export const translations = {
       showRequestedInfo: 'Näytä pyydetyt tiedot',
       discard: 'Hylkää tietopäivitys'
     },
+    summary: {
+      noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
+      request: {
+        title: 'Täydennyspyyntö'
+      },
+      response: {
+        title: 'Vastaus'
+      }
+    },
     request: {
       title: 'Hyväksy tiedot täydennyspyyntöön',
       readonlyTitle: 'Pyydetyt täydennykset',

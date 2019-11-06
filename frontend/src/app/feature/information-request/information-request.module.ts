@@ -33,6 +33,7 @@ import {InformationRequestFieldsComponent} from '@feature/information-request/re
 import {CustomerRegistryModule} from '@feature/customerregistry/customer-registry.module';
 import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
 import {RouterModule} from '@angular/router';
+import {InformationRequestSummaryModule} from '@feature/information-request/summary/information-request-summary.module';
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import {RouterModule} from '@angular/router';
     AlluCommonModule,
     MapModule,
     CustomerRegistryModule,
-    RouterModule.forChild([])
+    RouterModule.forChild([]),
+    InformationRequestSummaryModule
   ],
   declarations: [
     InformationAcceptanceModalComponent,

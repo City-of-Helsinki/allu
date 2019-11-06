@@ -17,6 +17,7 @@ import {DecisionDocumentComponent} from '@feature/decision/documents/decision-do
 import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
 import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
+import {InformationRequestSummariesComponent} from '@feature/information-request/summary/information-request-summaries.component';
 
 export const decisionTabs: Routes = [
   { path: '', redirectTo: 'contract', pathMatch: 'full'},
@@ -41,7 +42,8 @@ export const applicationTabs: Routes = [
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
   { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard], children: decisionTabs },
   { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },
-  { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] }
+  { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
+  { path: 'supplements', component: InformationRequestSummariesComponent, canActivate: [AuthGuard] }
 ];
 
 export const applicationRoutes: Routes = [
