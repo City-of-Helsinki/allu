@@ -1,5 +1,6 @@
 import * as fromInformationRequest from './information-request-reducer';
 import * as fromInformationRequestResult from './information-request-result-reducer';
+import * as fromInformationRequestSummary from './information-request-summary-reducer';
 import * as fromRoot from '../../allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
@@ -8,6 +9,7 @@ import {CustomerRoleType} from '../../../model/customer/customer-role-type';
 export interface InformationRequestState {
   request: fromInformationRequest.State;
   result: fromInformationRequestResult.State;
+  summary: fromInformationRequestSummary.State;
 }
 
 export interface State extends fromRoot.State {
@@ -16,7 +18,8 @@ export interface State extends fromRoot.State {
 
 export const reducers: ActionReducerMap<InformationRequestState> = {
   request: fromInformationRequest.reducer,
-  result: fromInformationRequestResult.reducer
+  result: fromInformationRequestResult.reducer,
+  summary: fromInformationRequestSummary.reducer
 };
 
 export const getInformationRequestState = createFeatureSelector<InformationRequestState>('informationRequest');
@@ -112,4 +115,25 @@ export const getOtherInfo = createSelector(
 export const getResultData = createSelector(
   getInformationRequestResultState,
   state => state
+);
+
+// Summary selectors
+export const getSummaryState = createSelector(
+  getInformationRequestState,
+  state => state.summary
+);
+
+export const getSummaries = createSelector(
+  getSummaryState,
+  fromInformationRequestSummary.getSummaries
+);
+
+export const getSummariesLoading = createSelector(
+  getSummaryState,
+  fromInformationRequestSummary.getLoading
+);
+
+export const getSummariesLoaded = createSelector(
+  getSummaryState,
+  fromInformationRequestSummary.getLoaded
 );

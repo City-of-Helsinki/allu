@@ -5,6 +5,7 @@ import * as InformationRequestAction from '../actions/information-request-action
 import {InformationRequestActionType} from '../actions/information-request-actions';
 import * as InformationRequestResultAction from '../actions/information-request-result-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
+import * as SummaryAction from '@feature/information-request/actions/information-request-summary-actions';
 import {Action, select, Store} from '@ngrx/store';
 import {InformationRequestService} from '@service/application/information-request.service';
 import {from, Observable, of} from 'rxjs/index';
@@ -19,6 +20,7 @@ import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notifi
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {findTranslation} from '@util/translations';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {InformationRequestSummaryActionType} from '@feature/information-request/actions/information-request-summary-actions';
 
 @Injectable()
 export class InformationRequestEffects {
@@ -46,7 +48,10 @@ export class InformationRequestEffects {
   saveRequest: Observable<Action> = this.actions.pipe(
     ofType<InformationRequestAction.SaveRequest>(InformationRequestActionType.SaveRequest),
     switchMap(action => this.informationRequestService.save(action.payload).pipe(
-      map(request => new InformationRequestAction.SaveRequestSuccess(request)),
+      switchMap(request => [
+        new InformationRequestAction.SaveRequestSuccess(request),
+        new SummaryAction.MarkForReload()
+      ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
@@ -56,7 +61,10 @@ export class InformationRequestEffects {
     ofType<InformationRequestAction.SaveAndSendRequest>(InformationRequestActionType.SaveAndSendRequest),
     switchMap(action => this.informationRequestService.save(action.payload)),
     switchMap(request => this.applicationStore.changeStatus(request.applicationId, ApplicationStatus.WAITING_INFORMATION).pipe(
-      map(() => new InformationRequestAction.SaveRequestSuccess(request)),
+      switchMap(() => [
+        new InformationRequestAction.SaveRequestSuccess(request),
+        new SummaryAction.MarkForReload()
+      ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
@@ -96,7 +104,8 @@ export class InformationRequestEffects {
         new InformationRequestAction.LoadLatestRequestSuccess(closed),
         new NotifySuccess(findTranslation('informationRequest.action.responseHandled')),
         new InformationRequestAction.LoadLatestResponseSuccess(undefined),
-        new ApplicationAction.Load(closed.applicationId)
+        new ApplicationAction.Load(closed.applicationId),
+        new SummaryAction.MarkForReload()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
@@ -108,7 +117,10 @@ export class InformationRequestEffects {
     switchMap(action => this.informationRequestService.delete(action.paylod)),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([_, app]) => this.applicationStore.changeStatus(app.id, ApplicationStatus.HANDLING).pipe(
-      map(() => new InformationRequestAction.CancelRequestSuccess()),
+      switchMap(() => [
+        new InformationRequestAction.CancelRequestSuccess(),
+        new SummaryAction.MarkForReload()
+      ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
@@ -125,5 +137,23 @@ export class InformationRequestEffects {
     ofType<InformationRequestAction.LoadLatestRequestSuccess>(InformationRequestActionType.LoadLatestRequestSuccess),
     filter(action => action.payload && action.payload.status === InformationRequestStatus.RESPONSE_RECEIVED),
     map(() => new InformationRequestAction.LoadLatestResponse())
+  );
+
+  @Effect()
+  getSummaries: Observable<Action> = this.actions.pipe(
+    ofType<SummaryAction.Get>(InformationRequestSummaryActionType.Get),
+    withLatestFrom(this.store.pipe(select(fromInformationRequest.getSummariesLoaded))),
+    filter(([action, loaded]) => !loaded),
+    map(([action, loaded]) => new SummaryAction.Load())
+  );
+
+  @Effect()
+  loadSummaries: Observable<Action> = this.actions.pipe(
+    ofType<SummaryAction.Load>(InformationRequestSummaryActionType.Load),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, app]) => this.informationRequestService.getSummariesForApplication(app.id).pipe(
+      map(summaries => new SummaryAction.LoadSuccess(summaries)),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
   );
 }

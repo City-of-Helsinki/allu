@@ -18,6 +18,7 @@ import * as informationRequestActions from '@feature/information-request/actions
 import * as supervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
 import * as invoicingCustomerActions from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import * as terminationActions from '@feature/decision/actions/termination-actions';
+import * as summaryActions from '@feature/information-request/actions/information-request-summary-actions';
 import {NumberUtil} from '@util/number.util';
 import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 
@@ -68,6 +69,7 @@ export class ApplicationResolve implements Resolve<Application> {
     this.store.dispatch(new informationRequestActions.LoadLatestRequest());
     this.store.dispatch(new terminationActions.LoadInfo());
     this.store.dispatch(new SaveDistributionSuccess(app.decisionDistributionList));
+    this.store.dispatch(new summaryActions.MarkForReload());
   }
 
   private handleError(err: any): Observable<Application> {
