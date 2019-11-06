@@ -14,7 +14,8 @@
 </div>
 
 <div *ngIf="requestDataAvailable && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
-  <information-request-summary [request]="data.informationRequest"></information-request-summary>
+  <information-request-fields
+    [requestFields]="data.informationRequest?.fields"></information-request-fields>
 </div>
 
 <div fxLayout="row" class="acceptance-info-header">

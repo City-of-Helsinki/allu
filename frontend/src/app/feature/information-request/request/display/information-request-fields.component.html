@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{'informationRequest.request.readonlyTitle' | translation}}</h2>
 <mat-list>
-  <mat-list-item *ngFor="let field of request.fields">
+  <mat-list-item *ngFor="let field of requestFields">
     <div fxLayout="row">
       <div class="text-highlighted" fxFlex="200px">{{['informationRequest.field', field.fieldKey] | translation}}</div>
       <div fxFlex>{{field.description}}</div>

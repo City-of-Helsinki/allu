@@ -29,7 +29,7 @@ import {LocationAcceptanceComponent} from '@feature/information-request/acceptan
 import {LocationInfoAcceptanceComponent} from '@feature/information-request/acceptance/location/location-info-acceptance.component';
 import {MapModule} from '@feature/map/map.module';
 import {AttachmentsAcceptanceComponent} from '@feature/information-request/acceptance/attachment/attachments-acceptance.component';
-import {InformationRequestSummaryComponent} from '@feature/information-request/request/display/information-request-summary.component';
+import {InformationRequestFieldsComponent} from '@feature/information-request/request/display/information-request-fields.component';
 import {CustomerRegistryModule} from '@feature/customerregistry/customer-registry.module';
 import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
 import {RouterModule} from '@angular/router';
@@ -67,7 +67,7 @@ import {RouterModule} from '@angular/router';
     LocationAcceptanceComponent,
     LocationInfoAcceptanceComponent,
     AttachmentsAcceptanceComponent,
-    InformationRequestSummaryComponent,
+    InformationRequestFieldsComponent,
     InformationAcceptanceEntryComponent
   ],
   providers: [
