@@ -151,7 +151,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Update applicant customer",
+  @ApiOperation(value = "Update applicant",
     authorizations = @Authorization(value ="api_key"),
     consumes = "application/json",
     produces = "application/json"
@@ -169,7 +169,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update property developer customer",
+  @ApiOperation(value = "Update property developer",
     authorizations = @Authorization(value ="api_key"),
     consumes = "application/json",
     produces = "application/json"
@@ -186,7 +186,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update contractor customer",
+  @ApiOperation(value = "Update contractor",
     authorizations = @Authorization(value ="api_key"),
     consumes = "application/json",
     produces = "application/json"
@@ -203,7 +203,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update representative customer",
+  @ApiOperation(value = "Update representative",
     authorizations = @Authorization(value ="api_key"),
     consumes = "application/json",
     produces = "application/json"

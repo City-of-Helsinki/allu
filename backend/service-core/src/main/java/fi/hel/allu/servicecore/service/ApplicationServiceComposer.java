@@ -163,11 +163,8 @@ public class ApplicationServiceComposer {
       customerMapper.createSingleCustomerWithContactsModel(customerWithContacts));
     CustomerWithContactsJson updatedCustomerWithContactsJson = customerMapper.createWithContactsJson(updatedCustomer);
 
-    // log change of the customer data
     applicationHistoryService.addCustomerChange(applicationId,
       customerMapper.createWithContactsJson(existingCustomer), updatedCustomerWithContactsJson, roleType);
-
-    // update search service
     searchService.updateApplicationCustomerWithContacts(applicationId, updatedCustomerWithContactsJson);
 
     return updatedCustomerWithContactsJson;

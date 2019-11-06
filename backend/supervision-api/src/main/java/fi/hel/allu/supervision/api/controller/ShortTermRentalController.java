@@ -31,13 +31,13 @@ public class ShortTermRentalController extends BaseApplicationDetailsController<
     return new ShortTermRentalApplication(application);
   }
 
-  @RequestMapping(value = "/{applicationId}/customerApplicant", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{applicationId}/applicant", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
                                                                           @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerApplicant(applicationId, customer);
   }
 
-  @RequestMapping(value = "/{applicationId}/customerRepresentative", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(@PathVariable Integer applicationId,
                                                                                @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerRepresentative(applicationId, customer);

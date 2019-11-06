@@ -63,25 +63,25 @@ public class ExcavationAnnouncementController extends BaseApplicationDetailsCont
     return getApprovalDocument(id, ApprovalDocumentType.OPERATIONAL_CONDITION);
   }
 
-  @RequestMapping(value = "/{applicationId}/customerApplicant", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{applicationId}/applicant", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
                                                                           @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerApplicant(applicationId, customer);
   }
 
-  @RequestMapping(value = "/{applicationId}/customerPropertyDeveloper", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{applicationId}/propertyDeveloper", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerPropertyDeveloper(@PathVariable Integer applicationId,
                                                                                   @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerPropertyDeveloper(applicationId, customer);
   }
 
-  @RequestMapping(value = "/{applicationId}/customerContractor", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{applicationId}/contractor", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerContractor(@PathVariable Integer applicationId,
                                                                            @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerContractor(applicationId, customer);
   }
 
-  @RequestMapping(value = "/{applicationId}/customerRepresentative", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(@PathVariable Integer applicationId,
                                                                                @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerRepresentative(applicationId, customer);
