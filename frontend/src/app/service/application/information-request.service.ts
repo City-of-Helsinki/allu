@@ -9,6 +9,8 @@ import {catchError, map} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
 import {BackendInformationRequest, InformationRequestMapper} from '../mapper/information-request-mapper';
 import {NumberUtil} from '@util/number.util';
+import {BackendInformationRequestSummary, InformationRequestSummaryMapper} from '@service/mapper/information-request-summary-mapper';
+import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 
 const applicationUrl = '/api/applications';
 const responseUrlPart = 'informationrequests/response';
@@ -40,6 +42,14 @@ export class InformationRequestService {
     return this.http.get<BackendInformationRequest>(url).pipe(
       map(response => InformationRequestMapper.mapBackend(response)),
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.get')))
+    );
+  }
+
+  getSummariesForApplication(id: number): Observable<InformationRequestSummary[]> {
+    const url = `${applicationUrl}/${id}/informationrequests/summaries`;
+    return this.http.get<BackendInformationRequestSummary[]>(url).pipe(
+      map(response => InformationRequestSummaryMapper.mapBackendList(response)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.fetchSummaries')))
     );
   }
 

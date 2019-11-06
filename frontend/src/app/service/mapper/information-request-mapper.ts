@@ -33,7 +33,7 @@ export class InformationRequestMapper {
             status: frontendRequest.status};
   }
 
-  private static mapFields(fields: InformationRequestField[]): BackendInformationRequestField[] {
+  public static mapFields(fields: InformationRequestField[]): BackendInformationRequestField[] {
     return fields.map(field => ({fieldKey: field.fieldKey, description: field.description}));
   }
 }
