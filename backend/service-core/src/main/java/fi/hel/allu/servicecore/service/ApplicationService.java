@@ -250,7 +250,7 @@ public class ApplicationService {
       new HttpEntity<>(customerWithContacts), CustomerWithContacts.class, applicationId);
 
     Integer currentUserId = userService.getCurrentUser().getId();
-    eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, currentUserId));
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, currentUserId, ApplicationNotificationType.CONTENT_CHANGED);
 
     return responseEntity.getBody();
   }
