@@ -6,7 +6,8 @@ import io.swagger.annotations.ApiModel;
 public enum CustomerSearchParameterField implements SearchField {
 
   NAME("name", "name", SearchParameterType.STRING),
-  REGISTRY_KEY("registryKey", "registryKey", SearchParameterType.STRING);
+  REGISTRY_KEY("registryKey", "registryKey", SearchParameterType.STRING),
+  IS_ACTIVE("active", "active", SearchParameterType.BOOLEAN);
 
   private final String searchFieldName;
   private final String sortFieldName;
