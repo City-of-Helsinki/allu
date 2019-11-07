@@ -39,8 +39,9 @@ public class InformationRequestController {
   @RequestMapping(value = "/applications/{id}/informationrequests", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<InformationRequestExt> findByApplicationId(@ApiParam(value = "Application ID to get information request for") @PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    InformationRequestJson request = informationRequestService.findOpenByApplicationId(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    InformationRequestJson request = informationRequestService.findOpenByApplicationId(applicationId);
     return new ResponseEntity<>(toInformationRequestExt(request), HttpStatus.OK);
   }
 
