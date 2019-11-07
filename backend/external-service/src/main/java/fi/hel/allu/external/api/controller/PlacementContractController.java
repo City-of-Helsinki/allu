@@ -101,7 +101,7 @@ public class PlacementContractController extends BaseApplicationController<Place
       throw new NoSuchEntityException("contract.notFound");
     }
     UserExt handler = applicationService.getHandler(applicationId);
-    UserExt decisionMaker = contractInfo.getStatus() == ContractStatusType.FINAL ? applicationService.getDecisionMaker(id) : null;
+    UserExt decisionMaker = contractInfo.getStatus() == ContractStatusType.FINAL ? applicationService.getDecisionMaker(applicationId) : null;
     return ResponseEntity.ok(new ContractExt(handler, decisionMaker, contractInfo.getStatus(), contractInfo.getCreationTime()));
 
   }

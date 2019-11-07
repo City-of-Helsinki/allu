@@ -98,7 +98,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateFullUpdateAllowed(applicationId);
     applicationService.validateOwnedByExternalUser(applicationId);
-    return new ResponseEntity<>(applicationService.updateApplication(id, application, getMapper()), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.updateApplication(applicationId, application, getMapper()), HttpStatus.OK);
   }
 
   @ApiOperation(value = "Send response for information request specified by ID parameter. Only fields listed in response are processed in Allu. "
