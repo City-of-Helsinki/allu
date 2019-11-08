@@ -651,6 +651,12 @@ export const translations = {
     }
   },
   informationRequest: {
+    status: {
+      DRAFT: 'Luonnos',
+      OPEN: 'Avoin',
+      RESPONSE_RECEIVED: 'Vastaus saapunut',
+      CLOSED: 'Suljettu'
+    },
     acceptance: {
       title: 'Hyväksy tietopäivitykset',
       readonlyTitle: 'Ehdotetut tietopäivitykset',

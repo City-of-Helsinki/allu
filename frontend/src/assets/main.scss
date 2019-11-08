@@ -20,6 +20,7 @@
 @import 'checkbox-theme';
 @import 'forms';
 @import 'autocomplete';
+@import 'progressbar';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
 @import '../app/feature/common/card/allu-card.component.theme';
@@ -29,6 +30,7 @@
 @import '../app/feature/history/history.theme';
 @import '../app/feature/application/progressbar/progressbar-theme';
 @import '../app/feature/information-request/information-request-theme';
+@import '../app/feature/information-request/summary/information-request-summary-theme';
 @import '../app/feature/application/notification/application-notification-theme';
 @import '../app/feature/application/invoicing/charge-basis/charge-basis.theme';
 @import '../app/feature/application/invoicing/invoice/invoice.theme';
@@ -57,6 +59,7 @@
 @include history-theme($allu-theme);
 @include progressbar-theme($allu-theme, $allu-success, $allu-basic);
 @include information-request-theme($allu-theme, $black-8-opacity);
+@include information-request-status-theme($allu-theme, $allu-success, $allu-basic);
 @include application-notification-theme($allu-theme);
 @include charge-basis-theme($allu-theme);
 @include invoice-theme($allu-theme);

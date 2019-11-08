@@ -1,5 +1,14 @@
 <allu-card>
-  <mat-card-title>{{'informationRequest.summary.request.title' | translation}}</mat-card-title>
+  <mat-card-title>
+    <div fxLayout="row">
+      <div fxFlex="auto">
+        {{'informationRequest.summary.request.title' | translation}}
+      </div>
+      <div fxFlex="none">
+        <information-request-status [status]="summary.status"></information-request-status>
+      </div>
+    </div>
+  </mat-card-title>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex>

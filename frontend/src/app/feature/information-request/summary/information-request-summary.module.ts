@@ -9,6 +9,7 @@ import {
   InformationRequestResponseSummaryComponent
 } from '@feature/information-request/summary/information-request-response-summary.component';
 import {FormsModule} from '@angular/forms';
+import {InformationRequestStatusComponent} from '@feature/information-request/summary/information-request-status.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import {FormsModule} from '@angular/forms';
     InformationRequestSummaryListComponent,
     InformationRequestSummaryPairComponent,
     InformationRequestSummaryComponent,
-    InformationRequestResponseSummaryComponent
+    InformationRequestResponseSummaryComponent,
+    InformationRequestStatusComponent
   ],
   providers: [
   ],

@@ -1,0 +1,6 @@
+<div class="progress-bar-container">
+  <div>{{['informationRequest.status', status] | translation | uppercase}}</div>
+  <div class="progress-bar" [ngClass]="color">
+    <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+  </div>
+</div>
