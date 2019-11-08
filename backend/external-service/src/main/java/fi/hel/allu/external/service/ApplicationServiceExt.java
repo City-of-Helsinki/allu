@@ -26,6 +26,7 @@ import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
@@ -49,7 +50,9 @@ import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryServ
 @Service
 public class ApplicationServiceExt {
 
-  private static final List<ChangeType> HISTORY_CHANGE_TYPES_INCLUDED = Arrays.asList(ChangeType.STATUS_CHANGED, ChangeType.CONTRACT_STATUS_CHANGED);
+  private static final List<ChangeType> HISTORY_CHANGE_TYPES_INCLUDED = Arrays.asList(ChangeType.STATUS_CHANGED, ChangeType.CONTRACT_STATUS_CHANGED,
+      ChangeType.COMMENT_ADDED);
+  private static final String HISTORY_INCLUDED_COMMENT_TYPE = CommentType.TO_EXTERNAL_SYSTEM.name();
 
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
@@ -106,13 +109,24 @@ public class ApplicationServiceExt {
   private List<ApplicationStatusEventExt> toStatusEvents(Integer applicationId, List<ChangeHistoryItem> items) {
     return Optional.ofNullable(items).orElse(Collections.emptyList())
             .stream()
+            .filter(i -> isChangeIncluded(i))
             .map(i ->
               new ApplicationStatusEventExt(i.getChangeTime(),
-                  i.getChangeSpecifier(),
+                  getEventName(i),
                   i.getInfo().getApplicationId(),
                   i.getChangeSpecifier2())
              )
             .collect(Collectors.toList());
+  }
+
+  private String getEventName(ChangeHistoryItem item) {
+    // For status change events return new status from change specifier as event name, for comments change type.
+    return item.getChangeType() == ChangeType.COMMENT_ADDED ? ChangeType.COMMENT_ADDED.name() : item.getChangeSpecifier();
+  }
+
+  private boolean isChangeIncluded(ChangeHistoryItem item) {
+    // If change type is "comment added" include it in history only if comment is targeted to external system
+    return item.getChangeType() != ChangeType.COMMENT_ADDED || item.getChangeSpecifier().equals(HISTORY_INCLUDED_COMMENT_TYPE);
   }
 
   public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {

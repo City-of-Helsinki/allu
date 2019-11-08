@@ -57,7 +57,7 @@ public class CommentController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Gets comments sent by Allu handler to external system",
+  @ApiOperation(value = "Gets comments sent by Allu handler to client system",
       produces = "application/json",
       consumes = "application/json",
       authorizations=@Authorization(value ="api_key"))
