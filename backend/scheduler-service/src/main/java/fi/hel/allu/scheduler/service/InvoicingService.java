@@ -86,7 +86,7 @@ public class InvoicingService {
       return;
     }
     final Map<Integer, Application> applicationsById =
-        getApplications(new ArrayList<>(invoices.stream().map(i -> i.getApplicationId()).collect(Collectors.toSet())))
+        getApplications(new ArrayList<>(invoices.stream().map(Invoice::getApplicationId).collect(Collectors.toSet())))
             .stream().collect(Collectors.toMap(Application::getId, Function.identity()));
     final List<SalesOrder> salesOrders = invoices.stream()
         .map(i -> {
@@ -97,8 +97,8 @@ public class InvoicingService {
     SalesOrderContainer salesOrderContainer = new SalesOrderContainer();
     salesOrderContainer.setSalesOrders(salesOrders);
     if (sendToSap(salesOrderContainer)) {
-      markInvoicesSent(invoices.stream().map(i -> i.getId()).collect(Collectors.toList()));
-      sendNotificationEmail(applicationsById.values().stream().map(a -> a.getApplicationId()).collect(Collectors.toList()), invoices.size());
+      markInvoicesSent(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
+      sendNotificationEmail(applicationsById.values().stream().map(Application::getApplicationId).collect(Collectors.toList()), invoices.size());
       applicationStatusUpdaterService.archiveApplications(new ArrayList<>(applicationsById.keySet()));
     }
   }
