@@ -5,12 +5,14 @@ export enum CommentType {
   INTERNAL = 'INTERNAL',
   PROPOSE_APPROVAL = 'PROPOSE_APPROVAL',
   PROPOSE_REJECT = 'PROPOSE_REJECT',
-  PROPOSE_TERMINATION = 'PROPOSE_TERMINATION'
+  PROPOSE_TERMINATION = 'PROPOSE_TERMINATION',
+  TO_EXTERNAL_SYSTEM = 'TO_EXTERNAL_SYSTEM'
 }
 
 export const manualComments: Array<CommentType> = [
   CommentType.INVOICING,
-  CommentType.INTERNAL
+  CommentType.INTERNAL,
+  CommentType.TO_EXTERNAL_SYSTEM
 ];
 
 export const decisionProposalComments: Array<CommentType> = [

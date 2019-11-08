@@ -34,7 +34,8 @@ public class CommentService {
   private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
       CommentType.INTERNAL,
       CommentType.INVOICING,
-      CommentType.EXTERNAL_SYSTEM
+      CommentType.EXTERNAL_SYSTEM,
+      CommentType.TO_EXTERNAL_SYSTEM
   )));
 
   @Autowired

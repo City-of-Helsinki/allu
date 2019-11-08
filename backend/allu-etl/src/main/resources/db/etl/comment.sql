@@ -21,7 +21,8 @@ SELECT
         WHEN type = 'PROPOSE_APPROVAL' THEN 'Ehdotettu hyväksyttäväksi'
         WHEN type = 'PROPOSE_REJECT' THEN 'Ehdotettu hylättäväksi'
         WHEN type = 'PROPOSE_TERMINATION' THEN 'Ehdotettu irtisanottavaksi'
-        WHEN type = 'EXTERNAL_SYSTEM' THEN 'Asiakasjärjestelmän kommentti'
+        WHEN type = 'EXTERNAL_SYSTEM' THEN 'Ulkoinen järjestelmä'
+        WHEN type = 'TO_EXTERNAL_SYSTEM' THEN 'Ulkoiselle järjestelmälle'
     END AS tyyppi,
     c.text AS teksti,
     c.create_time AS luontiaika,

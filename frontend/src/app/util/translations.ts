@@ -1560,7 +1560,8 @@ export const translations = {
       PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
       PROPOSE_REJECT: 'Ehdotettu hylättäväksi',
       PROPOSE_TERMINATION: 'Ehdotettu irtisanottavaksi',
-      EXTERNAL_SYSTEM: 'Ulkoinen järjestelmä'
+      EXTERNAL_SYSTEM: 'Ulkoinen järjestelmä',
+      TO_EXTERNAL_SYSTEM: 'Ulkoiselle järjestelmälle'
     },
     addComment: 'LISÄÄ KOMMENTTI',
     newComment: 'Uusi kommentti',
