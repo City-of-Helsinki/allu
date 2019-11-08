@@ -678,7 +678,10 @@ export const translations = {
         description: 'Selite'
       },
       response: {
-        title: 'Vastaus'
+        title: 'Vastaus',
+        received: 'Täydennys tehty',
+        creator: 'Tekijä',
+        changes: 'Toimitetut täydennykset',
       }
     },
     request: {
