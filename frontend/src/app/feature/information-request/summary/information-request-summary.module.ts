@@ -10,12 +10,15 @@ import {
 } from '@feature/information-request/summary/information-request-response-summary.component';
 import {FormsModule} from '@angular/forms';
 import {InformationRequestStatusComponent} from '@feature/information-request/summary/information-request-status.component';
+import {InformationRequestSummaryFieldsComponent} from '@feature/information-request/summary/information-request-summary-fields.component';
+import {MatTableModule} from '@angular/material';
 
 @NgModule({
   imports: [
     AlluCommonModule,
     RouterModule.forChild([]),
-    FormsModule
+    FormsModule,
+    MatTableModule
   ],
   declarations: [
     InformationRequestSummariesComponent,
@@ -23,7 +26,8 @@ import {InformationRequestStatusComponent} from '@feature/information-request/su
     InformationRequestSummaryPairComponent,
     InformationRequestSummaryComponent,
     InformationRequestResponseSummaryComponent,
-    InformationRequestStatusComponent
+    InformationRequestStatusComponent,
+    InformationRequestSummaryFieldsComponent
   ],
   providers: [
   ],

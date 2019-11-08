@@ -1,0 +1,25 @@
+:host .mat-header-row,
+:host .mat-row {
+  border-bottom-width: 0;
+  border-style: none;
+}
+
+:host .mat-header-row {
+  min-height: 1em;
+  margin-bottom: 4px;
+  line-height: 1em;
+
+  .mat-header-cell {
+    font-weight: 400;
+  }
+}
+
+:host .mat-row {
+  background: #f1f7fc;
+  margin-bottom: 4px;
+  min-height: 38px;
+}
+
+.mat-column-fieldKey {
+  max-width: 200px;
+}

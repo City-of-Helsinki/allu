@@ -33,7 +33,10 @@
         <div></div>
       </div>
       <div fxFlex>
-        <div></div>
+          <information-request-summary-fields
+            [columns]="['fieldKey', 'description']"
+            [fields]="summary.requestedFields"
+          ></information-request-summary-fields>
       </div>
     </div>
   </mat-card-content>

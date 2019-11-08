@@ -1,0 +1,22 @@
+<mat-table [dataSource]="fields">
+  <ng-container matColumnDef="fieldKey">
+    <mat-header-cell *matHeaderCellDef>
+      {{['informationRequest.summary', type, 'changes'] | translation}}
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div class="text-highlighted">
+        {{['informationRequest.field', row.fieldKey] | translation}}
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <mat-header-cell *matHeaderCellDef>
+      {{['informationRequest.summary', type, 'description'] | translation}}
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">{{row.description}}</mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: columns;"></mat-row>
+</mat-table>

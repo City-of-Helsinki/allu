@@ -674,7 +674,7 @@ export const translations = {
         title: 'Täydennyspyyntö',
         created: 'Pyyntö tehty',
         creator: 'Tekijä',
-        requestedChanges: 'Pyydetyt täydennykset',
+        changes: 'Pyydetyt täydennykset',
         description: 'Selite'
       },
       response: {
