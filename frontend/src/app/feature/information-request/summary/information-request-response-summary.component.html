@@ -1,5 +1,12 @@
 <allu-card>
-  <mat-card-title>{{'informationRequest.summary.response.title' | translation}}</mat-card-title>
+  <mat-card-title>
+    <ng-container *ngIf="summary.updateWithoutRequest; else fullRequest">
+      {{'informationRequest.summary.response.changeReport' | translation}}
+    </ng-container>
+    <ng-template #fullRequest>
+      {{'informationRequest.summary.response.title' | translation}}
+    </ng-template>
+  </mat-card-title>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex>

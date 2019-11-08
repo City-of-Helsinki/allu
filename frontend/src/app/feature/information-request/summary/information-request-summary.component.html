@@ -2,14 +2,19 @@
   <mat-card-title>
     <div fxLayout="row">
       <div fxFlex="auto">
-        {{'informationRequest.summary.request.title' | translation}}
+        <ng-container *ngIf="summary.updateWithoutRequest; else fullRequest">
+          {{'informationRequest.summary.request.customerReportedChange' | translation}}
+        </ng-container>
+        <ng-template #fullRequest>
+          {{'informationRequest.summary.request.title' | translation}}
+        </ng-template>
       </div>
       <div fxFlex="none">
         <information-request-status [status]="summary.status"></information-request-status>
       </div>
     </div>
   </mat-card-title>
-  <mat-card-content>
+  <mat-card-content *ngIf="!summary.updateWithoutRequest">
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex>
         <div>

@@ -672,6 +672,7 @@ export const translations = {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
       request: {
         title: 'Täydennyspyyntö',
+        customerReportedChange: 'Asiakkaan muutos',
         created: 'Pyyntö tehty',
         creator: 'Tekijä',
         changes: 'Pyydetyt täydennykset',
@@ -679,6 +680,7 @@ export const translations = {
       },
       response: {
         title: 'Vastaus',
+        changeReport: 'Muutosilmoitus',
         received: 'Täydennys tehty',
         creator: 'Tekijä',
         changes: 'Toimitetut täydennykset',
