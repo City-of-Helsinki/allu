@@ -665,7 +665,11 @@ export const translations = {
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
       request: {
-        title: 'Täydennyspyyntö'
+        title: 'Täydennyspyyntö',
+        created: 'Pyyntö tehty',
+        creator: 'Tekijä',
+        requestedChanges: 'Pyydetyt täydennykset',
+        description: 'Selite'
       },
       response: {
         title: 'Vastaus'

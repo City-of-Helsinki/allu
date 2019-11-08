@@ -8,11 +8,13 @@ import {InformationRequestSummaryComponent} from '@feature/information-request/s
 import {
   InformationRequestResponseSummaryComponent
 } from '@feature/information-request/summary/information-request-response-summary.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   imports: [
     AlluCommonModule,
-    RouterModule.forChild([])
+    RouterModule.forChild([]),
+    FormsModule
   ],
   declarations: [
     InformationRequestSummariesComponent,

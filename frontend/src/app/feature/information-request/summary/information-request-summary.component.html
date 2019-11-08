@@ -1,4 +1,31 @@
 <allu-card>
   <mat-card-title>{{'informationRequest.summary.request.title' | translation}}</mat-card-title>
-  <mat-card-content>Content</mat-card-content>
+  <mat-card-content>
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex>
+        <div>
+          <mat-form-field class="input-full-width">
+            <input
+              matInput
+              type="text"
+              [ngModel]="summary.creationTime | date: 'shortDate'"
+              [disabled]="true"
+              [placeholder]="'informationRequest.summary.request.created' | translation"/>
+          </mat-form-field>
+          <mat-form-field class="input-full-width">
+            <input
+              matInput
+              type="text"
+              [ngModel]="summary.creator"
+              [disabled]="true"
+              [placeholder]="'informationRequest.summary.request.creator' | translation"/>
+          </mat-form-field>
+        </div>
+        <div></div>
+      </div>
+      <div fxFlex>
+        <div></div>
+      </div>
+    </div>
+  </mat-card-content>
 </allu-card>
