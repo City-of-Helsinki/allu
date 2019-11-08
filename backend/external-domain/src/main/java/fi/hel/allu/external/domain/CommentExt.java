@@ -12,6 +12,14 @@ public class CommentExt {
   @NotBlank(message = "{comment.content.empty}")
   private String commentContent;
 
+  public CommentExt() {
+  }
+
+  public CommentExt(String commentator, String commentContent) {
+    this.commentator = commentator;
+    this.commentContent = commentContent;
+  }
+
   @ApiModelProperty(value = "Commentator name")
   public String getCommentator() {
     return commentator;

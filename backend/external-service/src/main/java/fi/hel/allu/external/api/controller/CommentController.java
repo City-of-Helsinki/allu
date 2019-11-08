@@ -1,5 +1,7 @@
 package fi.hel.allu.external.api.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.external.domain.CommentExt;
+import fi.hel.allu.external.domain.CommentOutExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.service.CommentServiceExt;
 import io.swagger.annotations.*;
@@ -53,6 +57,29 @@ public class CommentController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @ApiOperation(value = "Gets comments sent by Allu handler to external system",
+      produces = "application/json",
+      consumes = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @RequestMapping(value = "/{id}/comments/received", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<List<CommentOutExt>> getReceivedComments(@ApiParam(value = "Application id to get comments for") @PathVariable Integer id) {
+    return getComments(id, CommentType.TO_EXTERNAL_SYSTEM);
+  }
 
+  @ApiOperation(value = "Gets own comments sent from client system to Allu handler",
+      produces = "application/json",
+      consumes = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @RequestMapping(value = "/{id}/comments/sent", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<List<CommentOutExt>> getSentComments(@ApiParam(value = "Comment id to delete") @PathVariable Integer id) {
+    return getComments(id, CommentType.EXTERNAL_SYSTEM);
+  }
 
+  private ResponseEntity<List<CommentOutExt>> getComments(Integer externalApplicationId, CommentType type) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(externalApplicationId);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(commentService.getComments(applicationId, type));
+  }
 }

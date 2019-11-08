@@ -1,10 +1,15 @@
 package fi.hel.allu.external.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.external.domain.CommentExt;
+import fi.hel.allu.external.domain.CommentOutExt;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.service.CommentService;
@@ -35,4 +40,16 @@ public class CommentServiceExt {
     commentJson.setText(comment.getCommentContent());
     return commentJson;
   }
+
+  public List<CommentOutExt> getComments(Integer applicationId, CommentType commentType) {
+    return commentService.findByApplicationId(applicationId)
+      .stream()
+      .filter(c -> c.getType() == commentType)
+      .map(c -> toCommentOutExt(c)).collect(Collectors.toList());
+  }
+
+  public CommentOutExt toCommentOutExt(CommentJson comment) {
+    return new CommentOutExt(comment.getCommentator(), comment.getText(), comment.getCreateTime());
+  }
+
 }
