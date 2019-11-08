@@ -1,10 +1,18 @@
 <div>
-  <ng-container *ngIf="!summaries.length; else summaryList">
-    {{'informationRequest.noRequests' | translation}}
+  <ng-container *ngIf="noRequests; else summaryList">
+    {{'informationRequest.summary.noRequests' | translation}}
   </ng-container>
   <ng-template  #summaryList>
     <ul>
-      <li *ngFor="let summary of summaries">
+      <li>
+        <information-request-summary-pair [summary]="latest"></information-request-summary-pair>
+      </li>
+    </ul>
+    <div *ngIf="history.length">
+      <h3>{{'informationRequest.summary.history' | translation}}</h3>
+    </div>
+    <ul>
+      <li *ngFor="let summary of history">
         <information-request-summary-pair [summary]="summary"></information-request-summary-pair>
       </li>
     </ul>

@@ -24,4 +24,12 @@
   .closed .mat-progress-bar-fill::after {
     background-color: map-get($basic, 500);
   }
+
+  .connection.connection-active {
+    border-color: mat-color($accent, 500);
+  }
+
+  .connection.connection-closed {
+    border-color: map-get($basic, 500);
+  }
 }

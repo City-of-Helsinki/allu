@@ -8,5 +8,18 @@ import {InformationRequestSummary} from '@model/information-request/information-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InformationRequestSummaryListComponent {
-  @Input() summaries: InformationRequestSummary[] = [];
+  noRequests = true;
+  latest: InformationRequestSummary;
+  history: InformationRequestSummary[] = [];
+
+  @Input() set summaries(summaries: InformationRequestSummary[]) {
+    if (summaries && summaries.length) {
+      this.latest = summaries[0];
+      this.history = summaries.slice(1, summaries.length);
+      this.noRequests = false;
+    } else {
+      this.history = [];
+      this.noRequests = true;
+    }
+  }
 }

@@ -670,6 +670,7 @@ export const translations = {
     },
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
+      history: 'Historia',
       request: {
         title: 'Täydennyspyyntö',
         customerReportedChange: 'Asiakkaan muutos',
