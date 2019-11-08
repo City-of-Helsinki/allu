@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
+import {hasResponse} from '@model/information-request/information-request-status';
 
 @Component({
   selector: 'information-request-summary-pair',
@@ -9,4 +10,8 @@ import {InformationRequestSummary} from '@model/information-request/information-
 })
 export class InformationRequestSummaryPairComponent {
   @Input() summary: InformationRequestSummary;
+
+  get responseAvailable() {
+    return this.summary && hasResponse(this.summary.status);
+  }
 }

@@ -1,6 +1,6 @@
 <div>
   <information-request-summary [summary]="summary"></information-request-summary>
-  <div class="response">
+  <div class="response" *ngIf="responseAvailable">
     <div class="connection"></div>
     <information-request-response-summary [summary]="summary"></information-request-response-summary>
   </div>
