@@ -63,7 +63,7 @@ public class CommentService {
   public CommentJson addApplicationComment(int applicationId, CommentJson commentJson) {
     validateCommentType(commentJson.getType());
     CommentJson comment = addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
-    applicationHistoryService.addCommentAdded(applicationId);
+    applicationHistoryService.addCommentAdded(applicationId, commentJson.getType());
     applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(),
         ApplicationNotificationType.COMMENT_ADDED, commentJson.getType().name());
     return comment;

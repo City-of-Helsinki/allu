@@ -112,7 +112,7 @@ public class CommentServiceTest {
         Mockito.eq(Comment.class), Mockito.eq(APPLICATION_ID))).thenReturn(new ResponseEntity<>(comment, HttpStatus.OK));
     Mockito.when(userService.getCurrentUser()).thenReturn(newUserJson("user", USER_ID));
     commentService.addApplicationComment(APPLICATION_ID, newCommentJson(CommentType.INTERNAL, "comment", USER_ID));
-    verify(applicationHistoryService, times(1)).addCommentAdded(APPLICATION_ID);
+    verify(applicationHistoryService, times(1)).addCommentAdded(APPLICATION_ID, CommentType.INTERNAL);
   }
 
   @Test

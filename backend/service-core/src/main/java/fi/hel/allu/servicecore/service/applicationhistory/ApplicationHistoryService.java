@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service.applicationhistory;
 
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
@@ -264,8 +265,8 @@ public class ApplicationHistoryService {
     addChange(applicationId, ChangeType.CONTRACT_STATUS_CHANGED, contractStatus.name());
   }
 
-  public void addCommentAdded(Integer applicationId) {
-    addChange(applicationId, ChangeType.COMMENT_ADDED, null);
+  public void addCommentAdded(Integer applicationId, CommentType type) {
+    addChange(applicationId, ChangeType.COMMENT_ADDED, type.name());
   }
 
   public void addCommentRemoved(Integer applicationId) {
