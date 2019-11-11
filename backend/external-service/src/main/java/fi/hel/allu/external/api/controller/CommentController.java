@@ -73,7 +73,7 @@ public class CommentController {
       authorizations=@Authorization(value ="api_key"))
   @RequestMapping(value = "/{id}/comments/sent", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<CommentOutExt>> getSentComments(@ApiParam(value = "Comment id to delete") @PathVariable Integer id) {
+  public ResponseEntity<List<CommentOutExt>> getSentComments(@ApiParam(value = "Application id to get comments for") @PathVariable Integer id) {
     return getComments(id, CommentType.EXTERNAL_SYSTEM);
   }
 
