@@ -53,8 +53,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
 
     this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
 
-    const existingApplication = NumberUtil.isDefined(application.id);
-    this.sidebarItems = Some(application.type).map(type => this.createSidebar(type, existingApplication)).orElse([]);
+    this.sidebarItems = this.createSidebar(application);
   }
 
   private verifyTypeExists(type: ApplicationType) {
@@ -64,20 +63,33 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createSidebar(applicationType: ApplicationType, existing: boolean): Array<SidebarItem> {
-      const sidebar: Array<SidebarItem> = [
-        { type: 'BASIC_INFO' }
+  private createSidebar(application: Application): Array<SidebarItem> {
+      return [
+        { type: 'BASIC_INFO' },
+        ...this.createSidebarItemsForExisting(application),
+        ...this.createSidebarItemsForExternal(application)
       ];
+  }
 
-      if (existing) {
-        this.sidebarItem(applicationType, {type: 'ATTACHMENTS', count: this.attachmentCount }).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'DECISION'}).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'SUPERVISION', count: this.taskCount}).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'INVOICING', warn: this.invoicingWarn}).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'HISTORY'}).do(item => sidebar.push(item));
-      }
-      return sidebar;
+  private createSidebarItemsForExisting(application: Application): SidebarItem[] {
+    const sidebar: SidebarItem[] = [];
+    if (NumberUtil.isExisting(application)) {
+      this.sidebarItem(application.type, {type: 'ATTACHMENTS', count: this.attachmentCount }).do(item => sidebar.push(item));
+      this.sidebarItem(application.type, {type: 'DECISION'}).do(item => sidebar.push(item));
+      this.sidebarItem(application.type, {type: 'SUPERVISION', count: this.taskCount}).do(item => sidebar.push(item));
+      this.sidebarItem(application.type, {type: 'INVOICING', warn: this.invoicingWarn}).do(item => sidebar.push(item));
+      this.sidebarItem(application.type, {type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
+      this.sidebarItem(application.type, {type: 'HISTORY'}).do(item => sidebar.push(item));
+    }
+    return sidebar;
+  }
+
+  private createSidebarItemsForExternal(application: Application): SidebarItem[] {
+    const sidebar: SidebarItem[] = [];
+    if (NumberUtil.isDefined(application.externalOwnerId)) {
+      this.sidebarItem(application.type, {type: 'SUPPLEMENTS'}).do(item => sidebar.push(item));
+    }
+    return sidebar;
   }
 
   private get attachmentCount(): Observable<number> {

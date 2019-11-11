@@ -43,6 +43,10 @@
         <mat-icon class="mat-icon-36">history</mat-icon>
         <div>{{['sidebar.title', item.type] | translation}}</div>
       </div>
+      <div *ngSwitchCase="'SUPPLEMENTS'">
+        <mat-icon class="mat-icon-36">edit</mat-icon>
+        <div>{{['sidebar.title', item.type] | translation}}</div>
+      </div>
     </div>
   </a>
 </div>

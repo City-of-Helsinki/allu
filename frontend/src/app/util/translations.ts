@@ -1523,7 +1523,8 @@ export const translations = {
       HISTORY: 'Historia',
       SUPERVISION: 'Valvonta',
       PROJECTS: 'Hankkeet',
-      DECISION: 'Päätös'
+      DECISION: 'Päätös',
+      SUPPLEMENTS: 'Täydennys'
     }
   },
   attachments: 'Liitteet',
