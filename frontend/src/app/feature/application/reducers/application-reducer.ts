@@ -8,6 +8,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {InvoicingCustomerActions, InvoicingCustomerActionType} from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import {DistributionEntry} from '@model/common/distribution-entry';
+import {ArrayUtil} from '@util/array-util';
 
 export interface State {
   loaded: boolean;
@@ -102,9 +103,13 @@ export function reducer(state: State = initialState, action: HandledActions) {
     }
 
     case ApplicationActionType.AddToDistribution: {
+      const updatedDistribution = [...state.distribution]
+        .concat(action.payload)
+        .filter(ArrayUtil.uniqueItem(item => item.name));
+
       return {
         ...state,
-        distribution: [...state.distribution, action.payload]
+        distribution: updatedDistribution
       };
     }
 
