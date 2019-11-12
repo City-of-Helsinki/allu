@@ -1737,6 +1737,7 @@ export const translations = {
     error: {
       save: 'Laskutustietojen tallentaminen epäonnistui',
       invoiceRecipientSave: 'Laskutusasiakkaan tallentaminen epäonnistui',
+      invoiceRecipientFetch: 'Laskutusasiakkaan hakeminen epäonnistui',
       fetch: 'Laskujen hakeminen epäonnistui'
     },
     field: {

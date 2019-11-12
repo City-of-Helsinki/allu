@@ -3,6 +3,8 @@ package fi.hel.allu.model.service;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import fi.hel.allu.common.util.OptionalUtil;
+import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,12 +43,13 @@ public class ApplicationService {
   private final ApplicationDefaultValueService defaultValueService;
   private final UserDao userDao;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final InvoiceRecipientDao invoiceRecipientDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
     ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
     LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
-    InvoicingPeriodService invoicingPeriodService) {
+    InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -56,6 +59,7 @@ public class ApplicationService {
     this.defaultValueService = defaultValueService;
     this.userDao = userDao;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.invoiceRecipientDao = invoiceRecipientDao;
   }
 
   /**
@@ -470,9 +474,10 @@ public class ApplicationService {
   }
 
   @Transactional(readOnly = true)
-  public Customer getInvoiceRecipient(int id) {
-    Integer invoiceRecipientId = applicationDao.getInvoiceRecipientId(id);
-    return Optional.ofNullable(invoiceRecipientId).map(i -> customerDao.findById(i).orElse(null)).orElse(null);
+  public Customer getInvoiceRecipient(int applicationId) {
+    Integer invoiceRecipientId = applicationDao.getInvoiceRecipientId(applicationId);
+    return OptionalUtil.or(getInvoiceRecipientCustomer(applicationId), customerDao.findById(invoiceRecipientId))
+      .orElse(null);
   }
 
   public void changeInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId) {
@@ -607,4 +612,9 @@ public class ApplicationService {
     invoicingPeriodService.setExcavationAnnouncementPeriods(applicationId);
   }
 
+  private Optional<Customer> getInvoiceRecipientCustomer(int invoiceRecipientId) {
+    return Optional.ofNullable(invoiceRecipientId)
+      .flatMap(i -> invoiceRecipientDao.findByApplicationId(i))
+      .map(InvoiceRecipient::asCustomer);
+  }
 }

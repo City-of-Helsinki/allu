@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -46,12 +47,14 @@ public class ApplicationServiceTest {
   private InvoicingPeriodService invoicingPeriodService;
   @Mock
   private ApplicationService applicationService;
+  @Mock
+  private InvoiceRecipientDao invoiceRecipientDao;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
-        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService);
+        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, invoiceRecipientDao);
   }
 
   @Test

@@ -163,4 +163,20 @@ public class InvoiceRecipient {
   public void setInvoicingOperator(String invoicingOperator) {
     this.invoicingOperator = invoicingOperator;
   }
+
+  public Customer asCustomer() {
+    Customer customer = new Customer();
+    customer.setType(this.type);
+    customer.setName(this.name);
+    customer.setEmail(this.email);
+    customer.setPhone(this.phone);
+    customer.setRegistryKey(this.registryKey);
+    customer.setOvt(this.ovt);
+    if (this.streetAddress != null) {
+      final PostalAddress postalAddress = new PostalAddress(this.streetAddress, this.postalCode, this.city);
+      customer.setPostalAddress(postalAddress);
+    }
+    customer.setInvoicingOperator(this.invoicingOperator);
+    return customer;
+  }
 }

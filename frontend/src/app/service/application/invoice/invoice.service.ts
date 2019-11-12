@@ -10,6 +10,9 @@ import {catchError, map} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {Invoice} from '@model/application/invoice/invoice';
 import {BackendInvoice, InvoiceMapper} from '@service/mapper/invoice-mapper';
+import {Customer} from '@model/customer/customer';
+import {BackendCustomer} from '@service/backend-model/backend-customer';
+import {CustomerMapper} from '@service/mapper/customer-mapper';
 
 const APPLICATIONS_URL = '/api/applications';
 const CHARGE_BASIS_URL = '/api/applications/:appId/charge-basis';
@@ -18,6 +21,14 @@ const CHARGE_BASIS_URL = '/api/applications/:appId/charge-basis';
 export class InvoiceService {
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
+  }
+
+  getRecipient(applicationId: number): Observable<Customer> {
+    const url = `${APPLICATIONS_URL}/${applicationId}/invoicerecipient`;
+    return this.http.get<BackendCustomer>(url).pipe(
+      map(customer => CustomerMapper.mapBackend(customer)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('invoice.error.invoiceRecipientFetch')))
+    );
   }
 
   saveRecipient(applicationId: number, recipientId: number): Observable<{}> {

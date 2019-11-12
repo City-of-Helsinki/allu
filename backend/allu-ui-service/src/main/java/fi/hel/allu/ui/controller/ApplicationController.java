@@ -394,6 +394,12 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<CustomerJson> getInvoiceRecipient(@PathVariable int id) {
+    return ResponseEntity.ok(applicationServiceComposer.findInvoiceRecipientJson(id));
+  }
+
   @RequestMapping(value = "/{id}/clientapplicationdata", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> removeClientApplicationData(@PathVariable Integer id) {

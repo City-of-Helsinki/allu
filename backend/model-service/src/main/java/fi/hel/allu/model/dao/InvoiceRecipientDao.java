@@ -4,6 +4,7 @@ import static com.querydsl.core.types.Projections.bean;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import static fi.hel.allu.QInvoiceRecipient.invoiceRecipient;
+import static fi.hel.allu.QInvoice.invoice;
 import fi.hel.allu.model.domain.InvoiceRecipient;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,16 @@ public class InvoiceRecipientDao {
       return Optional.empty();
     }
     return Optional.of(theInvoiceRecipient);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<InvoiceRecipient> findByApplicationId(int applicationId) {
+    InvoiceRecipient result = queryFactory.select(invoiceRecipientBean)
+      .from(invoiceRecipient)
+      .join(invoice).on(invoice.recipientId.eq(invoiceRecipient.id))
+      .where(invoice.applicationId.eq(applicationId))
+      .orderBy(invoice.invoicableTime.desc())
+      .fetchFirst();
+    return Optional.ofNullable(result);
   }
 }

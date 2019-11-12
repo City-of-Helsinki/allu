@@ -596,6 +596,12 @@ public class ApplicationServiceComposer {
     return applicationService.findInvoiceRecipient(applicationId);
   }
 
+  public CustomerJson findInvoiceRecipientJson(Integer applicationId) {
+    return Optional.ofNullable(applicationService.findInvoiceRecipient(applicationId))
+      .map(recipient -> customerMapper.createCustomerJson(recipient))
+      .orElse(null);
+  }
+
   public List<Integer> findFinishedNotes() {
     return applicationService.findFinishedNotes();
   }
