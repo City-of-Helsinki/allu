@@ -725,7 +725,7 @@ export const translations = {
       create: 'Täydennyspyynnön luominen epäonnistui',
       update: 'Täydennyspyynnön päivittäminen epäonnistui',
       delete: 'Täydennyspyynnön poistaminen epäonnistui',
-      summariesFetch: 'Täydennyspyyntöjen hakeminen epäonnistui'
+      fetchSummaries: 'Täydennyspyyntöjen hakeminen epäonnistui'
     }
   },
   project: {

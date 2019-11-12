@@ -1381,8 +1381,8 @@ public class ApplicationProperties {
     return getModelServiceUrl("applications/{id}/informationrequest/open");
   }
 
-  public String getApplicationClosedInformationRequestFindUrl() {
-    return getModelServiceUrl("applications/{id}/informationrequest/closed");
+  public String getApplicationActiveInformationRequestFindUrl() {
+    return getModelServiceUrl("/applications/{id}/informationrequest/active");
   }
 
   public String getApplicationInformationRequestFindAllUrl() {

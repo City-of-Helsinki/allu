@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.user.Constants;
-import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestSummaryJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -75,7 +74,7 @@ public class InformationRequestService {
   }
 
   public InformationRequestJson findByApplicationId(int id) {
-    InformationRequest request = restTemplate.getForObject(applicationProperties.getApplicationClosedInformationRequestFindUrl(), InformationRequest.class, id);
+    InformationRequest request = restTemplate.getForObject(applicationProperties.getApplicationActiveInformationRequestFindUrl(), InformationRequest.class, id);
     return toInformationRequestJson(request);
   }
 

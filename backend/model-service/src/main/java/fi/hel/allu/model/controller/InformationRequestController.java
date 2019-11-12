@@ -65,14 +65,14 @@ public class InformationRequestController {
   /**
    * Finds open information request for given application.
    */
-  @RequestMapping(value = "applications/{id}/informationrequest/open", method = RequestMethod.GET)
+  @RequestMapping(value = "/applications/{id}/informationrequest/open", method = RequestMethod.GET)
   public ResponseEntity<InformationRequest> findOpenByApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(informationRequestDao.findOpenByApplicationId(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "applications/{id}/informationrequest/closed", method = RequestMethod.GET)
-  public ResponseEntity<InformationRequest> findClosedByApplicationId(@PathVariable int id) {
-    return new ResponseEntity<>(informationRequestDao.findClosedApplicationId(id), HttpStatus.OK);
+  @RequestMapping(value = "/applications/{id}/informationrequest/active", method = RequestMethod.GET)
+  public ResponseEntity<InformationRequest> findActiveByApplicationId(@PathVariable int id) {
+    return new ResponseEntity<>(informationRequestDao.findActiveByApplicationId(id), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/applications/{id}/informationrequest", method = RequestMethod.GET)
@@ -81,7 +81,7 @@ public class InformationRequestController {
   }
 
   @RequestMapping(value = "/informationrequests/{id}/responsefields", method = RequestMethod.GET)
-  public ResponseEntity<List<InformationRequestFieldKey>> findResponseFieldsForByRequest(@PathVariable int id) {
+  public ResponseEntity<List<InformationRequestFieldKey>> findResponseFieldsForInformationRequest(@PathVariable int id) {
     return ResponseEntity.ok(informationRequestDao.getResponseFields(id));
   }
 }

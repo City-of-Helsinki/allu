@@ -5,7 +5,7 @@ export enum InformationRequestStatus {
   CLOSED = 'CLOSED'
 }
 
-export const hasResponse = (status: InformationRequestStatus) => {
+export const canHaveResponse = (status: InformationRequestStatus) => {
   return InformationRequestStatus.RESPONSE_RECEIVED === status
     || InformationRequestStatus.CLOSED === status;
 };

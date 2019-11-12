@@ -66,7 +66,7 @@ public class InformationRequestDao {
   }
 
   private boolean applicationHasActiveInformationRequest(Integer applicationId) {
-    return findClosedApplicationId(applicationId) != null;
+    return findActiveByApplicationId(applicationId) != null;
   }
 
   @Transactional
@@ -101,7 +101,7 @@ public class InformationRequestDao {
   }
 
   @Transactional(readOnly = true)
-  public InformationRequest findClosedApplicationId(int applicationId) {
+  public InformationRequest findActiveByApplicationId(int applicationId) {
     return find(informationRequest.applicationId.eq(applicationId), informationRequest.status.ne(InformationRequestStatus.CLOSED));
   }
 
@@ -188,7 +188,7 @@ public class InformationRequestDao {
 
   @Transactional
   public InformationRequest move(int fromApplicationId, int toApplicationId) {
-    InformationRequest existing = findClosedApplicationId(fromApplicationId);
+    InformationRequest existing = findActiveByApplicationId(fromApplicationId);
     if (existing != null) {
       queryFactory
         .update(informationRequest)

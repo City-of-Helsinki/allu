@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
-import {hasResponse, InformationRequestStatus} from '@model/information-request/information-request-status';
+import {canHaveResponse, InformationRequestStatus} from '@model/information-request/information-request-status';
 
 @Component({
   selector: 'information-request-summary-pair',
@@ -12,7 +12,7 @@ export class InformationRequestSummaryPairComponent {
   @Input() summary: InformationRequestSummary;
 
   get responseAvailable() {
-    return this.summary && hasResponse(this.summary.status);
+    return this.summary && canHaveResponse(this.summary.status);
   }
 
   get connectionClass() {
