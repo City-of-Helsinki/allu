@@ -40,10 +40,13 @@ public class InvoicingPeriodService {
   @Transactional
   public List<InvoicingPeriod> updateInvoicingPeriods(Integer applicationId,
       int periodLength) {
-    validatePeriodModificationAllowed(applicationId);
-    invoicingPeriodDao.deletePeriods(applicationId);
-    createInvoicingPeriods(applicationId, periodLength);
-    return findForApplicationId(applicationId);
+    if (isPeriodModificationAllowed(applicationId)) {
+      invoicingPeriodDao.deletePeriods(applicationId);
+      createInvoicingPeriods(applicationId, periodLength);
+      return findForApplicationId(applicationId);
+    } else {
+      return findForApplicationId(applicationId);
+    }
   }
 
   @Transactional
@@ -52,7 +55,7 @@ public class InvoicingPeriodService {
     Application application = applicationDao.findById(applicationId);
     ZonedDateTime start = application.getStartTime().truncatedTo(ChronoUnit.DAYS);
     ZonedDateTime end = application.getEndTime().truncatedTo(ChronoUnit.DAYS);
-    List<InvoicingPeriod> periods = createPeriods(applicationId, periodLength, start, end);
+    List<InvoicingPeriod> periods = createPeriods(applicationId, periodLength, start, end, application.getType() == ApplicationType.AREA_RENTAL);
     applicationDao.setInvoicingPeriodLength(applicationId, periodLength);
     invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     return periods;
@@ -60,7 +63,6 @@ public class InvoicingPeriodService {
 
   @Transactional
   public List<InvoicingPeriod> createRecurringApplicationPeriods(Integer applicationId) {
-    validatePeriodModificationAllowed(applicationId);
     Application application = applicationDao.findById(applicationId);
     List<InvoicingPeriod> recurringPeriods = new ArrayList<>();
     ZonedDateTime periodStart = application.getStartTime();
@@ -74,7 +76,7 @@ public class InvoicingPeriodService {
 
     List<InvoicingPeriod> result;
     List<InvoicingPeriod> currentPeriods = findForApplicationId(applicationId);
-    if (periodsChanged(currentPeriods, recurringPeriods)) {
+    if (isPeriodModificationAllowed(applicationId) && periodsChanged(currentPeriods, recurringPeriods)) {
       invoicingPeriodDao.deletePeriods(applicationId);
       result = invoicingPeriodDao.insertPeriods(recurringPeriods);
       invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
@@ -94,7 +96,7 @@ public class InvoicingPeriodService {
   }
 
   private List<InvoicingPeriod> createPeriods(Integer applicationId, int periodLength, ZonedDateTime start,
-      ZonedDateTime end) {
+      ZonedDateTime end, boolean lastPeriodOpen) {
     ZonedDateTime currentStart = start;
     ZonedDateTime currentEnd = start.plusMonths(periodLength).minusDays(1);
     List<InvoicingPeriod> result = new ArrayList<>();
@@ -103,7 +105,7 @@ public class InvoicingPeriodService {
       currentStart = currentEnd.plusDays(1);
       currentEnd =  currentStart.plusMonths(periodLength).minusDays(1);
     }
-    result.add(new InvoicingPeriod(applicationId, currentStart, end));
+    result.add(new InvoicingPeriod(applicationId, currentStart, lastPeriodOpen ? null : end));
     return invoicingPeriodDao.insertPeriods(result);
   }
 
@@ -126,17 +128,16 @@ public class InvoicingPeriodService {
 
   @Transactional
   public void deletePeriods(Integer applicationId) {
-    validatePeriodModificationAllowed(applicationId);
-    invoicingPeriodDao.deletePeriods(applicationId);
-    applicationDao.setInvoicingPeriodLength(applicationId, null);
-    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    if (isPeriodModificationAllowed(applicationId)) {
+      invoicingPeriodDao.deletePeriods(applicationId);
+      applicationDao.setInvoicingPeriodLength(applicationId, null);
+      invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    }
   }
 
-  private void validatePeriodModificationAllowed(Integer applicationId) {
+  private boolean isPeriodModificationAllowed(Integer applicationId) {
     List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
-    if (hasClosedPeriods(existingPeriods)) {
-      throw new IllegalOperationException("invoicingPeriod.invoiced");
-    }
+    return !hasClosedPeriods(existingPeriods);
   }
 
   private boolean hasClosedPeriods(List<InvoicingPeriod> periods) {
@@ -193,5 +194,10 @@ public class InvoicingPeriodService {
       return true;
     }
     return false;
+  }
+
+  @Transactional
+  public void updatePeriodEndDate(Integer periodId, ZonedDateTime endTime) {
+    invoicingPeriodDao.updateEndTime(periodId, endTime);
   }
 }

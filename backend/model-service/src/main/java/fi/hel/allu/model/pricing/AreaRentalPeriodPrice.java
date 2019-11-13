@@ -31,7 +31,7 @@ public class AreaRentalPeriodPrice {
   public AreaRentalPeriodPrice(AreaRentalLocationPrice locationPrice, InvoicingPeriod invoicingPeriod) {
     this(locationPrice,
         TimeUtil.last(locationPrice.getStartTime(), invoicingPeriod.getStartTime()),
-        TimeUtil.first(locationPrice.getEndTime(), invoicingPeriod.getEndTime()),
+        TimeUtil.firstNotNull(locationPrice.getEndTime(), invoicingPeriod.getEndTime()),
         invoicingPeriod.getId());
   }
 

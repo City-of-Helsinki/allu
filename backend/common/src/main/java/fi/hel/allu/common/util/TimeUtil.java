@@ -97,8 +97,16 @@ public class TimeUtil {
     return Stream.of(dateTimes).sorted(Comparator.reverseOrder()).findFirst().get();
   }
 
-  public static ZonedDateTime first(ZonedDateTime...dateTimes ) {
-    return Stream.of(dateTimes).sorted().findFirst().get();
+  public static ZonedDateTime first(ZonedDateTime...dateTimes) {
+    return first(Stream.of(dateTimes));
+  }
+
+  public static ZonedDateTime firstNotNull(ZonedDateTime...dateTimes) {
+    return first(Stream.of(dateTimes).filter(d -> d != null));
+  }
+
+  private static ZonedDateTime first(Stream<ZonedDateTime> dates) {
+    return dates.sorted().findFirst().get();
   }
 
   public static boolean datePeriodsOverlap(ZonedDateTime period1Start, ZonedDateTime period1End, ZonedDateTime period2Start,

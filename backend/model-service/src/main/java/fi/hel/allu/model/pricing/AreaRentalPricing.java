@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,9 +110,19 @@ public class AreaRentalPricing extends Pricing {
    */
   private List<InvoicingPeriod> getLocationPeriods(AreaRentalLocationPrice locationPrice) {
     return invoicingPeriods.stream()
-        .filter(p -> TimeUtil.datePeriodsOverlap(p.getStartTime(), p.getEndTime(), locationPrice.getStartTime(), locationPrice.getEndTime()))
+        .filter(p -> overlaps(p, locationPrice))
         .collect(Collectors.toList());
   }
+
+  private boolean overlaps(InvoicingPeriod period, AreaRentalLocationPrice locationPrice) {
+    if (period.getEndTime() == null) {
+      // Open ended period, overlaps if location end date not before period start date
+      return TimeUtil.isSameDateOrLater(locationPrice.getEndTime(), period.getStartTime());
+    } else {
+      return TimeUtil.datePeriodsOverlap(period.getStartTime(), period.getEndTime(), locationPrice.getStartTime(), locationPrice.getEndTime());
+    }
+  }
+
 
   private int getPrice(int numUnits, String paymentClass) {
     if (paymentClass.equals(PriceUtil.UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {

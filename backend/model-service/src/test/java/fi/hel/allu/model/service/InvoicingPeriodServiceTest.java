@@ -30,8 +30,7 @@ import fi.hel.allu.model.domain.InvoicingPeriod;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class InvoicingPeriodServiceTest {
@@ -74,7 +73,7 @@ public class InvoicingPeriodServiceTest {
     validatePeriods(result, 1);
   }
 
-  @Test(expected = IllegalOperationException.class)
+  @Test
   public void shouldNotUpdateClosedPeriods() {
     List<InvoicingPeriod> existingPeriods = new ArrayList<>();
     existingPeriods.add(new InvoicingPeriod(APPLICATION_ID, START_TIME, START_TIME.plusMonths(6).minusDays(1)));
@@ -82,6 +81,8 @@ public class InvoicingPeriodServiceTest {
     existingPeriods.get(0).setClosed(true);
     when(invoicingPeriodDao.findForApplicationId(APPLICATION_ID)).thenReturn(existingPeriods);
     invoicingPeriodService.updateInvoicingPeriods(APPLICATION_ID, 6);
+    verify(invoicingPeriodDao, never()).insertInvoicingPeriod(any(InvoicingPeriod.class));
+    verify(invoicingPeriodDao, never()).deletePeriods(any(Integer.class));
   }
 
   private void validatePeriods(List<InvoicingPeriod> result, int expectedAmount) {

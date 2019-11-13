@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +83,13 @@ public class InvoicingPeriodDao {
        .setNull(chargeBasis.invoicingPeriodId)
        .where(chargeBasis.invoicingPeriodId.eq(periodId))
        .execute();
+  }
+
+  @Transactional
+  public void updateEndTime(Integer periodId, ZonedDateTime endTime) {
+    queryFactory.update(invoicingPeriod)
+      .set(invoicingPeriod.endTime, endTime)
+      .where(invoicingPeriod.id.eq(periodId))
+      .execute();
   }
 }

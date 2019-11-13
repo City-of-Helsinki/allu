@@ -36,6 +36,7 @@ public class AreaRentalStatusChangeHandlerTest {
 
   private AreaRentalStatusChangeHandler statusChangeHandler;
   private Application application;
+  private AreaRental areaRental;
   private Location location1;
   private Location location2;
   private Map<Integer, Location> locations;
@@ -59,6 +60,8 @@ public class AreaRentalStatusChangeHandlerTest {
   private InformationRequestDao informationRequestDao;
   @Mock
   private TerminationDao terminationDao;
+  @Mock
+  private InvoicingPeriodService invoicingPeriodService;
 
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
@@ -68,16 +71,20 @@ public class AreaRentalStatusChangeHandlerTest {
     supervisor = new User();
     supervisor.setId(228);
     createApplicationWithLocations();
+    application.setType(ApplicationType.AREA_RENTAL);
+    areaRental = new AreaRental();
+    areaRental.setWorkFinished(LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    application.setExtension(areaRental);
     statusChangeHandler = new AreaRentalStatusChangeHandler(applicationService, supervisionTaskService, locationService,
-        applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService, terminationDao);
+        applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService, terminationDao, invoicingPeriodService);
     when(locationService.findSupervisionTaskOwner(ApplicationType.AREA_RENTAL,
         location1.getCityDistrictId())).thenReturn(Optional.of(supervisor));
+
   }
 
   @Test
   public void onDecisionShouldCreateSupervisionTaskForAreaRental() {
     application.setEndTime(location2.getEndTime());
-    application.setType(ApplicationType.AREA_RENTAL);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(supervisionTaskService, times(3)).insert(supervisionTaskCaptor.capture());
     final List<SupervisionTask> insertedTasks = supervisionTaskCaptor.getAllValues();
@@ -108,56 +115,36 @@ public class AreaRentalStatusChangeHandlerTest {
 
   @Test
   public void onDecisionShouldNotLockChargeBasisEntries() {
-    application.setType(ApplicationType.AREA_RENTAL);
-    application.setExtension(new AreaRental());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(chargeBasisService, never()).lockEntries(eq(application.getId()));
   }
 
   @Test
   public void onDecisionShouldRemoveSupervisionDoneTag() {
-    application.setType(ApplicationType.AREA_RENTAL);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   @Test
-  public void onFinishedShuoldLockChargeBasisEntries() {
-    application.setType(ApplicationType.AREA_RENTAL);
-    application.setExtension(new AreaRental());
+  public void onFinishedShouldLockChargeBasisEntries() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
   }
 
   @Test
   public void onFinishedShouldSetInvoicable() {
-    application.setType(ApplicationType.AREA_RENTAL);
-    ZonedDateTime workFinishedDate = LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId);
-    AreaRental extension = new AreaRental();
-    extension.setWorkFinished(workFinishedDate);
-    application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
-    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(workFinishedDate));
+    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(areaRental.getWorkFinished()));
   }
 
   @Test
   public void onFinishedShouldCancelOpenSupervisionTasks() {
-    application.setType(ApplicationType.AREA_RENTAL);
-    ZonedDateTime workFinishedDate = LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId);
-    AreaRental extension = new AreaRental();
-    extension.setWorkFinished(workFinishedDate);
-    application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(supervisionTaskService, times(1)).cancelOpenTasksOfApplication(eq(application.getId()));
   }
 
   @Test
   public void onFinishedShouldRemoveSupervisionDoneTag() {
-    application.setType(ApplicationType.AREA_RENTAL);
-    ZonedDateTime workFinishedDate = LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId);
-    AreaRental extension = new AreaRental();
-    extension.setWorkFinished(workFinishedDate);
-    application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
