@@ -56,7 +56,7 @@ import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
 import {ObjectUtil} from '@util/object.util';
-import {SaveInitialDistribution} from '@feature/application/actions/application-actions';
+import {SaveDistribution} from '@feature/application/actions/application-actions';
 
 @Component({
   selector: 'type',
@@ -330,7 +330,7 @@ export class LocationComponent implements OnInit, OnDestroy {
           app => {
             this.createInitialDistribution(app.type, isNew).pipe(
               take(1)
-            ).subscribe(distribution => this.store.dispatch(new SaveInitialDistribution(distribution)));
+            ).subscribe(distribution => this.store.dispatch(new SaveDistribution(distribution)));
             this.destroy.next(true);
             this.notification.success(findTranslation('location.action.saved'));
             this.router.navigate(['/applications', app.id, urlSuffix]);

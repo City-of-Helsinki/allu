@@ -95,8 +95,8 @@ export function reducer(state: State = initialState, action: HandledActions) {
       };
     }
 
+    case ApplicationActionType.SaveDistributionAndNotify:
     case ApplicationActionType.SaveDistribution:
-    case ApplicationActionType.SaveInitialDistribution:
     case ApplicationActionType.LoadDistributionSuccess:
     case ApplicationActionType.SaveDistributionSuccess: {
       return {

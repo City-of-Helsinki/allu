@@ -104,8 +104,8 @@ export class ApplicationEffects {
 
   @Effect()
   saveDistribution: Observable<Action> = this.actions.pipe(
-    ofType<ApplicationAction.SaveDistribution | ApplicationAction.SaveInitialDistribution>(
-      ApplicationActionType.SaveDistribution, ApplicationActionType.SaveInitialDistribution
+    ofType<ApplicationAction.SaveDistributionAndNotify | ApplicationAction.SaveDistribution>(
+      ApplicationActionType.SaveDistributionAndNotify, ApplicationActionType.SaveDistribution
     ),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.applicationService.updateDistribution(app.id, action.payload).pipe(
@@ -131,7 +131,7 @@ export class ApplicationEffects {
   );
 
   private onSaveDistributionSuccess(action: Action, result: DistributionEntry[]): Action[] {
-    return action.type === ApplicationActionType.SaveInitialDistribution
+    return action.type === ApplicationActionType.SaveDistribution
       ? [new SaveDistributionSuccess(result)]
       : [new SaveDistributionSuccess(result), new NotifySuccess('decision.distribution.action.save')];
   }

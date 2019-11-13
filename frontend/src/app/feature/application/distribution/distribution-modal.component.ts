@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DistributionEntry} from '@model/common/distribution-entry';
-import {SaveDistribution} from '@feature/application/actions/application-actions';
+import {SaveDistributionAndNotify} from '@feature/application/actions/application-actions';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 
@@ -30,7 +30,7 @@ export class DistributionModalComponent {
   }
 
   saveDistribution(distribution: DistributionEntry[]): void {
-    this.store.dispatch(new SaveDistribution(distribution));
+    this.store.dispatch(new SaveDistributionAndNotify(distribution));
   }
 
   close() {
