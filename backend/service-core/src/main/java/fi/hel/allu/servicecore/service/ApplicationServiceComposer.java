@@ -461,6 +461,10 @@ public class ApplicationServiceComposer {
     return updatedApplication;
   }
 
+  public List<DistributionEntryJson> getDistributionList(int applicationId) {
+    return applicationService.getDistributionList(applicationId);
+  }
+
   private boolean hasPaperDistribution(DecisionDetailsJson decisionDetailsJson) {
     return decisionDetailsJson.getDecisionDistributionList() != null
         && decisionDetailsJson.getDecisionDistributionList().stream().anyMatch(d -> DistributionType.PAPER.equals(d.getDistributionType()));

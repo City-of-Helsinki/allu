@@ -384,9 +384,9 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url to replace distribution list of application.
+   * @return url to distribution list of application.
    */
-  public String getApplicationReplaceDistributionListUrl() {
+  public String getApplicationDistributionListUrl() {
     return getModelServiceUrl("/applications/{id}/decision-distribution-list");
   }
 

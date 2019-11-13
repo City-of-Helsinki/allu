@@ -22,7 +22,9 @@ export enum ApplicationActionType {
   SaveDistribution = '[Application] Save distribution',
   SaveInitialDistribution = '[Application] Save initial distribution',
   SaveDistributionSuccess = '[Application] Save distribution success',
-  AddToDistribution = '[Application] Add to distribution'
+  AddToDistribution = '[Application] Add to distribution',
+  LoadDistribution = '[Application] Load distribution',
+  LoadDistributionSuccess = '[Application] Load distribution success',
 }
 
 export class Load implements Action {
@@ -116,6 +118,16 @@ export class AddToDistribution implements Action {
   constructor(public payload: DistributionEntry) {}
 }
 
+export class LoadDistribution implements Action {
+  readonly type = ApplicationActionType.LoadDistribution;
+}
+
+export class LoadDistributionSuccess implements Action {
+  readonly type = ApplicationActionType.LoadDistributionSuccess;
+
+  constructor(public payload: DistributionEntry[]) {}
+}
+
 export type ApplicationActions =
   | Load
   | LoadSuccess
@@ -132,4 +144,6 @@ export type ApplicationActions =
   | SaveDistribution
   | SaveInitialDistribution
   | SaveDistributionSuccess
-  | AddToDistribution;
+  | AddToDistribution
+  | LoadDistribution
+  | LoadDistributionSuccess;

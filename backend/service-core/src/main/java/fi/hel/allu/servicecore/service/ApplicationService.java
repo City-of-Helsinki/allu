@@ -113,10 +113,27 @@ public class ApplicationService {
     List<DistributionEntry> distributionEntries =
         distributionEntryJsons.stream().map(entry -> applicationMapper.createDistributionEntryModel(entry)).collect(Collectors.toList());
     restTemplate.postForEntity(
-        applicationProperties.getApplicationReplaceDistributionListUrl(),
+        applicationProperties.getApplicationDistributionListUrl(),
         distributionEntries,
         Void.class,
         id);
+  }
+
+  /**
+   * Fetches application distribution list
+   *
+   * @param id application id
+   * @return Distribution list for specified application
+   */
+  public List<DistributionEntryJson> getDistributionList(int id) {
+    DistributionEntry[] result = restTemplate.getForObject(
+      applicationProperties.getApplicationDistributionListUrl(),
+      DistributionEntry[].class,
+      id
+    );
+    return Arrays.stream(result)
+      .map(entry -> applicationMapper.createDistributionEntryJson(entry))
+      .collect(Collectors.toList());
   }
 
   /**

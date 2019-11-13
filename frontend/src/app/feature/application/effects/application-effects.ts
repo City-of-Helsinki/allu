@@ -9,7 +9,7 @@ import * as MetaAction from '../actions/application-meta-actions';
 import {ApplicationMetaActionType} from '../actions/application-meta-actions';
 import * as ApplicationAction from '../actions/application-actions';
 import {Injectable} from '@angular/core';
-import {ApplicationActionType, SaveDistributionSuccess} from '@feature/application/actions/application-actions';
+import {ApplicationActionType, LoadDistributionSuccess, SaveDistributionSuccess} from '@feature/application/actions/application-actions';
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
@@ -110,6 +110,16 @@ export class ApplicationEffects {
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.applicationService.updateDistribution(app.id, action.payload).pipe(
       switchMap(distribution => this.onSaveDistributionSuccess(action, distribution)),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  loadDistribution: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.LoadDistribution>(ApplicationActionType.LoadDistribution),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, app]) => this.applicationService.getDistribution(app.id).pipe(
+      map(distribution => new LoadDistributionSuccess(distribution)),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );

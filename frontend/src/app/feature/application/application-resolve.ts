@@ -8,7 +8,7 @@ import {ApplicationStore} from '@service/application/application-store';
 import {NotificationService} from '@feature/notification/notification.service';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
-import {Load, LoadSuccess, SaveDistributionSuccess} from './actions/application-actions';
+import {Load, LoadDistribution, LoadSuccess, SaveDistributionSuccess} from './actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, switchMap, take, tap} from 'rxjs/internal/operators';
 import * as commentActions from '@feature/comment/actions/comment-actions';
@@ -68,8 +68,8 @@ export class ApplicationResolve implements Resolve<Application> {
     this.store.dispatch(new invoicingCustomerActions.Load());
     this.store.dispatch(new informationRequestActions.LoadLatestRequest());
     this.store.dispatch(new terminationActions.LoadInfo());
-    this.store.dispatch(new SaveDistributionSuccess(app.decisionDistributionList));
     this.store.dispatch(new summaryActions.MarkForReload());
+    this.store.dispatch(new LoadDistribution());
   }
 
   private handleError(err: any): Observable<Application> {

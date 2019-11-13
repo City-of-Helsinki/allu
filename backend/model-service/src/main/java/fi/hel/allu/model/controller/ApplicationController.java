@@ -299,6 +299,13 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/decision-distribution-list", method = RequestMethod.GET)
+  public ResponseEntity<List<DistributionEntry>> getDecisionDistributionList(@PathVariable int id) {
+    return ResponseEntity.ok(distributionEntryDao.findByApplicationId(id));
+  }
+  
+
+
   /**
    * Get list of applications about to end
    *

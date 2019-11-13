@@ -259,5 +259,13 @@ export class ApplicationService {
       catchError(error => this.errorHandler.handle(error, findTranslation('application.distribution.error.save')))
     );
   }
+
+  getDistribution(id: number): Observable<DistributionEntry[]> {
+    const url = `${APPLICATIONS_URL}/${id}/distribution`;
+    return this.http.get<BackendDistributionEntry[]>(url).pipe(
+      map(distribution => DistributionMapper.mapBackendList(distribution)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.distribution.error.fetch')))
+    );
+  }
 }
 

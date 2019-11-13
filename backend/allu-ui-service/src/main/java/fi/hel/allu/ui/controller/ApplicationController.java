@@ -329,6 +329,12 @@ public class ApplicationController {
     return ResponseEntity.ok(applicationJson.getDecisionDistributionList());
   }
 
+  @RequestMapping(value = "/{id}/distribution", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
+  public ResponseEntity<List<DistributionEntryJson>> getDistribution(@PathVariable int id) {
+    return ResponseEntity.ok(applicationServiceComposer.getDistributionList(id));
+  }
+
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationTagJson>> updateTags(@PathVariable int id,

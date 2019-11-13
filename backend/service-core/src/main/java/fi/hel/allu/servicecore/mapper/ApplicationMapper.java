@@ -457,7 +457,7 @@ public class ApplicationMapper {
     return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
   }
 
-  private DistributionEntryJson createDistributionEntryJson(DistributionEntry distributionEntry) {
+  public DistributionEntryJson createDistributionEntryJson(DistributionEntry distributionEntry) {
     DistributionEntryJson distributionEntryJson = new DistributionEntryJson();
     distributionEntryJson.setId(distributionEntry.getId());
     distributionEntryJson.setDistributionType(distributionEntry.getDistributionType());
