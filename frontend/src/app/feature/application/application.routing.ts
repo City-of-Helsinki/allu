@@ -43,7 +43,7 @@ export const applicationTabs: Routes = [
   { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard], children: decisionTabs },
   { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },
   { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
-  { path: 'supplements', component: InformationRequestSummariesComponent, canActivate: [AuthGuard] }
+  { path: 'supplements', component: InformationRequestSummariesComponent, canActivate: [AuthGuard], children: informationRequest }
 ];
 
 export const applicationRoutes: Routes = [

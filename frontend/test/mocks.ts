@@ -1,4 +1,4 @@
-import {Directive, TemplateRef} from '@angular/core';
+import {Component, Directive, TemplateRef} from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
 import {Application} from '../src/app/model/application/application';
 import {Location} from '../src/app/model/common/location';
@@ -190,6 +190,12 @@ export class ActivatedRouteMock {
     this.data$.next(data);
   }
 }
+
+@Component({
+  selector: 'mock-routed',
+  template: `<div>empty</div>`
+})
+export class MockRoutedComponent {}
 
 /**
  * Mock for InvoiceHub

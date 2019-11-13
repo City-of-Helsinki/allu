@@ -1,5 +1,5 @@
 import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -7,6 +7,16 @@ import {By} from '@angular/platform-browser';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 import {InformationRequestSummaryComponent} from '@feature/information-request/summary/information-request-summary.component';
 import {InformationRequestFieldsComponent} from '@feature/information-request/request/display/information-request-fields.component';
+import {Store, StoreModule} from '@ngrx/store';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {getButtonWithText} from '@test/selector-helpers';
+import {findTranslation} from '@util/translations';
+import {RouterTestingModule} from '@angular/router/testing';
+import {Router} from '@angular/router';
+import {Location} from '@angular/common';
+import {MockRoutedComponent} from '@test/mocks';
+import * as fromRoot from '@feature/allu/reducers';
+import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 
 @Component({
   selector: 'test-host',
@@ -21,6 +31,9 @@ describe('InformationRequestSummary', () => {
   let testHost: MockHostComponent;
   let de: DebugElement;
   let summaryComponent: InformationRequestSummaryComponent;
+  let router: Router;
+  let location: Location;
+  let store: Store<fromRoot.State>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -28,10 +41,15 @@ describe('InformationRequestSummary', () => {
         FormsModule,
         ReactiveFormsModule,
         MatDialogModule,
-        AlluCommonModule
+        AlluCommonModule,
+        StoreModule.forRoot({}),
+        RouterTestingModule.withRoutes([
+          { path: 'information_request', component: MockRoutedComponent }
+        ])
       ],
       declarations: [
         MockHostComponent,
+        MockRoutedComponent,
         InformationRequestSummaryComponent
       ],
       schemas: [ NO_ERRORS_SCHEMA ]
@@ -44,6 +62,9 @@ describe('InformationRequestSummary', () => {
     de = fixture.debugElement;
     fixture.detectChanges();
     summaryComponent = de.query(By.directive(InformationRequestSummaryComponent)).componentInstance;
+    router = TestBed.get(Router);
+    location = TestBed.get(Location);
+    store = TestBed.get(Store);
   });
 
   it('loads component', () => {
@@ -74,4 +95,38 @@ describe('InformationRequestSummary', () => {
     const requestFields: DebugElement = de.query(By.directive(InformationRequestFieldsComponent));
     expect(requestFields).toBeNull();
   });
+
+  it('should show action buttons for active request', () => {
+    const summary = new InformationRequestSummary();
+    summary.status = InformationRequestStatus.OPEN;
+    testHost.summary = summary;
+    fixture.detectChanges();
+    expect(getButtonWithText(de, findTranslation('application.button.cancelInformationRequest').toUpperCase())).toBeDefined();
+    expect(getButtonWithText(de, findTranslation('common.button.show').toUpperCase())).toBeDefined();
+  });
+
+  it('should navigate when show is clicked', fakeAsync(() => {
+    const summary = new InformationRequestSummary();
+    summary.status = InformationRequestStatus.OPEN;
+    testHost.summary = summary;
+    fixture.detectChanges();
+    const button = getButtonWithText(de, findTranslation('common.button.show').toUpperCase());
+    button.click();
+    tick();
+    expect(location.path()).toBe('/information_request');
+  }));
+
+  it('should navigate cancel request when cancel is clicked', fakeAsync(() => {
+    const summary = new InformationRequestSummary();
+    summary.informationRequestId = 123;
+    summary.status = InformationRequestStatus.OPEN;
+    testHost.summary = summary;
+    fixture.detectChanges();
+    spyOn(store, 'dispatch');
+
+    const button = getButtonWithText(de, findTranslation('application.button.cancelInformationRequest').toUpperCase());
+    button.click();
+    tick();
+    expect(store.dispatch).toHaveBeenCalledWith(new CancelRequest(summary.informationRequestId));
+  }));
 });

@@ -1,5 +1,9 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
+import {activeRequest, InformationRequestStatus} from '@model/information-request/information-request-status';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 
 @Component({
   selector: 'information-request-summary',
@@ -8,4 +12,14 @@ import {InformationRequestSummary} from '@model/information-request/information-
 })
 export class InformationRequestSummaryComponent {
   @Input() summary: InformationRequestSummary;
+
+  constructor(private store: Store<fromRoot.State>) {}
+
+  get showInformationRequest() {
+    return this.summary ? activeRequest(this.summary.status) : false;
+  }
+
+  cancelInformationRequest(): void {
+    this.store.dispatch(new CancelRequest(this.summary.informationRequestId));
+  }
 }

@@ -45,4 +45,16 @@
       </div>
     </div>
   </mat-card-content>
+  <mat-card-actions>
+    <div fxLayout="row" fxLayoutAlign="end center" *ngIf="showInformationRequest">
+      <div fxFlex="none">
+        <button mat-raised-button type="button" color="primary" (click)="cancelInformationRequest()">
+          {{'application.button.cancelInformationRequest' | translation | uppercase}}
+        </button>
+        <button mat-raised-button type="button" color="primary"  [routerLink]="'information_request'">
+          {{'common.button.show' | translation | uppercase}}
+        </button>
+      </div>
+    </div>
+  </mat-card-actions>
 </allu-card>

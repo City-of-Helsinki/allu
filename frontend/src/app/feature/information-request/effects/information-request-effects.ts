@@ -50,7 +50,7 @@ export class InformationRequestEffects {
     switchMap(action => this.informationRequestService.save(action.payload).pipe(
       switchMap(request => [
         new InformationRequestAction.SaveRequestSuccess(request),
-        new SummaryAction.MarkForReload()
+        new SummaryAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
@@ -63,7 +63,7 @@ export class InformationRequestEffects {
     switchMap(request => this.applicationStore.changeStatus(request.applicationId, ApplicationStatus.WAITING_INFORMATION).pipe(
       switchMap(() => [
         new InformationRequestAction.SaveRequestSuccess(request),
-        new SummaryAction.MarkForReload()
+        new SummaryAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
@@ -105,7 +105,7 @@ export class InformationRequestEffects {
         new NotifySuccess(findTranslation('informationRequest.action.responseHandled')),
         new InformationRequestAction.LoadLatestResponseSuccess(undefined),
         new ApplicationAction.Load(closed.applicationId),
-        new SummaryAction.MarkForReload()
+        new SummaryAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
@@ -119,7 +119,7 @@ export class InformationRequestEffects {
     switchMap(([_, app]) => this.applicationStore.changeStatus(app.id, ApplicationStatus.HANDLING).pipe(
       switchMap(() => [
         new InformationRequestAction.CancelRequestSuccess(),
-        new SummaryAction.MarkForReload()
+        new SummaryAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
