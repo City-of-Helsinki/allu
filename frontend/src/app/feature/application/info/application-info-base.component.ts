@@ -15,7 +15,7 @@ import {Observable, Subject} from 'rxjs';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/operators';
+import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {ApplicationService} from '../../../service/application/application.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
@@ -224,7 +224,13 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   private save(application: Application) {
-    this.applicationStore.save(application).subscribe(
+    this.store.pipe(
+      select(fromApplication.getDistributionList),
+      take(1),
+      switchMap(distribution => this.applicationStore.save(application).pipe(
+        tap(app => this.store.dispatch(new SaveDistribution(distribution)))
+      ))
+    ).subscribe(
       app => this.applicationSaved(app),
       err => {
         this.notification.errorInfo(err);
