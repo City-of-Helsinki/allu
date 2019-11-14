@@ -685,6 +685,7 @@ export const translations = {
         received: 'Täydennys tehty',
         creator: 'Tekijä',
         changes: 'Toimitetut täydennykset',
+        show: 'Näytä täydennykset'
       }
     },
     request: {

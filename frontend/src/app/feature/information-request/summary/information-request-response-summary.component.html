@@ -39,5 +39,14 @@
       </div>
     </div>
   </mat-card-content>
+  <mat-card-actions>
+    <div fxLayout="row" fxLayoutAlign="end center" *ngIf="summary.status === 'RESPONSE_RECEIVED'">
+      <div fxFlex="none">
+        <button mat-raised-button type="button" color="primary" [routerLink]="'pending_info'">
+          {{'informationRequest.summary.response.show' | translation | uppercase}}
+        </button>
+      </div>
+    </div>
+  </mat-card-actions>
 </allu-card>
 
