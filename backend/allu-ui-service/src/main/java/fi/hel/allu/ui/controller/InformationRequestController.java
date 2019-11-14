@@ -50,6 +50,18 @@ public class InformationRequestController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/informationrequests/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<InformationRequestJson> findById(@PathVariable("id") int id) {
+    return ResponseEntity.ok(informationRequestService.findRequestById(id));
+  }
+
+  @RequestMapping(value = "/informationrequests/{id}/response", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<InformationRequestResponseJson> findResponseForRequest(@PathVariable("id") int id) throws IOException {
+    return ResponseEntity.ok(informationRequestService.findResponseForRequest(id));
+  }
+
   @RequestMapping(value = "/applications/{id}/informationrequests", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<InformationRequestJson> findByApplicationId(@PathVariable("id") int id) {

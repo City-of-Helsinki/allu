@@ -57,6 +57,11 @@ public class InformationRequestController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/informationrequests/{id}/response", method = RequestMethod.GET)
+  public ResponseEntity<InformationRequestResponse> findResponse(@PathVariable Integer id) {
+    return ResponseEntity.ok(informationRequestDao.findResponseForRequest(id));
+  }
+
   @RequestMapping(value = "/applications/{id}/informationrequests/response", method = RequestMethod.GET)
   public ResponseEntity<InformationRequestResponse> findResponseForApplication(@PathVariable Integer id) {
     return new ResponseEntity<>(informationRequestDao.findResponseForApplicationId(id), HttpStatus.OK);

@@ -68,6 +68,18 @@ public class InformationRequestService {
     restTemplate.delete(applicationProperties.getInformationRequestUrl(), id);
   }
 
+  public InformationRequestJson findRequestById(int id) {
+    return toInformationRequestJson(findById(id));
+  }
+
+  public InformationRequestResponseJson findResponseForRequest(int requestId) throws IOException {
+    InformationRequest request = findById(requestId);
+
+    InformationRequestResponse response = restTemplate.getForObject(
+      applicationProperties.getInformationRequestResponseUrl(), InformationRequestResponse.class, requestId);
+    return toResponseJson(request.getApplicationId(), response);
+  }
+
   public InformationRequestJson findOpenByApplicationId(int id) {
     InformationRequest request = restTemplate.getForObject(applicationProperties.getApplicationOpenInformationRequestFindUrl(), InformationRequest.class, id);
     return toInformationRequestJson(request);

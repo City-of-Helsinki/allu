@@ -141,9 +141,14 @@ public class InformationRequestDao {
     if (informationRequestId == null) {
       throw new NoSuchEntityException("No information request response found for application", applicationId);
     }
-    ExternalApplication applicationData = externalApplicationDao.findByInformationRequestId(informationRequestId);
-    List<InformationRequestFieldKey> responseFields = getResponseFields(informationRequestId);
-    return new InformationRequestResponse(informationRequestId, responseFields, applicationData);
+    return findResponseForRequest(informationRequestId);
+  }
+
+  @Transactional(readOnly = true)
+  public InformationRequestResponse findResponseForRequest(Integer requestId) {
+    ExternalApplication applicationData = externalApplicationDao.findByInformationRequestId(requestId);
+    List<InformationRequestFieldKey> responseFields = getResponseFields(requestId);
+    return new InformationRequestResponse(requestId, responseFields, applicationData);
   }
 
   @Transactional(readOnly = true)
