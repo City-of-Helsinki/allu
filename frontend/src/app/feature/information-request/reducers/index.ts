@@ -1,4 +1,5 @@
 import * as fromInformationRequest from './information-request-reducer';
+import * as fromInformationRequestResponse from './information-request-response-reducer';
 import * as fromInformationRequestResult from './information-request-result-reducer';
 import * as fromInformationRequestSummary from './information-request-summary-reducer';
 import * as fromRoot from '../../allu/reducers';
@@ -8,6 +9,7 @@ import {CustomerRoleType} from '../../../model/customer/customer-role-type';
 
 export interface InformationRequestState {
   request: fromInformationRequest.State;
+  response: fromInformationRequestResponse.State;
   result: fromInformationRequestResult.State;
   summary: fromInformationRequestSummary.State;
 }
@@ -18,6 +20,7 @@ export interface State extends fromRoot.State {
 
 export const reducers: ActionReducerMap<InformationRequestState> = {
   request: fromInformationRequest.reducer,
+  response: fromInformationRequestResponse.reducer,
   result: fromInformationRequestResult.reducer,
   summary: fromInformationRequestSummary.reducer
 };
@@ -37,18 +40,23 @@ export const getInformationRequest = createSelector(
 
 export const getInformationRequestLoading = createSelector(
   getInformationRequestEntityState,
-  fromInformationRequest.getResponseLoading
+  fromInformationRequest.getRequestLoading
 );
 
 // Information request response selectors
-export const getInformationRequestResponse = createSelector(
-  getInformationRequestEntityState,
-  fromInformationRequest.getResponse
+export const getInformationRequestResponseEntityState = createSelector(
+  getInformationRequestState,
+  (state: InformationRequestState) => state.response
+);
+
+export const getInformationRequestResponse = (requestId: number) => createSelector(
+  getInformationRequestResponseEntityState,
+  fromInformationRequestResponse.getResponse(requestId)
 );
 
 export const getInformationRequestResponseLoading = createSelector(
-  getInformationRequestEntityState,
-  fromInformationRequest.getResponseLoading
+  getInformationRequestResponseEntityState,
+  fromInformationRequestResponse.getLoading
 );
 
 export const getInformationRequestResponsePending = createSelector(

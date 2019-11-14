@@ -21,14 +21,6 @@ export class InformationRequestService {
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {}
 
-  getForApplication(id: number): Observable<InformationRequestResponse> {
-    const url = `${applicationUrl}/${id}/${responseUrlPart}`;
-    return this.http.get<BackendInformationRequestResponse>(url).pipe(
-      map(response => InformationRequestResponseMapper.mapBackend(response)),
-      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequestResponse.error.fetch')))
-    );
-  }
-
   closeInformationRequest(id: number): Observable<InformationRequest> {
     const url = `${informationRequestUrl}/${id}/close`;
     return this.http.put<BackendInformationRequest>(url, {}).pipe(
@@ -42,6 +34,14 @@ export class InformationRequestService {
     return this.http.get<BackendInformationRequest>(url).pipe(
       map(response => InformationRequestMapper.mapBackend(response)),
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.get')))
+    );
+  }
+
+  getResponseForRequest(id: number): Observable<InformationRequestResponse> {
+    const url = `${informationRequestUrl}/${id}/response`;
+    return this.http.get<BackendInformationRequestResponse>(url).pipe(
+      map(response => InformationRequestResponseMapper.mapBackend(response)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequestResponse.error.fetch')))
     );
   }
 

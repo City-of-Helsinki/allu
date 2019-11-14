@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {filter, map, switchMap, take, withLatestFrom} from 'rxjs/operators';
-import {EMPTY, Observable, of, Subject} from 'rxjs';
+import {EMPTY, forkJoin, Observable, of, Subject} from 'rxjs';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -89,10 +89,13 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
 
   private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
     return this.store.pipe(
-      select(fromInformationRequest.getInformationRequestResponse),
-      withLatestFrom(this.store.pipe(select(fromInformationRequest.getInformationRequest))),
-      filter(([response, request]) => response !== undefined),
-      map(([response, request]) => ({
+      select(fromInformationRequest.getInformationRequest),
+      switchMap(request => forkJoin([
+        of(request),
+        this.store.pipe(select(fromInformationRequest.getInformationRequestResponse(request.informationRequestId)), take(1))
+      ])),
+      filter(([request, response]) => response !== undefined),
+      map(([request, response]) => ({
         informationRequest: request,
         oldInfo: currentApp,
         newInfo: response.responseData,

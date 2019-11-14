@@ -84,10 +84,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
     this.pendingClientData$ = this.store.select(fromApplication.hasPendingClientData);
     this.pendingCustomerInfo$ = this.store.select(fromApplication.hasPendingCustomerInfo);
-    this.pendingInformationRequestResponse$ = this.store.pipe(
-      select(fromInformationRequest.getInformationRequestResponse),
-      map(response => !!response)
-    );
+    this.pendingInformationRequestResponse$ = this.store.pipe(select(fromInformationRequest.getInformationRequestResponsePending));
 
     this.informationRequest$ = this.store.pipe(select(fromInformationRequest.getInformationRequest));
 

@@ -1,5 +1,4 @@
 import {Action} from '@ngrx/store';
-import {InformationRequestResponse} from '@model/information-request/information-request-response';
 import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequest} from '@model/information-request/information-request';
@@ -13,9 +12,6 @@ export enum InformationRequestActionType {
   SaveRequestSuccess = '[InformationRequest] Save information request success',
   CancelRequest = '[InformationRequest] Cancel information request',
   CancelRequestSuccess = '[InformationRequest] Cancel information request success',
-  LoadLatestResponse = '[InformationRequest] Load latest information request response',
-  LoadLatestResponseSuccess= '[InformationRequest] Load latest information request response success',
-  LoadLatestResponseFailed = '[InformationRequest] Load latest information request response failed',
   CloseRequest = '[InformationRequest] Close information request'
 }
 
@@ -57,20 +53,6 @@ export class CancelRequestSuccess implements Action {
   readonly type = InformationRequestActionType.CancelRequestSuccess;
 }
 
-export class LoadLatestResponse implements Action {
-  readonly type = InformationRequestActionType.LoadLatestResponse;
-}
-
-export class LoadLatestResponseSuccess implements Action {
-  readonly type = InformationRequestActionType.LoadLatestResponseSuccess;
-  constructor(public payload: InformationRequestResponse) {}
-}
-
-export class LoadLatestResponseFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = InformationRequestActionType.LoadLatestResponseFailed;
-  constructor(public payload: ErrorInfo) {}
-}
-
 export class CloseRequest implements Action {
   readonly type = InformationRequestActionType.CloseRequest;
   constructor(public payload: number) {}
@@ -84,7 +66,4 @@ export type InformationRequestAction =
   | SaveRequestSuccess
   | CancelRequest
   | CancelRequestSuccess
-  | LoadLatestResponse
-  | LoadLatestResponseSuccess
-  | LoadLatestResponseFailed
   | CloseRequest;
