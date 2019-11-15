@@ -55,11 +55,8 @@ public abstract class AbstractDocumentMapper<T> {
     // return lines in format {"[Customer name], [SSID]", "[address, Postal
     // code + city]",
     // "[email, phone]"}
-    Optional<CustomerJson> customer = application.getCustomersWithContacts().stream()
-        .filter(cwc -> roleType.equals(cwc.getRoleType()))
-        .findFirst()
+    Optional<CustomerJson> customer = getCustomerByRole(application, roleType)
         .map(cwc -> cwc.getCustomer());
-
     return addressLines(customer);
   }
 
@@ -74,9 +71,7 @@ public abstract class AbstractDocumentMapper<T> {
 
   protected List<String> contactLines(ApplicationJson application, CustomerRoleType roleType) {
     // [Yhteyshenkilön nimi]", "[Sähköpostiosoite, puhelin]
-    return application.getCustomersWithContacts().stream()
-        .filter(cwc -> roleType.equals(cwc.getRoleType()))
-        .findFirst()
+    return getCustomerByRole(application, roleType)
         .map(cwc -> contactLines(cwc.getContacts()))
         .orElse(Collections.emptyList());
   }
@@ -295,5 +290,11 @@ public abstract class AbstractDocumentMapper<T> {
 
   private boolean hasLocations(ApplicationJson application) {
     return !CollectionUtils.isEmpty(application.getLocations());
+  }
+
+  protected Optional<CustomerWithContactsJson> getCustomerByRole(ApplicationJson application, CustomerRoleType role) {
+    return application.getCustomersWithContacts().stream()
+        .filter(cwc -> role.equals(cwc.getRoleType()))
+        .findFirst();
   }
 }

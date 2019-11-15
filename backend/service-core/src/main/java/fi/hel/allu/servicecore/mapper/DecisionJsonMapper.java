@@ -584,8 +584,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
    * that is doing the work
    */
   private List<String> cableReportAddressLines(ApplicationJson applicationJson) {
-    CustomerWithContactsJson contractor = streamFor(applicationJson.getCustomersWithContacts())
-        .filter(cwc -> CustomerRoleType.CONTRACTOR.equals(cwc.getRoleType())).findFirst().orElse(null);
+    CustomerWithContactsJson contractor = getCustomerByRole(applicationJson, CustomerRoleType.CONTRACTOR).orElse(null);
     if (contractor == null) {
       return Collections.singletonList("[Kaivajan tiedot puuttuvat]");
     }
@@ -604,8 +603,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   }
 
   private String applicantName(ApplicationJson applicationJson) {
-    Optional<CustomerWithContactsJson> cwcOpt =
-        applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+    Optional<CustomerWithContactsJson> cwcOpt = getCustomerByRole(applicationJson, CustomerRoleType.APPLICANT);
     return cwcOpt.map(cwc -> cwc.getCustomer().getName()).orElse(null);
   }
 
