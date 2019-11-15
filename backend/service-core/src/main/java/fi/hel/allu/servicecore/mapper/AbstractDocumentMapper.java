@@ -1,17 +1,5 @@
 package fi.hel.allu.servicecore.mapper;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.ContactService;
-import fi.hel.allu.servicecore.service.CustomerService;
-import fi.hel.allu.servicecore.service.LocationService;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -19,6 +7,21 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.internal.util.privilegedactions.GetAnnotationParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.CustomerWithContacts;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.servicecore.service.LocationService;
 
 public abstract class AbstractDocumentMapper<T> {
   protected static final Logger logger = LoggerFactory.getLogger(AbstractDocumentMapper.class);
@@ -41,6 +44,11 @@ public abstract class AbstractDocumentMapper<T> {
     this.customerService = customerService;
     this.contactService = contactService;
     this.locationService = locationService;
+  }
+
+  protected CustomerAnonymizer getCustomerAnonymizer() {
+    // By default, no anonymization
+    return null;
   }
 
   protected List<String> customerAddressLines(ApplicationJson applicationJson) {
@@ -293,8 +301,11 @@ public abstract class AbstractDocumentMapper<T> {
   }
 
   protected Optional<CustomerWithContactsJson> getCustomerByRole(ApplicationJson application, CustomerRoleType role) {
-    return application.getCustomersWithContacts().stream()
+    Optional<CustomerWithContactsJson> customer = application.getCustomersWithContacts().stream()
         .filter(cwc -> role.equals(cwc.getRoleType()))
         .findFirst();
+    return Optional.of(getCustomerAnonymizer())
+        .map(a -> a.anonymizeCustomerWithContacts(customer))
+        .orElse(customer);
   }
 }
