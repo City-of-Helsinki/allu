@@ -4,9 +4,10 @@ import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequest} from '@model/information-request/information-request';
 
 export enum InformationRequestActionType {
-  LoadLatestRequest = '[InformationRequest] Load latest information request',
-  LoadLatestRequestSuccess = '[InformationRequest] Load latest information request success',
-  LoadLatestRequestFailed = '[InformationRequest] Load latest information request failed',
+  LoadRequest = '[InformationRequest] Load information request',
+  LoadActiveRequest = '[InformationRequest] Load active information request',
+  LoadRequestSuccess = '[InformationRequest] Load information request success',
+  LoadRequestFailed = '[InformationRequest] Load information request failed',
   SaveRequest = '[InformationRequest] Save information request',
   SaveAndSendRequest = '[InformationRequest] Save and send information request',
   SaveRequestSuccess = '[InformationRequest] Save information request success',
@@ -15,17 +16,22 @@ export enum InformationRequestActionType {
   CloseRequest = '[InformationRequest] Close information request'
 }
 
-export class LoadLatestRequest implements Action {
-  readonly type = InformationRequestActionType.LoadLatestRequest;
+export class LoadRequest implements Action {
+  readonly type = InformationRequestActionType.LoadRequest;
+  constructor(public payload: number) {}
 }
 
-export class LoadLatestRequestSuccess implements Action {
-  readonly type = InformationRequestActionType.LoadLatestRequestSuccess;
+export class LoadActiveRequest implements Action {
+  readonly type = InformationRequestActionType.LoadActiveRequest;
+}
+
+export class LoadRequestSuccess implements Action {
+  readonly type = InformationRequestActionType.LoadRequestSuccess;
   constructor(public payload: InformationRequest) {}
 }
 
-export class LoadLatestRequestFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = InformationRequestActionType.LoadLatestRequestFailed;
+export class LoadRequestFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = InformationRequestActionType.LoadRequestFailed;
   constructor(public payload: ErrorInfo) {}
 }
 
@@ -46,11 +52,12 @@ export class SaveRequestSuccess implements Action {
 
 export class CancelRequest implements Action {
   readonly type = InformationRequestActionType.CancelRequest;
-  constructor(public paylod: number) {}
+  constructor(public payload: number) {}
 }
 
 export class CancelRequestSuccess implements Action {
   readonly type = InformationRequestActionType.CancelRequestSuccess;
+  constructor(public payload: number) {}
 }
 
 export class CloseRequest implements Action {
@@ -59,9 +66,10 @@ export class CloseRequest implements Action {
 }
 
 export type InformationRequestAction =
-  | LoadLatestRequest
-  | LoadLatestRequestSuccess
-  | LoadLatestRequestFailed
+  | LoadRequest
+  | LoadActiveRequest
+  | LoadRequestSuccess
+  | LoadRequestFailed
   | SaveRequest
   | SaveRequestSuccess
   | CancelRequest

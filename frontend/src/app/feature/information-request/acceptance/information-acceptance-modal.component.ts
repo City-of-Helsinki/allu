@@ -17,7 +17,7 @@ import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequest} from '@model/information-request/information-request';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
-import {CloseRequest, LoadLatestRequest} from '@feature/information-request/actions/information-request-actions';
+import {CloseRequest, LoadActiveRequest, LoadRequest} from '@feature/information-request/actions/information-request-actions';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {map, switchMap, take} from 'rxjs/operators';
@@ -69,12 +69,12 @@ export class InformationAcceptanceModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.onApplicationChange(this.data.oldInfo);
     this.oldInfo = this.data.oldInfo;
     this.newInfo = this.data.newInfo;
     this.updatedFields = this.data.updatedFields;
     this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
     this.requestDataAvailable = this.data.informationRequest && this.data.informationRequest.fields.length > 0;
-    this.readonly = this.isReadOnly(this.oldInfo);
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();
@@ -86,7 +86,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
 
   onSubmit(): void {
     this.store.pipe(
-      select(fromInformationRequest.getInformationRequest),
+      select(fromInformationRequest.getActiveInformationRequest),
       take(1),
       map(request => request ? request.informationRequestId : undefined),
       switchMap(requestId => this.resultService.getResult(requestId))
@@ -109,7 +109,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
         this.router.navigate([path]);
         this.oldInfo = application;
         this.onApplicationChange(application);
-        this.store.dispatch(new LoadLatestRequest());
+        this.store.dispatch(new LoadActiveRequest());
       });
   }
 

@@ -29,7 +29,7 @@ export class ExternalUpdateNotificationService {
   }
 
   private informationRequest(): Observable<ExternalUpdateNotificationType> {
-    return this.store.select(fromInformationRequest.getInformationRequest).pipe(
+    return this.store.select(fromInformationRequest.getActiveInformationRequest).pipe(
       map(request => request ? this.activeInformationRequestNotificationType(request) : undefined)
     );
   }

@@ -66,7 +66,7 @@ export class ApplicationResolve implements Resolve<Application> {
     this.store.dispatch(new metaActions.Load());
     this.store.dispatch(new supervisionTaskActions.Load());
     this.store.dispatch(new invoicingCustomerActions.Load());
-    this.store.dispatch(new informationRequestActions.LoadLatestRequest());
+    this.store.dispatch(new informationRequestActions.LoadActiveRequest());
     this.store.dispatch(new terminationActions.LoadInfo());
     this.store.dispatch(new summaryActions.MarkForReload());
     this.store.dispatch(new LoadDistribution());

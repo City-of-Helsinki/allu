@@ -74,7 +74,7 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
 
   private getPendingData(): Observable<InformationAcceptanceData> {
     return this.store.pipe(
-      select(fromInformationRequest.getInformationRequestResponsePending),
+      select(fromInformationRequest.getActiveInformationRequestResponsePending),
       withLatestFrom(this.store.pipe(select(fromApplication.getCurrentApplication))),
       switchMap(([pendingResponse, app]) => {
         if (pendingResponse) {
@@ -89,7 +89,7 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
 
   private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
     return this.store.pipe(
-      select(fromInformationRequest.getInformationRequest),
+      select(fromInformationRequest.getActiveInformationRequest),
       switchMap(request => forkJoin([
         of(request),
         this.store.pipe(select(fromInformationRequest.getInformationRequestResponse(request.informationRequestId)), take(1))
@@ -132,7 +132,7 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
 
   private showInformationRequest(): void {
     this.store.pipe(
-      select(fromInformationRequest.getInformationRequest),
+      select(fromInformationRequest.getActiveInformationRequest),
       take(1),
       withLatestFrom(this.store.pipe(select(fromApplication.getCurrentApplication))),
       map(([request, app]) => this.createRequestModalConfig(request, app.id)),

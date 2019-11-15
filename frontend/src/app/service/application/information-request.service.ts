@@ -29,8 +29,16 @@ export class InformationRequestService {
     );
   }
 
-  getRequestForApplication(id: number): Observable<InformationRequest> {
-    const url = `${applicationUrl}/${id}/informationrequests`;
+  getRequestForApplication(applicationId: number): Observable<InformationRequest> {
+    const url = `${applicationUrl}/${applicationId}/informationrequests`;
+    return this.http.get<BackendInformationRequest>(url).pipe(
+      map(response => InformationRequestMapper.mapBackend(response)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.get')))
+    );
+  }
+
+  getRequest(id: number): Observable<InformationRequest> {
+    const url = `${informationRequestUrl}/${id}`;
     return this.http.get<BackendInformationRequest>(url).pipe(
       map(response => InformationRequestMapper.mapBackend(response)),
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.get')))

@@ -10,6 +10,8 @@ export const canHaveResponse = (status: InformationRequestStatus) => {
     || InformationRequestStatus.CLOSED === status;
 };
 
-export const activeRequest = (status: InformationRequestStatus) =>
+export const activeRequestWithoutResponse = (status: InformationRequestStatus) =>
   InformationRequestStatus.DRAFT === status
   || InformationRequestStatus.OPEN === status;
+
+export const activeRequest = (status: InformationRequestStatus) => InformationRequestStatus.CLOSED !== status;

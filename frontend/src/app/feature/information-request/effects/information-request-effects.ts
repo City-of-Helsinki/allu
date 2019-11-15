@@ -36,13 +36,25 @@ export class InformationRequestEffects {
 
   @Effect()
   loadRequest: Observable<Action> = this.actions.pipe(
-    ofType<InformationRequestAction.LoadLatestRequest>(InformationRequestActionType.LoadLatestRequest),
+    ofType<InformationRequestAction.LoadRequest>(InformationRequestActionType.LoadRequest),
+    switchMap(action => this.informationRequestService.getRequest(action.payload).pipe(
+      map(request => new InformationRequestAction.LoadRequestSuccess(request)),
+      catchError(error => from([
+        new InformationRequestAction.LoadRequestFailed(error),
+        new NotifyFailure(error)
+      ]))
+    ))
+  );
+
+  @Effect()
+  loadLatestRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.LoadActiveRequest>(InformationRequestActionType.LoadActiveRequest),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.informationRequestService.getRequestForApplication(application.id).pipe(
-      map(request => new InformationRequestAction.LoadLatestRequestSuccess(request)),
+      map(request => new InformationRequestAction.LoadRequestSuccess(request)),
       catchError(error => from([
-        new InformationRequestAction.LoadLatestRequestFailed(error),
+        new InformationRequestAction.LoadRequestFailed(error),
         new NotifyFailure(error)
       ]))
     ))
@@ -104,7 +116,7 @@ export class InformationRequestEffects {
     filter(action => NumberUtil.isDefined(action.payload)),
     switchMap(action => this.informationRequestService.closeInformationRequest(action.payload).pipe(
       switchMap((closed) => [
-        new InformationRequestAction.LoadLatestRequestSuccess(closed),
+        new InformationRequestAction.LoadRequestSuccess(closed),
         new NotifySuccess(findTranslation('informationRequest.action.responseHandled')),
         new ApplicationAction.Load(closed.applicationId),
         new SummaryAction.Load()
@@ -116,11 +128,11 @@ export class InformationRequestEffects {
   @Effect()
   cancelRequest: Observable<Action> = this.actions.pipe(
     ofType<InformationRequestAction.CancelRequest>(InformationRequestActionType.CancelRequest),
-    switchMap(action => this.informationRequestService.delete(action.paylod)),
-    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([_, app]) => this.applicationStore.changeStatus(app.id, ApplicationStatus.HANDLING).pipe(
+    switchMap(action => this.informationRequestService.delete(action.payload).pipe(
+      withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+      switchMap(([_, app]) => this.applicationStore.changeStatus(app.id, ApplicationStatus.HANDLING)),
       switchMap(() => [
-        new InformationRequestAction.CancelRequestSuccess(),
+        new InformationRequestAction.CancelRequestSuccess(action.payload),
         new SummaryAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
@@ -136,7 +148,7 @@ export class InformationRequestEffects {
 
   @Effect()
   onLoadRequestSuccess: Observable<Action> = this.actions.pipe(
-    ofType<InformationRequestAction.LoadLatestRequestSuccess>(InformationRequestActionType.LoadLatestRequestSuccess),
+    ofType<InformationRequestAction.LoadRequestSuccess>(InformationRequestActionType.LoadRequestSuccess),
     filter(action => action.payload && action.payload.status === InformationRequestStatus.RESPONSE_RECEIVED),
     map(action => new ResponseAction.LoadResponse(action.payload.informationRequestId))
   );

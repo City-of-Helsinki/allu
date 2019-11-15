@@ -1,62 +1,101 @@
 import {InformationRequestAction, InformationRequestActionType} from '../actions/information-request-actions';
 import {InformationRequest} from '@model/information-request/information-request';
-import {NumberUtil} from '@util/number.util';
-import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {activeRequest} from '@model/information-request/information-request-status';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
-export interface State {
-  request: InformationRequest;
-  requestLoading: boolean;
+export interface State extends EntityState<InformationRequest> {
+  loading: boolean;
+  active: number;
 }
 
-export const initialState: State = {
-  request: undefined,
-  requestLoading: false,
+export const adapter: EntityAdapter<InformationRequest> = createEntityAdapter<InformationRequest>({
+  selectId: request => request.informationRequestId
+});
+
+export const initialState: State = adapter.getInitialState({
+  loading: false,
+  active: undefined
+});
+
+const getUpdatedActiveOnUpsert = (state: State, request: InformationRequest): number => {
+  if (activeRequest(request.status)) {
+    return request.informationRequestId;
+  } else if (request.informationRequestId === state.active) {
+    return undefined;
+  } else {
+    return state.active;
+  }
 };
 
 export function reducer(state: State = initialState, action: InformationRequestAction) {
   switch (action.type) {
-    case InformationRequestActionType.LoadLatestRequest:
-    case InformationRequestActionType.LoadLatestRequestFailed: {
+    case InformationRequestActionType.LoadRequest: {
       return {
         ...state,
-        requestLoading: true,
-        request: undefined
+        loading: true
       };
     }
 
-    case InformationRequestActionType.LoadLatestRequestSuccess: {
+    case InformationRequestActionType.LoadActiveRequest: {
       return {
         ...state,
-        request: action.payload,
-        requestLoading: false
+        loading: true,
+        active: undefined
       };
+    }
+
+    case InformationRequestActionType.LoadRequestFailed: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+    case InformationRequestActionType.LoadRequestSuccess: {
+      if (action.payload) {
+        return adapter.upsertOne(action.payload, {
+          ...state,
+          loading: false,
+          active: getUpdatedActiveOnUpsert(state, action.payload)
+        });
+      } else {
+        return {
+          ...state,
+          loading: false,
+          active: undefined
+        };
+      }
     }
 
     case InformationRequestActionType.SaveRequestSuccess: {
-      return {
+      return adapter.upsertOne(action.payload, {
         ...state,
-        request: action.payload
-      };
+        active: getUpdatedActiveOnUpsert(state, action.payload)
+      });
     }
 
+    case InformationRequestActionType.CloseRequest:
     case InformationRequestActionType.CancelRequestSuccess: {
-      return {
-        ...initialState
-      };
+      return adapter.removeOne(action.payload, {
+        ...state,
+        active: state.active === action.payload ? undefined : state.active
+      });
     }
 
     default: {
-      return {
-        ...state
-      };
+      return state;
     }
   }
 }
 
-export const getRequest = (state: State) => state.request;
+export const getActive = (state: State) => state.active;
 
-export const getRequestLoading = (state: State) => state.requestLoading;
+export const {
+  selectIds: selectRequestIds,
+  selectEntities: selectRequestEntities,
+  selectAll: selectAllRequests,
+  selectTotal: selectRequestTotal
+} = adapter.getSelectors();
 
-export const getResponsePending = (state: State) => state.request
-  ? state.request.status === InformationRequestStatus.RESPONSE_RECEIVED
-  : false;
+
+export const getRequestLoading = (state: State) => state.loading;

@@ -6,6 +6,10 @@ import * as fromRoot from '../../allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerRoleType} from '../../../model/customer/customer-role-type';
+import {InformationRequest} from '@model/information-request/information-request';
+import {Dictionary} from '@ngrx/entity';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {NumberUtil} from '@util/number.util';
 
 export interface InformationRequestState {
   request: fromInformationRequest.State;
@@ -33,14 +37,35 @@ export const getInformationRequestEntityState = createSelector(
 );
 
 // Information request selectors
-export const getInformationRequest = createSelector(
+export const getInformationRequestEntities = createSelector(
   getInformationRequestEntityState,
-  fromInformationRequest.getRequest
+  fromInformationRequest.selectRequestEntities
+);
+
+export const getInformationRequest = (id: number) => createSelector(
+  getInformationRequestEntities,
+  (requests: Dictionary<InformationRequest>) => requests[id]
 );
 
 export const getInformationRequestLoading = createSelector(
   getInformationRequestEntityState,
   fromInformationRequest.getRequestLoading
+);
+
+export const getActiveInformationRequestId = createSelector(
+  getInformationRequestEntityState,
+  fromInformationRequest.getActive
+);
+
+export const getActiveInformationRequest = createSelector(
+  getInformationRequestEntities,
+  getActiveInformationRequestId,
+  (requests: Dictionary<InformationRequest>, active: number) => NumberUtil.isDefined(active) ? requests[active] : undefined
+);
+
+export const getActiveInformationRequestResponsePending = createSelector(
+  getActiveInformationRequest,
+  (request: InformationRequest) => request ? request.status === InformationRequestStatus.RESPONSE_RECEIVED : false
 );
 
 // Information request response selectors
@@ -57,11 +82,6 @@ export const getInformationRequestResponse = (requestId: number) => createSelect
 export const getInformationRequestResponseLoading = createSelector(
   getInformationRequestResponseEntityState,
   fromInformationRequestResponse.getLoading
-);
-
-export const getInformationRequestResponsePending = createSelector(
-  getInformationRequestEntityState,
-  fromInformationRequest.getResponsePending
 );
 
 // Information request result selectors
