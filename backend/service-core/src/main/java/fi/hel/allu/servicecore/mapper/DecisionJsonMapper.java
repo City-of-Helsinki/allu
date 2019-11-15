@@ -603,25 +603,10 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     return TimeUtil.dateAsString(zonedDateTime.plusDays(deltaDays));
   }
 
-  private String formatDayMonth(ZonedDateTime zonedDateTime) {
-    if (zonedDateTime == null) {
-      return null;
-    }
-    return TimeUtil.dateAsDayMonthString(zonedDateTime);
-  }
-
   private String applicantName(ApplicationJson applicationJson) {
     Optional<CustomerWithContactsJson> cwcOpt =
         applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
     return cwcOpt.map(cwc -> cwc.getCustomer().getName()).orElse(null);
-  }
-
-  private String getCustomerRegistryKey(CustomerJson customer) {
-    // Social security number (hetu) must never be shown on a decision
-    if (customer.getType() == CustomerType.PERSON) {
-      return null;
-    }
-    return customer.getRegistryKey();
   }
 
   private String eventNature(EventNature nature) {
