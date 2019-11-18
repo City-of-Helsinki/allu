@@ -20,7 +20,7 @@ import {ApplicationStatus} from '@model/application/application-status';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {findTranslation} from '@util/translations';
-import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {canHaveResponse, InformationRequestStatus} from '@model/information-request/information-request-status';
 import {InformationRequestSummaryActionType} from '@feature/information-request/actions/information-request-summary-actions';
 import {
   InformationRequestResponseActionType
@@ -33,6 +33,16 @@ export class InformationRequestEffects {
               private applicationStore: ApplicationStore,
               private applicationService: ApplicationService,
               private informationRequestService: InformationRequestService) {}
+
+  @Effect()
+  getRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.GetRequest>(InformationRequestActionType.GetRequest),
+    switchMap(action => this.store.pipe(
+      select(fromInformationRequest.getInformationRequest(action.payload)),
+      filter(request => !request),
+      map(() => new InformationRequestAction.LoadRequest(action.payload))
+    ))
+  );
 
   @Effect()
   loadRequest: Observable<Action> = this.actions.pipe(
@@ -82,6 +92,17 @@ export class InformationRequestEffects {
         new SummaryAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  getResponse: Observable<Action> = this.actions.pipe(
+    ofType<ResponseAction.GetResponse>(InformationRequestResponseActionType.GetResponse),
+    filter((action) => NumberUtil.isDefined(action.payload)),
+    switchMap(action => this.store.pipe(
+      select(fromInformationRequest.getInformationRequestResponse(action.payload)),
+      filter(response => !response),
+      map(() => new ResponseAction.LoadResponse(action.payload))
     ))
   );
 
@@ -149,8 +170,8 @@ export class InformationRequestEffects {
   @Effect()
   onLoadRequestSuccess: Observable<Action> = this.actions.pipe(
     ofType<InformationRequestAction.LoadRequestSuccess>(InformationRequestActionType.LoadRequestSuccess),
-    filter(action => action.payload && action.payload.status === InformationRequestStatus.RESPONSE_RECEIVED),
-    map(action => new ResponseAction.LoadResponse(action.payload.informationRequestId))
+    filter(action => action.payload && canHaveResponse(action.payload.status)),
+    map(action => new ResponseAction.GetResponse(action.payload.informationRequestId))
   );
 
   @Effect()

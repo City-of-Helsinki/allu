@@ -4,9 +4,15 @@ import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {ErrorInfo} from '@service/error/error-info';
 
 export enum InformationRequestResponseActionType {
+  GetResponse = '[InformationRequestResponse] Get information request response',
   LoadResponse = '[InformationRequestResponse] Load information request response',
   LoadResponseSuccess= '[InformationRequestResponse] Load information request response success',
   LoadResponseFailed = '[InformationRequestResponse] Load information request response failed'
+}
+
+export class GetResponse implements Action {
+  readonly type = InformationRequestResponseActionType.GetResponse;
+  constructor(public payload: number) {}
 }
 
 export class LoadResponse implements Action {
@@ -25,6 +31,7 @@ export class LoadResponseFailed implements ActionWithPayload<ErrorInfo> {
 }
 
 export type InformationRequestResponseAction =
+  | GetResponse
   | LoadResponse
   | LoadResponseSuccess
   | LoadResponseFailed;

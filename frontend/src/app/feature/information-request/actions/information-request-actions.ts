@@ -4,6 +4,7 @@ import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequest} from '@model/information-request/information-request';
 
 export enum InformationRequestActionType {
+  GetRequest = '[InformationRequest] Get information request',
   LoadRequest = '[InformationRequest] Load information request',
   LoadActiveRequest = '[InformationRequest] Load active information request',
   LoadRequestSuccess = '[InformationRequest] Load information request success',
@@ -14,6 +15,11 @@ export enum InformationRequestActionType {
   CancelRequest = '[InformationRequest] Cancel information request',
   CancelRequestSuccess = '[InformationRequest] Cancel information request success',
   CloseRequest = '[InformationRequest] Close information request'
+}
+
+export class GetRequest implements Action {
+  readonly type = InformationRequestActionType.GetRequest;
+  constructor(public payload: number) {}
 }
 
 export class LoadRequest implements Action {
@@ -66,6 +72,7 @@ export class CloseRequest implements Action {
 }
 
 export type InformationRequestAction =
+  | GetRequest
   | LoadRequest
   | LoadActiveRequest
   | LoadRequestSuccess
