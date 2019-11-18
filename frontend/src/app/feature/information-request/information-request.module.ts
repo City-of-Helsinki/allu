@@ -34,6 +34,7 @@ import {CustomerRegistryModule} from '@feature/customerregistry/customer-registr
 import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
 import {RouterModule} from '@angular/router';
 import {InformationRequestSummaryModule} from '@feature/information-request/summary/information-request-summary.module';
+import {InformationRequestEntryComponent} from '@feature/information-request/acceptance/information-request-entry.component';
 
 @NgModule({
   imports: [
@@ -70,7 +71,8 @@ import {InformationRequestSummaryModule} from '@feature/information-request/summ
     LocationInfoAcceptanceComponent,
     AttachmentsAcceptanceComponent,
     InformationRequestFieldsComponent,
-    InformationAcceptanceEntryComponent
+    InformationAcceptanceEntryComponent,
+    InformationRequestEntryComponent,
   ],
   providers: [
     InformationRequestService,
@@ -78,7 +80,8 @@ import {InformationRequestSummaryModule} from '@feature/information-request/summ
   ],
   exports: [
     InformationAcceptanceModalComponent,
-    InformationAcceptanceEntryComponent
+    InformationAcceptanceEntryComponent,
+    InformationRequestEntryComponent
   ],
   entryComponents: [
     InformationAcceptanceModalComponent,
