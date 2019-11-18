@@ -19,6 +19,7 @@ import {ContractGuard} from '@feature/decision/documents/contract-guard';
 import {InformationAcceptanceEntryComponent} from '@feature/information-request/acceptance/information-acceptance-entry.component';
 import {InformationRequestSummariesComponent} from '@feature/information-request/summary/information-request-summaries.component';
 import {InformationRequestEntryComponent} from '@feature/information-request/acceptance/information-request-entry.component';
+import {InformationAcceptanceResolve} from '@feature/information-request/acceptance/information-acceptance-resolve';
 
 export const decisionTabs: Routes = [
   { path: '', redirectTo: 'contract', pathMatch: 'full'},
@@ -30,7 +31,9 @@ export const decisionTabs: Routes = [
 ];
 
 export const informationRequest: Routes = [
-  { path: 'pending_info', component: InformationAcceptanceEntryComponent, canActivate: [AuthGuard]},
+  { path: 'pending_info', component: InformationAcceptanceEntryComponent, canActivate: [AuthGuard],
+    resolve: { acceptanceData: InformationAcceptanceResolve }
+  },
   { path: 'information_request', component: InformationRequestEntryComponent, canActivate: [AuthGuard]}
 ];
 

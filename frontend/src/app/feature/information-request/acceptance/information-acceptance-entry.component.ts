@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {filter, map, switchMap, take, withLatestFrom} from 'rxjs/operators';
-import {EMPTY, forkJoin, Observable, of, Subject} from 'rxjs';
+import {filter, map, switchMap, take} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -11,13 +11,8 @@ import {
   InformationAcceptanceModalComponent
 } from '@feature/information-request/acceptance/information-acceptance-modal.component';
 import {select, Store} from '@ngrx/store';
-import * as fromInformationRequest from '@feature/information-request/reducers';
-import * as fromApplication from '@feature/application/reducers';
-import {Application} from '@model/application/application';
 import * as fromAuth from '@feature/auth/reducers';
 import {RoleType} from '@model/user/role-type';
-import {ClientApplicationData} from '@model/application/client-application-data';
-import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActivatedRoute, Router} from '@angular/router';
 
@@ -25,10 +20,7 @@ import {ActivatedRoute, Router} from '@angular/router';
   selector: 'information-acceptance-entry',
   template: '<router-outlet></router-outlet>'
 })
-export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
-
-  private destroy = new Subject<boolean>();
-
+export class InformationAcceptanceEntryComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private store: Store<fromRoot.State>,
@@ -40,14 +32,11 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
     this.showPendingInfo();
   }
 
-  ngOnDestroy(): void {
-    this.destroy.next(true);
-    this.destroy.unsubscribe();
-  }
-
   private showPendingInfo(): void {
-    this.getPendingData()
+    this.route.data
       .pipe(
+        take(1),
+        map((routeData: {acceptanceData: InformationAcceptanceData}) => routeData.acceptanceData),
         filter(data => !!data),
         switchMap(data => this.openAcceptanceModal(data))
       ).subscribe((result: InformationRequestResult) => {
@@ -57,57 +46,6 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
         }
         this.router.navigate(['../'], {relativeTo: this.route});
       });
-  }
-
-  private getPendingData(): Observable<InformationAcceptanceData> {
-    return this.store.pipe(
-      select(fromInformationRequest.getActiveInformationRequestResponsePending),
-      withLatestFrom(this.store.pipe(select(fromApplication.getCurrentApplication))),
-      switchMap(([pendingResponse, app]) => {
-        if (pendingResponse) {
-          return this.getPendingResponse(app);
-        } else {
-          return this.getPendingInitialInfo(app);
-        }
-      }),
-      take(1)
-    );
-  }
-
-  private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.pipe(
-      select(fromInformationRequest.getActiveInformationRequest),
-      switchMap(request => forkJoin([
-        of(request),
-        this.store.pipe(select(fromInformationRequest.getInformationRequestResponse(request.informationRequestId)), take(1))
-      ])),
-      filter(([request, response]) => response !== undefined),
-      map(([request, response]) => ({
-        informationRequest: request,
-        oldInfo: currentApp,
-        newInfo: response.responseData,
-        updatedFields: response.updatedFiedls
-      }))
-    );
-  }
-
-  private getPendingInitialInfo(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.pipe(
-      select(fromApplication.getClientData),
-      filter(clientData => !!clientData),
-      map(clientData => this.getPendingDataFields(clientData)),
-      switchMap((pending) => {
-        if (pending.length) {
-          return of({
-            oldInfo: currentApp,
-            newInfo: currentApp,
-            updatedFields: pending
-          });
-        } else {
-          return EMPTY;
-        }
-      })
-    );
   }
 
   private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {
@@ -128,16 +66,5 @@ export class InformationAcceptanceEntryComponent implements OnInit, OnDestroy {
         return {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
       })
     );
-  }
-
-  private getPendingDataFields(clientData: ClientApplicationData): InformationRequestFieldKey[] {
-    let fields: InformationRequestFieldKey[] = [];
-    fields = clientData.clientApplicationKind  ? fields.concat(InformationRequestFieldKey.CLIENT_APPLICATION_KIND) : fields;
-    fields = clientData.customer ? fields.concat(InformationRequestFieldKey.CUSTOMER) : fields;
-    fields = clientData.invoicingCustomer ? fields.concat(InformationRequestFieldKey.INVOICING_CUSTOMER) : fields;
-    fields = clientData.representative ? fields.concat(InformationRequestFieldKey.REPRESENTATIVE) : fields;
-    fields = clientData.propertyDeveloper ? fields.concat(InformationRequestFieldKey.PROPERTY_DEVELOPER) : fields;
-    fields = clientData.contractor ? fields.concat(InformationRequestFieldKey.CONTRACTOR) : fields;
-    return fields;
   }
 }

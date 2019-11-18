@@ -35,6 +35,7 @@ import {InformationAcceptanceEntryComponent} from '@feature/information-request/
 import {RouterModule} from '@angular/router';
 import {InformationRequestSummaryModule} from '@feature/information-request/summary/information-request-summary.module';
 import {InformationRequestEntryComponent} from '@feature/information-request/acceptance/information-request-entry.component';
+import {InformationAcceptanceResolve} from '@feature/information-request/acceptance/information-acceptance-resolve';
 
 @NgModule({
   imports: [
@@ -76,7 +77,8 @@ import {InformationRequestEntryComponent} from '@feature/information-request/acc
   ],
   providers: [
     InformationRequestService,
-    InformationRequestResultService
+    InformationRequestResultService,
+    InformationAcceptanceResolve
   ],
   exports: [
     InformationAcceptanceModalComponent,
