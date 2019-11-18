@@ -31,7 +31,16 @@ export const decisionTabs: Routes = [
 ];
 
 export const informationRequest: Routes = [
-  { path: 'pending_info', component: InformationAcceptanceEntryComponent, canActivate: [AuthGuard],
+  {
+    path: 'pending_info',
+    component: InformationAcceptanceEntryComponent,
+    canActivate: [AuthGuard],
+    resolve: { acceptanceData: InformationAcceptanceResolve }
+  },
+  {
+    path: 'pending_info/:id',
+    component: InformationAcceptanceEntryComponent,
+    canActivate: [AuthGuard],
     resolve: { acceptanceData: InformationAcceptanceResolve }
   },
   { path: 'information_request', component: InformationRequestEntryComponent, canActivate: [AuthGuard]}
