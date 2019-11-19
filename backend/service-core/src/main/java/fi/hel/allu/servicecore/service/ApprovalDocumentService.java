@@ -21,6 +21,7 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
 import fi.hel.allu.servicecore.domain.DecisionDocumentType;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.mapper.AnonymizedApprovalDocumentMapper;
 import fi.hel.allu.servicecore.mapper.ApprovalDocumentMapper;
 
 @Service
@@ -33,6 +34,7 @@ public class ApprovalDocumentService {
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final ApprovalDocumentMapper approvalDocumentMapper;
+  private final ApprovalDocumentMapper anonymizedDocumentMapper;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final UserService userService;
   private final MailComposerService mailComposerService;
@@ -45,7 +47,8 @@ public class ApprovalDocumentService {
                                  ApplicationServiceComposer applicationServiceComposer,
                                  UserService userService,
                                  @Lazy MailComposerService mailComposerService,
-                                 InvoicingPeriodService invoicingPeriodService) {
+                                 InvoicingPeriodService invoicingPeriodService,
+                                 AnonymizedApprovalDocumentMapper anonymizedDocumentMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.approvalDocumentMapper = approvalDocumentMapper;
@@ -53,6 +56,7 @@ public class ApprovalDocumentService {
     this.userService = userService;
     this.mailComposerService = mailComposerService;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.anonymizedDocumentMapper = anonymizedDocumentMapper;
   }
 
   public byte[] getApprovalDocument(Integer applicationId,
@@ -125,7 +129,20 @@ public class ApprovalDocumentService {
 
   private void generateFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application,
       ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
-    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, false, type);
+    saveDocumentData(approvalDocumentMapper, prevApplication, application, type, chargeBasisEntries, applicationProperties.getApprovalDocumentUrl());
+    saveDocumentData(anonymizedDocumentMapper, prevApplication, application, type, chargeBasisEntries, applicationProperties.getAnonymizedApprovalDocumentUrl());
+    if (prevApplication.getStatus() != StatusType.DECISIONMAKING) {
+      // Send the created approval document using previously defined distribution list
+      final DecisionDetailsJson details = new DecisionDetailsJson();
+      details.setDecisionDistributionList(application.getDecisionDistributionList());
+      details.setMessageBody(""); // Todo: Use some predefined text?
+      mailComposerService.sendDecision(application, details, approvalDocumentTypeTodecisionDocumentType(type));
+    }
+  }
+
+  private void saveDocumentData(ApprovalDocumentMapper mapper, ApplicationJson prevApplication, ApplicationJson application, ApprovalDocumentType type,
+      List<ChargeBasisEntry> chargeBasisEntries, String documentDataUrl) {
+    final DecisionJson decisionJson = mapper.mapApprovalDocument(application, chargeBasisEntries, false, type);
     if (prevApplication.getStatus() != StatusType.DECISIONMAKING) {
       clearDeciderData(decisionJson);
     } else {
@@ -135,16 +152,8 @@ public class ApprovalDocumentService {
     final byte[] document = restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application, type));
     restTemplate.exchange(
-        applicationProperties.getApprovalDocumentUrl(), HttpMethod.POST,
+        documentDataUrl, HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("file", document), String.class, application.getId(), type);
-
-    if (prevApplication.getStatus() != StatusType.DECISIONMAKING) {
-      // Send the created approval document using previously defined distribution list
-      final DecisionDetailsJson details = new DecisionDetailsJson();
-      details.setDecisionDistributionList(application.getDecisionDistributionList());
-      details.setMessageBody(""); // Todo: Use some predefined text?
-      mailComposerService.sendDecision(application, details, approvalDocumentTypeTodecisionDocumentType(type));
-    }
   }
 
   private String styleSheetName(ApplicationJson application, ApprovalDocumentType documentType) {

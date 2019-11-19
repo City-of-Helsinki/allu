@@ -1,17 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.types.ChargeBasisType;
-import fi.hel.allu.common.types.DefaultTextType;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.pdf.domain.CableInfoTexts;
-import fi.hel.allu.pdf.domain.ChargeInfoTexts;
-import fi.hel.allu.pdf.domain.DecisionJson;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,17 +18,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.types.ChargeBasisType;
+import fi.hel.allu.common.types.DefaultTextType;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.pdf.domain.CableInfoTexts;
+import fi.hel.allu.pdf.domain.ChargeInfoTexts;
+import fi.hel.allu.pdf.domain.DecisionJson;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.AnonymizedDecisionJsonMapper;
+import fi.hel.allu.servicecore.mapper.CustomerAnonymizer;
+import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
+
+import static org.mockito.Mockito.atLeast;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DecisionServiceTest {
 
   private static final String STORE_DECISION_URL = "StoreDecisionUrl";
   private static final String DECISION_URL = "DecisionUrl";
+  private static final String ANONYMIZED_DECISION_URL = "anonymizedDecisionUrl";
   private static final String GENERATE_PDF_URL = "GeneratePdfUrl";
   private static final byte[] MOCK_PDF_DATA = StringUtils.repeat("MockPdfData", 100).getBytes();
   private static final byte[] MOCK_DECISION_DATA = StringUtils.repeat("MockDecision", 100).getBytes();
@@ -64,6 +70,7 @@ public class DecisionServiceTest {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getGeneratePdfUrl()).thenReturn(GENERATE_PDF_URL);
     Mockito.when(applicationProperties.getStoreDecisionUrl()).thenReturn(STORE_DECISION_URL);
+    Mockito.when(applicationProperties.getAnonymizedDecisionUrl()).thenReturn(ANONYMIZED_DECISION_URL);
     Mockito.when(applicationProperties.getDecisionUrl()).thenReturn(DECISION_URL);
 
     final UserJson owner = new UserJson();
@@ -75,8 +82,10 @@ public class DecisionServiceTest {
     Mockito.when(applicationServiceComposer.findApplicationById(Mockito.anyInt())).thenReturn(application);
 
     DecisionJsonMapper decisionMapper = new DecisionJsonMapper(locationService, customerService, contactService, chargeBasisService, metaService);
+    AnonymizedDecisionJsonMapper anonymizedDecisionMapper = new AnonymizedDecisionJsonMapper(locationService, customerService, contactService, chargeBasisService, metaService,
+        new CustomerAnonymizer());
     decisionService = new DecisionService(applicationProperties, restTemplate,
-        applicationServiceComposer, decisionMapper);
+        applicationServiceComposer, decisionMapper, anonymizedDecisionMapper);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -93,6 +102,8 @@ public class DecisionServiceTest {
         Mockito.anyString())).thenReturn(MOCK_PDF_DATA);
     Mockito.when(restTemplate.exchange(Mockito.eq(STORE_DECISION_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
         Mockito.eq(String.class), Mockito.anyInt())).thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
+    Mockito.when(restTemplate.exchange(Mockito.eq(ANONYMIZED_DECISION_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        Mockito.eq(String.class), Mockito.anyInt())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
     Mockito.when(restTemplate.getForObject(Mockito.eq(DECISION_URL), Mockito.eq(byte[].class), Mockito.anyInt()))
         .thenReturn(MOCK_DECISION_DATA);
   }
@@ -110,7 +121,7 @@ public class DecisionServiceTest {
 
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name :
-    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), Mockito.anyObject(),
+    Mockito.verify(restTemplate, atLeast(1)).postForObject(Matchers.eq(GENERATE_PDF_URL), Mockito.anyObject(),
         Matchers.eq(byte[].class),
         Matchers.eq("SHORT_TERM_RENTAL"));
     // - Generated PDF was stored to model:
@@ -131,7 +142,7 @@ public class DecisionServiceTest {
 
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name:
-    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), Mockito.anyObject(),
+    Mockito.verify(restTemplate, atLeast(1)).postForObject(Matchers.eq(GENERATE_PDF_URL), Mockito.anyObject(),
         Matchers.eq(byte[].class), Matchers.eq("EVENT"));
     // - Generated PDF was stored to model:
     Mockito.verify(restTemplate).exchange(Matchers.eq(STORE_DECISION_URL), Matchers.eq(HttpMethod.POST), Mockito.any(),
@@ -228,7 +239,7 @@ public class DecisionServiceTest {
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name :
     final ArgumentCaptor<DecisionJson> jsonCaptor = ArgumentCaptor.forClass(DecisionJson.class);
-    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), jsonCaptor.capture(),
+    Mockito.verify(restTemplate, atLeast(1)).postForObject(Matchers.eq(GENERATE_PDF_URL), jsonCaptor.capture(),
         Matchers.eq(byte[].class),
         Matchers.eq("CABLE_REPORT"));
     // - Sent JSON object contains field cableInfoEntries

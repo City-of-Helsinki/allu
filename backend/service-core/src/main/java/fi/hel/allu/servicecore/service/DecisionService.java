@@ -1,18 +1,20 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.util.MultipartRequestBuilder;
-import fi.hel.allu.pdf.domain.DecisionJson;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.StyleSheet;
-import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
+import fi.hel.allu.common.util.MultipartRequestBuilder;
+import fi.hel.allu.pdf.domain.DecisionJson;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StyleSheet;
+import fi.hel.allu.servicecore.mapper.AnonymizedDecisionJsonMapper;
+import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
 
 @Service
 public class DecisionService {
@@ -20,15 +22,19 @@ public class DecisionService {
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final DecisionJsonMapper decisionJsonMapper;
+  private final AnonymizedDecisionJsonMapper anonymizedDecisionJsonMapper;
   private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
   public DecisionService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      ApplicationServiceComposer applicationServiceComposer, DecisionJsonMapper decisionJsonMapper) {
+      ApplicationServiceComposer applicationServiceComposer, DecisionJsonMapper decisionJsonMapper,
+      AnonymizedDecisionJsonMapper anonymizedDecisionJsonMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationServiceComposer = applicationServiceComposer;
     this.decisionJsonMapper = decisionJsonMapper;
+    this.anonymizedDecisionJsonMapper = anonymizedDecisionJsonMapper;
+
   }
 
   /**
@@ -41,13 +47,19 @@ public class DecisionService {
    *           when model-service responds with error
    */
   public void generateDecision(int applicationId, ApplicationJson application) throws IOException {
+    saveDecisionData(decisionJsonMapper, applicationId, application, applicationProperties.getStoreDecisionUrl());
+    saveDecisionData(anonymizedDecisionJsonMapper, applicationId, application, applicationProperties.getAnonymizedDecisionUrl());
+  }
 
-    DecisionJson decisionJson = decisionJsonMapper.mapToDocumentJson(application, false);
+  private void saveDecisionData(DecisionJsonMapper mapper, int applicationId, ApplicationJson application, String decisionDataUrl)
+      throws IOException {
+    DecisionJson decisionJson = mapper.mapToDocumentJson(application, false);
+
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,
         StyleSheet.name(application));
     ResponseEntity<String> response = restTemplate.exchange(
-        applicationProperties.getStoreDecisionUrl(), HttpMethod.POST,
+        decisionDataUrl, HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("file", pdfData), String.class, applicationId);
     if (!response.getStatusCode().is2xxSuccessful()) {
       throw new IOException(response.getBody());
