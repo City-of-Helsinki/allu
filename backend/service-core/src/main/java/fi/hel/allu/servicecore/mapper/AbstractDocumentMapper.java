@@ -300,19 +300,19 @@ public abstract class AbstractDocumentMapper<T> {
 
   protected CustomerJson findCustomerById(Integer customerId) {
     CustomerJson customer = customerService.findCustomerById(customerId);
-    return Optional.of(getCustomerAnonymizer()).map(a -> a.anonymizeCustomer(customer)).orElse(customer);
+    return Optional.ofNullable(getCustomerAnonymizer()).map(a -> a.anonymizeCustomer(customer)).orElse(customer);
   }
 
   protected ContactJson findContactById(Integer id) {
     ContactJson contact = contactService.findById(id);
-    return Optional.of(getCustomerAnonymizer()).map(a -> a.anonymizeContact(contact)).orElse(contact);
+    return Optional.ofNullable(getCustomerAnonymizer()).map(a -> a.anonymizeContact(contact)).orElse(contact);
   }
 
   protected Optional<CustomerWithContactsJson> getCustomerByRole(ApplicationJson application, CustomerRoleType role) {
     Optional<CustomerWithContactsJson> customer = application.getCustomersWithContacts().stream()
         .filter(cwc -> role.equals(cwc.getRoleType()))
         .findFirst();
-    return Optional.of(getCustomerAnonymizer())
+    return Optional.ofNullable(getCustomerAnonymizer())
         .map(a -> a.anonymizeCustomerWithContacts(customer))
         .orElse(customer);
   }
