@@ -15,6 +15,7 @@ import * as fromAuth from '@feature/auth/reducers';
 import {RoleType} from '@model/user/role-type';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActivatedRoute, Router} from '@angular/router';
+import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'information-acceptance-entry',
@@ -44,7 +45,7 @@ export class InformationAcceptanceEntryComponent implements OnInit {
           this.store.dispatch(new SetKindsWithSpecifiers(result.application.kindsWithSpecifiers));
           this.store.dispatch(new InformationRequestResultAction.Save(result));
         }
-        this.router.navigate(['../'], {relativeTo: this.route});
+        this.navigateBack();
       });
   }
 
@@ -66,5 +67,19 @@ export class InformationAcceptanceEntryComponent implements OnInit {
         return {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
       })
     );
+  }
+
+  private navigateBack(): void {
+    this.route.params.pipe(
+      map(params => params['id']),
+      map(id => this.getPath(id)),
+      take(1)
+    ).subscribe(path => this.router.navigate(path, {relativeTo: this.route}));
+  }
+
+  private getPath(id: number): string[] {
+    return NumberUtil.isDefined(id)
+      ? ['../../']
+      : ['../'];
   }
 }
