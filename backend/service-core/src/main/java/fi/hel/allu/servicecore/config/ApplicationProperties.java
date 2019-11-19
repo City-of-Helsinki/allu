@@ -143,8 +143,16 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/decision");
   }
 
+  public String getAnonymizedDecisionUrl() {
+    return getModelServiceUrl("/applications/{id}/decision/anonymized");
+  }
+
   public String getApprovalDocumentUrl() {
     return getModelServiceUrl("/applications/{id}/approvalDocument/{type}");
+  }
+
+  public String getAnonymizedApprovalDocumentUrl() {
+    return getModelServiceUrl("/applications/{id}/approvalDocument/{type}/anonymized");
   }
 
   public String getTerminationUrl() {

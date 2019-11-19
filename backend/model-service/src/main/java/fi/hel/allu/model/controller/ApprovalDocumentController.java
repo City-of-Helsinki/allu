@@ -35,6 +35,14 @@ public class ApprovalDocumentController {
     return ResponseEntity.ok(bytes);
   }
 
+  @RequestMapping(value = "/{applicationId}/approvalDocument/{type}/anonymized", method = RequestMethod.GET)
+  public ResponseEntity<byte[]> getAnonymizedDocument(@PathVariable Integer applicationId, @PathVariable ApprovalDocumentType type) {
+    final byte[] bytes = approvalDocumentDao.getAnonymizedDocument(applicationId, type)
+        .orElseThrow(() -> new NoSuchEntityException("approvalDocument.notFound", applicationId));
+    return ResponseEntity.ok(bytes);
+  }
+
+
   @RequestMapping(value = "/{applicationId}/approvalDocument/{type}", method = RequestMethod.POST)
   public ResponseEntity<Void> storeApprovalDocument(
       @PathVariable Integer applicationId,
@@ -45,4 +53,14 @@ public class ApprovalDocumentController {
     httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri());
     return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
   }
+
+  @RequestMapping(value = "/{applicationId}/approvalDocument/{type}/anonymized", method = RequestMethod.POST)
+  public ResponseEntity<Void> storeAnonymizedDocument(
+      @PathVariable Integer applicationId,
+      @PathVariable ApprovalDocumentType type,
+      @RequestParam("file") MultipartFile file) throws IOException {
+    approvalDocumentDao.storeAnonymizedDocument(applicationId, type, file.getBytes());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 }

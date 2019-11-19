@@ -276,6 +276,14 @@ public class ApplicationController {
     return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
   }
 
+  @RequestMapping(value = "/{id}/decision/anonymized", method = RequestMethod.POST)
+  public ResponseEntity<Void> storeAnonymizedDecision(@PathVariable int id, @RequestParam("file") MultipartFile file)
+      throws IOException {
+    decisionDao.storeAnonymizedDecision(id, file.getBytes());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
   /**
    * Get the decision PDF for application
    *
@@ -287,6 +295,13 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET)
   public ResponseEntity<byte[]> getDecision(@PathVariable int id) {
     byte[] bytes = decisionDao.getDecision(id)
+        .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
+    return new ResponseEntity<>(bytes, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/decision/anonymized", method = RequestMethod.GET)
+  public ResponseEntity<byte[]> getAnonymizedDecision(@PathVariable int id) {
+    byte[] bytes = decisionDao.getAnonymizedDecision(id)
         .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
     return new ResponseEntity<>(bytes, HttpStatus.OK);
   }

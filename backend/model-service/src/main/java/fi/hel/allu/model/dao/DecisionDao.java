@@ -1,6 +1,8 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.SimplePath;
+
 import static fi.hel.allu.QDecision.decision;
 
 import java.time.ZonedDateTime;
@@ -33,9 +35,16 @@ public class DecisionDao {
       queryFactory.insert(decision).columns(decision.applicationId).values(applicationId).execute();
     }
     // Then update the row
-    queryFactory.update(decision).where(decision.applicationId.eq(applicationId)).set(decision.data, data)
+    queryFactory.update(decision).where(decision.applicationId.eq(applicationId))
+        .set(decision.data, data)
         .set(decision.creationTime, ZonedDateTime.now()).execute();
   }
+
+  @Transactional
+  public void storeAnonymizedDecision(int applicationId, byte[] anonymizedData) {
+    queryFactory.update(decision).where(decision.applicationId.eq(applicationId))
+    .set(decision.anonymizedData, anonymizedData).execute();
+ }
 
   /**
    * Retrieve the decision PDF for an application
@@ -46,10 +55,20 @@ public class DecisionDao {
    */
   @Transactional(readOnly = true)
   public Optional<byte[]> getDecision(int applicationId) {
-    byte[] data = queryFactory.select(decision.data).from(decision).where(decision.applicationId.eq(applicationId))
+    return getDecisionData(applicationId, decision.data);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<byte[]> getAnonymizedDecision(int applicationId) {
+    return getDecisionData(applicationId, decision.anonymizedData);
+  }
+
+  private Optional<byte[]> getDecisionData(int applicationId, SimplePath<byte[]> documentField) {
+    byte[] data = queryFactory.select(documentField).from(decision).where(decision.applicationId.eq(applicationId))
         .fetchOne();
     return Optional.ofNullable(data);
   }
+
 
   @Transactional
   public int getPlacementContractSectionNumber() {
