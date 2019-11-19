@@ -103,7 +103,7 @@ public class InvoicingService {
     }
   }
 
-  private boolean sendToSap(SalesOrderContainer salesOrderContainer) {
+  public boolean sendToSap(SalesOrderContainer salesOrderContainer) {
     return writeToTempFile(salesOrderContainer).map(dir -> {
       boolean sentOk = sftpService.uploadFiles(
           applicationProperties.getSapFtpInvoiceHost(),
@@ -145,7 +145,7 @@ public class InvoicingService {
         Application[].class));
   }
 
-  private Customer getCustomer(int id) {
+  private Customer getCustomer(Integer id) {
     return restTemplate.getForObject(applicationProperties.getFindCustomerUrl(), Customer.class, id);
   }
 
@@ -153,7 +153,7 @@ public class InvoicingService {
     restTemplate.postForObject(applicationProperties.getMarkInvoicesSentUrl(), invoiceIds, Void.class);
   }
 
-  private void sendNotificationEmail(List<String> applicationIds, int nrOfInvoices) {
+  public void sendNotificationEmail(List<String> applicationIds, Integer nrOfInvoices) {
     List<String> receiverEmails = getInvoiceNotificationReceiverEmails();
     if (receiverEmails.isEmpty()) {
       return;
