@@ -103,7 +103,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
         assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
       });
-      it("Filters invoices if sum is zero", () -> {
+      it("Returns invoices even if sum is zero", () -> {
         final Customer customer = new Customer();
         customer.setType(CustomerType.COMPANY);
         customer.setName("The Company");
@@ -117,7 +117,10 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
         Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
         List<Invoice> foundPendingInvoices = invoiceService.findPending();
-        assertTrue(foundPendingInvoices.isEmpty());
+        assertEquals(pendingInvoices.size(), foundPendingInvoices.size());
+        Invoice foundInvoice = foundPendingInvoices.get(0);
+        assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
+        assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
       });
 
     });

@@ -159,7 +159,7 @@ public class InvoiceService {
         logger.error("Invoice recipient not found with ID {}", i.getRecipientId());
       }
     });
-    return filterZeroInvoices(invoices);
+    return invoices;
   }
 
   private List<Invoice> filterZeroInvoices(List<Invoice> invoices) {

@@ -34,9 +34,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -85,22 +87,50 @@ public class InvoicingService {
       logger.info("No invoices to send.");
       return;
     }
-    final Map<Integer, Application> applicationsById =
-        getApplications(new ArrayList<>(invoices.stream().map(Invoice::getApplicationId).collect(Collectors.toSet())))
-            .stream().collect(Collectors.toMap(Application::getId, Function.identity()));
+
+    List<Invoice> netZeroInvoices = invoices.stream().filter(this::isNetZero).collect(Collectors.toList());
+    List<Invoice> nonNetZeroInvoices = invoices.stream().filter(invoice -> !isNetZero(invoice)).collect(Collectors.toList());
+
+    Set<Integer> applicationIdsWithZeroInvoices = netZeroInvoices.stream().map(Invoice::getApplicationId).collect(Collectors.toSet());
+    Set<Integer> applicationIdsWithNonZeroInvoices = nonNetZeroInvoices.stream().map(Invoice::getApplicationId).collect(Collectors.toSet());
+
+    final Map<Integer, Application> applicationsWithNonZeroInvoicesById =
+      getApplications(new ArrayList<>(applicationIdsWithNonZeroInvoices))
+        .stream().collect(Collectors.toMap(Application::getId, Function.identity()));
+
+    List<Integer> invoiceIdsToSend = new ArrayList<>();
+    invoiceIdsToSend.addAll(netZeroInvoices.stream().map(Invoice::getId).collect(Collectors.toList()));
+
+    Set<Integer> applicationIdsToArchive = new HashSet<>();
+    applicationIdsToArchive.addAll(applicationIdsWithZeroInvoices);
+
+    SalesOrderContainer salesOrderContainer = createSalesOrderContainer(nonNetZeroInvoices, applicationsWithNonZeroInvoicesById);
+    if (sendToSap(salesOrderContainer)) {
+      invoiceIdsToSend.addAll(nonNetZeroInvoices.stream().map(Invoice::getId).collect(Collectors.toList()));
+      sendNotificationEmail(applicationsWithNonZeroInvoicesById.values().stream().map(Application::getApplicationId).collect(Collectors.toList()), nonNetZeroInvoices.size());
+      applicationIdsToArchive.addAll(applicationIdsWithNonZeroInvoices);
+    }
+
+    markInvoicesSent(invoiceIdsToSend);
+    applicationStatusUpdaterService.archiveApplications(new ArrayList<>(applicationIdsToArchive));
+  }
+
+  private SalesOrderContainer createSalesOrderContainer(List<Invoice> invoices, Map<Integer, Application> applicationsById) {
     final List<SalesOrder> salesOrders = invoices.stream()
-        .map(i -> {
-          final Application app = applicationsById.get(i.getApplicationId());
-          return AlluMapper.mapToSalesOrder(app, i.getInvoiceRecipient(), getCustomer(app.getInvoiceRecipientId()).getSapCustomerNumber(), i.getRows());
-        })
+        .map(i -> createSalesOrder(i, applicationsById))
         .collect(Collectors.toList());
     SalesOrderContainer salesOrderContainer = new SalesOrderContainer();
     salesOrderContainer.setSalesOrders(salesOrders);
-    if (sendToSap(salesOrderContainer)) {
-      markInvoicesSent(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
-      sendNotificationEmail(applicationsById.values().stream().map(Application::getApplicationId).collect(Collectors.toList()), invoices.size());
-      applicationStatusUpdaterService.archiveApplications(new ArrayList<>(applicationsById.keySet()));
-    }
+    return salesOrderContainer;
+  }
+
+  private SalesOrder createSalesOrder(Invoice i, Map<Integer, Application> applicationsById) {
+    final Application app = applicationsById.get(i.getApplicationId());
+    return AlluMapper.mapToSalesOrder(app, i.getInvoiceRecipient(), getCustomer(app.getInvoiceRecipientId()).getSapCustomerNumber(), i.getRows());
+  }
+
+  private boolean isNetZero(Invoice invoice) {
+    return 0 == invoice.getRows().stream().reduce(0, (netSumAccumulator, invoiceRow) -> netSumAccumulator + invoiceRow.getNetPrice(), Integer::sum);
   }
 
   public boolean sendToSap(SalesOrderContainer salesOrderContainer) {

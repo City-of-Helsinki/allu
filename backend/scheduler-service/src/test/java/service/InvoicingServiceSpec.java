@@ -85,7 +85,14 @@ public class InvoicingServiceSpec {
           when(applicationProperties.getInvoiceNotificationReceiverEmailsUrl()).thenReturn(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL);
           when(applicationProperties.getMarkInvoicesSentUrl()).thenReturn(MARK_INVOICES_SENT_URL);
 
-          when(restTemplate.postForObject(eq(FIND_APPLICATIONS_URL), anyList(), any())).thenReturn(new Application[]{application.get()});
+          when(restTemplate.postForObject(eq(FIND_APPLICATIONS_URL), anyList(), any())).thenAnswer(invocationOnMock -> {
+            List applicationIds = invocationOnMock.getArgumentAt(1, List.class);
+            if (!applicationIds.isEmpty()) {
+              return new Application[]{application.get()};
+            } else {
+              return new Application[]{};
+            }
+          });
           when(restTemplate.getForObject(eq(FIND_CUSTOMER_URL), any(), anyInt())).thenReturn(new Customer());
 
           when(restTemplate.exchange(eq(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL), any(), isNull(HttpEntity.class), any(ParameterizedTypeReference.class)))
@@ -115,7 +122,68 @@ public class InvoicingServiceSpec {
 
           it("should send email concerning related applications", () -> {
             invoicingService.sendInvoices();
-            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()));
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), 2);
+          });
+
+          it("should request archival of related applications", () -> {
+            invoicingService.sendInvoices();
+            assertArchivalRequested(Collections.singletonList(applicationId.get()));
+          });
+        });
+
+        describe("with zero and non-zero net sum invoices", () -> {
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), 0, 10, 100, 300));
+          Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
+
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray());
+            doReturn(true).when(invoicingService).sendToSap(any());
+          });
+
+          it("should send non-zero net sum invoices to sap", () -> {
+            invoicingService.sendInvoices();
+            assertSalesOrdersSentToSap(3);
+          });
+
+          it("should mark all invoices sent", () -> {
+            invoicingService.sendInvoices();
+            assertInvoicesMarkedSent(invoiceIds.get());
+          });
+
+          it("should send email concerning related applications", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), 3);
+          });
+
+          it("should request archival of all related applications", () -> {
+            invoicingService.sendInvoices();
+            assertArchivalRequested(Collections.singletonList(applicationId.get()));
+          });
+        });
+
+
+        describe("with only zero net sum invoices", () -> {
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), 0, 0, 0));
+          Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
+
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray());
+            doReturn(true).when(invoicingService).sendToSap(any());
+          });
+
+          it("should not send invoices to sap", () -> {
+            invoicingService.sendInvoices();
+            assertSalesOrdersSentToSap(0);
+          });
+
+          it("should mark invoices sent", () -> {
+            invoicingService.sendInvoices();
+            assertInvoicesMarkedSent(invoiceIds.get());
+          });
+
+          it("should not send email concerning related applications", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.emptyList(), 0);
           });
 
           it("should request archival of related applications", () -> {
@@ -139,9 +207,11 @@ public class InvoicingServiceSpec {
     assertContainSameElements(invoiceIdCaptor.getValue(), invoiceIds);
   }
 
-  private void assertNotificationSentFor(List<String> applicationApplicationIds) {
+  private void assertNotificationSentFor(List<String> applicationApplicationIds, Integer expectedNumOfInvoices) {
     ArgumentCaptor<List> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
-    verify(invoicingService).sendNotificationEmail(applicationIdCaptor.capture(), any());
+    ArgumentCaptor<Integer> numOfInvoicesCaptor = ArgumentCaptor.forClass(Integer.class);
+    verify(invoicingService).sendNotificationEmail(applicationIdCaptor.capture(), numOfInvoicesCaptor.capture());
+    Assert.assertEquals(expectedNumOfInvoices, numOfInvoicesCaptor.getValue());
     assertContainSameElements(applicationIdCaptor.getValue(), applicationApplicationIds);
   }
 
