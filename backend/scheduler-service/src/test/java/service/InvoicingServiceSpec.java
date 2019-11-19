@@ -32,12 +32,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.greghaskins.spectrum.Spectrum.beforeEach;
 import static com.greghaskins.spectrum.Spectrum.describe;
 import static com.greghaskins.spectrum.Spectrum.it;
-import static org.junit.Assert.assertTrue;
+import static com.greghaskins.spectrum.Spectrum.let;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
@@ -69,11 +70,14 @@ public class InvoicingServiceSpec {
 
   {
     describe("Invoicing service", () -> {
-      beforeEach(() -> {
-         MockitoAnnotations.initMocks(this);
-      });
+      beforeEach(() -> MockitoAnnotations.initMocks(this));
 
       describe("sendInvoices", () -> {
+
+        Supplier<Application> application = let(this::createApplication);
+        Supplier<Integer> applicationId = let(() -> application.get().getId());
+        Supplier<String> applicationApplicationId = let(() -> application.get().getApplicationId());
+
         beforeEach(() -> {
           when(applicationProperties.getPendingInvoicesUrl()).thenReturn(PENDING_INVOICES_URL);
           when(applicationProperties.getFindApplicationsUrl()).thenReturn(FIND_APPLICATIONS_URL);
@@ -81,49 +85,70 @@ public class InvoicingServiceSpec {
           when(applicationProperties.getInvoiceNotificationReceiverEmailsUrl()).thenReturn(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL);
           when(applicationProperties.getMarkInvoicesSentUrl()).thenReturn(MARK_INVOICES_SENT_URL);
 
+          when(restTemplate.postForObject(eq(FIND_APPLICATIONS_URL), anyList(), any())).thenReturn(new Application[]{application.get()});
+          when(restTemplate.getForObject(eq(FIND_CUSTOMER_URL), any(), anyInt())).thenReturn(new Customer());
+
+          when(restTemplate.exchange(eq(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL), any(), isNull(HttpEntity.class), any(ParameterizedTypeReference.class)))
+            .thenReturn(responseWithValue(Collections.singletonList(new Configuration())));
+
           invoicingService = spy(new InvoicingService(restTemplate, applicationProperties, sftpService, alluMailService, applicationStatusUpdaterService));
         });
 
-        it("when there are no invoices with net sum of zero, should send everything to sap", () -> {
-          // Arrange
-          Application application = createApplication();
-          Integer applicationId = application.getId();
-          String applicationApplicationId = application.getApplicationId();
+        describe("with only non-zero net sum invoices", () -> {
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), 10, 100));
+          Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
-          List<Invoice> invoices = createInvoices(applicationId, 10, 100);
-          List<Integer> invoiceIds = invoices.stream().map(Invoice::getId).collect(Collectors.toList());
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray());
+            doReturn(true).when(invoicingService).sendToSap(any());
+          });
 
-          when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.toArray());
-          when(restTemplate.postForObject(eq(FIND_APPLICATIONS_URL), anyList(), any())).thenReturn(new Application[]{application});
-          when(restTemplate.getForObject(eq(FIND_CUSTOMER_URL), any(), anyInt())).thenReturn(new Customer());
+          it("should send invoices to sap", () -> {
+            invoicingService.sendInvoices();
+            assertSalesOrdersSentToSap(2);
+          });
 
-          List<Configuration> ts = Collections.singletonList(new Configuration());
-          when(restTemplate.exchange(eq(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL), any(), isNull(HttpEntity.class), any(ParameterizedTypeReference.class))).thenReturn(responseWithValue(ts));
+          it("should mark invoices sent", () -> {
+            invoicingService.sendInvoices();
+            assertInvoicesMarkedSent(invoiceIds.get());
+          });
 
-          doReturn(true).when(invoicingService).sendToSap(any());
+          it("should send email concerning related applications", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()));
+          });
 
-          // Act
-          invoicingService.sendInvoices();
-
-          // Assert
-          ArgumentCaptor<SalesOrderContainer> salesOrderCaptor = ArgumentCaptor.forClass(SalesOrderContainer.class);
-          verify(invoicingService, times(1)).sendToSap(salesOrderCaptor.capture());
-          assertValidSalesOrderContainer(salesOrderCaptor.getValue(), 2);
-
-          ArgumentCaptor<List> invoiceIdCaptor = ArgumentCaptor.forClass(List.class);
-          verify(restTemplate).postForObject(eq(MARK_INVOICES_SENT_URL), invoiceIdCaptor.capture(), any());
-          assertContainSameElements(invoiceIdCaptor.getValue(), invoiceIds);
-
-          ArgumentCaptor<List> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
-          verify(invoicingService).sendNotificationEmail(applicationIdCaptor.capture(), any());
-          assertContainSameElements(applicationIdCaptor.getValue(), Collections.singletonList(applicationApplicationId));
-
-          ArgumentCaptor<List> applicationIdCaptor2 = ArgumentCaptor.forClass(List.class);
-          verify(applicationStatusUpdaterService).archiveApplications(applicationIdCaptor2.capture());
-          assertContainSameElements(applicationIdCaptor2.getValue(), Collections.singletonList(applicationId));
+          it("should request archival of related applications", () -> {
+            invoicingService.sendInvoices();
+            assertArchivalRequested(Collections.singletonList(applicationId.get()));
+          });
         });
       });
     });
+  }
+
+  private void assertSalesOrdersSentToSap(int numSalesOrders) {
+    ArgumentCaptor<SalesOrderContainer> salesOrderCaptor = ArgumentCaptor.forClass(SalesOrderContainer.class);
+    verify(invoicingService, times(1)).sendToSap(salesOrderCaptor.capture());
+    assertValidSalesOrderContainer(salesOrderCaptor.getValue(), numSalesOrders);
+  }
+
+  private void assertInvoicesMarkedSent(List<Integer> invoiceIds) {
+    ArgumentCaptor<List> invoiceIdCaptor = ArgumentCaptor.forClass(List.class);
+    verify(restTemplate).postForObject(eq(MARK_INVOICES_SENT_URL), invoiceIdCaptor.capture(), any());
+    assertContainSameElements(invoiceIdCaptor.getValue(), invoiceIds);
+  }
+
+  private void assertNotificationSentFor(List<String> applicationApplicationIds) {
+    ArgumentCaptor<List> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
+    verify(invoicingService).sendNotificationEmail(applicationIdCaptor.capture(), any());
+    assertContainSameElements(applicationIdCaptor.getValue(), applicationApplicationIds);
+  }
+
+  private void assertArchivalRequested(List<Integer> applicationIds) {
+    ArgumentCaptor<List> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
+    verify(applicationStatusUpdaterService).archiveApplications(applicationIdCaptor.capture());
+    assertContainSameElements(applicationIdCaptor.getValue(), applicationIds);
   }
 
   private void assertValidSalesOrderContainer(SalesOrderContainer salesOrderContainer, Integer numSalesOrders) {
