@@ -25,7 +25,7 @@ export class InformationRequestService {
     const url = `${informationRequestUrl}/${id}/close`;
     return this.http.put<BackendInformationRequest>(url, {}).pipe(
       map(response => InformationRequestMapper.mapBackend(response)),
-      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequestResponse.error.close')))
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.close')))
     );
   }
 
@@ -33,7 +33,7 @@ export class InformationRequestService {
     const url = `${applicationUrl}/${applicationId}/informationrequests`;
     return this.http.get<BackendInformationRequest>(url).pipe(
       map(response => InformationRequestMapper.mapBackend(response)),
-      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.get')))
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.fetch')))
     );
   }
 
@@ -41,7 +41,7 @@ export class InformationRequestService {
     const url = `${informationRequestUrl}/${id}`;
     return this.http.get<BackendInformationRequest>(url).pipe(
       map(response => InformationRequestMapper.mapBackend(response)),
-      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.get')))
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.fetch')))
     );
   }
 

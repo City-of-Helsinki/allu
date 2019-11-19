@@ -646,8 +646,7 @@ export const translations = {
   },
   informationRequestResponse: {
     error: {
-      fetch: 'Täydennyspyynnön hakeminen epäonnistui',
-      close: 'Täydennyspyynnön sulkeminen epäonnistui'
+      fetch: 'Täydennyspyynnön vastauksen hakeminen epäonnistui'
     }
   },
   informationRequest: {
@@ -726,6 +725,8 @@ export const translations = {
       create: 'Täydennyspyynnön luominen epäonnistui',
       update: 'Täydennyspyynnön päivittäminen epäonnistui',
       delete: 'Täydennyspyynnön poistaminen epäonnistui',
+      close: 'Täydennyspyynnön sulkeminen epäonnistui',
+      fetch: 'Täydennyspyynnön hakeminen epäonnistui',
       fetchSummaries: 'Täydennyspyyntöjen hakeminen epäonnistui'
     }
   },
