@@ -550,7 +550,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     decision.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
     decision.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
     if (application.getInvoiceRecipientId() != null) {
-      CustomerJson customer = customerService.findCustomerById(application.getInvoiceRecipientId());
+      CustomerJson customer = findCustomerById(application.getInvoiceRecipientId());
       decision.setInvoiceRecipientAddressLines(addressLines(Optional.of(customer)));
       decision.setOvt(customer.getOvt());
       decision.setInvoicingOperator(customer.getInvoicingOperator());
@@ -562,9 +562,11 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       ApplicationJson applicationJson) {
     CableReportJson cableReport = (CableReportJson)applicationJson.getExtension();
     return Optional.ofNullable(cableReport.getOrderer())
-        .map(id -> contactService.findById(id))
-        .map(contact -> Pair.of(customerService.findCustomerById(contact.getCustomerId()), contact));
+        .map(id -> findContactById(id))
+        .map(contact -> Pair.of(findCustomerById(contact.getCustomerId()), contact));
   }
+
+
   /*
    * Find the customer and contact that left the cable report and return them
    */

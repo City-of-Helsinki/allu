@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.internal.util.privilegedactions.GetAnnotationParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -17,7 +16,6 @@ import org.springframework.util.CollectionUtils;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
@@ -25,8 +23,8 @@ import fi.hel.allu.servicecore.service.LocationService;
 
 public abstract class AbstractDocumentMapper<T> {
   protected static final Logger logger = LoggerFactory.getLogger(AbstractDocumentMapper.class);
-  protected final CustomerService customerService;
-  protected final ContactService contactService;
+  private final CustomerService customerService;
+  private final ContactService contactService;
   protected final LocationService locationService;
 
   private static final String ADDRESS_LINE_SEPARATOR = "; ";
@@ -298,6 +296,16 @@ public abstract class AbstractDocumentMapper<T> {
 
   private boolean hasLocations(ApplicationJson application) {
     return !CollectionUtils.isEmpty(application.getLocations());
+  }
+
+  protected CustomerJson findCustomerById(Integer customerId) {
+    CustomerJson customer = customerService.findCustomerById(customerId);
+    return Optional.of(getCustomerAnonymizer()).map(a -> a.anonymizeCustomer(customer)).orElse(customer);
+  }
+
+  protected ContactJson findContactById(Integer id) {
+    ContactJson contact = contactService.findById(id);
+    return Optional.of(getCustomerAnonymizer()).map(a -> a.anonymizeContact(contact)).orElse(contact);
   }
 
   protected Optional<CustomerWithContactsJson> getCustomerByRole(ApplicationJson application, CustomerRoleType role) {
