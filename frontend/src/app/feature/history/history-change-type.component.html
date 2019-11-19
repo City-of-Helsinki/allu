@@ -1,0 +1,25 @@
+<ng-container *ngIf="change.changeSpecifier; else changeTypeInfo">
+  <div [ngSwitch]="change.changeType">
+    <ng-container *ngSwitchCase="'LOCATION_CHANGED'">
+      {{'history.change.typeWithSpecifier.LOCATION_CHANGED' | translation:{locationKey: change.changeSpecifier} }}
+    </ng-container>
+    <ng-container *ngSwitchCase="'ATTACHMENT_ADDED'">
+      {{'history.change.typeWithSpecifier.ATTACHMENT_ADDED' | translation:{attachmentName: change.changeSpecifier} }}
+    </ng-container>
+    <ng-container *ngSwitchCase="'ATTACHMENT_REMOVED'">
+      {{'history.change.typeWithSpecifier.ATTACHMENT_REMOVED' | translation:{attachmentName: change.changeSpecifier} }}
+    </ng-container>
+    <ng-container *ngSwitchCase="'COMMENT_ADDED'">
+      {{'history.change.type.COMMENT_ADDED' | translation }}: {{['comment.type', change.changeSpecifier] | translation}}
+    </ng-container>
+    <ng-container *ngSwitchCase="'STATUS_CHANGED'">
+      <history-item-status [change]="change"></history-item-status>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
+    </ng-container>
+  </div>
+</ng-container>
+<ng-template #changeTypeInfo>
+  {{['history.change.type', change.changeType] | translation}}
+</ng-template>

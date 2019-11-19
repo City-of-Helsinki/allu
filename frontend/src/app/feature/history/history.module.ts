@@ -15,6 +15,7 @@ import {HistoryItemPreviewComponent} from './preview/history-item-preview.compon
 import {HistoryService} from '../../service/history/history-service';
 import {HistoryFieldFormatter} from '../../service/history/history-field-formatter';
 import {HistoryItemStatusComponent} from '@feature/history/history-item-status.component';
+import {HistoryChangeTypeComponent} from '@feature/history/history-change-type.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import {HistoryItemStatusComponent} from '@feature/history/history-item-status.c
     HistoryFieldComponent,
     HistoryPreviewComponent,
     HistoryItemPreviewComponent,
-    HistoryItemStatusComponent
+    HistoryItemStatusComponent,
+    HistoryChangeTypeComponent
   ],
   providers: [
     HistoryFormatter,
