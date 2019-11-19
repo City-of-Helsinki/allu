@@ -1,6 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {filter, map, switchMap, take} from 'rxjs/operators';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -16,6 +16,7 @@ import {RoleType} from '@model/user/role-type';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NumberUtil} from '@util/number.util';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
 
 @Component({
   selector: 'information-acceptance-entry',
@@ -62,7 +63,7 @@ export class InformationAcceptanceEntryComponent implements OnInit {
       filter(user => !!user),
       map(user => user.hasRole(RoleType.ROLE_PROCESS_APPLICATION)),
       map(canProcess => {
-        const readonly = !canProcess;
+        const readonly = !canProcess || baseData.informationRequest.status === InformationRequestStatus.CLOSED;
         const data = { ...baseData, readonly };
         return {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
       })
