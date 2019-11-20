@@ -1,13 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.TerminationInfo;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -192,6 +191,21 @@ public class ApplicationArchiverServiceTest {
     verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED));
   }
 
+  @Test
+  public void shouldNotFinishTrafficArrangementWithOpenFinalSupervision() {
+    applicationJson.setType(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().minusDays(1));
+    when(supervisionTaskService.findByApplicationId(anyInt())).thenReturn(Collections.singletonList(
+      createSupervisionTask(11, SupervisionTaskType.FINAL_SUPERVISION, SupervisionTaskStatusType.OPEN)
+    ));
+
+    archiverService.updateStatusForFinishedApplications();
+
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED));
+  }
+
   private void createApplication() {
     applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.FINISHED);
@@ -209,5 +223,13 @@ public class ApplicationArchiverServiceTest {
     info.setReason("For testing");
     info.setTerminator(USER_ID);
     return info;
+  }
+
+  private SupervisionTaskJson createSupervisionTask(int id, SupervisionTaskType taskType, SupervisionTaskStatusType status) {
+    SupervisionTaskJson task = new SupervisionTaskJson();
+    task.setId(id);
+    task.setType(taskType);
+    task.setStatus(status);
+    return task;
   }
 }

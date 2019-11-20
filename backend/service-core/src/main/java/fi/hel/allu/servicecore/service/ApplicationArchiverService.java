@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import org.apache.commons.lang3.BooleanUtils;
@@ -11,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
@@ -135,7 +132,9 @@ public class ApplicationArchiverService {
   }
 
   private boolean readyForFinished(ApplicationJson application) {
-    return isFinished(application) && !requiresSurvey(application);
+    return isFinished(application)
+      && !requiresSurvey(application)
+      && !hasOpenSupervisionTasksBlockingFinished(application);
   }
 
   private boolean readyForArchive(ApplicationJson application) {
@@ -193,7 +192,22 @@ public class ApplicationArchiverService {
     return tasks.stream().anyMatch(t -> SupervisionTaskStatusType.OPEN.equals(t.getStatus()));
   }
 
+  private boolean hasOpenSupervisionTasksBlockingFinished(ApplicationJson application) {
+    // Only Temporary traffic arrangement is currently blocked by open final supervision
+    if (ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS.equals(application.getType())) {
+      return hasOpenSupervisionTask(application.getId(), SupervisionTaskType.FINAL_SUPERVISION);
+    }
+    return false;
+  }
+
   private boolean requiresSurvey(ApplicationJson application) {
     return application.getApplicationTags().stream().anyMatch(t -> t.getType() == ApplicationTagType.SURVEY_REQUIRED);
+  }
+
+  private boolean hasOpenSupervisionTask(int applicationId, SupervisionTaskType taskType) {
+    return supervisionTaskService.findByApplicationId(applicationId).stream()
+      .anyMatch(t ->
+        SupervisionTaskStatusType.OPEN.equals(t.getStatus())
+        && taskType.equals(t.getType()));
   }
 }
