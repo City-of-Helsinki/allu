@@ -5,10 +5,16 @@ import {Some} from '@util/option';
 
 export type DecisionBlockedReason = 'requiredInvoicingInfoMissing' | 'changesNotHandled';
 
+const validStatusForInformationRequest = [
+  ApplicationStatus.PENDING,
+  ApplicationStatus.HANDLING,
+  ApplicationStatus.RETURNED_TO_PREPARATION
+];
+
 export class ApplicationUtil {
   public static validForInformationRequest(app: Application): boolean {
     const status = app.status;
-    const validStatus = status === ApplicationStatus.PENDING || status === ApplicationStatus.HANDLING;
+    const validStatus = validStatusForInformationRequest.indexOf(status) >= 0;
     const external =  NumberUtil.isDefined(app.externalOwnerId);
     return validStatus && external;
   }
