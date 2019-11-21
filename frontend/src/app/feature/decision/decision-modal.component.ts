@@ -13,6 +13,7 @@ import {DistributionType} from '@model/common/distribution-type';
 import {filter, map} from 'rxjs/internal/operators';
 import {UserService} from '@service/user/user-service';
 import {of} from 'rxjs/internal/observable/of';
+import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 export type DecisionModalType = 'DECISIONMAKING' | 'RETURNED_TO_PREPARATION' | 'REJECTED' | 'RESEND_EMAIL';
 
@@ -21,7 +22,7 @@ interface DecisionModalData {
   status: ApplicationStatus;
   distributionList: Array<DistributionEntry>;
   distributionType: DistributionType;
-  isTerminationDraftRejection: boolean;
+  tab: DecisionTab;
 }
 
 export const DECISION_MODAL_CONFIG = {
@@ -75,12 +76,13 @@ export class DecisionModalComponent implements OnInit {
 
     this.status = this.data.status;
     this.type = this.data.type;
-    this.isTerminationDraftRejection = this.data.isTerminationDraftRejection;
     this.distributionList = this.data.distributionList;
     this.emailDistribution = DistributionType.EMAIL === this.data.distributionType
       && this.data.status !== ApplicationStatus.RETURNED_TO_PREPARATION;
     this.ownerSelection = DistributionType.PAPER === this.data.distributionType
       || this.data.status === ApplicationStatus.RETURNED_TO_PREPARATION;
+    this.isTerminationDraftRejection = this.data.tab === DecisionTab.TERMINATION
+      && this.data.status === ApplicationStatus.RETURNED_TO_PREPARATION;
 
     this.initOwners(this.ownerSelection);
   }

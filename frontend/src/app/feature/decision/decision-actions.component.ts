@@ -22,6 +22,7 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
+import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -38,7 +39,7 @@ const RESEND_ALLOWED = [
 export class DecisionActionsComponent extends BaseDecisionActionsComponent implements OnInit, OnChanges {
   @Input() application: Application;
   @Input() approvedOperationalCondition = false;
-  @Input() isTerminationTab = false;
+  @Input() tab: DecisionTab = DecisionTab.DECISION;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   showProposal = false;
@@ -131,7 +132,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
   }
 
   public getDecisionReturnTextKey(): string {
-    return this.isTerminationTab ?
+    return this.tab === DecisionTab.TERMINATION ?
       'decision.type.TERMINATED.rejectDraft' :
       'decision.type.RETURNED_TO_PREPARATION.confirmText';
   }
@@ -157,7 +158,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
           type,
           status,
           distributionList,
-          isTerminationDraftRejection: this.isTerminationTab && status === ApplicationStatus.RETURNED_TO_PREPARATION
+          tab: this.tab
         }
       })),
       switchMap(config => this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config).afterClosed()),
