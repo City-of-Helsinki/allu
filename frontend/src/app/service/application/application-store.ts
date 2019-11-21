@@ -226,6 +226,7 @@ export class ApplicationStore {
     return this.doChangeStatus(appId, status, changeInfo).pipe(
       tap(application => {
         this.setAndDispatch(application);
+        this.store.dispatch(new HistoryAction.Load(ActionTargetType.Application));
         this.notification.translateSuccess(`application.statusChange.${status}`);
 
       }),
