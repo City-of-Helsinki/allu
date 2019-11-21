@@ -419,6 +419,16 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Get status changes for application
+   * @param applicationId
+   *          application ID
+   * @return list of application status changes
+   */
+  public List<StatusType> getStatusChanges(Integer applicationId) {
+    return applicationHistoryService.getStatusChangesWithoutReplaced(applicationId);
+  }
+
+  /**
    * Send the decision PDF for application as email to an specified distribution
    * list.
    *

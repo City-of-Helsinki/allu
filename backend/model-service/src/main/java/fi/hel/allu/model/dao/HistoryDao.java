@@ -57,6 +57,18 @@ public class HistoryDao {
     // Get history also from replaced applications
     getReplacedApplicationIds(applicationId, applicationIds);
     applicationIds.add(applicationId);
+    return getApplicationHistory(applicationIds);
+  }
+
+  /**
+   * Get change history for given application id's
+   *
+   * @param applicationIds
+   *          list of application database IDs
+   * @return list of changes, ordered from oldest to newest
+   */
+  @Transactional(readOnly = true)
+  public List<ChangeHistoryItem> getApplicationHistory(List<Integer> applicationIds) {
     return getChangeHistory(changeHistory.applicationId.in(applicationIds));
   }
 

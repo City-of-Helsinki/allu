@@ -1,8 +1,10 @@
 package fi.hel.allu.model.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,11 +46,12 @@ public class ApplicationHistoryController {
    * Get application history
    *
    * @param id the application's database ID
+   * @param noReplaced parameter to control if full history with replaced applications is fetched or not
    * @return list of changes for the application
    */
   @RequestMapping(value = "/applications/{id}/history", method = RequestMethod.GET)
-  public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
-    final List<ChangeHistoryItem> history = historyDao.getApplicationHistory(id);
+  public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id, @RequestParam(required = false) Boolean noReplaced) {
+    final List<ChangeHistoryItem> history = getHistory(id, noReplaced);
     history.stream().forEach(item -> {
       final ChangeHistoryItemInfo info = item.getInfo();
       if (info.getId() != null && (item.getChangeType() == ChangeType.STATUS_CHANGED ||
@@ -73,4 +76,11 @@ public class ApplicationHistoryController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  private List<ChangeHistoryItem> getHistory(int applicationId, Boolean noReplaced) {
+    if (BooleanUtils.isTrue(noReplaced)) {
+      return historyDao.getApplicationHistory(Arrays.asList(applicationId));
+    } else {
+      return historyDao.getApplicationHistory(applicationId);
+    }
+  }
 }

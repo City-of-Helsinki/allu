@@ -96,6 +96,14 @@ public class ApplicationHistoryService {
           .collect(Collectors.toList());
   }
 
+  public List<StatusType> getStatusChangesWithoutReplaced(Integer applicationId) {
+    return Arrays.stream(restTemplate.getForObject(applicationProperties.getApplicationHistoryUrl(true),
+      ChangeHistoryItem[].class, applicationId))
+      .filter(c -> c.getChangeType() == ChangeType.STATUS_CHANGED)
+      .map(c -> StatusType.valueOf(c.getChangeSpecifier()))
+      .collect(Collectors.toList());
+  }
+
   public boolean hasStatusInHistory(Integer applicationId, StatusType status) {
     return getStatusChanges(applicationId).stream()
         .anyMatch(change -> status.name().equals(change.getChangeSpecifier()));

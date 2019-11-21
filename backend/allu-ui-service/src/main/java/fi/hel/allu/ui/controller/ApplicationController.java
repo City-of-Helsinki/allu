@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -127,6 +128,18 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable Integer applicationId) {
     return new ResponseEntity<>(applicationServiceComposer.getChanges(applicationId), HttpStatus.OK);
+  }
+
+  /**
+   * Get status application has been (ignoring replaced applications)
+   *
+   * @param applicationId application ID
+   * @return list of status application has been
+   */
+  @RequestMapping(value = "/{applicationId}/statushistory", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<StatusType>> getStatusHistory(@PathVariable int applicationId) {
+    return ResponseEntity.ok(applicationServiceComposer.getStatusChanges(applicationId));
   }
 
   // Attachment API

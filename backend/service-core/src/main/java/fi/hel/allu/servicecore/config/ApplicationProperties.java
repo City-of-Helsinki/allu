@@ -763,6 +763,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{applicationId}/history");
   }
 
+  public String getApplicationHistoryUrl(Boolean noReplaced) {
+    String url = String.format("/applications/{applicationId}/history?noReplaced=%b", noReplaced);
+    return getModelServiceUrl(url);
+  }
+
   /**
    * @return URL for posting new application's history item
    */
