@@ -209,6 +209,11 @@ export const getHistoryLoading = createSelector(
   fromHistory.getLoading
 );
 
+export const getStatusHistory = createSelector(
+  getHistoryState,
+  fromHistory.getStatusHistory
+);
+
 // Replacement history selectors
 export const getReplacementHistoryState = createSelector(
   getApplicationState,

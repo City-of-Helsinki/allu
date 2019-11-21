@@ -5,8 +5,10 @@
 </pdf-view>
 <div class="document-footer">
   <decision-actions
-    *ngIf="showDecisionActions$ | async"
+    *ngIf="showDecisionActions"
     pdfViewFooter
+    [allowActions]="allowDecisionActions$ | async"
+    [allowResend]="allowDecisionResend$ | async"
     [application]="application$ | async"
     [approvedOperationalCondition]="approvedOperationalCondition$ | async"
     [hasInvoicing]="hasInvoicing$ | async"

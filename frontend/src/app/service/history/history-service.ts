@@ -6,6 +6,7 @@ import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {ChangeHistoryMapper} from '../mapper/change-history-mapper';
 import {BackendChangeHistoryItem} from '../backend-model/backend-change-history-item';
 import {map} from 'rxjs/internal/operators';
+import {ApplicationStatus} from '@model/application/application-status';
 
 const HISTORY_URL = '/api/applications/:appId/history';
 const PROJECT_URL = '/api/projects';
@@ -22,6 +23,11 @@ export class HistoryService {
   getApplicationHistory(applicationId: number): Observable<ChangeHistoryItem[]> {
     const url = HISTORY_URL.replace(':appId', String(applicationId));
     return this.getHistory(url);
+  }
+
+  getStatusHistory(applicationId: number): Observable<ApplicationStatus[]> {
+    const url = `/api/applications/${applicationId}/statushistory`;
+    return this.http.get<ApplicationStatus[]>(url);
   }
 
   private getHistory(url: string): Observable<ChangeHistoryItem[]> {

@@ -1,60 +1,62 @@
 <div class="action-row">
-  <ng-container *ngIf="showProposal">
-    <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']; types:[type]">
-      <div class="action-item"
-           [matTooltip]="decisionBlockedReasons$ | async"
-           [matTooltipDisabled]="!(decisionBlocked$ | async)">
-        <button mat-raised-button type="button" color="primary"
-                [disabled]="decisionBlocked$ | async"
-                (click)="decisionProposal('PROPOSE_APPROVAL')">
-          {{'decision.proposal.type.PROPOSE_APPROVAL' | translation | uppercase}}
-        </button>
-      </div>
+  <ng-container *ngIf="allowActions">
+    <ng-container *ngIf="showProposal">
+      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']; types:[type]">
+        <div class="action-item"
+             [matTooltip]="decisionBlockedReasons$ | async"
+             [matTooltipDisabled]="!(decisionBlocked$ | async)">
+          <button mat-raised-button type="button" color="primary"
+                  [disabled]="decisionBlocked$ | async"
+                  (click)="decisionProposal('PROPOSE_APPROVAL')">
+            {{'decision.proposal.type.PROPOSE_APPROVAL' | translation | uppercase}}
+          </button>
+        </div>
+      </ng-container>
     </ng-container>
-  </ng-container>
-  <ng-container *ngIf="skipProposal">
-    <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
-      <div class="action-item"
-           [matTooltip]="decisionBlockedReasons$ | async"
-           [matTooltipDisabled]="!(decisionBlocked$ | async)">
-        <button mat-raised-button type="button" color="primary"
-                [disabled]="decisionBlocked$ | async"
-                (click)="decision()">
-          {{'decision.type.DECISION.confirmText' | translation | uppercase}}
-        </button>
-      </div>
-    </ng-container>
-  </ng-container>
-  <ng-container *ngIf="showDecision">
-    <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
-      <ng-container *availableTo="['ROLE_DECISION']; types:[type]">
+    <ng-container *ngIf="skipProposal">
+      <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
         <div class="action-item"
              [matTooltip]="decisionBlockedReasons$ | async"
              [matTooltipDisabled]="!(decisionBlocked$ | async)">
           <button mat-raised-button type="button" color="primary"
                   [disabled]="decisionBlocked$ | async"
                   (click)="decision()">
-            {{['decision.type', application.targetState, 'confirmText'] | translation | uppercase }}
-          </button>
-        </div>
-        <div class="action-item" *ngIf="showToOperationalCondition"
-             [matTooltip]="decisionBlockedReasons$ | async"
-             [matTooltipDisabled]="!(decisionBlocked$ | async)">
-          <button mat-raised-button type="button" color="primary"
-                  [disabled]="decisionBlocked$ | async"
-                  (click)="operationalCondition()">
-            {{'decision.toOperationalCondition' | translation | uppercase }}
-          </button>
-        </div>
-        <div class="action-item">
-          <button mat-raised-button type="button" color="primary" (click)="returnToPreparation()">
-            {{getDecisionReturnTextKey() | translation | uppercase}}
+            {{'decision.type.DECISION.confirmText' | translation | uppercase}}
           </button>
         </div>
       </ng-container>
     </ng-container>
+    <ng-container *ngIf="showDecision">
+      <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
+        <ng-container *availableTo="['ROLE_DECISION']; types:[type]">
+          <div class="action-item"
+               [matTooltip]="decisionBlockedReasons$ | async"
+               [matTooltipDisabled]="!(decisionBlocked$ | async)">
+            <button mat-raised-button type="button" color="primary"
+                    [disabled]="decisionBlocked$ | async"
+                    (click)="decision()">
+              {{['decision.type', application.targetState, 'confirmText'] | translation | uppercase }}
+            </button>
+          </div>
+          <div class="action-item" *ngIf="showToOperationalCondition"
+               [matTooltip]="decisionBlockedReasons$ | async"
+               [matTooltipDisabled]="!(decisionBlocked$ | async)">
+            <button mat-raised-button type="button" color="primary"
+                    [disabled]="decisionBlocked$ | async"
+                    (click)="operationalCondition()">
+              {{'decision.toOperationalCondition' | translation | uppercase }}
+            </button>
+          </div>
+          <div class="action-item">
+            <button mat-raised-button type="button" color="primary" (click)="returnToPreparation()">
+              {{getDecisionReturnTextKey() | translation | uppercase}}
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
   </ng-container>
-  <ng-container *ngIf="showResend">
+  <ng-container *ngIf="allowResend">
     <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"

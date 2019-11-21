@@ -13,7 +13,7 @@ import {DistributionType} from '@model/common/distribution-type';
 import {filter, map} from 'rxjs/internal/operators';
 import {UserService} from '@service/user/user-service';
 import {of} from 'rxjs/internal/observable/of';
-import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {DecisionTab, tabToStatus} from '@feature/decision/documents/decision-tab';
 
 export type DecisionModalType = 'DECISIONMAKING' | 'RETURNED_TO_PREPARATION' | 'REJECTED' | 'RESEND_EMAIL';
 
@@ -91,7 +91,7 @@ export class DecisionModalComponent implements OnInit {
     const formValue = this.decisionForm.value;
 
     this.dialogRef.close({
-      status: ApplicationStatus[this.status],
+      status: this.resultStatus(),
       distributionList: formValue.distribution,
       emailMessage: formValue.emailMessage,
       comment: formValue.comment,
@@ -135,5 +135,11 @@ export class DecisionModalComponent implements OnInit {
         filter(preferred => !!preferred)
       );
     }
+  }
+
+  private resultStatus(): ApplicationStatus {
+    return this.type === 'RESEND_EMAIL'
+      ? tabToStatus[this.data.tab]
+      : this.status;
   }
 }

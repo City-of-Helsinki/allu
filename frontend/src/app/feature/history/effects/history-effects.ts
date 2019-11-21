@@ -6,7 +6,7 @@ import * as fromHistory from '../reducers/history-reducer';
 import * as fromProject from '../../project/reducers';
 import * as fromApplication from '../../application/reducers';
 import {ofTargetAndType, withLatestExistingOfTargetAndType} from '../../allu/actions/action-with-target';
-import {HistoryActionType, Load, LoadByTargetId, LoadFailed, LoadSuccess} from '../actions/history-actions';
+import {HistoryActionType, Load, LoadByTargetId, LoadFailed, LoadStatus, LoadStatusComplete, LoadSuccess} from '../actions/history-actions';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
 import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {HistoryService} from '../../../service/history/history-service';
@@ -32,7 +32,10 @@ export class HistoryEffects {
   loadApplicationHistory: Observable<Action> = this.actions.pipe(
     withLatestExistingOfTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, HistoryActionType.Load),
     switchMap(([action, application]) => this.historyService.getApplicationHistory(application.id).pipe(
-      map(history => new LoadSuccess(action.targetType, history)),
+      switchMap(history => [
+        new LoadSuccess(action.targetType, history),
+        new LoadStatus(action.targetType, application.id)
+      ]),
       catchError(error => of(new LoadFailed(action.targetType, error)))
     ))
   );
@@ -41,8 +44,20 @@ export class HistoryEffects {
   loadApplicationHistoryByTargetId: Observable<Action> = this.actions.pipe(
     ofTargetAndType<LoadByTargetId>(ActionTargetType.Application, HistoryActionType.LoadByTargetId),
     switchMap((action) => this.historyService.getApplicationHistory(action.payload).pipe(
-      map(history => new LoadSuccess(action.targetType, history)),
+      switchMap(history => [
+        new LoadSuccess(action.targetType, history),
+        new LoadStatus(action.targetType, action.payload)
+      ]),
       catchError(error => of(new LoadFailed(action.targetType, error)))
+    ))
+  );
+
+  @Effect()
+  loadStatusHistory: Observable<Action> = this.actions.pipe(
+    ofTargetAndType<LoadStatus>(ActionTargetType.Application, HistoryActionType.LoadStatus),
+    switchMap(action => this.historyService.getStatusHistory(action.payload).pipe(
+      map(statusHistory => new LoadStatusComplete(action.targetType, statusHistory)),
+      catchError(error => of(new LoadStatusComplete(action.targetType, undefined, error)))
     ))
   );
 

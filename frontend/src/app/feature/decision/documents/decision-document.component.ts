@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
-import {Observable, Subject} from 'rxjs/index';
+import {combineLatest, Observable, Subject} from 'rxjs/index';
 import {select, Store} from '@ngrx/store';
 import {map, take, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
@@ -12,7 +12,7 @@ import * as fromInvoicing from '@feature/application/invoicing/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
-import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {DecisionTab, tabToStatus} from '@feature/decision/documents/decision-tab';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
 import {ArrayUtil} from '@util/array-util';
@@ -29,7 +29,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   pdf$: Observable<Blob>;
   loading$: Observable<boolean>;
   processing$: Observable<boolean>;
-  showDecisionActions$: Observable<boolean>;
+  showDecisionActions: boolean;
+  allowDecisionActions$: Observable<boolean>;
+  allowDecisionResend$: Observable<boolean>;
   showContractActions$: Observable<boolean>;
   showTerminationActions$: Observable<boolean>;
   approvedOperationalCondition$: Observable<boolean>;
@@ -76,14 +78,18 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
       case DecisionTab.OPERATIONAL_CONDITION: {
         this.pdf$ = this.store.select(fromDecision.getOperationalConditionApprovalPdf);
         this.loading$ = this.store.select(fromDecision.getOperationalConditionApprovalLoading);
-        this.showDecisionActions$ = this.application$.pipe(map(app => this.showOperationalConditionActions(app)));
+        this.showDecisionActions = true;
+        this.allowDecisionActions$ = this.application$.pipe(map(app => this.showOperationalConditionActions(app)));
+        this.allowDecisionResend$ = this.allowResend(this.tab);
         break;
       }
 
       case DecisionTab.WORK_FINISHED: {
         this.pdf$ = this.store.select(fromDecision.getWorkFinishedApprovalPdf);
         this.loading$ = this.store.select(fromDecision.getWorkFinishedApprovaLoading);
-        this.showDecisionActions$ = this.application$.pipe(map(app => this.showWorkFinishedActions(app)));
+        this.showDecisionActions = true;
+        this.allowDecisionActions$ = this.application$.pipe(map(app => this.showWorkFinishedActions(app)));
+        this.allowDecisionResend$ = this.allowResend(this.tab);
         break;
       }
 
@@ -91,14 +97,16 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
         this.pdf$ = this.store.select(fromDecision.getTerminationPdf);
         this.loading$ = this.store.select(fromDecision.getTerminationLoading);
         this.showTerminationActions$ = this.application$.pipe(map(app => this.showTerminationActions(app)));
-        this.showDecisionActions$ = this.application$.pipe(map(app => this.showDecisionActionsOnTerminationTab(app)));
+        this.allowDecisionActions$ = this.application$.pipe(map(app => this.showDecisionActionsOnTerminationTab(app)));
         break;
       }
 
       default: {
         this.pdf$ = this.store.select(fromDecision.getDecisionPdf);
         this.loading$ = this.store.select(fromDecision.getDecisionLoading);
-        this.showDecisionActions$ = this.application$.pipe(map(app => this.showDecisionActions(app)));
+        this.showDecisionActions = true;
+        this.allowDecisionActions$ = this.application$.pipe(map(app => this.allowDecisionActions(app)));
+        this.allowDecisionResend$ = this.allowResend(this.tab);
         break;
       }
     }
@@ -108,7 +116,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
     this.store.dispatch(new Load());
   }
 
-  private showDecisionActions(app: Application): boolean {
+  private allowDecisionActions(app: Application): boolean {
     const inHandling = ApplicationStatus.HANDLING === app.status;
     const showByStatus = ArrayUtil.contains([app.status, app.targetState], ApplicationStatus.DECISION);
     return inHandling || showByStatus;
@@ -147,4 +155,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
     return isInDecisionMaking || isTerminated;
   }
 
+  private allowResend(tab: DecisionTab): Observable<boolean> {
+    return this.store.pipe(select(fromApplication.getStatusHistory)).pipe(
+      map(statusHistory => ArrayUtil.contains(statusHistory, tabToStatus[tab]))
+    );
+  }
 }

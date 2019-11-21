@@ -24,19 +24,14 @@ import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
-const RESEND_ALLOWED = [
-  ApplicationStatus.DECISION,
-  ApplicationStatus.OPERATIONAL_CONDITION,
-  ApplicationStatus.FINISHED,
-  ApplicationStatus.ARCHIVED,
-];
-
 @Component({
   selector: 'decision-actions',
   templateUrl: './decision-actions.component.html',
   styleUrls: ['./decision-actions.component.scss']
 })
 export class DecisionActionsComponent extends BaseDecisionActionsComponent implements OnInit, OnChanges {
+  @Input() allowActions: boolean;
+  @Input() allowResend: boolean;
   @Input() application: Application;
   @Input() approvedOperationalCondition = false;
   @Input() tab: DecisionTab = DecisionTab.DECISION;
@@ -46,7 +41,6 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
   skipProposal = false;
   showDecision = false;
   showToOperationalCondition = false;
-  showResend = false;
   type: ApplicationType;
 
   constructor(private applicationStore: ApplicationStore,
@@ -69,7 +63,6 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
       && !requiresContract(this.application.type);
     this.skipProposal = inHandling(status) && automaticDecisionMaking(this.application.type);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
-    this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
     this.showToOperationalCondition = this.approvedOperationalCondition && this.application.targetState === ApplicationStatus.DECISION;
     this.type = this.application.type;
   }
