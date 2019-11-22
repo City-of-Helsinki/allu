@@ -32,18 +32,31 @@ describe('Create external user', () => {
       'expirationTime': '2022-07-07T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
+    const extUserInternal  = {
+      'id': null,
+      'username': 'ext-user-internal',
+      'name': 'Internal Ext User',
+      'password': 'asdk#AER5320_23GtuOi',
+      'active': 'true',
+      'expirationTime': '2022-07-07T00:00:00.000Z',
+      'assignedRoles': ['ROLE_INTERNAL']
+    }
+
     let optionsTestUser = TestUtil.getPostOptions('/api/externalusers', extUser);
     let optionsTestUserRkj = TestUtil.getPostOptions('/api/externalusers', extUserRkj);
     let optionsTestUserHsy = TestUtil.getPostOptions('/api/externalusers', extUserHsy);
+    let optionsTestUserInternal = TestUtil.getPostOptions('/api/externalusers', extUserInternal);
     TestUtil.login('admin')
       .then(token => {
         TestUtil.addAuthorization(optionsTestUser, token);
         TestUtil.addAuthorization(optionsTestUserRkj, token);
         TestUtil.addAuthorization(optionsTestUserHsy, token);
+        TestUtil.addAuthorization(optionsTestUserInternal, token);
       })
       .then(() => rp(optionsTestUser))
       .then(() => rp(optionsTestUserRkj))
       .then(() => rp(optionsTestUserHsy))
+      .then(() => rp(optionsTestUserInternal))
       .then(done, done.fail);
   });
 
