@@ -23,6 +23,11 @@ public class ApplicationQueryParameters extends QueryParameters {
   private Boolean hasProject;
 
   /**
+   * By default archived applications are not included in search results.
+   */
+  private boolean includeArchived = false;
+
+  /**
    * surveyRequired is added to query as OR
    */
   private Boolean surveyRequired;
@@ -49,5 +54,13 @@ public class ApplicationQueryParameters extends QueryParameters {
 
   public void setSurveyRequired(Boolean surveyRequired) {
     this.surveyRequired = surveyRequired;
+  }
+
+  public boolean isIncludeArchived() {
+    return includeArchived;
+  }
+
+  public void setIncludeArchived(boolean includeArchived) {
+    this.includeArchived = includeArchived;
   }
 }

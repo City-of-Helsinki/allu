@@ -5,10 +5,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.common.domain.DocumentSearchCriteria;
+import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -78,6 +82,10 @@ public class ApprovalDocumentService {
 
   public byte[] getFinalApprovalDocument(Integer applicationId, ApprovalDocumentType type) {
     return restTemplate.getForObject(applicationProperties.getApprovalDocumentUrl(), byte[].class, applicationId, type);
+  }
+
+  public byte[] getAnonymizedDocument(Integer applicationId, ApprovalDocumentType type) {
+    return restTemplate.getForObject(applicationProperties.getAnonymizedApprovalDocumentUrl(), byte[].class, applicationId, type);
   }
 
   public void createFinalApprovalDocument(ApplicationJson prevApplication,
@@ -182,4 +190,11 @@ public class ApprovalDocumentService {
         return DecisionDocumentType.DECISION;
     }
   }
+
+  public List<DocumentSearchResult> searchApprovalDocuments(DocumentSearchCriteria searchCriteria, ApprovalDocumentType documentType) {
+    ParameterizedTypeReference<List<DocumentSearchResult>> typeRef = new ParameterizedTypeReference<List<DocumentSearchResult>>() {};
+    return restTemplate.exchange(applicationProperties.getApprovalDocumentSearchUrl(), HttpMethod.POST,
+        new HttpEntity<>(searchCriteria), typeRef, documentType).getBody();
+  }
+
 }

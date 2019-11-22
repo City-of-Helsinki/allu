@@ -136,12 +136,6 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  protected ResponseEntity<byte[]> returnPdfResponse(byte[] bytes) {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-  }
-
   @ApiOperation(value = "Gets decision document for application with given ID",
       authorizations = @Authorization(value ="api_key"),
       responseContainer = "Array")
@@ -157,7 +151,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     byte[] decision = decisionService.getFinalDecision(applicationId);
 
     List<byte[]> attachments = getDecisionAttachments(applicationId);
-    return returnPdfResponse(PdfMerger.appendDocuments(decision, attachments));
+    return PdfResponseBuilder.createResponseEntity(PdfMerger.appendDocuments(decision, attachments));
   }
 
   protected List<byte[]> getDecisionAttachments(Integer applicationId) {
@@ -184,7 +178,6 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] termination = terminationService.getFinalTermination(applicationId);
-
-    return returnPdfResponse(termination);
+    return PdfResponseBuilder.createResponseEntity(termination);
   }
 }

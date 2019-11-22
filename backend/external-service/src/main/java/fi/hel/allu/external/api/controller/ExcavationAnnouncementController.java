@@ -113,7 +113,7 @@ public class ExcavationAnnouncementController
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.OPERATIONAL_CONDITION);
-    return returnPdfResponse(bytes);
+    return PdfResponseBuilder.createResponseEntity(bytes);
   }
 
   @ApiOperation(value = "Gets work finished approval document for application with given ID",
@@ -130,7 +130,7 @@ public class ExcavationAnnouncementController
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED);
-    return returnPdfResponse(bytes);
+    return PdfResponseBuilder.createResponseEntity(bytes);
   }
 
   @ApiOperation(value = "Gets excavation announcement with given ID",

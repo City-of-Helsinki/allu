@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import fi.hel.allu.common.domain.DocumentSearchCriteria;
+import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -481,6 +483,14 @@ public class ApplicationController {
   public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
     applicationService.removeOwnerNotification(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Search decisions
+   */
+  @RequestMapping(value = "/decisions/search", method = RequestMethod.POST)
+  public ResponseEntity<List<DocumentSearchResult>> searchDecisions(@RequestBody DocumentSearchCriteria searchCriteria) {
+    return ResponseEntity.ok(decisionDao.searchDecisions(searchCriteria));
   }
 
 }

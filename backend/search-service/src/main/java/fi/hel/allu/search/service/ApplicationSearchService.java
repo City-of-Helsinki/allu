@@ -75,10 +75,12 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
 
   @Override
   protected BoolQueryBuilder addAdditionalQueryParameters(BoolQueryBuilder qb, ApplicationQueryParameters queryParameters) {
-    qb.mustNot(
-        QueryBuilders.matchQuery(
-            QueryParameter.FIELD_NAME_APPLICATION_STATUS, StatusType.REPLACED.name()).operator(Operator.AND)
-    );
+    if (!queryParameters.isIncludeArchived()) {
+      qb.mustNot(
+          QueryBuilders.matchQuery(
+              QueryParameter.FIELD_NAME_APPLICATION_STATUS, StatusType.REPLACED.name()).operator(Operator.AND)
+          );
+    }
     if (queryParameters.getIntersectingGeometry() != null) {
       addGeometryParameter(queryParameters.getIntersectingGeometry(), qb);
     }

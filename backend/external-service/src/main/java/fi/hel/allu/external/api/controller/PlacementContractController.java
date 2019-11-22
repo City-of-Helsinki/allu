@@ -63,7 +63,7 @@ public class PlacementContractController extends BaseApplicationController<Place
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] contract= contractService.getContractProposal(applicationId);
     List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
-    return returnPdfResponse(PdfMerger.appendDocuments(contract, attachments));
+    return PdfResponseBuilder.createResponseEntity(PdfMerger.appendDocuments(contract, attachments));
   }
 
   @ApiOperation(value = "Gets final contract PDF for application with given ID",
@@ -81,7 +81,7 @@ public class PlacementContractController extends BaseApplicationController<Place
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] contract = contractService.getFinalContract(applicationId);
     List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
-    return returnPdfResponse(PdfMerger.appendDocuments(contract, attachments));
+    return PdfResponseBuilder.createResponseEntity(PdfMerger.appendDocuments(contract, attachments));
   }
 
   @ApiOperation(value = "Gets contract metadata for application with given ID",

@@ -1,13 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.common.domain.DocumentSearchCriteria;
+import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -82,6 +87,10 @@ public class DecisionService {
     }
   }
 
+  public byte[] getAnonymizedDecision(int applicationId) {
+    return restTemplate.getForObject(applicationProperties.getAnonymizedDecisionUrl(), byte[].class, applicationId);
+  }
+
   public byte[] getFinalDecision(int applicationId) {
     return restTemplate.getForObject(applicationProperties.getDecisionUrl(), byte[].class, applicationId);
   }
@@ -102,8 +111,8 @@ public class DecisionService {
         decisionJson, byte[].class, StyleSheet.name(application));
   }
 
-
-
-
-
+  public List<DocumentSearchResult> searchDecisions(DocumentSearchCriteria searchCriteria) {
+    ParameterizedTypeReference<List<DocumentSearchResult>> typeRef = new ParameterizedTypeReference<List<DocumentSearchResult>>() {};
+    return restTemplate.exchange(applicationProperties.getDecisionSearchUrl(), HttpMethod.POST, new HttpEntity<>(searchCriteria), typeRef).getBody();
+  }
 }

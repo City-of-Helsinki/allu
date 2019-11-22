@@ -1,21 +1,21 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.ApprovalDocumentType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApprovalDocumentDao;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
+import fi.hel.allu.common.domain.DocumentSearchCriteria;
+import fi.hel.allu.common.domain.DocumentSearchResult;
+import fi.hel.allu.common.domain.types.ApprovalDocumentType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.ApprovalDocumentDao;
 
 @RestController
 @RequestMapping("/applications")
@@ -63,4 +63,12 @@ public class ApprovalDocumentController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Search approval documents of given type.
+   */
+  @RequestMapping(value = "/approvalDocument/{type}/search", method = RequestMethod.POST)
+  public ResponseEntity<List<DocumentSearchResult>> searchApprovalDocuments(@PathVariable ApprovalDocumentType type,
+      @RequestBody DocumentSearchCriteria searchCriteria) {
+    return ResponseEntity.ok(approvalDocumentDao.searchApprovalDocuments(searchCriteria, type));
+  }
 }
