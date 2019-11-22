@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
-import {activeRequestWithoutResponse, InformationRequestStatus} from '@model/information-request/information-request-status';
+import {isRequestActionable, InformationRequestStatus} from '@model/information-request/information-request-status';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
@@ -15,8 +15,8 @@ export class InformationRequestSummaryComponent {
 
   constructor(private store: Store<fromRoot.State>) {}
 
-  get showInformationRequest() {
-    return this.summary ? activeRequestWithoutResponse(this.summary.status) : false;
+  get showInformationRequestActions() {
+    return this.summary ? isRequestActionable(this.summary.status) : false;
   }
 
   cancelInformationRequest(): void {

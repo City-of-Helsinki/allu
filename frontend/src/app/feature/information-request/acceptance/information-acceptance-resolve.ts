@@ -85,7 +85,7 @@ export class InformationAcceptanceResolve implements Resolve<InformationAcceptan
         this.store.pipe(select(fromInformationRequest.getInformationRequestResponse(requestId)), take(1)),
         this.store.pipe(select(fromApplication.getCurrentApplication), take(1))
       ])),
-      filter(([request, response]) => response !== undefined),
+      filter(([request, response, currentApp]) => response !== undefined),
     );
   }
 

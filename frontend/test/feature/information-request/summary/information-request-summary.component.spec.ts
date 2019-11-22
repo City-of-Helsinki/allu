@@ -105,6 +105,24 @@ describe('InformationRequestSummary', () => {
     expect(getButtonWithText(de, findTranslation('common.button.show').toUpperCase())).toBeDefined();
   });
 
+  it('should hide action buttons for request with response', () => {
+    const summary = new InformationRequestSummary();
+    summary.status = InformationRequestStatus.RESPONSE_RECEIVED;
+    testHost.summary = summary;
+    fixture.detectChanges();
+    expect(getButtonWithText(de, findTranslation('application.button.cancelInformationRequest').toUpperCase())).toBeFalsy();
+    expect(getButtonWithText(de, findTranslation('common.button.show').toUpperCase())).toBeFalsy();
+  });
+
+  it('should hide action buttons for closed request', () => {
+    const summary = new InformationRequestSummary();
+    summary.status = InformationRequestStatus.CLOSED;
+    testHost.summary = summary;
+    fixture.detectChanges();
+    expect(getButtonWithText(de, findTranslation('application.button.cancelInformationRequest').toUpperCase())).toBeFalsy();
+    expect(getButtonWithText(de, findTranslation('common.button.show').toUpperCase())).toBeFalsy();
+  });
+
   it('should navigate when show is clicked', fakeAsync(() => {
     const summary = new InformationRequestSummary();
     summary.status = InformationRequestStatus.OPEN;
@@ -116,7 +134,7 @@ describe('InformationRequestSummary', () => {
     expect(location.path()).toBe('/information_request');
   }));
 
-  it('should navigate cancel request when cancel is clicked', fakeAsync(() => {
+  it('should dispatch cancel request when cancel is clicked', fakeAsync(() => {
     const summary = new InformationRequestSummary();
     summary.informationRequestId = 123;
     summary.status = InformationRequestStatus.OPEN;

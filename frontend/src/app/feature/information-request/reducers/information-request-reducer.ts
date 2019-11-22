@@ -1,6 +1,6 @@
 import {InformationRequestAction, InformationRequestActionType} from '../actions/information-request-actions';
 import {InformationRequest} from '@model/information-request/information-request';
-import {activeRequest} from '@model/information-request/information-request-status';
+import {InformationRequestStatus, isRequestUnfinished} from '@model/information-request/information-request-status';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
 export interface State extends EntityState<InformationRequest> {
@@ -18,9 +18,9 @@ export const initialState: State = adapter.getInitialState({
 });
 
 const getUpdatedActiveOnUpsert = (state: State, request: InformationRequest): number => {
-  if (activeRequest(request.status)) {
+  if (isRequestUnfinished(request.status)) {
     return request.informationRequestId;
-  } else if (request.informationRequestId === state.active) {
+  } else if (request.status === InformationRequestStatus.CLOSED && request.informationRequestId === state.active) {
     return undefined;
   } else {
     return state.active;
