@@ -9,6 +9,9 @@ export interface BackendSupervisionTaskLocation {
   geometry: GeoJSON.GeometryCollection;
   paymentTariff: string;
   underpass: boolean;
+  customerStartTime?: string;
+  customerEndTime?: string;
+  customerReportingTime?: string;
 }
 
 export interface BackendLocation {

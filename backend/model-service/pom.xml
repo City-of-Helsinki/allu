@@ -430,6 +430,21 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
+                          <table>supervision_task_location</table>
+                          <column>customer_start_time</column>
+                          <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                          <table>supervision_task_location</table>
+                          <column>customer_end_time</column>
+                          <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                        <table>supervision_task_location</table>
+                        <column>customer_reporting_time</column>
+                        <type>java.time.ZonedDateTime</type>
+                      </typeMapping>
+                        <typeMapping>
                             <table>termination</table>
                             <column>termination_decision_time</column>
                             <type>java.time.ZonedDateTime</type>

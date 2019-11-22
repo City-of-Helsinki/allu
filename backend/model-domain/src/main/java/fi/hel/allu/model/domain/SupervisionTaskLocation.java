@@ -12,14 +12,17 @@ public class SupervisionTaskLocation extends AbstractLocation {
   }
 
   public SupervisionTaskLocation(Integer locationKey, Geometry geometry, ZonedDateTime startTime, ZonedDateTime endTime,
-      String paymentTariff, Boolean underpass, Integer applicationLocationId) {
-    super(locationKey, geometry, startTime, endTime, paymentTariff, underpass);
+      String paymentTariff, Boolean underpass, ZonedDateTime customerStartTime, ZonedDateTime customerEndTime,
+      ZonedDateTime customerReportingTime, Integer applicationLocationId) {
+    super(locationKey, geometry, startTime, endTime, paymentTariff, underpass, customerStartTime, customerEndTime, customerReportingTime);
     this.applicationLocationId = applicationLocationId;
   }
 
   public static SupervisionTaskLocation fromApplicationLocation(Location location) {
     return new SupervisionTaskLocation(location.getLocationKey(), location.getGeometry(), location.getStartTime(),
-        location.getEndTime(), location.getEffectivePaymentTariff(), location.getUnderpass(), location.getId());
+        location.getEndTime(), location.getEffectivePaymentTariff(), location.getUnderpass(),
+        location.getCustomerStartTime(), location.getCustomerEndTime(), location.getCustomerReportingTime(),
+        location.getId());
   }
 
   public Integer getApplicationLocationId() {

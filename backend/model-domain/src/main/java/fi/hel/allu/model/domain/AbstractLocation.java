@@ -21,19 +21,26 @@ public abstract class AbstractLocation {
   private ZonedDateTime endTime;
   private String paymentTariff;
   private Boolean underpass;
+  private ZonedDateTime customerStartTime;
+  private ZonedDateTime customerEndTime;
+  private ZonedDateTime customerReportingTime;
 
 
   protected AbstractLocation() {
   }
 
   protected AbstractLocation(Integer locationKey, Geometry geometry, ZonedDateTime startTime, ZonedDateTime endTime,
-      String paymentTariff, Boolean underpass) {
+      String paymentTariff, Boolean underpass, ZonedDateTime customerStartTime, ZonedDateTime customerEndTime,
+      ZonedDateTime customerReportingTime) {
     this.locationKey = locationKey;
     this.geometry = geometry;
     this.startTime = startTime;
     this.endTime = endTime;
     this.paymentTariff = paymentTariff;
     this.underpass = underpass;
+    this.customerStartTime = customerStartTime;
+    this.customerEndTime = customerEndTime;
+    this.customerReportingTime = customerReportingTime;
   }
 
   /**
@@ -130,4 +137,27 @@ public abstract class AbstractLocation {
     this.underpass = underpass;
   }
 
+  public ZonedDateTime getCustomerStartTime() {
+    return customerStartTime;
+  }
+
+  public void setCustomerStartTime(ZonedDateTime customerStartTime) {
+    this.customerStartTime = customerStartTime;
+  }
+
+  public ZonedDateTime getCustomerEndTime() {
+    return customerEndTime;
+  }
+
+  public void setCustomerEndTime(ZonedDateTime customerEndTime) {
+    this.customerEndTime = customerEndTime;
+  }
+
+  public ZonedDateTime getCustomerReportingTime() {
+    return customerReportingTime;
+  }
+
+  public void setCustomerReportingTime(ZonedDateTime customerReportingTime) {
+    this.customerReportingTime = customerReportingTime;
+  }
 }

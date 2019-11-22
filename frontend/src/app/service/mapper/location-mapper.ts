@@ -99,6 +99,9 @@ export class LocationMapper {
     location.paymentTariff = supervisionTaskLocation.paymentTariff;
     location.locationKey = supervisionTaskLocation.locationKey;
     location.underpass = supervisionTaskLocation.underpass;
+    location.customerStartTime = TimeUtil.dateFromBackend(supervisionTaskLocation.customerStartTime);
+    location.customerEndTime = TimeUtil.dateFromBackend(supervisionTaskLocation.customerEndTime);
+    location.customerReportingTime = TimeUtil.dateFromBackend(supervisionTaskLocation.customerReportingTime);
     return location;
   }
 }

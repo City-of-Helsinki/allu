@@ -11,5 +11,11 @@
       <div fxFlex="0 1 auto" *ngIf="showPaymentTariff">{{paymentTariff}}</div>
       <div fxFlex="0 1 auto" *ngIf="relatedLocation.underpass">{{'location.underpass' | translation}}</div>
     </div>
+    <div fxLayout="row" class="location-info" *ngIf="relatedLocation.customerReportingTime">
+      <div fxFlex>
+        <span>{{'dateReporting.title.customer.validity' | translation}}: </span>
+        <span>{{relatedLocation.customerStartTime | date:'shortDate'}}–{{relatedLocation.customerEndTime | date:'shortDate'}}</span>
+      </div>
+    </div>
   </div>
 </div>

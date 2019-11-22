@@ -16,9 +16,6 @@ public class Location extends AbstractLocation implements PostalAddressItem {
   private Integer cityDistrictId;
   private Integer cityDistrictIdOverride;
   private String paymentTariffOverride;
-  private ZonedDateTime customerStartTime;
-  private ZonedDateTime customerEndTime;
-  private ZonedDateTime customerReportingTime;
 
   public Location() {
   }
@@ -185,29 +182,5 @@ public class Location extends AbstractLocation implements PostalAddressItem {
       return paymentTariffOverride;
     }
     return getPaymentTariff();
-  }
-
-  public ZonedDateTime getCustomerStartTime() {
-    return customerStartTime;
-  }
-
-  public void setCustomerStartTime(ZonedDateTime customerStartTime) {
-    this.customerStartTime = customerStartTime;
-  }
-
-  public ZonedDateTime getCustomerEndTime() {
-    return customerEndTime;
-  }
-
-  public void setCustomerEndTime(ZonedDateTime customerEndTime) {
-    this.customerEndTime = customerEndTime;
-  }
-
-  public ZonedDateTime getCustomerReportingTime() {
-    return customerReportingTime;
-  }
-
-  public void setCustomerReportingTime(ZonedDateTime customerReportingTime) {
-    this.customerReportingTime = customerReportingTime;
   }
 }
