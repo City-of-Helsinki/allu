@@ -7,7 +7,7 @@
   </div>
   <div fxFlex *ngIf="relatedLocation">
     <div fxLayout="row" class="location-info">
-      <div fxFlex="0 1 auto">{{relatedLocation.startTime | date:'shortDate'}} - {{relatedLocation.endTime | date:'shortDate'}}</div>
+      <div fxFlex="0 1 auto">{{relatedLocation.startTime | date:'shortDate'}}–{{relatedLocation.endTime | date:'shortDate'}}</div>
       <div fxFlex="0 1 auto" *ngIf="showPaymentTariff">{{paymentTariff}}</div>
       <div fxFlex="0 1 auto" *ngIf="relatedLocation.underpass">{{'location.underpass' | translation}}</div>
     </div>
