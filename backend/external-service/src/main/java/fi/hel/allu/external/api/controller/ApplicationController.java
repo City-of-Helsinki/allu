@@ -20,7 +20,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/applications")
-@Api(value = "v1/applications")
+@Api(tags= "Applications")
 public class ApplicationController {
 
   @Autowired

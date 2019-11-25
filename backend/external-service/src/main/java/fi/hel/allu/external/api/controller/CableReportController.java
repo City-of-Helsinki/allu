@@ -10,7 +10,7 @@ import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping("/v1/cablereports")
-@Api(value = "v1/cablereports")
+@Api(tags= "Cable reports")
 public class CableReportController extends BaseApplicationController<CableReportExt, CableReportExtMapper>{
 
   @Autowired

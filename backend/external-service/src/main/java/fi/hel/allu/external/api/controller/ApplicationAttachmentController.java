@@ -21,6 +21,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
+@Api(tags = "Application attachments")
 public class ApplicationAttachmentController {
 
   @Autowired

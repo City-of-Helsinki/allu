@@ -31,7 +31,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/placementcontracts")
-@Api(value = "v1/placementcontracts")
+@Api(tags = "Placement contracts")
 public class PlacementContractController extends BaseApplicationController<PlacementContractExt, PlacementContractExtMapper> {
 
   @Autowired

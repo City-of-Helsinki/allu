@@ -19,7 +19,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/trafficarrangementimages")
-@Api(value = "v1/trafficarrangementimages")
+@Api(tags = "Traffic arrangement images")
 public class TrafficArrangementImageController {
 
   @Autowired

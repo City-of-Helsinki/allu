@@ -19,14 +19,13 @@ import fi.hel.allu.external.domain.ExcavationAnnouncementOutExt;
 import fi.hel.allu.external.domain.ValidityPeriodExt;
 import fi.hel.allu.external.mapper.ExcavationAnnouncementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.DateReportingService;
 import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/excavationannouncements")
-@Api(value = "v1/excavationannouncements")
+@Api(tags = "Excavation announcements")
 public class ExcavationAnnouncementController
     extends BaseApplicationController<ExcavationAnnouncementExt, ExcavationAnnouncementExtMapper> {
 

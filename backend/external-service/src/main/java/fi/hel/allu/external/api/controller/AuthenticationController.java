@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import fi.hel.allu.external.config.ApplicationProperties;
 import fi.hel.allu.external.domain.LoginExt;
 import fi.hel.allu.servicecore.security.TokenUtil;
+import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping("/v1/login")
+@Api(tags = "Authentication")
 public class AuthenticationController {
 
   @Autowired

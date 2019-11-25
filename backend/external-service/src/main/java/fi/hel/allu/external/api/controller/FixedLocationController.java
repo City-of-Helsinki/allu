@@ -19,7 +19,7 @@ import io.swagger.annotations.Authorization;
 
 @RestController
 @RequestMapping("/v1/fixedlocations")
-@Api(value = "v1/fixedlocations")
+@Api(tags = "Fixed locations")
 public class FixedLocationController {
 
   @Autowired

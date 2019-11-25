@@ -18,12 +18,14 @@ import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.domain.InformationRequestFieldJson;
 import fi.hel.allu.servicecore.domain.InformationRequestJson;
 import fi.hel.allu.servicecore.service.InformationRequestService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 @RestController
 @RequestMapping("/v1")
+@Api(tags = "Information requests")
 public class InformationRequestController {
 
   @Autowired

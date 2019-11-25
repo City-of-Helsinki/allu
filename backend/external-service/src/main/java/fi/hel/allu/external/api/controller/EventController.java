@@ -10,7 +10,7 @@ import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping("/v1/events")
-@Api(value = "v1/events")
+@Api(tags = "Events")
 public class EventController extends BaseApplicationController<EventExt, EventExtMapper>{
 
   @Autowired

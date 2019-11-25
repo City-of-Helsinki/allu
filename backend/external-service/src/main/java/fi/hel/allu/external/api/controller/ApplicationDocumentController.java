@@ -19,6 +19,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/documents/applications")
+@Api(tags = "Application documents")
 public class ApplicationDocumentController {
 
   @Autowired

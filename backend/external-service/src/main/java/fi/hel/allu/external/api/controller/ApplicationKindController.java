@@ -22,7 +22,7 @@ import io.swagger.annotations.Authorization;
 
 @RestController
 @RequestMapping("/v1/applicationkinds")
-@Api(value = "v1/applicationkinds")
+@Api(tags = "Application kinds")
 public class ApplicationKindController {
 
   @Autowired

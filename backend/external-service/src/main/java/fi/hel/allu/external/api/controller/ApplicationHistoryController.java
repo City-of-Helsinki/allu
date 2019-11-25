@@ -21,7 +21,7 @@ import io.swagger.annotations.Authorization;
 
 @RestController
 @RequestMapping("/v1/applicationhistory")
-@Api(value = "v1/applicationhistory")
+@Api(tags = "Application history")
 public class ApplicationHistoryController {
 
   @Autowired
