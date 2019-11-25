@@ -25,7 +25,6 @@ import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
-import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.InvoiceService;
 import fi.hel.allu.servicecore.validation.ApplicationGeometryValidator;
 import fi.hel.allu.ui.security.ApplicationSecurityService;
@@ -38,9 +37,6 @@ public class ApplicationController {
 
   @Autowired
   private AttachmentService attachmentService;
-
-  @Autowired
-  private DecisionService decisionService;
 
   @Autowired
   private InvoiceService invoiceService;
@@ -273,79 +269,6 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> readDefaultAttachmentInfos(@PathVariable ApplicationType applicationType) {
     return new ResponseEntity<>(attachmentService.getDefaultAttachmentsByApplicationType(applicationType), HttpStatus.OK);
-  }
-
-  /**
-   * Get the decision PDF for application. If it doesn't exist, generate & return a preview.
-   *
-   * @param applicationId
-   *          the application's Id
-   * @return The PDF data
-   */
-  @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<byte[]> getDecision(@PathVariable int applicationId) {
-    byte[] bytes = decisionService.getDecision(applicationId);
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-  }
-
-  /**
-   * Send the decision PDF for application as email to an updated distribution list.
-   *
-   * @param applicationId       the application's Id.
-   * @param decisionDetailsJson Details of the decision.
-   */
-  @RequestMapping(value = "/{applicationId}/decision/send", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Void> sendDecision(
-      @PathVariable int applicationId,
-      @RequestBody DecisionDetailsJson decisionDetailsJson) {
-    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.DECISION);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{applicationId}/operational_condition/send", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Void> sendOperationalCondition(
-      @PathVariable int applicationId,
-      @RequestBody DecisionDetailsJson decisionDetailsJson) {
-    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.OPERATIONAL_CONDITION);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{applicationId}/work_finished/send", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Void> sendWorkFinished(
-      @PathVariable int applicationId,
-      @RequestBody DecisionDetailsJson decisionDetailsJson) {
-    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.WORK_FINISHED);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{applicationId}/termination/send", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
-  public ResponseEntity<Void> sendTermination(
-      @PathVariable int applicationId,
-      @RequestBody DecisionDetailsJson decisionDetailsJson) {
-    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.TERMINATION);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{id}/distribution", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
-  public ResponseEntity<List<DistributionEntryJson>> updateDistribution(
-    @PathVariable int id,
-    @Valid @RequestBody List<DistributionEntryJson> distribution) {
-    ApplicationJson applicationJson = applicationServiceComposer.replaceDistributionList(id, distribution);
-    return ResponseEntity.ok(applicationJson.getDecisionDistributionList());
-  }
-
-  @RequestMapping(value = "/{id}/distribution", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
-  public ResponseEntity<List<DistributionEntryJson>> getDistribution(@PathVariable int id) {
-    return ResponseEntity.ok(applicationServiceComposer.getDistributionList(id));
   }
 
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
