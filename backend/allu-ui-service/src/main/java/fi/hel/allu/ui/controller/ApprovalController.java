@@ -1,14 +1,8 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
-import fi.hel.allu.servicecore.domain.DecisionDocumentType;
-import fi.hel.allu.servicecore.domain.DistributionEntryJson;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.ApprovalDocumentService;
-import fi.hel.allu.servicecore.service.ChargeBasisService;
-import fi.hel.allu.servicecore.service.DecisionService;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,14 +22,16 @@ public class ApprovalController {
   private final ChargeBasisService chargeBasisService;
   private final DecisionService decisionService;
   private final ApplicationServiceComposer applicationServiceComposer;
+  private final BulkApprovalService bulkApprovalService;
 
   @Autowired
   public ApprovalController(ApprovalDocumentService approvalDocumentService, ChargeBasisService chargeBasisService,
-      DecisionService decisionService, ApplicationServiceComposer applicationServiceComposer) {
+      DecisionService decisionService, ApplicationServiceComposer applicationServiceComposer, BulkApprovalService bulkApprovalService) {
     this.approvalDocumentService = approvalDocumentService;
     this.chargeBasisService = chargeBasisService;
     this.decisionService = decisionService;
     this.applicationServiceComposer = applicationServiceComposer;
+    this.bulkApprovalService = bulkApprovalService;
   }
 
   @RequestMapping(value = "/{applicationId}/approvalDocument/{type}", method = RequestMethod.GET)
@@ -121,5 +117,11 @@ public class ApprovalController {
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<List<DistributionEntryJson>> getDistribution(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.getDistributionList(id));
+  }
+
+  @RequestMapping(value = "/bulkApprovalEntries", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_DECISION')")
+  public ResponseEntity<List<BulkApprovalEntryJson>> getBulkApprovalEntries(@RequestBody List<Integer> ids) {
+    return ResponseEntity.ok(bulkApprovalService.getBulkApprovalEntries(ids));
   }
 }

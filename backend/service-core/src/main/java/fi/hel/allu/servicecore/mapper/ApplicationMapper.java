@@ -457,6 +457,13 @@ public class ApplicationMapper {
     return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
   }
 
+  public List<DistributionEntryJson> createDistributionEntryJsonList(List<DistributionEntry> entries) {
+    if (entries == null) {
+      return Collections.emptyList();
+    }
+    return entries.stream().map(this::createDistributionEntryJson).collect(Collectors.toList());
+  }
+
   public DistributionEntryJson createDistributionEntryJson(DistributionEntry distributionEntry) {
     DistributionEntryJson distributionEntryJson = new DistributionEntryJson();
     distributionEntryJson.setId(distributionEntry.getId());
