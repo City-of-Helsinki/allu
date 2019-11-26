@@ -3,6 +3,7 @@ package fi.hel.allu.common.controller.handler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         final String message = errorMessageAccessor.getMessage(e.getMessage());
         ErrorInfo info = new ErrorInfo();
         info.setErrorMessage(message);
+        Optional.ofNullable(e.getCause())
+          .ifPresent(throwable ->
+            info.setAdditionalInfo(getAdditionalInfoMessage(e.getCause())));
         errorInfoList.add(info);
         return errorInfoList;
       } catch (NoSuchMessageException ne) {
@@ -128,6 +132,14 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
       }
     }
     return e;
+  }
+
+  private String getAdditionalInfoMessage(Throwable t) {
+    if (t instanceof ExceptionWithExtraInfo) {
+      return errorMessageAccessor.getMessage(t.getMessage(), new String[] { ((ExceptionWithExtraInfo) t).getExtraInfo() });
+    } else {
+      return errorMessageAccessor.getMessage(t.getMessage());
+    }
   }
 
   private String getValidationMessage(String key) {

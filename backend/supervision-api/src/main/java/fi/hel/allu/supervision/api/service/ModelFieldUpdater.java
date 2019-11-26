@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+import fi.hel.allu.common.exception.FieldUpdateException;
 import fi.hel.allu.model.domain.Location;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.InvalidPropertyException;
@@ -51,26 +52,26 @@ public abstract class ModelFieldUpdater {
       validateFieldsUpdatable(fields.keySet(), targetObject);
       updateFields(fields, targetObject);
     } catch (IllegalArgumentException | IOException e) {
-      throw new IllegalArgumentException("Failed to set value for field", e);
+      throw new IllegalArgumentException("application.update.fieldFailed", e);
     }
   }
 
   private void validateFieldsUpdatable(Set<String> fields, Object targetObject) {
-    fields.forEach(f -> validateIsUpdatable(getPropertyDescriptor(f, targetObject)));
+    fields.forEach(f -> validateIsUpdatable(getPropertyDescriptor(f, targetObject), f));
   }
 
   protected PropertyDescriptor getPropertyDescriptor(String fieldName, Object targetObject) {
     try {
      return PropertyAccessorFactory.forBeanPropertyAccess(targetObject).getPropertyDescriptor(fieldName);
     } catch (InvalidPropertyException ex) {
-      throw new IllegalArgumentException("Unknown field " + fieldName);
+      throw new FieldUpdateException("application.update.unknownField", fieldName);
     }
   }
 
-  private void validateIsUpdatable(PropertyDescriptor propertyDescriptor) {
-    Method writeMethod = Optional.ofNullable(propertyDescriptor.getWriteMethod()).orElseThrow(() -> new IllegalArgumentException("Given field cannot be updated"));
+  private void validateIsUpdatable(PropertyDescriptor propertyDescriptor, String fieldName) {
+    Method writeMethod = Optional.ofNullable(propertyDescriptor.getWriteMethod()).orElseThrow(() -> new FieldUpdateException("application.update.fieldNotUpdatable", fieldName));
     if (requireUpdatablePropertyAnnotation()) {
-      Optional.ofNullable(writeMethod.getAnnotation(UpdatableProperty.class)).orElseThrow(() -> new IllegalArgumentException("Given field cannot be updated"));
+      Optional.ofNullable(writeMethod.getAnnotation(UpdatableProperty.class)).orElseThrow(() -> new FieldUpdateException("application.update.fieldNotUpdatable", fieldName));
     }
   }
 
