@@ -17,6 +17,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NumberUtil} from '@util/number.util';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {InformationRequest} from '@app/model/information-request/information-request';
 
 @Component({
   selector: 'information-acceptance-entry',
@@ -63,7 +64,7 @@ export class InformationAcceptanceEntryComponent implements OnInit {
       filter(user => !!user),
       map(user => user.hasRole(RoleType.ROLE_PROCESS_APPLICATION)),
       map(canProcess => {
-        const readonly = !canProcess || baseData.informationRequest.status === InformationRequestStatus.CLOSED;
+        const readonly = !canProcess || this.isClosed(baseData.informationRequest);
         const data = { ...baseData, readonly };
         return {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
       })
@@ -82,5 +83,11 @@ export class InformationAcceptanceEntryComponent implements OnInit {
     return NumberUtil.isDefined(id)
       ? ['../../']
       : ['../'];
+  }
+
+  private isClosed(request: InformationRequest): boolean {
+    return request
+    ? request.status === InformationRequestStatus.CLOSED
+    : false;
   }
 }
