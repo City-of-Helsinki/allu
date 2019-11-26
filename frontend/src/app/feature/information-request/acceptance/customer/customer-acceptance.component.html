@@ -4,6 +4,7 @@
   [oldCustomer]="referenceCustomer$ | async"
   [newCustomer]="newCustomer"
   [readonly]="readonly"
+  [hideExisting]="hideExisting"
   (customerChanges)="customerChanges($event)">
   <div class="left-header">
     <h2 mat-dialog-title>

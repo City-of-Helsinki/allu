@@ -29,6 +29,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   @Input() formArray: FormArray;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
+  @Input() hideExisting = false;
 
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 

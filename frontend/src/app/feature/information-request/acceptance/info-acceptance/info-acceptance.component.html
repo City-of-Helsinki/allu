@@ -3,12 +3,12 @@
     <div class="section-content">
       <ng-content select=".left-header"></ng-content>
     </div>
-    <div class="section-content">
+    <div *ngIf="!hideExisting" class="section-content">
       <ng-content select=".right-header"></ng-content>
     </div>
   </div>
 
-  <div class="section-container">
+  <div *ngIf="!hideExisting" class="section-container">
     <div class="section-content info-acceptance-control">
       <ng-content select=".left-controls"></ng-content>
     </div>
@@ -18,7 +18,7 @@
   </div>
 
   <div class="section-container">
-    <div class="section-content">
+    <div *ngIf="!hideExisting" class="section-content">
       <field-select
         #oldValuesSelect
         [id]="id + '-old'"

@@ -41,6 +41,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
+  @Input() hideExisting = false;
 
   @ViewChild(CustomerInfoAcceptanceComponent, { static: true }) infoAcceptance: CustomerInfoAcceptanceComponent;
 

@@ -24,6 +24,7 @@ export class KindAcceptanceComponent implements OnInit {
   @Input() oldValues: KindsWithSpecifiers;
   @Input() newValues: string;
   @Input() readonly: boolean;
+  @Input() hideExisting = false;
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 

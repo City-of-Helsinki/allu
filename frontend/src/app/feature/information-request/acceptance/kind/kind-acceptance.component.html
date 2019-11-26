@@ -4,7 +4,7 @@
       {{'informationRequest.field.APPLICATION_KIND' | translation}}
     </h2>
   </div>
-  <div class="section-content">
+  <div *ngIf="!hideExisting" class="section-content">
     <h2 mat-dialog-title>
       <ng-container *ngIf="multipleKinds; else singleKind">
         {{'application.kind.suggestion.multiple' | translation}}
@@ -17,7 +17,7 @@
 </div>
 
 <div class="section-container">
-  <div class="section-content">
+  <div *ngIf="!hideExisting" class="section-content">
     <form [formGroup]="form">
       <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim" *ngIf="!readonly">
         <div fxFlex="0 1 50%" *ngIf="multipleKinds">

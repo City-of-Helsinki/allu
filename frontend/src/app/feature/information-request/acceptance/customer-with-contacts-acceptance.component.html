@@ -5,11 +5,13 @@
     [newCustomer]="newCustomerWithContacts?.customer"
     [readonly]="readonly"
     [fieldKey]="fieldKey"
-    [canBeInvoiceRecipient]="canBeInvoiceRecipient"></customer-acceptance>
+    [canBeInvoiceRecipient]="canBeInvoiceRecipient"
+    [hideExisting]="hideExisting"></customer-acceptance>
 
   <contacts-acceptance
     [parentForm]="parentForm"
     [newContacts]="newCustomerWithContacts?.contacts"
     [readonly]="readonly"
-    [fieldKey]="fieldKey"></contacts-acceptance>
+    [fieldKey]="fieldKey"
+    [hideExisting]="hideExisting"></contacts-acceptance>
 </div>

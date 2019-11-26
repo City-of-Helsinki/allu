@@ -21,6 +21,7 @@ export class OtherAcceptanceComponent implements OnInit {
   @Input() newInfo: Application;
   @Input() readonly: boolean;
   @Input() fieldKeys: InformationRequestFieldKey[];
+  @Input() hideExisting = false;
 
   form: FormGroup;
   otherInfoKeys: string[] = [];

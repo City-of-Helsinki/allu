@@ -54,6 +54,7 @@ class MockCustomerInfoAcceptanceComponent {
   @Input() form: FormGroup;
   @Input() countryCodes: CodeSetCodeMap;
   @Input() readonly: boolean;
+  @Input() hideExisting: boolean;
 
   @Input() set oldCustomer(customer: Customer) {
     this._oldCustomer = customer;

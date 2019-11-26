@@ -5,16 +5,18 @@ import {FieldSelectComponent, FieldValues} from '../field-select/field-select.co
 import {Subject} from 'rxjs';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {StructureMeta} from '@model/application/meta/structure-meta';
+import { Some } from '@app/util/option';
 
 export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() id: string;
   @Input() meta: StructureMeta;
+  @Input() hideExisting = false;
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
-  @ViewChild('oldValuesSelect', { static: true }) oldValuesSelect: FieldSelectComponent;
-  @ViewChild('newValuesSelect', { static: true }) newValuesSelect: FieldSelectComponent;
+  @ViewChild('oldValuesSelect', { static: false }) oldValuesSelect: FieldSelectComponent;
+  @ViewChild('newValuesSelect', { static: false }) newValuesSelect: FieldSelectComponent;
 
   selectionForm: FormGroup;
   fieldDescriptions: FieldDescription[];
@@ -61,21 +63,21 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
       // Timeout forces selectAll function to be called on next angular update cycle
       // which allows view to update with selected values. Without timeout it seems
       // that values update but the view does not.
-      setTimeout(() => this.oldValuesSelect.selectAll(), 0);
+      setTimeout(() => Some(this.oldValuesSelect).do(select => select.selectAll()), 0);
       this.onOldValuesSelected(Object.keys(this.oldValues));
     }
   }
 
   clearSelections(): void {
-    this.oldValuesSelect.deselectAll();
-    this.newValuesSelect.deselectAll();
+    Some(this.oldValuesSelect).do(select => select.deselectAll());
+    Some(this.newValuesSelect).do(select => select.deselectAll());
     this.form.reset({}, {emitEvent: false});
   }
 
   onOldValuesSelected(fields: string[]): void {
     fields.forEach(f => {
       this.patchField(f, this.oldValues);
-      this.newValuesSelect.deselect(f);
+      Some(this.newValuesSelect).do(select => select.deselect(f));
     });
     this.form.updateValueAndValidity();
   }
@@ -83,7 +85,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   onNewValuesSelected(fields: string[] = []): void {
     fields.forEach(f => {
       this.patchField(f, this.newValues);
-      this.oldValuesSelect.deselect(f);
+      Some(this.oldValuesSelect).do(select => select.deselect(f));
     });
     this.form.updateValueAndValidity();
   }

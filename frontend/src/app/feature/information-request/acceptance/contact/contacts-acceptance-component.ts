@@ -20,6 +20,7 @@ export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterView
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
+  @Input() hideExisting = false;
 
   contactForms: FormArray;
   contactChanges$ = new Subject<Contact>();

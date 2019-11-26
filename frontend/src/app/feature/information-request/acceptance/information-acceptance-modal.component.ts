@@ -21,6 +21,7 @@ import {CloseRequest, LoadActiveRequest, LoadRequest} from '@feature/information
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {map, switchMap, take} from 'rxjs/operators';
+import { InformationRequestStatus } from '@app/model/information-request/information-request-status';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -55,6 +56,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   applicationTypeBillable: boolean;
   requestDataAvailable = false;
   showRequest = true;
+  hideExisting = false;
 
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
@@ -74,7 +76,11 @@ export class InformationAcceptanceModalComponent implements OnInit {
     this.newInfo = this.data.newInfo;
     this.updatedFields = this.data.updatedFields;
     this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
-    this.requestDataAvailable = this.data.informationRequest && this.data.informationRequest.fields.length > 0;
+
+    if (this.data.informationRequest) {
+      this.requestDataAvailable = this.data.informationRequest.fields.length > 0;
+      this.hideExisting = this.data.informationRequest.status === InformationRequestStatus.CLOSED;
+    }
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();

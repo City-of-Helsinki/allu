@@ -15,4 +15,5 @@ export class CustomerWithContactsAcceptanceComponent {
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
+  @Input() hideExisting = false;
 }

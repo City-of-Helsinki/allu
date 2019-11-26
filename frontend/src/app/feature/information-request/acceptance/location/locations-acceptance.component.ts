@@ -21,6 +21,7 @@ export class LocationsAcceptanceComponent implements OnInit, AfterViewInit {
   @Input() oldLocations: Location[] = [];
   @Input() newLocations: Location[] = [];
   @Input() readonly: boolean;
+  @Input() hideExisting = false;
 
   locationKeys: number[];
   oldLocationsByKey: {[key: number]: Location} = {};

@@ -13,6 +13,7 @@ export class LocationAcceptanceComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean;
   @Input() oldLocation: Location;
   @Input() newLocation: Location;
+  @Input() hideExisting = false;
 
   @Output() locationChanges: EventEmitter<Location> = new EventEmitter<Location>();
 
