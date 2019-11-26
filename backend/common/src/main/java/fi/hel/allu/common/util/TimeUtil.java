@@ -111,7 +111,7 @@ public class TimeUtil {
 
   public static boolean datePeriodsOverlap(ZonedDateTime period1Start, ZonedDateTime period1End, ZonedDateTime period2Start,
       ZonedDateTime period2End) {
-    return !startOfDay(period1End).isBefore(startOfDay(period2Start))
-        && !startOfDay(period1Start).isAfter(startOfDay(period2End));
+    return !startOfDay(homeTime(period1End)).isBefore(startOfDay(homeTime(period2Start)))
+        && !startOfDay(homeTime(period1Start)).isAfter(startOfDay(homeTime(period2End)));
   }
 }
