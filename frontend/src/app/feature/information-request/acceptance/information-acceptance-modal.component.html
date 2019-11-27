@@ -13,108 +13,109 @@
   </div>
 </div>
 
-<div *ngIf="requestDataAvailable && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
-  <information-request-fields
-    [requestFields]="data.informationRequest?.fields"></information-request-fields>
-</div>
-
-<div fxLayout="row" class="acceptance-info-header">
-  <h2 *ngIf="!hideExisting" mat-dialog-title fxFlex>{{'informationRequest.acceptance.existingInfo' | translation}}</h2>
-  <h2 mat-dialog-title fxFlex>{{'informationRequest.acceptance.providedInfo' | translation}}</h2>
-</div>
-
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-dialog-content class="acceptance-content">
-    <div *ngFor="let field of updatedFields">
-      <div [ngSwitch]="field">
-        <kind-acceptance
-          *ngSwitchCase="'CLIENT_APPLICATION_KIND'"
-          [parentForm]="form"
-          [applicationType]="oldInfo.type"
-          [oldValues]="oldInfo?.kindsWithSpecifiers"
-          [newValues]="newInfo?.clientApplicationData.clientApplicationKind"
-          [readonly]="readonly"
-          [hideExisting]="hideExisting">
-        </kind-acceptance>
-
-        <div *ngSwitchCase="'APPLICATION_KIND'">
-          <!-- Placeholder -->
-        </div>
-
-        <customer-with-contacts-acceptance
-          *ngSwitchCase="'CUSTOMER'"
-          [parentForm]="form"
-          [oldCustomerWithContacts]="oldInfo?.applicant"
-          [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
-          [readonly]="readonly"
-          [fieldKey]="field"
-          [canBeInvoiceRecipient]="applicationTypeBillable"
-          [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
-
-        <customer-with-contacts-acceptance
-          *ngSwitchCase="'REPRESENTATIVE'"
-          [parentForm]="form"
-          [oldCustomerWithContacts]="oldInfo?.representative"
-          [newCustomerWithContacts]="newInfo?.clientApplicationData?.representative"
-          [readonly]="readonly"
-          [fieldKey]="field"
-          [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
-
-        <customer-with-contacts-acceptance
-          *ngSwitchCase="'PROPERTY_DEVELOPER'"
-          [parentForm]="form"
-          [oldCustomerWithContacts]="oldInfo?.propertyDeveloper"
-          [newCustomerWithContacts]="newInfo?.clientApplicationData?.propertyDeveloper"
-          [readonly]="readonly"
-          [fieldKey]="field"
-          [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
-
-        <customer-with-contacts-acceptance
-          *ngSwitchCase="'CONTRACTOR'"
-          [parentForm]="form"
-          [oldCustomerWithContacts]="oldInfo?.contractor"
-          [newCustomerWithContacts]="newInfo?.clientApplicationData?.contractor"
-          [readonly]="readonly"
-          [fieldKey]="field"
-          [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
-
-        <ng-container *ngSwitchCase="'INVOICING_CUSTOMER'">
-          <customer-acceptance
-            *ngIf="applicationTypeBillable && (useCustomerForInvoicing$ | async) === undefined"
+  <mat-dialog-content>
+    <div *ngIf="requestDataAvailable && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
+      <information-request-fields [requestFields]="data.informationRequest?.fields"></information-request-fields>
+    </div>
+    
+    <div fxLayout="row" class="acceptance-info-header">
+      <h2 *ngIf="!hideExisting" mat-dialog-title fxFlex>{{'informationRequest.acceptance.existingInfo' | translation}}</h2>
+      <h2 mat-dialog-title fxFlex>{{'informationRequest.acceptance.providedInfo' | translation}}</h2>
+    </div>
+    
+    <div class="acceptance-content">
+      <div *ngFor="let field of updatedFields">
+        <div [ngSwitch]="field">
+          <kind-acceptance
+            *ngSwitchCase="'CLIENT_APPLICATION_KIND'"
             [parentForm]="form"
-            [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
+            [applicationType]="oldInfo.type"
+            [oldValues]="oldInfo?.kindsWithSpecifiers"
+            [newValues]="newInfo?.clientApplicationData.clientApplicationKind"
+            [readonly]="readonly"
+            [hideExisting]="hideExisting">
+          </kind-acceptance>
+
+          <div *ngSwitchCase="'APPLICATION_KIND'">
+            <!-- Placeholder -->
+          </div>
+
+          <customer-with-contacts-acceptance
+            *ngSwitchCase="'CUSTOMER'"
+            [parentForm]="form"
+            [oldCustomerWithContacts]="oldInfo?.applicant"
+            [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
             [readonly]="readonly"
             [fieldKey]="field"
-            [hideExisting]="hideExisting"></customer-acceptance>
-        </ng-container>
+            [canBeInvoiceRecipient]="applicationTypeBillable"
+            [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
 
-        <attachments-acceptance
-          *ngSwitchCase="'ATTACHMENT'"
-          [parentForm]="form"
-          [attachments]="oldInfo?.attachmentList"></attachments-acceptance>
+          <customer-with-contacts-acceptance
+            *ngSwitchCase="'REPRESENTATIVE'"
+            [parentForm]="form"
+            [oldCustomerWithContacts]="oldInfo?.representative"
+            [newCustomerWithContacts]="newInfo?.clientApplicationData?.representative"
+            [readonly]="readonly"
+            [fieldKey]="field"
+            [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
 
-        <div *ngSwitchDefault>
-          <!-- Placeholder -->
+          <customer-with-contacts-acceptance
+            *ngSwitchCase="'PROPERTY_DEVELOPER'"
+            [parentForm]="form"
+            [oldCustomerWithContacts]="oldInfo?.propertyDeveloper"
+            [newCustomerWithContacts]="newInfo?.clientApplicationData?.propertyDeveloper"
+            [readonly]="readonly"
+            [fieldKey]="field"
+            [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
+
+          <customer-with-contacts-acceptance
+            *ngSwitchCase="'CONTRACTOR'"
+            [parentForm]="form"
+            [oldCustomerWithContacts]="oldInfo?.contractor"
+            [newCustomerWithContacts]="newInfo?.clientApplicationData?.contractor"
+            [readonly]="readonly"
+            [fieldKey]="field"
+            [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
+
+          <ng-container *ngSwitchCase="'INVOICING_CUSTOMER'">
+            <customer-acceptance
+              *ngIf="applicationTypeBillable && (useCustomerForInvoicing$ | async) === undefined"
+              [parentForm]="form"
+              [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
+              [readonly]="readonly"
+              [fieldKey]="field"
+              [hideExisting]="hideExisting"></customer-acceptance>
+          </ng-container>
+
+          <attachments-acceptance
+            *ngSwitchCase="'ATTACHMENT'"
+            [parentForm]="form"
+            [attachments]="oldInfo?.attachmentList"></attachments-acceptance>
+
+          <div *ngSwitchDefault>
+            <!-- Placeholder -->
+          </div>
         </div>
       </div>
-    </div>
-    <div *ngIf="hasLocationChanges">
-      <locations-acceptance
-        [parentForm]="form"
-        [readonly]="readonly"
-        [oldLocations]="oldInfo?.locations"
-        [newLocations]="newInfo?.locations"
-        [hideExisting]="hideExisting"></locations-acceptance>
-    </div>
-    <div>
-      <other-acceptance
-        [parentForm]="form"
-        [oldInfo]="oldInfo"
-        [newInfo]="newInfo"
-        [readonly]="readonly"
-        [fieldKeys]="updatedFields"
-        [hideExisting]="hideExisting"
-      ></other-acceptance>
+      <div *ngIf="hasLocationChanges">
+        <locations-acceptance
+          [parentForm]="form"
+          [readonly]="readonly"
+          [oldLocations]="oldInfo?.locations"
+          [newLocations]="newInfo?.locations"
+          [hideExisting]="hideExisting"></locations-acceptance>
+      </div>
+      <div>
+        <other-acceptance
+          [parentForm]="form"
+          [oldInfo]="oldInfo"
+          [newInfo]="newInfo"
+          [readonly]="readonly"
+          [fieldKeys]="updatedFields"
+          [hideExisting]="hideExisting"
+        ></other-acceptance>
+      </div>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>
