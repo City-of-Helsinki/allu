@@ -33,6 +33,9 @@
             <mat-hint *ngIf="!validForDecision">
               {{'attachment.onlyPdfForDecision' | translation}}
             </mat-hint>
+            <mat-hint *ngIf="attachmentForm.get('size').value as size" align="end">
+              {{size | fileSize:'MB'}}
+            </mat-hint>
           </mat-form-field>
 
           <input #realFileInput class="real-file-input" type="file" fileSelect

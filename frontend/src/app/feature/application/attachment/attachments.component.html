@@ -32,8 +32,9 @@
         <mat-card-content class="card-content">
           <div fxLayout="row wrap" fxLayoutGap="18px" class="inner-row">
             <div fxFlex>
-              <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
+              <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}              
             </div>
+            <div>{{attachment.size | fileSize:'MB'}}</div>
             <div fxFlex>
               <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
               <span *ngIf="!attachment.handlerName">{{'attachment.unknownHandler' | translation}}</span>
