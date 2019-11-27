@@ -262,6 +262,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   private findDefaultRegionalOwner(app: Application): Observable<User> {
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
     return this.userService.search(criteria).pipe(
+      map(preferred => preferred.filter(user => !user.hasRole(RoleType.ROLE_SUPERVISE))),
       map(preferred => ArrayUtil.first(preferred))
     );
   }
