@@ -43,6 +43,7 @@ import {ValidityEndTimeComponent} from '@feature/common/validity-time/validity-e
 import {ValidityStartTimeComponent} from '@feature/common/validity-time/validity-start-time.component';
 import {LocalLoaderService} from '@feature/common/local-loader/local-loader.service';
 import {ErrorPageComponent} from '@feature/common/error-page/error-page.component';
+import {FileSizePipe} from '@app/pipe/file-size.pipe';
 
 @NgModule({
   imports: [
@@ -71,7 +72,8 @@ import {ErrorPageComponent} from '@feature/common/error-page/error-page.componen
     ValidityTimeComponent,
     ValidityStartTimeComponent,
     ValidityEndTimeComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    FileSizePipe
   ],
   providers: [
     LocalLoaderService
@@ -119,7 +121,8 @@ import {ErrorPageComponent} from '@feature/common/error-page/error-page.componen
     ValidityTimeComponent,
     ValidityStartTimeComponent,
     ValidityEndTimeComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    FileSizePipe
   ],
   entryComponents: [
     ConfirmDialogComponent
