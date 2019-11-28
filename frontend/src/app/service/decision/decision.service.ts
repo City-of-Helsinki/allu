@@ -7,6 +7,8 @@ import {DecisionDetails} from '../../model/decision/decision-details';
 import {findTranslation} from '../../util/translations';
 import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
 import {catchError, map} from 'rxjs/internal/operators';
+import {BulkApprovalEntry} from '@app/model/decision/bulk-approval-entry';
+import {BulkApprovalEntryMapper, BackendBulkApprovalEntry} from '../mapper/bulk-approval-entry-mapper';
 
 const DECISION_URL = '/api/applications/:appId/decision';
 const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
@@ -46,6 +48,14 @@ export class DecisionService {
   public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = TERMINATION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
+  }
+
+  public getBulkApprovalEntries(applicationIds: number[]): Observable<BulkApprovalEntry[]> {
+    const url = `/api/applications/bulkApprovalEntries`;
+    return this.http.post<BackendBulkApprovalEntry[]>(url, JSON.stringify(applicationIds)).pipe(
+      map(bulkApprovalEntries => BulkApprovalEntryMapper.mapBackendList(bulkApprovalEntries)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.fetchBulkApprovalEntries')))
+    );
   }
 
   private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<{}> {

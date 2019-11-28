@@ -33,6 +33,7 @@ import {TerminationService} from '@feature/decision/termination/termination-serv
 import {TerminationActionsComponent} from '@feature/decision/termination/termination-actions.component';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
+import {BulkApprovalEffects} from './effects/bulk-approval-effects';
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-acti
       DecisionEffects,
       ContractEffects,
       ApprovalDocumentEffects,
-      TerminationEffects
+      TerminationEffects,
+      BulkApprovalEffects
     ]),
     AlluCommonModule,
     ProgressBarModule,

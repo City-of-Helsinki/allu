@@ -1101,7 +1101,8 @@ export const translations = {
     },
     error: {
       generatePdf: 'Pdf:n muodostaminen epäonnistui',
-      send: 'Päätöksen lähettäminen sähköpostijakeluna epäonnistui'
+      send: 'Päätöksen lähettäminen sähköpostijakeluna epäonnistui',
+      fetchBulkApprovalEntries: 'Massapäätöksen pohjatietojen hakeminen epäonnistui'
     },
     action: {
       send: 'Päätös lähettetty'

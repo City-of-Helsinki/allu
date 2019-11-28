@@ -3,6 +3,7 @@ import * as fromContract from './contract-reducer';
 import * as fromDocument from './document-reducer';
 import * as fromTermination from './termination-reducer';
 import * as fromApprovalDocument from './approval-document-reducer';
+import * as fromBulkApproval from './bulk-approval-reducer';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Decision} from '@model/decision/Decision';
@@ -18,6 +19,7 @@ export interface DecisionState {
   termination: fromTermination.State;
   operationalConditionApproval: fromApprovalDocument.State;
   workFinishedApproval: fromApprovalDocument.State;
+  bulkApproval: fromBulkApproval.State;
 }
 
 export interface State extends fromRoot.State {
@@ -30,7 +32,8 @@ export const reducers: ActionReducerMap<DecisionState> = {
   document: fromDocument.reducer,
   termination: fromTermination.reducer,
   operationalConditionApproval: fromApprovalDocument.reducerFor(ApprovalDocumentType.OPERATIONAL_CONDITION),
-  workFinishedApproval: fromApprovalDocument.reducerFor(ApprovalDocumentType.WORK_FINISHED)
+  workFinishedApproval: fromApprovalDocument.reducerFor(ApprovalDocumentType.WORK_FINISHED),
+  bulkApproval: fromBulkApproval.reducer
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Decision reducers');
@@ -160,4 +163,22 @@ export const getWorkFinishedApproval = createSelector(
 export const getWorkFinishedApprovalPdf = createSelector(
   getWorkFinishedApproval,
   (document: ApprovalDocument) => document ? document.pdf : undefined
+);
+
+/**
+ * Bulk approval selectors
+ */
+export const getBulkApprovalEntitiesState = createSelector(
+  getDecisionState,
+  (state: DecisionState) => state.bulkApproval
+);
+
+export const getBulkApprovalsLoading = createSelector(
+  getBulkApprovalEntitiesState,
+  fromBulkApproval.getLoading
+);
+
+export const getBulkApprovalEntries = createSelector(
+  getBulkApprovalEntitiesState,
+  fromBulkApproval.getEntries
 );
