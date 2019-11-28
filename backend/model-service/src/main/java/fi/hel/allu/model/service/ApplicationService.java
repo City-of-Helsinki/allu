@@ -476,8 +476,10 @@ public class ApplicationService {
   @Transactional(readOnly = true)
   public Customer getInvoiceRecipient(int applicationId) {
     Integer invoiceRecipientId = applicationDao.getInvoiceRecipientId(applicationId);
-    return OptionalUtil.or(getInvoiceRecipientCustomer(applicationId), customerDao.findById(invoiceRecipientId))
-      .orElse(null);
+    return OptionalUtil.or(
+      getInvoiceRecipientCustomer(applicationId, invoiceRecipientId),
+      customerDao.findById(invoiceRecipientId)
+    ).orElse(null);
   }
 
   public void changeInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId) {
@@ -612,9 +614,18 @@ public class ApplicationService {
     invoicingPeriodService.setExcavationAnnouncementPeriods(applicationId);
   }
 
-  private Optional<Customer> getInvoiceRecipientCustomer(int invoiceRecipientId) {
-    return Optional.ofNullable(invoiceRecipientId)
+  private Optional<Customer> getInvoiceRecipientCustomer(Integer applicationId, Integer invoiceRecipientId) {
+    return Optional.ofNullable(applicationId)
       .flatMap(i -> invoiceRecipientDao.findByApplicationId(i))
-      .map(InvoiceRecipient::asCustomer);
+      .map(InvoiceRecipient::asCustomer)
+      .map(customer -> setFieldsFromCustomer(invoiceRecipientId, customer));
+  }
+
+  private Customer setFieldsFromCustomer(Integer from, Customer target) {
+    customerDao.findById(from).ifPresent(customer -> {
+      target.setId(from);
+      target.setSapCustomerNumber(customer.getSapCustomerNumber());
+    });
+    return target;
   }
 }
