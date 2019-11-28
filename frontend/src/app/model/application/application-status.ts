@@ -154,4 +154,4 @@ export enum ApplicationStatusGroup {
 }
 
 export const distributionChangeAllowed = (status: ApplicationStatus) =>
-  isSameOrBetween(status, ApplicationStatus.PRE_RESERVED, ApplicationStatus.FINISHED);
+  isSameOrBetween(status, ApplicationStatus.PRE_RESERVED, ApplicationStatus.ARCHIVED);
