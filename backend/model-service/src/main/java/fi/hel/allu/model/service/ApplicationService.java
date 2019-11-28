@@ -478,7 +478,7 @@ public class ApplicationService {
     Integer invoiceRecipientId = applicationDao.getInvoiceRecipientId(applicationId);
     return OptionalUtil.or(
       getInvoiceRecipientCustomer(applicationId, invoiceRecipientId),
-      customerDao.findById(invoiceRecipientId)
+      () -> customerDao.findById(invoiceRecipientId)
     ).orElse(null);
   }
 
