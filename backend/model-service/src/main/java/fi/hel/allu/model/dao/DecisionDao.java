@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.SimplePath;
-import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.domain.DocumentSearchCriteria;
 import fi.hel.allu.common.domain.DocumentSearchResult;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.types.PublicityType;
 
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QDecision.decision;
@@ -63,16 +63,7 @@ public class DecisionDao {
    */
   @Transactional(readOnly = true)
   public Optional<byte[]> getDecision(int applicationId) {
-    return getDecisionData(applicationId, decision.data);
-  }
-
-  @Transactional(readOnly = true)
-  public Optional<byte[]> getAnonymizedDecision(int applicationId) {
-    return getDecisionData(applicationId, decision.anonymizedData);
-  }
-
-  private Optional<byte[]> getDecisionData(int applicationId, SimplePath<byte[]> documentField) {
-    byte[] data = queryFactory.select(documentField).from(decision).where(decision.applicationId.eq(applicationId))
+    byte[] data = queryFactory.select(decision.data).from(decision).where(decision.applicationId.eq(applicationId))
         .fetchOne();
     return Optional.ofNullable(data);
   }
@@ -84,14 +75,31 @@ public class DecisionDao {
   }
 
   @Transactional(readOnly = true)
+  public Optional<byte[]> getAnonymizedDecision(int applicationId) {
+    byte[] data = queryFactory.select(decision.anonymizedData)
+    .from(decision)
+    .join(application).on(decision.applicationId.eq(application.id))
+    .where(decision.applicationId.eq(applicationId).and(getAnonymizedDecisionSearchFilter()))
+    .fetchOne();
+    return Optional.ofNullable(data);
+  }
+
+  @Transactional(readOnly = true)
   public List<DocumentSearchResult> searchDecisions(DocumentSearchCriteria searchCriteria) {
-    Optional<BooleanExpression> conditions = conditions(searchCriteria);
-    SQLQuery<DocumentSearchResult> query = queryFactory
-      .select(Projections.constructor(DocumentSearchResult.class,decision.applicationId, application.decisionTime, application.decisionMaker))
+    BooleanExpression filter = getAnonymizedDecisionSearchFilter();
+    Optional<BooleanExpression> searchConditions = conditions(searchCriteria);
+    return queryFactory
+      .select(Projections.constructor(DocumentSearchResult.class, decision.applicationId, application.decisionTime, application.decisionMaker))
       .from(decision)
-      .join(application).on(decision.applicationId.eq(application.id));
-    conditions.ifPresent(c -> query.where(c));
-    return query.fetch();
+      .join(application).on(decision.applicationId.eq(application.id))
+      .where(searchConditions.map(sc -> filter.and(sc)).orElse(filter))
+      .fetch();
+  }
+
+  private BooleanExpression getAnonymizedDecisionSearchFilter() {
+    return decision.anonymizedData.isNotNull()
+        .and(application.type.ne(ApplicationType.CABLE_REPORT))
+        .and(application.decisionPublicityType.eq(PublicityType.PUBLIC));
   }
 
   private static Optional<BooleanExpression> conditions(DocumentSearchCriteria searchCriteria) {

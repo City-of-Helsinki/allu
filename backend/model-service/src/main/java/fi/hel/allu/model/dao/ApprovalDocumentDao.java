@@ -17,6 +17,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.DocumentSearchCriteria;
 import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
+import fi.hel.allu.common.types.PublicityType;
 
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApprovalDocument.approvalDocument;
@@ -54,23 +55,38 @@ public class ApprovalDocumentDao {
 
   @Transactional(readOnly = true)
   public Optional<byte[]> getApprovalDocument(Integer applicationId, ApprovalDocumentType type) {
-    return getDocumentData(applicationId, type, approvalDocument.document);
+    byte[] data = queryFactory.select(approvalDocument.document).from(approvalDocument)
+        . where(approvalDocument.applicationId.eq(applicationId).and(approvalDocument.type.eq(type)))
+        .fetchOne();
+    return Optional.ofNullable(data);
   }
 
   @Transactional(readOnly = true)
   public Optional<byte[]> getAnonymizedDocument(Integer applicationId, ApprovalDocumentType type) {
-    return getDocumentData(applicationId, type, approvalDocument.anonymizedDocument);
+    BooleanExpression filter = getAnonymizedDocumentSearchFilter(type);
+    byte[] data = queryFactory.select(approvalDocument.anonymizedDocument)
+      .from(approvalDocument)
+      .join(application).on(approvalDocument.applicationId.eq(application.id))
+      .where(approvalDocument.applicationId.eq(applicationId).and(filter))
+      .fetchOne();
+    return Optional.ofNullable(data);
   }
 
   @Transactional(readOnly = true)
   public List<DocumentSearchResult> searchApprovalDocuments(DocumentSearchCriteria searchCriteria, ApprovalDocumentType type) {
-    BooleanExpression typeCondition = approvalDocument.type.eq(type);
+    BooleanExpression filter = getAnonymizedDocumentSearchFilter(type);
     Optional<BooleanExpression> searchConditions = conditions(searchCriteria);
     return queryFactory.select(Projections.constructor(DocumentSearchResult.class, approvalDocument.applicationId, approvalDocument.creationTime))
       .from(approvalDocument)
       .join(application).on(approvalDocument.applicationId.eq(application.id))
-      .where(searchConditions.map(sc -> typeCondition.and(sc)).orElse(typeCondition))
+      .where(searchConditions.map(sc -> filter.and(sc)).orElse(filter))
       .fetch();
+  }
+
+  private BooleanExpression getAnonymizedDocumentSearchFilter(ApprovalDocumentType type) {
+    return approvalDocument.type.eq(type)
+        .and(approvalDocument.anonymizedDocument.isNotNull())
+        .and(application.decisionPublicityType.eq(PublicityType.PUBLIC));
   }
 
   private static Optional<BooleanExpression> conditions(DocumentSearchCriteria searchCriteria) {
@@ -82,14 +98,6 @@ public class ApprovalDocumentDao {
       .filter(p -> p.isPresent())
       .map(p -> p.get())
       .reduce((left, right) -> left.and(right));
-  }
-
-  private Optional<byte[]> getDocumentData(Integer applicationId, ApprovalDocumentType type,
-      SimplePath<byte[]> documentField) {
-    byte[] data = queryFactory.select(documentField).from(approvalDocument)
-        . where(approvalDocument.applicationId.eq(applicationId).and(approvalDocument.type.eq(type)))
-          .fetchOne();
-      return Optional.ofNullable(data);
   }
 
 }
