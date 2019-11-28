@@ -75,6 +75,12 @@ public abstract class ModelFieldUpdater {
     }
   }
 
+  public <T, C extends Class> T readValue(Object field, C targetClass) throws IOException {
+    JsonNode jsonNode = objectMapper.convertValue(field, JsonNode.class);
+    ObjectReader reader = objectMapper.readerFor(targetClass);
+    return reader.readValue(jsonNode);
+  }
+
   private void updateFields(Map<String, Object> fields, Object targetObject)
       throws JsonProcessingException, IOException {
     // the geolatte GeometryDeserializer does not support updating
@@ -82,9 +88,7 @@ public abstract class ModelFieldUpdater {
     if (fields.containsKey("geometry") && targetObject instanceof Location) {
       Location targetLocation = (Location) targetObject;
       Object geometryFields = fields.remove("geometry");
-      JsonNode geometryNode = objectMapper.convertValue(geometryFields, JsonNode.class);
-      ObjectReader geometryReader = objectMapper.readerFor(Geometry.class);
-      Geometry geometry = geometryReader.readValue(geometryNode);
+      Geometry geometry = readValue(geometryFields, Geometry.class);
       targetLocation.setGeometry(geometry);
     }
 
