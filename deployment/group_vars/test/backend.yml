@@ -30,7 +30,7 @@ email_sender_address: Allu Test Aluevaraus <noreply@test.allu.fi>
 
 invoice_sending_enabled: true
 invoice_archivedir: /tmp/allu-invoice-archive
-
+invoice_cronstring: "0 */15 * * * *"
 sap_ftp_invoice_host: 172.17.0.1
 sap_ftp_invoice_port: 2222
 sap_ftp_invoice_directory: /invoice/
