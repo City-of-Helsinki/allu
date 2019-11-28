@@ -62,6 +62,7 @@ import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
 import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects';
 import {storeLogger} from 'ngrx-store-logger';
+import {BulkApprovalModule} from '@feature/decision/bulk/bulk-approval.module';
 
 export function logger(reducer: ActionReducer<any>): any {
   return storeLogger({
@@ -108,7 +109,8 @@ export const metaReducers = environment.production ? [] : [logger];
     SidebarModule,
     CustomerRegistryModule,
     DownloadModule,
-    NotificationModule
+    NotificationModule,
+    BulkApprovalModule
   ],
   declarations: [
     AlluComponent,

@@ -13,6 +13,7 @@ import {
   WorkQueueContentComponent as SupervisionWorkQueueContentComponent
 } from '../supervision-workqueue/content/workqueue-content.component';
 import {ErrorPageComponent} from '@feature/common/error-page/error-page.component';
+import {bulkApprovalRoutes} from '@feature/decision/bulk/bulk-approval.routing';
 
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -20,8 +21,12 @@ export const rootRoutes: Routes = [
   { path: 'workqueue', component: WorkQueueComponent, canActivate: [AuthGuard], children: [
     { path: '', redirectTo: 'own', pathMatch: 'full'},
     { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] },
-    { path: 'own', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'OWN'}},
-    { path: 'common', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}}
+    { path: 'own', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'OWN'}, children: [
+      ...bulkApprovalRoutes
+    ]},
+    { path: 'common', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}, children: [
+      ...bulkApprovalRoutes
+    ]}
   ]},
   { path: 'supervision-tasks', component: SupervisionWorkqueueComponent, canActivate: [AuthGuard], children: [
     { path: '', redirectTo: 'own', pathMatch: 'full'},

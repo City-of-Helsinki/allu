@@ -995,6 +995,7 @@ export const translations = {
     resend: 'Lähetä päätös uudelleen',
     cannotShow: 'Päätöksen näyttäminen ei onnistu selaimellasi.',
     toOperationalCondition: 'Päätä toiminnalliseen kuntoon',
+    do: 'Päätä',
     type: {
       DECISIONMAKING: {
         title: 'Siirrä odottamaan päätöstä',
@@ -1149,6 +1150,9 @@ export const translations = {
     error: {
       fetchFailed: 'Hyväksyntädokumentin hakeminen epäonnistui'
     }
+  },
+  bulkApproval: {
+    title: 'Päätä valitut'
   },
   user: {
     role: {

@@ -11,7 +11,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromWorkQueue from '@feature/workqueue/reducers';
 import {AddMultiple} from '@feature/project/actions/application-basket-actions';
-import {map, switchMap, take, takeUntil} from 'rxjs/operators';
+import {map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {UserService} from '@service/user/user-service';
 import {ArrayUtil} from '@util/array-util';
 import {RoleType} from '@model/user/role-type';
@@ -19,6 +19,8 @@ import {ClearSelected} from '@feature/application/actions/application-search-act
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ChangeOwner, RemoveOwner} from '@feature/application/actions/application-actions';
 import {ApplicationType} from '@model/application/type/application-type';
+import {Load as LoadBulkApprovalEntries} from '@feature/decision/actions/bulk-approval-actions';
+import {Router, ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'workqueue',
@@ -38,10 +40,13 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       RoleType.ROLE_PROCESS_APPLICATION,
       RoleType.ROLE_DECISION];
 
-  constructor(private dialog: MatDialog,
-              private userService: UserService,
-              private currentUser: CurrentUser,
-              private store: Store<fromRoot.State>) {
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService,
+    private currentUser: CurrentUser,
+    private store: Store<fromRoot.State>,
+    private router: Router,
+    private route: ActivatedRoute) {
   }
 
   ngOnInit() {
@@ -81,6 +86,18 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       map(owners => this.createConfig(owners)),
       switchMap(config => this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config).afterClosed())
     ).subscribe(dialogCloseValue => this.handleOwnerChange(dialogCloseValue));
+  }
+
+  bulkApprove(): void {
+    this.store.pipe(
+      select(fromWorkQueue.getSelectedApplications),
+      withLatestFrom(this.store.pipe(select(fromWorkQueue.getTab))),
+      take(1)
+    ).subscribe(([selected, tab]) => {
+      this.store.dispatch(new LoadBulkApprovalEntries(selected));
+      this.store.dispatch(new ClearSelected(ActionTargetType.Application));
+      this.router.navigate([tab.toLocaleLowerCase(), 'bulkApproval'], {relativeTo: this.route});
+    });
   }
 
   /**

@@ -20,6 +20,16 @@
               *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
         {{'applicationBasket.addTo' | translation | uppercase}}
       </button>
+      <button
+       mat-raised-button
+       type="button"
+       color="primary"
+       class="in-front"
+       [disabled]="!(someSelected$ | async)"
+       (click)="bulkApprove()"
+       *availableTo="['ROLE_DECISION']">
+        {{'decision.do' | translation | uppercase}}
+      </button>
     </div>
   </div>
 
