@@ -29,13 +29,15 @@
           </p>
         </section>
         <section class="half-right">
-          <h2>Yhteyshenkilö</h2>
-          <!-- <p>[Yhteyshenkilön nimi]<br/>[Sähköpostiosoite, puhelin]</p> -->
-          <p>
-            <xsl:for-each select="data/customerContactLines">
-              <xsl:value-of select="."/><br/>
-            </xsl:for-each>
-          </p>
+          <xsl:if test="data/anonymizedDocument = 'false'">
+            <h2>Yhteyshenkilö</h2>
+            <!-- <p>[Yhteyshenkilön nimi]<br/>[Sähköpostiosoite, puhelin]</p> -->
+            <p>
+              <xsl:for-each select="data/customerContactLines">
+                <xsl:value-of select="."/><br/>
+              </xsl:for-each>
+            </p>
+          </xsl:if>
         </section>
       </div>
 
@@ -50,7 +52,7 @@
             </p>
           </section>
           <section class="half-right">
-            <xsl:if test="data/propertyDeveloperContactLines != ''">
+            <xsl:if test="data/propertyDeveloperContactLines != '' and data/anonymizedDocument = 'false'">
               <h2>Yhteyshenkilö</h2>
               <p>
                 <xsl:for-each select="data/propertyDeveloperContactLines">
@@ -72,12 +74,14 @@
           </p>
         </section>
         <section class="half-right">
-          <h2>Vastuuhenkilö</h2>
-          <p>
-            <xsl:for-each select="data/contractorContactLines">
-              <xsl:value-of select="."/><br/>
-            </xsl:for-each>
-          </p>
+          <xsl:if test="data/anonymizedDocument = 'false'">
+            <h2>Vastuuhenkilö</h2>
+            <p>
+              <xsl:for-each select="data/contractorContactLines">
+                <xsl:value-of select="."/><br/>
+              </xsl:for-each>
+            </p>
+          </xsl:if>
         </section>
       </div>
 
@@ -92,7 +96,7 @@
             </p>
           </section>
           <section class="half-right">
-            <xsl:if test="data/representativeContactLines != ''">
+            <xsl:if test="data/representativeContactLines != '' and data/anonymizedDocument = 'false'">
               <h2>Yhteyshenkilö</h2>
               <p>
                 <xsl:for-each select="data/representativeContactLines">
@@ -318,7 +322,7 @@
           </xsl:if>
       </section>
 
-      <xsl:if test="data/notBillable = 'false'">
+      <xsl:if test="data/notBillable = 'false' and data/anonymizedDocument = 'false'">
         <div class="unboxed avoid-pb">
           <h2>Laskutusosoite</h2>
           <section class="half-left">

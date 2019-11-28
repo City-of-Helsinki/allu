@@ -44,9 +44,9 @@ public abstract class AbstractDocumentMapper<T> {
     this.locationService = locationService;
   }
 
-  protected CustomerAnonymizer getCustomerAnonymizer() {
+  protected Optional<CustomerAnonymizer> getCustomerAnonymizer() {
     // By default, no anonymization
-    return null;
+    return Optional.empty();
   }
 
   protected List<String> customerAddressLines(ApplicationJson applicationJson) {
@@ -300,20 +300,19 @@ public abstract class AbstractDocumentMapper<T> {
 
   protected CustomerJson findCustomerById(Integer customerId) {
     CustomerJson customer = customerService.findCustomerById(customerId);
-    return Optional.ofNullable(getCustomerAnonymizer()).map(a -> a.anonymizeCustomer(customer)).orElse(customer);
+    return getCustomerAnonymizer().map(a -> a.anonymizeCustomer(customer)).orElse(customer);
   }
 
   protected ContactJson findContactById(Integer id) {
     ContactJson contact = contactService.findById(id);
-    return Optional.ofNullable(getCustomerAnonymizer()).map(a -> a.anonymizeContact(contact)).orElse(contact);
+    return getCustomerAnonymizer().map(a -> a.anonymizeContact(contact)).orElse(contact);
   }
 
   protected Optional<CustomerWithContactsJson> getCustomerByRole(ApplicationJson application, CustomerRoleType role) {
     Optional<CustomerWithContactsJson> customer = application.getCustomersWithContacts().stream()
         .filter(cwc -> role.equals(cwc.getRoleType()))
         .findFirst();
-    return Optional.ofNullable(getCustomerAnonymizer())
-        .map(a -> a.anonymizeCustomerWithContacts(customer))
+    return getCustomerAnonymizer().map(a -> a.anonymizeCustomerWithContacts(customer))
         .orElse(customer);
   }
 }

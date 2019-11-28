@@ -135,6 +135,8 @@ public class DecisionJson {
 
   private int headerRows;
 
+  private boolean isAnonymizedDocument = false;
+
   public boolean isDraft() {
     return isDraft;
   }
@@ -905,5 +907,13 @@ public class DecisionJson {
 
   public void setHeaderRows(int headerRows) {
     this.headerRows = headerRows;
+  }
+
+  public boolean isAnonymizedDocument() {
+    return isAnonymizedDocument;
+  }
+
+  public void setAnonymizedDocument(boolean isAnonymizedDocument) {
+    this.isAnonymizedDocument = isAnonymizedDocument;
   }
 }

@@ -1,5 +1,7 @@
 package fi.hel.allu.servicecore.mapper;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +21,7 @@ public class AnonymizedApprovalDocumentMapper extends ApprovalDocumentMapper {
   }
 
   @Override
-  protected CustomerAnonymizer getCustomerAnonymizer() {
-    return customerAnonymizer;
+  protected Optional<CustomerAnonymizer> getCustomerAnonymizer() {
+    return Optional.of(customerAnonymizer);
   }
-
 }

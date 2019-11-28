@@ -33,7 +33,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
 
         <section class="half-right">
-          <xsl:if test="data/customerContactLines != ''">
+          <xsl:if test="data/customerContactLines != '' and data/anonymizedDocument = 'false'">
             <h2>Yhteyshenkilö</h2>
             <!-- <p>[Yhteyshenkilön nimi]<br/>[Sähköpostiosoite, puhelin]</p> -->
             <p>
@@ -56,7 +56,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </p>
           </section>
           <section class="half-right">
-            <xsl:if test="data/representativeContactLines != ''">
+            <xsl:if test="data/representativeContactLines != '' and data/anonymizedDocument = 'false'">
               <h2>Yhteyshenkilö</h2>
               <p>
                 <xsl:for-each select="data/representativeContactLines">

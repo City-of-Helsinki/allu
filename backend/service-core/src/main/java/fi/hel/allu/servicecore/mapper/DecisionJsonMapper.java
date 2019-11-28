@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,24 +22,17 @@ import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
-import static fi.hel.allu.common.util.TimeUtil.HelsinkiZoneId;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.model.domain.util.PriceUtil;
 import fi.hel.allu.model.domain.util.Printable;
-import fi.hel.allu.pdf.domain.CableInfoTexts;
-import fi.hel.allu.pdf.domain.ChargeInfoTexts;
-import fi.hel.allu.pdf.domain.DecisionJson;
-import fi.hel.allu.pdf.domain.KindWithSpecifiers;
-import fi.hel.allu.pdf.domain.RentalArea;
+import fi.hel.allu.pdf.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.*;
-import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import static fi.hel.allu.common.util.TimeUtil.HelsinkiZoneId;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 @Component
 public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
@@ -99,6 +91,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   public DecisionJson mapToDocumentJson(ApplicationJson application, boolean draft) {
     DecisionJson decisionJson = new DecisionJson();
     decisionJson.setDraft(draft);
+    decisionJson.setAnonymizedDocument(getCustomerAnonymizer().isPresent());
     decisionJson.setEventName(application.getName());
     decisionJson.setDecisionId(application.getApplicationId());
     decisionJson.setCustomerAddressLines(customerAddressLines(application));
