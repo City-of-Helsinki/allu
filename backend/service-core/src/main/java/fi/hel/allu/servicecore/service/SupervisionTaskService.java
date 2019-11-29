@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
@@ -232,20 +233,19 @@ public class SupervisionTaskService {
 
   public void updateSupervisionTaskDate(Integer applicationId, SupervisionTaskType taskType,
       ZonedDateTime date) {
-    SupervisionTask task = findByApplicationIdAndType(applicationId, taskType);
-    if (task != null) {
-      task.setPlannedFinishingTime(date);
-      update(task.getId(), task);
-    }
+    Optional<SupervisionTask> task = findOpenSupervisionTaskByApplicationIdAndType(applicationId, taskType);
+    task.ifPresent(t -> updateTaskDate(t, date));
   }
 
-  private SupervisionTask findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
+  private void updateTaskDate(SupervisionTask task, ZonedDateTime date) {
+    task.setPlannedFinishingTime(date);
+    update(task.getId(), task);
+  }
+
+  private Optional<SupervisionTask> findOpenSupervisionTaskByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
     SupervisionTask[] supervisionTasksResult = restTemplate.getForEntity(
         applicationProperties.getSupervisionTaskByApplicationIdAndTypeUrl(), SupervisionTask[].class, applicationId, type).getBody();
-    if (supervisionTasksResult.length > 0) {
-      return supervisionTasksResult[0];
-    }
-    return null;
+    return Stream.of(supervisionTasksResult).filter(task -> task.getStatus() == SupervisionTaskStatusType.OPEN).findFirst();
   }
 
   public void updateSupervisionTaskDate(int applicationId, SupervisionTaskType type, int locationId, ZonedDateTime date) {
@@ -263,10 +263,6 @@ public class SupervisionTaskService {
             update(t.getId(), t);
         }
     );
-  }
-
-  public boolean hasSupervisionTask(Integer applicationId, SupervisionTaskType taskType) {
-    return findByApplicationIdAndType(applicationId, taskType) != null;
   }
 
   public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
