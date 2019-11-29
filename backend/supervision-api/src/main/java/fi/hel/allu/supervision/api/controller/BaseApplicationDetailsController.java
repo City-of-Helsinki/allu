@@ -239,4 +239,23 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     ApplicationJson result = applicationServiceComposer.replaceDistributionList(id, distributionList);
     return ResponseEntity.ok(result);
   }
+
+  @ApiOperation(value = "Update invoice recipient",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Invoice recipient updated successfully"),
+    @ApiResponse(code = 403, message = "Invoice recipient update forbidden", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/{id}/invoiceRecipient", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity updateInvoiceRecipient(@PathVariable Integer id,
+                                               @RequestBody @ApiParam("The new invoice recipient id")
+                                                 Integer invoiceRecipientId) {
+    validateType(id);
+    applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
+    return ResponseEntity.ok().build();
+  }
 }
