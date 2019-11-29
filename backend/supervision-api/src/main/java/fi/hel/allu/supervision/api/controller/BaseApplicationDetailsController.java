@@ -8,6 +8,7 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.servicecore.domain.CreateApplicationJson;
 import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.DistributionEntryJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.service.LocationService;
@@ -217,6 +218,25 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     validateType(applicationId);
     CustomerWithContactsJson result = applicationServiceComposer.replaceCustomerWithContacts(applicationId,
       customerMapper.createCustomerWithContactsJson(CustomerRoleType.REPRESENTATIVE, customer));
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation(value = "Update distribution list",
+    authorizations = @Authorization(value ="api_key"),
+    consumes = "application/json",
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Distribution list updated successfully"),
+    @ApiResponse(code = 403, message = "Distribution list update forbidden", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/{id}/distributionList", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ApplicationJson> updateDistributionList(@PathVariable Integer id,
+                                                                @RequestBody @ApiParam("The new distribution list")
+                                                                  List<DistributionEntryJson> distributionList) {
+    validateType(id);
+    ApplicationJson result = applicationServiceComposer.replaceDistributionList(id, distributionList);
     return ResponseEntity.ok(result);
   }
 }
