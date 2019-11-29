@@ -6,6 +6,7 @@
     outline-color: mat-color($primary, 100);
   }
 
+  ul.striped li:nth-child(odd),
   .mat-list.striped .mat-list-item:nth-child(odd) {
     background: mat-color($primary, 50);
   }

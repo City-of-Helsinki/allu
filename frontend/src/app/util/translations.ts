@@ -1152,7 +1152,9 @@ export const translations = {
     }
   },
   bulkApproval: {
-    title: 'Päätä valitut'
+    title: 'Päätä valitut',
+    nothingToApprove: 'Ei päätettäviä hakemuksia',
+    cannotBeApproved: 'Ei voida päättää'
   },
   user: {
     role: {

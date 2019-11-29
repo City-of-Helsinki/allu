@@ -1,0 +1,9 @@
+<div
+  fxLayout="row"
+  fxLayoutAlign="start center"
+  fxLayoutGap="18px"
+  class="slim">
+  <div fxFlex="0 0 120px" class="text-highlighted">{{entry.applicationId}}</div>
+  <div fxFlex="none">{{['application.status', entry.targetState] | translation}}</div>
+  <div fxFlex *ngIf="entry.bulkApprovalBlocked">{{entry.bulkApprovalBlockedReason}}</div>
+</div>
