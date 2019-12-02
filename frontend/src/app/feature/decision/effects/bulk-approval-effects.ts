@@ -1,19 +1,31 @@
 import {Injectable} from '@angular/core';
 import {DecisionService} from '@app/service/decision/decision.service';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Store, Action} from '@ngrx/store';
+import {Action, Store} from '@ngrx/store';
 import * as fromDecision from '@feature/decision/reducers';
-import {Observable, from} from 'rxjs';
-import {Load, BulkApprovalActionType, LoadComplete} from '@feature/decision/actions/bulk-approval-actions';
-import {switchMap, map, catchError} from 'rxjs/operators';
+import {forkJoin, from, Observable, of} from 'rxjs';
+import {
+  Approve,
+  ApproveComplete,
+  ApproveEntryComplete,
+  BulkApprovalActionType,
+  Load,
+  LoadComplete
+} from '@feature/decision/actions/bulk-approval-actions';
+import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {NotifyFailure} from '@app/feature/notification/actions/notification-actions';
+import {BulkApprovalEntry} from '@model/decision/bulk-approval-entry';
+import {ApplicationService} from '@service/application/application.service';
+import {StatusChangeInfo} from '@model/application/status-change-info';
+import {DecisionDetails} from '@model/decision/decision-details';
 
 @Injectable()
 export class BulkApprovalEffects {
   constructor(
     private actions: Actions,
     private store: Store<fromDecision.State>,
-    private decisionService: DecisionService) {}
+    private decisionService: DecisionService,
+    private applicationService: ApplicationService) {}
 
   @Effect()
   loadBulkApprovalEntries: Observable<Action> = this.actions.pipe(
@@ -26,4 +38,21 @@ export class BulkApprovalEffects {
       ]))
     ))
   );
+
+  @Effect()
+  approve: Observable<Action> = this.actions.pipe(
+    ofType<Approve>(BulkApprovalActionType.Approve),
+    mergeMap(action => forkJoin(...action.payload.map(entry => this.approveEntry(entry)))),
+    map(() => new ApproveComplete())
+  );
+
+  approveEntry(entry: BulkApprovalEntry): Observable<ApproveEntryComplete> {
+    return this.applicationService.changeStatus(entry.id, entry.targetState, new StatusChangeInfo()).pipe(
+      switchMap(app => this.decisionService.sendByStatus(entry.id, entry.targetState, new DecisionDetails(entry.distributionList)).pipe(
+        map(result => new ApproveEntryComplete({id: entry.id})),
+        catchError(error => of(new ApproveEntryComplete({id: entry.id, error: error}))),
+        tap(action => this.store.dispatch(action)) // Dispatch action to notify progress
+      ))
+    );
+  }
 }

@@ -8,7 +8,8 @@ import {findTranslation} from '../../util/translations';
 import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
 import {catchError, map} from 'rxjs/internal/operators';
 import {BulkApprovalEntry} from '@app/model/decision/bulk-approval-entry';
-import {BulkApprovalEntryMapper, BackendBulkApprovalEntry} from '../mapper/bulk-approval-entry-mapper';
+import {BackendBulkApprovalEntry, BulkApprovalEntryMapper} from '../mapper/bulk-approval-entry-mapper';
+import {ApplicationStatus} from '@model/application/application-status';
 
 const DECISION_URL = '/api/applications/:appId/decision';
 const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
@@ -48,6 +49,23 @@ export class DecisionService {
   public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = TERMINATION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
+  }
+
+  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<{}> {
+    switch (status) {
+      case ApplicationStatus.OPERATIONAL_CONDITION: {
+        return this.sendOperationalCondition(applicationId, emailDetails);
+      }
+      case ApplicationStatus.FINISHED: {
+        return this.sendWorkFinished(applicationId, emailDetails);
+      }
+      case ApplicationStatus.TERMINATED: {
+        return this.sendTermination(applicationId, emailDetails);
+      }
+      default: {
+        return this.sendDecision(applicationId, emailDetails);
+      }
+    }
   }
 
   public getBulkApprovalEntries(applicationIds: number[]): Observable<BulkApprovalEntry[]> {
