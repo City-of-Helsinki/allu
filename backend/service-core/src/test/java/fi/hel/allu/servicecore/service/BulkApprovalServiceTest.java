@@ -1,16 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.mail.model.MailMessage;
+import fi.hel.allu.servicecore.validation.ValidationMessageTranslator;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.DistributionEntry;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.BulkApprovalEntryJson;
-import fi.hel.allu.servicecore.domain.DecisionDocumentType;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Before;
@@ -39,6 +35,9 @@ public class BulkApprovalServiceTest {
   private ApplicationMapper applicationMapper;
   @Mock
   private ApplicationHistoryService applicationHistoryService;
+  @Mock
+  private ValidationMessageTranslator validationMessageTranslator;
+
 
   private BulkApprovalService bulkApprovalService;
 
@@ -46,7 +45,7 @@ public class BulkApprovalServiceTest {
 
   @Before
   public void setup() {
-    bulkApprovalService = new BulkApprovalService(applicationService, applicationMapper, applicationHistoryService);
+    bulkApprovalService = new BulkApprovalService(applicationService, applicationMapper, applicationHistoryService, validationMessageTranslator);
 
     applications = Arrays.asList(
       application(1, ApplicationType.EVENT, StatusType.DECISIONMAKING),
@@ -62,9 +61,6 @@ public class BulkApprovalServiceTest {
   public void shouldReturnEntriesForApplicationsInDecisionmaking() {
     List<BulkApprovalEntryJson> entries = bulkApprovalService.getBulkApprovalEntries(Arrays.asList(1, 2, 3));
 
-    // Both DECISIONMAKING status entries
-    verify(applicationHistoryService, times(2)).hasStatusInHistory(anyInt(), eq(StatusType.OPERATIONAL_CONDITION));
-
     assertEquals(2, entries.size());
     assertTrue(entries.stream().anyMatch(e -> e.getId() == applications.get(0).getId()));
     assertTrue(entries.stream().anyMatch(e -> e.getId() == applications.get(2).getId()));
@@ -73,23 +69,24 @@ public class BulkApprovalServiceTest {
   @Test
   public void shouldMarkApplicationsWithOperationalConditionInHistoryAsBlocked() {
     List<Application> moreApplications = new ArrayList<>(applications);
-    Application withOperationalCondition = application(5, ApplicationType.EXCAVATION_ANNOUNCEMENT, StatusType.DECISIONMAKING);
-    moreApplications.add(withOperationalCondition);
+    Application replacingWithOperationalCondition = application(5, ApplicationType.EXCAVATION_ANNOUNCEMENT, StatusType.DECISIONMAKING);
+    replacingWithOperationalCondition.setReplacesApplicationId(6);
+    moreApplications.add(replacingWithOperationalCondition);
 
     when(applicationService.findApplicationsById(anyList())).thenReturn(moreApplications);
     when(applicationHistoryService.hasStatusInHistory(
-      eq(withOperationalCondition.getId()), eq(StatusType.OPERATIONAL_CONDITION))).thenReturn(true);
+      eq(replacingWithOperationalCondition.getId()), eq(StatusType.OPERATIONAL_CONDITION))).thenReturn(true);
 
     List<BulkApprovalEntryJson> entries = bulkApprovalService.getBulkApprovalEntries(Arrays.asList(1, 2, 3, 5));
 
-    // All DECISIONMAKING status entries
-    verify(applicationHistoryService, times(3)).hasStatusInHistory(anyInt(), eq(StatusType.OPERATIONAL_CONDITION));
+    // Should be checked for replacing application
+    verify(applicationHistoryService, times(1)).hasStatusInHistory(anyInt(), eq(StatusType.OPERATIONAL_CONDITION));
 
     assertEquals(3, entries.size());
     assertTrue(entries.stream().anyMatch(e -> e.getId() == applications.get(0).getId()));
     assertTrue(entries.stream().anyMatch(e -> e.getId() == applications.get(2).getId()));
     assertTrue(entries.stream().anyMatch(e ->
-      e.getId() == withOperationalCondition.getId() && e.getBulkApprovalBlocked()));
+      e.getId() == replacingWithOperationalCondition.getId() && e.getBulkApprovalBlocked()));
   }
 
   private Application application(Integer id, ApplicationType type, StatusType status) {

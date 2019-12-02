@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.servicecore.validation.ValidationMessageTranslator;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.BulkApprovalEntryJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
@@ -17,13 +18,15 @@ public class BulkApprovalService {
   private final ApplicationService applicationService;
   private final ApplicationMapper applicationMapper;
   private final ApplicationHistoryService applicationHistoryService;
+  private final ValidationMessageTranslator validationMessageTranslator;
 
   @Autowired
   public BulkApprovalService(ApplicationService applicationService, ApplicationMapper applicationMapper,
-       ApplicationHistoryService applicationHistoryService) {
+       ApplicationHistoryService applicationHistoryService, ValidationMessageTranslator validationMessageTranslator) {
     this.applicationService = applicationService;
     this.applicationMapper = applicationMapper;
     this.applicationHistoryService = applicationHistoryService;
+    this.validationMessageTranslator = validationMessageTranslator;
   }
 
   public List<BulkApprovalEntryJson> getBulkApprovalEntries(List<Integer> ids) {
@@ -43,12 +46,19 @@ public class BulkApprovalService {
     entry.setApplicationId(application.getApplicationId());
     entry.setTargetState(application.getTargetState());
     entry.setDistributionList(applicationMapper.createDistributionEntryJsonList(application.getDecisionDistributionList()));
-    entry.setBulkApprovalBlocked(isApprovalBlocked(application.getId()));
-    entry.setBulkApprovalBlockedReason(""); // TODO: translated reason
+    setApprovalBlocked(entry, application);
     return entry;
   }
 
-  private boolean isApprovalBlocked(Integer applicationId) {
-    return applicationHistoryService.hasStatusInHistory(applicationId, StatusType.OPERATIONAL_CONDITION);
+  private void setApprovalBlocked(BulkApprovalEntryJson entry, Application application) {
+    if (isApprovalBlockedReplacedOperationalCondition(application)) {
+      entry.setBulkApprovalBlocked(true);
+      entry.setBulkApprovalBlockedReason(validationMessageTranslator.getTranslation("bulkApproval.blocked.choiceForOperationalConditionOrDecision"));
+    }
+  }
+
+  private boolean isApprovalBlockedReplacedOperationalCondition(Application application) {
+    return application.getReplacesApplicationId() != null
+      && applicationHistoryService.hasStatusInHistory(application.getId(), StatusType.OPERATIONAL_CONDITION);
   }
 }
