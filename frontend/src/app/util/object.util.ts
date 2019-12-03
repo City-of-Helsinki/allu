@@ -50,15 +50,26 @@ export class ObjectUtil {
   }
 }
 
-export interface Dictionary<T> {
+export interface DictionaryNum<T> {
+  [id: number]: T | undefined;
+}
+
+export abstract class Dictionary<T> implements DictionaryNum<T> {
   [key: string]: T;
 }
 
-export function toDictionary<T>(items: T[], keyFn: (item: T) => string): Dictionary<T> {
-  return items.reduce((prev: { [key: string]: T }, cur: T) => {
+export function toDictionary<T>(items: T[], keyFn: (item: T) => string | number): Dictionary<T> {
+  return items.reduce((prev: Dictionary<T>, cur: T) => {
     prev[keyFn(cur)] = cur;
     return prev;
   }, {});
+}
+
+export function upsert<T>(dictionary: Dictionary<T>, key: string | number, value: T): Dictionary<T> {
+  return {
+    ...dictionary,
+    [key]: value
+  };
 }
 
 export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';

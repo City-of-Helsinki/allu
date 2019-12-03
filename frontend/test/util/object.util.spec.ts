@@ -1,4 +1,4 @@
-import {ObjectUtil} from '../../src/app/util/object.util';
+import {Dictionary, ObjectUtil, upsert} from '../../src/app/util/object.util';
 describe('Object util', () => {
   it('should clone normal properties', () => {
     const original = {
@@ -45,5 +45,25 @@ describe('Object util', () => {
     };
 
     expect(ObjectUtil.clone(original)).toEqual(original);
+  });
+
+  it('upsert should update existing value in dictionary', () => {
+    const dict: Dictionary<{id: number, value: string}> = {
+      1: {id: 1, value: 'one'},
+      2: {id: 2, value: 'two'},
+    };
+
+    const updatedDict = upsert(dict, 2, {id: 2, value: 'three'});
+    expect(updatedDict[2]).toEqual({id: 2, value: 'three'});
+  });
+
+  it('upsert should insert non-existing value to dictionary', () => {
+    const dict: Dictionary<{id: number, value: string}> = {
+      1: {id: 1, value: 'one'},
+      2: {id: 2, value: 'two'},
+    };
+
+    const updatedDict = upsert(dict, 3, {id: 3, value: 'three'});
+    expect(updatedDict[3]).toEqual({id: 3, value: 'three'});
   });
 });
