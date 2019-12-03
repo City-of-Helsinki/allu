@@ -28,6 +28,7 @@ import {PageRequest} from '@model/common/page-request';
 import * as fromAuth from '@feature/auth/reducers';
 import {ObjectUtil} from '@util/object.util';
 import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
+import {ApproveComplete, BulkApprovalActionType} from '@feature/decision/actions/bulk-approval-actions';
 
 @Injectable()
 export class ApplicationSearchEffects {
@@ -63,10 +64,11 @@ export class ApplicationSearchEffects {
 
   @Effect()
   refreshWorkQueueSearch: Observable<Action> = this.actions.pipe(
-    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess>(
+    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess | ApproveComplete>(
       ApplicationActionType.ChangeOwnerSuccess,
       ApplicationActionType.RemoveOwnerSuccess,
-      ApplicationActionType.RemoveOwnerNotificationSuccess
+      ApplicationActionType.RemoveOwnerNotificationSuccess,
+      BulkApprovalActionType.ApproveComplete
     ),
     switchMap(() => this.getCurrentWorkQueueSearch()),
     switchMap(([search, sort, pageRequest]) => [
