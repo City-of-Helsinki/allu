@@ -6,14 +6,14 @@ import {OperationStatus} from '@model/common/operation-status';
 export interface State {
   loading: boolean;
   entries: BulkApprovalEntry[];
-  approving: boolean;
+  status: OperationStatus;
   entryStatus: Dictionary<EntryStatus>;
 }
 
 const initialState: State = {
   loading: false,
   entries: [],
-  approving: false,
+  status: OperationStatus.NOT_STARTED,
   entryStatus: {}
 };
 
@@ -31,6 +31,7 @@ export function reducer(state: State = initialState, action: BulkApprovalActions
         ...state,
         loading: false,
         entries: action.payload.entries,
+        status: OperationStatus.NOT_STARTED,
         entryStatus: {}
       };
     }
@@ -40,7 +41,7 @@ export function reducer(state: State = initialState, action: BulkApprovalActions
 
       return {
         ...state,
-        approving: true,
+        status: OperationStatus.PENDING,
         entryStatus: toDictionary<EntryStatus>(entryStatus, entry => entry.id)
       };
     }
@@ -59,7 +60,7 @@ export function reducer(state: State = initialState, action: BulkApprovalActions
     case BulkApprovalActionType.ApproveComplete: {
       return {
         ...state,
-        approving: false
+        status: OperationStatus.SUCCESS
       };
     }
 
@@ -71,5 +72,5 @@ export function reducer(state: State = initialState, action: BulkApprovalActions
 
 export const getLoading = (state: State) => state.loading;
 export const getEntries = (state: State) => state.entries;
-export const getApproving = (state: State) => state.approving;
+export const getStatus = (state: State) => state.status;
 export const getEntryStatus = (state: State) => state.entryStatus;

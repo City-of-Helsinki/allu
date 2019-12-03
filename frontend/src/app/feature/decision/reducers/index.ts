@@ -193,3 +193,8 @@ export const getBulkApprovalEntryStatus = (id: number) => createSelector(
   getBulkApprovalStatusEntities,
   status => status ? status[id] : undefined
 );
+
+export const getBulkApprovalStatus = createSelector(
+  getBulkApprovalEntitiesState,
+  fromBulkApproval.getStatus
+);

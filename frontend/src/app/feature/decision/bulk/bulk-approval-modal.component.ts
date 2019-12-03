@@ -6,6 +6,7 @@ import {Approve} from '@feature/decision/actions/bulk-approval-actions';
 import * as fromDecision from '@feature/decision/reducers';
 import {Observable} from 'rxjs';
 import {Dictionary} from '@util/object.util';
+import {OperationStatus} from '@model/common/operation-status';
 
 export interface BulkApprovalModalData {
   entries: BulkApprovalEntry[];
@@ -24,6 +25,7 @@ export const BULK_APPROVAL_MODAL_CONFIG: MatDialogConfig<BulkApprovalModalData> 
 export class BulkApprovalModalComponent implements OnInit {
   approvableEntries: BulkApprovalEntry[] = [];
   unapprovableEntries: BulkApprovalEntry[] = [];
+  status$: Observable<OperationStatus>;
 
   constructor(
     public dialogRef: MatDialogRef<BulkApprovalModalComponent>,
@@ -34,6 +36,7 @@ export class BulkApprovalModalComponent implements OnInit {
   ngOnInit(): void {
     this.approvableEntries = this.data.entries.filter(entry => !entry.bulkApprovalBlocked);
     this.unapprovableEntries = this.data.entries.filter(entry => entry.bulkApprovalBlocked);
+    this.status$ = this.store.pipe(select(fromDecision.getBulkApprovalStatus));
   }
 
   approve(): void {
@@ -42,7 +45,7 @@ export class BulkApprovalModalComponent implements OnInit {
     }
   }
 
-  cancel(): void {
+  close(): void {
     this.dialogRef.close();
   }
 

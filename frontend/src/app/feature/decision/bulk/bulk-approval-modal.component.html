@@ -25,11 +25,22 @@
     </ul>
   </ng-container>
 </div>
-<div mat-dialog-actions>
-  <button mat-raised-button type="button" color="primary" (click)="cancel()">
-    {{'common.button.cancel' | translation}}
+<div mat-dialog-actions *ngIf="status$ | async as status">
+  <button
+    mat-raised-button
+    type="button"
+    color="primary"
+    [disabled]="status==='PENDING'"
+    (click)="close()">
+    {{'common.button.close' | translation | uppercase}}
   </button>
-  <button mat-raised-button type="button" color="primary" (click)="approve()">
+  <button
+    *ngIf="status==='NOT_STARTED' || status==='PENDING'"
+    mat-raised-button
+    type="button"
+    color="primary"
+    [disabled]="status==='PENDING'"
+    (click)="approve()">
     {{'decision.do' | translation | uppercase}}
   </button>
 </div>
