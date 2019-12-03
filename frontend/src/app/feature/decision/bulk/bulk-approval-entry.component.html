@@ -5,5 +5,10 @@
   class="slim">
   <div fxFlex="0 0 120px" class="text-highlighted">{{entry.applicationId}}</div>
   <div fxFlex="none">{{['application.status', entry.targetState] | translation}}</div>
-  <div fxFlex *ngIf="entry.bulkApprovalBlocked">{{entry.bulkApprovalBlockedReason}}</div>
+  <div fxFlex>{{entry.bulkApprovalBlockedReason}}</div>
+  <div fxFlex="none" *ngIf="entryStatus" class="entry-status">
+    <mat-spinner *ngIf="entryStatus.status==='PENDING'" diameter="24"></mat-spinner>
+    <mat-icon *ngIf="entryStatus.status==='SUCCESS'" class="icon-middle icon-success">check_circle</mat-icon>
+    <mat-icon *ngIf="entryStatus.status==='FAIL'" color="warn" class="icon-middle">error</mat-icon>
+  </div>
 </div>

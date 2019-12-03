@@ -9,7 +9,9 @@
       </div>
     </li>
     <li *ngFor="let approvalEntry of approvableEntries" class="entry-row">
-      <bulk-approval-entry [entry]="approvalEntry"></bulk-approval-entry>
+      <bulk-approval-entry
+        [entry]="approvalEntry"
+        [entryStatus]="status(approvalEntry.id) | async"></bulk-approval-entry>
     </li>
   </ul>
 

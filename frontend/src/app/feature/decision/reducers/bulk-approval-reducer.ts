@@ -1,20 +1,20 @@
-import {BulkApprovalEntry} from '@app/model/decision/bulk-approval-entry';
+import {BulkApprovalEntry, EntryStatus} from '@app/model/decision/bulk-approval-entry';
 import {BulkApprovalActions, BulkApprovalActionType} from '../actions/bulk-approval-actions';
+import {Dictionary, toDictionary, upsert} from '@util/object.util';
+import {OperationStatus} from '@model/common/operation-status';
 
 export interface State {
   loading: boolean;
   entries: BulkApprovalEntry[];
   approving: boolean;
-  approved: number[];
-  failed: number[];
+  entryStatus: Dictionary<EntryStatus>;
 }
 
 const initialState: State = {
   loading: false,
   entries: [],
   approving: false,
-  approved: [],
-  failed: []
+  entryStatus: {}
 };
 
 export function reducer(state: State = initialState, action: BulkApprovalActions) {
@@ -31,24 +31,28 @@ export function reducer(state: State = initialState, action: BulkApprovalActions
         ...state,
         loading: false,
         entries: action.payload.entries,
-        approved: [],
-        failed: []
+        entryStatus: {}
       };
     }
 
     case BulkApprovalActionType.Approve: {
+      const entryStatus = action.payload.map((entry) => ({id: entry.id, status: OperationStatus.PENDING}));
+
       return {
         ...state,
-        approving: true
+        approving: true,
+        entryStatus: toDictionary<EntryStatus>(entryStatus, entry => entry.id)
       };
     }
 
     case BulkApprovalActionType.ApproveEntryComplete: {
-      const success = !action.payload.error;
       return {
         ...state,
-        approved: success ? state.approved.concat(action.payload.id) : state.approved,
-        failed: !success ? state.failed.concat(action.payload.id) : state.failed
+        entryStatus: upsert(state.entryStatus, action.payload.id, {
+          id: action.payload.id,
+          status: action.payload.error ? OperationStatus.FAIL : OperationStatus.SUCCESS,
+          error: action.payload.error
+        })
       };
     }
 
@@ -68,5 +72,4 @@ export function reducer(state: State = initialState, action: BulkApprovalActions
 export const getLoading = (state: State) => state.loading;
 export const getEntries = (state: State) => state.entries;
 export const getApproving = (state: State) => state.approving;
-export const getApproved = (state: State) => state.approved;
-export const getFailed = (state: State) => state.failed;
+export const getEntryStatus = (state: State) => state.entryStatus;

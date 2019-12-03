@@ -1,9 +1,11 @@
-import {BulkApprovalEntry} from '@app/model/decision/bulk-approval-entry';
+import {BulkApprovalEntry, EntryStatus} from '@app/model/decision/bulk-approval-entry';
 import {MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {Component, Inject, OnInit} from '@angular/core';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {Approve} from '@feature/decision/actions/bulk-approval-actions';
 import * as fromDecision from '@feature/decision/reducers';
+import {Observable} from 'rxjs';
+import {Dictionary} from '@util/object.util';
 
 export interface BulkApprovalModalData {
   entries: BulkApprovalEntry[];
@@ -42,5 +44,9 @@ export class BulkApprovalModalComponent implements OnInit {
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  status(id: number): Observable<EntryStatus> {
+    return this.store.pipe(select(fromDecision.getBulkApprovalEntryStatus(id)));
   }
 }

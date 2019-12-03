@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {BulkApprovalEntry} from '@model/decision/bulk-approval-entry';
+import {BulkApprovalEntry, EntryStatus} from '@model/decision/bulk-approval-entry';
 
 @Component({
   selector: 'bulk-approval-entry',
@@ -9,4 +9,5 @@ import {BulkApprovalEntry} from '@model/decision/bulk-approval-entry';
 })
 export class BulkApprovalEntryComponent {
   @Input() entry: BulkApprovalEntry;
+  @Input() entryStatus: EntryStatus;
 }

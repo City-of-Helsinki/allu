@@ -1,4 +1,4 @@
-@mixin allu-icons-theme($theme, $gray) {
+@mixin allu-icons-theme($theme, $gray, $success) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $foreground: map-get($theme, foreground);
@@ -6,6 +6,10 @@
 
   mat-icon.info-icon-gray {
     color: $gray;
+  }
+
+  mat-icon.icon-success {
+    color: map-get($success, 500);
   }
 
   .mat-icon-button[disabled][disabled] {
