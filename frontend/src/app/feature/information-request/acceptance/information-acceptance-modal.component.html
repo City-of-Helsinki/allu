@@ -18,12 +18,12 @@
     <div *ngIf="requestDataAvailable && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
       <information-request-fields [requestFields]="data.informationRequest?.fields"></information-request-fields>
     </div>
-    
+
     <div fxLayout="row" class="acceptance-info-header">
       <h2 *ngIf="!hideExisting" mat-dialog-title fxFlex>{{'informationRequest.acceptance.existingInfo' | translation}}</h2>
       <h2 mat-dialog-title fxFlex>{{'informationRequest.acceptance.providedInfo' | translation}}</h2>
     </div>
-    
+
     <div class="acceptance-content">
       <div *ngFor="let field of updatedFields">
         <div [ngSwitch]="field">
@@ -126,7 +126,7 @@
       <button *ngIf="oldInfo.status==='PENDING'" type="button" mat-raised-button color="primary" (click)="moveToHandling()">
         {{'application.button.toHandling' | translation | uppercase}}
       </button>
-      <ng-container *ngIf="oldInfo.status==='DECISION' || oldInfo.status==='OPERATIONAL_CONDITION'">
+      <ng-container *ngIf="(oldInfo.status==='DECISION' || oldInfo.status==='OPERATIONAL_CONDITION') && !hideExisting">
         <button
           type="button"
           mat-raised-button
