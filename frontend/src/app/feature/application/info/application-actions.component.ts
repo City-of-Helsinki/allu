@@ -133,6 +133,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     application.customerReference = undefined;
     application.replacesApplicationId = undefined;
     application.replacedByApplicationId = undefined;
+    application.identificationNumber = undefined;
     // Pre-reserved should be kept as such
     application.status = application.status === ApplicationStatus.PRE_RESERVED
       ? ApplicationStatus.PRE_RESERVED
