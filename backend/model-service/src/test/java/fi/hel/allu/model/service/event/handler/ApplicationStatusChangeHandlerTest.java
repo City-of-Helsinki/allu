@@ -89,6 +89,16 @@ public class ApplicationStatusChangeHandlerTest {
   }
 
   @Test
+  public void onDecisionRemoveReplacedFromProject() {
+    Integer replacedApplicationId = Integer.valueOf(999);
+    application.setReplacesApplicationId(replacedApplicationId);
+    application.setType(ApplicationType.EVENT);
+    application.setProjectId(555);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    Mockito.verify(applicationDao).updateProject(null, Collections.singletonList(application.getReplacesApplicationId()));
+  }
+
+  @Test
   public void onDecisionShouldRemoveSupervisionDoneTag() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);

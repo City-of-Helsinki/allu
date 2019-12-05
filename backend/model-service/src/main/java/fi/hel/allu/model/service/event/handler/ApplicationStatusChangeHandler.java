@@ -191,6 +191,8 @@ public class ApplicationStatusChangeHandler {
     if (application.getReplacesApplicationId() != null) {
       changeReplacedApplicationStatus(application.getReplacesApplicationId(), userId);
       cancelDanglingSupervisionTasks(application.getReplacesApplicationId());
+      // Remove replaced application from project
+      applicationDao.updateProject(null, Collections.singletonList(application.getReplacesApplicationId()));
     }
   }
 

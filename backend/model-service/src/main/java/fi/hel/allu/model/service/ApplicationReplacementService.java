@@ -110,8 +110,7 @@ public class ApplicationReplacementService {
 
     // Update application status
     updateStatus(replacingApplication);
-    // Remove replaced application from project
-    applicationDao.updateProject(null, Collections.singletonList(applicationToReplace.getId()));
+
     // Set replaces and replaced by
     applicationDao.setApplicationReplaced(applicationId, replacingApplication.getId());
 
