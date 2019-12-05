@@ -7,7 +7,6 @@ import java.util.List;
 public class DecisionDetailsJson {
   @NotEmpty(message = "{decision.distribution}")
   private List<DistributionEntryJson> decisionDistributionList;
-  @NotEmpty(message = "{decision.messageBody}")
   private String messageBody;
 
   /**

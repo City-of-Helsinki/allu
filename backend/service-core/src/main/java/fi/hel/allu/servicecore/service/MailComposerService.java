@@ -174,7 +174,7 @@ public class MailComposerService {
     Map<String, Object> result = new HashMap<>();
     result.put("applicationId", applicationJson.getApplicationId());
     result.put("decisionType", decisionTypeFor(applicationJson.getType()));
-    result.put("accompanyingMessage", accompanyingMessage);
+    result.put("accompanyingMessage", Optional.ofNullable(accompanyingMessage).orElse(""));
     result.put("handlerName", handlerName(type, applicationJson.getHandler()));
     result.put("totalPrice", applicationJson.getCalculatedPrice());
     result.put("inlineImageName", "cid:" + INLINE_LOGO_CID);

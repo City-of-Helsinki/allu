@@ -72,7 +72,7 @@ public class ApprovalController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Void> sendDecision(
     @PathVariable int applicationId,
-    @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    @RequestBody @Valid DecisionDetailsJson decisionDetailsJson) {
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.DECISION);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -81,7 +81,7 @@ public class ApprovalController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Void> sendOperationalCondition(
     @PathVariable int applicationId,
-    @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    @RequestBody @Valid DecisionDetailsJson decisionDetailsJson) {
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.OPERATIONAL_CONDITION);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -90,7 +90,7 @@ public class ApprovalController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Void> sendWorkFinished(
     @PathVariable int applicationId,
-    @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    @RequestBody @Valid DecisionDetailsJson decisionDetailsJson) {
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.WORK_FINISHED);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -99,7 +99,7 @@ public class ApprovalController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<Void> sendTermination(
     @PathVariable int applicationId,
-    @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    @RequestBody @Valid DecisionDetailsJson decisionDetailsJson) {
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.TERMINATION);
     return new ResponseEntity<>(HttpStatus.OK);
   }
