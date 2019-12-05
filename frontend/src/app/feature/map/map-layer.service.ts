@@ -108,7 +108,7 @@ export class MapLayerService {
       'Kaukolämpö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukolampo', token, ZoomLevel.METERS_10),
       'Kaukojäähdytys': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukojaahdytys', token, ZoomLevel.METERS_10),
       'Kaasu': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaasu', token, ZoomLevel.METERS_10),
-      'Vesijohto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_vesijohto', token, ZoomLevel.METERS_10),
+      'Vesijohto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_vesi', token, ZoomLevel.METERS_10),
       'Viemari': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_viemari', token, ZoomLevel.METERS_10),
       'Imujätehuolto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_imujatehuolto', token, ZoomLevel.METERS_10),
       'Yhdistelmäjohtokartta': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_yhdistelma', token, ZoomLevel.METERS_10),

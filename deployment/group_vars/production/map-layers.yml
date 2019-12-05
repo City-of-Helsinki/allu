@@ -35,9 +35,9 @@ map_layers_restricted:
   - name: helsinki_johtokartta_kaasu
     title: Helsinki Johtokartta kaasu
     sources: [hki_johtokartta_kaasu_cache]
-  - name: helsinki_johtokartta_vesijohto
-    title: Helsinki Johtokartta vesijohto
-    sources: [hki_johtokartta_vesijohto_cache]
+  - name: helsinki_johtokartta_vesi
+    title: Helsinki Johtokartta vesi
+    sources: [hki_johtokartta_vesi_cache]
   - name: helsinki_johtokartta_viemari
     title: Helsinki Johtokartta viemari
     sources: [hki_johtokartta_viemari_cache]
