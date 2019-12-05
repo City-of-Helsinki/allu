@@ -58,7 +58,12 @@ public class BulkApprovalService {
   }
 
   private boolean isApprovalBlockedReplacedOperationalCondition(Application application) {
-    return application.getReplacesApplicationId() != null
+    boolean replacingApplication = application.getReplacesApplicationId() != null;
+    boolean toDecisionOrOperationalCondition = application.getTargetState() == StatusType.DECISION
+      || application.getTargetState() == StatusType.OPERATIONAL_CONDITION;
+    return replacingApplication
+      && toDecisionOrOperationalCondition
       && applicationHistoryService.hasStatusInHistory(application.getId(), StatusType.OPERATIONAL_CONDITION);
   }
+
 }

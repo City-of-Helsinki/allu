@@ -71,6 +71,7 @@ public class BulkApprovalServiceTest {
     List<Application> moreApplications = new ArrayList<>(applications);
     Application replacingWithOperationalCondition = application(5, ApplicationType.EXCAVATION_ANNOUNCEMENT, StatusType.DECISIONMAKING);
     replacingWithOperationalCondition.setReplacesApplicationId(6);
+    replacingWithOperationalCondition.setTargetState(StatusType.DECISION);
     moreApplications.add(replacingWithOperationalCondition);
 
     when(applicationService.findApplicationsById(anyList())).thenReturn(moreApplications);
@@ -87,6 +88,25 @@ public class BulkApprovalServiceTest {
     assertTrue(entries.stream().anyMatch(e -> e.getId() == applications.get(2).getId()));
     assertTrue(entries.stream().anyMatch(e ->
       e.getId() == replacingWithOperationalCondition.getId() && e.getBulkApprovalBlocked()));
+  }
+
+  @Test
+  public void shouldNotBlockApplicationsWithOperationalConditionInHistoryToFinished() {
+    List<Application> moreApplications = new ArrayList<>(applications);
+    Application replacingWithOperationalCondition = application(5, ApplicationType.EXCAVATION_ANNOUNCEMENT, StatusType.DECISIONMAKING);
+    replacingWithOperationalCondition.setReplacesApplicationId(6);
+    replacingWithOperationalCondition.setTargetState(StatusType.FINISHED);
+    moreApplications.add(replacingWithOperationalCondition);
+
+    when(applicationService.findApplicationsById(anyList())).thenReturn(moreApplications);
+    when(applicationHistoryService.hasStatusInHistory(
+      eq(replacingWithOperationalCondition.getId()), eq(StatusType.OPERATIONAL_CONDITION))).thenReturn(true);
+
+    List<BulkApprovalEntryJson> entries = bulkApprovalService.getBulkApprovalEntries(Arrays.asList(1, 2, 3, 5));
+
+    assertEquals(3, entries.size());
+    assertTrue(entries.stream().anyMatch(e ->
+      e.getId() == replacingWithOperationalCondition.getId() && e.getBulkApprovalBlocked() == null));
   }
 
   private Application application(Integer id, ApplicationType type, StatusType status) {
