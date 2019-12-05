@@ -4,6 +4,7 @@ import {AlluCommonModule} from '@app/feature/common/allu-common.module';
 import {BulkApprovalModalContainerComponent} from './bulk-approval-modal-container.component';
 import {BulkApprovalModalComponent} from './bulk-approval-modal.component';
 import {BulkApprovalEntryComponent} from '@feature/decision/bulk/bulk-approval-entry.component';
+import {BulkApprovalEntryListComponent} from '@feature/decision/bulk/bulk-approval-entry-list.component';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import {BulkApprovalEntryComponent} from '@feature/decision/bulk/bulk-approval-e
   declarations: [
     BulkApprovalModalContainerComponent,
     BulkApprovalModalComponent,
-    BulkApprovalEntryComponent
+    BulkApprovalEntryComponent,
+    BulkApprovalEntryListComponent
   ],
   providers: [
   ],

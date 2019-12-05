@@ -1,0 +1,22 @@
+<div
+  *ngIf="entries.length"
+  fxLayout="row"
+  fxLayoutAlign="start center"
+  fxLayoutGap="18px"
+  class="slim entries-header text-highlighted">
+  <div fxFlex="0 0 120px">{{'application.applicationId' | translation}}</div>
+  <div fxFlex="none">{{'application.targetState' | translation}}</div>
+</div>
+
+<ul class="striped">
+  <li *ngIf="entries.length === 0" class="entry-row">
+    <div fxLayout="row" fxLayoutAlign="start center" class="slim">
+      <div fxFlex class="text-highlighted">{{'bulkApproval.nothingToApprove' | translation}}</div>
+    </div>
+  </li>
+  <li *ngFor="let approvalEntry of entries" class="entry-row">
+    <bulk-approval-entry
+      [entry]="approvalEntry"
+      [entryStatus]="status(approvalEntry.id) | async"></bulk-approval-entry>
+  </li>
+</ul>

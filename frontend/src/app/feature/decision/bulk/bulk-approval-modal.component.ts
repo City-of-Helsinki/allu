@@ -48,8 +48,4 @@ export class BulkApprovalModalComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
   }
-
-  status(id: number): Observable<EntryStatus> {
-    return this.store.pipe(select(fromDecision.getBulkApprovalEntryStatus(id)));
-  }
 }

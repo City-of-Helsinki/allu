@@ -37,6 +37,7 @@ export const translations = {
     receivedTime: 'Hakemus saapunut',
     orderer: 'Hakemuksen tilaaja',
     relatedApplications: 'Liittyvät hakemukset',
+    targetState: 'Kohdetila',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',

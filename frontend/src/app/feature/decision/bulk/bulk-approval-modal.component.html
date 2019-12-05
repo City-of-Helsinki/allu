@@ -2,27 +2,12 @@
   {{'bulkApproval.title' | translation}}
 </h1>
 <div mat-dialog-content>
-  <ul class="striped">
-    <li *ngIf="approvableEntries.length === 0" class="entry-row">
-      <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-        <div fxFlex class="text-highlighted">{{'bulkApproval.nothingToApprove' | translation}}</div>
-      </div>
-    </li>
-    <li *ngFor="let approvalEntry of approvableEntries" class="entry-row">
-      <bulk-approval-entry
-        [entry]="approvalEntry"
-        [entryStatus]="status(approvalEntry.id) | async"></bulk-approval-entry>
-    </li>
-  </ul>
+  <bulk-approval-entry-list [entries]="approvableEntries"></bulk-approval-entry-list>
 
   <ng-container *ngIf="unapprovableEntries.length">
     <h2 mat-dialog-title>{{'bulkApproval.cannotBeApproved' | translation}}</h2>
 
-    <ul class="striped" *ngIf="data.entries">
-      <li *ngFor="let approvalEntry of unapprovableEntries" class="entry-row">
-        <bulk-approval-entry [entry]="approvalEntry"></bulk-approval-entry>
-      </li>
-    </ul>
+    <bulk-approval-entry-list [entries]="unapprovableEntries"></bulk-approval-entry-list>
   </ng-container>
 </div>
 <div mat-dialog-actions *ngIf="status$ | async as status">
