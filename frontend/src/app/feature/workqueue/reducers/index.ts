@@ -5,6 +5,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {InjectionToken} from '@angular/core';
+import {ApplicationStatus} from '@model/application/application-status';
 
 export interface ApplicationWorkQueueState {
   workQueue: fromWorkQueue.State;
@@ -62,4 +63,9 @@ export const getSelectedApplicationEntities = createSelector(
   getMatchingApplicationsList,
   getSelectedApplications,
   (matching, selected) => matching.filter(app => selected.indexOf(app.id) >= 0)
+);
+
+export const getSomeSelectedHaveStatus = (status: ApplicationStatus) => createSelector(
+  getSelectedApplicationEntities,
+  applications => applications ? applications.some(app => app.status === status) : false
 );

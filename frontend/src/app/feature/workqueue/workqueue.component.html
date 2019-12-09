@@ -25,7 +25,7 @@
        type="button"
        color="primary"
        class="in-front"
-       [disabled]="!(someSelected$ | async)"
+       [disabled]="!(someDecisionMakingSelected$ | async)"
        (click)="bulkApprove()"
        *availableTo="['ROLE_DECISION']">
         {{'decision.do' | translation | uppercase}}

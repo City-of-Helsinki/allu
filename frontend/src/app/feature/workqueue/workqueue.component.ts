@@ -20,7 +20,8 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ChangeOwner, RemoveOwner} from '@feature/application/actions/application-actions';
 import {ApplicationType} from '@model/application/type/application-type';
 import {Load as LoadBulkApprovalEntries} from '@feature/decision/actions/bulk-approval-actions';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Component({
   selector: 'workqueue',
@@ -33,6 +34,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   tabs = workQueueTabs;
   owners: Array<User>;
   someSelected$: Observable<boolean>;
+  someDecisionMakingSelected$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
   private editRoles = [
@@ -54,6 +56,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
         users => this.owners = users.filter(o => ArrayUtil.anyMatch(this.editRoles, o.roles)));
 
     this.someSelected$ = this.store.pipe(select(fromWorkQueue.getSomeApplicationsSelected));
+    this.someDecisionMakingSelected$ = this.store.pipe(select(fromWorkQueue.getSomeSelectedHaveStatus(ApplicationStatus.DECISIONMAKING)));
   }
 
   ngOnDestroy() {
