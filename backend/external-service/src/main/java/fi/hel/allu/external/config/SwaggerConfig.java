@@ -72,14 +72,15 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
             new Tag("Excavation announcements", "Excavation announcement application API", 5),
             new Tag("Placement contracts", "Placement contracts application API", 6),
             new Tag("Short term rentals", "Short term rental application API", 7),
-            new Tag("Application attachments", "API to list, dowload and add application attachments", 8),
-            new Tag("Application history", "API to list application events (status changes and supervision events)", 9),
-            new Tag("Comments", "API to manage application comments", 10),
-            new Tag("Information requests", "API to read application information requests", 11),
-            new Tag("Application kinds", "API to list application kinds", 12),
-            new Tag("Fixed locations", "API to list Allu fixed locations", 13),
-            new Tag("Traffic arrangement images", "API to list and download Allu traffic arrangement images", 14),
-            new Tag("Application documents", "API to list application decisions and approval documents and download them with private person data anonymized. Allowed only for Allu internal users.", 15)
+            new Tag("Traffic arrangements", "Traffic arrangements application API", 8),
+            new Tag("Application attachments", "API to list, dowload and add application attachments", 9),
+            new Tag("Application history", "API to list application events (status changes and supervision events)", 10),
+            new Tag("Comments", "API to manage application comments", 11),
+            new Tag("Information requests", "API to read application information requests", 12),
+            new Tag("Application kinds", "API to list application kinds", 13),
+            new Tag("Fixed locations", "API to list Allu fixed locations", 14),
+            new Tag("Traffic arrangement images", "API to list and download Allu traffic arrangement images", 15),
+            new Tag("Application documents", "API to list application decisions and approval documents and download them with private person data anonymized. Allowed only for Allu internal users.", 16)
          )
         .ignoredParameterTypes(IGNORED_CLASSES);
   }
