@@ -3,8 +3,10 @@
     <div fxFlex="auto">
       <h2 class="allu-header">
         <span>{{project.customer?.name}}</span>
-        <span *ngIf="project.startTime">{{project.startTime | date:'shortDate'}}</span>
-        <span *ngIf="project.endTime"> - {{project.endTime | date:'shortDate'}}</span>
+        <span>
+          <ng-container *ngIf="project.startTime">{{project.startTime | date:'shortDate'}}</ng-container>
+          <ng-container  *ngIf="project.endTime"> - {{project.endTime | date:'shortDate'}}</ng-container>
+        </span>
       </h2>
     </div>
     <div fxFlex="none">

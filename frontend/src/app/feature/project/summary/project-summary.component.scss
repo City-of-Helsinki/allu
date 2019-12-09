@@ -18,6 +18,10 @@ h2.preview-header {
   font-weight: 400;
 }
 
+h2.allu-header > span:not(:first-child) {
+  margin-left: 4px;
+}
+
 .preview-card {
   padding: 0 50px 0 30px;
 }
