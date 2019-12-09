@@ -41,7 +41,8 @@ public class TrafficArrangementImageController {
 
   @ApiOperation(value = "Gets traffic arrangement image PDF for given ID.",
       response = byte.class,
-      responseContainer = "Array")
+      responseContainer = "Array",
+      authorizations=@Authorization(value ="api_key"))
   @ApiResponses( value = {
       @ApiResponse(code = 200, message = "Image retrieved successfully", response = byte.class, responseContainer = "Array"),
       @ApiResponse(code = 404, message = "No image found for ID", response = ErrorInfo.class)
