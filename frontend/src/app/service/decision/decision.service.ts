@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Decision} from '../../model/decision/Decision';
 import {ErrorHandler} from '../error/error-handler.service';
@@ -77,8 +77,12 @@ export class DecisionService {
   }
 
   private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<{}> {
-    return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails))).pipe(
-      catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.send')))
-    );
+    if (emailDetails.decisionDistributionList && emailDetails.decisionDistributionList.length) {
+      return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails))).pipe(
+        catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.send')))
+      );
+    } else {
+      return of({});
+    }
   }
 }
