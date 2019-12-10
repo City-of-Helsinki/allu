@@ -1,14 +1,14 @@
 package fi.hel.allu.external.mapper;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.external.domain.ShortTermRentalExt;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ShortTermRentalJson;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ShortTermRentalExtMapper extends ApplicationExtMapper<ShortTermRentalExt> {
@@ -33,5 +33,12 @@ public class ShortTermRentalExtMapper extends ApplicationExtMapper<ShortTermRent
   @Override
   protected List<Integer> getFixedLocationIds(ShortTermRentalExt rental) {
     return rental.getFixedLocationIds();
+  }
+
+  @Override
+  protected void mapTypeSpecificData(ShortTermRentalExt application, ApplicationJson applicationJson) {
+    Optional.ofNullable(application.getRecurringEndYear())
+      .map(recurringEndYear -> application.getEndTime().withYear(recurringEndYear))
+      .ifPresent(recurringEnd -> applicationJson.setRecurringEndTime(recurringEnd));
   }
 }

@@ -45,8 +45,11 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
     applicationJson.setExtension(createExtension(application));
     applicationJson.setClientApplicationData(createClientApplicationData(application));
     applicationJson.setKind(getApplicationKind(application));
+    mapTypeSpecificData(application, applicationJson);
     return applicationJson;
   }
+
+  protected void mapTypeSpecificData(T application, ApplicationJson applicationJson) {}
 
   private ClientApplicationDataJson createClientApplicationData(T application) {
     ClientApplicationDataJson clientApplicationData = new ClientApplicationDataJson();
