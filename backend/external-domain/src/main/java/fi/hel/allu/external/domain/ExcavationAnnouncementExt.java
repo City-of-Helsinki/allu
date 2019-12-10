@@ -20,6 +20,8 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
   @NotNull(message = "{excavation.contractor}")
   @Valid
   private CustomerWithContactsExt contractorWithContacts;
+  @Valid
+  private CustomerWithContactsExt propertyDeveloperWithContacts;
   private Boolean pksCard;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
@@ -50,6 +52,15 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
 
   public void setContractorWithContacts(CustomerWithContactsExt contractorWithContacts) {
     this.contractorWithContacts = contractorWithContacts;
+  }
+
+  @ApiModelProperty(value = "Property developer (rakennuttaja)")
+  public CustomerWithContactsExt getPropertyDeveloperWithContacts() {
+    return propertyDeveloperWithContacts;
+  }
+
+  public void setPropertyDeveloperWithContacts(CustomerWithContactsExt propertyDeveloperWithContacts) {
+    this.propertyDeveloperWithContacts = propertyDeveloperWithContacts;
   }
 
   @ApiModelProperty(value = "PKS card (PKS kortti)")
