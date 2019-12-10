@@ -599,6 +599,13 @@ public class ApplicationDao {
   @Transactional
   public CustomerWithContacts replaceCustomerWithContacts(Integer applicationId, CustomerWithContacts customerWithContacts) {
     CustomerRoleType customerRoleType = customerWithContacts.getRoleType();
+    removeCustomerByRoleType(applicationId, customerRoleType);
+    insertCustomerWithContact(applicationId, customerWithContacts);
+    return customerDao.findByApplicationAndCustomerTypeWithContacts(applicationId, customerRoleType);
+  }
+
+  @Transactional
+  public void removeCustomerByRoleType(Integer applicationId, CustomerRoleType customerRoleType) {
     BooleanExpression idCondition = applicationCustomer.applicationId.eq(applicationId);
     BooleanExpression typeCondition = applicationCustomer.customerRoleType.eq(customerRoleType);
 
@@ -607,9 +614,6 @@ public class ApplicationDao {
         .where(idCondition.and(typeCondition)).fetch();
     queryFactory.delete(applicationCustomerContact).where(applicationCustomerContact.applicationCustomerId.in(applicationCustomers)).execute();
     queryFactory.delete(applicationCustomer).where(applicationCustomer.id.in(applicationCustomers)).execute();
-
-    insertCustomerWithContact(applicationId, customerWithContacts);
-    return customerDao.findByApplicationAndCustomerTypeWithContacts(applicationId, customerRoleType);
   }
 
   private void insertCustomerWithContact(int applicationId, CustomerWithContacts cwc) {

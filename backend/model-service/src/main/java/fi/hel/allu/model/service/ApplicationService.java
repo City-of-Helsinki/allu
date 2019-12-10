@@ -229,6 +229,13 @@ public class ApplicationService {
     return applicationDao.replaceCustomerWithContacts(applicationId, customerWithContacts);
   }
 
+  @Transactional
+  public void removeCustomerWithContacts(Integer applicationId,
+                                         CustomerRoleType roleType) {
+    verifyApplicationIsUpdatable(applicationId);
+    applicationDao.removeCustomerByRoleType(applicationId, roleType);
+  }
+
   private void calculateApplicationPrice(Application application) {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisEntries));

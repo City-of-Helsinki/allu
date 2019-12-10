@@ -258,4 +258,39 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
     return ResponseEntity.ok().build();
   }
+
+  @ApiOperation(value = "Remove property developer",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Property developer removed successfully"),
+      @ApiResponse(code = 403, message = "Removal forbidden", response = ErrorInfo.class),
+    })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> removePropertyDeveloper(Integer applicationId) {
+    return removeCustomerWithRole(applicationId, CustomerRoleType.PROPERTY_DEVELOPER);
+  }
+
+  @ApiOperation(value = "Remove representative",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Representative removed successfully"),
+      @ApiResponse(code = 403, message = "Removal forbidden", response = ErrorInfo.class),
+    })
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> removeRepresentative(Integer applicationId) {
+    return removeCustomerWithRole(applicationId, CustomerRoleType.REPRESENTATIVE);
+  }
+
+  private ResponseEntity<Void> removeCustomerWithRole(Integer applicationId, CustomerRoleType roleType) {
+    validateType(applicationId);
+    applicationServiceComposer.removeCustomerWithContacts(applicationId, roleType);
+    return ResponseEntity.ok().build();
+  }
+
 }

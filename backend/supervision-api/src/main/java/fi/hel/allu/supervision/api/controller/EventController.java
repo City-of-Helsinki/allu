@@ -42,4 +42,11 @@ public class EventController extends BaseApplicationDetailsController<EventAppli
                                                                                @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerRepresentative(applicationId, customer);
   }
+
+  @Override
+  @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.DELETE, produces = "application/json")
+  public ResponseEntity<Void> removeRepresentative(@PathVariable Integer applicationId) {
+    return super.removeRepresentative(applicationId);
+  }
+
 }

@@ -272,6 +272,14 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
+  void removeCustomerWithContacts(Integer applicationId,
+      CustomerRoleType roleType) {
+    restTemplate.delete(applicationProperties.getApplicationCustomerByRoleUrl(), applicationId, roleType);
+    Integer currentUserId = userService.getCurrentUser().getId();
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, currentUserId,
+        ApplicationNotificationType.CONTENT_CHANGED);
+  }
+
   Application changeApplicationStatus(int applicationId, StatusType statusType) {
     HttpEntity<Integer> userIdRequest = getUserIdRequest(statusType);
 

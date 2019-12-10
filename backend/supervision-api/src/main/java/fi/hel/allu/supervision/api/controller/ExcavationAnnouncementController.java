@@ -86,4 +86,17 @@ public class ExcavationAnnouncementController extends BaseApplicationDetailsCont
                                                                                @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerRepresentative(applicationId, customer);
   }
+
+  @Override
+  @RequestMapping(value = "/{applicationId}/propertyDeveloper", method = RequestMethod.DELETE, produces = "application/json")
+  public ResponseEntity<Void> removePropertyDeveloper(@PathVariable Integer applicationId) {
+    return super.removePropertyDeveloper(applicationId);
+  }
+
+  @Override
+  @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.DELETE, produces = "application/json")
+  public ResponseEntity<Void> removeRepresentative(@PathVariable Integer applicationId) {
+    return super.removeRepresentative(applicationId);
+  }
+
 }

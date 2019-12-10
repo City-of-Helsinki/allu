@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import fi.hel.allu.common.domain.DocumentSearchCriteria;
 import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.AttachmentDao;
@@ -126,6 +127,15 @@ public class ApplicationController {
   public ResponseEntity<CustomerWithContacts> replaceCustomerWithContacts(@PathVariable int applicationId,
                                                                           @Valid @RequestBody CustomerWithContacts customerWithContacts) {
     return ResponseEntity.ok(applicationService.replaceCustomerWithContacts(applicationId, customerWithContacts));
+  }
+
+  /**
+   * Remove the customer of the given type with their contacts from an application
+   */
+  @RequestMapping(value = "/{applicationId}/customerWithContacts/{roleType}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeCustomerWithContacts(@PathVariable int applicationId, @PathVariable CustomerRoleType roleType) {
+    applicationService.removeCustomerWithContacts(applicationId, roleType);
+    return ResponseEntity.ok().build();
   }
 
   /**
@@ -320,7 +330,6 @@ public class ApplicationController {
   public ResponseEntity<List<DistributionEntry>> getDecisionDistributionList(@PathVariable int id) {
     return ResponseEntity.ok(distributionEntryDao.findByApplicationId(id));
   }
-  
 
 
   /**

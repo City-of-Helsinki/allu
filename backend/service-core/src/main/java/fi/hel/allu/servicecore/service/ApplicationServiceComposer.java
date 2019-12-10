@@ -170,6 +170,21 @@ public class ApplicationServiceComposer {
     return updatedCustomerWithContactsJson;
   }
 
+  public void removeCustomerWithContacts(Integer applicationId,
+      CustomerRoleType roleType) {
+    Optional<CustomerWithContacts> existingCustomer = applicationService.findApplicationCustomerByRoleType(applicationId, roleType);
+    existingCustomer.ifPresent(c -> removeCustomerWithContacts(applicationId, roleType, c));
+  }
+
+  private void removeCustomerWithContacts(Integer applicationId, CustomerRoleType roleType, CustomerWithContacts customer) {
+    applicationService.removeCustomerWithContacts(applicationId, roleType);
+    applicationHistoryService.addCustomerChange(applicationId,
+        customerMapper.createWithContactsJson(customer),
+        null, roleType);
+    ApplicationJson application = findApplicationById(applicationId);
+    searchService.updateApplications(Collections.singletonList(application));
+  }
+
   /**
    * Update the given application by calling back-end service, don't track the
    * changes in application history. To make sure application changes are

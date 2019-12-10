@@ -243,6 +243,9 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/customerWithContacts");
   }
 
+  public String getApplicationCustomerByRoleUrl() {
+    return getModelServiceUrl("/applications/{id}/customerWithContacts/{roleType}");
+  }
 
   /**
    * @return url to send application search queries.
