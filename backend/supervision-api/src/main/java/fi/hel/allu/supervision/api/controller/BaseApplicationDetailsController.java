@@ -251,7 +251,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   })
   @RequestMapping(value = "/{id}/invoiceRecipient", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity updateInvoiceRecipient(@PathVariable Integer id,
+  public ResponseEntity<Void> updateInvoiceRecipient(@PathVariable Integer id,
                                                @RequestBody @ApiParam("The new invoice recipient id")
                                                  Integer invoiceRecipientId) {
     validateType(id);
