@@ -550,12 +550,12 @@ public class ApplicationService {
     return customers;
   }
 
-  public CustomerWithContacts findApplicationCustomerByRoleType(Integer applicationId, CustomerRoleType customerRoleType) {
+  public Optional<CustomerWithContacts> findApplicationCustomerByRoleType(Integer applicationId, CustomerRoleType customerRoleType) {
     List<CustomerWithContacts> customers = fetchApplicationCustomers(applicationId);
-    CustomerWithContacts customerForType = customers.stream()
+    Optional<CustomerWithContacts> customerForType = customers.stream()
       .filter(customerWithContacts -> customerRoleType.equals(customerWithContacts.getRoleType()))
-      .findFirst().orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));
-    personAuditLogService.log(customerForType, "ApplicationService");
+      .findFirst();
+    customerForType.ifPresent(c -> personAuditLogService.log(c, "ApplicationService"));
     return customerForType;
   }
 
