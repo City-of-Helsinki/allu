@@ -31,12 +31,14 @@ public class EventController extends BaseApplicationDetailsController<EventAppli
     return new EventApplication(application);
   }
 
+  @Override
   @RequestMapping(value = "/{applicationId}/applicant", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
                                                                           @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerApplicant(applicationId, customer);
   }
 
+  @Override
   @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(@PathVariable Integer applicationId,
                                                                                @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {

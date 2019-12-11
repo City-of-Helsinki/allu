@@ -31,24 +31,28 @@ public class TrafficArrangementController extends BaseApplicationDetailsControll
     return new TrafficArrangementApplication(application);
   }
 
+  @Override
   @RequestMapping(value = "/{applicationId}/applicant", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
                                                                           @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerApplicant(applicationId, customer);
   }
 
+  @Override
   @RequestMapping(value = "/{applicationId}/propertyDeveloper", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerPropertyDeveloper(@PathVariable Integer applicationId,
                                                                                   @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerPropertyDeveloper(applicationId, customer);
   }
 
+  @Override
   @RequestMapping(value = "/{applicationId}/contractor", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerContractor(@PathVariable Integer applicationId,
                                                                            @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerContractor(applicationId, customer);
   }
 
+  @Override
   @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(@PathVariable Integer applicationId,
                                                                                @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
