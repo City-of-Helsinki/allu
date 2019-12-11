@@ -2,6 +2,7 @@ package fi.hel.allu.common.util;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 import com.google.common.collect.Range;
 
@@ -14,6 +15,14 @@ public class AnnualTimePeriod {
   public AnnualTimePeriod(LocalDate periodStart, LocalDate periodEnd) {
     this.periodStart = periodStart;
     this.periodEnd = periodEnd;
+  }
+
+  public LocalDate getPeriodStart() {
+    return periodStart;
+  }
+
+  public LocalDate getPeriodEnd() {
+    return periodEnd;
   }
 
   /**
@@ -50,6 +59,13 @@ public class AnnualTimePeriod {
     LocalDate periodEndDate = getAnnualPeriodEnd(dateToCheck);
     LocalDate periodStartDate = getAnnualPeriodStartForPeriodEnd(periodEndDate);
     return Range.closed(periodStartDate, periodEndDate).contains(LocalDate.from(dateToCheck));
+  }
+
+  /**
+   * Checks whether all given dates are in annual period.
+   */
+  public boolean isInAnnualPeriod(ZonedDateTime... datesToCheck) {
+    return Arrays.stream(datesToCheck).allMatch(date -> isInAnnualPeriod(date));
   }
 
   private LocalDate getAnnualPeriodStartForPeriodEnd(LocalDate periodEndDate) {
