@@ -39,6 +39,7 @@ public class PdfServiceTest {
   private final static String STYLESHEET = "STYLESHEET";
   private final static Path TEMPFILE = Paths.get("TEMPFILE");
   private final static String DUMMY_JSON = "{\"foo\": \"bar\"}";
+  private final static String COMMON_STYLESHEET = "COMMON";
 
   @Before
   public void setUp() throws Exception {
@@ -54,16 +55,7 @@ public class PdfServiceTest {
 
   @Test
   public void testBareContent() throws IOException, TransformerException {
-    // Test creating a pdf from stylesheet without header or footer:
-    Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
-      Path arg = invocation.getArgumentAt(0, Path.class);
-      return arg.endsWith("stylesheet.xsl"); });
-
-    pdfService.generatePdf(DUMMY_JSON, "stylesheet");
-
-    // Only one call should have been made:
-    Mockito.verify(jsonConverter).jsonToXml(Mockito.eq(DUMMY_JSON), Mockito.any());
-    Mockito.verify(jsonConverter).applyStylesheet(Mockito.any(), Mockito.any());
+    testFallbackDocument("stylesheet", "stylesheet.xsl");
   }
 
   @Test(expected = NoSuchEntityException.class)
@@ -121,4 +113,30 @@ public class PdfServiceTest {
     Mockito.verify(jsonConverter, Mockito.times(3)).applyStylesheet(Mockito.any(), Mockito.any());
   }
 
+  @Test
+  public void testFirstFallbackDocument() throws IOException, TransformerException {
+    testFallbackDocument("stylesheet-suffix1-suffix2", COMMON_STYLESHEET + "-suffix1-suffix2.xsl");
+  }
+
+  @Test
+  public void testLastResortFallbackDocument() throws IOException, TransformerException {
+    testFallbackDocument("stylesheet-suffix1-suffix2", COMMON_STYLESHEET + "-suffix2.xsl");
+  }
+
+  private void testFallbackDocument(String documentName, String expectedFallback) throws IOException, TransformerException {
+    Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
+      Path arg = invocation.getArgumentAt(0, Path.class);
+      if (arg.endsWith(expectedFallback)) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    pdfService.generatePdf(DUMMY_JSON, documentName);
+
+    // Only one call should have been made:
+    Mockito.verify(jsonConverter).jsonToXml(Mockito.eq(DUMMY_JSON), Mockito.any());
+    Mockito.verify(jsonConverter).applyStylesheet(Mockito.any(), Mockito.any());
+  }
 }
