@@ -14,7 +14,7 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.InformationRequestDao;
@@ -52,7 +52,7 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   @Mock
   private WinterTimeService winterTimeService;
   @Mock
-  private WinterTime winterTime;
+  private AnnualTimePeriod winterTime;
   @Mock
   private HistoryDao historyDao;
   @Mock
@@ -72,8 +72,8 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
     extension = new ExcavationAnnouncement();
     application.setExtension(extension);
     when(winterTimeService.getWinterTime()).thenReturn(winterTime);
-    when(winterTime.getWinterTimeStart(any(ZonedDateTime.class))).thenReturn(LocalDate.parse("2019-12-01"));
-    when(winterTime.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
+    when(winterTime.getAnnualPeriodStart(any(ZonedDateTime.class))).thenReturn(LocalDate.parse("2019-12-01"));
+    when(winterTime.isInAnnualPeriod(any(ZonedDateTime.class))).thenReturn(true);
     InvoicingPeriod operationalConditionPeriod = new InvoicingPeriod(1, StatusType.OPERATIONAL_CONDITION);
     InvoicingPeriod workFinishedPeriod = new InvoicingPeriod(2, StatusType.FINISHED);
     operationalConditionPeriod.setId(OPERATIONAL_CONDITION_PERIOD_ID);
@@ -145,7 +145,7 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   public void onFinishedShouldAdjustInvoicingForSummertimeOperational() {
     extension.setWorkFinished(LocalDate.parse("2019-08-31").atStartOfDay(TimeUtil.HelsinkiZoneId));
     extension.setWinterTimeOperation(LocalDate.parse("2019-08-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
-    when(winterTime.isInWinterTime(extension.getWinterTimeOperation())).thenReturn(false);
+    when(winterTime.isInAnnualPeriod(extension.getWinterTimeOperation())).thenReturn(false);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verifyInvoicingAdjustment(true);
   }
@@ -155,7 +155,7 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
     when(invoiceService.applicationHasInvoiced(application.getId())).thenReturn(true);
     extension.setWorkFinished(LocalDate.parse("2019-08-31").atStartOfDay(TimeUtil.HelsinkiZoneId));
     extension.setWinterTimeOperation(LocalDate.parse("2019-08-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
-    when(winterTime.isInWinterTime(extension.getWinterTimeOperation())).thenReturn(false);
+    when(winterTime.isInAnnualPeriod(extension.getWinterTimeOperation())).thenReturn(false);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verifyInvoicingAdjustment(false);
   }
@@ -165,7 +165,7 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
     when(invoiceService.applicationHasInvoiced(application.getId())).thenReturn(true);
     extension.setWorkFinished(LocalDate.parse("2019-12-12").atStartOfDay(TimeUtil.HelsinkiZoneId));
     extension.setWinterTimeOperation(LocalDate.parse("2019-12-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
-    when(winterTime.isInWinterTime(extension.getWinterTimeOperation())).thenReturn(false);
+    when(winterTime.isInAnnualPeriod(extension.getWinterTimeOperation())).thenReturn(false);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verifyInvoicingAdjustment(false);
   }

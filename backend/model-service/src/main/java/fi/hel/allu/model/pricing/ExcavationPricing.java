@@ -3,15 +3,13 @@ package fi.hel.allu.model.pricing;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.PriceUtil;
@@ -23,7 +21,7 @@ public class ExcavationPricing extends Pricing {
   private final Application application;
   private final ExcavationAnnouncement extension;
   private final List<InvoicingPeriod> invoicingPeriods;
-  private final WinterTime winterTime;
+  private final AnnualTimePeriod winterTime;
   private final PricingExplanator pricingExplanator;
   private final PricingDao pricingDao;
 
@@ -115,7 +113,7 @@ public class ExcavationPricing extends Pricing {
   // If winter time operation is finished after "summer end" adds additional
   // invoiced period between summer end and work finished / application end time
   private void addSummerPeriodForWinterTimeOperation(List<PricedPeriod> result) {
-    ZonedDateTime winterTimeEnd = winterTime.getWinterTimeEnd(extension.getWinterTimeOperation()).atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ZonedDateTime winterTimeEnd = winterTime.getAnnualPeriodEnd(extension.getWinterTimeOperation()).atStartOfDay(TimeUtil.HelsinkiZoneId);
     ZonedDateTime applicationEnd = getEndTimeForApplication().truncatedTo(ChronoUnit.DAYS);
     if (applicationEnd != null && applicationEnd.isAfter(winterTimeEnd)) {
       result.add(new PricedPeriod(winterTimeEnd.plusDays(1), applicationEnd, getWorkFinishedPeriodId()));
@@ -137,9 +135,9 @@ public class ExcavationPricing extends Pricing {
   private void addWinterTimePeriod(List<PricedPeriod> periods) {
     ZonedDateTime endTime;
     ZonedDateTime winterTimeOperation = extension.getWinterTimeOperation().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
-    if (!winterTime.isInWinterTime(winterTimeOperation)) {
+    if (!winterTime.isInAnnualPeriod(winterTimeOperation)) {
       // Operational condition before winter start -> charged until date before winter start or work finished
-      endTime = winterTime.getWinterTimeStart(winterTimeOperation).atStartOfDay(TimeUtil.HelsinkiZoneId).minusDays(1);
+      endTime = winterTime.getAnnualPeriodStart(winterTimeOperation).atStartOfDay(TimeUtil.HelsinkiZoneId).minusDays(1);
       if (extension.getWorkFinished() != null && extension.getWorkFinished().isBefore(endTime)) {
         // Work finished before winter start
         endTime = extension.getWorkFinished().withZoneSameInstant(TimeUtil.HelsinkiZoneId);

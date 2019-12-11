@@ -4,14 +4,13 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.InformationRequestDao;
@@ -107,9 +106,9 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
 
   private ZonedDateTime getInvoicableTimeForOperationalCondition(ExcavationAnnouncement extension) {
     // If operational condition is before winter start it's invoiced on first day of winter
-    WinterTime winterTime = winterTimeService.getWinterTime();
-    if (!winterTime.isInWinterTime(extension.getWinterTimeOperation())) {
-      return winterTime.getWinterTimeStart(extension.getWinterTimeOperation()).atStartOfDay(TimeUtil.HelsinkiZoneId);
+    AnnualTimePeriod winterTime = winterTimeService.getWinterTime();
+    if (!winterTime.isInAnnualPeriod(extension.getWinterTimeOperation())) {
+      return winterTime.getAnnualPeriodStart(extension.getWinterTimeOperation()).atStartOfDay(TimeUtil.HelsinkiZoneId);
     }
     return extension.getWinterTimeOperation();
   }
@@ -142,9 +141,9 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     ZonedDateTime operationalConditionDate = excavationAnnouncement.getWinterTimeOperation();
     if (operationalConditionDate != null) {
       ZonedDateTime workFinishedDate = excavationAnnouncement.getWorkFinished();
-      WinterTime winterTime = winterTimeService.getWinterTime();
-      return !winterTime.isInWinterTime(operationalConditionDate) &&
-          winterTime.getWinterTimeStart(operationalConditionDate).isAfter(LocalDate.from(workFinishedDate));
+      AnnualTimePeriod winterTime = winterTimeService.getWinterTime();
+      return !winterTime.isInAnnualPeriod(operationalConditionDate) &&
+          winterTime.getAnnualPeriodStart(operationalConditionDate).isAfter(LocalDate.from(workFinishedDate));
     }
     return false;
   }

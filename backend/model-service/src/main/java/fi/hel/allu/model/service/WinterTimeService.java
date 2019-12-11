@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.ConfigurationDao;
 import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.ConfigurationKey;
@@ -23,8 +23,8 @@ public class WinterTimeService {
     this.configurationDao = configurationDao;
   }
 
-  public WinterTime getWinterTime() {
-    return new WinterTime(
+  public AnnualTimePeriod getWinterTime() {
+    return new AnnualTimePeriod(
         LocalDate.parse(getConfigurationValue(ConfigurationKey.WINTER_TIME_START)),
         LocalDate.parse(getConfigurationValue(ConfigurationKey.WINTER_TIME_END)));
   }
@@ -35,7 +35,7 @@ public class WinterTimeService {
   }
 
   public boolean isInWinterTime(ZonedDateTime dateToCheck) {
-    return getWinterTime().isInWinterTime(dateToCheck.withZoneSameInstant(TimeUtil.HelsinkiZoneId));
+    return getWinterTime().isInAnnualPeriod(dateToCheck.withZoneSameInstant(TimeUtil.HelsinkiZoneId));
   }
 
 
