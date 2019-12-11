@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@RequestMapping("/v1/applicationkinds")
 @Api(tags = "Application kinds")
 public class ApplicationKindController {
 
@@ -33,14 +32,29 @@ public class ApplicationKindController {
       response = ApplicationKind.class,
       responseContainer="List",
       authorizations=@Authorization(value ="api_key"))
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(value = "/v1/applicationkinds", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<ApplicationKind>> getAll(@ApiParam(value = "Application type of the kinds to get", required = true)
-                                                      @RequestParam(required = true) ApplicationType applicationType) {
+  @Deprecated
+  public ResponseEntity<List<ApplicationKind>> getAllSupportedByV1(
+    @ApiParam(value = "Application type of the kinds to get", required = true)
+    @RequestParam(required = true) ApplicationType applicationType) {
     List<ApplicationKind> result = ApplicationKind.forApplicationType(applicationType)
         .stream()
-        .filter(k -> !applicationProperties.getExcludedApplicationKinds().contains(k.name()))
+        .filter(k -> !applicationProperties.getV1ExcludedApplicationKinds().contains(k.name()))
         .collect(Collectors.toList());
     return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "Get Allu application kinds",
+    produces = "application/json",
+    response = ApplicationKind.class,
+    responseContainer="List",
+    authorizations=@Authorization(value ="api_key"))
+  @RequestMapping(value = "/v2/applicationkinds", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<List<ApplicationKind>> getAll(
+    @ApiParam(value = "Application type of the kinds to get", required = true)
+    @RequestParam(required = true) ApplicationType applicationType) {
+    return new ResponseEntity<>(ApplicationKind.forApplicationType(applicationType), HttpStatus.OK);
   }
 }

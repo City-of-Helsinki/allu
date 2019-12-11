@@ -14,8 +14,6 @@ import fi.hel.allu.external.domain.ShortTermRentalExt;
 @Component
 public class ShortTermRentalExtValidator implements Validator {
 
-  private static final String ERROR_CODE =  "shorttermrental.kind";
-
   private final ApplicationProperties applicationProperties;
   private final MessageSourceAccessor accessor;
 
@@ -35,12 +33,5 @@ public class ShortTermRentalExtValidator implements Validator {
   @Override
   public void validate(Object target, Errors errors) {
     ShortTermRentalExt application = (ShortTermRentalExt) target;
-    if (application.getApplicationKind() != null && !isValidKind(application.getApplicationKind())) {
-      errors.rejectValue("applicationKind", ERROR_CODE, accessor.getMessage(ERROR_CODE));
-    }
-  }
-
-  private boolean isValidKind(ApplicationKind kind) {
-    return !applicationProperties.getExcludedApplicationKinds().contains(kind.name());
   }
 }
