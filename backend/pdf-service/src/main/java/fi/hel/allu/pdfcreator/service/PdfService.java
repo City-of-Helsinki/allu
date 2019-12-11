@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import javax.xml.transform.TransformerException;
 
+import fi.hel.allu.common.util.OptionalUtil;
 import org.apache.commons.exec.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,19 +84,18 @@ public class PdfService {
     }
   }
 
-  private Path writeHtml(String xml, String stylesheet, String suffix)  throws IOException, TransformerException {
-    Path path = writeHtml(xml, stylesheet + suffix);
-    if (path != null) {
-      return path;
-    } else {
-      return writeHtml(xml, getFallbackStyleSheetName(stylesheet + suffix));
-    }
+  private Path writeHtml(String xml, String stylesheet) throws IOException, TransformerException {
+    Path xslTemplate = getStylesheetTemplate(stylesheet);
+    return writeHtml(xml, xslTemplate);
   }
 
-  private Path writeHtml(String xml, String stylesheet) throws IOException, TransformerException {
+  private Path writeHtml(String xml, String stylesheet, String suffix) throws IOException, TransformerException {
+    return writeHtml(xml, stylesheet + suffix);
+  }
+
+  private Path writeHtml(String xml, Path xslPath) throws IOException, TransformerException {
     // Check that stylesheet exists:
-    Path xslPath = stylesheetDir.resolve(stylesheet + ".xsl");
-    if (!fileSysAccessor.exists(xslPath)) {
+    if (xslPath == null) {
       return null;
     }
 
@@ -136,14 +135,47 @@ public class PdfService {
     return pdfPath;
   }
 
-  private String getFallbackStyleSheetName(String styleSheet) {
-    String[] parts = styleSheet.split(STYLESHEET_SEPARATOR);
-    // We have some suffix like -footer or -header
+  private Path getStylesheetTemplate(String stylesheet) {
+    return OptionalUtil.or(
+      resolveStylesheet(stylesheet),
+      () -> resolveStylesheet(getCommonStylesheetWithOriginalSuffixes(stylesheet)),
+      () -> resolveStylesheet(getCommonStylesheetWithLastOriginalSuffix(stylesheet))
+    ).orElse(null);
+  }
+
+  private Optional<Path> resolveStylesheet(String stylesheet) {
+    Path xslPath = stylesheetDir.resolve(stylesheet + ".xsl");
+    return Optional.ofNullable(xslPath)
+      .filter(path -> fileSysAccessor.exists(xslPath));
+  }
+
+  /**
+   * Create stylesheet name from original stylesheets suffixes (eg. -footer or -header)
+   * with prefix from COMMON_STYLESHEET
+   */
+  private String getCommonStylesheetWithOriginalSuffixes(String styleSheet) {
+    return Optional.ofNullable(getSuffixParts(styleSheet))
+      .map(suffixParts -> String.join("-", suffixParts))
+      .map(suffix -> String.join("-", COMMON_STYLESHEET, suffix))
+      .orElse(COMMON_STYLESHEET);
+  }
+
+  /**
+   * Create stylesheet name from original stylesheet when it has multiple suffixes suffixes (eg. -approval-header)
+   * with prefix from COMMON_STYLESHEET.
+   */
+  private String getCommonStylesheetWithLastOriginalSuffix(String styleSheet) {
+    return Optional.ofNullable(getSuffixParts(styleSheet))
+      .map(suffixParts -> String.join("-", COMMON_STYLESHEET, suffixParts[suffixParts.length - 1]))
+      .orElse(COMMON_STYLESHEET);
+  }
+
+  private String[] getSuffixParts(String stylesheet) {
+    String[] parts = stylesheet.split(STYLESHEET_SEPARATOR);
     if (parts.length > 1) {
-      // we also might have multiple suffixes eg. -approval-header, so take last
-      return String.join("-", COMMON_STYLESHEET, parts[parts.length - 1]);
+      return Arrays.copyOfRange(parts, 1, parts.length);
     } else {
-      return COMMON_STYLESHEET;
+      return null;
     }
   }
 
