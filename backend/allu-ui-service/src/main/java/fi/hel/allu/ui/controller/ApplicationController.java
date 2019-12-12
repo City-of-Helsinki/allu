@@ -337,7 +337,7 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<CustomerJson> getInvoiceRecipient(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.findInvoiceRecipientJson(id));
   }
