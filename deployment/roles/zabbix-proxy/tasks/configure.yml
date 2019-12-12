@@ -1,0 +1,81 @@
+---
+- name: set zabbix proxy mode
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?ProxyMode=.*'
+    replace: 'ProxyMode={{ zabbix_proxy_mode|default(1) }}'
+  notify: restart zabbix-proxy
+
+- name: set zabbix proxy database
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?DBName=.*'
+    replace: 'DBName=/var/lib/zabbix/zabbix_proxy.sqlite3'
+  notify: restart zabbix-proxy
+
+- name: set zabbix server
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?Server=.*'
+    replace: 'Server={{ zabbix_proxy_server }}'
+  notify: restart zabbix-proxy
+
+- name: set zabbix hostname
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?Hostname=.*'
+    replace: 'Hostname={{ zabbix_proxy_hostname }}'
+  notify: restart zabbix-proxy
+
+- name: set zabbix StartHTTPPollers
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?\s*StartHTTPPollers=.*'
+    replace: 'StartHTTPPollers={{ zabbix_proxy_http_pollers }}'
+  when: zabbix_proxy_http_pollers|default('') != ''
+  notify: restart zabbix-proxy
+
+- name: set zabbix TLS connect to PSK
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?\s*TLSConnect=.*'
+    replace: 'TLSConnect=psk'
+  notify: restart zabbix-proxy
+
+- name: set zabbix TLS accept to PSK
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?\s*TLSAccept=.*'
+    replace: 'TLSAccept=psk'
+  notify: restart zabbix-proxy
+
+- name: set zabbix TLS PSK identity
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?\s*TLSPSKIdentity=.*'
+    replace: 'TLSPSKIdentity={{ zabbix_proxy_tls_identity }}'
+  notify: restart zabbix-proxy
+
+- name: set zabbix TLS PSK key file
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '^#?\s*TLSPSKFile=.*'
+    replace: 'TLSPSKFile=/etc/zabbix/proxy_psk.key'
+  notify: restart zabbix-proxy
+
+- name: create zabbix TLS PSK key file
+  copy:
+    dest: /etc/zabbix/proxy_psk.key
+    content: '{{ zabbix_proxy_tls_psk }}'
+    owner: zabbix
+    group: zabbix
+    mode: 0600
+  notify: restart zabbix-proxy
+
+- name: ensure /var/lib/zabbix exists
+  file:
+    path: /var/lib/zabbix
+    owner: zabbix
+    group: zabbix
+    mode: 0700
+    state: directory

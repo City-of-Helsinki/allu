@@ -1,0 +1,8 @@
+---
+- name: enable zabbix-proxy
+  service: name=zabbix-proxy.service enabled=yes state=started
+  register: zabbix_proxy_service
+
+- pause: # zabbix proxy builds the db on first start and it will cause a race condition if it's restarted immediately by notify handler
+    seconds: 30
+  when: zabbix_proxy_service.changed and zabbix_proxy_service.state == 'started'

@@ -1,0 +1,20 @@
+- name: install zabbix-proxy (staging)
+  hosts: webservers:&staging
+  become: yes
+  remote_user: allu
+  roles:
+    - zabbix-proxy
+
+- name: install zabbix-proxy (production)
+  hosts: reporting_dbserver:&production
+  become: yes
+  remote_user: allu
+  roles:
+    - zabbix-proxy
+
+- name: install zabbix-agent
+  hosts: all
+  become: yes
+  remote_user: allu
+  roles:
+    - zabbix-agent

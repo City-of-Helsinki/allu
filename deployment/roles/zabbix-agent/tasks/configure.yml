@@ -1,0 +1,59 @@
+---
+- name: set zabbix server
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: '^#?Server=.*'
+    replace: 'Server={{ zabbix_server }}'
+  notify: restart zabbix-agent
+
+- name: set zabbix server (active)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: '^#?ServerActive=.*'
+    replace: 'ServerActive={{ zabbix_server }}'
+  notify: restart zabbix-agent
+
+- name: set zabbix TLS connect to PSK
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: '^#?\s*TLSConnect=.*'
+    replace: 'TLSConnect=psk'
+  notify: restart zabbix-agent
+
+- name: set zabbix TLS accept to PSK
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: '^#?\s*TLSAccept=.*'
+    replace: 'TLSAccept=psk'
+  notify: restart zabbix-agent
+
+- name: set zabbix TLS PSK identity
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: '^#?\s*TLSPSKIdentity=.*'
+    replace: 'TLSPSKIdentity={{ zabbix_tls_identity }}'
+  notify: restart zabbix-agent
+
+- name: set zabbix TLS PSK key file
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: '^#?\s*TLSPSKFile=.*'
+    replace: 'TLSPSKFile=/etc/zabbix/psk.key'
+  notify: restart zabbix-agent
+
+- name: create zabbix TLS PSK key file
+  copy:
+    dest: /etc/zabbix/psk.key
+    content: '{{ zabbix_tls_psk }}'
+    owner: zabbix
+    group: zabbix
+    mode: 0600
+  notify: restart zabbix-agent
+
+- name: ensure /var/lib/zabbix exists
+  file:
+    path: /var/lib/zabbix
+    owner: zabbix
+    group: zabbix
+    mode: 0700
+    state: directory

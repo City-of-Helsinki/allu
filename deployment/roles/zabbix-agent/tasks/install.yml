@@ -1,0 +1,17 @@
+---
+- name: check if zabbix-release is installed
+  command: dpkg -s zabbix-release
+  register: zabbix_release_dpkg
+  changed_when: false
+  failed_when: false
+
+- name: install zabbix-release deb
+  apt: deb="https://repo.zabbix.com/zabbix/4.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.0-2+{{ ansible_distribution_release }}_all.deb"
+  when: zabbix_release_dpkg.rc != 0
+
+- name: refresh apt
+  apt: update_cache=yes
+  when: zabbix_release_dpkg.rc != 0
+
+- name: install zabbix-agent
+  apt: name=zabbix-agent state=latest install_recommends=no

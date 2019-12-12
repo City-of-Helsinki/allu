@@ -1,0 +1,6 @@
+---
+- name: allow Zabbix proxy to connect to running agent
+  ufw: rule=allow port={{ item }} src={{ zabbix_server }}
+  become: yes
+  with_items:
+      - 10050 # zabbix-agent
