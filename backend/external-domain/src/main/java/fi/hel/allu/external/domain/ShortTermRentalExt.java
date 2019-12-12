@@ -8,12 +8,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @NotFalse(rules = {
     "applicationKind, kindMatchType, {shorttermrental.kind}",
     "recurringEndYear, lessThanYearActivity, {shorttermrental.lessThanYearActivity}",
     "recurringEndYear, recurringKind, {shorttermrental.recurringKind}",
+    "within80cmFromWall, kindWithin80cm, {shorttermrental.kindWithin80cm}",
  })
 @ApiModel("Short term rental (lyhytaikainen maanvuokraus) input model.")
 public class ShortTermRentalExt extends BaseApplicationExt {
@@ -23,6 +26,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
   @NotNull(message = "{application.kind}")
   private ApplicationKind applicationKind;
   private Integer recurringEndYear;
+  private Boolean within80cmFromWall;
 
   @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
   public List<Integer> getFixedLocationIds() {
@@ -62,10 +66,39 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.recurringEndYear = recurringEndYear;
   }
 
+  @ApiModelProperty(value = "Describes whether rental area is within 80cm from actual business space. " +
+    "This can be set for SUMMER_TERRACE, WINTER_TERRACE and PROMOTION_OR_SALES.")
+  public Boolean getWithin80cmFromWall() {
+    return within80cmFromWall;
+  }
+
+  public void setWithin80cmFromWall(Boolean within80cmFromWall) {
+    this.within80cmFromWall = within80cmFromWall;
+  }
+
+  @JsonIgnore
+  public boolean isBillableSalesArea() {
+    return Optional.ofNullable(within80cmFromWall)
+      .map(within -> !within)
+      .orElse(null);
+  }
+
   @JsonIgnore
   public boolean getKindMatchType() {
     if (applicationKind != null) {
       return applicationKind.getTypes().contains(ApplicationType.SHORT_TERM_RENTAL);
+    }
+    return true;
+  }
+
+  @JsonIgnore
+  public boolean getKindWithin80cm() {
+    if (applicationKind != null) {
+      return Arrays.asList(
+        ApplicationKind.SUMMER_TERRACE,
+        ApplicationKind.WINTER_TERRACE,
+        ApplicationKind.PROMOTION_OR_SALES
+      ).contains(applicationKind);
     }
     return true;
   }
