@@ -2023,7 +2023,7 @@ export const translations = {
         DECISION: 'Hakemus siirretty odottamaan päätöstä',
         OPERATIONAL_CONDITION: 'Hakemus siirretty odottamaan toiminnallisen kunnon hyväksyntää',
         FINISHED: 'Hakemus siirretty odottamaan työ valmis hyväksyntää',
-        TERMINATION: 'Hakemus siirretty odottamaan irtisanomisen päätöstä',
+        TERMINATED: 'Hakemus siirretty odottamaan irtisanomisen päätöstä',
       },
       returnTo: {
         DECISION: 'Hakemus palautettu päätetyksi',
