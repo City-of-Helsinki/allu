@@ -52,7 +52,7 @@ public class ApplicationUpdateService extends ModelFieldUpdater {
     }
   }
 
-  private void validateUpdateAllowed(Integer id) {
+  public void validateUpdateAllowed(Integer id) {
     StatusType status = applicationServiceComposer.getApplicationStatus(id).getStatus();
     if (status != StatusType.NOTE
         && status != StatusType.HANDLING

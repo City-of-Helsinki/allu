@@ -1,30 +1,44 @@
 package fi.hel.allu.supervision.api.controller;
 
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.servicecore.domain.CreateAreaRentalApplicationJson;
-import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.CreateAreaRentalApplicationJson;
+import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.service.ApplicationService;
+import fi.hel.allu.servicecore.service.InvoicingPeriodService;
 import fi.hel.allu.supervision.api.domain.AreaRentalApplication;
+import fi.hel.allu.supervision.api.domain.InvoicingPeriodJson;
 import io.swagger.annotations.*;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/arearentals")
 @Api(tags = "Applications")
 public class AreaRentalController extends BaseApplicationDetailsController<AreaRentalApplication, CreateAreaRentalApplicationJson> {
+
+  private static final List<Integer> ALLOWABLE_PERIOD_LENGTHS = Arrays.asList(1, 3, 6, 12);
+
+  @Autowired
+  private InvoicingPeriodService invoicingPeriodService;
+
+  @Autowired
+  private ApplicationService applicationService;
 
   @Override
   protected ApplicationType getApplicationType() {
@@ -137,4 +151,53 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return super.removeRepresentative(applicationId);
   }
 
+  @ApiOperation(value = "Set invoicing period length for area rental with given ID. Ignored if application is not billable.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = InvoicingPeriodJson.class,
+      responseContainer="List"
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Invoicing period length set successfully", response = InvoicingPeriodJson.class, responseContainer="List")
+  })
+  @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<List<InvoicingPeriodJson>> setInvoicingPeriodLength(@PathVariable Integer id,
+      @ApiParam(value = "Period length in months", allowableValues = "1, 3, 6, 12") @RequestParam int periodLength) {
+    validateType(id);
+    validateUpdateAllowed(id);
+    validatePeriodLength(periodLength);
+    List<InvoicingPeriodJson> result;
+    if (applicationService.isBillable(id)) {
+      result = invoicingPeriodService.createInvoicingPeriods(id, periodLength)
+        .stream()
+        .map(i -> new InvoicingPeriodJson(i.getId(), i.getStartTime(), i.getEndTime()))
+        .collect(Collectors.toList());
+    } else {
+      result = Collections.emptyList();
+    }
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation(value = "Remove invoicing periods from area rental with given ID.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json"
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Invoicing periods removed successfully")
+  })
+  @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.DELETE, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> deleteInvoicingPeriods(@PathVariable Integer id) {
+    validateType(id);
+    validateUpdateAllowed(id);
+    invoicingPeriodService.deleteInvoicingPeriods(id);
+    return ResponseEntity.ok().build();
+  }
+
+  private void validatePeriodLength(int periodLength) {
+    if (!ALLOWABLE_PERIOD_LENGTHS.contains(periodLength)) {
+      throw new IllegalArgumentException("application.invoicingPeriod.invalid");
+    }
+  }
 }

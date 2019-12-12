@@ -293,4 +293,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok().build();
   }
 
+  protected void validateUpdateAllowed(Integer applicationId) {
+    applicationUpdateService.validateUpdateAllowed(applicationId);
+  }
 }
