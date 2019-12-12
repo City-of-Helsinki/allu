@@ -114,7 +114,7 @@ public class ApprovalController {
   }
 
   @RequestMapping(value = "/{id}/distribution", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DistributionEntryJson>> getDistribution(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.getDistributionList(id));
   }
