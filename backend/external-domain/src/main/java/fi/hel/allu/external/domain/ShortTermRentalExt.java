@@ -93,7 +93,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
 
   @JsonIgnore
   public boolean getKindWithin80cm() {
-    if (applicationKind != null) {
+    if (within80cmFromWall != null) {
       return Arrays.asList(
         ApplicationKind.SUMMER_TERRACE,
         ApplicationKind.WINTER_TERRACE,
