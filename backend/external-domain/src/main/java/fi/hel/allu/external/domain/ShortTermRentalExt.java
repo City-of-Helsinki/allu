@@ -77,7 +77,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
   }
 
   @JsonIgnore
-  public boolean isBillableSalesArea() {
+  public Boolean isBillableSalesArea() {
     return Optional.ofNullable(within80cmFromWall)
       .map(within -> !within)
       .orElse(null);
