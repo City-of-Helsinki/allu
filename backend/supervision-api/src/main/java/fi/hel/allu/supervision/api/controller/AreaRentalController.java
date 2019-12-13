@@ -12,18 +12,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
-import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.CreateAreaRentalApplicationJson;
 import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.service.ApplicationService;
+import fi.hel.allu.servicecore.service.DateReportingService;
 import fi.hel.allu.servicecore.service.InvoicingPeriodService;
+import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.supervision.api.domain.AreaRentalApplication;
+import fi.hel.allu.supervision.api.domain.DatePeriodReportJson;
+import fi.hel.allu.supervision.api.domain.DateReportJson;
 import fi.hel.allu.supervision.api.domain.InvoicingPeriodJson;
 import io.swagger.annotations.*;
 
@@ -35,10 +40,16 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
   private static final List<Integer> ALLOWABLE_PERIOD_LENGTHS = Arrays.asList(1, 3, 6, 12);
 
   @Autowired
+  private DateReportingService dateReportingService;
+
+  @Autowired
   private InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   private ApplicationService applicationService;
+
+  @Autowired
+  private LocationService locationService;
 
   @Override
   protected ApplicationType getApplicationType() {
@@ -193,6 +204,52 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     validateUpdateAllowed(id);
     invoicingPeriodService.deleteInvoicingPeriods(id);
     return ResponseEntity.ok().build();
+  }
+
+
+  @ApiOperation(value = "Report customer work finished date",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Date reported successfully"),
+    })
+  @RequestMapping(value = "/{id}/customerworkfinished", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<Void> reportCustomerWorkFinished(@ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+                                                         @ApiParam(value = "Date report containing reporting date and work finished date")
+                                                         @RequestBody @Valid DateReportJson dateReport) {
+    validateType(id);
+    dateReportingService.reportCustomerWorkFinished(id, new ApplicationDateReport(dateReport.getReportingDate(), dateReport.getReportedDate(), null));
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Report customer location validity period",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Period reported successfully"),
+    })
+  @RequestMapping(value = "/{applicationId}/locations/{locationId}/customervalidity", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<Void> reportCustomerLocationValidityPeriod(@ApiParam(value = "Id of the application") @PathVariable("applicationId") Integer applicationId,
+                                                                   @ApiParam(value = "Id of the location") @PathVariable("locationId") Integer locationId,
+                                                                   @ApiParam(value = "Period report containing reporting date and reported period")
+                                                                   @RequestBody @Valid DatePeriodReportJson dateReport) {
+    validateType(applicationId);
+    validateApplicationHasLocation(applicationId, locationId);
+    dateReportingService.reportCustomerLocationValidity(applicationId, locationId, new ApplicationDateReport(dateReport.getReportingDate(),
+        dateReport.getReportedStartDate(), dateReport.getReportedEndDate()));
+    return ResponseEntity.ok().build();
+  }
+
+  private void validateApplicationHasLocation(Integer applicationId, Integer locationId) {
+    if (!locationService.getLocationById(locationId).getApplicationId().equals(applicationId)) {
+      throw new NoSuchEntityException("application.location.notFound");
+    }
   }
 
   private void validatePeriodLength(int periodLength) {

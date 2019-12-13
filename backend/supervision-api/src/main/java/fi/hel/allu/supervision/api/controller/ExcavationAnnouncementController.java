@@ -1,20 +1,23 @@
 package fi.hel.allu.supervision.api.controller;
 
-import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.CreateExcavationAnnouncementApplicationJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.CreateExcavationAnnouncementApplicationJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.service.DateReportingService;
+import fi.hel.allu.supervision.api.domain.DatePeriodReportJson;
+import fi.hel.allu.supervision.api.domain.DateReportJson;
 import fi.hel.allu.supervision.api.domain.ExcavationAnnouncementApplication;
 import io.swagger.annotations.*;
 
@@ -22,6 +25,9 @@ import io.swagger.annotations.*;
 @RequestMapping("/v1/excavationannouncements")
 @Api(tags = "Applications")
 public class ExcavationAnnouncementController extends BaseApplicationDetailsController<ExcavationAnnouncementApplication, CreateExcavationAnnouncementApplicationJson> {
+
+  @Autowired
+  private DateReportingService dateReportingService;
 
   @Override
   protected ApplicationType getApplicationType() {
@@ -101,6 +107,61 @@ public class ExcavationAnnouncementController extends BaseApplicationDetailsCont
   @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.DELETE, produces = "application/json")
   public ResponseEntity<Void> removeRepresentative(@PathVariable Integer applicationId) {
     return super.removeRepresentative(applicationId);
+  }
+
+  @ApiOperation(value = "Report customer operational condition date",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Date reported successfully"),
+    })
+  @RequestMapping(value = "/{id}/customeroperationalcondition", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<Void> reportCustomerOperationalCondition(@ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+                                                                 @ApiParam(value = "Date report containing reporting date and operational condition date")
+                                                                 @RequestBody @Valid DateReportJson dateReport) {
+    validateType(id);
+    dateReportingService.reportCustomerOperationalCondition(id, new ApplicationDateReport(dateReport.getReportingDate(), dateReport.getReportedDate(), null));
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Report customer work finished date",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Date reported successfully"),
+    })
+  @RequestMapping(value = "/{id}/customerworkfinished", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<Void> reportCustomerWorkFinished(@ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+                                                         @ApiParam(value = "Date report containing reporting date and work finished date")
+                                                         @RequestBody @Valid DateReportJson dateReport) {
+    validateType(id);
+    dateReportingService.reportCustomerWorkFinished(id, new ApplicationDateReport(dateReport.getReportingDate(), dateReport.getReportedDate(), null));
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Report customer application validity period",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Period reported successfully"),
+    })
+  @RequestMapping(value = "/{id}/customervalidity", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<Void> reportCustomerValidityPeriod(@ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+                                                           @ApiParam(value = "Period report containing reporting date and reported period")
+                                                           @RequestBody @Valid DatePeriodReportJson dateReport) {
+    validateType(id);
+    dateReportingService.reportCustomerValidity(id, new ApplicationDateReport(dateReport.getReportingDate(),
+        dateReport.getReportedStartDate(), dateReport.getReportedEndDate()));
+    return ResponseEntity.ok().build();
   }
 
 }
