@@ -1,5 +1,9 @@
 package fi.hel.allu.common.domain.types;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Additional specifiers for certain application kinds
  */
@@ -67,6 +71,10 @@ public enum ApplicationSpecifier {
 
   private ApplicationSpecifier(ApplicationKind kind) {
     this.kind = kind;
+  }
+
+  public static List<ApplicationSpecifier> forApplicationKind(ApplicationKind kind) {
+    return Arrays.stream(ApplicationSpecifier.values()).filter(s -> s.getKind().equals(kind)).collect(Collectors.toList());
   }
 
 }

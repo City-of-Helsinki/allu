@@ -1,6 +1,7 @@
 package fi.hel.allu.supervision.api.controller;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.domain.types.*;
@@ -19,6 +21,7 @@ import fi.hel.allu.supervision.api.domain.CodeType;
 import fi.hel.allu.supervision.api.translation.EnumTranslator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 @RestController
@@ -55,8 +58,17 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationkinds", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ApplicationKind, CodeMetadata>> getApplicationKinds() {
-    return ResponseEntity.ok(getCodeMetadata(ApplicationKind.values(), a -> CodeType.USER));
+  public ResponseEntity<Map<ApplicationKind, CodeMetadata>> getApplicationKinds(
+      @ApiParam(value = "Optional application type parameter. If given, only kinds allowed for given application type are returned")
+      @RequestParam(required = false) ApplicationType applicationType) {
+    ApplicationKind[] kinds = Optional.ofNullable(applicationType)
+        .map(t -> getKindsForApplicationType(t))
+        .orElse(ApplicationKind.values());
+    return ResponseEntity.ok(getCodeMetadata(kinds, a -> CodeType.USER));
+  }
+
+  private ApplicationKind[] getKindsForApplicationType(ApplicationType type) {
+    return ApplicationKind.forApplicationType(type).toArray(new ApplicationKind[0]);
   }
 
   @ApiOperation(value = "Gets map containing application specifiers with descriptions ",
@@ -65,8 +77,17 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationspecifiers", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ApplicationSpecifier, CodeMetadata>> getApplicationSpecifiers() {
-    return ResponseEntity.ok(getCodeMetadata(ApplicationSpecifier.values(), a -> CodeType.USER));
+  public ResponseEntity<Map<ApplicationSpecifier, CodeMetadata>> getApplicationSpecifiers(
+      @ApiParam(value = "Optional application kind parameter. If given, only specifiers allowed for given kind are returned")
+      @RequestParam(required = false) ApplicationKind applicationKind) {
+    ApplicationSpecifier[] specifiers = Optional.ofNullable(applicationKind)
+        .map(k -> getSpecifiersForKind(k))
+        .orElse(ApplicationSpecifier.values());
+    return ResponseEntity.ok(getCodeMetadata(specifiers, a -> CodeType.USER));
+  }
+
+  private ApplicationSpecifier[] getSpecifiersForKind(ApplicationKind kind) {
+    return ApplicationSpecifier.forApplicationKind(kind).toArray(new ApplicationSpecifier[0]);
   }
 
   @ApiOperation(value = "Gets map containing supervision task types with descriptions ",
