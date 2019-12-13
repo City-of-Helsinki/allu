@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@ApiModel("Event (tapahtuma) input model. Currently only supported event type is promotion.")
-public class EventExt extends BaseApplicationExt {
+@ApiModel("Promotion event (promootio) input model.")
+public class PromotionExt extends BaseApplicationExt {
 
   private List<Integer> fixedLocationIds;
   private Integer structureArea;

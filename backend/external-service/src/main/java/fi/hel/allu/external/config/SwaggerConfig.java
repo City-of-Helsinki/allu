@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 
 import javax.servlet.ServletContext;
 
+import fi.hel.allu.external.mapper.event.PromotionExtMapper;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
   private static final Class<?>[] IGNORED_CLASSES = {
       CableReportExtMapper.class,
-      EventExtMapper.class,
+      PromotionExtMapper.class,
       ExcavationAnnouncementExtMapper.class,
       PlacementContractExtMapper.class,
       ShortTermRentalExtMapper.class

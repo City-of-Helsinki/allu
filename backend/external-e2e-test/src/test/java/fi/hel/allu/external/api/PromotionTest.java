@@ -1,30 +1,29 @@
 package fi.hel.allu.external.api;
 
-import java.time.ZonedDateTime;
-
+import fi.hel.allu.external.domain.PromotionExt;
 import org.geolatte.geom.Geometry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.hel.allu.external.domain.EventExt;
+import java.time.ZonedDateTime;
 
 import static fi.hel.allu.external.api.data.TestData.EVENT_GEOMETRY;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class EventTest extends BaseApplicationTest<EventExt> {
+public class PromotionTest extends BaseApplicationTest<PromotionExt> {
 
-  private static final String RESOURCE_PATH = "/events";
-  private static final String NAME = "Tapahtuma - ext";
+  private static final String RESOURCE_PATH = "/events/promotions";
+  private static final String NAME = "Promootio - ext";
   private static final ZonedDateTime EVENT_START_TIME = ZonedDateTime.now().plusDays(3);
   private static final ZonedDateTime EVENT_END_TIME = ZonedDateTime.now().plusDays(10);
   private static final Integer STRUCTURE_AREA = Integer.valueOf(10);
-  private static final String STRUCTURE_DESCRIPTION = "Tapahtuman rakenteiden kuvaus";
-  private static final String DESCRIPTION = "Tapahtuman kuvaus";
+  private static final String STRUCTURE_DESCRIPTION = "Promootion rakenteiden kuvaus";
+  private static final String DESCRIPTION = "Promootion kuvaus";
 
 
   @Test
-  public void shouldCreateEvent() {
+  public void shouldCreatePromotion() {
     validateApplicationCreationSuccessful();
   }
 
@@ -34,8 +33,8 @@ public class EventTest extends BaseApplicationTest<EventExt> {
   }
 
   @Override
-  protected EventExt getApplication() {
-    EventExt event = new EventExt();
+  protected PromotionExt getApplication() {
+    PromotionExt event = new PromotionExt();
     event.setEventStartTime(EVENT_START_TIME);
     event.setEventEndTime(EVENT_END_TIME);
     event.setStructureArea(STRUCTURE_AREA);
@@ -54,5 +53,4 @@ public class EventTest extends BaseApplicationTest<EventExt> {
   protected String getResourcePath() {
     return RESOURCE_PATH;
   }
-
 }
