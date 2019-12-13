@@ -24,7 +24,7 @@ import fi.hel.allu.servicecore.service.DateReportingService;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/excavationannouncements")
+@RequestMapping({"/v1/excavationannouncements", "/v2/excavationannouncements"})
 @Api(tags = "Excavation announcements")
 public class ExcavationAnnouncementController
     extends BaseApplicationController<ExcavationAnnouncementExt, ExcavationAnnouncementExtMapper> {

@@ -18,7 +18,7 @@ import fi.hel.allu.servicecore.service.DecisionService;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/documents/applications")
+@RequestMapping({"/v1/documents/applications", "/v2/documents/applications"})
 @Api(tags = "Application documents")
 public class ApplicationDocumentController {
 

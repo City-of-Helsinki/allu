@@ -25,7 +25,7 @@ import fi.hel.allu.servicecore.security.TokenUtil;
 import io.swagger.annotations.Api;
 
 @RestController
-@RequestMapping("/v1/login")
+@RequestMapping({"/v1/login", "/v2/login"})
 @Api(tags = "Authentication")
 public class AuthenticationController {
 

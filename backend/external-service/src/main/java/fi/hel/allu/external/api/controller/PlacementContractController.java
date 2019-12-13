@@ -30,7 +30,7 @@ import fi.hel.allu.servicecore.service.ContractService;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/placementcontracts")
+@RequestMapping({"/v1/placementcontracts", "/v2/placementcontracts"})
 @Api(tags = "Placement contracts")
 public class PlacementContractController extends BaseApplicationController<PlacementContractExt, PlacementContractExtMapper> {
 

@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@RequestMapping("/v1/fixedlocations")
+@RequestMapping({"/v1/fixedlocations", "/v2/fixedlocations"})
 @Api(tags = "Fixed locations")
 public class FixedLocationController {
 

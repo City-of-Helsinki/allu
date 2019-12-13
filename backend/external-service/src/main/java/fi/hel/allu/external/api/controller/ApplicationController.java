@@ -19,7 +19,7 @@ import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/applications")
+@RequestMapping({"/v1/applications", "/v2/applications"})
 @Api(tags= "Applications")
 public class ApplicationController {
 

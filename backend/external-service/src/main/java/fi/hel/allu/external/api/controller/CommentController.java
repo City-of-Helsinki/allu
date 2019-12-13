@@ -19,7 +19,7 @@ import fi.hel.allu.external.service.CommentServiceExt;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/applications")
+@RequestMapping({"/v1/applications", "/v2/applications"})
 @Api(tags = "Comments")
 public class CommentController {
 

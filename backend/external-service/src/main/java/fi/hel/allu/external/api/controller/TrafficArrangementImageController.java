@@ -18,7 +18,7 @@ import fi.hel.allu.servicecore.service.AttachmentService;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/trafficarrangementimages")
+@RequestMapping({"/v1/trafficarrangementimages", "/v2/trafficarrangementimages"})
 @Api(tags = "Traffic arrangement images")
 public class TrafficArrangementImageController {
 

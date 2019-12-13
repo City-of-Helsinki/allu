@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/trafficarrangements")
+@RequestMapping({"/v1/trafficarrangements", "/v2/trafficarrangements"})
 @Api(tags = "Traffic arrangements")
 public class TrafficArrangementController extends BaseApplicationController<TrafficArrangementExt, TrafficArrangementExtMapper> {
 

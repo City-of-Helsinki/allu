@@ -9,7 +9,7 @@ import fi.hel.allu.external.mapper.EventExtMapper;
 import io.swagger.annotations.Api;
 
 @RestController
-@RequestMapping("/v1/events")
+@RequestMapping({"/v1/events", "/v2/events"})
 @Api(tags = "Events")
 public class EventController extends BaseApplicationController<EventExt, EventExtMapper>{
 

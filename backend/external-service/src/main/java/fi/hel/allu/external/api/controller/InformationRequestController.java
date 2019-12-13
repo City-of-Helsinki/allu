@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping({"/v1", "/v2"})
 @Api(tags = "Information requests")
 public class InformationRequestController {
 

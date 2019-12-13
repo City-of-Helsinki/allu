@@ -20,7 +20,7 @@ import fi.hel.allu.external.service.ApplicationServiceExt;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping({"/v1", "/v2"})
 @Api(tags = "Application attachments")
 public class ApplicationAttachmentController {
 

@@ -9,7 +9,7 @@ import fi.hel.allu.external.mapper.CableReportExtMapper;
 import io.swagger.annotations.Api;
 
 @RestController
-@RequestMapping("/v1/cablereports")
+@RequestMapping({"/v1/cablereports", "/v2/cablereports"})
 @Api(tags= "Cable reports")
 public class CableReportController extends BaseApplicationController<CableReportExt, CableReportExtMapper>{
 

@@ -16,7 +16,7 @@ import fi.hel.allu.external.mapper.ShortTermRentalExtMapper;
 import fi.hel.allu.external.validation.ShortTermRentalExtValidator;
 
 @RestController
-@RequestMapping("/v1/shorttermrentals")
+@RequestMapping({"/v1/shorttermrentals", "/v2/shorttermrentals"})
 @Api(tags = "Short term rentals")
 public class ShortTermRentalController extends BaseApplicationController<ShortTermRentalExt, ShortTermRentalExtMapper> {
 

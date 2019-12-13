@@ -32,7 +32,7 @@ public class ApplicationKindController {
       response = ApplicationKind.class,
       responseContainer="List",
       authorizations=@Authorization(value ="api_key"))
-  @RequestMapping(value = "/v1/applicationkinds", method = RequestMethod.GET)
+  @RequestMapping(value = {"/v1/applicationkinds"}, method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   @Deprecated
   public ResponseEntity<List<ApplicationKind>> getAllSupportedByV1(

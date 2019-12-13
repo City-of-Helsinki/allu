@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@RequestMapping("/v1/applicationhistory")
+@RequestMapping({"/v1/applicationhistory", "/v2/applicationhistory"})
 @Api(tags = "Application history")
 public class ApplicationHistoryController {
 
