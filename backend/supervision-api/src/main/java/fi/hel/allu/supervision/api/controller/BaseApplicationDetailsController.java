@@ -120,7 +120,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     @ApiResponse(code = 400, message = "Invalid application data", response = ErrorInfo.class),
     @ApiResponse(code = 403, message = "Application creation forbidden", response = ErrorInfo.class),
   })
-  @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+  @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<A> createApplication(@RequestBody @Valid @ApiParam("New application") U application) {
     application.setType(getApplicationType());
