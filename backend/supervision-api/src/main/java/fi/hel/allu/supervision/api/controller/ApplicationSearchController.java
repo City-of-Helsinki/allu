@@ -26,7 +26,7 @@ import io.swagger.annotations.*;
 @RestController
 @RequestMapping("/v1")
 @Api(tags = "Applications")
-public class ApplicationController {
+public class ApplicationSearchController {
 
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
