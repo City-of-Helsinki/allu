@@ -1,6 +1,7 @@
 package fi.hel.allu.supervision.api.controller;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -208,16 +209,31 @@ public class SupervisionTaskController {
   @ApiOperation(value = "Rejects supervision task and creates a new task with given date.",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json",
-      response = Integer.class
+      response = SupervisionTaskSearchResult.class
       )
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Supervision task rejected successfully", response = Integer.class),
+      @ApiResponse(code = 200, message = "Supervision task rejected successfully", response = SupervisionTaskSearchResult.class),
       @ApiResponse(code = 400, message = "Invalid parameters", response = ErrorInfo.class),
   })
   @RequestMapping(value = "/supervisiontasks/{id}/rejected", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<SupervisionTaskSearchResult> reject(@PathVariable Integer id, @RequestBody @Valid SupervisionTaskRejectionJson rejectionData) {
     return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(supervisionTaskApprovalService.rejectSupervisionTask(id, rejectionData)));
+  }
+
+  @ApiOperation(value = "Change owner of the supervision task. Returns updated task.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = SupervisionTaskSearchResult.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Owner updated successfully", response = SupervisionTaskSearchResult.class),
+  })
+  @RequestMapping(value = "/supervisiontasks/{id}/ownerId", method = RequestMethod.PUT, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskSearchResult> updateOwner(@PathVariable Integer id, @ApiParam(value = "Id of the new owner") @RequestParam Integer ownerId) {
+    supervisionTaskService.updateOwner(ownerId, Collections.singletonList(id));
+    return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(supervisionTaskService.findById(id)));
   }
 
   private void validateModificationAllowed(SupervisionTaskJson task) {
