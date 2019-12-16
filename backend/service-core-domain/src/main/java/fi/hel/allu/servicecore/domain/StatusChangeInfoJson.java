@@ -18,6 +18,12 @@ public class StatusChangeInfoJson {
       this.owner = owner;
     }
 
+    public StatusChangeInfoJson(CommentType type, String comment, Integer owner) {
+      this.type = type;
+      this.comment = comment;
+      this.owner = owner;
+    }
+
     /**
      * Type of comment
      */
