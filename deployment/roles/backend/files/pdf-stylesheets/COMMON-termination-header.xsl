@@ -27,7 +27,7 @@
       ]]>
         </script>
       </head>
-      <body style='height:34mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
+      <body style='height:30mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
         <div class="header">
           <div class="logo">
             <img src="helsinki-logo.png" />
