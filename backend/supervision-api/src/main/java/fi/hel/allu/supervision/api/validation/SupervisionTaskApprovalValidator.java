@@ -32,9 +32,9 @@ public class SupervisionTaskApprovalValidator implements Validator {
   private static final String ERROR_OPERATIONAL_DATE = "supervisiontask.operational.date";
   private static final String ERROR_FINAL_DATE = "supervisiontask.finalSupervision.date";
   private static final String ERROR_STATUS = "supervisiontask.invalid.taskstatus";
-  private static final String ERROR_DECISION_NOTE = "supervisiontask.decision.note";
-  private static final String ERROR_DECISION_MAKER_REQUIRED = "supervisiontask.decision.maker.required";
-  private static final String ERROR_DECISION_MAKER_INVALID = "supervisiontask.decision.maker.invalid";
+  private static final String ERROR_DECISION_NOTE = "decision.note";
+  private static final String ERROR_DECISION_MAKER_REQUIRED = "decision.maker.required";
+  private static final String ERROR_DECISION_MAKER_INVALID = "decision.maker.invalid";
 
   @Autowired
   SupervisionTaskApprovalValidator(
