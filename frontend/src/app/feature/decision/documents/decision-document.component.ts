@@ -96,6 +96,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
       case DecisionTab.TERMINATION: {
         this.pdf$ = this.store.select(fromDecision.getTerminationPdf);
         this.loading$ = this.store.select(fromDecision.getTerminationLoading);
+        this.showDecisionActions = true;
         this.showTerminationActions$ = this.application$.pipe(map(app => this.showTerminationActions(app)));
         this.allowDecisionActions$ = this.application$.pipe(map(app => this.showDecisionActionsOnTerminationTab(app)));
         break;
