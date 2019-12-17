@@ -171,7 +171,7 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
   @ApiResponses( value = {
       @ApiResponse(code = 200, message = "Invoicing period length set successfully", response = InvoicingPeriodJson.class, responseContainer="List")
   })
-  @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.GET, produces = "application/json")
+  @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<List<InvoicingPeriodJson>> setInvoicingPeriodLength(@PathVariable Integer id,
       @ApiParam(value = "Period length in months", allowableValues = "1, 3, 6, 12") @RequestParam int periodLength) {
