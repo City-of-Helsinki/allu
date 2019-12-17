@@ -89,6 +89,10 @@ public class TimeUtil {
     return homeTime(dateToCheck).truncatedTo(ChronoUnit.DAYS).isAfter(homeTime(limitDate).truncatedTo(ChronoUnit.DAYS));
   }
 
+  public static boolean isDateBefore(ZonedDateTime dateToCheck, ZonedDateTime limitDate) {
+    return homeTime(dateToCheck).truncatedTo(ChronoUnit.DAYS).isBefore(homeTime(limitDate).truncatedTo(ChronoUnit.DAYS));
+  }
+
   public static ZonedDateTime nextDay(ZonedDateTime dateTime) {
     return dateTime != null ? dateTime.plusDays(1) : null;
   }
