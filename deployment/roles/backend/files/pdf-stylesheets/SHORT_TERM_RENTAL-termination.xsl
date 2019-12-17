@@ -17,6 +17,28 @@
         </xsl:if>
       </head>
       <body>
+        <div class="header" style="width: 100%; margin-top: 3px;">
+          <div class="logo">
+            <img src="helsinki-logo.png" />
+          </div>
+          <div class="department">
+            <p>Kaupunkiympäristö</p>
+            <p>Alueidenkäyttö ja -valvonta</p>
+          </div>
+          <div class="half-right">
+            <h1>Irtisanominen</h1>
+            <div class="id">
+              <table>
+                <tr>
+                  <td class="c1">Päätöspäivämäärä:</td>
+                  <!-- [päätöspvm] -->
+                  <td class="c2"><xsl:value-of select="data/decisionDate" /></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <div class="body">
           <div class="unboxed avoid-pb">
             <section>
