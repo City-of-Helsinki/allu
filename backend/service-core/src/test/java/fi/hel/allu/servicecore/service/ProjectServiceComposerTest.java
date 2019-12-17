@@ -21,6 +21,7 @@ public class ProjectServiceComposerTest {
   private SearchService searchService;
   private ApplicationJsonService applicationJsonService;
   private ProjectServiceComposer projectServiceComposer;
+  private CustomerService customerService;
   private static final int projectId1 = 1;
   private static final int projectId2 = 2;
   private static final int projectParentId = 3;
@@ -31,7 +32,9 @@ public class ProjectServiceComposerTest {
     projectService = Mockito.mock(ProjectService.class);
     searchService = Mockito.mock(SearchService.class);
     applicationJsonService = Mockito.mock(ApplicationJsonService.class);
-    projectServiceComposer = new ProjectServiceComposer(applicationService, projectService, applicationJsonService, searchService);
+    customerService = Mockito.mock(CustomerService.class);
+    projectServiceComposer = new ProjectServiceComposer(applicationService, projectService, applicationJsonService,
+        searchService, customerService);
   }
 
   @Test

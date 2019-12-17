@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 
 /**
@@ -21,21 +22,25 @@ import fi.hel.allu.servicecore.domain.ProjectJson;
 @Service
 public class ProjectServiceComposer {
 
+  private static final String DEFAULT_IDENTIFIER_PREFIX = "Hanke_";
   private final ApplicationService applicationService;
   private final ProjectService projectService;
   private final SearchService searchService;
   private final ApplicationJsonService applicationJsonService;
+  private final CustomerService customerService;
 
   @Autowired
   public ProjectServiceComposer(
       ApplicationService applicationService,
       ProjectService projectService,
       ApplicationJsonService applicationJsonService,
-      SearchService searchService) {
+      SearchService searchService,
+      CustomerService customerService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.applicationJsonService = applicationJsonService;
     this.searchService = searchService;
+    this.customerService = customerService;
   }
 
   /**
@@ -60,9 +65,18 @@ public class ProjectServiceComposer {
    * @return Created project
    */
   public ProjectJson insert(ProjectJson projectJson) {
+    if (projectJson.getIdentifier() == null) {
+      projectJson.setIdentifier(
+          getProjectIdentifierPrefix(projectJson.getCustomer().getId()) + projectService.getNextProjectNumber());
+    }
     ProjectJson insertedProject = projectService.insert(projectJson);
     searchService.insertProject(insertedProject);
     return insertedProject;
+  }
+
+  private String getProjectIdentifierPrefix(Integer customerId) {
+    CustomerJson customer = customerService.findCustomerById(customerId);
+    return Optional.ofNullable(customer.getProjectIdentifierPrefix()).orElse(DEFAULT_IDENTIFIER_PREFIX);
   }
 
   /**
