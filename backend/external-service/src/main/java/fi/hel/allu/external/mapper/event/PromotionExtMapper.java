@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -16,17 +17,16 @@ import fi.hel.allu.servicecore.domain.EventJson;
 @Component
 public class PromotionExtMapper extends ApplicationExtMapper<PromotionExt> {
 
+  private final EventExtensionMapper extensionMapper;
+
+  @Autowired
+  public PromotionExtMapper(EventExtensionMapper extensionMapper) {
+    this.extensionMapper = extensionMapper;
+  }
+
   @Override
   protected EventJson createExtension(PromotionExt event) {
-    EventJson extension = new EventJson();
-    extension.setStructureArea(Optional.ofNullable(event.getStructureArea()).orElse(0));
-    extension.setStructureDescription(event.getStructureDescription());
-    extension.setEventStartTime(event.getEventStartTime());
-    extension.setEventEndTime(event.getEventEndTime());
-    extension.setNature(EventNature.PROMOTION);
-    extension.setDescription(event.getDescription());
-    extension.setSurfaceHardness(SurfaceHardness.HARD);
-    return extension;
+    return extensionMapper.createPromotionExtension(event);
   }
 
   @Override
