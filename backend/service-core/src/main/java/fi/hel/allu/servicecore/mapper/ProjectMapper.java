@@ -1,17 +1,21 @@
 package fi.hel.allu.servicecore.mapper;
 
-import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.search.domain.ProjectES;
-import fi.hel.allu.servicecore.domain.ProjectJson;
-import fi.hel.allu.servicecore.service.ContactService;
-import fi.hel.allu.servicecore.service.CustomerService;
-import fi.hel.allu.servicecore.service.UserService;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.search.domain.ProjectES;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.CreateProjectJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.servicecore.service.UserService;
 
 /**
  * Mapper for projects in their different forms.
@@ -97,5 +101,16 @@ public class ProjectMapper {
       projectES.setCreator(projectJson.getCreator().getRealName());
     }
     return projectES;
+  }
+
+  public ProjectJson mapCreateJsonToProjectJson(CreateProjectJson createJson) {
+    ProjectJson projectJson = new ProjectJson();
+    projectJson.setCustomer(new CustomerJson(createJson.getCustomerId()));
+    projectJson.setContact(new ContactJson(createJson.getContactId()));
+    projectJson.setIdentifier(createJson.getIdentifier());
+    projectJson.setAdditionalInfo(createJson.getAdditionalInfo());
+    projectJson.setCustomerReference(createJson.getCustomerReference());
+    projectJson.setName(createJson.getName());
+    return projectJson;
   }
 }

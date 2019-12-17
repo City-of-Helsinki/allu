@@ -172,4 +172,14 @@ public class ProjectServiceComposer {
         .collect(Collectors.toList());
   }
 
+  public ProjectJson findById(Integer id) {
+    return projectService.findById(id);
+  }
+
+  public void delete(Integer id) {
+    List<Integer> applicationIds = projectService.findApplicationsByProject(id).stream()
+      .map(Application::getId)
+      .collect(Collectors.toList());
+    delete(id, applicationIds);
+  }
 }

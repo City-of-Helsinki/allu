@@ -8,13 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.domain.CreateProjectJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
 import fi.hel.allu.supervision.api.domain.ProjectSearchParameters;
 import fi.hel.allu.supervision.api.domain.ProjectSearchResult;
@@ -34,6 +34,8 @@ public class ProjectController {
   private ProjectSearchParameterMapper searchParameterMapper;
   @Autowired
   private ProjectSearchResultMapper searchResultMapper;
+  @Autowired
+  private ProjectMapper projectMapper;
 
 
   @ApiOperation(value = "Search projects",
@@ -52,5 +54,46 @@ public class ProjectController {
     QueryParameters queryParameters = searchParameterMapper.mapToQueryParameters(searchParameters);
     Pageable pageRequest = MapperUtil.mapToPageRequest(searchParameters);
     return ResponseEntity.ok(projectServiceComposer.search(queryParameters, pageRequest).map(p -> searchResultMapper.mapToSearchResult(p)));
+  }
+
+  @ApiOperation(value = "Create new project. Generates default identifier if not given in input model. Returns ID of the created project.",
+      authorizations = @Authorization(value ="api_key"),
+      response = Integer.class
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Project created successfully", response = Integer.class),
+  })
+  @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Integer> create(@RequestBody @Valid CreateProjectJson project) {
+    ProjectJson createdProject = projectServiceComposer.insert(projectMapper.mapCreateJsonToProjectJson(project));
+    return ResponseEntity.ok(createdProject.getId());
+  }
+
+  @ApiOperation(value = "Get project by ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = ProjectJson.class,
+      produces = "application/json"
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Project fetched successfully", response = ProjectJson.class)
+  })
+  @RequestMapping(value = "/{id}",  method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ProjectJson> findById(@PathVariable Integer id) {
+    return ResponseEntity.ok(projectServiceComposer.findById(id));
+  }
+
+  @ApiOperation(value = "Remove project",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Project deleted successfully")
+  })
+  @RequestMapping(value = "/{id}",  method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> remove(@PathVariable Integer id) {
+    projectServiceComposer.delete(id);
+    return ResponseEntity.ok().build();
   }
 }
