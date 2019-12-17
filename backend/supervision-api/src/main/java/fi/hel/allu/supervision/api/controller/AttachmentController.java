@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
-import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
 import fi.hel.allu.servicecore.service.AttachmentService;
 import io.swagger.annotations.*;
 
