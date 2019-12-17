@@ -182,4 +182,9 @@ public class ProjectServiceComposer {
       .collect(Collectors.toList());
     delete(id, applicationIds);
   }
+
+  public boolean projectHasApplication(Integer projectId, Integer applicationId) {
+    return getProjectsByApplications(Collections.singletonList(applicationId)).contains(projectId);
+  }
+
 }

@@ -1,6 +1,8 @@
 package fi.hel.allu.supervision.api.controller;
 
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.CreateProjectJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
@@ -96,4 +99,36 @@ public class ProjectController {
     projectServiceComposer.delete(id);
     return ResponseEntity.ok().build();
   }
+
+  @ApiOperation(value = "Add applications to project. If application already is in some other project, it's moved to this project",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Applications addded successfully")
+  })
+  @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> addApplications(@PathVariable int id,
+      @ApiParam(value = "Ids of the applications to be added") @RequestBody List<Integer> applicationIds) {
+    projectServiceComposer.addApplications(id, applicationIds);
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Remove application from project",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application removed successfully")
+  })
+  @RequestMapping(value = "/{id}/applications/{applicationId}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> removeApplication(@PathVariable int id,
+      @ApiParam(value = "Id of the application to be remove") @PathVariable Integer applicationId) {
+    if (!projectServiceComposer.projectHasApplication(id, applicationId)) {
+      throw new IllegalOperationException("project.application.notfound");
+    }
+    projectServiceComposer.removeApplication(applicationId);
+    return ResponseEntity.ok().build();
+  }
+
 }
