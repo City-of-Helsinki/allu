@@ -1,10 +1,14 @@
 package fi.hel.allu.servicecore.domain;
 
-import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Invoice")
 public class InvoiceJson {
   private Integer id;
   private Integer applicationId;
@@ -30,9 +34,7 @@ public class InvoiceJson {
     // for deserialization
   }
 
-  /**
-   * Get the database ID for the invoice
-   */
+  @ApiModelProperty(value = "ID of the invoice")
   public Integer getId() {
     return id;
   }
@@ -41,11 +43,7 @@ public class InvoiceJson {
     this.id = id;
   }
 
-  /**
-   * Get the database ID of the application this invoice belongs to.
-   *
-   * @return Application's database ID
-   */
+  @ApiModelProperty(value = "ID of the application this invoice belongs to")
   public Integer getApplicationId() {
     return applicationId;
   }
@@ -54,9 +52,7 @@ public class InvoiceJson {
     this.applicationId = applicationId;
   }
 
-  /**
-   * Get the time after which this invoice is invoicable
-   */
+  @ApiModelProperty(value = "Time after which this invoice is invoicable")
   public ZonedDateTime getInvoicableTime() {
     return invoicableTime;
   }
@@ -65,11 +61,7 @@ public class InvoiceJson {
     this.invoicableTime = invoicableTime;
   }
 
-  /**
-   * Has this invoice been sent to invoicing?
-   *
-   * @return true if invoice has been invoiced
-   */
+  @ApiModelProperty(value = "Value indicating whether this invoice has been sent to invoicing")
   public boolean isInvoiced() {
     return invoiced;
   }
@@ -78,12 +70,7 @@ public class InvoiceJson {
     this.invoiced = invoiced;
   }
 
-  /**
-   * Is this invoice waiting for invoicee's SAP ID?
-   *
-   * @return true if invoice can't be sent because invoicee's SAP ID is not
-   *         known.
-   */
+  @ApiModelProperty(value = "Is this invoice waiting for invoicee's SAP ID")
   public boolean isSapIdPending() {
     return sapIdPending;
   }
@@ -92,11 +79,7 @@ public class InvoiceJson {
     this.sapIdPending = sapIdPending;
   }
 
-  /**
-   * Get the invoice rows for this invoice.
-   *
-   * @return List of invoice rows
-   */
+  @ApiModelProperty(value = "Rows of the invoice")
   public List<InvoiceRowJson> getRows() {
     return rows;
   }
@@ -105,6 +88,7 @@ public class InvoiceJson {
     this.rows = rows;
   }
 
+  @ApiModelProperty(value = "Time when invoice was sent to invoicing")
   public ZonedDateTime getSentTime() {
     return sentTime;
   }
