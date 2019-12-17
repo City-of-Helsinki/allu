@@ -2,10 +2,7 @@ package fi.hel.allu.external.mapper.event;
 
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.external.domain.BigEventExt;
-import fi.hel.allu.external.domain.EventAdditionalDetails;
-import fi.hel.allu.external.domain.EventExt;
-import fi.hel.allu.external.domain.PromotionExt;
+import fi.hel.allu.external.domain.*;
 import fi.hel.allu.servicecore.domain.EventJson;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
@@ -23,6 +20,12 @@ public class EventExtensionMapper {
   public EventJson createBigEventExtension(BigEventExt bigEvent) {
     EventJson eventJson = createExtensionWithAdditionalDetails(bigEvent, bigEvent.getAdditionalDetails());
     eventJson.setNature(EventNature.BIG_EVENT);
+    return eventJson;
+  }
+
+  public EventJson createOutdoorEventExtension(OutdoorEventExt outdoorEvent) {
+    EventJson eventJson = createExtensionWithAdditionalDetails(outdoorEvent, outdoorEvent.getAdditionalDetails());
+    eventJson.setNature(outdoorEvent.getNature());
     return eventJson;
   }
 
