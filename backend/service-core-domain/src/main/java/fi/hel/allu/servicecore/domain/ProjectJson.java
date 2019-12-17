@@ -9,21 +9,16 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Project (hanke)")
-public class ProjectJson {
+public class ProjectJson extends BaseProjectJson {
   private Integer id;
-  private String name;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private List<Integer> cityDistricts;
-  private String customerReference;
-  private String additionalInfo;
   private Integer parentId;
   @NotNull
   private CustomerJson customer;
   @NotNull
   private ContactJson contact;
-  @NotNull
-  private String identifier;
   private UserJson creator;
 
   public ProjectJson() {
@@ -40,15 +35,6 @@ public class ProjectJson {
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  @ApiModelProperty(value = "Name of the project")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   @ApiModelProperty(value = "Start time of the project. Calculated from the applications of the project.")
@@ -78,24 +64,6 @@ public class ProjectJson {
     this.cityDistricts = cityDistricts;
   }
 
-  @ApiModelProperty(value = "Customer reference (asiakkaan viite tai työnumero) ")
-  public String getCustomerReference() {
-    return customerReference;
-  }
-
-  public void setCustomerReference(String customerReference) {
-    this.customerReference = customerReference;
-  }
-
-  @ApiModelProperty(value = "Additional information")
-  public String getAdditionalInfo() {
-    return additionalInfo;
-  }
-
-  public void setAdditionalInfo(String additionalInfo) {
-    this.additionalInfo = additionalInfo;
-  }
-
   @ApiModelProperty(value = "Id of the parent project")
   public Integer getParentId() {
     return parentId;
@@ -121,15 +89,6 @@ public class ProjectJson {
 
   public void setContact(ContactJson contact) {
     this.contact = contact;
-  }
-
-  @ApiModelProperty(value = "Project identifier (hanketunniste)")
-  public String getIdentifier() {
-    return identifier;
-  }
-
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
   }
 
   @ApiModelProperty(value = "Creator of the project")
