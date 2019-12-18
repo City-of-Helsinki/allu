@@ -78,9 +78,18 @@ public class AlluMailService {
       if (inlineResources != null) {
         message.setInlineResources(inlineResources);
       }
-      log =  mailService.send(message);
+      log =  sendEmail(message);
     }
     logService.addMailSenderLog(log);
+  }
+
+  private MailSenderLog sendEmail(MailMessage message) {
+    try {
+      return mailService.send(message);
+    } catch (Exception e) {
+      logger.warn("Failed to send message", e);
+      return new MailSenderLog(message.getSubject(), ZonedDateTime.now(), message.getTo(), true, e.getMessage());
+    }
   }
 
   public List<String> getForbiddenEmailAddresses(List<String> recipients) {
