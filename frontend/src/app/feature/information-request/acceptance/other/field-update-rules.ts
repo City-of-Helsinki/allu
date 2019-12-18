@@ -22,9 +22,7 @@ const excavationAnnouncementFieldBlacklist: string[] = [
   'extension.qualityAssuranceTest'
 ];
 const temporaryTraffiArrangementFieldBlacklist: string[] = [
-  'extension.trafficArrangements',
-  'extension.trafficArrangementImpedimentType',
-  'extension.workPurpose'
+  'extension.trafficArrangementImpedimentType'
 ];
 
 const cableReportFieldBlacklist: string[] = [
