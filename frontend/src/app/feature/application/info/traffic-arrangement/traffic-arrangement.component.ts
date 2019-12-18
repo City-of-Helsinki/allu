@@ -16,8 +16,6 @@ import {ApplicationStatus, isSameOrAfter} from '@model/application/application-s
 })
 export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  showImpedimentType = false;
-
   protected createExtensionForm(): FormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
@@ -49,7 +47,5 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
 
     const arrangement = <TrafficArrangement>application.extension || new TrafficArrangement();
     this.applicationForm.patchValue(from(application, arrangement));
-
-    this.showImpedimentType = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
   }
 }
