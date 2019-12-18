@@ -27,6 +27,8 @@ mail_server_auth: false
 email_allowed_addresses: "*@*"
 email_sender_address: Allu <noreply@kaupunkiymparisto.fi>
 
+applicantreminder_cronstring: "0 0 1 * * MON-FRI"
+
 invoice_cronstring: "0 0 7 * * *"
 invoice_sending_enabled: true
 
