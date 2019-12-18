@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.validation.ValidationMessageTranslator;
 import fi.hel.allu.model.domain.Application;
@@ -63,7 +64,11 @@ public class BulkApprovalService {
       || application.getTargetState() == StatusType.OPERATIONAL_CONDITION;
     return replacingApplication
       && toDecisionOrOperationalCondition
-      && applicationHistoryService.hasStatusInHistory(application.getId(), StatusType.OPERATIONAL_CONDITION);
+      && hasBeenInOperationalCondition(application);
   }
 
+  private boolean hasBeenInOperationalCondition(Application application) {
+    return ApplicationType.EXCAVATION_ANNOUNCEMENT.equals(application.getType())
+      && applicationHistoryService.hasStatusInHistory(application.getId(), StatusType.OPERATIONAL_CONDITION);
+  }
 }
