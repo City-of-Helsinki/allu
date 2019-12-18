@@ -108,7 +108,7 @@ export function reducer(state: State = initialState, action: HandledActions) {
     case ApplicationActionType.AddToDistribution: {
       const updatedDistribution = [...state.distribution]
         .concat(action.payload)
-        .filter(ArrayUtil.uniqueItem(item => item.name));
+        .filter(ArrayUtil.uniqueItem(item => item.email));
 
       return {
         ...state,
