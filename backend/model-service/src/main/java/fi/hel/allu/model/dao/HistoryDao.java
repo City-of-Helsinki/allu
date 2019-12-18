@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,13 @@ public class HistoryDao {
    */
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getApplicationHistory(List<Integer> applicationIds) {
-    return getChangeHistory(changeHistory.applicationId.in(applicationIds));
+    Path[] fields = ArrayUtils.addAll(changeHistory.all(), application.applicationId, application.name);
+    List<Tuple> results = queryFactory.select(fields)
+      .from(changeHistory)
+      .leftJoin(application).on(changeHistory.applicationId.eq(application.id))
+      .where(changeHistory.applicationId.in(applicationIds))
+      .orderBy(changeHistory.id.desc()).fetch();
+    return resultToChangeHistory(results);
   }
 
   // Gets recursively all application ids replaced by application with given application ID
@@ -119,8 +126,9 @@ public class HistoryDao {
    * Get the change history items that match the given condition.
    */
   private List<ChangeHistoryItem> getChangeHistory(Predicate condition) {
-    List<Tuple> results = queryFactory.select(changeHistory.all()).from(changeHistory)
-        .where(condition).orderBy(changeHistory.id.desc()).fetch();
+    List<Tuple> results = queryFactory.select(changeHistory.all())
+      .from(changeHistory)
+      .where(condition).orderBy(changeHistory.id.desc()).fetch();
     return resultToChangeHistory(results);
   }
 
@@ -143,7 +151,10 @@ public class HistoryDao {
 
   private ChangeHistoryItemInfo getInfo(Tuple result) {
     if (result.get(changeHistory.applicationId) != null) {
-      return new ChangeHistoryItemInfo(result.get(changeHistory.applicationId));
+      ChangeHistoryItemInfo info = new ChangeHistoryItemInfo(result.get(changeHistory.applicationId));
+      info.setApplicationId(result.get(application.applicationId));
+      info.setName(result.get(application.name));
+      return info;
     } else {
       return new ChangeHistoryItemInfo(result.get(changeHistory.projectId));
     }

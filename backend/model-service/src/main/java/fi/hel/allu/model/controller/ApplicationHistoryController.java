@@ -51,18 +51,7 @@ public class ApplicationHistoryController {
    */
   @RequestMapping(value = "/applications/{id}/history", method = RequestMethod.GET)
   public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id, @RequestParam(required = false) Boolean noReplaced) {
-    final List<ChangeHistoryItem> history = getHistory(id, noReplaced);
-    history.stream().forEach(item -> {
-      final ChangeHistoryItemInfo info = item.getInfo();
-      if (info.getId() != null && (item.getChangeType() == ChangeType.STATUS_CHANGED ||
-                                   item.getChangeType() == ChangeType.LOCATION_CHANGED ||
-                                   item.getChangeType() == ChangeType.CONTRACT_STATUS_CHANGED)) {
-          final Application app = applicationDao.findById(item.getInfo().getId());
-          info.setApplicationId(app.getApplicationId());
-          info.setName(app.getName());
-      }
-    });
-    return ResponseEntity.ok(history);
+    return ResponseEntity.ok(getHistory(id, noReplaced));
   }
 
   /**
