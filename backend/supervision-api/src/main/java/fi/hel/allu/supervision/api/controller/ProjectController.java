@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.servicecore.domain.CreateProjectJson;
+import fi.hel.allu.servicecore.domain.ModifyProjectJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
@@ -68,7 +68,7 @@ public class ProjectController {
   })
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Integer> create(@RequestBody @Valid CreateProjectJson project) {
+  public ResponseEntity<Integer> create(@RequestBody @Valid ModifyProjectJson project) {
     ProjectJson createdProject = projectServiceComposer.insert(projectMapper.mapCreateJsonToProjectJson(project));
     return ResponseEntity.ok(createdProject.getId());
   }

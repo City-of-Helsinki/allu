@@ -10,7 +10,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CreateProjectJson;
+import fi.hel.allu.servicecore.domain.ModifyProjectJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.service.ContactService;
@@ -103,7 +103,7 @@ public class ProjectMapper {
     return projectES;
   }
 
-  public ProjectJson mapCreateJsonToProjectJson(CreateProjectJson createJson) {
+  public ProjectJson mapCreateJsonToProjectJson(ModifyProjectJson createJson) {
     ProjectJson projectJson = new ProjectJson();
     projectJson.setCustomer(new CustomerJson(createJson.getCustomerId()));
     projectJson.setContact(new ContactJson(createJson.getContactId()));

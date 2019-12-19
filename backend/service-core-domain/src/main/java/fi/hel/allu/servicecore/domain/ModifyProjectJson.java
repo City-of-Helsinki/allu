@@ -5,15 +5,15 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Project creation model")
-public class CreateProjectJson extends BaseProjectJson {
+@ApiModel(value = "Project creation and modification model")
+public class ModifyProjectJson extends BaseProjectJson {
 
   @NotNull(message = "{customerWithContacts.customer}")
   private Integer customerId;
   @NotNull(message = "{customerWithContacts.contact}")
   private Integer contactId;
 
-  public CreateProjectJson() {
+  public ModifyProjectJson() {
     super();
   }
 
