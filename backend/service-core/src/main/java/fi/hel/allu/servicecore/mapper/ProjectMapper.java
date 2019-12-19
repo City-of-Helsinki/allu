@@ -105,12 +105,16 @@ public class ProjectMapper {
 
   public ProjectJson mapCreateJsonToProjectJson(ModifyProjectJson createJson) {
     ProjectJson projectJson = new ProjectJson();
-    projectJson.setCustomer(new CustomerJson(createJson.getCustomerId()));
-    projectJson.setContact(new ContactJson(createJson.getContactId()));
-    projectJson.setIdentifier(createJson.getIdentifier());
-    projectJson.setAdditionalInfo(createJson.getAdditionalInfo());
-    projectJson.setCustomerReference(createJson.getCustomerReference());
-    projectJson.setName(createJson.getName());
+    setProjectFields(createJson, projectJson);
     return projectJson;
+  }
+
+  public void setProjectFields(ModifyProjectJson modifyJson, ProjectJson projectJson) {
+    projectJson.setCustomer(new CustomerJson(modifyJson.getCustomerId()));
+    projectJson.setContact(new ContactJson(modifyJson.getContactId()));
+    projectJson.setIdentifier(modifyJson.getIdentifier());
+    projectJson.setAdditionalInfo(modifyJson.getAdditionalInfo());
+    projectJson.setCustomerReference(modifyJson.getCustomerReference());
+    projectJson.setName(modifyJson.getName());
   }
 }

@@ -50,7 +50,6 @@ public class ProjectController {
     binder.addValidators(projectCustomerValidator);
   }
 
-
   @ApiOperation(value = "Search projects",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json",
@@ -139,6 +138,21 @@ public class ProjectController {
     }
     projectServiceComposer.removeApplication(applicationId);
     return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Update project. ",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = ProjectJson.class
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Project updated successfully", response = ProjectJson.class)
+  })
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ProjectJson> update(@PathVariable int id,
+      @ApiParam(value = "Updated project data") @RequestBody @Valid ModifyProjectJson project) {
+    return ResponseEntity.ok(projectServiceComposer.update(id, project));
   }
 
 }

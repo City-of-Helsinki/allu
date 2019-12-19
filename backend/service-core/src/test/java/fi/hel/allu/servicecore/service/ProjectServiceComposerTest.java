@@ -1,18 +1,20 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ProjectJson;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
 
 public class ProjectServiceComposerTest {
 
@@ -22,6 +24,8 @@ public class ProjectServiceComposerTest {
   private ApplicationJsonService applicationJsonService;
   private ProjectServiceComposer projectServiceComposer;
   private CustomerService customerService;
+  private ProjectMapper projectMapper;
+
   private static final int projectId1 = 1;
   private static final int projectId2 = 2;
   private static final int projectParentId = 3;
@@ -33,8 +37,9 @@ public class ProjectServiceComposerTest {
     searchService = Mockito.mock(SearchService.class);
     applicationJsonService = Mockito.mock(ApplicationJsonService.class);
     customerService = Mockito.mock(CustomerService.class);
+    projectMapper = Mockito.mock(ProjectMapper.class);
     projectServiceComposer = new ProjectServiceComposer(applicationService, projectService, applicationJsonService,
-        searchService, customerService);
+        searchService, customerService, projectMapper);
   }
 
   @Test

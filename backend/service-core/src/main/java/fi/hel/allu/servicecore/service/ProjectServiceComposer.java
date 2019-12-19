@@ -13,7 +13,9 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.ModifyProjectJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
 
 /**
  * Service for composing different project related services together. The main purpose of this class is to avoid circular references
@@ -28,6 +30,7 @@ public class ProjectServiceComposer {
   private final SearchService searchService;
   private final ApplicationJsonService applicationJsonService;
   private final CustomerService customerService;
+  private final ProjectMapper projectMapper;
 
   @Autowired
   public ProjectServiceComposer(
@@ -35,12 +38,14 @@ public class ProjectServiceComposer {
       ProjectService projectService,
       ApplicationJsonService applicationJsonService,
       SearchService searchService,
-      CustomerService customerService) {
+      CustomerService customerService,
+      ProjectMapper projectMapper) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.applicationJsonService = applicationJsonService;
     this.searchService = searchService;
     this.customerService = customerService;
+    this.projectMapper = projectMapper;
   }
 
   /**
@@ -187,4 +192,12 @@ public class ProjectServiceComposer {
     return getProjectsByApplications(Collections.singletonList(applicationId)).contains(projectId);
   }
 
+  /**
+   * Update existing project with given data
+   */
+  public ProjectJson update(int id, ModifyProjectJson updatedProject) {
+    ProjectJson project = findById(id);
+    projectMapper.setProjectFields(updatedProject, project);
+    return update(id, project);
+  }
 }
