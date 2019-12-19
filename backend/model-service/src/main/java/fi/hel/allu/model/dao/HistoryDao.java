@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -54,11 +55,7 @@ public class HistoryDao {
    */
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getApplicationHistory(int applicationId) {
-    List<Integer> applicationIds = new ArrayList<>();
-    // Get history also from replaced applications
-    getReplacedApplicationIds(applicationId, applicationIds);
-    applicationIds.add(applicationId);
-    return getApplicationHistory(applicationIds);
+    return getApplicationHistory(getWithReplacedApplicationIds(applicationId));
   }
 
   /**
@@ -95,6 +92,14 @@ public class HistoryDao {
         .from(application)
         .where(application.id.eq(applicationId)).fetchOne();
 
+  }
+
+  private List<Integer> getWithReplacedApplicationIds(int applicationId) {
+    List<Integer> applicationIds = new ArrayList<>();
+    // Get history also from replaced applications
+    getReplacedApplicationIds(applicationId, applicationIds);
+    applicationIds.add(applicationId);
+    return applicationIds;
   }
 
   /**
@@ -238,6 +243,17 @@ public class HistoryDao {
         .collect(Collectors.groupingBy(t -> t.get(1, ExternalApplicationId.class).getExternalApplicationId(),
                  Collectors.mapping(t -> toChangeHistoryWithApplicationId(t), Collectors.toList())));
    }
+
+  @Transactional(readOnly = true)
+  public Boolean applicationHasStatusInHistory(int applicationId, StatusType status) {
+    List<Integer> applicationIds = getWithReplacedApplicationIds(applicationId);
+    return queryFactory.select(changeHistory.all())
+      .from(changeHistory)
+      .where(changeHistory.applicationId.in(applicationIds)
+        .and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED))
+        .and(changeHistory.changeSpecifier.eq(status.name())))
+      .fetchCount() > 0;
+  }
 
   private ChangeHistoryItem toChangeHistoryWithApplicationId(Tuple tuple) {
     String applicationId = tuple.get(1, ExternalApplicationId.class).getApplicationId();

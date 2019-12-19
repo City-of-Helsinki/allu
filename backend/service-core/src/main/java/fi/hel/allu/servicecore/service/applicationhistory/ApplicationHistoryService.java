@@ -105,8 +105,8 @@ public class ApplicationHistoryService {
   }
 
   public boolean hasStatusInHistory(Integer applicationId, StatusType status) {
-    return getStatusChanges(applicationId).stream()
-        .anyMatch(change -> status.name().equals(change.getChangeSpecifier()));
+    return restTemplate.getForObject(applicationProperties.getApplicationHistoryHasStatusUrl(),
+      Boolean.class, applicationId, status);
   }
 
   public void addInvoiceRecipientChange(Integer applicationId, CustomerJson oldInvoiceRecipient, CustomerJson newInvoiceRecipient) {

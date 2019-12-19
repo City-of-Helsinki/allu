@@ -788,6 +788,10 @@ public class ApplicationProperties {
     return getModelServiceUrl(url);
   }
 
+  public String getApplicationHistoryHasStatusUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/history/hasstatus/{status}");
+  }
+
   /**
    * @return URL for posting new application's history item
    */

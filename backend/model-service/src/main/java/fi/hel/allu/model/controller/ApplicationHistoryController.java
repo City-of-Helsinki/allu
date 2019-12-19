@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,11 @@ public class ApplicationHistoryController {
       @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestBody HistorySearchCriteria searchCriteria) {
     Map<Integer, List<ChangeHistoryItem>> result = historyDao.getApplicationChangesForExternalOwner(externalOwnerId, searchCriteria);
     return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applications/{id}/history/hasstatus/{status}", method = RequestMethod.GET)
+  public ResponseEntity<Boolean> hasStatusInHistory(@PathVariable int id, @PathVariable StatusType status) {
+    return ResponseEntity.ok(historyDao.applicationHasStatusInHistory(id, status));
   }
 
   private List<ChangeHistoryItem> getHistory(int applicationId, Boolean noReplaced) {
