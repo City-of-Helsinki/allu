@@ -222,7 +222,7 @@
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(100% - 18px)">
               <mat-checkbox #marketingProviders [disabled]="readonly" class="input-field-checkbox"
-                            [checked]="applicationForm.value.marketingProviders">
+                            [checked]="applicationForm.get('marketingProviders').value">
                 {{'application.event.hasMarketingProviders' | translation}}
               </mat-checkbox>
             </div>
