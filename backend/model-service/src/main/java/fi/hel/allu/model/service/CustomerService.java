@@ -57,7 +57,7 @@ public class CustomerService {
   @Transactional(readOnly = true)
   public Customer findById(int id) throws NoSuchEntityException {
     return customerDao.findById(id)
-        .orElseThrow(() -> new NoSuchEntityException("Customer not found", Integer.toString(id)));
+        .orElseThrow(() -> new NoSuchEntityException("customer.notFound", Integer.toString(id)));
   }
 
   /**
@@ -148,7 +148,7 @@ public class CustomerService {
   @Transactional(readOnly = true)
   public Contact findContact(int id) {
     return contactDao.findById(id)
-        .orElseThrow(() -> new NoSuchEntityException("Contact not found", Integer.toString(id)));
+        .orElseThrow(() -> new NoSuchEntityException("contact.notFound", Integer.toString(id)));
   }
 
   /**
