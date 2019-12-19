@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.ErrorInfo;
@@ -24,6 +25,7 @@ import fi.hel.allu.supervision.api.domain.ProjectSearchResult;
 import fi.hel.allu.supervision.api.mapper.MapperUtil;
 import fi.hel.allu.supervision.api.mapper.ProjectSearchParameterMapper;
 import fi.hel.allu.supervision.api.mapper.ProjectSearchResultMapper;
+import fi.hel.allu.supervision.api.validation.ProjectCustomerValidator;
 import io.swagger.annotations.*;
 
 @RestController
@@ -39,6 +41,14 @@ public class ProjectController {
   private ProjectSearchResultMapper searchResultMapper;
   @Autowired
   private ProjectMapper projectMapper;
+
+  @Autowired
+  private ProjectCustomerValidator projectCustomerValidator;
+
+  @InitBinder("modifyProjectJson")
+  protected void initUpdateBinder(WebDataBinder binder) {
+    binder.addValidators(projectCustomerValidator);
+  }
 
 
   @ApiOperation(value = "Search projects",
