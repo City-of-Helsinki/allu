@@ -24,7 +24,7 @@ public class CommentController {
   @Autowired
   private CommentService commentService;
 
-  @ApiOperation(value = "Add new comment for an application with given ID. ",
+  @ApiOperation(value = "Add new comment for an application with given ID.",
       notes = "User is allowed to add comments with following types:"
       + "<ul>"
       + " <li>INTERNAL</li>"
@@ -41,8 +41,29 @@ public class CommentController {
   })
   @RequestMapping(value = "/applications/{id}/comments", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<CommentJson> addComment(@PathVariable Integer id, @RequestBody @Valid CommentCreateJson comment) {
+  public ResponseEntity<CommentJson> addApplicationComment(@PathVariable Integer id, @RequestBody @Valid CommentCreateJson comment) {
     return ResponseEntity.ok(commentService.addApplicationComment(id, new CommentJson(comment.getType(), comment.getText())));
+  }
+
+  @ApiOperation(value = "Add new comment for an project with given ID.",
+      notes = "User is allowed to add comments with following types:"
+      + "<ul>"
+      + " <li>INTERNAL</li>"
+      + " <li>INVOICING</li>"
+      + " <li>EXTERNAL_SYSTEM</li>"
+      + "</ul>",
+      produces = "application/json",
+      consumes = "application/json",
+      response = CommentJson.class,
+      authorizations = @Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Comment added successfully", response = CommentJson.class),
+      @ApiResponse(code = 400, message = "Invalid request data", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/projects/{id}/comments", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CommentJson> addProjectComment(@PathVariable Integer id, @RequestBody @Valid CommentCreateJson comment) {
+    return ResponseEntity.ok(commentService.addProjectComment(id, new CommentJson(comment.getType(), comment.getText())));
   }
 
   @ApiOperation(value = "Get all comments for application with given ID. ",
@@ -57,6 +78,20 @@ public class CommentController {
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<List<CommentJson>> findByApplication(@PathVariable Integer id) {
     return ResponseEntity.ok(commentService.findByApplicationId(id));
+  }
+
+  @ApiOperation(value = "Get all comments for project with given ID. ",
+      produces = "application/json",
+      response = CommentJson.class,
+      responseContainer = "List",
+      authorizations = @Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Comments fetched successfully", response = CommentJson.class, responseContainer = "List")
+  })
+  @RequestMapping(value = "/projects/{id}/comments", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<List<CommentJson>> findByProject(@PathVariable Integer id) {
+    return ResponseEntity.ok(commentService.findByProjectId(id));
   }
 
   @ApiOperation(value = "Get comment by ID. ",
