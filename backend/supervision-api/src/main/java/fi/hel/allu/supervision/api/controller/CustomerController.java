@@ -108,6 +108,20 @@ public class CustomerController {
     return ResponseEntity.ok(customerSearchResultMapper.mapToSearchResult(updatedCustomer));
   }
 
+  @ApiOperation(value = "Get customer by ID",
+    authorizations = @Authorization(value ="api_key"),
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Customer retrieved successfully"),
+    @ApiResponse(code = 404, message = "Customer not found", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/customers/{id}", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CustomerJson> getCustomerById(@PathVariable Integer id) {
+    return ResponseEntity.ok(customerService.findCustomerById(id));
+  }
+
   @ApiOperation(value = "List contacts of a customer",
     authorizations = @Authorization(value ="api_key"),
     produces = "application/json",
