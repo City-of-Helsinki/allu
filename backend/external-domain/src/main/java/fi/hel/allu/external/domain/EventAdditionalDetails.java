@@ -49,15 +49,6 @@ public class EventAdditionalDetails {
     this.ecoCompass = ecoCompass;
   }
 
-  @ApiModelProperty(value = "Event contains food sales or service")
-  public Boolean getFoodSales() {
-    return foodSales;
-  }
-
-  public void setFoodSales(boolean foodSales) {
-    this.foodSales = foodSales;
-  }
-
   @ApiModelProperty(value = "Description of food sales or services")
   public String getFoodProviders() {
     return foodProviders;

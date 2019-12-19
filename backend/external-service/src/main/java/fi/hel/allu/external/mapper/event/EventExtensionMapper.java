@@ -5,6 +5,7 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.servicecore.domain.EventJson;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -35,8 +36,8 @@ public class EventExtensionMapper {
     eventJson.setAttendees(details.getAttendees());
     eventJson.setEntryFee(details.getEntryFee());
     eventJson.setEcoCompass(BooleanUtils.isTrue(details.getEcoCompass()));
-    eventJson.setFoodSales(BooleanUtils.isTrue(details.getFoodSales()));
     eventJson.setFoodProviders(details.getFoodProviders());
+    eventJson.setFoodSales(StringUtils.isNotEmpty(details.getFoodProviders()));
     eventJson.setMarketingProviders(details.getMarketingProviders());
     eventJson.setTimeExceptions(details.getTimeExceptions());
     return eventJson;

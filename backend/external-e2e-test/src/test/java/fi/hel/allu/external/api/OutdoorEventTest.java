@@ -25,6 +25,7 @@ public class OutdoorEventTest extends BaseApplicationTest<OutdoorEventExt> {
   private static final String DESCRIPTION = "Tapahtuman kuvaus";
   private static final String URL = "www.ulkoilutapahtuma.fi";
   private static final String MARKETING_PROVIDERS = "Mainoskuvauksia paikalla";
+  private static final String FOOD_PROVIDERS = "Nakkikioski ja hattarapiste";
 
 
   @Test
@@ -66,6 +67,7 @@ public class OutdoorEventTest extends BaseApplicationTest<OutdoorEventExt> {
     details.setUrl(URL);
     details.setEcoCompass(true);
     details.setMarketingProviders(MARKETING_PROVIDERS);
+    details.setFoodProviders(FOOD_PROVIDERS);
     details.setAttendees(5000);
     details.setEntryFee(50);
     return details;
