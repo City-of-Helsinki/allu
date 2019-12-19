@@ -19,6 +19,7 @@ import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ModifyProjectJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.service.ProjectService;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
 import fi.hel.allu.supervision.api.domain.ProjectSearchParameters;
 import fi.hel.allu.supervision.api.domain.ProjectSearchResult;
@@ -35,6 +36,8 @@ public class ProjectController {
 
   @Autowired
   private ProjectServiceComposer projectServiceComposer;
+  @Autowired
+  private ProjectService projectService;
   @Autowired
   private ProjectSearchParameterMapper searchParameterMapper;
   @Autowired
@@ -113,7 +116,7 @@ public class ProjectController {
       authorizations = @Authorization(value ="api_key")
   )
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Applications addded successfully")
+      @ApiResponse(code = 200, message = "Applications added successfully")
   })
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -155,4 +158,50 @@ public class ProjectController {
     return ResponseEntity.ok(projectServiceComposer.update(id, project));
   }
 
+  @ApiOperation(value = "Add child projects for project. If child project is currently child of some other project, parent of the"
+      + " child project is updated.",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Child projects added successfully")
+  })
+  @RequestMapping(value = "/{id}/childProjects", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> addChildProjects(@PathVariable int id,
+      @ApiParam(value = "Ids of the projects to be added") @RequestBody List<Integer> childProjectIds) {
+    childProjectIds.forEach(childId -> projectServiceComposer.updateProjectParent(childId, id));
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "List child projects of the project",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = ProjectJson.class,
+      responseContainer = "List"
+        )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Projects listed successfully", response = ProjectJson.class, responseContainer = "List")
+  })
+  @RequestMapping(value = "/{id}/childProjects", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<List<ProjectJson>> getChildProjects(@PathVariable int id) {
+    return ResponseEntity.ok(projectService.findProjectChildren(id));
+  }
+
+  @ApiOperation(value = "Remove child project from project. Removes only parent-child relationship, does not delete child project.",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Child project removed successfully")
+  })
+  @RequestMapping(value = "/{id}/childProjects/{childProjectId}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> removeChildProject(@PathVariable(value = "id") @ApiParam(value = "ID of the parent project") int id,
+      @PathVariable(value = "childProjectId") @ApiParam(value = "ID of the child project to remove") int childProjectId) {
+    if (!projectService.findProjectChildren(id).stream().anyMatch(c -> c.getId().equals(childProjectId))) {
+      throw new IllegalArgumentException("project.childproject.notfound");
+    }
+    projectServiceComposer.updateProjectParent(childProjectId, null);
+    return ResponseEntity.ok().build();
+  }
 }
