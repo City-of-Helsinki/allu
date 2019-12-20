@@ -16,6 +16,10 @@ public class CableReportExtMapper extends ApplicationExtMapper<CableReportExt> {
   protected ApplicationExtensionJson createExtension(CableReportExt cableReport) {
     CableReportJson extension = new CableReportJson();
     extension.setWorkDescription(cableReport.getWorkDescription());
+    extension.setConstructionWork(cableReport.getConstructionWork());
+    extension.setMaintenanceWork(cableReport.getMaintenanceWork());
+    extension.setEmergencyWork(cableReport.getEmergencyWork());
+    extension.setPropertyConnectivity(cableReport.getPropertyConnectivity());
     return extension;
   }
 

@@ -27,10 +27,6 @@ const temporaryTraffiArrangementFieldBlacklist: string[] = [
 
 const cableReportFieldBlacklist: string[] = [
   'extension.validityTime',
-  'extension.constructionWork',
-  'extension.maintenanceWork',
-  'extension.emergencyWork',
-  'extension.propertyConnectivity',
   'extension.cableReportId',
   'extension.mapExtractCount',
   'extension.infoEntries',

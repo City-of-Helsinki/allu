@@ -31,6 +31,11 @@ public class CableReportExt extends BaseApplicationExt {
   @Valid
   private CustomerWithContactsExt contractorWithContacts;
 
+  private Boolean constructionWork;
+  private Boolean maintenanceWork;
+  private Boolean emergencyWork;
+  private Boolean propertyConnectivity;
+
   @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {
     return clientApplicationKind;
@@ -65,6 +70,42 @@ public class CableReportExt extends BaseApplicationExt {
 
   public void setContractorWithContacts(CustomerWithContactsExt contractorWithContacts) {
     this.contractorWithContacts = contractorWithContacts;
+  }
+
+  @ApiModelProperty(value = "Construction work")
+  public Boolean getConstructionWork() {
+    return constructionWork;
+  }
+
+  public void setConstructionWork(Boolean constructionWork) {
+    this.constructionWork = constructionWork;
+  }
+
+  @ApiModelProperty(value = "Maintenance work")
+  public Boolean getMaintenanceWork() {
+    return maintenanceWork;
+  }
+
+  public void setMaintenanceWork(Boolean maintenanceWork) {
+    this.maintenanceWork = maintenanceWork;
+  }
+
+  @ApiModelProperty(value = "Emergency work")
+  public Boolean getEmergencyWork() {
+    return emergencyWork;
+  }
+
+  public void setEmergencyWork(Boolean emergencyWork) {
+    this.emergencyWork = emergencyWork;
+  }
+
+  @ApiModelProperty(value = "Property connectivity (tontti-/kiinteistöliitos)")
+  public Boolean getPropertyConnectivity() {
+    return propertyConnectivity;
+  }
+
+  public void setPropertyConnectivity(Boolean propertyConnectivity) {
+    this.propertyConnectivity = propertyConnectivity;
   }
 
   @JsonIgnore
