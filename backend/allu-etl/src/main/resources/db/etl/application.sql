@@ -58,7 +58,7 @@ SELECT
     CASE
         WHEN a.type = 'EXCAVATION_ANNOUNCEMENT' THEN 'Kaivuilmoitus'
         WHEN a.type = 'AREA_RENTAL' THEN 'Aluevuokraus'
-        WHEN a.type = 'TEMPORARY_TRAFFIC_ARRANGEMENTS' THEN 'Väliaikainen liikennejärjestely'
+        WHEN a.type = 'TEMPORARY_TRAFFIC_ARRANGEMENTS' THEN 'Tilapäinen liikennejärjestely'
         WHEN a.type = 'CABLE_REPORT' THEN 'Johtoselvitys'
         WHEN a.type = 'PLACEMENT_CONTRACT' THEN 'Sijoitussopimus'
         WHEN a.type = 'EVENT' THEN 'Tapahtuma'

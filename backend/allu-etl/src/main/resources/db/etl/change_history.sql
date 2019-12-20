@@ -38,7 +38,7 @@ SELECT
     CASE
         WHEN c.change_specifier = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'
         WHEN c.change_specifier = 'PRE_RESERVED' THEN 'Alustava varaus'
-        WHEN c.change_specifier = 'PENDING' THEN 'Vireillä'
+        WHEN c.change_specifier = 'PENDING' THEN 'Hakemus saapunut'
         WHEN c.change_specifier = 'WAITING_INFORMATION' THEN 'Odottaa täydennystä'
         WHEN c.change_specifier = 'INFORMATION_RECEIVED' THEN 'Täydennys vastaanotettu'
         WHEN c.change_specifier = 'HANDLING' THEN 'Käsittelyssä'
