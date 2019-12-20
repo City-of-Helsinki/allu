@@ -173,9 +173,15 @@ export class TimeUtil {
   }
 
   public static isSame(left: Date, right: Date, granularity: unitOfTime.StartOf): boolean {
-    const lMoment = moment(left);
-    const rMoment = moment(right);
-    return lMoment.isSame(rMoment, granularity);
+    if (left === right) {
+      return true;
+    } else if (!right || !left) {
+      return false;
+    } else {
+      const lMoment = moment(left);
+      const rMoment = moment(right);
+      return lMoment.isSame(rMoment, granularity);
+    }
   }
 
   public static isInTimePeriod(date: Date, periodStart: Date, periodEnd: Date): boolean {
