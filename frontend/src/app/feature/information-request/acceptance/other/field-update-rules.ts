@@ -53,8 +53,6 @@ const eventFieldBlacklist: string[] = [
 ];
 
 const shortTermRentalBlacklist: string[] = [
-  'extension.commercial',
-  'extension.billableSalesArea'
 ];
 
 export function blacklistForType(type: ApplicationType): string[] {

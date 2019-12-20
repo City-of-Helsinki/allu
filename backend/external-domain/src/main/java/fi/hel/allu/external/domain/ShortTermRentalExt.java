@@ -17,6 +17,7 @@ import java.util.Optional;
     "recurringEndYear, lessThanYearActivity, {shorttermrental.lessThanYearActivity}",
     "recurringEndYear, recurringKind, {shorttermrental.recurringKind}",
     "within80cmFromWall, kindWithin80cm, {shorttermrental.kindWithin80cm}",
+    "commercial, kindCommercial, {shorttermrental.kindCommercial}"
  })
 @ApiModel("Short term rental (lyhytaikainen maanvuokraus) input model.")
 public class ShortTermRentalExt extends BaseApplicationExt {
@@ -27,6 +28,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
   private ApplicationKind applicationKind;
   private Integer recurringEndYear;
   private Boolean within80cmFromWall;
+  private Boolean commercial;
 
   @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
   public List<Integer> getFixedLocationIds() {
@@ -76,6 +78,15 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.within80cmFromWall = within80cmFromWall;
   }
 
+  @ApiModelProperty(value = "True, if rental has commercial nature. Value allowed only for kind BRIDGE_BANNER.")
+  public Boolean getCommercial() {
+    return commercial;
+  }
+
+  public void setCommercial(Boolean commercial) {
+    this.commercial = commercial;
+  }
+
   @JsonIgnore
   public Boolean isBillableSalesArea() {
     return Optional.ofNullable(within80cmFromWall)
@@ -115,6 +126,14 @@ public class ShortTermRentalExt extends BaseApplicationExt {
   public boolean getRecurringKind() {
     if (getRecurringEndYear() != null) {
       return applicationKind.isTerrace();
+    }
+    return true;
+  }
+
+  @JsonIgnore
+  public boolean getKindCommercial() {
+    if (getCommercial() != null) {
+      return applicationKind.equals(ApplicationKind.BRIDGE_BANNER);
     }
     return true;
   }

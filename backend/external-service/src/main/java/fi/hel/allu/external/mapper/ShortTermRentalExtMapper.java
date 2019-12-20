@@ -33,6 +33,7 @@ public class ShortTermRentalExtMapper extends ApplicationExtMapper<ShortTermRent
     ShortTermRentalJson extension = new ShortTermRentalJson();
     extension.setDescription(rental.getDescription());
     extension.setBillableSalesArea(rental.isBillableSalesArea());
+    extension.setCommercial(rental.getCommercial());
     return extension;
   }
 
