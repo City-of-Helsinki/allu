@@ -44,14 +44,14 @@ public class InformationRequestController {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     InformationRequestJson request = informationRequestService.findOpenByApplicationId(applicationId);
-    return new ResponseEntity<>(toInformationRequestExt(request), HttpStatus.OK);
+    return new ResponseEntity<>(toInformationRequestExt(request, id), HttpStatus.OK);
   }
 
-  private InformationRequestExt toInformationRequestExt(InformationRequestJson request) {
+  private InformationRequestExt toInformationRequestExt(InformationRequestJson request, Integer externalApplicationId) {
     if (request == null) {
       return null;
     }
-    return new InformationRequestExt(request.getId(), request.getApplicationId(), toInformationRequestExtFields(request.getFields()));
+    return new InformationRequestExt(request.getId(), externalApplicationId, toInformationRequestExtFields(request.getFields()));
   }
 
   private List<InformationRequestFieldExt> toInformationRequestExtFields(List<InformationRequestFieldJson> fields) {
