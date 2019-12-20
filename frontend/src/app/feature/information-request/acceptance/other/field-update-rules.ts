@@ -39,16 +39,7 @@ const placementContractFieldBlacklist: string[] = [
 ];
 
 const eventFieldBlacklist: string[] = [
-  'extension.nature',
-  'extension.url',
   'extension.applicationType',
-  'extension.timeExceptions',
-  'extension.attendees',
-  'extension.entryFee',
-  'extension.ecoCompass',
-  'extension.foodSales',
-  'extension.foodProviders',
-  'extension.marketingProviders',
   'extension.surfaceHardness'
 ];
 
