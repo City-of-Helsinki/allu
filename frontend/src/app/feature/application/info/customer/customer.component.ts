@@ -13,6 +13,7 @@ import {CustomerService} from '@service/customer/customer.service';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Contact} from '@model/customer/contact';
+import {startWith} from 'rxjs/operators';
 
 @Component({
   selector: 'customer',
@@ -67,6 +68,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
     }
 
     this.onCustomerWithContactsChange();
+    this.onCustomerTypeChange(undefined);
+
     this.customerForm.get('type').valueChanges
       .subscribe(type => this.onCustomerTypeChange(type));
   }
@@ -150,7 +153,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
       classes.push('customer-person');
     }
 
-    if (this.showPropertyDeveloper || this.showRepresentative) {
+    if (this.showPropertyDeveloper || this.showRepresentative || this.isNewCustomer) {
       classes.push('customer-additional-toggle');
     }
 

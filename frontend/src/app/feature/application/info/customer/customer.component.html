@@ -18,7 +18,7 @@
         <mat-card-content>
           <customer-info [form]="customerForm" [allowSearch]="true"
                          (customerChange)="onCustomerChange($event)"></customer-info>
-          <div fxLayout="row">
+          <div fxLayout="row" fxLayoutAlign="start center" class="customer-bottom-controls">
             <div fxFlex="50%" *ngIf="showRepresentative">
               <mat-checkbox [checked]="parentForm.getRawValue().hasRepresentative" [disabled]="readonly"
                             (change)="onRepresentativeChange($event.checked)">

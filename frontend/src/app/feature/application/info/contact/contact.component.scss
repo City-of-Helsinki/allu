@@ -1,4 +1,4 @@
-$baseHeight: 11.4rem;
+$baseHeight: 9.0rem;
 
 .col.contact-card {
   padding: 0 9px 5px 9px;
@@ -19,18 +19,18 @@ $baseHeight: 11.4rem;
   }
 }
 
-@include contact-card-height(4rem, 0);
+@include contact-card-height(4.2rem, 0);
 
 :host-context(.customer-person) {
   @include contact-card-height(0, 0);
 }
 
 :host-context(.customer-additional-toggle) {
-  @include contact-card-height(4rem, 2rem);
+  @include contact-card-height(4.2rem, 2.4rem);
 }
 
 :host-context(.customer-person.customer-additional-toggle) {
-  @include contact-card-height(0, 2rem);
+  @include contact-card-height(0, 2.4rem);
 }
 
 .col.contact-card:nth-of-type(even) {
