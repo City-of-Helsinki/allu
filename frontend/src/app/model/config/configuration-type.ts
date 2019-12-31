@@ -4,5 +4,6 @@ export enum ConfigurationType {
   CALENDAR_DATE = 'CALENDAR_DATE',
   DATE = 'DATE',
   USER = 'USER',
-  ATTACHMENT = 'ATTACHMENT'
+  ATTACHMENT = 'ATTACHMENT',
+  CONTACT = 'CONTACT'
 }

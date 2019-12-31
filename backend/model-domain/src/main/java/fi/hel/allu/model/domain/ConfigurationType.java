@@ -6,5 +6,6 @@ public enum ConfigurationType {
   DATE,
   CALENDAR_DATE,
   USER,
-  ATTACHMENT
+  ATTACHMENT,
+  CONTACT
 }

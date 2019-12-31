@@ -2115,7 +2115,8 @@ export const translations = {
       PARKLET_TIME_END: 'Parklet-ajan loppupäivä',
       SUMMER_TERRACE_INVOICING_DATE: 'Kesäterassien laskutuspäivä',
       WINTER_TERRACE_INVOICING_DATE: 'Talviterassien laskutuspäivä',
-      PARKLET_INVOICING_DATE: 'Parklettien laskutuspäivä'
+      PARKLET_INVOICING_DATE: 'Parklettien laskutuspäivä',
+      DEFAULT_CONTACT: 'Oletusyhteyshenkilö'
     },
     field: {
       valueMissing: 'Arvo puuttuu'
