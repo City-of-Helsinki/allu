@@ -1,8 +1,8 @@
 <div fxLayout="row" fxLayoutAlign="start baseline">
-  <div fxFlex>
+  <div fxFlex="50%">
     {{['configuration.key', configuration.key] | translation}}
   </div>
-  <div fxFlex>
+  <div fxFlex="50%">
     <ng-container [ngSwitch]="configuration.type">
       <configuration-date-value
         *ngSwitchCase="'DATE'"

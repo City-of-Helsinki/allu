@@ -1,5 +1,5 @@
 <div class="configuration-entry-controls">
-  <div class="configuration-entry-control">
+  <div class="configuration-entry-value">
     <mat-form-field class="input-full-width">
       <input type="text" matInput [formControl]="valueCtrl"/>
       <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>

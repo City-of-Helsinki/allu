@@ -4,7 +4,16 @@
   justify-content: flex-start;
 }
 
-.configuration-entry-control {
+.configuration-entry-value {
   flex: 1;
-  max-width: 50%;
+}
+
+.configuration-entry-control {
+  flex: none;
+  min-width: 48px
+}
+
+.configuration-entry-value .value-50 {
+  display: inline-block;
+  width: 50%;
 }
