@@ -17,6 +17,10 @@
         [configuration]="configuration"
         [users]="users"
       ></configuration-user-value>
+      <configuration-contact-value
+        *ngSwitchCase="'CONTACT'"
+        [configuration]="configuration"
+      ></configuration-contact-value>
       <configuration-text-value
         *ngSwitchDefault
         [configuration]="configuration"></configuration-text-value>

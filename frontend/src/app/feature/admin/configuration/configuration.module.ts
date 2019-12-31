@@ -7,6 +7,7 @@ import {ConfigurationTextValueComponent} from '@feature/admin/configuration/conf
 import {ConfigurationCalendarDateValueComponent} from '@feature/admin/configuration/configuration-calendar-date-value.component';
 import {ConfigurationUserValueComponent} from '@feature/admin/configuration/configuration-user-value.component';
 import {ConfigurationDateValueComponent} from '@feature/admin/configuration/configuration-date-value.component';
+import {ConfigurationContactValueComponent} from '@feature/admin/configuration/configuration-contact-value.component';
 import {StoreModule} from '@ngrx/store';
 import {reducersProvider, reducersToken} from '@feature/admin/configuration/reducers';
 import {EffectsModule} from '@ngrx/effects';
@@ -26,7 +27,8 @@ import {ConfigurationEffects} from '@feature/admin/configuration/effects/configu
     ConfigurationTextValueComponent,
     ConfigurationCalendarDateValueComponent,
     ConfigurationUserValueComponent,
-    ConfigurationDateValueComponent
+    ConfigurationDateValueComponent,
+    ConfigurationContactValueComponent
   ],
   providers: [
     reducersProvider

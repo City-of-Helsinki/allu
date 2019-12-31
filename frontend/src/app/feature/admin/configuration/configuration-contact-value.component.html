@@ -1,0 +1,29 @@
+<div class="configuration-entry-controls">
+  <div class="configuration-entry-control">
+    <mat-form-field class="input-full-width">
+      <input matInput type="text" [formControl]="valueCtrl" required
+             [matAutocomplete]="contactSearch"
+             [placeholder]="'project.info.contactName' | translation"/>
+
+      <mat-autocomplete #contactSearch="matAutocomplete"
+                        [displayWith]="contactName">
+        <mat-option *ngFor="let contact of matching$ | async"
+                    [value]="contact">
+          {{ contact.name }}
+        </mat-option>
+      </mat-autocomplete>
+
+      <mat-error *ngIf="valueCtrl.hasError('idRequired')">
+        {{'project.field.contactMissing' | translation}}
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="configuration-entry-control">
+    <button type="submit" mat-icon-button
+            *ngIf="valueCtrl.dirty"
+            [disabled]="!valueCtrl.valid"
+            (click)="submit()">
+      <mat-icon>save</mat-icon>
+    </button>
+  </div>
+</div>
