@@ -2,13 +2,17 @@ import * as fromConfigurations from '@feature/allu/reducers/configuration-reduce
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {InjectionToken} from '@angular/core';
 import {Configuration} from '@model/config/configuration';
+import * as fromContactSearch from '@feature/customerregistry/reducers/contact-search-reducer';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface State {
   configurations: fromConfigurations.State;
+  contactSearch: fromContactSearch.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
-  configurations: fromConfigurations.reducer
+  configurations: fromConfigurations.reducer,
+  contactSearch: fromContactSearch.createReducerFor(ActionTargetType.Configuration)
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Configuration reducers');
@@ -35,3 +39,12 @@ export const getEditableConfigurations = createSelector(
   getAllConfigurations,
   (configurations: Configuration[]) => configurations.filter(c => c.editable)
 );
+
+export const getConfigurationContactSearchState = createSelector(
+  getConfigurationState,
+  state => state.contactSearch
+);
+
+export const {
+  getMatching: getMatchingContacts
+} = fromContactSearch.createContactSelectors(getConfigurationContactSearchState);
