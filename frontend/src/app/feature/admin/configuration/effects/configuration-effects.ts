@@ -3,7 +3,7 @@ import {Action, select, Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
 import {defer, Observable, of} from 'rxjs';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
-import * as fromAuth from '../../auth/reducers';
+import * as fromAuth from '@feature/auth/reducers';
 import {ConfigurationService} from '@service/config/configuration.service';
 import {ConfigurationActionType, LoadFailed, LoadSuccess, Save, SaveSuccess} from '../actions/configuration-actions';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';

@@ -12,5 +12,6 @@ export enum ActionTargetType {
   Home = 'Home',
   Location = 'Location',
   ApplicationWorkQueue = 'ApplicationWorkQueue',
-  SupervisionTaskWorkQueue = 'SupervisionTaskWorkQueue'
+  SupervisionTaskWorkQueue = 'SupervisionTaskWorkQueue',
+  Configuration = 'Configuration'
 }

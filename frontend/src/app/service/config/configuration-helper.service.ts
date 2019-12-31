@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as fromRoot from '@feature/allu/reducers';
+import * as fromConfiguration from '@feature/admin/configuration/reducers';
 import {select, Store} from '@ngrx/store';
 import {Observable} from 'rxjs/internal/Observable';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
@@ -19,12 +19,12 @@ import {ArrayUtil} from '@util/array-util';
 @Injectable()
 export class ConfigurationHelperService {
   constructor(
-    private store: Store<fromRoot.State>,
+    private store: Store<fromConfiguration.State>,
     private userService: UserService) {}
 
   public getConfiguration(key: ConfigurationKey): Observable<Configuration[]> {
     return this.store.pipe(
-      select(fromRoot.getAllConfigurations),
+      select(fromConfiguration.getAllConfigurations),
       map(configurations => configurations.filter(c => c.key === key))
     );
   }

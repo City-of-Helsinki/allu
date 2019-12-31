@@ -7,12 +7,18 @@ import {ConfigurationTextValueComponent} from '@feature/admin/configuration/conf
 import {ConfigurationCalendarDateValueComponent} from '@feature/admin/configuration/configuration-calendar-date-value.component';
 import {ConfigurationUserValueComponent} from '@feature/admin/configuration/configuration-user-value.component';
 import {ConfigurationDateValueComponent} from '@feature/admin/configuration/configuration-date-value.component';
+import {StoreModule} from '@ngrx/store';
+import {reducersProvider, reducersToken} from '@feature/admin/configuration/reducers';
+import {EffectsModule} from '@ngrx/effects';
+import {ConfigurationEffects} from '@feature/admin/configuration/effects/configuration-effects';
 
 @NgModule({
   imports: [
     AlluCommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StoreModule.forFeature('configuration', reducersToken),
+    EffectsModule.forFeature([ConfigurationEffects])
   ],
   declarations: [
     ConfigurationComponent,
@@ -22,7 +28,9 @@ import {ConfigurationDateValueComponent} from '@feature/admin/configuration/conf
     ConfigurationUserValueComponent,
     ConfigurationDateValueComponent
   ],
-  providers: [],
+  providers: [
+    reducersProvider
+  ],
   exports: [
     ConfigurationComponent
   ]

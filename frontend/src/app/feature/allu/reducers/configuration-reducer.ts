@@ -1,5 +1,5 @@
 import {Configuration} from '@model/config/configuration';
-import {ConfigurationActions, ConfigurationActionType} from '../actions/configuration-actions';
+import {ConfigurationActions, ConfigurationActionType} from '../../admin/configuration/actions/configuration-actions';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
 export function sortConfiguration(left: Configuration, right: Configuration) {

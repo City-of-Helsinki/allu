@@ -56,7 +56,6 @@ import {ToastrModule} from 'ngx-toastr';
 import {CodeSetEffects} from './effects/code-set-effects';
 import {NotificationModule} from '@feature/notification/notification.module';
 import {ConfigurationService} from '@service/config/configuration.service';
-import {ConfigurationEffects} from './effects/configuration-effects';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
@@ -84,7 +83,6 @@ export const metaReducers = environment.production ? [] : [logger];
     EffectsModule.forRoot([
       CityDistrictEffects,
       CodeSetEffects,
-      ConfigurationEffects,
       UserEffects,
       FixedLocationEffects
     ]),
