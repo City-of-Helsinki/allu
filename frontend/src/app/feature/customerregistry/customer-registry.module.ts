@@ -19,6 +19,7 @@ import {CustomerSearchEffects} from './effects/customer-search-effects';
 import {ContactSearchEffects} from '@feature/customerregistry/effects/contact-search-effects';
 import {reducersProvider, reducersToken} from '@feature/customerregistry/reducers';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
+import {ContactEffects} from '@feature/customerregistry/effects/contact-effects';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import {CustomerOptionContentComponent} from '@feature/customerregistry/customer
     StoreModule.forFeature('customer', reducersToken),
     EffectsModule.forFeature([
       CustomerSearchEffects,
-      ContactSearchEffects
+      ContactSearchEffects,
+      ContactEffects
     ]),
     ReactiveFormsModule,
     MatTableModule,

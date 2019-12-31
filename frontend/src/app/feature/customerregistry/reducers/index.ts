@@ -1,4 +1,5 @@
 import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
+import * as fromContact from '@feature/customerregistry/reducers/contact-reducer';
 import * as fromCustomerSearch from '@feature/customerregistry/reducers/customer-search-reducer';
 import * as fromContactSearch from '@feature/customerregistry/reducers/contact-search-reducer';
 import * as fromRoot from '@feature/allu/reducers';
@@ -8,8 +9,11 @@ import {Customer} from '@model/customer/customer';
 import {Page} from '@model/common/page';
 import {createCustomerSelectors} from '@feature/customerregistry/reducers/customer-search-reducer';
 import {createContactSelectors} from '@feature/customerregistry/reducers/contact-search-reducer';
+import {Dictionary} from '@ngrx/entity';
+import {Contact} from '@model/customer/contact';
 
 export interface CustomerState {
+  contacts: fromContact.State;
   customerSearch: fromCustomerSearch.State;
   contactSearch: fromContactSearch.State;
   applicantSearch: fromCustomerSearch.State;
@@ -29,6 +33,7 @@ export interface State extends fromRoot.State {
 }
 
 export const reducers: ActionReducerMap<CustomerState> = {
+  contacts: fromContact.reducer,
   customerSearch: fromCustomerSearch.createReducerFor(ActionTargetType.Customer),
   contactSearch: fromContactSearch.createReducerFor(ActionTargetType.Customer),
   applicantSearch: fromCustomerSearch.createReducerFor(ActionTargetType.Applicant),
@@ -50,6 +55,21 @@ export const reducersProvider = [
 ];
 
 export const getCustomerState = createFeatureSelector<CustomerState>('customer');
+
+export const getContactsEntityState = createSelector(
+  getCustomerState,
+  state => state.contacts
+);
+
+export const getContactEntities = createSelector(
+  getContactsEntityState,
+  fromContact.selectContactEntities
+);
+
+export const getContact = (id: number) => createSelector(
+  getContactEntities,
+  (contacts: Dictionary<Contact>) => contacts[id]
+);
 
 export function createCustomerStateSelector(selector: (state: CustomerState) => fromCustomerSearch.State) {
   return createSelector(getCustomerState, selector);
