@@ -88,7 +88,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         new Tag("Application kinds", "API to list application kinds", 13),
         new Tag("Fixed locations", "API to list Allu fixed locations", 14),
         new Tag("Traffic arrangement images", "API to list and download Allu traffic arrangement images", 15),
-        new Tag("Application documents", "API to list application decisions and approval documents and download them with private person data anonymized. Allowed only for Allu internal users.", 16)
+        new Tag("Application documents", "API to list application decisions and approval documents and download them with private person data anonymized. Allowed only for Allu internal users.", 16),
+        new Tag("Notes", "API to add notes. Allowed only for Allu internal users.", 17)
       );
   }
 

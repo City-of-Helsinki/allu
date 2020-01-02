@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiModelProperty;
  *
  */
 @NotFalse(rules = {"startTime, startTimeNotAfterEndTime, {application.startTime}"})
-public abstract class BaseApplicationExt {
+public abstract class BaseApplicationExt implements HasGeometry {
 
   private PostalAddressExt postalAddress;
   @NotBlank(message = "{application.name}")
@@ -105,6 +105,7 @@ public abstract class BaseApplicationExt {
      + "<li>Only named CRS is supported, the given name must either be of the form: urn:ogc:def:crs:EPSG:x.y:4326 (x.y: the version of the EPSG) or of the form EPSG:4326</li>"
       +"</ul>",
   required = true)
+  @Override
   public Geometry getGeometry() {
     return geometry;
   }

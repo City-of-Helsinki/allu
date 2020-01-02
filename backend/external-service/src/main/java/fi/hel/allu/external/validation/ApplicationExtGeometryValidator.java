@@ -9,6 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import fi.hel.allu.external.domain.BaseApplicationExt;
+import fi.hel.allu.external.domain.HasGeometry;
 import fi.hel.allu.servicecore.service.LocationService;
 
 @Component
@@ -29,12 +30,12 @@ public class ApplicationExtGeometryValidator implements Validator {
 
   @Override
   public boolean supports(Class<?> clazz) {
-    return BaseApplicationExt.class.isAssignableFrom(clazz);
+    return HasGeometry.class.isAssignableFrom(clazz);
   }
 
   @Override
   public void validate(Object target, Errors errors) {
-    BaseApplicationExt application = (BaseApplicationExt) target;
+    HasGeometry application = (HasGeometry) target;
     if (!isValidGeometry(application.getGeometry())) {
       errors.rejectValue("geometry", ERROR_CODE, accessor.getMessage(ERROR_CODE));
     }
