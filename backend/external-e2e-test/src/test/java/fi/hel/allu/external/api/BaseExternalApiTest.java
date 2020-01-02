@@ -39,7 +39,6 @@ public class BaseExternalApiTest {
     return new HttpEntity<>(requestBody, createAuthenticationHeader());
   }
 
-
   private HttpHeaders createAuthenticationHeader() {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -74,9 +73,17 @@ public class BaseExternalApiTest {
     ResponseEntity<String> response = restTemplate.exchange(
         getExtServiceUrl(LOGIN_PATH),
         HttpMethod.POST,
-        new HttpEntity<>(new LoginExt(username, password)),
+        new HttpEntity<>(new LoginExt(getUserName(), getPassword())),
         String.class);
     this.bearerToken = response.getBody();
+  }
+
+  protected String getUserName() {
+    return username;
+  }
+
+  protected String getPassword() {
+    return password;
   }
 
 
