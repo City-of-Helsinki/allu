@@ -15,6 +15,7 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ContactSearchQuery} from '@service/customer/contact-search-query';
 import {Sort} from '@model/common/sort';
 import {FindById} from '@feature/customerregistry/actions/contact-actions';
+import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'configuration-contact-value',
@@ -39,7 +40,7 @@ export class ConfigurationContactValueComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.matching$ = this.store.pipe(select(fromConfiguration.getMatchingContacts));
-    this.initValue(+this.configuration.value);
+    this.initValue(this.configuration.value);
 
     this.valueCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
@@ -65,18 +66,24 @@ export class ConfigurationContactValueComponent implements OnInit, OnDestroy {
     return contact ? contact.name : undefined;
   }
 
-  private initValue(contactId: number): void {
+  private initValue(contactId: string): void {
     this.valueCtrl = this.fb.control(undefined, [Validators.required, ComplexValidator.idRequired]);
+    if (NumberUtil.isNumeric(contactId)) {
+      this.fetchInitialContact(+contactId);
+    }
+  }
+
+  private searchContact(name: string): void {
+    const query: ContactSearchQuery = {name, active: true};
+    this.store.dispatch(new ContactSearchAction.Search(ActionTargetType.Configuration, {query, sort: new Sort('name', 'asc')}));
+  }
+
+  private fetchInitialContact(contactId: number): void {
     this.store.dispatch(new FindById(contactId));
     this.store.pipe(
       select(fromCustomerRegistry.getContact(contactId)),
       filter(contact => !!contact),
       take(1)
     ).subscribe(contact => this.valueCtrl.patchValue(contact));
-  }
-
-  private searchContact(name: string): void {
-    const query: ContactSearchQuery = {name, active: true};
-    this.store.dispatch(new ContactSearchAction.Search(ActionTargetType.Configuration, {query, sort: new Sort('name', 'asc')}));
   }
 }
