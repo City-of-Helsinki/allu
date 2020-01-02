@@ -12,7 +12,7 @@ import {ComplexValidator} from '@util/complex-validator';
 import {debounceTime, filter, take, takeUntil} from 'rxjs/internal/operators';
 import * as ContactSearchAction from '@feature/customerregistry/actions/contact-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {ContactSearchQuery} from '@service/customer/contact-search-query';
+import {ContactNameSearchMinChars, ContactSearchQuery} from '@service/customer/contact-search-query';
 import {Sort} from '@model/common/sort';
 import {FindById} from '@feature/customerregistry/actions/contact-actions';
 import {NumberUtil} from '@util/number.util';
@@ -45,7 +45,8 @@ export class ConfigurationContactValueComponent implements OnInit, OnDestroy {
     this.valueCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
-      filter(contact => typeof contact === 'string')
+      filter(contact => typeof contact === 'string'),
+      filter(ContactNameSearchMinChars),
     ).subscribe(name => this.searchContact(name));
   }
 
