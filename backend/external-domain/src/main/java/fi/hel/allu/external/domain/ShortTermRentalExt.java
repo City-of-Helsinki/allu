@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @NotFalse(rules = {
     "applicationKind, kindMatchType, {shorttermrental.kind}",
-    "recurringEndYear, lessThanYearActivity, {shorttermrental.lessThanYearActivity}",
+    "recurringEndYear, lessThanYearActivity, {application.lessThanYearActivity}",
     "recurringEndYear, recurringKind, {shorttermrental.recurringKind}",
     "within80cmFromWall, kindWithin80cm, {shorttermrental.kindWithin80cm}",
     "commercial, kindCommercial, {shorttermrental.kindCommercial}"
