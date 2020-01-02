@@ -1328,7 +1328,8 @@ export const translations = {
       dayInvalid: 'Virheellinen päivä',
       monthInvalid: 'Virheellinen kuukausi',
       faultyValueTitle: 'Puutteelliset tiedot',
-      faultyValue: 'Tarkista antamasi tiedot'
+      faultyValue: 'Tarkista antamasi tiedot',
+      contactMissing: 'Yhteyshenkilö puuttuu'
     },
     boolean: {
       'true': 'Kyllä',
