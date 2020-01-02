@@ -20,6 +20,7 @@ import {ContactSearchEffects} from '@feature/customerregistry/effects/contact-se
 import {reducersProvider, reducersToken} from '@feature/customerregistry/reducers';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import {ContactEffects} from '@feature/customerregistry/effects/contact-effects';
+import {ContactOptionContentComponent} from '@feature/customerregistry/contact/contact-option-content.component';
 
 @NgModule({
   imports: [
@@ -46,13 +47,15 @@ import {ContactEffects} from '@feature/customerregistry/effects/contact-effects'
     CustomerModalComponent,
     CustomerModalComponent,
     ContactModalComponent,
-    CustomerOptionContentComponent
+    CustomerOptionContentComponent,
+    ContactOptionContentComponent
   ],
   exports: [
     CustomerModalComponent,
     ContactModalComponent,
     CustomerInfoComponent,
-    CustomerOptionContentComponent
+    CustomerOptionContentComponent,
+    ContactOptionContentComponent
   ],
   providers: [
     reducersProvider

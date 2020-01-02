@@ -12,6 +12,7 @@ import {StoreModule} from '@ngrx/store';
 import {reducersProvider, reducersToken} from '@feature/admin/configuration/reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ConfigurationEffects} from '@feature/admin/configuration/effects/configuration-effects';
+import {CustomerRegistryModule} from '@feature/customerregistry/customer-registry.module';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import {ConfigurationEffects} from '@feature/admin/configuration/effects/configu
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forFeature('configuration', reducersToken),
-    EffectsModule.forFeature([ConfigurationEffects])
+    EffectsModule.forFeature([ConfigurationEffects]),
+    CustomerRegistryModule
   ],
   declarations: [
     ConfigurationComponent,

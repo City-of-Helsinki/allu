@@ -6,10 +6,11 @@
              [placeholder]="'project.info.contactName' | translation"/>
 
       <mat-autocomplete #contactSearch="matAutocomplete"
-                        [displayWith]="contactName">
+                        [displayWith]="contactName"
+                        class="multi-line-option">
         <mat-option *ngFor="let contact of matching$ | async"
                     [value]="contact">
-          {{ contact.name }}
+          <contact-option-content [contact]="contact"></contact-option-content>
         </mat-option>
       </mat-autocomplete>
 
