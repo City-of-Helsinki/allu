@@ -938,6 +938,7 @@ export const translations = {
     title: 'Yhteyshenkilö',
     name: 'Yhteyshenkilön nimi',
     orderer: 'Tilaaja',
+    noContact: 'Ei yhteyshenkilöä',
     role: {
       APPLICANT: {
         title: 'Yhteyshenkilö'

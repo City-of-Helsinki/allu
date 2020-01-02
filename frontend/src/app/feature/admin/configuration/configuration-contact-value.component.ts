@@ -58,7 +58,7 @@ export class ConfigurationContactValueComponent implements OnInit, OnDestroy {
   submit(): void {
     const configuration: Configuration = {
       ...this.configuration,
-      value: this.valueCtrl.value.id
+      value: this.valueCtrl.value.id || ''
     };
     this.store.dispatch(new Save(configuration));
   }
@@ -68,7 +68,7 @@ export class ConfigurationContactValueComponent implements OnInit, OnDestroy {
   }
 
   private initValue(contactId: string): void {
-    this.valueCtrl = this.fb.control(undefined, [Validators.required, ComplexValidator.idRequired]);
+    this.valueCtrl = this.fb.control(undefined, [ComplexValidator.idValid]);
     if (NumberUtil.isNumeric(contactId)) {
       this.fetchInitialContact(+contactId);
     }

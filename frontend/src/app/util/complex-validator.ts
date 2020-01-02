@@ -4,6 +4,7 @@ import {TimeUtil} from './time.util';
 import {NumberUtil} from './number.util';
 import * as finnishSsn from 'finnish-ssn';
 import {unitOfTime} from 'moment';
+import {StringUtil} from '@util/string.util';
 
 /**
  * Implements more complex validations than angular2 provides out of the box
@@ -206,6 +207,12 @@ export class ComplexValidator {
     return NumberUtil.isDefined(id)
       ? undefined
       : {'idRequired': {value: control.value}};
+  }
+
+  static idValid(control: AbstractControl): ValidationErrors | undefined {
+    return StringUtil.isEmpty(control.value) || NumberUtil.isExisting(control.value)
+      ? undefined
+      : {'idValid': {value: control.value}};
   }
 
   static requiredLength(length: number): ValidatorFn {
