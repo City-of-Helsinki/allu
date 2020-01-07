@@ -22,7 +22,7 @@ LEFT JOIN allu_operative.user u on i.creator_id = u.id
 ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
     luontiaika = EXCLUDED.luontiaika,
-    vastausaika = EXLUDED.vastausaika,
+    vastausaika = EXCLUDED.vastausaika,
     lisaaja = EXCLUDED.lisaaja,
     status = EXCLUDED.status
 ;
