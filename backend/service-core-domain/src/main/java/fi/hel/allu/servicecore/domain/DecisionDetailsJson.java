@@ -1,13 +1,20 @@
 package fi.hel.allu.servicecore.domain;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import java.util.List;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class DecisionDetailsJson {
   @NotEmpty(message = "{decision.distribution}")
   private List<DistributionEntryJson> decisionDistributionList;
   private String messageBody;
+
+  public DecisionDetailsJson() {
+  }
+
+  public DecisionDetailsJson(List<DistributionEntryJson> decisionDistributionList) {
+    this.decisionDistributionList = decisionDistributionList;
+  }
 
   /**
    * @return  Distribution list of the decision.

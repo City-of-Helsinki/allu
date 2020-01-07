@@ -1,5 +1,7 @@
 package fi.hel.allu.supervision.api.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,7 @@ import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.CreateExcavationAnnouncementApplicationJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.DateReportingService;
 import fi.hel.allu.supervision.api.domain.DatePeriodReportJson;
 import fi.hel.allu.supervision.api.domain.DateReportJson;
@@ -67,6 +66,38 @@ public class ExcavationAnnouncementController extends BaseApplicationDetailsCont
   public ResponseEntity<byte[]> getOperationalConditionDocument(@PathVariable Integer id) {
     validateType(id);
     return getApprovalDocument(id, ApprovalDocumentType.OPERATIONAL_CONDITION);
+  }
+
+  @ApiOperation(value = "Sends the operational condition approval document for given application as email to "
+      + "an specified distribution list.",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Approval document sent successfully")
+  })
+  @RequestMapping(value = "/{id}/operationalcondition/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> sendOperationalConditionDocument(@PathVariable Integer id,
+      @RequestBody List<DistributionEntryJson> distribution) {
+    validateType(id);
+    applicationServiceComposer.sendDecision(id, new DecisionDetailsJson(distribution), DecisionDocumentType.OPERATIONAL_CONDITION);
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Sends the work finished approval document for given application as email to "
+      + "an specified distribution list.",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Approval document sent successfully")
+  })
+  @RequestMapping(value = "/{id}/workfinished/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> sendWorkFinishedDocument(@PathVariable Integer id,
+      @RequestBody List<DistributionEntryJson> distribution) {
+    validateType(id);
+    applicationServiceComposer.sendDecision(id, new DecisionDetailsJson(distribution), DecisionDocumentType.WORK_FINISHED);
+    return ResponseEntity.ok().build();
   }
 
   @Override

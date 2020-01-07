@@ -10,16 +10,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.PdfMerger;
-import fi.hel.allu.servicecore.service.ApplicationService;
+import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
+import fi.hel.allu.servicecore.domain.DecisionDocumentType;
+import fi.hel.allu.servicecore.domain.DistributionEntryJson;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.DecisionService;
 import io.swagger.annotations.*;
@@ -34,7 +34,7 @@ public class DecisionController {
   @Autowired
   private AttachmentService attachmentService;
   @Autowired
-  private ApplicationService applicationService;
+  private ApplicationServiceComposer applicationServiceComposer;
 
   @ApiOperation(value = "Gets decision document for application with given ID. Returns draft if decision is not yet made. "
       + "Available for all application types except notes.",
@@ -60,8 +60,24 @@ public class DecisionController {
     return new ResponseEntity<>(PdfMerger.appendDocuments(decision, attachments), httpHeaders, HttpStatus.OK);
   }
 
+  @ApiOperation(value = "Sends the decision document for given application as email to an specified distribution list.",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Decision document sent successfully"),
+      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/decision/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> sendDecision(@PathVariable Integer id,
+      @RequestBody List<DistributionEntryJson> distribution) {
+    validateHasDecision(id);
+    applicationServiceComposer.sendDecision(id, new DecisionDetailsJson(distribution), DecisionDocumentType.DECISION);
+    return ResponseEntity.ok().build();
+  }
+
   private void validateHasDecision(Integer id) {
-    if (applicationService.getApplicationType(id) == ApplicationType.NOTE) {
+    if (applicationServiceComposer.getApplicationType(id) == ApplicationType.NOTE) {
       throw new NoSuchEntityException("note.decision");
     }
   }

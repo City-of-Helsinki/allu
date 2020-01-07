@@ -614,10 +614,6 @@ public class ApplicationService {
     return BooleanUtils.isNotTrue(findApplicationById(id).getNotBillable());
   }
 
-  public ApplicationType getApplicationType(Integer id) {
-    return findApplicationById(id).getType();
-  }
-
   public void addOwnerNotification(Integer id) {
     restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, id);
   }

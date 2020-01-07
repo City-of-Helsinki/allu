@@ -18,10 +18,7 @@ import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.CreateAreaRentalApplicationJson;
-import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationService;
 import fi.hel.allu.servicecore.service.DateReportingService;
 import fi.hel.allu.servicecore.service.InvoicingPeriodService;
@@ -74,6 +71,22 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
   public ResponseEntity<byte[]> getWorkFinishedDocument(@PathVariable Integer id) {
     validateType(id);
     return getApprovalDocument(id, ApprovalDocumentType.WORK_FINISHED);
+  }
+
+  @ApiOperation(value = "Sends the work finished approval document for given application as email to "
+      + "an specified distribution list.",
+      authorizations = @Authorization(value ="api_key")
+  )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Approval document sent successfully")
+  })
+  @RequestMapping(value = "/{id}/workfinished/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> sendWorkFinishedDocument(@PathVariable Integer id,
+      @RequestBody List<DistributionEntryJson> distribution) {
+    validateType(id);
+    applicationServiceComposer.sendDecision(id, new DecisionDetailsJson(distribution), DecisionDocumentType.WORK_FINISHED);
+    return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "Create a new location",

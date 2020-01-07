@@ -652,4 +652,8 @@ public class ApplicationServiceComposer {
   public Integer getApplicationOwnerId(int applicationId) {
     return applicationService.getApplicationOwnerId(applicationId);
   }
+
+  public ApplicationType getApplicationType(Integer applicationId) {
+    return getApplicationStatus(applicationId).getType();
+  }
 }
