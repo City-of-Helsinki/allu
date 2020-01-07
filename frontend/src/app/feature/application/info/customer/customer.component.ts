@@ -68,7 +68,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
     }
 
     this.onCustomerWithContactsChange();
-    this.onCustomerTypeChange(undefined);
+    this.initCustomerType();
 
     this.customerForm.get('type').valueChanges
       .subscribe(type => this.onCustomerTypeChange(type));
@@ -123,6 +123,11 @@ export class CustomerComponent implements OnInit, OnDestroy {
     this.customerWithContactsForm = CustomerWithContactsForm.initialForm(this.fb, roleType);
     this.customerForm = <FormGroup>this.customerWithContactsForm.get('customer');
     this.parentForm.addControl(CustomerWithContactsForm.formName(roleType), this.customerWithContactsForm);
+  }
+
+  private initCustomerType(): void {
+    const customerType = Some(this.customerWithContacts.customer).map(customer => customer.type).orElse(undefined);
+    this.onCustomerTypeChange(customerType);
   }
 
   private disableEdit(customer: Customer): void {
