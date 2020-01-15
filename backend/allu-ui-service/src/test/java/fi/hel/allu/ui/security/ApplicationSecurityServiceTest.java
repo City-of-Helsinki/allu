@@ -1,20 +1,21 @@
 package fi.hel.allu.ui.security;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.service.UserService;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.UserService;
 
 import static org.mockito.Mockito.when;
 

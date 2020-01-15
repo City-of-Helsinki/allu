@@ -1,6 +1,21 @@
 package fi.hel.allu.servicecore.service;
 
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.types.PublicityType;
@@ -10,97 +25,62 @@ import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.UserMapper;
 
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.ring;
+import static org.geolatte.geom.builder.DSL.*;
 
 public abstract class MockServices {
-  @Mock
-  protected ApplicationProperties props;
   @Mock
   protected RestTemplate restTemplate;
 
   private static final int METADATA_VERSION = 1;
 
   public void initSaveMocks() {
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Application.class), Mockito.anyInt()))
-        .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.any(), Mockito.eq(Application.class), Mockito.anyInt()))
+        .thenReturn(createMockApplicationModel());
 
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Customer.class)))
-        .thenAnswer((Answer<Customer>) invocation -> createMockCustomerModel());
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.any(), Mockito.eq(Customer.class)))
+        .thenReturn(createMockCustomerModel());
 
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Project.class)))
-        .thenAnswer((Answer<Project>) invocation -> createMockProjectModel());
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.any(), Mockito.eq(Project.class)))
+        .thenReturn(createMockProjectModel());
 
     Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(HttpEntity.class), Mockito.eq(Project.class), Mockito.anyInt()))
-      .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> new ResponseEntity<>(createMockProjectModel(), HttpStatus.CREATED));
+      .thenReturn(new ResponseEntity<>(createMockProjectModel(), HttpStatus.CREATED));
 
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.any(),
         Mockito.eq(Event.class)))
-        .thenAnswer((Answer<Event>) invocation -> createMockOutdoorEventModel());
+        .thenReturn(createMockOutdoorEventModel());
 
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(ApplicationES.class)))
-        .thenAnswer((Answer<ApplicationES>) invocation -> createMockApplicationES());
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.any(), Mockito.eq(ApplicationES.class)))
+        .thenReturn(createMockApplicationES());
   }
 
   public void initSearchMocks() {
-    Mockito.when(restTemplate.getForObject(Mockito.any(String.class), Mockito.eq(Application.class), Mockito.any
-        (String.class)))
-        .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
+    Mockito.when(restTemplate.getForObject(Mockito.anyString(), Mockito.eq(Application.class), Mockito.anyInt()))
+        .thenReturn(createMockApplicationModel());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(User.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<User>>) invocation -> createMockUserResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(User.class), Mockito.anyInt()))
+        .thenReturn(createMockUserResponse());
 
-    Mockito
-        .when(
-            restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(AttachmentInfo[].class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<AttachmentInfo[]>>) invocation -> createMockAttachmentInfoListResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(AttachmentInfo[].class), Mockito.anyInt()))
+        .thenReturn(createMockAttachmentInfoListResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockPersonResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(Customer.class), Mockito.anyInt()))
+        .thenReturn(createMockPersonResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockCustomerResponse());
+        .thenReturn(createMockCustomerResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Event.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Event>>) invocation -> createMockOutdoorEventResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(Event.class), Mockito.anyInt()))
+        .thenReturn(createMockOutdoorEventResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Application[].class), Mockito.any
-        (String.class)))
-        .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
-            createMockApplicationListResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(Application[].class), Mockito.anyString()))
+        .thenReturn(createMockApplicationListResponse());
 
-    Mockito.when(restTemplate.postForEntity(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Application[].class)))
-        .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
-            createMockApplicationListResponse());
-
-    Mockito.when(props.getModelServiceUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
-
+    Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(), Mockito.eq(Application[].class)))
+        .thenReturn(createMockApplicationListResponse());
   }
 
   public static LocationJson createLocationJson(Integer id) {

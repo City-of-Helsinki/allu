@@ -67,7 +67,7 @@ public class ProjectDao {
    */
   @Transactional(readOnly = true)
   public Page<Project> findAll(Pageable pageRequest) {
-    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     QueryResults<Project> queryResults = queryFactory.select(projectBean).from(project).where(NOT_DELETED).orderBy(project.id.asc())
         .offset(offset).limit(count).fetchResults();

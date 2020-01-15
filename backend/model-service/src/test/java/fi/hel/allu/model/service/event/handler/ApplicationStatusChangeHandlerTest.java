@@ -3,29 +3,30 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import fi.hel.allu.common.domain.TerminationInfo;
-import fi.hel.allu.model.dao.TerminationDao;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SupervisionTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

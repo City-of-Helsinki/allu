@@ -1,19 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
-import java.util.Map;
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.servicecore.domain.StructureMetaJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.ResponseEntity;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.servicecore.domain.StructureMetaJson;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MetaServiceTest extends MockServices {
@@ -26,24 +25,23 @@ public class MetaServiceTest extends MockServices {
 
   @Before
   public void setUp() {
-    metaService = new MetaService(props, restTemplate);
+    metaService = new MetaService(TestProperties.getProperties(), restTemplate);
     Mockito
         .when(restTemplate.postForEntity(
-            Mockito.any(String.class),
-            Mockito.anyMapOf(String.class, String.class),
+            Mockito.anyString(),
+            Mockito.anyMap(),
             Mockito.eq(StructureMeta.class),
-            Mockito.any(ApplicationKind.class)))
+            Mockito.anyString()))
         .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
     Mockito
         .when(restTemplate.postForEntity(
-            Mockito.any(String.class),
-            Mockito.anyMapOf(String.class, String.class),
+            Mockito.anyString(),
+            Mockito.anyMap(),
             Mockito.eq(StructureMeta.class),
-            Mockito.any(ApplicationKind.class),
+            Mockito.anyString(),
             Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
 
-    initSearchMocks();
   }
 
   @Test

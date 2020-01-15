@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -42,11 +42,11 @@ import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ApplicationServiceTest extends MockServices {
   private static Validator validator;
   @Mock
@@ -93,7 +93,7 @@ public class ApplicationServiceTest extends MockServices {
     initSearchMocks();
     userService = Mockito.mock(UserService.class);
 
-    Mockito.when(customerService.createCustomer(Mockito.anyObject())).thenAnswer((Answer<CustomerJson>) invocation ->
+    Mockito.when(customerService.createCustomer(Mockito.any())).thenAnswer((Answer<CustomerJson>) invocation ->
         createCustomerJson(103));
 
     Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer((Answer<CustomerJson>) invocation ->
@@ -102,7 +102,7 @@ public class ApplicationServiceTest extends MockServices {
     userJson = new UserJson(USER_ID, null, null, null, null, null, true, null, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
-    applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService,
+    applicationService = new ApplicationService(TestProperties.getProperties(), restTemplate, applicationMapper, userService,
         personAuditLogService, paymentClassService, paymentZoneService, invoicingPeriodService, invoiceService, eventDispatcher);
   }
 
@@ -169,7 +169,7 @@ public class ApplicationServiceTest extends MockServices {
   public void testUpdateApplicationOwner() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()));
-    Mockito.verify(restTemplate, Mockito.times(1)).put(null, Collections.singletonList(applicationJson.getId()), 2);
+    Mockito.verify(restTemplate, Mockito.times(1)).put(anyString(), eq(Collections.singletonList(applicationJson.getId())), eq(2));
   }
 
   @Test
@@ -257,9 +257,6 @@ public class ApplicationServiceTest extends MockServices {
   @Test
   public void shouldPublishApplicationEventOnSetInvoiceRecipient() {
     Application response = applicationService.createApplication(createMockApplicationJson(1));
-    ApplicationProperties ap = Mockito.mock(ApplicationProperties.class);
-    Mockito.when(ap.getApplicationInvoiceRecipientUrl()).thenReturn("http://application/invoicerecipient");
-    applicationService.setApplicationProperties(ap);
     applicationService.setInvoiceRecipient(response.getId(), 15);
     verify(eventDispatcher, times(1)).dispatchUpdateEvent(eq(1), anyInt(), eq(ApplicationNotificationType.INVOICE_RECIPIENT_CHANGED), any(StatusType.class));
   }

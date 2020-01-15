@@ -95,7 +95,7 @@ public class ContactDao {
    */
   @Transactional(readOnly = true)
   public Page<Contact> findAll(Pageable pageRequest) {
-    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     List<Expression<?>> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
     mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));

@@ -144,16 +144,15 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
       context("Search", () -> {
 
         context("Sort order", () -> {
-          final Sort sort = new Sort(new Order(Direction.ASC, "applicationId"),
-              new Order(Direction.DESC, "actualFinishingTime"));
-
+          final Sort sort = Sort.by(Sort.Order.asc("applicationId"),
+               Sort.Order.desc("actualFinishingTime"));
           it("Can convert to QueryDSL ordering", () -> {
             OrderSpecifier<?>[] orders = SupervisionTaskDao.toOrder(sort);
             assertEquals(2, orders.length);
           });
 
           it("Throws exception on invalid sort key", () -> {
-            assertThrows(NoSuchEntityException.class).when(() -> SupervisionTaskDao.toOrder(new Sort("noSuchKey")));
+            assertThrows(NoSuchEntityException.class).when(() -> SupervisionTaskDao.toOrder(Sort.by("noSuchKey")));
           });
 
         });
@@ -162,7 +161,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
 
-          List<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria());
+          List<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), PageRequest.of(0, 100)).getContent();
           assertEquals(2, result.size());
         });
 
@@ -170,7 +169,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
               shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
-          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "type"));
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "type"));
           Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
 
           assertEquals(2, result.getNumberOfElements());
@@ -183,7 +182,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
               shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
-          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.type"));
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "application.type"));
           Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
 
           assertEquals(2, result.getNumberOfElements());
@@ -199,7 +198,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           supervisionTaskDao.insert(taskForOther);
           applicationDao.updateStatus(shortTermApp.getId(), StatusType.CANCELLED);
           applicationDao.updateStatus(outdoorApp.getId(), StatusType.HANDLING);
-          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.status"));
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "application.status"));
           Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
 
           assertEquals(2, result.getNumberOfElements());
@@ -210,11 +209,11 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
         it("Find by application id", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
-          SupervisionTask inserted = supervisionTaskDao.insert(taskForOther);
+          supervisionTaskDao.insert(taskForOther);
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setApplicationId(shortTermApp.getApplicationId());
-          List<SupervisionWorkItem> result = supervisionTaskDao.search(search);
+          List<SupervisionWorkItem> result = supervisionTaskDao.search(search, PageRequest.of(0, 100)).getContent();
           assertEquals(1, result.size());
         });
 
@@ -224,9 +223,9 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setTaskTypes(Arrays.asList(SupervisionTaskType.WARRANTY));
-          assertEquals(1, supervisionTaskDao.search(search).size());
+          assertEquals(1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements());
           search.setTaskTypes(Arrays.asList(SupervisionTaskType.WARRANTY, SupervisionTaskType.SUPERVISION));
-          assertEquals(2, supervisionTaskDao.search(search).size());
+          assertEquals(2, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements());
         });
 
         it("Find by application type", () -> {
@@ -235,9 +234,9 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setApplicationTypes(Arrays.asList(shortTermApp.getType()));
-          assertEquals(1, supervisionTaskDao.search(search).size());
+          assertEquals(1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements());
           search.setApplicationTypes(Arrays.asList(shortTermApp.getType(), outdoorApp.getType()));
-          assertEquals(2, supervisionTaskDao.search(search).size());
+          assertEquals(2, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements());
         });
 
         it("Find by dates", () -> {
@@ -247,11 +246,11 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setAfter(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
-          assertEquals(2, supervisionTaskDao.search(search).size()); // added + existing
+          assertEquals(2, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added + existing
           search.setBefore(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
-          assertEquals(1, supervisionTaskDao.search(search).size()); // added
+          assertEquals(1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added
           search.setAfter(null);
-          assertEquals(1, supervisionTaskDao.search(search).size()); // added
+          assertEquals(1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added
         });
 
         it("Find by application status", () -> {
@@ -260,7 +259,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setApplicationStatus(Arrays.asList(shortTermApp.getStatus()));
-          assertEquals(2, supervisionTaskDao.search(search).size());
+          assertEquals(2, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements());
         });
 
         it("Find by city district", () -> {
@@ -273,7 +272,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria location1Search = new SupervisionTaskSearchCriteria();
           location1Search.setCityDistrictIds(Arrays.asList(location.getCityDistrictId()));
-          assertEquals(1, supervisionTaskDao.search(location1Search).size());
+          assertEquals(1, supervisionTaskDao.search(location1Search, PageRequest.of(0, 100)).getTotalElements());
         });
 
         it("Find by city district override", () -> {
@@ -288,7 +287,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria location1Search = new SupervisionTaskSearchCriteria();
           location1Search.setCityDistrictIds(Arrays.asList(location.getCityDistrictIdOverride()));
-          assertEquals(1, supervisionTaskDao.search(location1Search).size());
+          assertEquals(1, supervisionTaskDao.search(location1Search, PageRequest.of(0, 100)).getTotalElements());
         });
 
         it("Find only by specified city districts", () -> {
@@ -313,11 +312,11 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria location1Search = new SupervisionTaskSearchCriteria();
           location1Search.setCityDistrictIds(Arrays.asList(location1.getCityDistrictId()));
-          assertEquals("Expected to find both tasks", 2, supervisionTaskDao.search(location1Search).size());
+          assertEquals("Expected to find both tasks", 2, supervisionTaskDao.search(location1Search, PageRequest.of(0, 100)).getTotalElements());
 
           SupervisionTaskSearchCriteria location2Search = new SupervisionTaskSearchCriteria();
           location2Search.setCityDistrictIds(Arrays.asList(location2.getCityDistrictIdOverride()));
-          assertEquals("Expected to find single task", 1, supervisionTaskDao.search(location2Search).size());
+          assertEquals("Expected to find single task", 1, supervisionTaskDao.search(location2Search, PageRequest.of(0, 100)).getTotalElements());
         });
 
         context("Paging tests", () -> {
@@ -331,7 +330,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
               supervisionTaskDao.insert(task_i);
             }
             SupervisionTaskSearchCriteria searchCriteria = new SupervisionTaskSearchCriteria();
-            PageRequest pageRequest = new PageRequest(2, 15, Direction.ASC, "type");
+            PageRequest pageRequest = PageRequest.of(2, 15, Direction.ASC, "type");
             results.set(supervisionTaskDao.search(searchCriteria, pageRequest));
           });
 

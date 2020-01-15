@@ -18,7 +18,7 @@
         <database.db>jenkins</database.db>
         <database.password>sniknej</database.password>
         <database.uri>jdbc:postgresql:///${database.db}</database.uri>
-        <flyway.baselineOnMigrate>true</flyway.baselineOnMigrate>
+        <spring.flyway.baselineOnMigrate>true</spring.flyway.baselineOnMigrate>
     </properties>
 
     <dependencies>
@@ -70,7 +70,7 @@
             <version>${querydsl.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <scope>runtime</scope>
         </dependency>

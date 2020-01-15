@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -60,7 +61,7 @@ public class WorkQueueServiceTest {
 
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
 
-    List<ApplicationES> result = workQueueService.searchSharedByGroup(new ApplicationQueryParameters(), null).getContent();
+    List<ApplicationES> result = workQueueService.searchSharedByGroup(new ApplicationQueryParameters(), PageRequest.of(1, 10)).getContent();
 
     Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any(), Mockito.eq(false));
     QueryParameters searchQuery = queryParametersArgumentCaptor.getValue();
@@ -92,7 +93,7 @@ public class WorkQueueServiceTest {
     QueryParameter dummyParameter = new QueryParameter("dummy", Collections.emptyList());
     QueryParameter typeParameter = new QueryParameter(QueryParameter.FIELD_NAME_STATUS, Collections.singletonList(StatusType.REJECTED.name()));
     queryParametersJson.setQueryParameters(new ArrayList<>(Arrays.asList(dummyParameter, typeParameter)));
-    List<ApplicationES> result = workQueueService.searchSharedByGroup(queryParametersJson, null).getContent();
+    List<ApplicationES> result = workQueueService.searchSharedByGroup(queryParametersJson, PageRequest.of(1, 10)).getContent();
 
     Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any(), Mockito.eq(false));
     QueryParameters searchQuery = queryParametersArgumentCaptor.getValue();

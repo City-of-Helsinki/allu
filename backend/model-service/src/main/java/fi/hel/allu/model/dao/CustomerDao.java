@@ -101,7 +101,7 @@ public class CustomerDao {
    */
   @Transactional(readOnly = true)
   public Page<Customer> findAll(Pageable pageRequest) {
-    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     QueryResults<Tuple> customerPostalAddress = queryFactory
         .select(customerBean, postalAddressBean)

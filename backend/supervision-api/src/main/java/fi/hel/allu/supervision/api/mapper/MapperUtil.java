@@ -26,7 +26,7 @@ import fi.hel.allu.supervision.api.domain.SearchParameters;
 
 public class MapperUtil {
 
-  public static PageRequest DEFAULT_PAGE_REQUEST = new PageRequest(0, 100000);
+  public static PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 100000);
 
   private static final Logger logger = LoggerFactory.getLogger(MapperUtil.class);
   private static ObjectReader geometryReader;
@@ -54,7 +54,7 @@ public class MapperUtil {
 
   public static Pageable mapToPageRequest(SearchParameters<?> searchParameters) {
     Sort sort = getSort(searchParameters);
-    PageRequest pageRequest = new PageRequest(searchParameters.getPage(), searchParameters.getPageSize(), sort);
+    PageRequest pageRequest = PageRequest.of(searchParameters.getPage(), searchParameters.getPageSize(), sort);
     return pageRequest;
   }
 
@@ -72,7 +72,7 @@ public class MapperUtil {
       .filter(s -> s.getField().getSortFieldName() != null)
       .map(s -> new Sort.Order(s.getDirection(), s.getField().getSortFieldName()))
       .collect(Collectors.toList());
-    return !sortOrder.isEmpty() ? new Sort(sortOrder) : null;
+    return !sortOrder.isEmpty() ? Sort.by(sortOrder) : null;
   }
 
 }

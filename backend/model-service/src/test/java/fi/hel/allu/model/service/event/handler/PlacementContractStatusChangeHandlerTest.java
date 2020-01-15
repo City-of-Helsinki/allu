@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -70,7 +70,6 @@ public class PlacementContractStatusChangeHandlerTest {
         decisionDao, terminationDao);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
-    when(locationService.findSupervisionTaskOwner(eq(application.getType()), anyInt())).thenReturn(Optional.empty());
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
   }
 

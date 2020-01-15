@@ -69,7 +69,7 @@ public class SupervisionTaskSearchParameterMapper {
   }
 
   private List<Integer> fetchApplicationIds(ApplicationQueryParameters applicationQueryParameters) {
-    PageRequest pageRequest = new PageRequest(0, Integer.MAX_VALUE, null);
+    PageRequest pageRequest = PageRequest.of(0, Integer.MAX_VALUE, null);
     Page<ApplicationES> result = applicationServiceComposer.search(applicationQueryParameters, pageRequest, Boolean.FALSE);
     return result.getContent().stream().map(ApplicationES::getId).collect(Collectors.toList());
   }

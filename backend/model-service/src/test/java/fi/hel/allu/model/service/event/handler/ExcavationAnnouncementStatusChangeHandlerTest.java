@@ -8,13 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.AnnualTimePeriod;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.InformationRequestDao;
@@ -25,7 +25,7 @@ import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -97,13 +97,15 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   @Test
   public void onOperationalConditionShouldLockChargeBasisEntriesForPeriod() {
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    application.setExtension(new ExcavationAnnouncement());
+    application.setExtension(extension);
+    extension.setWinterTimeOperation(ZonedDateTime.now());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
     verify(chargeBasisService, times(1)).lockEntriesOfPeriod(eq(OPERATIONAL_CONDITION_PERIOD_ID));
   }
 
   @Test
   public void onOperationalConditionShouldRemoveSupervisionDoneTag() {
+    extension.setWinterTimeOperation(ZonedDateTime.now());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
@@ -162,7 +164,6 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
 
   @Test
   public void onFinishedShouldNotAdjustInvoicingIfNotSummertimeOperational() {
-    when(invoiceService.applicationHasInvoiced(application.getId())).thenReturn(true);
     extension.setWorkFinished(LocalDate.parse("2019-12-12").atStartOfDay(TimeUtil.HelsinkiZoneId));
     extension.setWinterTimeOperation(LocalDate.parse("2019-12-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
     when(winterTime.isInAnnualPeriod(extension.getWinterTimeOperation())).thenReturn(false);

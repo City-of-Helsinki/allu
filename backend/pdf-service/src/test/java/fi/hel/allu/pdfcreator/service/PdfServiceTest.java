@@ -1,8 +1,7 @@
 package fi.hel.allu.pdfcreator.service;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -19,6 +18,8 @@ import fi.hel.allu.pdfcreator.config.ApplicationProperties;
 import fi.hel.allu.pdfcreator.util.Executioner;
 import fi.hel.allu.pdfcreator.util.FileSysAccessor;
 import fi.hel.allu.pdfcreator.util.JsonConverter;
+
+import static org.junit.Assert.fail;
 
 public class PdfServiceTest {
 
@@ -47,7 +48,7 @@ public class PdfServiceTest {
     Mockito.when(applicationProperties.getTempDir()).thenReturn(TEMPDIR);
     Mockito.when(applicationProperties.getStylesheetDir()).thenReturn(STYLESHEETDIR);
     Mockito.when(applicationProperties.getPdfGenerator()).thenReturn(PDFGENERATOR);
-    Mockito.when(jsonConverter.applyStylesheet(Mockito.anyString(), Mockito.any())).thenReturn(STYLESHEET);
+    Mockito.when(jsonConverter.applyStylesheet(Mockito.nullable(String.class), Mockito.nullable(InputStream.class))).thenReturn(STYLESHEET);
     Mockito.when(fileSysAccessor.createTempFile(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(TEMPFILE);
 
     pdfService = new PdfService(applicationProperties, fileSysAccessor, executioner, jsonConverter);
@@ -71,7 +72,7 @@ public class PdfServiceTest {
   public void testWithHeader() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet that also has header:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
-      Path arg = invocation.getArgumentAt(0, Path.class);
+      Path arg = invocation.getArgument(0);
       return arg.endsWith("stylesheet.xsl") || arg.endsWith("stylesheet-header.xsl");
     });
 
@@ -86,7 +87,7 @@ public class PdfServiceTest {
   public void testWithFooter() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet that also has a footer:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
-      Path arg = invocation.getArgumentAt(0, Path.class);
+      Path arg = invocation.getArgument(0);
       return arg.endsWith("stylesheet.xsl") || arg.endsWith("stylesheet-footer.xsl");
     });
 
@@ -101,7 +102,7 @@ public class PdfServiceTest {
   public void testWithHeaderAndFooter() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet that has both header and footer:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
-      Path arg = invocation.getArgumentAt(0, Path.class);
+      Path arg = invocation.getArgument(0);
       return arg.endsWith("stylesheet.xsl") || arg.endsWith("stylesheet-header.xsl")
           || arg.endsWith("stylesheet-footer.xsl");
     });
@@ -125,7 +126,7 @@ public class PdfServiceTest {
 
   private void testFallbackDocument(String documentName, String expectedFallback) throws IOException, TransformerException {
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
-      Path arg = invocation.getArgumentAt(0, Path.class);
+      Path arg = invocation.getArgument(0);
       if (arg.endsWith(expectedFallback)) {
         return true;
       } else {

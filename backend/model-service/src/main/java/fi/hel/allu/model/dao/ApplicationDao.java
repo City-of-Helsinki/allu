@@ -123,7 +123,7 @@ public class ApplicationDao {
    */
   @Transactional(readOnly = true)
   public Page<Application> findAll(Pageable pageRequest) {
-    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     QueryResults<Application> queryResults = queryFactory.select(applicationBean).from(application)
         .orderBy(application.id.asc()).offset(offset).limit(count).fetchResults();

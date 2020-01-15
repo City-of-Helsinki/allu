@@ -371,7 +371,7 @@ public class SearchService {
       new HttpEntity<>(queryParameters), typeref);
 
     final Page<R> responsePage = response.getBody();
-    final PageRequest responsePageRequest = new PageRequest(responsePage.getNumber(),
+    final PageRequest responsePageRequest = PageRequest.of(responsePage.getNumber(),
       Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
 
     final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,

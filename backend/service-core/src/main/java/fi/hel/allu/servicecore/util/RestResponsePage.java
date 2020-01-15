@@ -19,7 +19,7 @@ public class RestResponsePage<T> extends PageImpl<T> {
                       @JsonProperty("number") int page,
                       @JsonProperty("size") int size,
                       @JsonProperty("totalElements") long total) {
-      super(content, new PageRequest(page, size), total);
+      super(content, PageRequest.of(page, size), total);
   }
 
   public RestResponsePage(List<T> content, Pageable pageable, long total) {

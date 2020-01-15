@@ -76,7 +76,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertEquals(testCustomer.getPostalAddress().getStreetAddress(), customer.getPostalAddress().getStreetAddress());
         });
         it("should find all customers", () -> {
-          Page<Customer> customers = customerDao.findAll(new PageRequest(0, Integer.MAX_VALUE));
+          Page<Customer> customers = customerDao.findAll(PageRequest.of(0, Integer.MAX_VALUE));
           assertTrue(customers.getSize() > 0);
           Customer customer = customers.getContent().get(0);
           assertEquals(testCustomer.getName(), customer.getName());
@@ -188,7 +188,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
       });
 
       it("Can fetch 5 customers in ascendind ID order", () -> {
-        Page<Customer> page = customerDao.findAll(new PageRequest(1, 5));
+        Page<Customer> page = customerDao.findAll(PageRequest.of(1, 5));
         assertEquals(5, page.getSize());
         List<Customer> elements = page.getContent();
         assertEquals(5, elements.size());

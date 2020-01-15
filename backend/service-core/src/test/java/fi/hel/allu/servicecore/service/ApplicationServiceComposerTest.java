@@ -135,6 +135,7 @@ public class ApplicationServiceComposerTest {
 
   @Test
   public void testSendDecision() {
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
     ApplicationJson applicationJson = Mockito.mock(ApplicationJson.class);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.any(Application.class)))
         .thenReturn(applicationJson);

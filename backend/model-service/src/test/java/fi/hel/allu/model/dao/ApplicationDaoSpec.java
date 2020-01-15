@@ -123,7 +123,7 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
       });
 
       it("Can fetch 5 applications in ascendind ID order", () -> {
-        Page<Application> page = applicationDao.findAll(new PageRequest(1, 5));
+        Page<Application> page = applicationDao.findAll(PageRequest.of(1, 5));
         assertEquals(5, page.getSize());
         List<Application> elements = page.getContent();
         assertEquals(5, elements.size());

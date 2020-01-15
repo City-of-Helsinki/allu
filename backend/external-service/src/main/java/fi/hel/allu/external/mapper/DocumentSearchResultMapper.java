@@ -88,7 +88,7 @@ public class DocumentSearchResultMapper {
     if (applicationIds.isEmpty()) {
       return Collections.emptyMap();
     }
-    PageRequest pageRequest = new PageRequest(0, applicationIds.size());
+    PageRequest pageRequest = PageRequest.of(0, applicationIds.size());
     ApplicationQueryParameters parameters = new ApplicationQueryParameters();
     parameters.setQueryParameters(Collections.singletonList(new QueryParameter("id", applicationIds)));
     parameters.setIncludeArchived(true);

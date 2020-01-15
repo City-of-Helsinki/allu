@@ -24,7 +24,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -39,8 +38,6 @@ import static com.greghaskins.spectrum.Spectrum.beforeEach;
 import static com.greghaskins.spectrum.Spectrum.describe;
 import static com.greghaskins.spectrum.Spectrum.it;
 import static com.greghaskins.spectrum.Spectrum.let;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(Spectrum.class)
@@ -86,7 +83,7 @@ public class InvoicingServiceSpec {
           when(applicationProperties.getMarkInvoicesSentUrl()).thenReturn(MARK_INVOICES_SENT_URL);
 
           when(restTemplate.postForObject(eq(FIND_APPLICATIONS_URL), anyList(), any())).thenAnswer(invocationOnMock -> {
-            List applicationIds = invocationOnMock.getArgumentAt(1, List.class);
+            List<Integer> applicationIds = invocationOnMock.getArgument(1);
             if (!applicationIds.isEmpty()) {
               return new Application[]{application.get()};
             } else {
@@ -95,7 +92,7 @@ public class InvoicingServiceSpec {
           });
           when(restTemplate.getForObject(eq(FIND_CUSTOMER_URL), any(), anyInt())).thenReturn(new Customer());
 
-          when(restTemplate.exchange(eq(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL), any(), isNull(HttpEntity.class), any(ParameterizedTypeReference.class)))
+          when(restTemplate.exchange(eq(INVOICE_NOTIFICATION_RECEIVER_EMAILS_URL), any(), isNull(), any(ParameterizedTypeReference.class)))
             .thenReturn(responseWithValue(Collections.singletonList(new Configuration())));
 
           invoicingService = spy(new InvoicingService(restTemplate, applicationProperties, sftpService, alluMailService, applicationStatusUpdaterService));
@@ -106,7 +103,7 @@ public class InvoicingServiceSpec {
           Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
           beforeEach(() -> {
-            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray());
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray(new Invoice[0]));
             doReturn(true).when(invoicingService).sendToSap(any());
           });
 
@@ -136,7 +133,7 @@ public class InvoicingServiceSpec {
           Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
           beforeEach(() -> {
-            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray());
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray(new Invoice[0]));
             doReturn(true).when(invoicingService).sendToSap(any());
           });
 
@@ -167,7 +164,7 @@ public class InvoicingServiceSpec {
           Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
           beforeEach(() -> {
-            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray());
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray(new Invoice[0]));
             doReturn(true).when(invoicingService).sendToSap(any());
           });
 
@@ -202,13 +199,13 @@ public class InvoicingServiceSpec {
   }
 
   private void assertInvoicesMarkedSent(List<Integer> invoiceIds) {
-    ArgumentCaptor<List> invoiceIdCaptor = ArgumentCaptor.forClass(List.class);
+    ArgumentCaptor<List<Integer>> invoiceIdCaptor = ArgumentCaptor.forClass(List.class);
     verify(restTemplate).postForObject(eq(MARK_INVOICES_SENT_URL), invoiceIdCaptor.capture(), any());
     assertContainSameElements(invoiceIdCaptor.getValue(), invoiceIds);
   }
 
   private void assertNotificationSentFor(List<String> applicationApplicationIds, Integer expectedNumOfInvoices) {
-    ArgumentCaptor<List> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
+    ArgumentCaptor<List<String>> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
     ArgumentCaptor<Integer> numOfInvoicesCaptor = ArgumentCaptor.forClass(Integer.class);
     verify(invoicingService).sendNotificationEmail(applicationIdCaptor.capture(), numOfInvoicesCaptor.capture());
     Assert.assertEquals(expectedNumOfInvoices, numOfInvoicesCaptor.getValue());
@@ -216,7 +213,7 @@ public class InvoicingServiceSpec {
   }
 
   private void assertArchivalRequested(List<Integer> applicationIds) {
-    ArgumentCaptor<List> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
+    ArgumentCaptor<List<Integer>> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
     verify(applicationStatusUpdaterService).archiveApplications(applicationIdCaptor.capture());
     assertContainSameElements(applicationIdCaptor.getValue(), applicationIds);
   }
@@ -234,7 +231,7 @@ public class InvoicingServiceSpec {
     }
   }
 
-  private void assertContainSameElements(List result, List expectation) {
+  private <T extends Comparable<T>> void assertContainSameElements(List<T> result, List<T> expectation) {
     Collections.sort(result);
     Collections.sort(expectation);
     if (!expectation.equals(result)) {
@@ -249,6 +246,7 @@ public class InvoicingServiceSpec {
     application.setId(idCounter++);
     application.setApplicationId("ID" + application.getId());
     application.setType(ApplicationType.CABLE_REPORT);
+    application.setInvoiceRecipientId(1);
     return application;
   }
 

@@ -64,7 +64,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   private static final Logger logger = LoggerFactory.getLogger(GenericSearchService.class);
   private static final int DEFAULT_PAGE = 0;
   private static final int DEFAULT_PAGESIZE = 100;
-  protected static final Pageable DEFAULT_PAGEREQUEST = new PageRequest(DEFAULT_PAGE, DEFAULT_PAGESIZE);
+  protected static final Pageable DEFAULT_PAGEREQUEST = PageRequest.of(DEFAULT_PAGE, DEFAULT_PAGESIZE);
 
   /* Sort field suffix for alphabetic sort */
   private static final String ALPHASORT = ".alphasort";
@@ -371,7 +371,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   protected SearchRequestBuilder prepareSearch(Pageable pageRequest, QueryBuilder qb) {
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
-        .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
+        .setFrom((int)pageRequest.getOffset()).setSize(pageRequest.getPageSize())
         .setTypes(indexTypeName).setQuery(qb);
     return addFieldFilter(srBuilder);
   }

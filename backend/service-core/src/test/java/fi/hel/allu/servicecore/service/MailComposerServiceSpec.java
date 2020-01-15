@@ -1,30 +1,27 @@
 package fi.hel.allu.servicecore.service;
 
-import com.greghaskins.spectrum.Spectrum;
-
-import fi.hel.allu.common.domain.MailSenderLog;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.mail.model.MailMessage.Attachment;
-import fi.hel.allu.mail.model.MailMessage.InlineResource;
-import fi.hel.allu.servicecore.domain.*;
-
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.domain.MailSenderLog;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.mail.model.MailMessage.Attachment;
+import fi.hel.allu.servicecore.domain.*;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -48,14 +45,14 @@ public class MailComposerServiceSpec {
     describe("Mail composer service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
-        Mockito.when(mailBuilder.withAttachments(Mockito.anyListOf(Attachment.class))).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withAttachments(Mockito.anyList())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.withBody(Mockito.anyString())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.withAttachment(Mockito.any(Attachment.class))).thenReturn(mailBuilder);
-        Mockito.when(mailBuilder.withHtmlBody(Mockito.anyString())).thenReturn(mailBuilder);
-        Mockito.when(mailBuilder.withInlineResources(Mockito.anyListOf(InlineResource.class))).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withHtmlBody(Mockito.nullable(String.class))).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withInlineResources(Mockito.anyList())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.withSubject(Mockito.anyString())).thenReturn(mailBuilder);
-        Mockito.when(mailBuilder.withModel(Mockito.anyMapOf(String.class, Object.class))).thenReturn(mailBuilder);
-        Mockito.when(alluMailService.newMailTo(Mockito.anyListOf(String.class))).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withModel(Mockito.anyMap())).thenReturn(mailBuilder);
+        Mockito.when(alluMailService.newMailTo(Mockito.anyList())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.send()).thenReturn(new MailSenderLog());
         mailComposerService = new MailComposerService(alluMailService, mailAttachmentService, logService, applicationService);
       });
@@ -91,9 +88,9 @@ public class MailComposerServiceSpec {
           decisionDetailsJson.setMessageBody("MessageBody");
           mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.DECISION);
 
-          Mockito.verify(alluMailService).newMailTo(Mockito.anyListOf(String.class));
+          Mockito.verify(alluMailService).newMailTo(Mockito.anyList());
           Mockito.verify(mailBuilder).withSubject(Mockito.anyString());
-          Mockito.verify(mailBuilder).withAttachments(Mockito.anyListOf(Attachment.class));
+          Mockito.verify(mailBuilder).withAttachments(Mockito.anyList());
           Mockito.verify(mailBuilder).withBody(Mockito.anyString());
 
           ArgumentCaptor<List> attachmentsCaptor = ArgumentCaptor.forClass(List.class);

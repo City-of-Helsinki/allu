@@ -1,5 +1,14 @@
 package fi.hel.allu.servicecore.service;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -7,15 +16,8 @@ import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,7 +60,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, times(1))
-      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   @Test
@@ -69,7 +71,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, times(1))
-      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   @Test
@@ -90,7 +92,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, times(1))
-        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   // Only the end time is expired
@@ -103,7 +105,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, never())
-      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
 
@@ -115,7 +117,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, times(1))
-      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   // Neither time is expired
@@ -128,7 +130,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, never())
-      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
 
@@ -140,7 +142,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, never())
-      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   @Test
@@ -151,7 +153,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.updateStatusForFinishedApplications();
     verify(applicationServiceComposer, times(1))
-        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   @Test
@@ -176,7 +178,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.updateStatusForTerminatedApplications();
     verify(applicationServiceComposer, times(1))
-        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
   @Test

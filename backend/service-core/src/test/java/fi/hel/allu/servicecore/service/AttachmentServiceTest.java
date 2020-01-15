@@ -7,8 +7,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -29,8 +30,8 @@ import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 /**
@@ -38,10 +39,10 @@ import static org.mockito.Mockito.times;
  *
  * Simply verify that all API calls result in proper calls to RestTemplate.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class AttachmentServiceTest {
 
   protected AttachmentService attachmentService;
-  private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
   private ApplicationHistoryService applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
@@ -52,10 +53,9 @@ public class AttachmentServiceTest {
 
   @Before
   public void setUp() {
-    applicationProperties = Mockito.mock(ApplicationProperties.class);
     restTemplate = Mockito.mock(RestTemplate.class);
     userService = Mockito.mock(UserService.class);
-    attachmentService = new AttachmentService(applicationProperties, restTemplate, userService,
+    attachmentService = new AttachmentService(TestProperties.getProperties(), restTemplate, userService,
         applicationHistoryService, eventDispatcher);
     UserJson userJson = new UserJson();
     userJson.setId(USER_ID);
@@ -158,9 +158,9 @@ public class AttachmentServiceTest {
     ResponseEntity<AttachmentInfo[]> responseEntity = Mockito.mock(ResponseEntity.class);
     Mockito.when(responseEntity.getBody()).thenReturn(new AttachmentInfo[] {attachmentInfo});
     Mockito.when(restTemplate.getForEntity(
-      Matchers.eq(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION)),
-      Matchers.eq(AttachmentInfo[].class),
-      Matchers.anyInt())).thenReturn(responseEntity);
+      Mockito.eq(TestProperties.getProperties().getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION)),
+      Mockito.eq(AttachmentInfo[].class),
+      Mockito.anyInt())).thenReturn(responseEntity);
 
     List<AttachmentInfoJson> attachmentInfoJsons = attachmentService.findAttachmentsForApplication(APPLICATION_ID);
     assertEquals(1, attachmentInfoJsons.size());

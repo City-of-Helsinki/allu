@@ -25,8 +25,8 @@ import java.util.List;;
 public class PaymentClassServiceTest {
   private static final String PAYMENT_CLASSES = "<payment_classes>";
   private static final String PAYMENT_CLASS = "<payment_class>";
-  private static final String RESPONSE = 
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
+  private static final String RESPONSE =
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
       "<wfs:FeatureCollection xmlns=\"http://www.opengis.net/wfs\" " +
           "xmlns:wfs=\"http://www.opengis.net/wfs\" " +
           "xmlns:gml=\"http://www.opengis.net/gml\" " +
@@ -39,7 +39,7 @@ public class PaymentClassServiceTest {
         "<gml:boundedBy><gml:null>unknown</gml:null></gml:boundedBy>" +
         PAYMENT_CLASSES +
       "</wfs:FeatureCollection>";
-  private static final String MEMBER = "<gml:featureMember><helsinki:Katutoiden_maksuluokat fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" + 
+  private static final String MEMBER = "<gml:featureMember><helsinki:Katutoiden_maksuluokat fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
       PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat></gml:featureMember>";
 
   private static final Geometry GEOMETRY = geometrycollection(3879, polygon(ring(
@@ -72,6 +72,7 @@ public class PaymentClassServiceTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
+    Mockito.when(applicationProperties.getPaymentClassUrl()).thenReturn("paymentclass");
     paymentClassService = new PaymentClassServiceImpl(applicationProperties, restTemplate);
   }
 

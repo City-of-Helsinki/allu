@@ -1,10 +1,13 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.servicecore.domain.ProjectJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
-import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -13,13 +16,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import java.util.Collections;
-import java.util.Set;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
 
 public class ProjectServiceTest extends MockServices {
   private static Validator validator;
@@ -44,12 +45,11 @@ public class ProjectServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-
     ProjectMapper projectMapper = new ProjectMapper(customerService, contactService, userService);
-    projectService = new ProjectService(props, restTemplate, projectMapper, userService, changeHistoryMapper);
+    projectService = new ProjectService(TestProperties.getProperties(), restTemplate, projectMapper, userService, changeHistoryMapper);
 
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Project[].class)))
-        .thenAnswer(invocation -> new Project[] {createMockProjectModel()});
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.anyList(), Mockito.eq(Project[].class)))
+        .thenReturn(new Project[] {createMockProjectModel()});
     Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer(invocation -> createCustomerJson(103));
     UserJson user = new UserJson();
     user.setId(1);

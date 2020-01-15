@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -27,7 +27,7 @@ import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,7 +61,7 @@ public class SupervisionTaskServiceTest {
     when(applicationProperties.getSupervisionTaskRejectUrl()).thenReturn("http://task/id/reject");
     when(applicationProperties.getSupervisionTaskCreateUrl()).thenReturn("http://task");
     when(applicationProperties.getSupervisionTaskUpdateUrl()).thenReturn("http://task/id/update");
-    when(userService.getCurrentUser()).thenReturn(new UserJson(12));
+    when(userService.getCurrentUser()).thenReturn(new UserJson(USER_ID));
     when(userService.findUserById(USER_ID)).thenReturn(new UserJson(USER_ID));
   }
 
@@ -148,9 +148,10 @@ public class SupervisionTaskServiceTest {
 
   private SupervisionTaskJson createTaskJson(SupervisionTaskType type) {
     SupervisionTaskJson taskJson = new SupervisionTaskJson();
+    taskJson.setId(99);
     taskJson.setApplicationId(APPLICATION_ID);
     taskJson.setType(type);
-    taskJson.setCreator(new UserJson());
+    taskJson.setCreator(new UserJson(USER_ID));
     return taskJson;
   }
 

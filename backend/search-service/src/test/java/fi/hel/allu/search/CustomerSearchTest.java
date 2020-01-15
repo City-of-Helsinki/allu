@@ -98,7 +98,7 @@ public class CustomerSearchTest {
     QueryParameters params = SearchTestUtil.createQueryParameters("name", "baabeli");
 
     List<Integer> appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "name")).getContent();
+        PageRequest.of(0, 100, Direction.ASC, "name")).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
   }
@@ -121,7 +121,7 @@ public class CustomerSearchTest {
     QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "94");
 
     List<Integer> appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+        PageRequest.of(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
 
@@ -129,7 +129,7 @@ public class CustomerSearchTest {
     params = SearchTestUtil.createQueryParameters("registryKey", "9422");
 
     appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+        PageRequest.of(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(3), appList);
 
@@ -137,7 +137,7 @@ public class CustomerSearchTest {
     params = SearchTestUtil.createQueryParameters("registryKey", "9444-9231");
 
     appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+        PageRequest.of(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(1), appList);
   }
@@ -159,13 +159,13 @@ public class CustomerSearchTest {
     QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "123456");
 
     List<Integer> appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+        PageRequest.of(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(3, appList.size());
 
     params = SearchTestUtil.createQueryParameters("registryKey", "123456-1");
 
     appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+        PageRequest.of(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(2), appList);
   }

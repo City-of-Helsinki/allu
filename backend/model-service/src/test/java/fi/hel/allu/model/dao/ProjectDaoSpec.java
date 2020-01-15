@@ -45,7 +45,7 @@ public class ProjectDaoSpec extends SpeccyTestBase {
       });
 
       it("Can fetch 5 projects in ascendind ID order", () -> {
-        Page<Project> page = projectDao.findAll(new PageRequest(1, 5));
+        Page<Project> page = projectDao.findAll(PageRequest.of(1, 5));
         assertEquals(5, page.getSize());
         List<Project> elements = page.getContent();
         assertEquals(5, elements.size());

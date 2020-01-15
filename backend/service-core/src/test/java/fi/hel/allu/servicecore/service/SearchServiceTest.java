@@ -4,16 +4,11 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,16 +28,18 @@ import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -51,14 +48,6 @@ public class SearchServiceTest {
   private AsyncRestTemplate restTemplate;
   @Autowired
   private ApplicationProperties applicationProperties;
-  @Autowired
-  private ApplicationMapper applicationMapper;
-  @Autowired
-  private CustomerMapper customerMapper;
-  @Autowired
-  private ProjectMapper projectMapper;
-  @Autowired
-  private LocationService locationService;
   @Autowired
   private SearchService searchService;
 
@@ -78,16 +67,17 @@ public class SearchServiceTest {
     Mockito.when(applicationProperties.getApplicationSearchUrl()).thenReturn(APPLICATION_SEARCH);
     ApplicationQueryParameters queryParameters = new ApplicationQueryParameters();
     queryParameters.setQueryParameters(Arrays.asList(new QueryParameter()));
-    RestResponsePage<Integer> response = new RestResponsePage<>(Arrays.asList(1, 2, 3), 0, 3, 50);
+    RestResponsePage<ApplicationES> response = new RestResponsePage<>(
+        Arrays.asList(new ApplicationES(), new ApplicationES(), new ApplicationES()), 0, 3, 50);
 
     Mockito.when(syncRestTemplate.exchange(
       any(URI.class), any(),
       any(),
-      Mockito.<ParameterizedTypeReference<RestResponsePage<Integer>>> any()))
+      Mockito.<ParameterizedTypeReference<RestResponsePage<ApplicationES>>> any()))
       .thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
 
     Page<ApplicationES> applications= searchService.searchApplication(queryParameters,
-      new PageRequest(0, 100),
+      PageRequest.of(0, 100),
       false);
     assertEquals(3, applications.getNumberOfElements());
   }
@@ -106,7 +96,7 @@ public class SearchServiceTest {
     List<ApplicationJson> applications = Arrays.asList(new ApplicationJson());
     Mockito.when(applicationProperties.getApplicationsSearchUpdateUrl()).thenReturn(BASE_URL + APPLICATION_SEARCH);
     searchService.updateApplications(applications, true);
-    Mockito.verify(syncRestTemplate, times(1)).put(anyString(), any(HttpEntity.class));
+    Mockito.verify(syncRestTemplate, times(1)).put(anyString(), anyList());
   }
 
   @Configuration
@@ -124,7 +114,9 @@ public class SearchServiceTest {
 
     @Bean
     public ApplicationMapper applicationMapper() {
-      return Mockito.mock(ApplicationMapper.class);
+      ApplicationMapper mapper = Mockito.mock(ApplicationMapper.class);
+      when(mapper.createApplicationESModel(any(ApplicationJson.class))).thenReturn(new ApplicationES());
+      return mapper;
     }
 
     @Bean

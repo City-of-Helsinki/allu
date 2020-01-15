@@ -178,8 +178,8 @@ public class SearchSyncServiceSpec {
   // HttpStatus.NOT_FOUND, otherwise generate a page and return it.
   private <T> ResponseEntity<Page<T>> generatePage(InvocationOnMock invocation, int numPages, Class<T> clazz)
       throws InstantiationException, IllegalAccessException, Exception {
-    int pageNum = invocation.getArgumentAt(4, Integer.class);
-    int pageSize = invocation.getArgumentAt(5, Integer.class);
+    int pageNum = invocation.getArgument(4);
+    int pageSize = invocation.getArgument(5);
     if (pageNum >= numPages) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -189,7 +189,7 @@ public class SearchSyncServiceSpec {
       new Statement(instance, "setId", new Integer[] {i}).execute();
       elems.add(instance);
     }
-    PageImpl<T> page = new PageImpl<>(elems, new PageRequest(pageNum, pageSize), pageSize * numPages);
+    PageImpl<T> page = new PageImpl<>(elems, PageRequest.of(pageNum, pageSize), pageSize * numPages);
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 }

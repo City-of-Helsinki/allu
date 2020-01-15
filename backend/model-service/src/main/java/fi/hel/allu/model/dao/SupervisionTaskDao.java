@@ -172,11 +172,6 @@ public class SupervisionTaskDao {
   }
 
   @Transactional
-  public List<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria) {
-    return search(searchCriteria, null).getContent();
-  }
-
-  @Transactional
   public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     BooleanExpression conditions = conditions(searchCriteria)
         .reduce((left, right) -> left.and(right))

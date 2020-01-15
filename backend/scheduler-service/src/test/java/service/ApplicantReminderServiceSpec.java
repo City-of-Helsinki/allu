@@ -26,7 +26,6 @@ import fi.hel.allu.scheduler.service.ApplicantReminderService;
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(Spectrum.class)
@@ -61,12 +60,12 @@ public class ApplicantReminderServiceSpec {
 
         context("with no applications expiring", () -> {
           beforeEach(() -> {
-            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
+            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), any(), eq(Application[].class)))
                     .thenReturn(new Application[0]);
             applicantReminderService.sendReminders();
           });
           it("should not send any email", () -> {
-            verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
+            verify(alluMailService, never()).sendEmail(anyList(), anyString(), anyString(), anyString(), anyList());
           });
           it("should not mark any reminders as sent", () -> {
             verify(restTemplate, never()).postForObject(eq(MARK_REMINDER_SENT_URL), any(), eq(Void.class));
@@ -79,7 +78,7 @@ public class ApplicantReminderServiceSpec {
           final Application[] expiring = new Application[] { dummyApplication(APP_ID) };
 
           beforeEach(() -> {
-            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
+            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), any(), eq(Application[].class)))
                     .thenReturn(expiring);
             applicantReminderService.sendReminders();
           });
@@ -107,13 +106,13 @@ public class ApplicantReminderServiceSpec {
             Application application = dummyExcavation(APP_ID, extension);
             final Application[] expiring = new Application[] { application };
 
-            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
+            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), any(), eq(Application[].class)))
                 .thenReturn(expiring);
             applicantReminderService.sendReminders();
           });
 
           it("should skip application with customer work finished date", () -> {
-            verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
+            verify(alluMailService, never()).sendEmail(anyList(), anyString(), anyString(), anyString(), anyList());
           });
         });
       });

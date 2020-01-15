@@ -23,8 +23,6 @@ import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-;
-
 /**
  * Common routines for testing Web components (i.e., controllers)
  *

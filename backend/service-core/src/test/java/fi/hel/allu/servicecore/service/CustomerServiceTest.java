@@ -1,11 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.CodeSetType;
-import fi.hel.allu.model.domain.CodeSet;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,12 +15,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import java.util.Set;
+import fi.hel.allu.common.domain.types.CodeSetType;
+import fi.hel.allu.model.domain.CodeSet;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 import static org.mockito.Mockito.when;
 
@@ -48,7 +48,7 @@ public class CustomerServiceTest extends MockServices {
     initSaveMocks();
     initSearchMocks();
     customerService = new CustomerService(
-        props, restTemplate, new CustomerMapper(userService, codeSetService), Mockito.mock(SearchService.class),
+        TestProperties.getProperties(), restTemplate, new CustomerMapper(userService, codeSetService), Mockito.mock(SearchService.class),
         Mockito.mock(ContactService.class), userService, Mockito.mock(PersonAuditLogService.class), changeHistoryMapper);
     when(userService.getCurrentUser()).thenReturn(new UserJson());
     when(codeSetService.findByTypeAndCode(Mockito.eq(CodeSetType.Country), Mockito.anyString()))

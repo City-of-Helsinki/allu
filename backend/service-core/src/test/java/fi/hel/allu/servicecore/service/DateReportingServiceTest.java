@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -81,14 +81,14 @@ public class DateReportingServiceTest {
     final ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setLocations(locations);
     applicationJson.setId(APP_ID);
+    applicationJson.setStatus(StatusType.DECISION);
     Application application = new Application();
     application.setId(APP_ID);
     application.setExtension(new AreaRental());
     application.setStatus(StatusType.DECISION);
 
-    Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.anyObject())).thenReturn(applicationJson);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.any())).thenReturn(applicationJson);
     Mockito.when(applicationService.setCustomerValidityDates(eq(APP_ID), any(ApplicationDateReport.class))).thenReturn(application);
-    Mockito.when(applicationService.setTargetState(APP_ID, StatusType.FINISHED)).thenReturn(application);
     Mockito.when(userService.getCurrentUser()).thenReturn(new UserJson(15));
   }
 

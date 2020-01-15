@@ -47,7 +47,6 @@
             <artifactId>mail</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -71,11 +70,11 @@
         <dependency>
           <groupId>org.springframework.security</groupId>
           <artifactId>spring-security-jwt</artifactId>
+          <version>1.0.10.RELEASE</version>
         </dependency>
         <dependency>
           <groupId>org.springframework.retry</groupId>
           <artifactId>spring-retry</artifactId>
-          <version>1.2.2.RELEASE</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>

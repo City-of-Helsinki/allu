@@ -204,7 +204,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Mockito
         .when(mockRestTemplate.postForObject(Mockito.eq(ADD_APPLICATION_HISTORY_URL), Mockito.any(),
             Mockito.eq(Void.class), Mockito.eq(applicationId)))
-        .then(invocation -> captureChange(invocation.getArgumentAt(1, ChangeHistoryItem.class)));
+        .then(invocation -> captureChange(invocation.getArgument(1)));
     capturedChange = null;
   }
 }

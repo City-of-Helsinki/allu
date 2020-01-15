@@ -8,9 +8,6 @@ import java.util.Collections;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.geolatte.geom.Geometry;
-import org.geolatte.geom.builder.DSL.Polygon2DToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,10 +26,8 @@ import static org.geolatte.geom.builder.DSL.*;
  */
 @Component
 public class TestCommon {
-  private static final Logger logger = LoggerFactory.getLogger(TestCommon.class);
 
   private static int projectNbr = 0;
-  private static final Polygon2DToken Sq_0_0 = polygon(ring(c(0, 0), c(0, 2), c(2, 2), c(2, 0), c(0, 0)));
 
   @Autowired
   private SqlRunner sqlRunner;

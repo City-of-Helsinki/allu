@@ -47,7 +47,7 @@ public class SupervisionTaskServiceSpec {
 
         beforeEach(() -> {
           when(supervisionTaskDao.insert(any(SupervisionTask.class)))
-              .then(i -> i.getArgumentAt(0, SupervisionTask.class));
+              .then(i -> i.getArgument(0));
         });
 
         it("should insert given task", () -> {
@@ -64,7 +64,7 @@ public class SupervisionTaskServiceSpec {
       describe("Approve", () -> {
         beforeEach(() -> {
           when(supervisionTaskDao.update(any(SupervisionTask.class)))
-              .then(i -> i.getArgumentAt(0, SupervisionTask.class));
+              .then(i -> i.getArgument(0));
         });
 
         it("should update approved task", () -> {
@@ -89,7 +89,7 @@ public class SupervisionTaskServiceSpec {
       describe("Reject", () -> {
         beforeEach(() -> {
           when(supervisionTaskDao.update(any(SupervisionTask.class)))
-              .then(i -> i.getArgumentAt(0, SupervisionTask.class));
+              .then(i -> i.getArgument(0));
         });
 
         it("should update rejected task", () -> {

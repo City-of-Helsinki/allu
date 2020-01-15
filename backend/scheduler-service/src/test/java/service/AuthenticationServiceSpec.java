@@ -41,6 +41,8 @@ public class AuthenticationServiceSpec {
         authenticationService = new AuthenticationService(restTemplate, applicationProperties);
         Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST),
             Mockito.any(HttpEntity.class), Mockito.eq(Properties.class))).thenReturn(mockResponse);
+        Mockito.when(applicationProperties.getServiceAuth()).thenReturn("service_auth");
+        Mockito.when(applicationProperties.getTokenRequestUrl()).thenReturn("/token");
       });
 
       it("should send POST request and parse token from response", () -> {

@@ -34,6 +34,7 @@ public class ChargeBasisServiceTest {
     describe("ChargeBasis service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
+        Mockito.when(applicationProperties.getChargeBasisUrl()).thenReturn("chargebasis");
         chargeBasisService = new ChargeBasisService(applicationProperties, restTemplate, applicationService);
       });
 
