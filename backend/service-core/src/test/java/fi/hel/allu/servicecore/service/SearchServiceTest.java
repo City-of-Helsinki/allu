@@ -68,7 +68,7 @@ public class SearchServiceTest {
     ApplicationQueryParameters queryParameters = new ApplicationQueryParameters();
     queryParameters.setQueryParameters(Arrays.asList(new QueryParameter()));
     RestResponsePage<ApplicationES> response = new RestResponsePage<>(
-        Arrays.asList(new ApplicationES(), new ApplicationES(), new ApplicationES()), 0, 3, 50);
+        Arrays.asList(new ApplicationES(), new ApplicationES(), new ApplicationES()), PageRequest.of(0, 3), 50);
 
     Mockito.when(syncRestTemplate.exchange(
       any(URI.class), any(),
