@@ -35,8 +35,6 @@ import fi.hel.allu.model.coordinates.CoordinateTransformation;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
@@ -55,7 +53,6 @@ public class LocationDao {
   private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(location.paymentTariff);
   private static final int TUPLE_LOCATION = 0;
-  private static final int TUPLE_POSTAL_ADDRESS = 1;
   private static final int TUPLE_CUSTOMER_LOCATION_VALIDITY = 2;
   private static final double LINE_BUFFER = 0.5;
 

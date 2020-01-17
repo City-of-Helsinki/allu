@@ -46,8 +46,8 @@ public class UserDaoTest {
   public void testFetchList() {
     User user1 = createDummyUser("username1");
     User user2 = createDummyUser("username2");
-    User insertedUser1 = userDao.insert(user1);
-    User insertedUser2 = userDao.insert(user2);
+    userDao.insert(user1);
+    userDao.insert(user2);
 
     List<User> users = userDao.findAll();
 

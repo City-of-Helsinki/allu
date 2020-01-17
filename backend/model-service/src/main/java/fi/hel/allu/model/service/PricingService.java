@@ -125,7 +125,7 @@ public class PricingService {
     // check that application is not new
     if (application.getId() != null && event != null) {
       EventPricing pricing = new EventPricing();
-      int priceInCents = calculateEventPrice(application, event, pricing);
+      calculateEventPrice(application, event, pricing);
       // pass the charge basis entries to caller
       return pricing.getChargeBasisEntries();
     } else {

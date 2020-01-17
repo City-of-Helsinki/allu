@@ -1,10 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.CodeSetType;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.dao.CodeSetDao;
-import fi.hel.allu.model.domain.CodeSet;
-import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +9,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
+
+import fi.hel.allu.common.domain.types.CodeSetType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.CodeSet;
+import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,8 +28,6 @@ public class CodeSetControllerTest {
 
   @Autowired
   private WebTestCommon wtc;
-  @Autowired
-  private CodeSetDao codeSetDao;
 
   @Before
   public void setup() throws Exception {

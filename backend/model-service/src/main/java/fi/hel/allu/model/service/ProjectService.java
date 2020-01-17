@@ -1,27 +1,8 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.common.util.ObjectComparer;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.ContactDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.FieldChange;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.model.domain.changehistory.ApplicationChange;
-import fi.hel.allu.model.domain.changehistory.ContactChange;
-import fi.hel.allu.model.domain.changehistory.CustomerChange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,9 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.common.util.ObjectComparer;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.changehistory.ApplicationChange;
+import fi.hel.allu.model.domain.changehistory.ContactChange;
+import fi.hel.allu.model.domain.changehistory.CustomerChange;
 
 /**
  * Business logic for project (hanke) related functionality.
@@ -39,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
   private static final List<ChangeType> infoChangeTypes = Arrays.asList(ChangeType.STATUS_CHANGED);
 
   private final ProjectDao projectDao;

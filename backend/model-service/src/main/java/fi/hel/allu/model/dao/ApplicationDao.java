@@ -624,14 +624,13 @@ public class ApplicationDao {
         .executeWithKey(applicationCustomer.id);
 
     SQLInsertClause inserts = queryFactory.insert(applicationCustomerContact);
-    List<Integer> contactIds = new ArrayList<>();
     if (!cwc.getContacts().isEmpty()) {
       cwc.getContacts().forEach(
           c -> inserts.populate(bean(applicationCustomerContact, applicationCustomerContact.all()))
               .set(applicationCustomerContact.contactId, c.getId())
               .set(applicationCustomerContact.applicationCustomerId, applicationCustomerId)
               .addBatch());
-      contactIds = inserts.executeWithKeys(contact.id);
+      inserts.executeWithKeys(contact.id);
     }
   }
 

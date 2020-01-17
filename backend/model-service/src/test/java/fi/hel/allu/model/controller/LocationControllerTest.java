@@ -126,7 +126,6 @@ public class LocationControllerTest {
     Set<String> expectedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
     wtc.perform(put(String.format("/locations/application/%d?userId=%d", application.getId(), testUser.getId())), locations)
         .andExpect(status().isOk());
-    List<Location> updatedLocations = getLocationsByApplicationId(application.getId());
     Set<String> updatedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
     Assert.assertTrue(updatedPostalCodes.containsAll(expectedPostalCodes));
   }

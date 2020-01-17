@@ -102,7 +102,7 @@ public class PersonAuditLogDaoSpec extends SpeccyTestBase {
           boolean failed = false;
           try {
             PersonAuditLogLog logEntry = new PersonAuditLogLog(insertedCustomer.getId(), insertedContact.getId(), insertedUser.getId(), "test", ZonedDateTime.now());
-            PersonAuditLogLog insertedLogEntry = personAuditLogDao.insert(logEntry);
+            personAuditLogDao.insert(logEntry);
           } catch (RuntimeException e) {
             failed = true;
           }

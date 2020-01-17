@@ -57,8 +57,6 @@ public class ApplicationReplacementServiceTest {
   private InvoicingPeriodService invoicingPeriodService;
   @Autowired
   private DistributionEntryDao distributionEntryDao;
-  @Autowired
-  private InformationRequestDao informationRequestDao;
 
   @Autowired
   private TestCommon testCommon;

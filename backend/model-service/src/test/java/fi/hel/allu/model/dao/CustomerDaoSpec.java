@@ -95,7 +95,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         });
         it("should find non-person customer by business id", () -> {
           testCustomer.setType(CustomerType.COMPANY);
-          Customer businessCustomer = customerDao.insert(testCustomer);
+          customerDao.insert(testCustomer);
           List<Customer> customers = customerDao.findByBusinessId(testCustomer.getRegistryKey());
           assertEquals(1, customers.size());
           Customer customer = customers.get(0);

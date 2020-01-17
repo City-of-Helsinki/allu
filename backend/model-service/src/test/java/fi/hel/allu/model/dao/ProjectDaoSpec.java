@@ -1,12 +1,8 @@
 package fi.hel.allu.model.dao;
 
-import com.greghaskins.spectrum.Spectrum;
+import java.util.List;
 
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,16 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.greghaskins.spectrum.Spectrum;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
-import org.apache.commons.lang3.RandomStringUtils;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -37,7 +31,6 @@ public class ProjectDaoSpec extends SpeccyTestBase {
   {
     describe("ProjectDao.findAll", () -> {
       beforeEach(() -> {
-        List<Contact> contacts = new ArrayList<>();
         for (int i = 0; i < 15; ++i) {
           Project p = projectDao.insert(dummyProject(i));
           assertNotNull(p.getId());

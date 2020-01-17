@@ -63,7 +63,7 @@ public class UserControllerTest {
 
   @Test
   public void testLoadAllUsers() throws Exception {
-    User user = testCommon.insertUser("testuser");
+    testCommon.insertUser("testuser");
     ResultActions resultActions = wtc.perform(get("/users")).andExpect(status().isOk());
     List<User> parsedUsers = wtc.parseObjectFromResult(resultActions, List.class);
     Assert.assertEquals(1, parsedUsers.size());

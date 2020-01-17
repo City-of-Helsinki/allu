@@ -36,14 +36,13 @@ public class ContactDaoSpec extends SpeccyTestBase {
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
   private Contact insertedContact;
   private int customerId;
-  private int applicationId;
 
   {
     // manual transaction handling done in SpeccyTestBase
     beforeEach(() -> {
       testCommon.deleteAllData();
       customerId = testCommon.insertPerson().getId();
-      applicationId = testCommon.insertApplication("test app", "käsittelijä");
+      testCommon.insertApplication("test app", "käsittelijä");
       testContact.setCustomerId(customerId);
       testContact.setEmail("test@email.fi");
       testContact.setName("test name");

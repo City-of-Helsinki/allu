@@ -1,21 +1,22 @@
 package fi.hel.allu.model.dao;
 
-import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.DistributionEntry;
-import fi.hel.allu.model.domain.PostalAddress;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 
@@ -28,7 +29,6 @@ public class DistributionEntryDaoSpec extends SpeccyTestBase {
   @Autowired
   PostalAddressDao postalAddressDao;
 
-  private ZonedDateTime testTime = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
   private DistributionEntry testDistributionEntry = new DistributionEntry();
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
   private DistributionEntry insertedDistributionEntry;

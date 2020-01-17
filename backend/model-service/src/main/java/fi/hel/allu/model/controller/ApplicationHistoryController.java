@@ -4,33 +4,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import fi.hel.allu.common.domain.types.StatusType;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
 
 @RestController
 public class ApplicationHistoryController {
 
   private final HistoryDao historyDao;
-  private final ApplicationDao applicationDao;
 
   @Autowired
-  public ApplicationHistoryController(HistoryDao historyDao, ApplicationDao applicationDao) {
+  public ApplicationHistoryController(HistoryDao historyDao) {
     this.historyDao = historyDao;
-    this.applicationDao = applicationDao;
   }
-
 
   /**
    * Add an application history entry

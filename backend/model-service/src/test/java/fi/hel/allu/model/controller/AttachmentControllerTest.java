@@ -149,7 +149,7 @@ public class AttachmentControllerTest {
   public void testDeleteDefaultAttachmentFromApplication() throws Exception {
     DefaultAttachmentInfo info = newDefaultInfo();
     DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
-    AttachmentInfo test = insertAttachmentInfo(application.getId(), inserted, new byte[1]);
+    insertAttachmentInfo(application.getId(), inserted, new byte[1]);
     // make sure application has the attachment
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d/attachments", application.getId())));
     resultActions.andExpect(status().isOk());
