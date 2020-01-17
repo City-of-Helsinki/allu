@@ -94,7 +94,7 @@ public class DateReportingServiceTest {
 
   @Test
   public void workFinishedDateCantBeBeforeAreaStartDate() {
-    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.anyObject())).thenReturn(Collections.emptyList());
+    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(Collections.emptyList());
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("workfinisheddate.before.area.start");
 
@@ -108,7 +108,7 @@ public class DateReportingServiceTest {
     final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(10), ZonedDateTime.now().plusDays(10));
     period.setClosed(true);
     invoicingPeriods.add(period);
-    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.anyObject())).thenReturn(invoicingPeriods);
+    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(invoicingPeriods);
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("workfinisheddate.invoiced.invoicing.period");
 

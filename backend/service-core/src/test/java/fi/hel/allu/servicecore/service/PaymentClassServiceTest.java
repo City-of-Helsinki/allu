@@ -84,7 +84,7 @@ public class PaymentClassServiceTest {
     final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
     future.set(response);
     Mockito.when(restTemplate.exchange(
-        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.anyObject(), Mockito.eq(String.class))).thenReturn(future);
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY));
     assertEquals("2", paymentClass);
@@ -102,7 +102,7 @@ public class PaymentClassServiceTest {
     SettableListenableFuture<ResponseEntity<String>> future2 = new SettableListenableFuture<>();
     future2.set(response2);
     Mockito.when(restTemplate.exchange(
-        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.anyObject(), Mockito.eq(String.class)))
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class)))
             .thenReturn(future1)
             .thenReturn(future2);
 
@@ -118,7 +118,7 @@ public class PaymentClassServiceTest {
     final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
     future.set(response);
     Mockito.when(restTemplate.exchange(
-        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.anyObject(), Mockito.eq(String.class))).thenReturn(future);
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY));
     assertEquals("undefined", paymentClass);

@@ -73,7 +73,7 @@ public class AttachmentControllerTest {
       data = new byte[100];
     }
     ResultActions resultActions =
-        wtc.perform(fileUpload("/attachments/applications/" + applicationId).file(infoPart).file("data", data));
+        wtc.perform(multipart("/attachments/applications/" + applicationId).file(infoPart).file("data", data));
     resultActions.andExpect(status().isCreated());
     return wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
   }
@@ -285,7 +285,7 @@ public class AttachmentControllerTest {
     if (data == null) {
       data = new byte[100];
     }
-    ResultActions resultActions = wtc.perform(fileUpload("/attachments/default").file(infoPart).file("data", data));
+    ResultActions resultActions = wtc.perform(multipart("/attachments/default").file(infoPart).file("data", data));
     resultActions.andExpect(status().isCreated());
     return wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo.class);
   }

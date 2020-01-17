@@ -82,7 +82,7 @@ public class PaymentZoneServiceTest {
   private void setResponse(String response) {
     SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
     future.set(ResponseEntity.ok(response));
-    Mockito.when(restTemplate.exchange(Mockito.eq(URL), Mockito.eq(HttpMethod.POST), Mockito.anyObject(),
+    Mockito.when(restTemplate.exchange(Mockito.eq(URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
         Mockito.eq(String.class))).thenReturn(future);
   }
 

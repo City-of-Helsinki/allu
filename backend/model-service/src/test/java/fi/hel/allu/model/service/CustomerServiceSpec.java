@@ -83,7 +83,7 @@ public class CustomerServiceSpec extends SpeccyTestBase {
         final List<Customer> CUSTOMERS = Collections.singletonList(dummyCustomer(911));
 
         beforeEach(() -> {
-          Mockito.when(customerDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(CUSTOMERS);
+          Mockito.when(customerDao.findByIds(Mockito.anyList())).thenReturn(CUSTOMERS);
         });
 
         it("Should return the customers", () -> {
@@ -196,7 +196,7 @@ public class CustomerServiceSpec extends SpeccyTestBase {
         final List<Contact> CONTACTS = Collections.singletonList(new Contact());
 
         beforeEach(() -> {
-          Mockito.when(contactDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(CONTACTS);
+          Mockito.when(contactDao.findByIds(Mockito.anyList())).thenReturn(CONTACTS);
         });
 
         it("Should return the customers", () -> {

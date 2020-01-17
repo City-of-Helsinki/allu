@@ -7,11 +7,9 @@ import java.util.List;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
@@ -130,7 +128,7 @@ public class ApplicationServiceComposerTest {
     Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
     List<ApplicationJson> expected = new ArrayList<>();
     expected.add(updatedApplicationJson);
-    Mockito.verify(searchService).updateApplications(Matchers.refEq(expected));
+    Mockito.verify(searchService).updateApplications(Mockito.refEq(expected));
   }
 
   @Test
