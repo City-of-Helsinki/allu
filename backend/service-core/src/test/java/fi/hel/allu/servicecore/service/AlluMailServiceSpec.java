@@ -28,12 +28,6 @@ public class AlluMailServiceSpec {
   @Mock
   private ApplicationProperties applicationProperties;
   @Mock
-  private DecisionService decisionService;
-  @Mock
-  private ContractService contractService;
-  @Mock
-  private ApprovalDocumentService approvalDocumentService;
-  @Mock
   private JavaMailSender javaMailSender;
 
 
@@ -43,7 +37,7 @@ public class AlluMailServiceSpec {
     describe("Mail sending service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
-        alluMailService = new AlluMailService(applicationProperties, decisionService, contractService, approvalDocumentService, javaMailSender);
+        alluMailService = new AlluMailService(applicationProperties, javaMailSender);
       });
 
       final Supplier<MimeMessage> mockMimeMessage = let(()->Mockito.mock(MimeMessage.class));
@@ -56,7 +50,6 @@ public class AlluMailServiceSpec {
           Mockito.when(applicationProperties.getEmailSenderAddress())
               .thenReturn("Allu Aluevaraus <noreply@allu.invalid>");
           Mockito.when(javaMailSender.createMimeMessage()).thenReturn(mockMimeMessage.get());
-          Mockito.when(decisionService.getDecision(Mockito.anyInt())).thenReturn("BODY".getBytes());
         });
 
         it("Should fail with forbidden email", () -> {

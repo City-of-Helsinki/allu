@@ -17,7 +17,7 @@ public class IndexConductor {
 
   private enum SyncState {
     NOT_ACTIVE, ACTIVE, ACTIVATING, DEACTIVATING
-  };
+  }
 
   public IndexConductor(String indexAliasName) {
     this.indexAliasName = indexAliasName;

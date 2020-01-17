@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 @Service
 public class ConfigurationService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
 

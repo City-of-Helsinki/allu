@@ -1,14 +1,12 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.CoordinateJson;
-import fi.hel.allu.servicecore.domain.PostalAddressJson;
-import fi.hel.allu.servicecore.util.WfsRestTemplate;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -16,17 +14,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.servicecore.domain.CoordinateJson;
+import fi.hel.allu.servicecore.domain.PostalAddressJson;
+import fi.hel.allu.servicecore.util.WfsRestTemplate;
+import fi.hel.allu.ui.config.ApplicationProperties;
 
 public class AddressServiceTest {
 
   private static final String GEOCODE_URL = "http://geocode";
   private static final String SEARCH_URL = "http://search";
-  private static final String STREETNAME_FILTER = "katunimi='%s'";
-  private static final String STREETNUMBER_FILTER = "osoitenumero='%s'";
-  private static final String STREETLETTER_FILTER = "osoitekirjain='%s'";
 
   private static final String wfsGeocodeXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
       "<wfs:FeatureCollection xmlns=\"http://www.opengis.net/wfs\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +

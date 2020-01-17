@@ -162,7 +162,6 @@ public class ApplicationServiceComposerTest {
 
   @Test
   public void testReturnToEditingFromFinishedToDecision() {
-    ChangeHistoryItemJson[] history = {};
     applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
     applicationWithOwner.setTargetState(StatusType.FINISHED);
     updatedApplication.setStatus(StatusType.DECISION);

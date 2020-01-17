@@ -24,8 +24,8 @@ public class StreetAddressXmlTest {
     List<Integer> streetNumber = Arrays.asList(new Integer[] {10,1,11,12});
 
     for (int i = 0; i < xValues.size(); ++i) {
-      assertEquals((double) xValues.get(i), streetAddressXml.featureMember.get(i).geocodedAddress.x, 0);
-      assertEquals((double) yValues.get(i), streetAddressXml.featureMember.get(i).geocodedAddress.y, 0);
+      assertEquals(xValues.get(i), streetAddressXml.featureMember.get(i).geocodedAddress.x, 0);
+      assertEquals(yValues.get(i), streetAddressXml.featureMember.get(i).geocodedAddress.y, 0);
       assertEquals("Viipurinkatu", streetAddressXml.featureMember.get(i).geocodedAddress.streetName);
       assertEquals((int) streetNumber.get(i), streetAddressXml.featureMember.get(i).geocodedAddress.streetNumber);
     }

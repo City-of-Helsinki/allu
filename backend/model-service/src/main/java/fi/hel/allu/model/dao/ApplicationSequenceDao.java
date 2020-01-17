@@ -74,7 +74,7 @@ public class ApplicationSequenceDao {
       if (applicationType == null) { throw new NullPointerException("Null application type is not allowed"); }
       return typeToPrefix.get(applicationType);
     }
-  };
+  }
 
   private static final Logger logger = LoggerFactory.getLogger(ApplicationSequenceDao.class);
   private Clock clock = Clock.systemDefaultZone();

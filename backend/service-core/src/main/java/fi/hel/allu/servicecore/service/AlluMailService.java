@@ -29,22 +29,13 @@ import java.util.stream.Collectors;
 public class AlluMailService {
 
   private final ApplicationProperties applicationProperties;
-  private final DecisionService decisionService;
-  private final ContractService contractService;
-  private final ApprovalDocumentService approvalDocumentService;
   private final MailService mailService;
   private Pattern emailAcceptPattern = null;
 
   @Autowired
   public AlluMailService(ApplicationProperties applicationProperties,
-                         DecisionService decisionService,
-                         ContractService contractService,
-                         ApprovalDocumentService approvalDocumentService,
                          JavaMailSender javaMailSender) {
     this.applicationProperties = applicationProperties;
-    this.decisionService = decisionService;
-    this.contractService = contractService;
-    this.approvalDocumentService = approvalDocumentService;
     mailService = new MailService(javaMailSender);
   }
 

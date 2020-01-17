@@ -74,7 +74,6 @@ public class ApplicantReminderServiceSpec {
 
         context("with one application expiring", () -> {
           final Integer APP_ID = 123;
-          final String EMAIL = "ee-mail@mail.ee";
           final Application[] expiring = new Application[] { dummyApplication(APP_ID) };
 
           beforeEach(() -> {

@@ -25,7 +25,6 @@ public class MetaService {
   private RestTemplate restTemplate;
 
   private static final String APPLICATION = "Application";
-  private static final String PROJECT = "Project";
   private static final String EXTENSION_PATH = "/extension";
 
   @Autowired

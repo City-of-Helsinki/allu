@@ -37,9 +37,6 @@ public class ApplicationJsonServiceTest {
 
   private Application application = Mockito.mock(Application.class);
   private ProjectJson projectJson = Mockito.mock(ProjectJson.class);
-  private CustomerJson customerJson = Mockito.mock(CustomerJson.class);
-  private ContactJson contactJson = Mockito.mock(ContactJson.class);
-  private List<ContactJson> contactJsons = Collections.singletonList(contactJson);
   private UserJson userJson = Mockito.mock(UserJson.class);
   private List<CommentJson> comments = new ArrayList<>();
   private UserJson currentUser = Mockito.mock(UserJson.class);

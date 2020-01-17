@@ -25,7 +25,6 @@ import fi.hel.allu.servicecore.mapper.UserMapper;
 @Service
 public class UserService {
 
-  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;

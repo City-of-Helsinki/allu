@@ -218,7 +218,6 @@ public class AlluMapper {
   private static String SAP_MATERIAL_DOG_TRAINING_FIELD = "27100040";
   private static String SAP_MATERIAL_SEASON_SALE = "27100021";
   private static String SAP_MATERIAL_CIRCUS = "27100022";
-  private static String SAP_MATERIAL_DEPOSIT = "27100001";
   private static String SAP_MATERIAL_OTHER_RENTAL = "27100017";
   private static String SAP_MATERIAL_PLACEMENT_CONTRACT = "27100032";
   private static String SAP_MATERIAL_TERRACE = "27100052";

@@ -22,7 +22,6 @@ import java.util.concurrent.Future;
 @Service
 public class WFSService {
 
-  private static final Logger logger = LoggerFactory.getLogger(WFSService.class);
   private static final String USERNAME = "kayttajanimi";
 
   private final ApplicationProperties applicationProperties;

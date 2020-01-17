@@ -7,7 +7,6 @@ public class EventAdditionalDetails {
   private int attendees;
   private int entryFee;
   private Boolean ecoCompass;
-  private Boolean foodSales;
   private String foodProviders;
   private String marketingProviders;
   private String timeExceptions;

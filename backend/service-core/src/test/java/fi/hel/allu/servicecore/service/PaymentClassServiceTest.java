@@ -20,7 +20,7 @@ import org.springframework.util.concurrent.SettableListenableFuture;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;;
+import java.util.List;
 
 public class PaymentClassServiceTest {
   private static final String PAYMENT_CLASSES = "<payment_classes>";

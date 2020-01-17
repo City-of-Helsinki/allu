@@ -33,7 +33,6 @@ import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryServ
 
 @Service
 public class DateReportingService {
-  private static final Logger logger = LoggerFactory.getLogger(DateReportingService.class);
 
   private final ApplicationService applicationService;
   private final ApplicationJsonService applicationJsonService;

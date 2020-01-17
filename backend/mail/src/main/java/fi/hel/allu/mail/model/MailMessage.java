@@ -101,7 +101,7 @@ public class MailMessage {
   }
 
   public void setAttachments(List<Attachment> attachments) {
-    if (attachments == null) { throw new NullPointerException("Attempted to set MailMessage attachment to null"); };
+    if (attachments == null) { throw new NullPointerException("Attempted to set MailMessage attachment to null"); }
     this.attachments = attachments;
   }
 

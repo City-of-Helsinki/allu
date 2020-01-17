@@ -21,18 +21,12 @@ import java.net.URI;
 @Component
 public class WfsRestTemplate extends RestTemplate {
 
-  private MediaType defaultResponseContentType;
-
   public WfsRestTemplate() {
     super();
   }
 
   public WfsRestTemplate(ClientHttpRequestFactory requestFactory) {
     super(requestFactory);
-  }
-
-  public void setDefaultResponseContentType(String defaultResponseContentType) {
-    this.defaultResponseContentType = MediaType.parseMediaType(defaultResponseContentType);
   }
 
   @Override
