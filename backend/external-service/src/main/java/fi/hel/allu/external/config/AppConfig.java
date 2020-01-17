@@ -13,12 +13,12 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableAutoConfiguration
 @EnableAsync
-public class AppConfig extends WebMvcConfigurerAdapter {
+public class AppConfig  implements WebMvcConfigurer {
 
   @Autowired
   private PreAuthorizeEnforcerInterceptor preAuthorizeEnforcerInterceptor;

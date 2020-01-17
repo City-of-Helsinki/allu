@@ -9,7 +9,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
 import fi.hel.allu.common.controller.handler.ServiceResponseErrorHandler;
@@ -18,7 +18,7 @@ import fi.hel.allu.servicecore.security.PreAuthorizeEnforcerInterceptor;
 @Configuration
 @EnableAutoConfiguration
 @EnableAsync
-public class AppConfig extends WebMvcConfigurerAdapter {
+public class AppConfig implements WebMvcConfigurer {
 
   @Autowired
   private PreAuthorizeEnforcerInterceptor preAuthorizeEnforcerInterceptor;
