@@ -11,7 +11,7 @@ import fi.hel.allu.sap.model.SalesOrder;
 import fi.hel.allu.sap.model.SalesOrderContainer;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,7 +192,7 @@ public class InvoicingService {
     String subject = applicationProperties.getInvoiceNotificationSubject();
     try {
       String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
-      String body = StrSubstitutor.replace(mailTemplate, mailVariables(applicationIds, nrOfInvoices));
+      String body = StringSubstitutor.replace(mailTemplate, mailVariables(applicationIds, nrOfInvoices));
       alluMailService.sendEmail(receiverEmails, subject, body, null, null);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);

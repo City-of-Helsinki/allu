@@ -8,7 +8,7 @@ import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,9 +104,9 @@ public class ApplicantReminderService {
     try {
       final Map<String, String> mailVariables = mailVariables(application);
       final String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE + ".txt");
-      final String body = StrSubstitutor.replace(mailTemplate, mailVariables);
+      final String body = StringSubstitutor.replace(mailTemplate, mailVariables);
       final String htmlMailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE + ".html");
-      final String htmlBody = StrSubstitutor.replace(htmlMailTemplate, mailVariables);
+      final String htmlBody = StringSubstitutor.replace(htmlMailTemplate, mailVariables);
       final List<InlineResource> inlineResources = inlineResources();
       alluMailService.sendEmail(recipients, subject, body, htmlBody, inlineResources);
     } catch (IOException e) {

@@ -4,7 +4,7 @@ import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class SapCustomerNotificationService {
     String subject = String.format(applicationProperties.getCustomerNotificationMailSubject());
     try {
       String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
-      String body = StrSubstitutor.replace(mailTemplate, mailVariables(numberOfCustomersWaitingSapNumber, numberOfUpdates));
+      String body = StringSubstitutor.replace(mailTemplate, mailVariables(numberOfCustomersWaitingSapNumber, numberOfUpdates));
       alluMailService.sendEmail(receiverEmails, subject, body, null, null);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
