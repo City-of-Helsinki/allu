@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.config;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

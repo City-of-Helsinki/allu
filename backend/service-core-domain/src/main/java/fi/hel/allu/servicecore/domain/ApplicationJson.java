@@ -1,14 +1,15 @@
 package fi.hel.allu.servicecore.domain;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * in Finnish: Hakemus

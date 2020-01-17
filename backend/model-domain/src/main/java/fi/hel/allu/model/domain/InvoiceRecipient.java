@@ -1,7 +1,7 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.CustomerType;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 

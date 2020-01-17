@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import fi.hel.allu.common.types.CommentType;
 import io.swagger.annotations.ApiModel;

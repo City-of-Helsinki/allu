@@ -2,7 +2,7 @@ package fi.hel.allu.external.domain;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import io.swagger.annotations.ApiModel;

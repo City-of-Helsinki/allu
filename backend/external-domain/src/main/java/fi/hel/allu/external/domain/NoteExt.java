@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

@@ -1,6 +1,6 @@
 package fi.hel.allu.model.domain;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 /**
  * in Finnish: Yhteyshenkilö

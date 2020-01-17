@@ -63,6 +63,6 @@ public class NotFalseValidatorTest {
         assertEquals(2, constraintViolations.size() );
         Set<String> messages = constraintViolations.stream().map((cv) -> cv.getMessage()).collect(Collectors.toSet());
         assertTrue(messages.contains("values must match"));
-        assertTrue(messages.contains("may not be empty"));
+        assertTrue(messages.contains("must not be empty"));
     }
 }

@@ -1,6 +1,6 @@
 package fi.hel.allu.common.validator;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 @NotFalse(rules = {"value, valuesAreEqual, values must match"})
 public class NotFalseTestClass {

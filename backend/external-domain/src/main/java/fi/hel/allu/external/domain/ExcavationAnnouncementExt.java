@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import io.swagger.annotations.ApiModel;
