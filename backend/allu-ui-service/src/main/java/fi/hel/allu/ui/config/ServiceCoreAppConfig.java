@@ -1,17 +1,17 @@
 package fi.hel.allu.ui.config;
 
-import fi.hel.allu.servicecore.config.ApplicationProperties;
+import java.util.List;
+
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.annotation.EnableRetry;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
 
 @Configuration
-@EnableRetry
 public class ServiceCoreAppConfig {
 
   @Bean
