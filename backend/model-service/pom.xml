@@ -127,6 +127,7 @@
                     <url>${database.uri}</url>
                     <user>${database.user}</user>
                     <password>${database.password}</password>
+                    <table>schema_version</table>
                     <schemas>
                         <schema>allu</schema>
                     </schemas>

@@ -14,6 +14,7 @@
       <database.password>sniknej</database.password>
       <database.uri>jdbc:postgresql:///${database.db}</database.uri>
       <spring.flyway.baselineOnMigrate>true</spring.flyway.baselineOnMigrate>
+      <table>schema_version</table>
   </properties>
   <dependencies>
     <dependency>
