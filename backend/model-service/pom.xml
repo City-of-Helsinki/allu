@@ -92,6 +92,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <!-- support for conditional processing of logback configuration file -->
@@ -120,7 +121,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway.version}</version>
+                <version>4.2.0</version>
                 <configuration>
                     <locations>
                         <location>filesystem:src/main/resources/db/migration</location>
