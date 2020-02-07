@@ -50,6 +50,7 @@ public class SearchService {
   private static final long REQUEST_TIME_OUT_SECONDS = 10;
   private static final int RETRY_COUNT = 2;
   private static final int RETRY_FIRST_BACKOFF_SECONDS = 3;
+  private static final int MAX_IN_MEMORY_SIZE = 16 * 1024 * 1024;
 
   @Autowired
   public SearchService(
@@ -65,6 +66,9 @@ public class SearchService {
     this.projectMapper = projectMapper;
     this.locationService = locationService;
     webClient = webClientBuilder
+        .exchangeStrategies(
+            builder -> builder.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
+        )
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
   }
