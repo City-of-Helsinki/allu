@@ -41,18 +41,18 @@ public class ShortTermRentalPricing extends Pricing {
     static final String BENJI = "Benji-hyppylaite";
     static final String OTHER_SHORT_TERM_RENTAL = "Muu lyhytaikainen maanvuokraus";
     static final String PROMOTION_OR_SALES_SMALL = "Korkeintaan 0,8 m seinästä";
-    static final String PROMOTION_OR_SALES_LARGE = "%s €/m²/kk + alv, yli 0,8 m seinästä";
+    static final String PROMOTION_OR_SALES_LARGE = "%s EUR/m²/kk + alv, yli 0,8 m seinästä";
     static final String STORAGE_AREA = "Varastoalue";
     static final String URBAN_FARMING = "Kaupunkiviljelypaikka yhdistyksille ja yhteisöille";
-    static final String KESKUSKATU_SALES = "%s €/päivä/alkava 10 m² + alv";
-    static final String SUMMER_THEATER = "%s €/toimintakuukausi";
-    static final String DOG_TRAINING_FIELD_ORG = "Vuosivuokra yhdistyksille %s €/vuosi (2h/vk)";
-    static final String DOG_TRAINING_FIELD_COM = "Vuosivuokra yrityksille %s €/vuosi (2h/vk)";
+    static final String KESKUSKATU_SALES = "%s EUR/päivä/alkava 10 m² + alv";
+    static final String SUMMER_THEATER = "%s EUR/toimintakuukausi";
+    static final String DOG_TRAINING_FIELD_ORG = "Vuosivuokra yhdistyksille %s EUR/vuosi (2h/vk)";
+    static final String DOG_TRAINING_FIELD_COM = "Vuosivuokra yrityksille %s EUR/vuosi (2h/vk)";
     static final String DOG_TRAINING_EVENT_ORG = "Koirankoulutustapahtuma, järjestäjänä yhdistys";
     static final String DOG_TRAINING_EVENT_COM = "Koirankoulutustapahtuma, järjestäjänä yritys";
     static final String SMALL_ART_AND_CULTURE = "Pienimuotoinen kaupallinen taide- ja kulttuuritoiminta";
-    static final String SEASON_SALES = "%s €/päivä/alkava 10 m² + alv";
-    static final String CIRCUS = "%s €/päivä + alv";
+    static final String SEASON_SALES = "%s EUR/päivä/alkava 10 m² + alv";
+    static final String CIRCUS = "%s EUR/päivä + alv";
   }
 
   public ShortTermRentalPricing(Application application, PricingExplanator explanationService, PricingDao pricingDao,

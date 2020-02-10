@@ -232,7 +232,7 @@ public class ApplicationControllerTest {
     // read application back from database and check the calculated price
     ResultActions ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(ra, Application.class);
-    int expectedPrice = 280000; // 8 days, 500€ per day with eco compass discount
+    int expectedPrice = 280000; // 8 days, 500 EUR per day with eco compass discount
     assertEquals(expectedPrice, (int) application.getCalculatedPrice());
   }
 

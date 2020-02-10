@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Charge basis entry (maksuperuste)",
 description = "Examples</br> "
-    + "<h3>Add new area usage fee (100m\u00B2, 10€/m\u00B2):</h3>"
+    + "<h3>Add new area usage fee (100 m\u00B2, 10 EUR/m\u00B2):</h3>"
     + "<ul>"
     + " <li>type: AREA_USAGE_FEE</li> "
     + " <li>text: Description of the fee</li> "
@@ -26,7 +26,7 @@ description = "Examples</br> "
     + " <li>quantity: 100</li> "
     + " <li>netPrice: 100000</li> "
     + "</ul>"
-    + "<h3>Add 100€ discount applied to invoice total</h3>"
+    + "<h3>Add 100 EUR discount applied to invoice total</h3>"
     + "<ul>"
     + " <li>type: DISCOUNT</li> "
     + " <li>text: Description of the discount</li> "

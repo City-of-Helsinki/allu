@@ -18,9 +18,9 @@ public class TerracePrice {
 
 
   private static enum TerracePriceInfo {
-    SUMMER_TERRACE(ApplicationKind.SUMMER_TERRACE, ChargeBasisTag::SummerTerrace, "Kesäterassi, maksuvyöhyke %s, %.2f €/m²/kk"),
-    WINTER_TERRACE(ApplicationKind.WINTER_TERRACE, ChargeBasisTag::WinterTerrace, "Talviterassi, maksuvyöhyke %s, %.2f €/m²/kk"),
-    PARKLET(ApplicationKind.PARKLET, ChargeBasisTag::Parklet, "Parklet, maksuvyöhyke %s, %.2f €/m²/kk");
+    SUMMER_TERRACE(ApplicationKind.SUMMER_TERRACE, ChargeBasisTag::SummerTerrace, "Kesäterassi, maksuvyöhyke %s, %.2f EUR/m²/kk"),
+    WINTER_TERRACE(ApplicationKind.WINTER_TERRACE, ChargeBasisTag::WinterTerrace, "Talviterassi, maksuvyöhyke %s, %.2f EUR/m²/kk"),
+    PARKLET(ApplicationKind.PARKLET, ChargeBasisTag::Parklet, "Parklet, maksuvyöhyke %s, %.2f EUR/m²/kk");
 
     private final ApplicationKind kind;
     private final Function<Integer, ChargeBasisTag> tagGetter;

@@ -32,7 +32,7 @@ public class EventPricingTest {
     // Calculate a bill for 5-day event with two build days
     bill.accumulatePrice(bc, 5, 2, 300.0, infoTexts, EventNature.PUBLIC_FREE);
     assertEquals(360000, bill.getPriceInCents());
-    // Verify that EcoCompass gives 30% discount
+    // Verify that EcoCompass gives 30 % discount
     bill.applyDiscounts(true);
     assertEquals(252000, bill.getPriceInCents());
     verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
@@ -45,7 +45,7 @@ public class EventPricingTest {
     EventPricing bill = new EventPricing();
     // Calculate a bill for 10-day big event,
     bill.accumulatePrice(bc, 10, 0, 11000.0, infoTexts, EventNature.BIG_EVENT);
-    // 10 days, 500€ every starting 10000m² -> 1000€ per day
+    // 10 days, 500 EUR every starting 10000 m² -> 1000 EUR per day
     assertEquals(1000000, bill.getPriceInCents());
   }
 
