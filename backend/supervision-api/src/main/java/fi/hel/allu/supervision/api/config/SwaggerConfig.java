@@ -91,7 +91,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
               new Tag("Application attachments", "API to list and add application attachments"),
               new Tag("City districts", "API to list city districts"),
               new Tag("Customers", "API to search and manage customers"),
-              new Tag("Locations", "API to manage locations")
+              new Tag("Locations", "API to manage locations"),
+              new Tag("Payment classes", "API to fetch payment classes")
               )
 
         .additionalModels(

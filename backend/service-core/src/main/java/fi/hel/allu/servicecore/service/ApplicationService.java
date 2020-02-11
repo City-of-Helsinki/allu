@@ -5,8 +5,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,9 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
@@ -629,5 +625,13 @@ public class ApplicationService {
 
   public Integer getApplicationOwnerId(int applicationId) {
     return restTemplate.getForObject(applicationProperties.getApplicationOwnerUrl(), Integer.class, applicationId);
+  }
+
+  public List<String> getPricelistPaymentClasses(ApplicationType type, ApplicationKind kind) {
+    ParameterizedTypeReference<List<String>> typeRef =
+        new ParameterizedTypeReference<List<String>>() {};
+    return restTemplate
+        .exchange(applicationProperties.getPricelistPaymentClassesUrl(), HttpMethod.GET, null, typeRef, type, kind)
+        .getBody();
   }
 }

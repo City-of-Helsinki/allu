@@ -60,6 +60,10 @@ public class PricingService {
     this.invoicingPeriodService = invoicingPeriodService;
   }
 
+  public List<String> getPaymentClasses(ApplicationType applicationType, ApplicationKind applicationKind) {
+    return pricingDao.getPaymentClasses(applicationType, applicationKind);
+  }
+
   /**
    * Calculate basis for application pricing
    *

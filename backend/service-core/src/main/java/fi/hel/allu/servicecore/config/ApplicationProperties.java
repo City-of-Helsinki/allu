@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.ConfigurationKey;
 
+import java.net.URI;
 import java.util.List;
 
 public class ApplicationProperties {
@@ -1531,6 +1532,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/excavation/invoicingperiods");
   }
 
+  /**
+   * WFS payment class URL
+   * @return
+   */
   public String getPaymentClassUrl() {
     return paymentClassUrl;
   }
@@ -1557,5 +1562,9 @@ public class ApplicationProperties {
 
   public String getReplacingApplicationIdUrl() {
     return getModelServiceUrl("/applications/{id}/replacing");
+  }
+
+  public String getPricelistPaymentClassesUrl() {
+    return getModelServiceUrl("/prices/paymentclasses?type={type}&kind={kind}");
   }
 }

@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -73,5 +76,20 @@ public class PricingDao {
       throw new NoSuchEntityException("pricing.notFound");
     }
     return value;
+  }
+
+  @Transactional(readOnly = true)
+  public List<String> getPaymentClasses(ApplicationType type, ApplicationKind kind) {
+    BooleanExpression condition = pricing.applicationType.eq(type).and(pricing.paymentClass.isNotNull());
+    if (type == ApplicationType.SHORT_TERM_RENTAL) {
+      // Short term rentals have kind specific payment classes
+      condition = condition.and(pricing.key.eq(kind.name()));
+    }
+    return queryFactory
+        .selectDistinct(pricing.paymentClass)
+        .from(pricing)
+        .where(condition)
+        .orderBy(pricing.paymentClass.asc())
+        .fetch();
   }
 }
