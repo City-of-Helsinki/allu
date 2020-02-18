@@ -1,4 +1,4 @@
-FROM postgres:9.6
+FROM postgres:9.6.16
 
 RUN apt-get update \
   && apt-get install -y postgresql-9.6-postgis-2.3 postgresql-9.6-postgis-2.3-scripts --no-install-recommends \
