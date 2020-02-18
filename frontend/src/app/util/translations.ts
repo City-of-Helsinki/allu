@@ -1108,7 +1108,7 @@ export const translations = {
       fetchBulkApprovalEntries: 'Massapäätöksen pohjatietojen hakeminen epäonnistui'
     },
     action: {
-      send: 'Päätös lähettetty'
+      send: 'Päätös lähetetty'
     }
   },
   contract: {

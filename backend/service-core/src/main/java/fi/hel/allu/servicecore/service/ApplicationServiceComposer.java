@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
@@ -455,7 +456,13 @@ public class ApplicationServiceComposer {
       ApplicationTagJson tag = new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now());
       applicationService.addTag(applicationId, tag);
     }
-    mailComposerService.sendDecision(findApplicationById(applicationId), decisionDetailsJson, type);
+    try {
+      mailComposerService.sendDecision(findApplicationById(applicationId), decisionDetailsJson, type);
+    }
+    catch (MailSendException mse) {
+      refreshSearchTags(applicationId);
+      throw mse;
+    }
   }
 
   private void onTagsChange(int id, List<ApplicationTagJson> oldTags, List<ApplicationTagJson> newTags) {
