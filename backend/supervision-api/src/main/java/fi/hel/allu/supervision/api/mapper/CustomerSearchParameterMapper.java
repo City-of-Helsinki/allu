@@ -1,20 +1,20 @@
 package fi.hel.allu.supervision.api.mapper;
 
-import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.supervision.api.domain.CustomerSearchParameterField;
-import fi.hel.allu.supervision.api.domain.CustomerSearchParameters;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import fi.hel.allu.search.domain.QueryParameter;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.supervision.api.domain.SearchField;
+import fi.hel.allu.supervision.api.domain.SearchParameters;
+
 public class CustomerSearchParameterMapper {
 
-  public static QueryParameters mapToQueryParameters(CustomerSearchParameters searchParameters) {
+  public static <S extends SearchField, T extends SearchParameters<S>> QueryParameters mapToQueryParameters(T searchParameters) {
     QueryParameters result = new QueryParameters();
     List<QueryParameter> queryParams = new ArrayList<>();
-    for (Entry<CustomerSearchParameterField, String> parameter: searchParameters.getSearchParameters().entrySet()) {
+    for (Entry<S, String> parameter: searchParameters.getSearchParameters().entrySet()) {
       QueryParameter qp = mapQueryParameter(parameter.getKey(), parameter.getValue());
       queryParams.add(qp);
     }
@@ -22,7 +22,7 @@ public class CustomerSearchParameterMapper {
     return result;
   }
 
-  public static QueryParameter mapQueryParameter(CustomerSearchParameterField key, String value) {
+  public static <S extends SearchField> QueryParameter mapQueryParameter(S key, String value) {
     return new QueryParameter(key.getSearchFieldName(), value);
   }
 

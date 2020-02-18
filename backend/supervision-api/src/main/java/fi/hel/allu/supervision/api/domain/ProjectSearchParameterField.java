@@ -25,6 +25,7 @@ public enum ProjectSearchParameterField implements SearchField {
     return sortFieldName;
   }
 
+  @Override
   public String getSearchFieldName() {
     return searchFieldName;
   }

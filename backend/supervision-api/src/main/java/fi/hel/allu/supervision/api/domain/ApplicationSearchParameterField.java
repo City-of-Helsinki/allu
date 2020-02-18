@@ -32,6 +32,7 @@ public enum ApplicationSearchParameterField implements SearchField {
     this.multiValue = multiValue;
   }
 
+  @Override
   public String getSearchFieldName() {
     return searchFieldName;
   }

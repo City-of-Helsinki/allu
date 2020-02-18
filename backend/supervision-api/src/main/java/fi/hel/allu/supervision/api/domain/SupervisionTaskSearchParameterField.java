@@ -22,4 +22,9 @@ public enum SupervisionTaskSearchParameterField implements SearchField {
   public String getSortFieldName() {
     return sortFieldName;
   }
+
+  @Override
+  public String getSearchFieldName() {
+    return sortFieldName;
+  }
 }

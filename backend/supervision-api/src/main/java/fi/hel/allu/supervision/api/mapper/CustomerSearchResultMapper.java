@@ -1,11 +1,19 @@
 package fi.hel.allu.supervision.api.mapper;
 
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.supervision.api.domain.CustomerSearchResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.supervision.api.domain.ContactSearchResult;
+import fi.hel.allu.supervision.api.domain.CustomerSearchResult;
 
 @Component
 public class CustomerSearchResultMapper {
+
+  @Autowired
+  private CustomerService customerService;
 
   public CustomerSearchResult mapToSearchResult(CustomerJson customerJson) {
     CustomerSearchResult result = new CustomerSearchResult();
@@ -32,4 +40,13 @@ public class CustomerSearchResultMapper {
     return result;
   }
 
+  public ContactSearchResult mapToSearchResult(ContactJson contactJson) {
+    ContactSearchResult result = new ContactSearchResult();
+    result.setId(contactJson.getId());
+    result.setName(contactJson.getName());
+    result.setEmail(contactJson.getEmail());
+    result.setCustomerId(contactJson.getCustomerId());
+    result.setCustomerName(customerService.findCustomerById(contactJson.getCustomerId()).getName());
+    return result;
+  }
 }
