@@ -13,10 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>fi.hel.allu</groupId>
             <artifactId>service-core</artifactId>
             <version>${project.parent.version}</version>
