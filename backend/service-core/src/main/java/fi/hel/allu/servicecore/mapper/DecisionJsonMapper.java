@@ -528,7 +528,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     } else if (entry.getReferredTag() != null) {
       rentalArea.setText(entry.getText());
       getReferredEntry(entry.getReferredTag(), entries)
-          .ifPresent(e -> rentalArea.setFinished(ZonedDateTime.now().isAfter(locations.get(e.getLocationId()).getEndTime())));
+          .ifPresent(e -> rentalArea.setFinished(e.getLocationId() != null && ZonedDateTime.now().isAfter(locations.get(e.getLocationId()).getEndTime())));
     } else {
       rentalArea.setChargeBasisText(entry.getText());
     }
