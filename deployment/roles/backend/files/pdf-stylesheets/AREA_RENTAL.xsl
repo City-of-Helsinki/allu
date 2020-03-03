@@ -156,17 +156,19 @@
       <section class="unboxed">
         <h2>Vuokra-alueet</h2>
         <table class="area-table">
-          <tr>
-            <th>Aluetunnus</th>
-            <th>Voimassaolo</th>
-            <th>Osoite</th>
-            <th>Altakulj.</th>
-            <th>Pinta-ala</th>
-            <th>ML</th>
-            <th>à € / pv</th>
-            <th>pv</th>
-            <th>Maksu</th>
-          </tr>
+          <xsl:if test="data/hasAreaEntries = 'true'">
+            <tr>
+              <th>Aluetunnus</th>
+              <th>Voimassaolo</th>
+              <th>Osoite</th>
+              <th>Altakulj.</th>
+              <th>Pinta-ala</th>
+              <th>ML</th>
+              <th>à € / pv</th>
+              <th>pv</th>
+              <th>Maksu</th>
+            </tr>
+          </xsl:if>
           <xsl:for-each select="data/rentalAreas">
             <xsl:variable name="areaFinished">
               <xsl:choose>

@@ -102,6 +102,7 @@ public class DecisionJson {
 
   private List<ChargeInfoTexts> chargeInfoEntries;
   private List<RentalArea> rentalAreas;
+  private Boolean hasAreaEntries;
   private Integer invoicingPeriodLength;
   private Integer sectionNumber;
   private List<KindWithSpecifiers> kinds;
@@ -915,5 +916,13 @@ public class DecisionJson {
 
   public void setAnonymizedDocument(boolean isAnonymizedDocument) {
     this.isAnonymizedDocument = isAnonymizedDocument;
+  }
+
+  public Boolean getHasAreaEntries() {
+    return hasAreaEntries;
+  }
+
+  public void setHasAreaEntries(Boolean hasAreaEntries) {
+    this.hasAreaEntries = hasAreaEntries;
   }
 }

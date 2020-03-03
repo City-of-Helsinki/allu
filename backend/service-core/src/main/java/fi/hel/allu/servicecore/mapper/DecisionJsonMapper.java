@@ -453,7 +453,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     final List<ChargeBasisEntry> otherEntries = BooleanUtils.isTrue(application.getNotBillable()) ? Collections.emptyList()
         : chargeBasisEntries.stream().filter(c -> !isAreaEntry(c, chargeBasisEntries) && c.isInvoicable())
             .collect(Collectors.toList());
-
+    decision.setHasAreaEntries(!areaEntries.isEmpty());
     final List<RentalArea> rentalAreas = areaEntries.stream()
         .map(e -> chargeBasisToRentalArea(e, application, locations, areaEntries))
         .collect(Collectors.toList());
