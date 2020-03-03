@@ -113,13 +113,12 @@ public class ChargeBasisService {
    */
   @Transactional
   public boolean setManualChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
-    Optional<InvoicingPeriod> invoicingPeriod = invoicingPeriodService.findFirstOpenPeriod(applicationId);
     final AtomicInteger i = getMaxAreaUsageNumber(entries);
     List<ChargeBasisEntry> manualEntries = entries.stream()
         .filter(e -> e.getManuallySet())
         .map(e -> setAreaUsageTagIfMissing(e, i))
         .collect(Collectors.toList());
-    invoicingPeriod.ifPresent(p -> setPeriodIfMissing(p.getId(), manualEntries));
+    manualEntries.forEach(entry -> setPeriodIfMissing(applicationId, entry));
 
     ChargeBasisModification modification = chargeBasisDao.getModifications(
         applicationId,
@@ -145,16 +144,15 @@ public class ChargeBasisService {
   }
 
   private void setPeriodIfMissing(int applicationId, ChargeBasisEntry e) {
-    Optional<InvoicingPeriod> invoicingPeriod = invoicingPeriodService.findFirstOpenPeriod(applicationId);
-    invoicingPeriod.ifPresent(p -> setPeriodIfMissing(p.getId(), Collections.singletonList(e)));
-  }
-
-  private void setPeriodIfMissing(Integer invoicingPeriodId, List<ChargeBasisEntry> manualEntries) {
-    manualEntries.forEach(e -> {
-      if (e.getInvoicingPeriodId() == null) {
-        e.setInvoicingPeriodId(invoicingPeriodId);
+    if (e.getInvoicingPeriodId() == null) {
+      if (e.getReferredTag() != null) {
+        Optional<ChargeBasisEntry> referredEntry =  chargeBasisDao.findByTag(applicationId, e.getReferredTag());
+        referredEntry.ifPresent(referred -> e.setInvoicingPeriodId(referred.getInvoicingPeriodId()));
+      } else {
+        Optional<InvoicingPeriod> invoicingPeriod = invoicingPeriodService.findFirstOpenPeriod(applicationId);
+        invoicingPeriod.ifPresent(p -> e.setInvoicingPeriodId(p.getId()));
       }
-    });
+    }
   }
 
   private int getNumberPartAreaUsageTag(ChargeBasisEntry entry) {

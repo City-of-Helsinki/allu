@@ -41,7 +41,7 @@ export const {
 
 export const getAllReferrableChargeBasisEntries = createSelector(
   getAllChargeBasisEntries,
-  (entries: ChargeBasisEntry[]) => entries.filter(e => e.referrable)
+  (entries: ChargeBasisEntry[]) => entries.filter(e => e.referrable && !e.locked)
 );
 
 export const getCustomerEntityState = createSelector(

@@ -252,4 +252,11 @@ public class ChargeBasisDao {
         .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.tag.eq(tag), chargeBasis.manuallySet.eq(manuallySet))
         .fetchFirst();
   }
+
+  public Optional<ChargeBasisEntry> findByTag(int applicationId, String tag) {
+    return Optional.ofNullable(queryFactory.select(chargeBasisBean)
+        .from(chargeBasis)
+        .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.tag.eq(tag))
+        .fetchFirst());
+  }
 }
