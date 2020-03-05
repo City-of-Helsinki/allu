@@ -54,8 +54,11 @@ public class MapperUtil {
 
   public static Pageable mapToPageRequest(SearchParameters<?> searchParameters) {
     Sort sort = getSort(searchParameters);
-    PageRequest pageRequest = PageRequest.of(searchParameters.getPage(), searchParameters.getPageSize(), sort);
-    return pageRequest;
+    if (sort != null) {
+      return PageRequest.of(searchParameters.getPage(), searchParameters.getPageSize(), sort);
+    } else {
+      return PageRequest.of(searchParameters.getPage(), searchParameters.getPageSize());
+    }
   }
 
   public static Geometry toGeometry(String geometryJsonString) {
