@@ -79,7 +79,7 @@ public class SupervisionTaskController {
       @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/supervisiontasks/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Page<SupervisionTaskSearchResult>> search(@RequestBody @Valid SupervisionTaskSearchParameters searchParameters) {
     SupervisionTaskSearchCriteria criteria = searchParameterMapper.createSearchCriteria(searchParameters);
     Pageable pageRequest = MapperUtil.mapToPageRequest(searchParameters);
@@ -96,7 +96,7 @@ public class SupervisionTaskController {
       @ApiResponse(code = 404, message = "Task with ID not found", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/supervisiontasks/{id}", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<SupervisionTaskSearchResult> findById(@PathVariable Integer id) {
     SupervisionTaskJson task = supervisionTaskService.findById(id);
     return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(task));
@@ -112,7 +112,7 @@ public class SupervisionTaskController {
       @ApiResponse(code = 200, message = "Supervision tasks retrieved successfully", response = SupervisionTaskSearchResult.class, responseContainer = "List"),
   })
   @RequestMapping(value = "/applications/{id}/supervisiontasks", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<SupervisionTaskSearchResult>> findByApplicationId(@PathVariable Integer id) {
     List<SupervisionTaskSearchResult> tasks = supervisionTaskService.findByApplicationId(id)
         .stream()

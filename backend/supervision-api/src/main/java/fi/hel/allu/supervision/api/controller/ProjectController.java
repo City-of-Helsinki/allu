@@ -64,7 +64,7 @@ public class ProjectController {
       @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Page<ProjectSearchResult>> search(@RequestBody @Valid ProjectSearchParameters searchParameters) {
     QueryParameters queryParameters = searchParameterMapper.mapToQueryParameters(searchParameters);
     Pageable pageRequest = MapperUtil.mapToPageRequest(searchParameters);
@@ -94,7 +94,7 @@ public class ProjectController {
       @ApiResponse(code = 200, message = "Project fetched successfully", response = ProjectJson.class)
   })
   @RequestMapping(value = "/{id}",  method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<ProjectJson> findById(@PathVariable Integer id) {
     return ResponseEntity.ok(projectServiceComposer.findById(id));
   }
@@ -183,7 +183,7 @@ public class ProjectController {
       @ApiResponse(code = 200, message = "Projects listed successfully", response = ProjectJson.class, responseContainer = "List")
   })
   @RequestMapping(value = "/{id}/childProjects", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<ProjectJson>> getChildProjects(@PathVariable int id) {
     return ResponseEntity.ok(projectService.findProjectChildren(id));
   }

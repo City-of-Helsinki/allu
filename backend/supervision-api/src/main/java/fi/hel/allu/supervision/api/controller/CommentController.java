@@ -75,7 +75,7 @@ public class CommentController {
       @ApiResponse(code = 200, message = "Comments fetched successfully", response = CommentJson.class, responseContainer = "List")
   })
   @RequestMapping(value = "/applications/{id}/comments", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<CommentJson>> findByApplication(@PathVariable Integer id) {
     return ResponseEntity.ok(commentService.findByApplicationId(id));
   }
@@ -89,7 +89,7 @@ public class CommentController {
       @ApiResponse(code = 200, message = "Comments fetched successfully", response = CommentJson.class, responseContainer = "List")
   })
   @RequestMapping(value = "/projects/{id}/comments", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<CommentJson>> findByProject(@PathVariable Integer id) {
     return ResponseEntity.ok(commentService.findByProjectId(id));
   }
@@ -103,7 +103,7 @@ public class CommentController {
       @ApiResponse(code = 404, message = "Comment with given ID not found", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/comments/{id}", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<CommentJson> findById(@PathVariable Integer id) {
     return ResponseEntity.ok(commentService.mapToJson(commentService.findById(id)));
   }

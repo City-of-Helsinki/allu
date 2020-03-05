@@ -46,7 +46,7 @@ public class ChargeBasisController {
       @ApiResponse(code = 200, message = "Charge basis entries retrieved successfully", response = ChargeBasisEntryJson.class, responseContainer="List")
   })
   @RequestMapping(value = "/applications/{id}/chargebasisentries", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<ChargeBasisEntryJson>> findByApplication(@PathVariable Integer id) {
     List<ChargeBasisEntryJson> result;
     if (applicationService.isBillable(id)) {
@@ -70,7 +70,7 @@ public class ChargeBasisController {
       @ApiResponse(code = 200, message = "Invoicing periods retrieved successfully", response = InvoicingPeriodJson.class, responseContainer="List")
   })
   @RequestMapping(value = "/applications/{id}/invoicingperiods", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<InvoicingPeriodJson>> findPeriodsByApplication(@PathVariable Integer id) {
     List<InvoicingPeriodJson> result;
     if (applicationService.isBillable(id)) {

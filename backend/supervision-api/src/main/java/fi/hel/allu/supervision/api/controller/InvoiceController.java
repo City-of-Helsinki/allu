@@ -33,7 +33,7 @@ public class InvoiceController {
       @ApiResponse(code = 200, message = "Invoices of application retrieved successfully", response = InvoiceJson.class, responseContainer="List"),
   })
   @RequestMapping(value = "/applications/{applicationId}/invoices", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<InvoiceJson>> getApplicationInvoices(@PathVariable Integer applicationId) {
     return new ResponseEntity<>(invoiceService.findByApplication(applicationId), HttpStatus.OK);
   }

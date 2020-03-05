@@ -37,7 +37,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/applicationtypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<ApplicationType, CodeMetadata>> getApplicationTypes() {
     return ResponseEntity.ok(getCodeMetadata(ApplicationType.values(), a -> CodeType.USER));
   }
@@ -47,7 +47,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/applicationstatustypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<StatusType, CodeMetadata>> getApplicationStatusTypes() {
     return ResponseEntity.ok(getCodeMetadata(StatusType.values(), a -> CodeType.SYSTEM));
   }
@@ -57,7 +57,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/applicationkinds", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<ApplicationKind, CodeMetadata>> getApplicationKinds(
       @ApiParam(value = "Optional application type parameter. If given, only kinds allowed for given application type are returned")
       @RequestParam(required = false) ApplicationType applicationType) {
@@ -76,7 +76,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/applicationspecifiers", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<ApplicationSpecifier, CodeMetadata>> getApplicationSpecifiers(
       @ApiParam(value = "Optional application kind parameter. If given, only specifiers allowed for given kind are returned")
       @RequestParam(required = false) ApplicationKind applicationKind) {
@@ -95,7 +95,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/supervisiontasktypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<SupervisionTaskType, CodeMetadata>> getSupervisionTaskTypes() {
     return ResponseEntity.ok(getCodeMetadata(SupervisionTaskType.values(), a -> a.isManuallyAdded() ? CodeType.USER : CodeType.SYSTEM));
   }
@@ -105,7 +105,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/supervisiontaskstatustypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<SupervisionTaskStatusType, CodeMetadata>> getSupervisionTaskStatusTypes() {
     return ResponseEntity.ok(getCodeMetadata(SupervisionTaskStatusType.values(), a -> CodeType.SYSTEM));
   }
@@ -115,7 +115,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/commenttypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<CommentType, CodeMetadata>> getCommentTypes() {
     return ResponseEntity.ok(getCodeMetadata(CommentType.values(), a -> a.isManuallyAdded() ? CodeType.USER : CodeType.SYSTEM));
   }
@@ -125,7 +125,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/customertypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<CustomerType, CodeMetadata>> getCustomerTypes() {
     return ResponseEntity.ok(getCodeMetadata(CustomerType.values(), a -> CodeType.USER));
   }
@@ -135,7 +135,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/customerroletypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<CustomerRoleType, CodeMetadata>> getCustomerRoleTypes() {
     return ResponseEntity.ok(getCodeMetadata(CustomerRoleType.values(), a -> CodeType.USER));
   }
@@ -145,7 +145,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/attachmenttypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<AttachmentType, CodeMetadata>> getAttachmentTypes() {
     return ResponseEntity.ok(getCodeMetadata(AttachmentType.values(), a -> a.isDefaultAttachment() ? CodeType.SYSTEM: CodeType.USER));
   }
@@ -155,7 +155,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/distributiontypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<DistributionType, CodeMetadata>> getDistributionTypes() {
     return ResponseEntity.ok(getCodeMetadata(DistributionType.values(), a -> CodeType.USER));
   }
@@ -165,7 +165,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/publicitytypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<PublicityType, CodeMetadata>> getPublicityTypes() {
     return ResponseEntity.ok(getCodeMetadata(PublicityType.values(), a -> CodeType.USER));
   }
@@ -175,7 +175,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/trafficarrangementimpedimenttypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<TrafficArrangementImpedimentType, CodeMetadata>> getTrafficArrangementImpedimentTypes() {
     return ResponseEntity.ok(getCodeMetadata(TrafficArrangementImpedimentType.values(), a -> CodeType.USER));
   }
@@ -185,7 +185,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/applicationtagtypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<ApplicationTagType, CodeMetadata>> getApplicationTagTypes() {
     return ResponseEntity.ok(getCodeMetadata(ApplicationTagType.values(), a -> a.isManuallyAdded() ? CodeType.USER : CodeType.SYSTEM));
   }
@@ -195,7 +195,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/cableinfotypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<DefaultTextType, CodeMetadata>> getCableInfoTypes() {
     return ResponseEntity.ok(getCodeMetadata(DefaultTextType.getCableInfoTypes(), a -> CodeType.USER));
   }
@@ -205,7 +205,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/eventnatures", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<EventNature, CodeMetadata>> getEventNatures() {
     return ResponseEntity.ok(getCodeMetadata(EventNature.values(), a -> a == EventNature.PROMOTION ? CodeType.SYSTEM : CodeType.USER));
   }
@@ -215,7 +215,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/chargebasistypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<ChargeBasisType, CodeMetadata>> getChargeBasisTypes() {
     return ResponseEntity.ok(getCodeMetadata(ChargeBasisType.values(), a -> a == ChargeBasisType.CALCULATED ? CodeType.SYSTEM : CodeType.USER));
   }
@@ -225,7 +225,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/chargebasisunits", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<ChargeBasisUnit, CodeMetadata>> getChargeBasisUnits() {
     return ResponseEntity.ok(getCodeMetadata(ChargeBasisUnit.values(), a -> CodeType.USER));
   }
@@ -235,7 +235,7 @@ public class CodeController {
       produces = "application/json"
   )
   @RequestMapping(value = "/surfacehardnesstypes", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Map<SurfaceHardness, CodeMetadata>> getSurfaceHardnessTypes() {
     return ResponseEntity.ok(getCodeMetadata(SurfaceHardness.values(), a -> CodeType.USER));
   }

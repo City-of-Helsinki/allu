@@ -47,7 +47,7 @@ public class DecisionController {
       @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) throws IOException {
     validateHasDecision(id);
     byte[] decision = decisionService.getDecision(id);

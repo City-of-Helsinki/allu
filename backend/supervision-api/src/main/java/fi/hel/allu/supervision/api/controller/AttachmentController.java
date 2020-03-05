@@ -77,7 +77,7 @@ public class AttachmentController {
       @ApiResponse(code = 200, message = "Attachments fetched successfully", response = AttachmentInfoJson.class, responseContainer="List"),
   })
   @RequestMapping(value = "/applications/{id}/attachments", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<AttachmentInfoJson>> getAttachments(@ApiParam(value = "Application ID to fetch attachments for") @PathVariable Integer id) {
     return ResponseEntity.ok(attachmentService.findAttachmentsForApplication(id));
   }
@@ -90,7 +90,7 @@ public class AttachmentController {
       @ApiResponse(code = 200, message = "Attachment data fetched successfully", response = byte.class, responseContainer="Array"),
   })
   @RequestMapping(value = "/attachments/{attachmentId}/data", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<byte[]> getAttachmentData(@PathVariable int attachmentId) {
     AttachmentInfoJson info = attachmentService.getAttachment(attachmentId);
     byte[] bytes = attachmentService.getAttachmentData(attachmentId);
@@ -112,7 +112,7 @@ public class AttachmentController {
       @ApiResponse(code = 200, message = "Attachments fetched successfully", response = AttachmentInfoJson.class, responseContainer="List"),
   })
   @RequestMapping(value = "/attachments/default/{applicationType}", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<AttachmentInfoJson>> readAttachmentInfos(@PathVariable ApplicationType applicationType) {
     List<AttachmentInfoJson> result = attachmentService.getDefaultAttachmentsByApplicationType(applicationType).stream()
         .map(d -> new AttachmentInfoJson(d.getId(), d.getHandlerName(), d.getType(), d.getMimeType(), d.getName(),

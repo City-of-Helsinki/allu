@@ -47,7 +47,7 @@ public class ExcavationAnnouncementController extends BaseApplicationDetailsCont
       @ApiResponse(code = 404, message = "No document found for given application", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/{id}/approval/workfinished", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<byte[]> getWorkFinishedDocument(@PathVariable Integer id) {
     validateType(id);
     return getApprovalDocument(id, ApprovalDocumentType.WORK_FINISHED);
@@ -62,7 +62,7 @@ public class ExcavationAnnouncementController extends BaseApplicationDetailsCont
       @ApiResponse(code = 404, message = "No document found for given application", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/{id}/approval/operationalcondition", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<byte[]> getOperationalConditionDocument(@PathVariable Integer id) {
     validateType(id);
     return getApprovalDocument(id, ApprovalDocumentType.OPERATIONAL_CONDITION);

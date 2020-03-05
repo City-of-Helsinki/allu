@@ -63,7 +63,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
       @ApiResponse(code = 200, message = "Application retrieved successfully"),
   })
   @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<A> getApplicationDetails(@PathVariable Integer id) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(id);
     validateType(application);
@@ -79,7 +79,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
       @ApiResponse(code = 200, message = "Applications retrieved successfully"),
   })
   @RequestMapping(method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<A>> getApplicationsWithIds(@RequestParam("ids") final List<Integer> ids) {
     List<ApplicationJson> applications = applicationServiceComposer.findApplicationsByIds(ids);
     applications.forEach(a -> validateType(a));

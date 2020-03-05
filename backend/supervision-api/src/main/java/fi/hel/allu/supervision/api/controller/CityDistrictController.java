@@ -29,7 +29,7 @@ public class CityDistrictController {
       produces = "application/json"
   )
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<CityDistrictInfoJson>> getAllCityDistricts() {
     return ResponseEntity.ok(locationService.getCityDistrictList());
   }
@@ -39,7 +39,7 @@ public class CityDistrictController {
       produces = "application/json"
   )
   @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<CityDistrictInfoJson> getCityDistrictById(@PathVariable Integer id) {
     return ResponseEntity.ok(locationService.getCityDistrictById(id));
   }

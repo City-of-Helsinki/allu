@@ -46,7 +46,7 @@ public class PlacementContractController extends BaseApplicationDetailsControlle
       @ApiResponse(code = 404, message = "No contract found for given application", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/{id}/contract", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<byte[]> getPlacementContract(@PathVariable Integer id) {
     validateType(id);
     if (contractService.hasContract(id)) {

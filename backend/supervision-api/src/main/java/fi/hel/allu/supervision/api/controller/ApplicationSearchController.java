@@ -44,7 +44,7 @@ public class ApplicationSearchController {
       @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/applications/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Page<ApplicationSearchResult>> search(@RequestBody @Valid ApplicationSearchParameters searchParameters) {
     ApplicationQueryParameters queryParameters = ApplicationSearchParameterMapper.mapToQueryParameters(searchParameters);
     Pageable pageable = MapperUtil.mapToPageRequest(searchParameters);
@@ -63,7 +63,7 @@ public class ApplicationSearchController {
       @ApiResponse(code = 200, message = "Applications retrieved successfully", response = ApplicationSearchResult.class, responseContainer="List"),
   })
   @RequestMapping(value = "/projects/{projectId}/applications", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<ApplicationSearchResult>> getProjectApplications(@PathVariable Integer projectId) {
     ApplicationQueryParameters queryParameters = ApplicationSearchParameterMapper.queryParametersForProject(projectId);
     Page<ApplicationES> result = applicationServiceComposer.search(queryParameters, MapperUtil.DEFAULT_PAGE_REQUEST, Boolean.FALSE);
