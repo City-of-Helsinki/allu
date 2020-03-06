@@ -67,6 +67,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   }
 
   private final NumberFormat currencyFormat;
+  private final NumberFormat percentageFormat;
   private final Locale locale;
 
   private final MetaService metaService;
@@ -85,6 +86,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     decimalFormat = new DecimalFormat("0.##");
     locale = new Locale("fi", "FI");
     currencyFormat = NumberFormat.getCurrencyInstance(locale);
+    percentageFormat = NumberFormat.getNumberInstance(locale);
   }
 
 
@@ -290,7 +292,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
    */
   private String chargeNetPrice(ChargeBasisEntry e) {
     if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
-      return e.getQuantity() + " %";
+      return percentageFormat.format(e.getQuantity()) + " %";
     } else {
       return currencyFormat.format(e.getNetPrice() * 0.01);
     }
@@ -499,7 +501,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       Map<Integer, Location> locations, List<ChargeBasisEntry> entries) {
 
     final RentalArea rentalArea = new RentalArea();
-    if (BooleanUtils.isNotTrue(application.getNotBillable()) && entry.getNetPrice() != 0) {
+    if (BooleanUtils.isNotTrue(application.getNotBillable()) && ( entry.getNetPrice() != 0 || ChargeBasisUnit.PERCENT.equals(entry.getUnit()) )) {
       rentalArea.setUnitPrice(chargeUnitPrice(entry));
       rentalArea.setPrice(chargeNetPrice(entry));
     }
