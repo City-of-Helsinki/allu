@@ -25,6 +25,17 @@ public class MailSenderLog {
     this.errorMessage = errorMessage;
   }
 
+  public MailSenderLog(String subject, ZonedDateTime sentTime, String receiver, boolean sentFailed,
+      String errorMessage) {
+    super();
+    this.subject = subject;
+    this.sentTime = sentTime;
+    this.receivers = new String[1];
+    this.receivers[0] = receiver;
+    this.sentFailed = sentFailed;
+    this.errorMessage = errorMessage;
+  }
+
   public Integer getId() {
     return id;
   }

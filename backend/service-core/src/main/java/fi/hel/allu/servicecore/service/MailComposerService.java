@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.servicecore.validation.TranslationMessageTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,16 +86,23 @@ public class MailComposerService {
   private final AlluMailService alluMailService;
   private final LogService logService;
   private final ApplicationService applicationService;
+  private final CommentService commentService;
   private final MailAttachmentService mailAttachmentService;
+  private final TranslationMessageTranslator translator;
 
   @Autowired
   public MailComposerService(AlluMailService alluMailService,
                              MailAttachmentService mailAttachmentService,
-                             LogService logService, ApplicationService applicationService) {
+                             LogService logService,
+                             ApplicationService applicationService,
+                             CommentService commentService,
+                             TranslationMessageTranslator translator) {
     this.alluMailService = alluMailService;
     this.mailAttachmentService = mailAttachmentService;
     this.logService = logService;
     this.applicationService = applicationService;
+    this.commentService = commentService;
+    this.translator = translator;
   }
 
   public void sendDecision(ApplicationJson application, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
@@ -105,33 +114,42 @@ public class MailComposerService {
       final List<InlineResource> inlineResources = inlineResources();
 
       MailSenderLog log;
-      try {
-        final String attachmentName = attachmentName(type, application.getApplicationId());
-        final List<Attachment> attachments = mailAttachmentService.forApplication(application, type, attachmentName);
-        final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipients)
-          .withSubject(subject)
-          .withBody(textBodyFor(application))
-          .withHtmlBody(htmlBodyFor(application))
-          .withInlineResources(inlineResources)
-          .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), type, attachmentName))
-          .withAttachments(attachments);
+      List<String> failedEmails = new ArrayList<>();
+      for (String emailRecipient : emailRecipients) {
+        try {
+          final String attachmentName = attachmentName(type, application.getApplicationId());
+          final List<Attachment> attachments = mailAttachmentService.forApplication(application, type, attachmentName);
+          final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipient)
+            .withSubject(subject)
+            .withBody(textBodyFor(application))
+            .withHtmlBody(htmlBodyFor(application))
+            .withInlineResources(inlineResources)
+            .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), type, attachmentName))
+            .withAttachments(attachments);
 
-        log = mailBuilder.send();
-      } catch (Exception e) {
-        logger.warn("Failed to send message", e);
-        log = new MailSenderLog(subject, ZonedDateTime.now(), emailRecipients, true, e.getMessage());
+          log = mailBuilder.send();
+        } catch (Exception e) {
+          logger.warn("Failed to send message", e);
+          log = new MailSenderLog(subject, ZonedDateTime.now(), emailRecipient, true, e.getMessage());
+          failedEmails.add(emailRecipient);
+        }
+        saveMailSenderLog(log);
       }
-      saveMailSenderLog(log);
-      if (log.isSentFailed()) {
-        handleDecisionEmailSentFailed(log, application.getId());
+      if (!failedEmails.isEmpty()) {
+        handleDecisionEmailSentFailed(failedEmails, application.getId());
       }
     } else {
       logger.warn("No email recipients");
     }
   }
 
-  private void handleDecisionEmailSentFailed(MailSenderLog log, Integer id) {
+  private void handleDecisionEmailSentFailed(List<String> failedEmails, Integer id) {
     applicationService.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now()));
+    CommentJson commentJson = new CommentJson(
+      CommentType.INTERNAL,
+      String.format(translator.getTranslation("decision.email.failedComment"), StringUtils.collectionToDelimitedString(failedEmails, ",\n"))
+    );
+    commentService.addApplicationComment(id, commentJson);
     throw new MailSendException("decision.email.failed");
   }
 

@@ -52,6 +52,12 @@ public class AlluMailServiceSpec {
           Mockito.when(javaMailSender.createMimeMessage()).thenReturn(mockMimeMessage.get());
         });
 
+        it("Should send single emails", () -> {
+          alluMailService.newMailTo("yucca@jucca.org")
+            .withSubject("Cheep Cialis").withBody("Body").send();
+          Mockito.verify(javaMailSender).send(Mockito.any(MimeMessage.class));
+        });
+
         it("Should fail with forbidden email", () -> {
           try {
             alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "potsmasher@masher.xx"));

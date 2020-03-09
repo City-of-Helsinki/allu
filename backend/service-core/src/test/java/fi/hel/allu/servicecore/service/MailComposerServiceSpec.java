@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import fi.hel.allu.servicecore.validation.TranslationMessageTranslator;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -37,6 +38,10 @@ public class MailComposerServiceSpec {
   @Mock
   private ApplicationService applicationService;
   @Mock
+  private CommentService commentService;
+  @Mock
+  private TranslationMessageTranslator translator;
+  @Mock
   private MailAttachmentService mailAttachmentService;
 
   private MailComposerService mailComposerService;
@@ -52,9 +57,9 @@ public class MailComposerServiceSpec {
         Mockito.when(mailBuilder.withInlineResources(Mockito.anyList())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.withSubject(Mockito.anyString())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.withModel(Mockito.anyMap())).thenReturn(mailBuilder);
-        Mockito.when(alluMailService.newMailTo(Mockito.anyList())).thenReturn(mailBuilder);
+        Mockito.when(alluMailService.newMailTo(Mockito.anyString())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.send()).thenReturn(new MailSenderLog());
-        mailComposerService = new MailComposerService(alluMailService, mailAttachmentService, logService, applicationService);
+        mailComposerService = new MailComposerService(alluMailService, mailAttachmentService, logService, applicationService, commentService, translator);
       });
       describe("Create decision e-mail", () -> {
         final int APPLICATION_ID = 911;
@@ -63,6 +68,10 @@ public class MailComposerServiceSpec {
         final Supplier<ApplicationJson> mockApplication = let(() -> Mockito.mock(ApplicationJson.class));
         final List<DistributionEntryJson> distribution = Collections
             .singletonList(emailDistribution("Pekka Pekanpekka", "pekkapekanpekka@pekka.org"));
+        final List<DistributionEntryJson> distributions = Arrays.asList(
+          emailDistribution("Pekka Pekanpekka", "pekkapekanpekka@pekka.org"),
+          emailDistribution("Ville Vilperi", "villevilperi@ville.org")
+        );
         final List<Attachment> attachments = Arrays.asList(
             new Attachment("first", MediaType.APPLICATION_PDF_VALUE, null),
             new Attachment("second", MediaType.APPLICATION_PDF_VALUE, null),
@@ -88,7 +97,7 @@ public class MailComposerServiceSpec {
           decisionDetailsJson.setMessageBody("MessageBody");
           mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.DECISION);
 
-          Mockito.verify(alluMailService).newMailTo(Mockito.anyList());
+          Mockito.verify(alluMailService).newMailTo(Mockito.anyString());
           Mockito.verify(mailBuilder).withSubject(Mockito.anyString());
           Mockito.verify(mailBuilder).withAttachments(Mockito.anyList());
           Mockito.verify(mailBuilder).withBody(Mockito.anyString());

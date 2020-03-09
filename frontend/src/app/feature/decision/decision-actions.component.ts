@@ -175,7 +175,10 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
       .map(details => this.sendDecisionDocument(appId, details, confirmation.status).pipe(
-        catchError(error => this.notification.errorCatch(error, {}))
+        catchError(error => {
+          this.store.dispatch(new Load(ActionTargetType.Application));
+          return this.notification.errorCatch(error, {});
+        })
       ))
       .orElseGet(() => of({}));
   }
