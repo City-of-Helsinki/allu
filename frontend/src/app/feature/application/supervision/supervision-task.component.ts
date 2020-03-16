@@ -84,8 +84,13 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const disabledStatus = ApplicationStatus.DECISIONMAKING === this.application.status;
     const disabledTaskType = [SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskType.FINAL_SUPERVISION]
       .indexOf(this.form.value.type) >= 0;
+    const disabledByOperationalCondition = this.form.value.type === SupervisionTaskType.OPERATIONAL_CONDITION &&
+      this.application.status !== ApplicationStatus.DECISION;
+    const disabledByFinalSupervision = this.form.value.type === SupervisionTaskType.FINAL_SUPERVISION &&
+      !ArrayUtil.contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], this.application.status);
 
-    this.approveDisabled = disabledTaskType && (disabledStatus || disablingTags);
+    this.approveDisabled = (disabledTaskType && (disabledStatus || disablingTags)) ||
+      disabledByOperationalCondition || disabledByFinalSupervision;
   }
 
   ngOnInit(): void {
