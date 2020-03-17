@@ -21,7 +21,7 @@
 
       <div class="unboxed">
         <section class="half-left">
-          <h2>Päätöksen hakija</h2>
+          <h2>Työstä vastaava</h2>
           <p>
             <xsl:for-each select="data/customerAddressLines">
               <xsl:value-of select="." /><br/>
@@ -75,7 +75,7 @@
         </section>
         <section class="half-right">
           <xsl:if test="data/anonymizedDocument = 'false'">
-            <h2>Vastuuhenkilö</h2>
+            <h2>Yhteyshenkilö</h2>
             <p>
               <xsl:for-each select="data/contractorContactLines">
                 <xsl:value-of select="."/><br/>
@@ -160,14 +160,14 @@
       </div>
 
       <section class="unboxed">
-        <h2>Työn tarkoitus</h2>
+        <h2>Kaivutyön tarkoitus</h2>
         <p>
           <xsl:value-of select="data/workPurpose"/>
         </p>
       </section>
 
       <section class="unboxed">
-        <h2>Liikennejärjestelypäätös</h2>
+        <h2>Liikennejärjestelyitä koskevat määräykset</h2>
         <p>
           <xsl:for-each select="data/trafficArrangements">
             <p>
@@ -182,7 +182,7 @@
 
       <xsl:if test="data/additionalConditions or (data/qualityAssuranceTest = 'true')">
         <section class="unboxed">
-          <h2>Päätösehdot</h2>
+          <h2>Kaivutyötä koskevat määräykset</h2>
           <xsl:for-each select="data/additionalConditions">
             <p>
               <!-- [Ehtokentän teksti]  -->
@@ -244,29 +244,46 @@
       </xsl:if>
 
       <section class="unboxed">
-        <h2>Yleiset ehdot</h2>
+        <h2>Yleiset määräykset</h2>
         <ol style="margin-top: 0px;">
-          <li>Päätöksenhakija on velvollinen noudattamaan liikennejärjestelypäätöksessä määriteltyjä ehtoja</li>
-          <li>Alueen käyttö muuhun kuin haettuun tarkoitukseen, tai muussa laajuudessa, tai ehtojen vastaisesti,
-            johtaa laiminlyöntimaksuun, tai päätöksen purkamiseen</li>
-          <li>Päätöksenhakijan suorittamien liikennejärjestelyjen sisältäessä puutteita päätöksenantaja voi korjata
-            puutteet päätöksenhakijan kustannuksella, mikäli niitä ei kehotuksista huolimatta korjata</li>
-          <li>Päätöksenhakija vastaa kaupungille ja kolmannelle osapuolelle aiheutuneista vahingoista</li>
-          <li>Käytetyt alueet on ennallistettava välittömästi tilapäisten liikennejärjestelyjen päätyttyä</li>
-          <li>Päätöksenhakijan takuu alueen ennallistamisesta kestää 2 vuotta työn valmistumisesta</li>
+          <li>Työstä vastaava on velvollinen noudattamaan annettuja määräyksiä.</li>
+          <li>Alueen käyttö muuhun kuin ilmoitettuun tarkoitukseen, muussa laajuudessa tai määräysten vastaisesti
+            voi johtaa uhkasakkomenettelyyn tai asiasta voidaan tehdä rikosilmoitus. Työstä vastaavalta voidaan
+            periä myös ylimääräisiä valvontakuluja sekä korvauksia kaupungille aiheutuneista kustannuksista, jotka
+            johtuvat välitöntä vaaraa aiheuttaneen laiminlyönnin poistamisesta.</li>
+          <li>Työkohteessa on oltava näkyvillä erillinen työmaataulu, josta selviää päätöksen KP-tunnus, kaivutyön
+            tarkoitus ja kesto sekä työstä vastaavan ja urakoitsijan yhteystiedot.</li>
+          <li>Työalue on ennallistettava hyväksytysti työtä edeltäneeseen kuntoon työajan kuluessa.</li>
+          <li>Jos työn kesto muuttuu alkuperäiseen ilmoitukseen nähden, on työstä vastaavan ilmoitettava
+            päivämäärämuutoksesta, valmistumisesta tai lisäaikatarpeesta kaupungille viimeistään seuraavana
+            arkipäivänä (https://www.hel.fi/static/hkr/luvat/ilmoituskaavake.pdf).</li>
+          <li>Työstä vastaavan on ilmoitettava talvityökautena työalueen toiminnallisesta kunnosta kaupungille
+            viimeistään seuraavana arkipäivänä. Jos ilmoitusta toiminnallisesta kunnosta ei tehdä, jatkuu
+            alueenkäyttömaksun veloitus.</li>
+          <li>Työalueen laajuuteen liittyvistä muutoksista tulee ilmoittaa ennen muutoksen toteuttamista.</li>
+          <li>Ilmoitusten laiminlyönnistä voi aiheutua ylimääräisiä valvontakuluja ja alueenkäyttömaksuja.</li>
+          <li>Työstä vastaava on velvollinen huolehtimaan tilapäisten liikennejärjestelyiden toteuttamisesta
+            sekä poistamisesta kustannuksellaan. Kaupungilla on oikeus teettää tarvittavat toimet työstä vastaavan
+            kustannuksella, mikäli työstä vastaava kaupungin antamasta kehotuksesta huolimatta laiminlyö
+            tilapäisten liikennejärjestelyiden toteuttamisen tai poistamisen.</li>
+          <li>Työstä vastaava vastaa kaupungille ja kolmannelle osapuolelle aiheuttamistaan vahingoista.</li>
+          <li>Työstä vastaava vastaa kahden vuoden ajan esiin tulevista, alueen ennallistamiseen liittyvistä
+            virheistä ja puutteista. Takuuaika lasketaan siitä, kun kaupunki on hyväksynyt työn valmiiksi.
+            Mikäli kaupungin antamia määräyksiä on rikottu, vastaa työstä vastaava esiin tulevien virheiden ja
+            puutteiden korjaamisesta takuuajan jälkeenkin.</li>
         </ol>
         <p>
-          Työmaajärjestelyjä sekä kaivutöiden ja liikennejärjestelyjen suorittamista koskevat tekniset ohjeet ja
-          määräykset on annettu tässä päätöksessä sekä ohjeessa ”Yleisten alueiden käyttö, tilapäiset
-          liikennejärjestelyt ja katutyöt” ja ”Tilapäiset liikennejärjestelyt katu- ja yleisillä alueilla”. Ohjeista lisätietoa
-          Helsingin kaupungin nettisivuilla osoitteessa https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/katutyoluvat/.
+          Työmaajärjestelyjä sekä kaivutöiden ja liikennejärjestelyjen suorittamista koskevat tekniset ohjeet
+          ja määräykset on annettu tässä päätöksessä sekä ohjeessa ” Kaivutyöt ja tilapäiset liikennejärjestelyt
+          pääkaupunkiseudulla” ja ”Tilan varaaminen siirtokehotuskyltein”. Edellä mainituissa ohjeissa annettuja
+          määräyksiä on noudatettava soveltuvin osin. Ohjeet löytyvät Helsingin kaupungin nettisivuilla osoitteessa
+          https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/kaduilla-ja-puistoissa-tehtavat-tyot
+          kohdasta ”Noudata näitä työohjeita”.
         </p>
         <p class="space-above">
-          Kunnan antamien määräysten lainmukaisuuden ratkaiseminen osoitetaan rakennusvalvontapalveluihin.
-          Muutoksenhaku kunnan antamiin päätöksiin osoitetaan kaupunkiympäristölautakunnalle, sähköposti
-          helsinki.kirjaamo@hel.fi. Ennen varsinaisen valituksen tekemistä maksuvelvollisen tulee tehdä kirjallinen
-          muistutus maksun perimisestä päättävälle kunnan viranomaiselle 14 päivän kuluessa maksulipun (lasku)
-          saamisesta.
+          Kunnan antamien määräysten lainmukaisuus voidaan saattaa kunnan rakennusvalvontaviranomaisen ratkaistavaksi.
+          Ennen muutoksen hakemista kadulla ja yleisillä alueilla tehtävistä töistä perittäviin maksuihin on
+          tehtävä kirjallinen muistutus kaupungille 14 päivän kuluessa maksulipun (lasku) saamisesta.
         </p>
       </section>
 
@@ -364,7 +381,7 @@
           <xsl:value-of select="data/deciderName"/>
         </p>
         <p class="space-above">
-          Päätös perustuu lakiin kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta § 14 b.
+          Päätös perustuu kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta annetun lain (669/1978) kohtiin 14 a § ja 14 b § sekä tieliikennelain (267/1981) kohtaan 54 § ja tieliikenneasetuksen (182/1982) kohtiin 49 § ja 50 §.
         </p>
       </section>
 
@@ -393,7 +410,7 @@
       </div>
 
       <div class="unboxed avoid-pb">
-        <h2>Lupakäsittelijän yhteystiedot</h2>
+        <h2>Ilmoituksen käsittelijän yhteystiedot</h2>
         <section class="half-left">
           <p class="small">Nimi</p>
           <p><xsl:value-of select="data/handlerName"/></p>

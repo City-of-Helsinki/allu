@@ -49,10 +49,10 @@
       <div class="half-right" style="position:relative;left:-20pt;">
         <xsl:choose>
           <xsl:when test="data/replacingDecision = 'false'">
-            <h1>Päätös yleisellä alueella tehtävästä työstä</h1>
+            <h1>Päätös yleisellä alueella tehtävästä kaivutyöstä</h1>
           </xsl:when>
           <xsl:otherwise>
-           <h1>Korvaava päätös yleisellä alueella tehtävästä työstä</h1>
+           <h1>Korvaava päätös yleisellä alueella tehtävästä kaivutyöstä</h1>
           </xsl:otherwise>
         </xsl:choose>
         <div class="page">
