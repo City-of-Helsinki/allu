@@ -180,7 +180,7 @@
         </p>
       </section>
 
-      <xsl:if test="data/additionalConditions or (data/qualityAssuranceTest = 'true')">
+      <xsl:if test="data/additionalConditions or (data/qualityAssuranceTest = 'true') or (data/compactionAndBearingCapacityMeasurement = 'true')">
         <section class="unboxed">
           <h2>Kaivutyötä koskevat määräykset</h2>
           <xsl:for-each select="data/additionalConditions">
@@ -192,14 +192,14 @@
               </xsl:if>
             </p>
           </xsl:for-each>
-          <xsl:if test="data/qualityAssuranceTest = 'true'">
+          <xsl:if test="data/qualityAssuranceTest = 'true' or data/compactionAndBearingCapacityMeasurement = 'true'">
             <p>
               <xsl:if test="data/additionalConditions">
                 <br/>
               </xsl:if>
-              Luvansaaja on velvollinen teettämään kohteessa laadunvarmistuskokeet sekä toimittamaan niiden tulokset
-              lausuntoineen luvan myöntäjälle työn valmistumisilmoituksen liitteenä. Luvansaajan tulee tilata vaaditut
-              laadunvarmistuskokeet sertifioidulta taholta.
+              Työstä vastaava on velvollinen teettämään kohteessa laadunvarmistuskokeet sekä toimittamaan
+              niiden tulokset lausuntoineen kaupungille osoitteeseen luvat@hel.fi.
+              Työstä vastaavan tulee tilata vaaditut laadunvarmistuskokeet sertifioidulta taholta.
             </p>
           </xsl:if>
         </section>
@@ -207,7 +207,7 @@
 
       <xsl:if test="data/qualityAssuranceTest = 'true' or data/compactionAndBearingCapacityMeasurement = 'true'">
         <div class="unboxed">
-          <h2>Päätöksen saaja on velvollinen teettämään seuraavat kaivannon laadunvarmistustoimenpiteet</h2>
+          <h2>Työstä vastaava on velvollinen teettämään seuraavat kaivannon laadunvarmistustoimenpiteet</h2>
 
           <section class="half-left">
             <div style="margin-top: 5px; height: 22px;">
