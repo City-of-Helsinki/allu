@@ -300,7 +300,7 @@ public class ApplicationServiceComposer {
   public ApplicationJson returnToEditing(int applicationId, StatusChangeInfoJson info) {
     Application application = applicationService.findApplicationById(applicationId);
     StatusType statusToReturn = getReturnStatus(applicationId, application.getTargetState());
-    reopenSupervisionTaskByTarget(applicationId, application.getTargetState(), info.getComment());
+    reopenApprovedSupervisionTaskByTarget(applicationId, application.getTargetState(), info.getComment());
     application = applicationService.returnToStatus(applicationId, statusToReturn);
     changeOwnerOnStatusChange(application, info);
     return updateSearchServiceOnStatusChange(application, statusToReturn);
@@ -327,17 +327,17 @@ public class ApplicationServiceComposer {
     }
   }
 
-  private void reopenSupervisionTaskByTarget(int applicationId, StatusType target, String comment) {
+  private void reopenApprovedSupervisionTaskByTarget(int applicationId, StatusType target, String comment) {
     if (StatusType.OPERATIONAL_CONDITION.equals(target)) {
-      reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION, comment);
+      reopenApprovedSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION, comment);
     } else if (StatusType.FINISHED.equals(target)) {
-      reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION, comment);
+      reopenApprovedSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION, comment);
     }
   }
 
-  private void reopenSupervisionTask(int applicationId, SupervisionTaskType taskType, String comment) {
+  private void reopenApprovedSupervisionTask(int applicationId, SupervisionTaskType taskType, String comment) {
     final List<SupervisionTaskJson> tasks = supervisionTaskService.findByApplicationId(applicationId);
-    tasks.stream().filter(s -> s.getType() == taskType).forEach(s -> {
+    tasks.stream().filter(s -> s.getType() == taskType && s.getStatus() == SupervisionTaskStatusType.APPROVED).forEach(s -> {
       s.setStatus(SupervisionTaskStatusType.OPEN);
       s.setActualFinishingTime(null);
       s.setDescription(appendCommentToDescription(s.getDescription(), comment));
