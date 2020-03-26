@@ -60,7 +60,7 @@ public class ProjectSearchParameterMapper {
     }
     applicationQueryParameters.setIntersectingGeometry(intersectingGeometry);
     applicationQueryParameters.setHasProject(true);
-    PageRequest pageRequest = PageRequest.of(0, Integer.MAX_VALUE, null);
+    PageRequest pageRequest = PageRequest.of(0, Integer.MAX_VALUE);
     Page<ApplicationES> result = applicationServiceComposer.search(applicationQueryParameters, pageRequest, Boolean.FALSE);
     return result.getContent().stream().filter(a -> a.getProject() != null).map(a -> a.getProject().getId())
         .collect(Collectors.toList());
