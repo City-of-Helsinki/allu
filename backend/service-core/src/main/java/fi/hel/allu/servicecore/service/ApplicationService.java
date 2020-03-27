@@ -242,10 +242,12 @@ public class ApplicationService {
   }
 
 
-  void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
+  void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds, boolean dispatchEvent) {
     restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
     Integer currentUserId = userService.getCurrentUser().getId();
-    applicationIds.forEach(id -> applicationEventDispatcher.dispatchOwnerChangeEvent(id, currentUserId, updatedOwner));
+    if (dispatchEvent) {
+      applicationIds.forEach(id -> applicationEventDispatcher.dispatchOwnerChangeEvent(id, currentUserId, updatedOwner));
+    }
   }
 
   void removeApplicationOwner(List<Integer> applicationIds) {
