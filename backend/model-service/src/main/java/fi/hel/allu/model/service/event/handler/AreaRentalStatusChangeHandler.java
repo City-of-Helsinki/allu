@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,12 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
                           TimeUtil.nextDay(application.getEndTime()));
     removeTag(application.getId(), ApplicationTagType.PRELIMINARY_SUPERVISION_DONE);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
+    // Lock invoicing of periods having period end date. These cannot be changed
+    // after decision because invoices are sent before work is finished
+    invoicingPeriodService.findOpenPeriodsForApplicationId(application.getId())
+      .stream()
+      .filter(p -> p.getEndTime() != null)
+      .forEach(p -> finishInvoicingForPeriod(application, p.getId()));
   }
 
   @Override
