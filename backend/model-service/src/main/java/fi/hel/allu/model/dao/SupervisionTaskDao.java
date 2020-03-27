@@ -244,7 +244,7 @@ public class SupervisionTaskDao {
         Optional.of(supervisionTaskWithAddress.status.in(statuses)),
         values(searchCriteria.getTaskTypes()).map(supervisionTaskWithAddress.type::in),
         Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTaskWithAddress.plannedFinishingTime::goe),
-        Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTaskWithAddress.plannedFinishingTime::loe),
+        Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTaskWithAddress.plannedFinishingTime::lt),
         Optional.ofNullable(searchCriteria.getApplicationId()).map(String::toUpperCase).map(application.applicationId::startsWith),
         values(searchCriteria.getOwners()).map(supervisionTaskWithAddress.ownerId::in),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),

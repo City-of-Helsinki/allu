@@ -84,7 +84,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       debounceTime(300)
     ) .subscribe(search => {
       this.storedFilterStore.resetCurrent(StoredFilterType.SUPERVISION_WORKQUEUE);
-      this.store.dispatch(new SetSearchQuery(ActionTargetType.SupervisionTaskWorkQueue, search));
+      const query = SupervisionTaskSearchCriteria.updateDatesForSearch(search);
+      this.store.dispatch(new SetSearchQuery(ActionTargetType.SupervisionTaskWorkQueue, query));
     });
 
     this.taskFilter = combineLatest(
@@ -104,7 +105,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       map(sf => sf.search)
     ).subscribe(search => {
       this.queryForm.patchValue(search, {emitEvent: false});
-      this.store.dispatch(new SetSearchQuery(ActionTargetType.SupervisionTaskWorkQueue, search));
+      const query = SupervisionTaskSearchCriteria.updateDatesForSearch(search);
+      this.store.dispatch(new SetSearchQuery(ActionTargetType.SupervisionTaskWorkQueue, query));
     });
   }
 
