@@ -241,14 +241,17 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
         it("Find by dates", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
-          taskForOther.setPlannedFinishingTime(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
+          ZonedDateTime testDate = ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault());
+          taskForOther.setPlannedFinishingTime(testDate);
           supervisionTaskDao.insert(taskForOther);
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
-          search.setAfter(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
+          search.setAfter(testDate);
           assertEquals(2, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added + existing
-          search.setBefore(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
-          assertEquals(1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added
+          search.setBefore(testDate);
+          assertEquals("Search as per API failed", 0, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // none
+          search.setBefore(TimeUtil.endOfDay(testDate));
+          assertEquals("Search as per frontend failed", 1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added
           search.setAfter(null);
           assertEquals(1, supervisionTaskDao.search(search, PageRequest.of(0, 100)).getTotalElements()); // added
         });
