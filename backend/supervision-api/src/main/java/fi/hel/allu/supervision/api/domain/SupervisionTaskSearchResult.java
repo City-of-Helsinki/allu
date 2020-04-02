@@ -16,6 +16,7 @@ public class SupervisionTaskSearchResult {
   private Integer id;
   private Integer applicationId;
   private Integer locationId;
+  private Integer locationKey;
   private StatusType applicationStatus;
   private ApplicationType applicationType;
   private String applicationIdentifier;
@@ -58,6 +59,15 @@ public class SupervisionTaskSearchResult {
 
   public void setLocationId(Integer locationId) {
     this.locationId = locationId;
+  }
+
+  @ApiModelProperty(value = "Key of the location this task applies to (present only in work time supervision tasks of area rentals)")
+  public Integer getLocationKey() {
+    return locationKey;
+  }
+
+  public void setLocationKey(Integer locationKey) {
+    this.locationKey = locationKey;
   }
 
   @ApiModelProperty(value = "Supervision task type")

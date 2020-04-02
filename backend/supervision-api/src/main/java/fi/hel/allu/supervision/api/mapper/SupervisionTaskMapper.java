@@ -12,6 +12,7 @@ import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskCreateJson;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskSearchResult;
@@ -24,6 +25,9 @@ public class SupervisionTaskMapper {
 
   @Autowired
   private SupervisionTaskService supervisionTaskService;
+
+  @Autowired
+  private LocationService locationService;
 
   public SupervisionTaskSearchResult mapToSearchResult(SupervisionWorkItem item) {
     SupervisionTaskJson task = supervisionTaskService.findById(item.getId());
@@ -40,6 +44,9 @@ public class SupervisionTaskMapper {
 
     Optional.ofNullable(task.getOwner()).ifPresent(o -> result.setOwnerRealName(o.getRealName()));
     Optional.ofNullable(task.getOwner()).ifPresent(o -> result.setOwnerUserName(o.getUserName()));
+    Optional.ofNullable(task.getLocationId()).ifPresent(locationId ->
+      Optional.ofNullable(locationService.getLocationById(locationId)).ifPresent(l -> result.setLocationKey(l.getLocationKey()))
+    );
     result.setApplicationIdentifier(applicationStatusInfo.getApplicationId());
     result.setApplicationStatus(applicationStatusInfo.getStatus());
     result.setActualFinishingTime(task.getActualFinishingTime());
