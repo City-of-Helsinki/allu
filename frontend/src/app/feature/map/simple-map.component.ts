@@ -6,6 +6,7 @@ import {DEFAULT_OVERLAY, MapLayerService} from '@feature/map/map-layer.service';
 import {MapFeature} from '@feature/map/map-feature';
 import {pathStyle} from '@service/map/map-draw-styles';
 import {Projection} from '@feature/map/projection';
+import {ZoomBoundsDiagonals} from '@feature/map/zoom-bounds-diagonals';
 
 @Component({
   selector: 'simple-map',
@@ -74,7 +75,19 @@ export class SimpleMapComponent implements AfterViewInit, OnDestroy {
   private centerAndZoomOnDrawn() {
     const bounds = this._contentFeatures.getBounds();
     if (Object.keys(bounds).length > 0) {
-      this._map.fitBounds(bounds);
+      // This check is made, as fitBounds has unresolved issues for small bounds
+      if (!bounds.getNorthEast().equals(bounds.getSouthWest())) {
+        const diagonal = bounds.getNorthEast().distanceTo(bounds.getSouthWest());
+        if (diagonal < ZoomBoundsDiagonals.DIAG_FOR_ZOOM_12) {
+          this._map.setView(bounds.getCenter(), 12);
+        } else if (diagonal < ZoomBoundsDiagonals.DIAG_FOR_ZOOM_11) {
+          this._map.setView(bounds.getCenter(), 11);
+        } else {
+          this._map.fitBounds(bounds);
+        }
+      } else {
+        this._map.setView(bounds.getCenter(), 11);
+      }
     }
   }
 
