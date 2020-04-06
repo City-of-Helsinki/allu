@@ -247,6 +247,8 @@ public class ApplicationService {
     Integer currentUserId = userService.getCurrentUser().getId();
     if (dispatchEvent) {
       applicationIds.forEach(id -> applicationEventDispatcher.dispatchOwnerChangeEvent(id, currentUserId, updatedOwner));
+    } else {
+      applicationIds.forEach(id -> applicationEventDispatcher.dispatchNotificationRemoval(id));
     }
   }
 

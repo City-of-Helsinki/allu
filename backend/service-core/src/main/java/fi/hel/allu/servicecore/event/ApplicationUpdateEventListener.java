@@ -43,11 +43,11 @@ public class ApplicationUpdateEventListener {
 
   @EventListener
   public void onApplicationOwnerChange(ApplicationOwnerChangeEvent event) {
-    if (Objects.equals(event.getOwnerId(), event.getUpdaterId())) {
-      // Owner set to current user, clear owner notification
-      applicationServiceComposer.removeOwnerNotification(event.getApplicationId());
-    } else if (event.getOwnerId() != null) {
+    if (event.getOwnerId() != null && !Objects.equals(event.getOwnerId(), event.getUpdaterId())) {
       applicationServiceComposer.addOwnerNotification(event.getApplicationId());
+    } else {
+      // Owner set to current user or new owner not given -> clear owner notification
+      applicationServiceComposer.removeOwnerNotification(event.getApplicationId());
     }
   }
 

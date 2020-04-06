@@ -43,8 +43,12 @@ public class ApplicationEventDispatcher {
     eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationId, updaterId, ownerId));
   }
 
+  public void dispatchNotificationRemoval(Integer applicationId) {
+    // Publish owner change event without new owner to clear notifications
+    eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationId, null, null));
+  }
+
   private StatusType getApplicationStatus(int applicationId) {
     return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), ApplicationStatusInfo.class, applicationId).getStatus();
   }
-
 }
