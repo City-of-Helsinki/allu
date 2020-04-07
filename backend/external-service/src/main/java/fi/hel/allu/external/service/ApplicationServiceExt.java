@@ -206,8 +206,12 @@ public class ApplicationServiceExt {
     validateApplicationChangePossible(applicationId);
     InformationRequest request = informationRequestService.createForResponse(applicationId, Collections.emptyList());
     addResponseForRequest(applicationId, request.getId(), response, mapper);
-    applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.OTHER_CHANGES, ZonedDateTime.now()));
+    addTag(applicationId, ApplicationTagType.OTHER_CHANGES);
     applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(), ApplicationNotificationType.EXTERNAL_OTHER_CHANGE);
+  }
+
+  public void addTag(Integer applicationId, ApplicationTagType tagType) {
+    applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, tagType, ZonedDateTime.now()));
   }
 
   private void validateInformationRequestOpen(Integer requestId) {

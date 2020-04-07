@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.external.domain.CommentExt;
 import fi.hel.allu.external.domain.CommentOutExt;
@@ -24,7 +25,9 @@ public class CommentServiceExt {
   private ApplicationServiceExt applicationService;
 
   public Integer addComment(Integer applicationId, CommentExt comment) {
-    return commentService.addApplicationComment(applicationId, toCommentJson(comment)).getId();
+    Integer commentId = commentService.addApplicationComment(applicationId, toCommentJson(comment)).getId();
+    applicationService.addTag(applicationId, ApplicationTagType.OTHER_CHANGES);
+    return commentId;
   }
 
   public void deleteComment(Integer id) {
