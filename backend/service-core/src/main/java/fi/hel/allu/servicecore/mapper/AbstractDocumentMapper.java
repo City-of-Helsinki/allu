@@ -69,7 +69,7 @@ public abstract class AbstractDocumentMapper<T> {
   protected List<String> addressLines(Optional<CustomerJson> customer) {
     return customer
         .map(c -> Arrays.asList(
-            combinePossibleBlankStrings(c.getName(), getCustomerRegistryKey(c)),
+            combinePossibleBlankStrings(convertNonBreakingForwardSlashToBreaking(c.getName()), getCustomerRegistryKey(c)),
             postalAddress(c.getPostalAddress()),
             combinePossibleBlankStrings(c.getEmail(), c.getPhone()))
         ).orElse(Collections.emptyList());
@@ -169,6 +169,17 @@ public abstract class AbstractDocumentMapper<T> {
   private String convertNonBreakingSpaceToSpace(String value) {
     if (value != null) {
       return value.replace('\u00A0',' ');
+    } else {
+      return null;
+    }
+  }
+
+  /*
+   * Append zero-width-space after non-breaking "/"
+   */
+  private String convertNonBreakingForwardSlashToBreaking(String s) {
+    if (s != null) {
+      return s.replace("/", "/\u200B");
     } else {
       return null;
     }
