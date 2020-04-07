@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
@@ -18,6 +19,7 @@ import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.*;
 
 @Service
@@ -25,6 +27,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
 
   private final WinterTimeService winterTimeService;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final SupervisionTaskService supervisionTaskService;
 
   public ExcavationAnnouncementStatusChangeHandler(ApplicationService applicationService,
        SupervisionTaskService supervisionTaskService, LocationService locationService,
@@ -37,6 +40,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
         invoiceService, terminationDao);
     this.winterTimeService = winterTimeService;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.supervisionTaskService = supervisionTaskService;
   }
 
   @Override
@@ -85,6 +89,10 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
     clearTargetState(application);
     setOwner(application.getHandler(), application.getId());
+    // If replacing application is moved directly to operational condition without
+    // operational condition approval, there's open operational condition
+    // supervision task which should be removed.
+    removeOpenOperationalConditionTask(application.getId());
   }
 
   private Integer getOperationalConditionPeriodId(Integer id) {
@@ -146,6 +154,12 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
           winterTime.getAnnualPeriodStart(operationalConditionDate).isAfter(LocalDate.from(workFinishedDate));
     }
     return false;
+  }
+
+  private void removeOpenOperationalConditionTask(Integer applicationId) {
+    supervisionTaskService.findByApplicationIdAndType(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION)
+      .stream().filter(t -> t.getStatus() == SupervisionTaskStatusType.OPEN)
+      .forEach(t -> supervisionTaskService.delete(t.getId()));
   }
 
 }
