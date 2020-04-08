@@ -393,7 +393,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
 
     decisionJson.setCustomerContactLines(cableReportContactLines(orderer));
     decisionJson.setCableReportOrderer(
-        orderer.map(e -> e.getValue().getName()).orElse("[Johtoselvityksen tilaajan nimi puuttuu]"));
+        orderer.map(e -> convertNonBreakingForwardSlashToBreaking(e.getValue().getName())).orElse("[Johtoselvityksen tilaajan nimi puuttuu]"));
     decisionJson.setCustomerAddressLines(cableReportAddressLines(applicationJson));
   }
 
@@ -572,7 +572,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     final CustomerJson customer = orderer.get().getKey();
     final ContactJson contact = orderer.get().getValue();
     return Arrays.asList(
-        customer.getName(), contact.getName(), contact.getPhone(), contact.getEmail())
+        convertNonBreakingForwardSlashToBreaking(customer.getName()), convertNonBreakingForwardSlashToBreaking(contact.getName()), contact.getPhone(), contact.getEmail())
         .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
   }
 
@@ -587,7 +587,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     }
     final CustomerJson customer = contractor.getCustomer();
     return Arrays
-        .asList(customer.getName(), customer.getPostalAddress().getStreetAddress(),
+        .asList(convertNonBreakingForwardSlashToBreaking(customer.getName()), customer.getPostalAddress().getStreetAddress(),
             customer.getPostalAddress().getCity(), customer.getPhone())
         .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
 

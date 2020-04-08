@@ -177,7 +177,7 @@ public abstract class AbstractDocumentMapper<T> {
   /*
    * Append zero-width-space after non-breaking "/"
    */
-  private String convertNonBreakingForwardSlashToBreaking(String s) {
+  protected String convertNonBreakingForwardSlashToBreaking(String s) {
     if (s != null) {
       return s.replace("/", "/\u200B");
     } else {

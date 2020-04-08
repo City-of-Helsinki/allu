@@ -43,4 +43,13 @@ public class DecisionJsonMapperTest {
     final String[] expected = {"Condition 1", "Condition 2", null};
     Assert.assertArrayEquals(expected, decision.getAdditionalConditions().toArray());
   }
+
+  @Test
+  public void nonBreakingForwardSlash() {
+    String longName1 = "really/long/name";
+    String expectedLongName1 = "really/\u200Blong/\u200Bname";
+    String longName2 = "really long name";
+    Assert.assertEquals(expectedLongName1, decisionMapper.convertNonBreakingForwardSlashToBreaking(longName1));
+    Assert.assertEquals(longName2, decisionMapper.convertNonBreakingForwardSlashToBreaking(longName2));
+  }
 }
