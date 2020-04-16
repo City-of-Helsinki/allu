@@ -41,22 +41,46 @@ describe('Create external user', () => {
       'expirationTime': '2022-07-07T00:00:00.000Z',
       'assignedRoles': ['ROLE_INTERNAL']
     }
+    const extUserIbmE  = {
+      'id': null,
+      'username': 'ext-user-ibm_e-asiointi',
+      'name': 'IBM e-asiointi',
+      'password': 'Edk#60$YpP74qrPKvXAe',
+      'active': 'true',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'assignedRoles': ['ROLE_TRUSTED_PARTNER']
+    }
+    const extUserHelen  = {
+      'id': null,
+      'username': 'ext-user-helen_oy',
+      'name': 'Helen Oy',
+      'password': 'v859Bw9$MAugtwsqV8$u',
+      'active': 'true',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'assignedRoles': ['ROLE_TRUSTED_PARTNER']
+    }
 
     let optionsTestUser = TestUtil.getPostOptions('/api/externalusers', extUser);
     let optionsTestUserRkj = TestUtil.getPostOptions('/api/externalusers', extUserRkj);
     let optionsTestUserHsy = TestUtil.getPostOptions('/api/externalusers', extUserHsy);
     let optionsTestUserInternal = TestUtil.getPostOptions('/api/externalusers', extUserInternal);
+    let optionsTestUserIbmE = TestUtil.getPostOptions('/api/externalusers', extUserIbmE);
+    let optionsTestUserHelen = TestUtil.getPostOptions('/api/externalusers', extUserHelen);
     TestUtil.login('admin')
       .then(token => {
         TestUtil.addAuthorization(optionsTestUser, token);
         TestUtil.addAuthorization(optionsTestUserRkj, token);
         TestUtil.addAuthorization(optionsTestUserHsy, token);
         TestUtil.addAuthorization(optionsTestUserInternal, token);
+        TestUtil.addAuthorization(optionsTestUserIbmE, token);
+        TestUtil.addAuthorization(optionsTestUserHelen, token);
       })
       .then(() => rp(optionsTestUser))
       .then(() => rp(optionsTestUserRkj))
       .then(() => rp(optionsTestUserHsy))
       .then(() => rp(optionsTestUserInternal))
+      .then(() => rp(optionsTestUserIbmE))
+      .then(() => rp(optionsTestUserHelen))
       .then(done, done.fail);
   });
 
