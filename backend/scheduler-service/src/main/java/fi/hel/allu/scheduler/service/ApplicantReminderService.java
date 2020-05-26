@@ -116,9 +116,8 @@ public class ApplicantReminderService {
 
   private Map<String, String> mailVariables(Application application) {
     Map<String, String> result = new HashMap<>();
-    result.put("applicationId", application.getApplicationId());
+    result.put("idAndAddress", idAndAddress(application));
     result.put("endDate", application.getEndTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-    result.put("address", address(application));
     result.put("inlineImageName", "cid:" + INLINE_LOGO_CID);
     return result;
   }
@@ -128,7 +127,7 @@ public class ApplicantReminderService {
     if (locations != null && !locations.isEmpty()) {
       final Location location = locations.get(0);
       if (location.getPostalAddress() != null) {
-        return location.getPostalAddress().getStreetAddress();
+        return location.getPostalAddress().getStreetAddress() != null ? location.getPostalAddress().getStreetAddress() : "";
       }
     }
     return null;

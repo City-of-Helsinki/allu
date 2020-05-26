@@ -1,6 +1,6 @@
 Hyvä asiakkaamme,
 
-Päätöksen ${applicationId} ${address} voimassaolo on päättymässä.
+Päätöksen ${idAndAddress} voimassaolo on päättymässä.
 Hakemukseenne merkitty päättymispäivä on ${endDate}.
 
 Tehkää ilmoitus https://www.hel.fi/static/hkr/luvat/ilmoituskaavake.pdf lisäajasta,
