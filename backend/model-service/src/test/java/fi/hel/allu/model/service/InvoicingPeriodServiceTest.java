@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 public class InvoicingPeriodServiceTest {
 
 
-  private static final Integer APPLICATION_ID = Integer.valueOf(99);
+  private static final Integer APPLICATION_ID = 99;
   @Mock
   private InvoicingPeriodDao invoicingPeriodDao;
   @Mock

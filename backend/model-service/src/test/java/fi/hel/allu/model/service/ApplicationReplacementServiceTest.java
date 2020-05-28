@@ -24,8 +24,6 @@ import fi.hel.allu.model.testUtils.TestCommon;
 
 import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -220,7 +218,7 @@ public class ApplicationReplacementServiceTest {
     setToDecisionState(created.getId());
     int applicationId = applicationReplacementService.replaceApplication(created.getId(), testUser.getId());
     // 8 month application should contain 3 periods when period length is 3
-    assertEquals(invoicingPeriodService.findForApplicationId(applicationId).size(), 3);
+    assertEquals(3, invoicingPeriodService.findForApplicationId(applicationId).size());
   }
 
   @Test
@@ -229,7 +227,7 @@ public class ApplicationReplacementServiceTest {
     setToDecisionState(areaRental.getId());
     int applicationId = applicationReplacementService.replaceApplication(areaRental.getId(), testUser.getId());
     // No periods should have been copied since original did not have any
-    assertEquals(invoicingPeriodService.findForApplicationId(applicationId).size(), 0);
+    assertEquals(0, invoicingPeriodService.findForApplicationId(applicationId).size());
   }
 
   @Test
@@ -275,7 +273,7 @@ public class ApplicationReplacementServiceTest {
     attachment.setDescription("Attachment");
     attachment.setType(AttachmentType.ADDED_BY_CUSTOMER);
     attachment.setUserId(testCommon.insertUser("attachment").getId());
-    byte data[] = {1, 2, 3};
+    byte[] data = {1, 2, 3};
     attachmentDao.insert(originalApplication.getId(), attachment, data);
   }
 
@@ -347,7 +345,7 @@ public class ApplicationReplacementServiceTest {
 
   private void setToDecisionState(Integer applicationId) {
     Optional<User> userOpt = userDao.findByUserName("decisionmaker");
-    User decisionMaker = userOpt.isPresent() ? userOpt.get() : testCommon.insertUser("decisionmaker");
+    User decisionMaker = userOpt.orElseGet(() -> testCommon.insertUser("decisionmaker"));
     applicationDao.updateDecision(applicationId, StatusType.DECISION, decisionMaker.getId(), originalApplication.getHandler());
   }
 
