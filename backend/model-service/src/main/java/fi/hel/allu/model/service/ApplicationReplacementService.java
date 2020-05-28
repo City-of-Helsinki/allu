@@ -17,6 +17,7 @@ import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 
 import static fi.hel.allu.common.domain.types.ApplicationTagType.*;
+import static fi.hel.allu.model.common.ApplicationUtil.isRecurringRental;
 
 /**
  * Service for replacing application (korvaava päätös).
@@ -217,8 +218,11 @@ public class ApplicationReplacementService {
     if (replacingApplication.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       invoicingPeriodService.setExcavationAnnouncementPeriods(replacingApplication.getId());
     } else if (replacingApplication.getType() == ApplicationType.AREA_RENTAL
-      && replacingApplication.getInvoicingPeriodLength() != null) {
+            && replacingApplication.getInvoicingPeriodLength() != null) {
       invoicingPeriodService.createInvoicingPeriods(replacingApplication.getId(), replacingApplication.getInvoicingPeriodLength());
+    } else if (replacingApplication.getType() == ApplicationType.SHORT_TERM_RENTAL
+            && isRecurringRental(replacingApplication)) {
+      invoicingPeriodService.createRecurringApplicationPeriods(replacingApplication.getId());
     }
   }
 }

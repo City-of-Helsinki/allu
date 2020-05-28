@@ -232,6 +232,24 @@ public class ApplicationReplacementServiceTest {
     assertEquals(invoicingPeriodService.findForApplicationId(applicationId).size(), 0);
   }
 
+  @Test
+  public void shouldCreateInvoicingPeriodsForRecurringTerraceShortTermRental() {
+    Application shortTermRental = createApplication(ApplicationType.SHORT_TERM_RENTAL, new ShortTermRental());
+    shortTermRental.setKind(ApplicationKind.SUMMER_TERRACE);
+    shortTermRental.setRecurringEndTime(ENDTIME.plusYears(2));
+    Application created = applicationDao.insert(shortTermRental);
+    List<Location> locations = createLocations(created);
+    locations.get(0).setEndTime(ENDTIME);
+    locationService.insert(locations, testUser.getId());
+
+    setToDecisionState(created.getId());
+    int applicationId = applicationReplacementService.replaceApplication(created.getId(), testUser.getId());
+
+    assertTrue(created.getKind().isTerrace());
+    // Repeating a rental for 2 more years ( total 3 ) should result in 3 invoicing periods
+    assertEquals(3, invoicingPeriodService.findForApplicationId(applicationId).size());
+  }
+
   private <E extends ApplicationExtension> Application insertApplication(ApplicationType type, E extension) {
     Application created = applicationDao.insert(createApplication(type, extension));
     insertLocations(created);

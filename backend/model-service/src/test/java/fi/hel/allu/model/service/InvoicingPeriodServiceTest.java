@@ -68,6 +68,17 @@ public class InvoicingPeriodServiceTest {
   }
 
   @Test
+  public void shouldCreateRecurringPeriods() {
+    Application application = applicationDao.findById(APPLICATION_ID);
+    application.setRecurringEndTime(END_TIME.plusYears(2));
+    // Check if period affects, even if it should be null. END_TIME - START_TIME difference should be 9 months.
+    application.setInvoicingPeriodLength(5);
+    List<InvoicingPeriod> result = invoicingPeriodService.createRecurringApplicationPeriods(APPLICATION_ID);
+    // Not using validatePeriods() method, as it asserts if periods have 1 day between
+    assertEquals(3, result.size());
+  }
+
+  @Test
   public void shouldNotUpdateClosedPeriods() {
     List<InvoicingPeriod> existingPeriods = new ArrayList<>();
     existingPeriods.add(new InvoicingPeriod(APPLICATION_ID, START_TIME, START_TIME.plusMonths(6).minusDays(1)));

@@ -20,6 +20,8 @@ import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.service.*;
 
+import static fi.hel.allu.model.common.ApplicationUtil.isRecurringRental;
+
 @Service
 public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeHandler {
 
@@ -90,12 +92,5 @@ public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeH
   private boolean isDateOnPeriod(InvoicingPeriod period, ZonedDateTime date) {
     return period.getStartTime() != null && TimeUtil.isSameDateOrLater(date, period.getStartTime())
         && period.getEndTime() != null && TimeUtil.isSameDateOrLater(period.getEndTime(), date);
-  }
-
-  private boolean isRecurringRental(Application application) {
-    return application.getKind().isTerrace() &&
-        application.getRecurringEndTime() != null &&
-        application.getEndTime() != null &&
-        application.getRecurringEndTime().getYear() > application.getEndTime().getYear();
   }
 }
