@@ -102,7 +102,7 @@ public class UserController {
       @ApiResponse(code = 200, message = "Users retrieved successfully", response = UserJson.class, responseContainer = "List")
   })
   @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<UserJson>> getAllUsers() {
     return ResponseEntity.ok(activeUsers(userService.findAllActiveUsers()));
   }
