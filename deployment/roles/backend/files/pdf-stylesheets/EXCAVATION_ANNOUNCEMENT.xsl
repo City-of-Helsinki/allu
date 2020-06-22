@@ -381,7 +381,7 @@
           <xsl:value-of select="data/deciderName"/>
         </p>
         <p class="space-above">
-          Päätös perustuu kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta annetun lain (669/1978) kohtiin 14 a § ja 14 b § sekä tieliikennelain (267/1981) kohtaan 54 § ja tieliikenneasetuksen (182/1982) kohtiin 49 § ja 50 §.
+          Päätös perustuu kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta annetun lain (669/1978) kohtiin 14 a § ja 14 b § sekä tieliikennelain (729/2018) kohtiin 187 § ja 188 §
         </p>
       </section>
 
