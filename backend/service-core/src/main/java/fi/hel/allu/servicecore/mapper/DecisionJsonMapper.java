@@ -63,7 +63,8 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     vat0Kinds = new HashSet<>(Arrays.asList(
             ApplicationKind.SUMMER_TERRACE,
             ApplicationKind.WINTER_TERRACE,
-            ApplicationKind.PARKLET));
+            ApplicationKind.PARKLET,
+            ApplicationKind.URBAN_FARMING));
   }
 
   private final NumberFormat currencyFormat;
@@ -343,6 +344,9 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
 
     decisionJson.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
     decisionJson.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
+
+    decisionJson.setDistributionNames(application.getDecisionDistributionList().stream()
+      .map(DistributionEntryJson::getName).collect(Collectors.toList()));
   }
 
   private void fillEventSpecifics(DecisionJson decisionJson, ApplicationJson application) {

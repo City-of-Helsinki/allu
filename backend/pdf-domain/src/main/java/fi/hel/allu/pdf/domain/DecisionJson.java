@@ -88,6 +88,8 @@ public class DecisionJson {
 
   private List<String> attachmentNames;
 
+  private List<String> distributionNames;
+
   private String appealInstructions;
 
   private String cableReportValidUntil;
@@ -618,6 +620,14 @@ public class DecisionJson {
 
   public void setAttachmentNames(List<String> attachmentNames) {
     this.attachmentNames = attachmentNames;
+  }
+
+  public List<String> getDistributionNames() {
+    return distributionNames;
+  }
+
+  public void setDistributionNames(List<String> distributionNames) {
+    this.distributionNames = distributionNames;
   }
 
   public String getAppealInstructions() {
