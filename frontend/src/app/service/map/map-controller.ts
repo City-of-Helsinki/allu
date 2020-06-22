@@ -331,7 +331,7 @@ export class MapController {
 
     this.map.on('moveend', (e: any) => {
       if (!self.config.showOnlyApplicationArea) {
-        self.mapStore.mapViewChange(this.map.getBounds());
+        self.mapStore.mapViewChange(this.map.getBounds(), this.map.getZoom());
       }
     });
 

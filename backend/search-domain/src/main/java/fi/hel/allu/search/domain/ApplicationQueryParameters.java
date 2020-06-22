@@ -32,6 +32,11 @@ public class ApplicationQueryParameters extends QueryParameters {
    */
   private Boolean surveyRequired;
 
+  /**
+   * zoom is added to query as SHOULD
+   */
+  private Integer zoom;
+
   public Geometry getIntersectingGeometry() {
     return intersectingGeometry;
   }
@@ -62,5 +67,13 @@ public class ApplicationQueryParameters extends QueryParameters {
 
   public void setIncludeArchived(boolean includeArchived) {
     this.includeArchived = includeArchived;
+  }
+
+  public Integer getZoom() {
+    return zoom;
+  }
+
+  public void setZoom(Integer zoom) {
+    this.zoom = zoom;
   }
 }

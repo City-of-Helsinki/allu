@@ -98,10 +98,12 @@ export class MapDataService {
   private toApplicationLocationQuery(filter: MapSearchFilter, includeSurveyRequired?: boolean): BackendQueryParameters {
     const viewPoly = this.mapUtil.polygonFromBounds(filter.geometry);
     const geometry = this.mapUtil.featureToGeometry(viewPoly.toGeoJSON());
+    const zoom = filter.zoom;
     return {
       queryParameters: this.mapSearchParameters(filter),
       intersectingGeometry: geometry,
-      surveyRequired: includeSurveyRequired
+      surveyRequired: includeSurveyRequired,
+      zoom: zoom
     };
   }
 

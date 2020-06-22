@@ -10,6 +10,7 @@ export interface MapSearchFilter {
   types?: ApplicationType[];
   geometry?: LatLngBounds;
   layers?: string[];
+  zoom?: number;
 }
 
 export const defaultFilter = {
@@ -21,5 +22,6 @@ export const defaultFilter = {
     ApplicationStatusGroup.DECISION
   ],
   types: Object.keys(ApplicationType).map(type => ApplicationType[type]),
-  layers: ['Karttasarja'].concat(applicationLayers)
+  layers: ['Karttasarja'].concat(applicationLayers),
+  zoom: 6 // TODO get actual default used by map search component
 };

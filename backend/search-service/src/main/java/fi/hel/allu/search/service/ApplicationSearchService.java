@@ -1,21 +1,18 @@
 package fi.hel.allu.search.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.search.domain.LocationES;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.common.geo.builders.ShapeBuilders;
 import org.elasticsearch.index.query.*;
-import org.elasticsearch.index.search.MatchQuery;
 import org.elasticsearch.search.SearchHit;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.PointCollection;
@@ -60,15 +57,15 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     try {
       SearchRequestBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
       SearchResponse response = srBuilder.execute().actionGet();
-      return createResult(pageRequest, response);
+      return createResult(pageRequest, response, queryParameters.getZoom());
     } catch (IOException e) {
       throw new SearchException(e);
     }
   }
 
-  protected Page<ApplicationES> createResult(Pageable pageRequest, SearchResponse response) throws IOException {
+  protected Page<ApplicationES> createResult(Pageable pageRequest, SearchResponse response, Integer zoom) throws IOException {
     long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
-    List<ApplicationES> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response);
+    List<ApplicationES> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response, zoom);
     anonymizeCustomers(results);
     return new PageImpl<>(results, pageRequest, totalHits);
   }
@@ -123,14 +120,60 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     results.forEach(a -> CustomerAnonymizer.anonymize(a.getCustomers()));
   }
 
-  private List<ApplicationES> iterateSearchResponse(SearchResponse response) throws IOException {
+  private List<ApplicationES> iterateSearchResponse(SearchResponse response, Integer zoom) throws IOException {
     List<ApplicationES> appList = new ArrayList<>();
     if (response != null) {
       for (SearchHit hit : response.getHits()) {
-        appList.add(objectMapper.readValue(hit.getSourceAsString(), ApplicationES.class));
+        ApplicationES applicationES = objectMapper.readValue(hit.getSourceAsString(), ApplicationES.class);
+        applicationES.setLocations(getBestLocationRepresentations(applicationES.getLocations(), zoom));
+        appList.add(applicationES);
       }
     }
     return appList;
+  }
+
+  /**
+   * Remove redundant locations from lists by either getting the location with full geometries or
+   * grabbing the one location whose geometries suit best with the provided zoom level.
+   * @param locationESList List of all the locations saved in elasticsearch
+   * @param zoom The zoom level to get the optimal geometries
+   * @return The locations best suited for the situation
+   */
+  private List<LocationES> getBestLocationRepresentations(List<LocationES> locationESList, Integer zoom) {
+    // Bundle to lists grouped by locationKey
+    List<List<LocationES>> locationESLists = locationESList.stream()
+      .map(location -> locationESList.stream()
+        .filter(l -> l.getLocationKey().equals(location.getLocationKey())).collect(Collectors.toList()))
+      .distinct().collect(Collectors.toList());
+    List<LocationES> cleanedLocationESList = locationESLists.stream()
+      .map(locations -> getLocationByZoom(locations, zoom))
+      .collect(Collectors.toList());
+    if (!cleanedLocationESList.contains(null)) {
+      return cleanedLocationESList;
+    }
+    return locationESList;
+  }
+
+  /**
+   * Remove redundant locations from lists by either getting the location with full geometries or
+   * grabbing the one location whose geometries suit best with the provided zoom level.
+   * @param locationESList List of locations with (hopefully) the same locationKey
+   * @param zoom The zoom level to get the optimal geometries
+   * @return The location best suited for the situation
+   */
+  private LocationES getLocationByZoom(List<LocationES> locationESList, Integer zoom) {
+    if (zoom != null) {
+      LocationES locationES = locationESList.stream()
+        .filter(l -> l.getZoom() <= zoom)
+        .max(Comparator.comparingInt(LocationES::getZoom))
+        .orElse(null);
+      if (locationES != null) {
+        return locationES;
+      }
+    }
+    return locationESList.stream()
+      .min(Comparator.comparingInt(LocationES::getZoom))
+      .orElse(locationESList.isEmpty() ? null : locationESList.get(0)); // Return the first item if nothing works
   }
 
 }

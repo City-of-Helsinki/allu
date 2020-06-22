@@ -4,7 +4,9 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.geolatte.geom.Geometry;
+import com.google.common.collect.Lists;
+import fi.hel.allu.servicecore.util.GeometrySimplifier;
+import org.geolatte.geom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class ApplicationMapper {
   private final UserService userService;
   private final LocationService locationService;
   private final ObjectWriter geometryWriter;
+  private List<ZoomLevelSizeBounds> zoomLevelSizeBoundsList;
 
   @Autowired
   public ApplicationMapper(CustomerMapper customerMapper, UserService userService, LocationService locationService) {
@@ -55,7 +58,7 @@ public class ApplicationMapper {
     module.addSerializer(Geometry.class, new GeometrySerializerProxy());
     mapper.registerModule(module);
     geometryWriter = mapper.writerFor(Geometry.class);
-
+    zoomLevelSizeBoundsList = GeometrySimplifier.generateZoomLevelSizeBoundsList();
   }
 
   /**
@@ -419,15 +422,36 @@ public class ApplicationMapper {
 
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {
     if (locationJsons != null) {
-      return locationJsons.stream()
-          .map(json -> this.createLocationES(json))
-          .collect(Collectors.toList());
+      List<LocationES> locationESList = new ArrayList<>();
+      locationJsons.forEach(json -> locationESList.addAll(this.createLocationESSimplified(json)));
+      return locationESList;
     } else {
       return null;
     }
   }
 
+  private List<LocationES> createLocationESSimplified(LocationJson locationJson) {
+    if (locationJson.getGeometry().getNumPoints() == 1) {
+      return Lists.newArrayList(createLocationES(locationJson));
+    }
+    List<LocationES> locationsWithSimplifiedGeo = new ArrayList<>();
+    // Go through all complexities
+    for (int i = GeometryComplexity.FULL.ordinal(); i >= GeometryComplexity.POINT.ordinal(); i--) {
+      LocationES locationESWithZoom = createLocationES(locationJson, i);
+      if (locationESWithZoom == null) {
+        logger.debug("No need to add complexity " + GeometryComplexity.values()[i]);
+        continue;
+      }
+      locationsWithSimplifiedGeo.add(locationESWithZoom);
+    }
+    return locationsWithSimplifiedGeo;
+  }
+
   private LocationES createLocationES(LocationJson json) {
+    return createLocationES(json, null);
+  }
+
+  private LocationES createLocationES(LocationJson json, Integer complexity) {
     LocationES locationEs = new LocationES();
     locationEs.setLocationKey(json.getLocationKey());
     Optional.ofNullable(json.getPostalAddress()).ifPresent(address -> {
@@ -438,10 +462,35 @@ public class ApplicationMapper {
     locationEs.setAddress(json.getAddress());
     locationEs.setCityDistrictId(getCityDistrictId(json));
     locationEs.setAdditionalInfo(json.getAdditionalInfo());
-    locationEs.setGeometry(toJsonString(json.getGeometry()));
-    Geometry searchGeometry = locationService.transformCoordinates(json.getGeometry(), Constants.ELASTIC_SEARCH_SRID);
+    Geometry jsonGeometry = json.getGeometry();
+    if (!simplifyGeometry(locationEs, jsonGeometry, json.getGeometry(), complexity)) {
+      return null;
+    }
+    Geometry searchGeometry = locationService.transformCoordinates(jsonGeometry, Constants.ELASTIC_SEARCH_SRID);
     locationEs.setSearchGeometry(searchGeometry);
     return locationEs;
+  }
+
+  /**
+   * Handle simplification of geometry if such is needed.
+   * @return boolean telling if location should be added to location list
+   */
+  private boolean simplifyGeometry(
+    LocationES locationEs, Geometry jsonGeometry, Geometry geometry, Integer complexity
+  ) {
+    GeometryWithMinZoomLevel geometryWithMinZoom = (complexity == null) ? null :
+      GeometrySimplifier.handleGeometryZoomLevel(geometry, complexity, zoomLevelSizeBoundsList);
+    if (complexity != null){
+      if (geometryWithMinZoom == null) {
+        logger.debug("No geometry to add to locationES");
+        return false;
+      }
+      jsonGeometry = geometryWithMinZoom.getGeometry();
+    }
+    locationEs.setGeometry(toJsonString(jsonGeometry));
+    // If here geometryWithMinZoom == null, then complexity == null -> we want full geometry with zoom 1
+    locationEs.setZoom(geometryWithMinZoom == null ? 1 : Optional.of(geometryWithMinZoom.getMinZoomLevel()).orElse(1));
+    return true;
   }
 
   private String toJsonString(Geometry geometry) {

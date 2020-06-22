@@ -26,6 +26,7 @@ public class LocationES {
   private String additionalInfo;
   private String address;
   private String geometry;
+  private Integer zoom;
 
   /**
    * ElasticSearch uses different coordinate system. Save search coordinates
@@ -112,6 +113,14 @@ public class LocationES {
 
   public void setGeometry(String geometry) {
     this.geometry = geometry;
+  }
+
+  public Integer getZoom() {
+    return zoom;
+  }
+
+  public void setZoom(Integer zoom) {
+    this.zoom = zoom;
   }
 
   public Geometry getSearchGeometry() {

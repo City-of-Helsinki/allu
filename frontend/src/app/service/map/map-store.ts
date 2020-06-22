@@ -191,13 +191,17 @@ export class MapStore {
     });
   }
 
-  mapViewChange(bounds: LatLngBounds): void {
+  mapViewChange(bounds: LatLngBounds, zoom?: number): void {
     const role = this.snapshot.role;
+    let zoomToFilter = this.snapshot.mapSearchFilter.zoom;
+    if (zoom !== undefined) {
+      zoomToFilter = zoom;
+    }
     if ('LOCATION' === role) {
-      const locationSearchFilter = {...this.snapshot.locationSearchFilter, geometry: bounds};
+      const locationSearchFilter = {...this.snapshot.locationSearchFilter, geometry: bounds, zoom: zoomToFilter};
       this.state$.next({...this.state$.getValue(), locationSearchFilter });
     } else if ('SEARCH' === role) {
-      const mapSearchFilter = {...this.snapshot.mapSearchFilter, geometry: bounds};
+      const mapSearchFilter = {...this.snapshot.mapSearchFilter, geometry: bounds, zoom: zoomToFilter};
       this.state$.next({...this.state$.getValue(), mapSearchFilter });
     }
   }

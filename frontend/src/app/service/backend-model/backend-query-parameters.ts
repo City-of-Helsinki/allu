@@ -2,6 +2,7 @@ export interface BackendQueryParameters {
   queryParameters: Array<BackendQueryParameter>;
   intersectingGeometry?: GeoJSON.GeometryObject;
   surveyRequired?: boolean;
+  zoom?: number;
 }
 
 export interface BackendQueryParameter {
