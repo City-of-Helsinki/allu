@@ -345,8 +345,10 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     decisionJson.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
     decisionJson.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
 
-    decisionJson.setDistributionNames(application.getDecisionDistributionList().stream()
-      .map(DistributionEntryJson::getName).collect(Collectors.toList()));
+    if (application.getDecisionDistributionList() != null && !application.getDecisionDistributionList().isEmpty()) {
+      decisionJson.setDistributionNames(application.getDecisionDistributionList().stream()
+        .map(DistributionEntryJson::getName).collect(Collectors.toList()));
+    }
   }
 
   private void fillEventSpecifics(DecisionJson decisionJson, ApplicationJson application) {
