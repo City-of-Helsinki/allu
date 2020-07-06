@@ -2,12 +2,15 @@ package fi.hel.allu.model.pricing;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.util.CollectionUtils;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -22,6 +25,7 @@ public class ShortTermRentalPricing extends Pricing {
   private final List<Location> locations;
   private final PricingExplanator explanationService;
   private final PricingDao pricingDao;
+  private final TerminationDao terminationDao;
   private final double applicationArea;
   private final boolean customerIsCompany;
   private final DecimalFormat decimalFormat;
@@ -55,7 +59,8 @@ public class ShortTermRentalPricing extends Pricing {
     static final String CIRCUS = "%s EUR/päivä + alv";
   }
 
-  public ShortTermRentalPricing(Application application, PricingExplanator explanationService, PricingDao pricingDao,
+  public ShortTermRentalPricing(Application application,
+      PricingExplanator explanationService, PricingDao pricingDao, TerminationDao terminationDao,
       double applicationArea, boolean customerIsCompany, List<InvoicingPeriod> recurringPeriods, List<Location> locations) {
     super();
     this.application = application;
@@ -63,6 +68,7 @@ public class ShortTermRentalPricing extends Pricing {
     this.customerIsCompany = customerIsCompany;
     this.explanationService = explanationService;
     this.pricingDao = pricingDao;
+    this.terminationDao = terminationDao;
     this.recurringPeriods = recurringPeriods;
     this.decimalFormat = new DecimalFormat("#.00");
     this.locations = locations;
@@ -307,7 +313,7 @@ public class ShortTermRentalPricing extends Pricing {
 
   private Stream<TerracePrice> getTerracePrices(String paymentClass, int unitPrice) {
     if (CollectionUtils.isEmpty(recurringPeriods)) {
-      return Stream.of(new TerracePrice(unitPrice, (int)getBillableArea(), application.getStartTime(), application.getEndTime(), application));
+      return Stream.of(new TerracePrice(unitPrice, (int)getBillableArea(), application.getStartTime(), getActualEndTime(application), application));
     } else {
       return recurringPeriods.stream()
           .map(p -> new TerracePrice(unitPrice, (int)getBillableArea(), p.getStartTime(), p.getEndTime(), application, p.getId()));
@@ -345,6 +351,23 @@ public class ShortTermRentalPricing extends Pricing {
       setPriceInCents(getPriceInCents() + priceInCents);
     });
 
+  }
+
+  private ZonedDateTime getActualEndTime(Application application) {
+    TerminationInfo termination = terminationDao.getTerminationInfo(application.getId());
+    if (termination != null && termination.getTerminationDecisionTime() != null &&
+        isTerminationWithinApplicationStartAndEndTimes(termination, application)) {
+      return termination.getExpirationTime();
+    }
+    else {
+      return application.getEndTime();
+    }
+  }
+
+  private boolean isTerminationWithinApplicationStartAndEndTimes(TerminationInfo termination, Application application) {
+    return (termination.getExpirationTime().isEqual(application.getStartTime()) ||
+            termination.getExpirationTime().isAfter(application.getStartTime())) &&
+            termination.getExpirationTime().isBefore(application.getEndTime());
   }
 
 }

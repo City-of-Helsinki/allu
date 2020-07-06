@@ -25,7 +25,6 @@ import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,7 +34,8 @@ public class ShortTermRentalStatusChangeHandlerTest {
   private static final int PERIODS_END_YEAR = 2025;
   private static final int PERIOD_START_MONTH = 7;
   private static final int PERIOD_END_MONTH = 8;
-  private static final ZonedDateTime TERMINATION_DATE = ZonedDateTime.of(2022, 7, 31, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
+  private static final int TERMINATION_YEAR = 2022;
+  private static final ZonedDateTime TERMINATION_DATE = ZonedDateTime.of(TERMINATION_YEAR, 7, 31, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
   private static final int APPLICATION_ID = 99;
   private static final int USER_ID = 999;
   private static final int INVOICE_RECIPIENT_ID = 998;
@@ -92,6 +92,13 @@ public class ShortTermRentalStatusChangeHandlerTest {
     ArgumentCaptor<InvoicingPeriod> captor = ArgumentCaptor.forClass(InvoicingPeriod.class);
     verify(invoicingPeriodService, times(1)).insertInvoicingPeriod(captor.capture());
     assertEquals(TERMINATION_DATE, captor.getValue().getEndTime());
+  }
+
+  @Test
+  public void shouldUpdateNonRecurringChargeBasisOnTermination() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.TERMINATED, USER_ID));
+    verify(chargeBasisService, times(1)).unlockEntries(APPLICATION_ID);
+    verify(applicationService, times(1)).updateChargeBasis(APPLICATION_ID);
   }
 
   @Test

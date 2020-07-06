@@ -281,6 +281,7 @@ public class TestCommon {
   }
 
   private static final String[] DELETE_ALL_DATA = new String[] {
+      "delete from allu.person_audit_log",
       "delete from allu.decision",
       "delete from allu.application_customer_contact",
       "delete from allu.contact",
@@ -289,6 +290,7 @@ public class TestCommon {
       "delete from allu.application_attachment",
       "delete from allu.attachment",
       "delete from allu.attachment_data",
+      "delete from allu.invoice_row",
       "delete from allu.charge_basis",
       "delete from allu.application_tag",
       "delete from allu.location_flids",

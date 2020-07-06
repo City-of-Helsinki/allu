@@ -43,15 +43,18 @@ public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeH
     clearTargetState(application);
     clearOwner(application);
     createSupervisionTaskForTerminated(application, userId);
-    // Handle termination of recurring rental
-    handleRecurringRentalTermination(application);
+    // Handle termination of short term rental
+    handleShortTermRentalTermination(application);
     finishInvoicing(application);
   }
 
-  private void handleRecurringRentalTermination(Application application) {
+  private void handleShortTermRentalTermination(Application application) {
     TerminationInfo termination = getTermination(application.getId());
     if (termination != null && isRecurringRental(application)) {
       handleRecurringPeriodTermination(application, termination.getExpirationTime());
+    }
+    else if (termination != null) {
+      handleUpdateChargeBasisOnTermination(application);
     }
   }
 
@@ -69,6 +72,11 @@ public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeH
       .map(InvoicingPeriod::getId)
       .collect(Collectors.toList());
     invoicingPeriodService.deletePeriods(application.getId(), periodsToRemove);
+  }
+
+  private void handleUpdateChargeBasisOnTermination(Application application) {
+    getChargeBasisService().unlockEntries(application.getId());
+    getApplicationService().updateChargeBasis(application.getId());
   }
 
   private void handleInvoicingPeriodOnTermination(InvoicingPeriod periodOnTermination, Application application,

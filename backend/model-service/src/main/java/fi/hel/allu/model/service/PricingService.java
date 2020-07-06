@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ public class PricingService {
   private final PricingExplanator pricingExplanator;
   private final WinterTimeService winterTimeService;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final TerminationDao terminationDao;
 
   private static final Location EMPTY_LOCATION;
 
@@ -51,13 +53,14 @@ public class PricingService {
 
   @Autowired
   public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao, WinterTimeService winterTimeService,
-      InvoicingPeriodService invoicingPeriodService) {
+      InvoicingPeriodService invoicingPeriodService, TerminationDao terminationDao) {
     this.pricingDao = pricingDao;
     this.locationDao = locationDao;
     this.customerDao = customerDao;
     this.pricingExplanator = new PricingExplanator(locationDao);
     this.winterTimeService = winterTimeService;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.terminationDao = terminationDao;
   }
 
   public List<String> getPaymentClasses(ApplicationType applicationType, ApplicationKind applicationKind) {
@@ -146,8 +149,8 @@ public class PricingService {
       locations = locationDao.findByApplication(application.getId());
     }
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
-    ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, pricingExplanator,
-        pricingDao, applicationArea, isCompany(application), invoicingPeriodService.findForApplicationId(application.getId()), locations);
+    ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, pricingExplanator, pricingDao, terminationDao,
+      applicationArea, isCompany(application), invoicingPeriodService.findForApplicationId(application.getId()), locations);
     pricing.calculatePrice();
     return pricing.getChargeBasisEntries();
   }

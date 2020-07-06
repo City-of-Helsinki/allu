@@ -143,7 +143,6 @@ public class PricingServiceTest {
   @Test
   public void testBridgeBanner() {
     Application application = new Application();
-    application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     ShortTermRental extension = new ShortTermRental();
     extension.setCommercial(false);
@@ -210,7 +209,6 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingField() {
     Application application = new Application();
-    application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setExtension(new ShortTermRental());
     application
