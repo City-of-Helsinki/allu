@@ -200,7 +200,7 @@ public class ChargeBasisService {
 
   private void handleInvoicingChanged(int applicationId) {
     StatusType status = applicationDao.getStatus(applicationId);
-    if (status == StatusType.DECISION || status == StatusType.OPERATIONAL_CONDITION) {
+    if (status == StatusType.DECISION || status == StatusType.OPERATIONAL_CONDITION || status == StatusType.TERMINATED) {
       // Invoicing changed after last decision
       applicationDao.setInvoicingChanged(applicationId, true);
       invoicingChangeEventPublisher.publishEvent(new InvoicingChangeEvent(this, applicationId));
