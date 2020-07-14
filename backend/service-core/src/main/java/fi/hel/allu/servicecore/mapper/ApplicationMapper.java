@@ -478,18 +478,28 @@ public class ApplicationMapper {
   private boolean simplifyGeometry(
     LocationES locationEs, Geometry jsonGeometry, Geometry geometry, Integer complexity
   ) {
-    GeometryWithMinZoomLevel geometryWithMinZoom = (complexity == null) ? null :
-      GeometrySimplifier.handleGeometryZoomLevel(geometry, complexity, zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel simplifyWithMinZoomLevel = (complexity == null) ? null :
+      GeometrySimplifier.shouldSimplifyWithComplexity(geometry, complexity, zoomLevelSizeBoundsList);
     if (complexity != null){
-      if (geometryWithMinZoom == null) {
+      if (simplifyWithMinZoomLevel == null) {
         logger.debug("No geometry to add to locationES");
         return false;
       }
-      jsonGeometry = geometryWithMinZoom.getGeometry();
+      if (simplifyWithMinZoomLevel.shouldSimplify()) {
+        // Get actual simplified geometry
+        jsonGeometry = locationService.simplifyGeometry(geometry, simplifyWithMinZoomLevel.getMinZoomLevel());
+      } else {
+        if (simplifyWithMinZoomLevel.getGeometry() != null) {
+          // Use a Point geometry of the provided geometry
+          jsonGeometry = simplifyWithMinZoomLevel.getGeometry();
+        } else {
+          jsonGeometry = geometry;
+        }
+      }
     }
     locationEs.setGeometry(toJsonString(jsonGeometry));
     // If here geometryWithMinZoom == null, then complexity == null -> we want full geometry with zoom 1
-    locationEs.setZoom(geometryWithMinZoom == null ? 1 : Optional.of(geometryWithMinZoom.getMinZoomLevel()).orElse(1));
+    locationEs.setZoom(simplifyWithMinZoomLevel == null ? 1 : Optional.of(simplifyWithMinZoomLevel.getMinZoomLevel()).orElse(1));
     return true;
   }
 

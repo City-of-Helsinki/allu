@@ -162,6 +162,13 @@ public class LocationService {
     return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(new GeometryWrapper(geometry)), GeometryWrapper.class).getBody().getGeometry();
   }
 
+  public Geometry simplifyGeometry(Geometry geometry, int zoomLevel) {
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getSimplifyGeometryUrl())
+        .queryParam("zoom", zoomLevel)
+        .buildAndExpand().toUri();
+    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(new GeometryWrapper(geometry)), GeometryWrapper.class).getBody().getGeometry();
+  }
+
   public Location getLocationById(Integer locationId) {
     return restTemplate.getForObject(applicationProperties.getLocationUrl(), Location.class, locationId);
   }

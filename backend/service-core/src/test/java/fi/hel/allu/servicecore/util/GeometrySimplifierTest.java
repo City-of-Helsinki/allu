@@ -1,6 +1,6 @@
 package fi.hel.allu.servicecore.util;
 
-import fi.hel.allu.servicecore.domain.GeometryWithMinZoomLevel;
+import fi.hel.allu.servicecore.domain.ShouldSimplifyWithMinZoomLevel;
 import fi.hel.allu.servicecore.domain.ZoomLevelSizeBounds;
 import org.geolatte.geom.*;
 import org.geolatte.geom.crs.CrsId;
@@ -30,11 +30,11 @@ class GeometrySimplifierTest {
     ).add(2.549815796449239E7,6672928.049400462).toPointSequence());
     GeometryCollection geometries = geometryToCollection(point);
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNull(geoWithZoomFull, "Object returned as non-null for complexity FULL");
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNull(geoWithZoomSimple, "Object returned as non-null for complexity SIMPLE");
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomPoint, "Object returned as null for complexity POINT");
     assertEquals(1, geoWithZoomPoint.getGeometry().getNumPoints());
     assertEquals(1, geoWithZoomPoint.getMinZoomLevel());
@@ -53,13 +53,13 @@ class GeometrySimplifierTest {
     )};
     GeometryCollection geometries = geometryToCollection(new Polygon(linearRings));
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomFull, "Object returned as null for complexity FULL");
-    assertEquals(geometries.getNumPoints(), geoWithZoomFull.getGeometry().getNumPoints());
+    assertNull(geoWithZoomFull.getGeometry(), "No geometry should be returned for complexity FULL");
     assertEquals(9, geoWithZoomFull.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNull(geoWithZoomSimple, "Object returned as non-null for complexity SIMPLE");
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomPoint, "Object returned as null for complexity POINT");
     assertEquals(1, geoWithZoomPoint.getGeometry().getNumPoints());
     assertEquals(1, geoWithZoomPoint.getMinZoomLevel());
@@ -80,16 +80,15 @@ class GeometrySimplifierTest {
     )};
     GeometryCollection geometries = geometryToCollection(new Polygon(linearRings));
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomFull, "Object returned as null for complexity FULL");
-    assertEquals(geometries.getNumPoints(), geoWithZoomFull.getGeometry().getNumPoints());
+    assertNull(geoWithZoomFull.getGeometry(), "No geometry should be returned for complexity FULL");
     assertEquals(9, geoWithZoomFull.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomSimple, "Object returned as null for complexity SIMPLE");
-    assertNotEquals(geometries.getNumPoints(), geoWithZoomSimple.getGeometry().getNumPoints());
-    assertNotEquals(0, geoWithZoomSimple.getGeometry().getNumPoints());
+    assertNull(geoWithZoomSimple.getGeometry(), "No geometry should be returned for complexity SIMPLE");
     assertEquals(6, geoWithZoomSimple.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomPoint, "Object returned as null for complexity POINT");
     assertEquals(1, geoWithZoomPoint.getGeometry().getNumPoints());
     assertEquals(1, geoWithZoomPoint.getMinZoomLevel());
@@ -109,16 +108,15 @@ class GeometrySimplifierTest {
     )};
     GeometryCollection geometries = geometryToCollection(new Polygon(linearRings));
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomFull, "Object returned as null for complexity FULL");
-    assertEquals(geometries.getNumPoints(), geoWithZoomFull.getGeometry().getNumPoints());
+    assertNull(geoWithZoomFull.getGeometry(), "No geometry should be returned for complexity FULL");
     assertEquals(9, geoWithZoomFull.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomSimple, "Object returned as null for complexity SIMPLE");
-    assertEquals(geometries.getNumPoints(), geoWithZoomSimple.getGeometry().getNumPoints(),
-      "Should have full geometry, as it is square");
+    assertNull(geoWithZoomSimple.getGeometry(), "No geometry should be returned for complexity SIMPLE");
     assertEquals(6, geoWithZoomSimple.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomPoint, "Object returned as null for complexity POINT");
     assertEquals(1, geoWithZoomPoint.getGeometry().getNumPoints());
     assertEquals(1, geoWithZoomPoint.getMinZoomLevel());
@@ -140,16 +138,15 @@ class GeometrySimplifierTest {
     )};
     GeometryCollection geometries = geometryToCollection(new Polygon(linearRings));
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomFull, "Object returned as null for complexity FULL");
-    assertEquals(geometries.getNumPoints(), geoWithZoomFull.getGeometry().getNumPoints());
+    assertNull(geoWithZoomFull.getGeometry(), "No geometry should be returned for complexity FULL");
     assertEquals(6, geoWithZoomFull.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomSimple, "Object returned as null for complexity SIMPLE");
-    assertNotEquals(geometries.getNumPoints(), geoWithZoomSimple.getGeometry().getNumPoints());
-    assertNotEquals(0, geoWithZoomSimple.getGeometry().getNumPoints());
+    assertNull(geoWithZoomSimple.getGeometry(), "No geometry should be returned for complexity SIMPLE");
     assertEquals(4, geoWithZoomSimple.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomPoint, "Object returned as null for complexity POINT");
     assertEquals(1, geoWithZoomPoint.getGeometry().getNumPoints());
     assertEquals(1, geoWithZoomPoint.getMinZoomLevel());
@@ -175,16 +172,15 @@ class GeometrySimplifierTest {
     )};
     GeometryCollection geometries = geometryToCollection(new Polygon(linearRings));
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomFull, "Object returned as null for complexity FULL");
-    assertEquals(geometries.getNumPoints(), geoWithZoomFull.getGeometry().getNumPoints());
+    assertNull(geoWithZoomFull.getGeometry(), "No geometry should be returned for complexity FULL");
     assertEquals(4, geoWithZoomFull.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomSimple, "Object returned as null for complexity SIMPLE");
-    assertNotEquals(geometries.getNumPoints(), geoWithZoomSimple.getGeometry().getNumPoints());
-    assertNotEquals(0, geoWithZoomSimple.getGeometry().getNumPoints());
+    assertNull(geoWithZoomSimple.getGeometry(), "No geometry should be returned for complexity SIMPLE");
     assertEquals(1, geoWithZoomSimple.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNull(geoWithZoomPoint, "Object returned as non-null for complexity POINT");
   }
 
@@ -203,13 +199,13 @@ class GeometrySimplifierTest {
     )};
     GeometryCollection geometries = geometryToCollection(new Polygon(linearRings));
 
-    GeometryWithMinZoomLevel geoWithZoomFull = handleGeometryZoomLevel(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomFull = shouldSimplifyWithComplexity(geometries, FULL.ordinal(), zoomLevelSizeBoundsList);
     assertNotNull(geoWithZoomFull, "Object returned as null for complexity FULL");
-    assertEquals(geometries.getNumPoints(), geoWithZoomFull.getGeometry().getNumPoints());
+    assertNull(geoWithZoomFull.getGeometry(), "No geometry should be returned for complexity FULL");
     assertEquals(1, geoWithZoomFull.getMinZoomLevel());
-    GeometryWithMinZoomLevel geoWithZoomSimple = handleGeometryZoomLevel(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomSimple = shouldSimplifyWithComplexity(geometries, SIMPLE.ordinal(), zoomLevelSizeBoundsList);
     assertNull(geoWithZoomSimple, "Object returned as non-null for complexity SIMPLE");
-    GeometryWithMinZoomLevel geoWithZoomPoint = handleGeometryZoomLevel(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
+    ShouldSimplifyWithMinZoomLevel geoWithZoomPoint = shouldSimplifyWithComplexity(geometries, POINT.ordinal(), zoomLevelSizeBoundsList);
     assertNull(geoWithZoomPoint, "Object returned as non-null for complexity POINT");
   }
 }

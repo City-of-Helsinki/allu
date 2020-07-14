@@ -4,8 +4,9 @@ import fi.hel.allu.common.domain.ApplicationDateReport;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import fi.hel.allu.model.util.ZoomTolerance;
+import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -178,5 +179,9 @@ public class LocationService {
     List<Location> locations = findByApplicationId(copyFromApplicationId);
     locations.forEach(l -> l.setApplicationId(copyToApplicationId));
     insert(locations, userId);
+  }
+
+  public Geometry simplifyGeometry(Geometry geometry, Integer zoomLevel) {
+    return locationDao.simplifyGeometry(geometry, ZoomTolerance.getTolerance(zoomLevel));
   }
 }

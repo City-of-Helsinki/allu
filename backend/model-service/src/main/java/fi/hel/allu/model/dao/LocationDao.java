@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.coordinates.GeometrySimplification;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.geolatte.geom.GeometryType;
@@ -62,6 +63,8 @@ public class LocationDao {
   private PostalAddressDao postalAddressDao;
   @Autowired
   private CoordinateTransformation coordinateTransformation;
+  @Autowired
+  private GeometrySimplification geometrySimplification;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
   final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
@@ -552,6 +555,11 @@ public class LocationDao {
   @Transactional(readOnly = true)
   public Geometry transformCoordinates(Geometry geometry, Integer targetSrid) {
      return coordinateTransformation.transformCoordinates(geometry, targetSrid);
+  }
+
+  @Transactional(readOnly = true)
+  public Geometry simplifyGeometry(Geometry geometry, Integer tolerance) {
+     return geometrySimplification.simplifyGeometry(geometry, tolerance);
   }
 
   private Tuple mapCustomerLocationValidity(Tuple item) {

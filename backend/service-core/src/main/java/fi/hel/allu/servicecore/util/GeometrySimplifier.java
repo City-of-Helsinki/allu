@@ -1,11 +1,9 @@
 package fi.hel.allu.servicecore.util;
 
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import fi.hel.allu.servicecore.domain.GeometryComplexity;
-import fi.hel.allu.servicecore.domain.GeometryWithMinZoomLevel;
+import fi.hel.allu.servicecore.domain.ShouldSimplifyWithMinZoomLevel;
 import fi.hel.allu.servicecore.domain.ZoomLevelSizeBounds;
 import org.geolatte.geom.*;
-import org.geolatte.geom.jts.JTS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +38,13 @@ public class GeometrySimplifier {
    * @param geometry The geometry to be handled
    * @param complexity The complexity we expect
    * @param zoomLevelSizeBoundsList List of objects with zoom levels and bounds
-   * @return the handled geometry, either complete geometry, simplified, or as a point.
+   * @return Object saying if geometry needs simplification, the geometry's minimum zoom level for given complexity, and
+   * a Geometry object for geometries of type POINT. That geometry can be a point of a polygon or the actual geometry,
+   * depending on the geometry type.
    */
-  public static GeometryWithMinZoomLevel handleGeometryZoomLevel(Geometry geometry, Integer complexity, List<ZoomLevelSizeBounds> zoomLevelSizeBoundsList) {
+  public static ShouldSimplifyWithMinZoomLevel shouldSimplifyWithComplexity(
+    Geometry geometry, Integer complexity, List<ZoomLevelSizeBounds> zoomLevelSizeBoundsList
+  ) {
     if (!areEqualTypes(geometry, GeometryType.POINT)) {
       // Go here if the geometry type is not POINT
 
@@ -65,39 +67,43 @@ public class GeometrySimplifier {
           GeometryComplexity.values()[complexity].name() +
           ", bounding box size (rounded up): " + Math.ceil(boundingBoxSize));
         if (GeometryComplexity.FULL.ordinal() == complexity) {
-          logger.debug("Returning full geometry"); // Should at least have full geometry saved
-          return new GeometryWithMinZoomLevel(geometry, 1);
+          logger.debug("Using full geometry"); // Calling function should at least have full geometry in memory
+          return new ShouldSimplifyWithMinZoomLevel(false, 1, null);
         }
         else {
-          logger.debug("Returning null"); // Expecting to have at least full geometry saved
+          logger.debug("Returning null");
+          // Expecting to have at least full geometry saved. Simplifications are used for improved UX.
           return null;
         }
       }
 
       if (zoomLevelSizeBounds.getComplexity().equals(GeometryComplexity.FULL)) {
-        logger.debug("Full geo: min zoom level: " + zoomLevelSizeBounds.getMinZoomLevel() + ", bbox size: " + Math.ceil(boundingBoxSize));
-        return new GeometryWithMinZoomLevel(geometry, zoomLevelSizeBounds.getMinZoomLevel());
+        logger.debug("Full geo: min zoom level: " + zoomLevelSizeBounds.getMinZoomLevel() +
+          ", bbox size: " + Math.ceil(boundingBoxSize));
+        return new ShouldSimplifyWithMinZoomLevel(false, zoomLevelSizeBounds.getMinZoomLevel(), null);
       } else if (zoomLevelSizeBounds.getComplexity().equals(GeometryComplexity.SIMPLE)) {
-        logger.debug("Simple geo: min zoom level: " + zoomLevelSizeBounds.getMinZoomLevel() + ", bbox size: " + Math.ceil(boundingBoxSize));
-        return new GeometryWithMinZoomLevel(
-          handleSimplification(geometry, zoomLevelSizeBounds.getMinZoomLevel()),
-          zoomLevelSizeBounds.getMinZoomLevel()
-        );
+        logger.debug("Simple geo: min zoom level: " + zoomLevelSizeBounds.getMinZoomLevel() +
+          ", bbox size: " + Math.ceil(boundingBoxSize));
+        return new ShouldSimplifyWithMinZoomLevel(true, zoomLevelSizeBounds.getMinZoomLevel(), null);
       } else {
         logger.debug("Point geo: min zoom level: " + zoomLevelSizeBounds.getMinZoomLevel());
         if (areEqualTypes(geometry, GeometryType.POLYGON)) {
-          return new GeometryWithMinZoomLevel(replacePolygonWithCentroid(geometry), zoomLevelSizeBounds.getMinZoomLevel());
+          return new ShouldSimplifyWithMinZoomLevel(
+            false, zoomLevelSizeBounds.getMinZoomLevel(), replacePolygonWithCentroid(geometry)
+          );
         } else if (areEqualTypes(geometry, GeometryType.LINE_STRING)) {
-          return new GeometryWithMinZoomLevel(replaceLineStringWithStartPoint(geometry), zoomLevelSizeBounds.getMinZoomLevel());
+          return new ShouldSimplifyWithMinZoomLevel(
+            false, zoomLevelSizeBounds.getMinZoomLevel(), replaceLineStringWithStartPoint(geometry)
+          );
         }
         // If not polygon or line string, it should then be point or something close to that. So this is okay?
-        return new GeometryWithMinZoomLevel(geometry, zoomLevelSizeBounds.getMinZoomLevel());
+        return new ShouldSimplifyWithMinZoomLevel(false, zoomLevelSizeBounds.getMinZoomLevel(), geometry);
       }
     } else {
       // Go here if the geometry type is POINT
       if (GeometryComplexity.POINT.ordinal() == complexity) {
         logger.debug("Point geo: min zoom level: 1, complexity name: " + GeometryComplexity.values()[complexity].name());
-        return new GeometryWithMinZoomLevel(geometry, 1);
+        return new ShouldSimplifyWithMinZoomLevel(false, 1, geometry);
       }
       else {
         // No need to return point geometries to other complexities than POINT
@@ -156,22 +162,5 @@ public class GeometrySimplifier {
     Point bottomLeft = Points.create2D(boundingBox.getMinX(), boundingBox.getMinY());
     Point upperRight = Points.create2D(boundingBox.getMaxX(), boundingBox.getMaxY());
     return bottomLeft.distance(upperRight);
-  }
-
-  private static Geometry handleSimplification(Geometry geometry, Integer minZoomLevel) {
-    if (minZoomLevel == 1) {
-      return simplifyGeometry(geometry, 50);
-    } else if (minZoomLevel == 4) {
-      return simplifyGeometry(geometry, 10);
-    } else if (minZoomLevel == 6) {
-      return simplifyGeometry(geometry, 3);
-    }
-    return geometry;
-  }
-
-  private static Geometry simplifyGeometry(Geometry geometry, int distanceTolerance) {
-    com.vividsolutions.jts.geom.Geometry jtsGeometry = JTS.to(geometry);
-    com.vividsolutions.jts.geom.Geometry jtsSimplifiedGeometry = DouglasPeuckerSimplifier.simplify(jtsGeometry, distanceTolerance);
-    return JTS.from(jtsSimplifiedGeometry, geometry.getCrsId());
   }
 }

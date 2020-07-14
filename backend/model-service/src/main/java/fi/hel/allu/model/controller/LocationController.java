@@ -177,8 +177,13 @@ public class LocationController {
   }
 
   @RequestMapping(value = "/geometry/transform", method = RequestMethod.POST)
-  public ResponseEntity<GeometryWrapper> transfomGeometry(@RequestBody GeometryWrapper geometryWrapper, @RequestParam(value="srid") Integer srId) {
+  public ResponseEntity<GeometryWrapper> transformGeometry(@RequestBody GeometryWrapper geometryWrapper, @RequestParam(value="srid") Integer srId) {
     return ResponseEntity.ok(new GeometryWrapper(locationDao.transformCoordinates(geometryWrapper.getGeometry(), srId)));
+  }
+
+  @RequestMapping(value = "/geometry/simplify", method = RequestMethod.POST)
+  public ResponseEntity<GeometryWrapper> simplifyGeometry(@RequestBody GeometryWrapper geometryWrapper, @RequestParam(value="zoom") Integer zoomLevel) {
+    return ResponseEntity.ok(new GeometryWrapper(locationService.simplifyGeometry(geometryWrapper.getGeometry(), zoomLevel)));
   }
 
   // Make a stripped-down view of a city district: only the district ID + name.

@@ -548,6 +548,13 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/geometry/transform");
   }
 
+  /**
+   * @return url for simplifying geometry
+   */
+  public String getSimplifyGeometryUrl() {
+    return getModelServiceUrl("/locations/geometry/simplify");
+  }
+
 
   /**
    * @return url for fetching fixed locations (such as Narinkka) for given application type.

@@ -65,6 +65,13 @@ public class LocationDaoTest {
   private static final Polygon2DToken Sq_2_2 = polygon(ring(c(2, 2), c(2, 4), c(4, 4), c(4, 2), c(2, 2)));
   private static final Polygon2DToken Sq_5_5 = polygon(ring(c(5, 5), c(5, 7), c(7, 7), c(7, 5), c(5, 5)));
 
+  // Test geometries to test simplification:
+  // three different size polygons to test simplification with different tolerances.
+  private static final Polygon2DToken Pol_0_0 = polygon(ring(c(0, 0), c(0, 20), c(0, 40), c(20, 40),
+    c(50, 20), c(60, 0), c(20, 20), c(0, 0)));
+  private static final Polygon2DToken Pol_0_100 = polygon(ring(c(0, 100), c(0, 200), c(0, 700), c(300, 900),
+    c(200, 700), c(600, 500), c(200, 100), c(0, 100)));
+
   @Test
   public void testLocationKeyGeneration() {
     Location locIn = newLocationWithDefaults();
@@ -370,6 +377,45 @@ public class LocationDaoTest {
     assertNull(updated.getPostalAddress());
 
     assertFalse(postalAddressDao.findById(inserted.getPostalAddress().getId()).isPresent());
+  }
+
+  @Test
+  public void testSimplifyTolerance3() {
+    Geometry geometry = geometrycollection(3879, Pol_0_0);
+    Geometry result = locationDao.simplifyGeometry(geometry, 3);
+    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
+    assertNotEquals(0, result.getNumPoints());
+
+    geometry = geometrycollection(3879, Pol_0_100);
+    result = locationDao.simplifyGeometry(geometry, 3);
+    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
+    assertNotEquals(0, result.getNumPoints());
+  }
+
+  @Test
+  public void testSimplifyTolerance10() {
+    Geometry geometry = geometrycollection(3879, Pol_0_0);
+    Geometry result = locationDao.simplifyGeometry(geometry, 10);
+    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
+    assertNotEquals(0, result.getNumPoints());
+
+    geometry = geometrycollection(3879, Pol_0_100);
+    result = locationDao.simplifyGeometry(geometry, 10);
+    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
+    assertNotEquals(0, result.getNumPoints());
+  }
+
+  @Test
+  public void testSimplifyTolerance50() {
+    // Expecting to return 0 points, as points are less than 50 m apart
+    Geometry geometry = geometrycollection(3879, Pol_0_0);
+    Geometry result = locationDao.simplifyGeometry(geometry, 50);
+    assertEquals(0, result.getNumPoints());
+
+    geometry = geometrycollection(3879, Pol_0_100);
+    result = locationDao.simplifyGeometry(geometry, 50);
+    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
+    assertNotEquals(0, result.getNumPoints());
   }
 
   private Location newLocationWithDefaults() {
