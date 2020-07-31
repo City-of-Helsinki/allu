@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ZoomToleranceTest {
 
   @Test
-  void getToleranceReturns50() {
-    assertEquals(50, ZoomTolerance.getTolerance(1));
+  void getToleranceReturns100() {
+    assertEquals(100, ZoomTolerance.getTolerance(1));
   }
 
   @Test

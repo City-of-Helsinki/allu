@@ -67,10 +67,10 @@ public class LocationDaoTest {
 
   // Test geometries to test simplification:
   // three different size polygons to test simplification with different tolerances.
-  private static final Polygon2DToken Pol_0_0 = polygon(ring(c(0, 0), c(0, 20), c(0, 40), c(20, 40),
-    c(50, 20), c(60, 0), c(20, 20), c(0, 0)));
+  private static final Polygon2DToken Pol_0_0 = polygon(ring(c(10, 0), c(0, 20), c(0, 40), c(20, 40),
+    c(50, 20), c(60, 0), c(20, 20), c(10, 0)));
   private static final Polygon2DToken Pol_0_100 = polygon(ring(c(0, 100), c(0, 200), c(0, 700), c(300, 900),
-    c(200, 700), c(600, 500), c(200, 100), c(0, 100)));
+    c(400, 700), c(600, 500), c(200, 100), c(0, 100)));
 
   @Test
   public void testLocationKeyGeneration() {
@@ -383,39 +383,57 @@ public class LocationDaoTest {
   public void testSimplifyTolerance3() {
     Geometry geometry = geometrycollection(3879, Pol_0_0);
     Geometry result = locationDao.simplifyGeometry(geometry, 3);
-    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
-    assertNotEquals(0, result.getNumPoints());
+    assertEquals("Should not simplify",
+      geometry.getNumPoints(), result.getNumPoints());
+    assertNotEquals("Simplify should always give at least 1 point, " +
+        "given that it should not remove lines, only replace",
+      0, result.getNumPoints());
 
     geometry = geometrycollection(3879, Pol_0_100);
     result = locationDao.simplifyGeometry(geometry, 3);
-    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
-    assertNotEquals(0, result.getNumPoints());
+    assertEquals("Should simplify 2 lines to 1 line",
+      geometry.getNumPoints() - 1, result.getNumPoints());
+    assertNotEquals("Simplify should always give at least 1 point, " +
+        "given that it should not remove lines, only replace",
+      0, result.getNumPoints());
   }
 
   @Test
   public void testSimplifyTolerance10() {
     Geometry geometry = geometrycollection(3879, Pol_0_0);
     Geometry result = locationDao.simplifyGeometry(geometry, 10);
-    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
-    assertNotEquals(0, result.getNumPoints());
+    assertEquals("Should simplify 4 lines to 2 lines",
+      geometry.getNumPoints() - 2, result.getNumPoints());
+    assertNotEquals("Simplify should always give at least 1 point, " +
+        "given that it should not remove lines, only replace",
+      0, result.getNumPoints());
 
     geometry = geometrycollection(3879, Pol_0_100);
     result = locationDao.simplifyGeometry(geometry, 10);
-    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
-    assertNotEquals(0, result.getNumPoints());
+    assertEquals("Should simplify 2 lines to 1 line",
+      geometry.getNumPoints() - 1, result.getNumPoints());
+    assertNotEquals("Simplify should always give at least 1 point, " +
+        "given that it should not remove lines, only replace",
+      0, result.getNumPoints());
   }
 
   @Test
-  public void testSimplifyTolerance50() {
-    // Expecting to return 0 points, as points are less than 50 m apart
+  public void testSimplifyTolerance100() {
     Geometry geometry = geometrycollection(3879, Pol_0_0);
-    Geometry result = locationDao.simplifyGeometry(geometry, 50);
-    assertEquals(0, result.getNumPoints());
+    Geometry result = locationDao.simplifyGeometry(geometry, 100);
+    assertEquals("Should simplify 5 lines to 2 lines",
+      geometry.getNumPoints() - 4, result.getNumPoints());
+    assertNotEquals("Simplify should always give at least 1 point, " +
+        "given that it should not remove lines, only replace",
+      0, result.getNumPoints());
 
     geometry = geometrycollection(3879, Pol_0_100);
-    result = locationDao.simplifyGeometry(geometry, 50);
-    assertNotEquals(geometry.getNumPoints(), result.getNumPoints());
-    assertNotEquals(0, result.getNumPoints());
+    result = locationDao.simplifyGeometry(geometry, 100);
+    assertEquals("Should simplify 4 lines to 2 lines",
+      geometry.getNumPoints() - 2, result.getNumPoints());
+    assertNotEquals("Simplify should always give at least 1 point, " +
+        "given that it should not remove lines, only replace",
+      0, result.getNumPoints());
   }
 
   private Location newLocationWithDefaults() {
