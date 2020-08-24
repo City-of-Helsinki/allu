@@ -13,7 +13,7 @@
   become: yes
 
 - name: create directory for Postgresql databases backups
-  file: path=/srv/data/allu/database/dumps
+  file: path=/srv/backup/allu/database/dumps
         state=directory
         owner=postgres
         group=postgres
