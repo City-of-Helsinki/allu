@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
@@ -136,9 +137,13 @@ public class SupervisionTaskService {
   }
 
   private void validateApprovalAllowed(SupervisionTaskJson taskJson) {
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(taskJson.getApplicationId());
+    boolean hasStatusBlockingApproval = applicationJson.getStatus().isBeforeDecision();
+
     if ((taskJson.getType() == SupervisionTaskType.OPERATIONAL_CONDITION
-        || taskJson.getType() == SupervisionTaskType.FINAL_SUPERVISION)
-        && applicationServiceComposer.isReplaced(taskJson.getApplicationId())) {
+      || taskJson.getType() == SupervisionTaskType.FINAL_SUPERVISION)
+      && (applicationServiceComposer.isReplaced(taskJson.getApplicationId())
+      || hasStatusBlockingApproval)) {
       // Do not allow approval of operational condition / final supervision if replacing application exists since
       // approval may change state of application
       throw new IllegalOperationException("application.replaced.notAllowed");

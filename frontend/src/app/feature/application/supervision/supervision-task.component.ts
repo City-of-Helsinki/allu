@@ -87,7 +87,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const disabledByOperationalCondition = this.form.value.type === SupervisionTaskType.OPERATIONAL_CONDITION &&
       this.application.status !== ApplicationStatus.DECISION;
     const disabledByFinalSupervision = this.form.value.type === SupervisionTaskType.FINAL_SUPERVISION &&
-      !ArrayUtil.contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], this.application.status);
+      !ArrayUtil.contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION, ApplicationStatus.FINISHED],
+        this.application.status);
 
     this.approveDisabled = (disabledTaskType && (disabledStatus || disablingTags)) ||
       disabledByOperationalCondition || disabledByFinalSupervision;
