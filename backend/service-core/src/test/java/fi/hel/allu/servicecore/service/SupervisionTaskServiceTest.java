@@ -4,6 +4,9 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +30,7 @@ import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -120,6 +124,9 @@ public class SupervisionTaskServiceTest {
   @Test
   public void shouldAddHistoryWhenApproved() {
     setTaskApprovedResult(SupervisionTaskType.WARRANTY);
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setStatus(StatusType.DECISION);
+    when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
     supervisionTaskService.approve(createTaskJson(SupervisionTaskType.WARRANTY));
     verify(historyService, times(1)).addSupervisionApproved(APPLICATION_ID, SupervisionTaskType.WARRANTY);
   }
@@ -127,9 +134,40 @@ public class SupervisionTaskServiceTest {
   @Test
   public void shouldPublishApplicationEventWhenApproved() {
     setTaskApprovedResult(SupervisionTaskType.WARRANTY);
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setStatus(StatusType.DECISION);
+    when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
     supervisionTaskService.approve(createTaskJson(SupervisionTaskType.WARRANTY));
     verify(archiveEventPublisher, times(1)).publishEvent(any(ApplicationArchiveEvent.class));
     verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_APPROVED);
+  }
+
+  @Test
+  public void shouldNotAddHistoryWhenApprovalIsNotAllowed() {
+    setTaskApprovedResult(SupervisionTaskType.FINAL_SUPERVISION);
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setStatus(StatusType.HANDLING);
+    when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
+    try {
+      supervisionTaskService.approve(createTaskJson(SupervisionTaskType.FINAL_SUPERVISION));
+    } catch (IllegalOperationException exception) {
+      assertEquals("application.replaced.notAllowed", exception.getMessage());
+    }
+    verify(historyService, times(0)).addSupervisionApproved(APPLICATION_ID, SupervisionTaskType.FINAL_SUPERVISION);
+  }
+
+  @Test
+  public void shouldNotPublishApplicationEventWhenApprovalIsNotAllowed() {
+    setTaskApprovedResult(SupervisionTaskType.FINAL_SUPERVISION);
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setStatus(StatusType.HANDLING);
+    when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
+    try {
+      supervisionTaskService.approve(createTaskJson(SupervisionTaskType.FINAL_SUPERVISION));
+    } catch (IllegalOperationException exception) {
+      assertEquals("application.replaced.notAllowed", exception.getMessage());
+    }
+    verify(archiveEventPublisher, times(0)).publishEvent(any(ApplicationArchiveEvent.class));
   }
 
   @Test
