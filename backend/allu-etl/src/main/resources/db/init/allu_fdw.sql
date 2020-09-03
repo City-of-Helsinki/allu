@@ -59,6 +59,7 @@ LIMIT TO (
   supervision_task,
   "user",
   invoicing_period,
-  customer_location_validity
+  customer_location_validity,
+  termination
 )
 FROM SERVER allu_operative INTO allu_operative;

@@ -184,21 +184,25 @@ INSERT INTO allureport.lyhyt_maanvuokraus (
   ehdot,
   kuvaus,
   kaupallinen,
-  laskutettava_myyntialue
+  laskutettava_myyntialue,
+  irtisanomispaiva
 )
 SELECT
     a.id AS hakemus_id,
     a.extension::json ->> 'terms' AS ehdot,
     a.extension::json ->> 'description' AS kuvaus,
     (a.extension::json ->> 'commercial')::boolean AS kaupallinen,
-    (a.extension::json ->> 'billableSalesArea')::boolean AS laskutettava_myyntialue
+    (a.extension::json ->> 'billableSalesArea')::boolean AS laskutettava_myyntialue,
+    t.expiration_time AS irtisanomispaiva
 FROM allu_operative.application a
+LEFT JOIN allu_operative.termination t ON t.application_id = a.id
 WHERE a.type = 'SHORT_TERM_RENTAL'
 ON CONFLICT (hakemus_id) DO UPDATE SET
     ehdot = EXCLUDED.ehdot,
     kuvaus = EXCLUDED.kuvaus,
     kaupallinen = EXCLUDED.kaupallinen,
-    laskutettava_myyntialue = EXCLUDED.laskutettava_myyntialue
+    laskutettava_myyntialue = EXCLUDED.laskutettava_myyntialue,
+    irtisanomispaiva = EXCLUDED.irtisanomispaiva
 ;
 
 INSERT INTO allureport.muistiinpano (
