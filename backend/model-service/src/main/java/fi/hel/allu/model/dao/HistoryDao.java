@@ -1,8 +1,6 @@
 package fi.hel.allu.model.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.StatusType;
@@ -68,9 +66,11 @@ public class HistoryDao {
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getApplicationHistory(List<Integer> applicationIds) {
     Path[] fields = ArrayUtils.addAll(changeHistory.all(), application.applicationId, application.name);
+    fields = ArrayUtils.addAll(fields, fieldChange.all());
     List<Tuple> results = queryFactory.select(fields)
       .from(changeHistory)
       .leftJoin(application).on(changeHistory.applicationId.eq(application.id))
+      .leftJoin(fieldChange).on(fieldChange.changeHistoryId.eq(changeHistory.id))
       .where(changeHistory.applicationId.in(applicationIds))
       .orderBy(changeHistory.id.desc()).fetch();
     return resultToChangeHistory(results);
@@ -105,7 +105,7 @@ public class HistoryDao {
   /**
    * Get customer's change history
    *
-   * @param applicationId application's database ID
+   * @param customerId customer's database ID
    * @return list of changes, ordered from oldest to newest
    */
   @Transactional(readOnly = true)
@@ -113,14 +113,25 @@ public class HistoryDao {
     return getChangeHistory(changeHistory.customerId.eq(customerId));
   }
 
+
+  /**
+   * Get project change history
+   *
+   * @param projectId project database ID
+   * @return list of changes, ordered from oldest to newest
+   */
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getProjectHistory(int projectId) {
     // Include application status in project history
+    Path[] fields = ArrayUtils.addAll(changeHistory.all(), fieldChange.all());
     final List<Tuple> results = queryFactory.query()
       .union(
-        select(changeHistory.all()).from(changeHistory).where(changeHistory.projectId.eq(projectId)),
-        select(changeHistory.all()).from(changeHistory).innerJoin(application)
-          .on(changeHistory.applicationId.eq(application.id))
+        select(fields).from(changeHistory)
+          .leftJoin(fieldChange).on(fieldChange.changeHistoryId.eq(changeHistory.id))
+          .where(changeHistory.projectId.eq(projectId)),
+        select(fields).from(changeHistory)
+          .innerJoin(application).on(changeHistory.applicationId.eq(application.id))
+          .leftJoin(fieldChange).on(fieldChange.changeHistoryId.eq(changeHistory.id))
           .where(application.projectId.eq(projectId)
             .and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED))))
       .orderBy(changeHistory.id.desc()).fetch();
@@ -131,27 +142,39 @@ public class HistoryDao {
    * Get the change history items that match the given condition.
    */
   private List<ChangeHistoryItem> getChangeHistory(Predicate condition) {
-    List<Tuple> results = queryFactory.select(changeHistory.all())
+    Path[] fields = ArrayUtils.addAll(changeHistory.all(), fieldChange.all());
+    List<Tuple> results = queryFactory.select(fields)
       .from(changeHistory)
+      .leftJoin(fieldChange).on(fieldChange.changeHistoryId.eq(changeHistory.id))
       .where(condition).orderBy(changeHistory.id.desc()).fetch();
     return resultToChangeHistory(results);
   }
 
   private List<ChangeHistoryItem> resultToChangeHistory(List<Tuple> results) {
     return results.stream()
-        .map(r -> new ChangeHistoryItem(r.get(changeHistory.userId), getInfo(r),
-            r.get(changeHistory.changeType), r.get(changeHistory.changeSpecifier),
-            r.get(changeHistory.changeTime), getChangeLines(r.get(changeHistory.id)),
-            r.get(changeHistory.changeSpecifier2)))
-        .collect(Collectors.toList());
+      .map(result -> results.stream()
+        .filter(rf -> Objects.equals(rf.get(changeHistory.id), result.get(changeHistory.id)))
+        .collect(Collectors.toList()))
+      .distinct()
+      .map(changeHistoryWithFieldChangeList -> {
+        Tuple rChangeHistory = changeHistoryWithFieldChangeList.get(0);
+        return new ChangeHistoryItem(rChangeHistory.get(changeHistory.userId), getInfo(rChangeHistory),
+          rChangeHistory.get(changeHistory.changeType), rChangeHistory.get(changeHistory.changeSpecifier),
+          rChangeHistory.get(changeHistory.changeTime), getChangeLines(changeHistoryWithFieldChangeList),
+          rChangeHistory.get(changeHistory.changeSpecifier2));
+      })
+      .collect(Collectors.toList());
   }
 
   /*
    * Get all field changes for the given change history item.
    */
-  private List<FieldChange> getChangeLines(Integer changeId) {
-    return queryFactory.select(fieldChangeBean).from(fieldChange).where(fieldChange.changeHistoryId.eq(changeId))
-        .fetch();
+  private List<FieldChange> getChangeLines(List<Tuple> fieldChanges) {
+    return fieldChanges.stream().map(f ->
+      new FieldChange(f.get(fieldChange.fieldName),
+        f.get(fieldChange.oldValue), f.get(fieldChange.newValue))
+    )
+      .collect(Collectors.toList());
   }
 
   private ChangeHistoryItemInfo getInfo(Tuple result) {
