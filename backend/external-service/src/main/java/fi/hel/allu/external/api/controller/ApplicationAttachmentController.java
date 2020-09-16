@@ -28,6 +28,8 @@ public class ApplicationAttachmentController {
   private ApplicationServiceExt applicationService;
 
   @ApiOperation(value = "Add new attachment for an application with given ID.",
+      notes = "Note: This API does not work through swagger. Please use postman to test this API.\n" +
+        "In postman, the JSON formatted metadata should be appended as a .json file.",
       produces = "application/json",
       consumes = "multipart/form-data",
       response = Integer.class,
