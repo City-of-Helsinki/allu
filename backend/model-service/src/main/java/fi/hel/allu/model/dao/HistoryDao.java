@@ -23,6 +23,7 @@ import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
+import org.springframework.util.StringUtils;
 
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
@@ -170,7 +171,9 @@ public class HistoryDao {
    * Get all field changes for the given change history item.
    */
   private List<FieldChange> getChangeLines(List<Tuple> fieldChanges) {
-    return fieldChanges.stream().map(f ->
+    return fieldChanges.stream()
+      .filter(f -> !StringUtils.isEmpty(f.get(fieldChange.fieldName)))
+      .map(f ->
       new FieldChange(f.get(fieldChange.fieldName),
         f.get(fieldChange.oldValue), f.get(fieldChange.newValue))
     )
