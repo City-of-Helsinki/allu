@@ -173,7 +173,7 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     }
     return locationESList.stream()
       .filter(l -> l.getZoom() != null)
-      .min(Comparator.comparingInt(LocationES::getZoom))
+      .max(Comparator.comparingInt(LocationES::getZoom))
       .orElse(locationESList.isEmpty() ? null : locationESList.get(0)); // Return the first item if nothing works
   }
 
