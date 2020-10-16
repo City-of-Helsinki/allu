@@ -103,7 +103,6 @@ export class ApplicationExtensionMapper {
           backendExtension.additionalInfo,
           backendExtension.contractText,
           backendExtension.terms,
-          backendExtension.terminationDate,
           backendExtension.rationale
         );
       case ApplicationType.AREA_RENTAL:
@@ -264,7 +263,6 @@ export class ApplicationExtensionMapper {
       additionalInfo: placementContract.additionalInfo,
       contractText: placementContract.contractText,
       terms: placementContract.terms,
-      terminationDate: placementContract.terminationDate,
       rationale: placementContract.rationale
     };
   }

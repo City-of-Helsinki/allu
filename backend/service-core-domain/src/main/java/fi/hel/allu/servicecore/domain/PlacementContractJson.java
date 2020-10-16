@@ -13,7 +13,6 @@ public class PlacementContractJson extends ApplicationExtensionJson {
   private String propertyIdentificationNumber;
   private String additionalInfo;
   private String contractText;
-  private ZonedDateTime terminationDate;
   private Integer sectionNumber;
   private String rationale;
 
@@ -51,16 +50,6 @@ public class PlacementContractJson extends ApplicationExtensionJson {
   @UpdatableProperty
   public void setContractText(String contractText) {
     this.contractText = contractText;
-  }
-
-  @ApiModelProperty(value = "Contract termination date")
-  public ZonedDateTime getTerminationDate() {
-    return terminationDate;
-  }
-
-  @UpdatableProperty
-  public void setTerminationDate(ZonedDateTime terminationDate) {
-    this.terminationDate = terminationDate;
   }
 
   @ApiModelProperty(value = "Section number (pykälänumero)", readOnly = true)

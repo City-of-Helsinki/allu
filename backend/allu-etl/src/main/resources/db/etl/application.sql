@@ -264,10 +264,11 @@ SELECT
   a.extension::json ->> 'propertyIdentificationNumber' AS kiinteistotunnus,
   a.extension::json ->> 'additionalInfo' AS tyonkuvaus,
   a.extension::json ->> 'contractText' AS sopimusteksti,
-  TO_TIMESTAMP((a.extension::json ->> 'terminationDate')::float) AS irtisanomispaiva,
+  t.expiration_time AS irtisanomispaiva,
   (a.extension::json ->> 'sectionNumber')::integer AS pykala,
   a.extension::json ->> 'rationale' AS paatoksen_perustelut
 FROM allu_operative.application a
+LEFT JOIN allu_operative.termination t ON t.application_id = a.id
 WHERE a.type = 'PLACEMENT_CONTRACT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
     ehdot = EXCLUDED.ehdot,

@@ -11,7 +11,6 @@ public class PlacementContract extends ApplicationExtension {
   private String propertyIdentificationNumber;
   private String additionalInfo;
   private String contractText;
-  private ZonedDateTime terminationDate;
   private Integer sectionNumber;
   private String rationale;
 
@@ -52,14 +51,6 @@ public class PlacementContract extends ApplicationExtension {
 
   public void setContractText(String contractText) {
     this.contractText = contractText;
-  }
-
-  public ZonedDateTime getTerminationDate() {
-    return terminationDate;
-  }
-
-  public void setTerminationDate(ZonedDateTime terminationDate) {
-    this.terminationDate = terminationDate;
   }
 
   /**
