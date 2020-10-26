@@ -138,7 +138,8 @@
           supervision_task,
           "user",
           invoicing_period,
-          customer_location_validity) FROM SERVER allu_operative INTO allu_operative;'
+          customer_location_validity,
+          termination) FROM SERVER allu_operative INTO allu_operative;'
   become: yes
   become_user: postgres
 
