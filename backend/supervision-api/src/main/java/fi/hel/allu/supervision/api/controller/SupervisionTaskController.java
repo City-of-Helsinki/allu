@@ -177,7 +177,8 @@ public class SupervisionTaskController {
       notes =
             "<h3>Approval of operational condition supervision task</h3>"
           + " <ul>"
-          + "   <li>Approval not allowed if there's no decision made for application (application status other than DECISION)</li>"
+          + "   <li>Approval not allowed in states PENDING_CLIENT, PRE_RESERVED, PENDING, WAITING_INFORMATION, "
+          + "   INFORMATION_RECEIVED, HANDLING, RETURNED_TO_PREPARATION, WAITING_CONTRACT_APPROVAL, DECISIONMAKING, and REPLACED</li>"
           + "   <li>Approval not allowed if application has DATE_CHANGE or OTHER_CHANGES tag</li>"
           + "   <li>Sets operational condition date for the excavation announcement according to given date</li>"
           + "   <li>Moves application to operational condition state if there's no changes in invoicing or in operational condition date after decision. If invoicing or operational condition date is changed, "
