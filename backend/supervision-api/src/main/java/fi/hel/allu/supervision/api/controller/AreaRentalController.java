@@ -193,7 +193,7 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     validatePeriodLength(periodLength);
     List<InvoicingPeriodJson> result;
     if (applicationService.isBillable(id)) {
-      result = invoicingPeriodService.createInvoicingPeriods(id, periodLength)
+      result = invoicingPeriodService.updateInvoicingPeriods(id, periodLength)
         .stream()
         .map(i -> new InvoicingPeriodJson(i.getId(), i.getStartTime(), i.getEndTime()))
         .collect(Collectors.toList());
