@@ -1,0 +1,6 @@
+- name: allow http(s) to docker container
+  ufw: route=true rule=allow proto=tcp port={{ item }}
+  become: yes
+  with_items:
+    - 80
+    - 443
