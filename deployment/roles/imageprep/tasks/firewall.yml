@@ -1,6 +1,14 @@
 - name: install uncomplicated firewall (UFW) using Ubuntu repository
   apt: name=ufw state=present
 
+- name: replace ufw after rules to block docker opening ports to outside world
+  copy: src=after.rules
+    dest=/etc/ufw
+    owner=root
+    group=root
+    mode="u=rw"
+    force=yes # because we're replacing, we need to force copying over existing file
+
 - name: enable UFW
   ufw: state=enabled policy=deny
 

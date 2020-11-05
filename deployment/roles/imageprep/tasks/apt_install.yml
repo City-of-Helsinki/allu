@@ -25,7 +25,7 @@
   when: dockerPresent.stat.exists
 
 - name: copy Docker deb-package to target host
-  copy: src=docker-ce_17.03.1-ce-0-ubuntu-xenial_amd64.deb dest=/tmp/docker.deb
+  copy: src=docker-ce_18.06.3_ce_3-0_ubuntu_amd64.deb dest=/tmp/docker.deb
 
 # Docker deb packages are available at https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/
 - name: Install Docker from deb package
