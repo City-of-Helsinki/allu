@@ -1,12 +1,12 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.hel.allu.common.domain.types.ApplicationType;
-
-import java.time.ZonedDateTime;
 
 /**
  * Placement contract (sijoitussopimus) specific data.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PlacementContract extends ApplicationExtension {
   private String propertyIdentificationNumber;
   private String additionalInfo;
