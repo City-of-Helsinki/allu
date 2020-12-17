@@ -279,6 +279,7 @@ public class ApplicationReplacementServiceTest {
 
   private void insertChargeBasisEntries() {
     ChargeBasisEntry manual = new ChargeBasisEntry();
+    manual.setTag("MAN");
     manual.setManuallySet(true);
     manual.setType(ChargeBasisType.ADDITIONAL_FEE);
     manual.setUnit(ChargeBasisUnit.PIECE);
@@ -287,6 +288,7 @@ public class ApplicationReplacementServiceTest {
     manual.setQuantity(1);
     manual.setText("manual");
     ChargeBasisEntry calculated = new ChargeBasisEntry();
+    calculated.setTag("CAL");
     calculated.setManuallySet(false);
     calculated.setType(ChargeBasisType.AREA_USAGE_FEE);
     calculated.setUnit(ChargeBasisUnit.DAY);

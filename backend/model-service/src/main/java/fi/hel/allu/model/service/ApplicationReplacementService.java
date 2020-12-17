@@ -52,6 +52,7 @@ public class ApplicationReplacementService {
   private final ApplicationDao applicationDao;
   private final CommentDao commentDao;
   private final LocationService locationService;
+  private final LocationDao locationDao;
   private final DepositDao depositDao;
   private final SupervisionTaskDao supervisionTaskDao;
   private final ChargeBasisDao chargeBasisDao;
@@ -62,13 +63,14 @@ public class ApplicationReplacementService {
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
-      LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao, ChargeBasisDao chargeBasisDao,
-      InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService, DistributionEntryDao distributionEntryDao,
-      InformationRequestDao informationRequestDao) {
+      LocationService locationService, LocationDao locationDao, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao,
+      ChargeBasisDao chargeBasisDao, InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService,
+      DistributionEntryDao distributionEntryDao, InformationRequestDao informationRequestDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.commentDao = commentDao;
+    this.locationDao = locationDao;
     this.depositDao = depositDao;
     this.supervisionTaskDao = supervisionTaskDao;
     this.chargeBasisDao = chargeBasisDao;
@@ -116,6 +118,8 @@ public class ApplicationReplacementService {
     applicationDao.setApplicationReplaced(applicationId, replacingApplication.getId());
 
     createInvoicingPeriods(replacingApplication);
+
+    updateReplacingChargeBasisEntries(replacingApplication);
 
     return replacingApplication.getId();
   }
@@ -228,5 +232,77 @@ public class ApplicationReplacementService {
             && isRecurringRental(replacingApplication)) {
       invoicingPeriodService.createRecurringApplicationPeriods(replacingApplication.getId());
     }
+  }
+
+  private void updateReplacingChargeBasisEntries(Application replacingApplication) {
+    // Copying invoicable and locked values from replaced application to replacing
+    List<Integer> invoicedChargeBasisIds = invoiceDao.getInvoicedChargeBasisIds(replacingApplication.getReplacesApplicationId());
+    List<ChargeBasisEntry> oldApplicationEntries = chargeBasisDao.getChargeBasis(replacingApplication.getReplacesApplicationId());
+    List<ChargeBasisEntry> presentApplicationEntries = chargeBasisDao.getChargeBasis(replacingApplication.getId());
+    List<ChargeBasisEntry> oldNonInvoicedEntries = oldApplicationEntries.stream()
+      .filter(e -> !invoicedChargeBasisIds.contains(e.getId()))
+      .collect(Collectors.toList());
+    List<ChargeBasisEntry> oldInvoicedEntries = oldApplicationEntries.stream()
+      .filter(e -> invoicedChargeBasisIds.contains(e.getId()))
+      .collect(Collectors.toList());
+
+    // Get locations
+    Set<Integer> locationIds = new HashSet<>();
+    oldApplicationEntries.stream()
+      .filter(e->e.getLocationId() != null)
+      .forEach(e -> locationIds.add(e.getLocationId()));
+    presentApplicationEntries.stream()
+      .filter(e->e.getLocationId() != null)
+      .forEach(e -> locationIds.add(e.getLocationId()));
+    Map<Integer, Location> locationMap = new HashMap<>();
+    // Get distinct list of ids to fetch to minimize db overhead
+    locationDao.findByIds(new ArrayList<>(locationIds)).forEach(e -> locationMap.put(e.getId(), e));
+
+    // Handle copying
+    handleInvoicedEntries(oldInvoicedEntries, presentApplicationEntries, locationMap);
+    handleNotYetInvoicedEntries(oldNonInvoicedEntries, presentApplicationEntries, locationMap);
+    // Update entries
+    updateChargeBasisEntries(presentApplicationEntries);
+  }
+
+  private void handleInvoicedEntries(List<ChargeBasisEntry> oldEntries,
+                                     List<ChargeBasisEntry> presentEntries,
+                                     Map<Integer, Location> locationMap) {
+    for (ChargeBasisEntry oldEntry : oldEntries) {
+      presentEntries.stream()
+        .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
+        .forEach(presentEntry -> {
+          presentEntry.setInvoicable(false);
+          presentEntry.setLocked(true);
+        });
+    }
+  }
+
+  private void handleNotYetInvoicedEntries(List<ChargeBasisEntry> oldNonInvoicedEntries,
+                                           List<ChargeBasisEntry> presentApplicationEntries,
+                                           Map<Integer, Location> locationMap) {
+    for (ChargeBasisEntry oldEntry : oldNonInvoicedEntries) {
+      presentApplicationEntries.stream()
+        .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
+        .forEach(presentEntry -> {
+          presentEntry.setInvoicable(oldEntry.isInvoicable());
+          presentEntry.setLocked(false);
+        });
+    }
+  }
+
+  private void updateChargeBasisEntries(List<ChargeBasisEntry> entriesToUpdate) {
+    // Disable invoicable for those invoiced and those set as not invoicable in replaced application
+    List<Integer> idsToNotInvoicable = entriesToUpdate.stream()
+      .filter(e->!e.isInvoicable())
+      .map(ChargeBasisEntry::getId)
+      .collect(Collectors.toList());
+    chargeBasisDao.setEntriesInvoicable(idsToNotInvoicable, false);
+    // Lock those already invoiced or otherwise already locked in replaced application
+    List<Integer> idsToLocked = entriesToUpdate.stream()
+      .filter(e-> e.getLocked() != null && e.getLocked())
+      .map(ChargeBasisEntry::getId)
+      .collect(Collectors.toList());
+    chargeBasisDao.setEntriesLocked(idsToLocked, true);
   }
 }

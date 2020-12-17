@@ -89,6 +89,7 @@ public class ChargeBasisDao {
           .filter(old->adding.equalContent(old, locationMap))
           .findAny();
         oldOptional.ifPresent(old->adding.setInvoicable(old.isInvoicable()));
+        oldOptional.ifPresent(old->adding.setLocked(old.getLocked()));
       }
     }
   }
@@ -223,6 +224,11 @@ public class ChargeBasisDao {
   }
 
   @Transactional
+  public void setEntriesLocked(List<Integer> entryIds, boolean isLocked) {
+    queryFactory.update(chargeBasis).set(chargeBasis.locked, isLocked).where(chargeBasis.id.in(entryIds)).execute();
+  }
+
+  @Transactional
   public void lockEntriesOfPeriod(Integer periodId) {
     queryFactory.update(chargeBasis).set(chargeBasis.locked, true).where(chargeBasis.invoicingPeriodId.eq(periodId)).execute();
   }
@@ -237,6 +243,11 @@ public class ChargeBasisDao {
   public ChargeBasisEntry setInvoicable(int id, boolean invoicable) {
     queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.id.eq(id)).execute();
     return findChargeBasisEntry(id);
+  }
+
+  @Transactional
+  public void setEntriesInvoicable(List<Integer> ids, boolean invoicable) {
+    queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.id.in(ids)).execute();
   }
 
   @Transactional(readOnly = true)

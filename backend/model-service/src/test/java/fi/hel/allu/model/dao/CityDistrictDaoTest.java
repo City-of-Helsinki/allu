@@ -38,6 +38,9 @@ public class CityDistrictDaoTest {
   @Before
   public void setup() throws Exception {
     testCommon.deleteFrom("user_city_district");
+    testCommon.deleteFrom("invoice_row");
+    testCommon.deleteFrom("supervision_task");
+    testCommon.deleteFrom("location");
     testCommon.deleteFrom("city_district");
   }
 
