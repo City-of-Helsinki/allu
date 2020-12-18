@@ -182,6 +182,10 @@ public class ApplicationReplacementService {
 
   public void setApplicationLocations(Application applicationToReplace, Application application) {
     List<Location> locations = locationService.findByApplicationId(applicationToReplace.getId());
+    // Sort locations by id to ensure locations are the same order as when previously created.
+    // Ensures tags are same order.
+    if (!locations.isEmpty() && locations.get(0).getId() != null)
+      locations.sort(Comparator.comparing(AbstractLocation::getId));
     locations.forEach(l -> clearIds(l));
     application.setLocations(locations);
   }
