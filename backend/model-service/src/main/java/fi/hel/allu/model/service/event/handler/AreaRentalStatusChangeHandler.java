@@ -2,8 +2,13 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SupervisionTask;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -39,12 +44,27 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     handleReplacedApplicationOnDecision(application, userId);
     clearTargetState(application);
 
+    boolean replacingApplication = application.getReplacesApplicationId() != null;
+    List<Location> locationsOfApprovedSupervisionTasks = new ArrayList<>();
+    // If replacing application, get the locations of all present supervision tasks of the replacing application.
+    // As only approved locations should yet have a supervision task on the replacing application,
+    // getting the locations of existing supervision tasks should enable filtering out approved supervision
+    // task locations from locations that should be given a work time supervision.
+    if (replacingApplication) {
+      List<SupervisionTask> supervisionTasks = getSupervisionTaskService().findByApplicationIdAndType(
+        application.getId(), SupervisionTaskType.WORK_TIME_SUPERVISION);
+      locationsOfApprovedSupervisionTasks.addAll(
+        getSupervisionTaskService().getLocationsOfSupervisionTasks(supervisionTasks));
+    }
     // There is no need to create work time supervision task for each location when
     // there is only single location
     if (application.getLocations().size() > 1) {
-      application.getLocations().stream().forEach(l ->
-        createSupervisionTask(application, SupervisionTaskType.WORK_TIME_SUPERVISION, userId,
-          TimeUtil.nextDay(l.getEndTime()), l.getId()));
+      application.getLocations().stream()
+        .filter(l -> !replacingApplication ||
+          !l.getOptionalLocationIfExistsInList(locationsOfApprovedSupervisionTasks).isPresent())
+        .forEach(l ->
+          createSupervisionTask(application, SupervisionTaskType.WORK_TIME_SUPERVISION, userId,
+            TimeUtil.nextDay(l.getEndTime()), l.getId()));
     }
 
     createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,

@@ -298,4 +298,8 @@ public class ApplicationStatusChangeHandler {
     return chargeBasisService;
   }
 
+  protected SupervisionTaskService getSupervisionTaskService() {
+    return supervisionTaskService;
+  }
+
 }

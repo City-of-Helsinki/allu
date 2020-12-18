@@ -206,4 +206,8 @@ public class SupervisionTaskService {
   private void saveSupervisedLocation(Integer supervisionTaskId, Location location) {
     supervisionTaskDao.saveSupervisedLocation(supervisionTaskId, SupervisionTaskLocation.fromApplicationLocation(location));
   }
+
+  public List<Location> getLocationsOfSupervisionTasks(List<SupervisionTask> tasks) {
+    return locationDao.findByIds(tasks.stream().map(t -> t.getLocationId()).collect(Collectors.toList()));
+  }
 }
