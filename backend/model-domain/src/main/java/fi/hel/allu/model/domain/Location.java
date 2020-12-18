@@ -1,7 +1,7 @@
 package fi.hel.allu.model.domain;
 
-import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -182,5 +182,41 @@ public class Location extends AbstractLocation implements PostalAddressItem {
       return paymentTariffOverride;
     }
     return getPaymentTariff();
+  }
+
+  /**
+   * Check if some content is equal to other {@code Location} content, including some AbstractLocation content.
+   * @param other location to compare with
+   * @return true if content is same, else false
+   */
+  public boolean equalGeneralContentAndGeometry(Location other) {
+    if (this.area == null || !this.area.equals(other.getArea()))
+      return false;
+    if (this.postalAddress == null || !this.postalAddress.equals(other.getPostalAddress()))
+      return false;
+    if (this.cityDistrictId == null || !this.cityDistrictId.equals(other.getCityDistrictId()))
+      return false;
+    // Check variables from AbstractLocation here since customerReportingTime may be null.
+    // We want to check general data anyways.
+    if (getStartTime() == null || !getStartTime().isEqual(other.getStartTime()))
+      return false;
+    if (getEndTime() == null || !getEndTime().isEqual(other.getEndTime()))
+      return false;
+    if (getPaymentTariff() == null || !getPaymentTariff().equals(other.getPaymentTariff()))
+      return false;
+    if (getUnderpass() == null || !getUnderpass().equals(other.getUnderpass()))
+      return false;
+    return this.equalGeometry(other.getGeometry());
+  }
+
+  /**
+   * Check if this location exists in provided list using {@link #equalGeneralContentAndGeometry},
+   * and returns any location as optional.
+   * @param list locations on which comparison is done
+   * @return optional location if general content and geometry match any location in list,
+   * else empty optional.
+   */
+  public Optional<Location> getOptionalLocationIfExistsInList(List<Location> list) {
+    return list.stream().filter(l -> l.equalGeneralContentAndGeometry(this)).findAny();
   }
 }

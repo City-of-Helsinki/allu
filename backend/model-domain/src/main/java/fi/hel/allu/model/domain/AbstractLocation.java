@@ -160,4 +160,26 @@ public abstract class AbstractLocation {
   public void setCustomerReportingTime(ZonedDateTime customerReportingTime) {
     this.customerReportingTime = customerReportingTime;
   }
+
+  public boolean equalContent(AbstractLocation other) {
+    if (this.startTime == null || !this.startTime.isEqual(other.getStartTime()))
+      return false;
+    if (this.endTime == null || !this.endTime.isEqual(other.getEndTime()))
+      return false;
+    if (this.paymentTariff == null || !this.paymentTariff.equals(other.getPaymentTariff()))
+      return false;
+    if (this.underpass == null || !this.underpass.equals(other.getUnderpass()))
+      return false;
+    if (this.customerStartTime == null || !this.customerStartTime.isEqual(other.getCustomerStartTime()))
+      return false;
+    if (this.customerEndTime == null || !this.customerEndTime.isEqual(other.getCustomerEndTime()))
+      return false;
+    return this.customerReportingTime != null && this.customerReportingTime.isEqual(other.getCustomerReportingTime());
+  }
+
+  public boolean equalGeometry(Geometry other) {
+    if (this.geometry == null)
+      return false;
+    return this.geometry.equals(other);
+  }
 }
