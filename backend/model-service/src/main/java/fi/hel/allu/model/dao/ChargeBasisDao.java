@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.domain.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,9 @@ public class ChargeBasisDao {
   @Autowired
   private SQLQueryFactory queryFactory;
 
+  @Autowired
+  private LocationDao locationDao;
+
   final QBean<ChargeBasisEntry> chargeBasisBean = bean(ChargeBasisEntry.class, chargeBasis.all());
 
   /**
@@ -55,8 +59,38 @@ public class ChargeBasisDao {
         .filter(e -> e.getManuallySet() == manuallySet).collect(Collectors.toList());
     Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
+    transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(e -> e.getId()).collect(Collectors.toSet());
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
+  }
+
+  /**
+   * Transfers the {@code invoicable} field data from old {@code ChargeBasisEntry} to the new.
+   * Check of equality is done by comparing content of each entry. Only calculated entries are updated
+   * Without this function, {@code invoicable} field data would be lost on {@code InvoicingPeriod} update.
+   * @param oldEntries {@code ChargeBasisEntry} list before update
+   * @param entriesToAdd {@code ChargeBasisEntry} list to add
+   */
+  private void transferInvoicableStatusFromOldToNew(List<ChargeBasisEntry> oldEntries, List<ChargeBasisEntry> entriesToAdd) {
+    // Should be application update that does not tamper calculated charge basis entries.
+    // If calculated count is not same in both, either invoicing period or number of locations has changed.
+    long oldCount = oldEntries.stream().filter(e->!e.getManuallySet() && e.getLocationId() != null).count();
+    long newCount = entriesToAdd.stream().filter(e->!e.getManuallySet() && e.getLocationId() != null).count();
+    if (oldCount > 0 && oldCount == newCount) {
+      // Get locations to compare entire entry
+      Set<Integer> locationIds = new HashSet<>();
+      Map<Integer, Location> locationMap = new HashMap<>();
+      oldEntries.stream().filter(e->e.getLocationId() != null).forEach(e->locationIds.add(e.getLocationId()));
+      entriesToAdd.stream().filter(e->e.getLocationId() != null).forEach(e->locationIds.add(e.getLocationId()));
+      locationDao.findByIds(new ArrayList<>(locationIds)).forEach(l->locationMap.put(l.getId(), l));
+
+      for (ChargeBasisEntry adding : entriesToAdd) {
+        Optional<ChargeBasisEntry> oldOptional = oldEntries.stream()
+          .filter(old->adding.equalContent(old, locationMap))
+          .findAny();
+        oldOptional.ifPresent(old->adding.setInvoicable(old.isInvoicable()));
+      }
+    }
   }
 
   /**

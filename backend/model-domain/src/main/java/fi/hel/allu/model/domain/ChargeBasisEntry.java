@@ -2,6 +2,9 @@ package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -240,16 +243,6 @@ public class ChargeBasisEntry {
     if (getClass() != obj.getClass())
       return false;
     ChargeBasisEntry other = (ChargeBasisEntry) obj;
-    if (!Arrays.equals(explanation, other.explanation))
-      return false;
-    if (manuallySet != other.manuallySet)
-      return false;
-    if (netPrice != other.netPrice)
-      return false;
-    if (Double.doubleToLongBits(quantity) != Double.doubleToLongBits(other.quantity))
-      return false;
-    if (referrable != other.referrable)
-      return false;
     if (referredTag == null) {
       if (other.referredTag != null)
         return false;
@@ -265,11 +258,7 @@ public class ChargeBasisEntry {
         return false;
     } else if (!text.equals(other.text))
       return false;
-    if (type != other.type)
-      return false;
-    if (unit != other.unit)
-      return false;
-    if (unitPrice != other.unitPrice)
+    if (!equalDescriptiveContent(other))
       return false;
     if (invoicingPeriodId == null) {
       if (other.invoicingPeriodId != null)
@@ -277,6 +266,104 @@ public class ChargeBasisEntry {
     } else if (!invoicingPeriodId.equals(other.invoicingPeriodId))
       return false;
     return true;
+  }
+
+  public boolean equalDescriptiveContent(ChargeBasisEntry other) {
+    if (!Arrays.equals(explanation, other.explanation))
+      return false;
+    if (manuallySet != other.manuallySet)
+      return false;
+    if (netPrice != other.netPrice)
+      return false;
+    if (Double.doubleToLongBits(quantity) != Double.doubleToLongBits(other.quantity))
+      return false;
+    if (referrable != other.referrable)
+      return false;
+    if (type != other.type)
+      return false;
+    if (unit != other.unit)
+      return false;
+    if (unitPrice != other.unitPrice)
+      return false;
+    return true;
+  }
+
+  /**
+   * Compares the content and tag against another {@code ChargeBasisEntry} instance.
+   * The tags are primarily compared as is. However, if invoicingPeriod is not null
+   * on either instance, then tag is cut using regex
+   * (see function {@link #retrieveTagWithoutInvoicePeriodId()}).
+   * @param other {@code ChargeBasisEntry} to compare against
+   * @return comparison result
+   */
+  public boolean equalDescriptiveContentAndTagPrefix(ChargeBasisEntry other) {
+    String firstTag = this.tag;
+    String secondTag = other.getTag();
+    if (!(invoicingPeriodId == null && other.getInvoicingPeriodId() == null)) {
+      firstTag = retrieveTagWithoutInvoicePeriodId();
+      secondTag = other.retrieveTagWithoutInvoicePeriodId();
+    }
+    return equalDescriptiveContent(other) &&
+      firstTag.equals(secondTag);
+  }
+
+  /**
+   * Uses regex to remove invoicePeriod from tag.
+   * Only affects tags with both locationId and invoicePeriodId.
+   * @return handled tag
+   */
+  public String retrieveTagWithoutInvoicePeriodId() {
+    String pattern = "(.*)(#\\d+)(#\\d+)";
+    Pattern r = Pattern.compile(pattern);
+    Matcher m = r.matcher(tag);
+    if (m.find( )) {
+      return m.group(1) + m.group(2);
+    }else {
+      return tag;
+    }
+  }
+
+  /**
+   * Compares content of this object with content of another {@code ChargeBasisEntry}.
+   * Locations are not compared.
+   * @param other another entry
+   * @return true if entry content match, else false
+   */
+  public boolean equalContent(ChargeBasisEntry other) {
+    return equalContent(other, null);
+  }
+
+  /**
+   * Compares content of this object with content of another {@code ChargeBasisEntry}.
+   * Use {@code locationMap} parameter to include location comparison.
+   * @param other another entry
+   * @param locationMap map should include location of both entries if not set null
+   * @return true if entry content match and both have null/non-null locationId, else false
+   */
+  public boolean equalContent(ChargeBasisEntry other, Map<Integer, Location> locationMap) {
+    // Check only content first, as all entries may not have a location.
+    // This leads to locationId in ChargeBasisEntry tag not matching at any case.
+    if (this.equalDescriptiveContentAndTagPrefix(other)) {
+      if (this.getLocationId() == null && other.getLocationId() == null) {
+        return true;
+      }
+      else if (this.getLocationId() != null && other.getLocationId() != null) {
+        if (locationMap != null && !locationMap.isEmpty()) {
+          try {
+            return locationMap.get(this.getLocationId())
+              .equalGeneralContentAndGeometry(locationMap.get(other.getLocationId()));
+          } catch (NullPointerException npe) {
+            System.err.println("Failing gracefully at ChargeBasisEntry.equalReplacingChargeBasisEntry: " +
+              "Must have not specified locationMap correctly or something unexpected happened");
+            npe.printStackTrace();
+            // Fail gracefully by returning what would have been returned if locationMap had been null (true).
+          }
+        }
+        return true;
+      }
+      return false;
+    }
+    return false;
   }
 
   public Integer getInvoicingPeriodId() {
