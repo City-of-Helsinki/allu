@@ -31,6 +31,7 @@ public class ChargeBasisEntryMapper {
     json.setReferredTag(entry.getReferredTag());
     json.setReferrable(entry.isReferrable());
     json.setEditable(entry.getManuallySet() && BooleanUtils.isNotTrue(entry.getLocked()));
+    json.setLocked(entry.getLocked() != null && entry.getLocked());
     json.setInvoicable(entry.isInvoicable());
     return json;
   }

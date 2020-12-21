@@ -69,6 +69,7 @@ public class ChargeBasisEntryJson {
   private String referredTag;
   private Boolean referrable;
   private Boolean editable;
+  private Boolean locked;
   private Boolean invoicable;
 
 
@@ -188,6 +189,15 @@ public class ChargeBasisEntryJson {
 
   public void setEditable(Boolean editable) {
     this.editable = editable;
+  }
+
+  @ApiModelProperty(value = "Value indicating whether this entry can be modified or not", readOnly = true)
+  public Boolean getLocked() {
+    return locked;
+  }
+
+  public void setLocked(Boolean locked) {
+    this.locked = locked;
   }
 
   @ApiModelProperty(value = "Net price in cents. Required if unit is not percent. Discount is given as negative price", required = true)
