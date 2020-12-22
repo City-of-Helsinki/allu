@@ -105,4 +105,11 @@ public class ChargeBasisController {
     applicationService.updateApplicationPricing(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/charge-basis/recalculate", method = RequestMethod.PUT)
+  public ResponseEntity<List<ChargeBasisEntry>> recalculateEntries(@PathVariable int id) {
+    applicationService.updateChargeBasis(id);
+    applicationService.updateApplicationPricing(id);
+    return ResponseEntity.ok(chargeBasisService.getChargeBasis(id));
+  }
 }

@@ -105,6 +105,11 @@ public class ChargeBasisService {
     restTemplate.delete(applicationProperties.getChargeBasisEntryUrl(), applicationId, entryId);
   }
 
+  public ChargeBasisEntry[] recalculateEntries(Integer applicationId) {
+    return restTemplate.exchange(applicationProperties.getChargeBasisEntriesRecalculateUrl(), HttpMethod.PUT,
+      new HttpEntity<>(null), ChargeBasisEntry[].class, applicationId).getBody();
+  }
+
   public ChargeBasisEntry getEntry(int applicationId, int entryId) {
     return restTemplate.getForObject(applicationProperties.getChargeBasisEntryUrl(), ChargeBasisEntry.class, applicationId, entryId);
   }

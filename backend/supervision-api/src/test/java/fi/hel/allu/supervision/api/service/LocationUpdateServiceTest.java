@@ -1,6 +1,8 @@
 package fi.hel.allu.supervision.api.service;
 
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.servicecore.service.LocationService;
 import org.geolatte.geom.Point;
 import org.junit.Before;
@@ -14,7 +16,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationUpdateServiceTest {
@@ -23,15 +25,19 @@ public class LocationUpdateServiceTest {
 
   @Mock
   private LocationService locationService;
+  @Mock
+  private ChargeBasisService chargeBasisService;
   private LocationUpdateService locationUpdateService;
   private Location location;
 
   @Before
   public void setup() {
     location = new Location();
-    locationUpdateService = new LocationUpdateService(locationService);
+    ChargeBasisEntry[] chargeBasisEntries = new ChargeBasisEntry[2];
+    locationUpdateService = new LocationUpdateService(locationService, chargeBasisService);
     when(locationService.getLocationById(LOCATION_ID)).thenReturn(location);
     when(locationService.updateLocation(any())).thenReturn(location);
+    when(chargeBasisService.recalculateEntries(any())).thenReturn(chargeBasisEntries);
   }
 
   @Test
@@ -56,6 +62,25 @@ public class LocationUpdateServiceTest {
     Point updatedPoint = location.getGeometry().getPointN(0);
     assertEquals(lat, updatedPoint.getX(), 0.000001);
     assertEquals(lon, updatedPoint.getY(), 0.000001);
+  }
+
+  @Test
+  public void shouldUpdateChargeBasisOnUnderpassChange() {
+    Map<String, Object> values = new HashMap<>();
+    values.put("underpass", true);
+    locationUpdateService.update(LOCATION_ID, values);
+
+    assertEquals(values.get("underpass"), location.getUnderpass());
+    verify(chargeBasisService).recalculateEntries(any());
+  }
+
+  @Test
+  public void shouldNotUpdateChargeBasisOnUnderpassNotChanged() {
+    Map<String, Object> values = new HashMap<>();
+    values.put("additionalInfo", "some info");
+    locationUpdateService.update(LOCATION_ID, values);
+    assertEquals(values.get("additionalInfo"), location.getAdditionalInfo());
+    verify(chargeBasisService, times(0)).recalculateEntries(any());
   }
 
   private Map<String, Object> createPointGeometryMap(double lat, double lon) {

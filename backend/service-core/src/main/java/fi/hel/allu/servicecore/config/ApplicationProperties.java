@@ -711,6 +711,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/charge-basis/{entryId}");
   }
 
+  public String getChargeBasisEntriesRecalculateUrl() {
+    return getModelServiceUrl("/applications/{id}/charge-basis/recalculate");
+  }
+
   public String getSingleInvoiceChargeBasisUrl() {
     return getModelServiceUrl("/applications/{id}/single-invoice-charge-basis");
   }
