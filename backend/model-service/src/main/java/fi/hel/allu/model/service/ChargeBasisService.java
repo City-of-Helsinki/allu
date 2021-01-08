@@ -59,6 +59,7 @@ public class ChargeBasisService {
         calculatedEntries, false);
     // Filter locked entries when updating calculated entries
     handleModifications(modification.filtered(chargeBasisDao.getLockedChargeBasisIds(applicationId)));
+    deleteOldLockedEntries(applicationId);
     return modification.hasChanges();
   }
 
@@ -67,6 +68,21 @@ public class ChargeBasisService {
       validateModificationsAllowed(modification);
       chargeBasisDao.setChargeBasis(modification);
       handleInvoicingChanged(modification.getApplicationId());
+    }
+  }
+
+  private void deleteOldLockedEntries(int applicationId) {
+    List<ChargeBasisEntry> oldEntries = getChargeBasis(applicationId).stream()
+      .filter(e -> !e.getManuallySet()).collect(Collectors.toList());
+    // If there are entries with invoicingPeriodId, delete entries without invoicingPeriodId.
+    if (oldEntries.stream().anyMatch(oe -> oe.getInvoicingPeriodId() != null)) {
+      chargeBasisDao.deleteEntries(
+        oldEntries.stream()
+          .filter(oe -> oe.getInvoicingPeriodId() == null)
+          .map(oe -> oe.getId())
+          .collect(Collectors.toList()),
+        applicationId
+      );
     }
   }
 

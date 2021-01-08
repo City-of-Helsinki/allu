@@ -60,12 +60,15 @@ public class ApplicationReplacementService {
   private final InvoicingPeriodService invoicingPeriodService;
   private final DistributionEntryDao distributionEntryDao;
   private final InformationRequestDao informationRequestDao;
+  private final PricingService pricingService;
+  private final ChargeBasisService chargeBasisService;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
       LocationService locationService, LocationDao locationDao, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao,
       ChargeBasisDao chargeBasisDao, InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService,
-      DistributionEntryDao distributionEntryDao, InformationRequestDao informationRequestDao) {
+      DistributionEntryDao distributionEntryDao, InformationRequestDao informationRequestDao,
+      PricingService pricingService, ChargeBasisService chargeBasisService) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
@@ -78,6 +81,8 @@ public class ApplicationReplacementService {
     this.invoicingPeriodService = invoicingPeriodService;
     this.distributionEntryDao = distributionEntryDao;
     this.informationRequestDao = informationRequestDao;
+    this.pricingService = pricingService;
+    this.chargeBasisService = chargeBasisService;
   }
 
   /**
@@ -120,6 +125,7 @@ public class ApplicationReplacementService {
     createInvoicingPeriods(replacingApplication);
 
     updateReplacingChargeBasisEntries(replacingApplication);
+    updateReplacingApplicationPrice(replacingApplication.getId());
 
     return replacingApplication.getId();
   }
@@ -304,5 +310,11 @@ public class ApplicationReplacementService {
       .map(ChargeBasisEntry::getId)
       .collect(Collectors.toList());
     chargeBasisDao.setEntriesLocked(idsToLocked, true);
+  }
+
+  private void updateReplacingApplicationPrice(int applicationId) {
+    applicationDao.updateCalculatedPrice(
+      applicationId,
+      pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
   }
 }

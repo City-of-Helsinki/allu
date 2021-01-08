@@ -61,6 +61,7 @@ public class ChargeBasisDao {
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
     transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(e -> e.getId()).collect(Collectors.toSet());
+    moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
   }
 
@@ -92,6 +93,43 @@ public class ChargeBasisDao {
         oldOptional.ifPresent(old->adding.setLocked(old.getLocked()));
       }
     }
+  }
+
+  /**
+   * Moves entries from {@code entriesToUpdate} map to {@code entriesToAdd}
+   * if {@code entriesToUpdate} contains a locked entry.
+   * This method is necessary, as entries without a location do not have
+   * invoicingPeriodId or locationId in their tag String (see {@link #getEntriesToUpdate}
+   * and {@link #hasEntryWithKey}).
+   * @param oldEntries {@code ChargeBasisEntry} list before update
+   * @param entriesToAdd {@code ChargeBasisEntry} list to add
+   * @param entriesToUpdate map of {@code ChargeBasisEntry} objects to be updated
+   */
+  private void moveOldLockedEntriesToEntriesBeingAdded(List<ChargeBasisEntry> oldEntries,
+                                                       List<ChargeBasisEntry> entriesToAdd,
+                                                       Map<Integer, ChargeBasisEntry> entriesToUpdate) {
+    List<ChargeBasisEntry> oldEntriesToBeUpdated = oldEntries.stream()
+      .filter(oe -> Boolean.TRUE.equals(oe.getLocked()) && entriesToUpdate.containsKey(oe.getId()))
+      .collect(Collectors.toList());
+    List<ChargeBasisEntry> entriesToPrependToAddList = new ArrayList<>();
+    for (ChargeBasisEntry lockedOldEntryToBeUpdated: oldEntriesToBeUpdated) {
+      ChargeBasisEntry entryToUpdate = entriesToUpdate.get(lockedOldEntryToBeUpdated.getId());
+      entryToUpdate.setInvoicable(lockedOldEntryToBeUpdated.isInvoicable());
+      entryToUpdate.setLocked(lockedOldEntryToBeUpdated.getLocked());
+      // If locationId is null, we can put it first in entryNumber order.
+      // Thus, we can sort the entriesToAdd list, before prepending those without locationId.
+      if (lockedOldEntryToBeUpdated.getLocationId() == null) {
+        entriesToPrependToAddList.add(entryToUpdate);
+      } else {
+        entriesToAdd.add(entryToUpdate);
+      }
+      // Remove entry from entriesToUpdate
+      entriesToUpdate.remove(lockedOldEntryToBeUpdated.getId());
+    }
+    entriesToAdd.sort(Comparator.comparing(ChargeBasisEntry::getTag));
+    // Add entries to entriesToAdd in the following manner,
+    // to ensure the locked entries are first in entryNumber order.
+    entriesToAdd.addAll(0, entriesToPrependToAddList);
   }
 
   /**
