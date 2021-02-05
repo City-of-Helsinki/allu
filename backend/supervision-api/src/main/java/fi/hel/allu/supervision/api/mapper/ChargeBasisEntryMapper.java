@@ -53,8 +53,10 @@ public class ChargeBasisEntryMapper {
     } else {
       entry.setUnitPrice(0);
       entry.setNetPrice(0);
+
     }
     entry.setReferredTag(json.getReferredTag());
+    entry.setManuallySet(true);
     return entry;
   }
 }
