@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
@@ -254,5 +255,12 @@ public class ApplicationJson extends BaseApplicationJson {
 
   public void setTerminationTime(ZonedDateTime terminationTime) {
     this.terminationTime = terminationTime;
+  }
+
+  public boolean isNotAreaRental() {
+    if(getType() != null) {
+      return getType() != ApplicationType.AREA_RENTAL;
+    }
+    return true;
   }
 }

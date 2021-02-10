@@ -1,15 +1,16 @@
 package fi.hel.allu.supervision.api.service;
 
 import java.beans.PropertyDescriptor;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Stream;
-
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.PropertyAccessorFactory;
 
@@ -23,6 +24,8 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import io.swagger.annotations.ApiModelProperty;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,6 +35,8 @@ public class ApplicationUpdateServiceTest {
 
   @Mock
   private ApplicationServiceComposer applicationServiceComposer;
+  @Mock
+  private  LocationUpdateService locationUpdateService;
   private ApplicationUpdateService applicationUpdateService;
   private ApplicationJson application;
 
@@ -40,7 +45,7 @@ public class ApplicationUpdateServiceTest {
   @Before
   public void setup() {
     application = new ApplicationJson();
-    applicationUpdateService = new ApplicationUpdateService(applicationServiceComposer);
+    applicationUpdateService = new ApplicationUpdateService(applicationServiceComposer, locationUpdateService);
     when(applicationServiceComposer.findApplicationById(APPLICATION_ID)).thenReturn(application);
     ApplicationStatusInfo statusInfo = new ApplicationStatusInfo();
     statusInfo.setStatus(StatusType.HANDLING);
@@ -68,6 +73,7 @@ public class ApplicationUpdateServiceTest {
     values.put("trafficArrangementImpedimentType", TrafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT);
     values.put("terms", "new terms");
     AreaRentalJson extension = new AreaRentalJson();
+    application.setType(ApplicationType.AREA_RENTAL);
     application.setExtension(extension);
     applicationUpdateService.update(APPLICATION_ID, 1, values);
     assertEquals(values.get("pksCard"), extension.getPksCard());
@@ -118,7 +124,7 @@ public class ApplicationUpdateServiceTest {
     application.setExtension(extension);
     applicationUpdateService.update(APPLICATION_ID, 1, values);
     assertEquals(values.get("additionalInfo"), extension.getAdditionalInfo());
-    assertTrue(extension.getCableReports().size() == 1);
+    assertEquals(extension.getCableReports().size(), 1);
     assertTrue(extension.getCableReports().contains("JS1900001"));
   }
 
@@ -160,6 +166,36 @@ public class ApplicationUpdateServiceTest {
     application.setExtension(extension);
     applicationUpdateService.update(APPLICATION_ID, 1, values);
     assertEquals(values.get("trafficArrangements"), extension.getTrafficArrangements());
+  }
+
+  @Test
+  public void locationIsUpdated(){
+    List<LocationJson> dummyList = new ArrayList<>();
+    LocationJson dummyLocation = new LocationJson();
+    dummyLocation.setId(69);
+    dummyList.add(dummyLocation);
+    application.setLocations(dummyList);
+
+    Map<String, Object> wantedValues = new HashMap<>();
+    wantedValues.put("startTime", ZonedDateTime.of(3001, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")));
+    wantedValues.put("endTime", ZonedDateTime.of(3001, 1, 10, 0, 0, 0, 0, ZoneId.of("UTC")));
+
+    Map<String, Object> testData = new HashMap<>();
+    testData.put("name", "newName");
+    testData.putAll(wantedValues);
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    applicationUpdateService.update(APPLICATION_ID, 1, testData);
+    wantedValues.remove("name");
+    verify(locationUpdateService, Mockito.times(1)).update(69,wantedValues);
+  }
+
+  @Test
+  public void locationIsNotUpdatedOnAreaRental(){
+    Map<String, Object> values = new HashMap<>();
+
+    application.setType(ApplicationType.AREA_RENTAL);
+    applicationUpdateService.update(APPLICATION_ID, 1, values);
+    verify(locationUpdateService, Mockito.times(0)).update(anyInt(), anyMap());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -221,9 +257,11 @@ public class ApplicationUpdateServiceTest {
     nonReadOnlyFieldsUpdatable(new TrafficArrangementJson());
   }
 
+
+
   private <T> void nonReadOnlyFieldsUpdatable(T targetObject) {
     PropertyDescriptor[] descriptors =  PropertyAccessorFactory.forBeanPropertyAccess(targetObject).getPropertyDescriptors();
-    Stream.of(descriptors).forEach(d -> nonReadOnlyFieldUpdatable(d));
+    Stream.of(descriptors).forEach(this::nonReadOnlyFieldUpdatable);
   }
 
   private void nonReadOnlyFieldUpdatable(PropertyDescriptor d) {

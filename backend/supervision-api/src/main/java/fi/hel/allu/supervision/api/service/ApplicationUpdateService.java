@@ -2,10 +2,10 @@ package fi.hel.allu.supervision.api.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.StatusType;
@@ -15,16 +15,23 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 @Service
 public class ApplicationUpdateService extends ModelFieldUpdater {
 
-  @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
 
-  public ApplicationUpdateService(ApplicationServiceComposer applicationServiceComposer) {
+  private LocationUpdateService locationUpdateService;
+
+  public ApplicationUpdateService(ApplicationServiceComposer applicationServiceComposer, LocationUpdateService locationUpdateService) {
     this.applicationServiceComposer = applicationServiceComposer;
+    this.locationUpdateService = locationUpdateService;
   }
+
 
   public ApplicationJson update(Integer id, Integer version, Map<String, Object> fields) {
     validateUpdateAllowed(id);
     ApplicationJson application = applicationServiceComposer.findApplicationById(id);
+    if(application.isNotAreaRental() && application.getLocations().size() == 1  ) {
+      updateLocation(fields, application.getLocations().get(0).getId());
+      application = applicationServiceComposer.findApplicationById(id);
+      }
     updateApplication(application, fields);
     application.setVersion(version);
     return applicationServiceComposer.updateApplication(id, application);
@@ -42,6 +49,13 @@ public class ApplicationUpdateService extends ModelFieldUpdater {
     });
     updateObject(applicationFields, application);
     updateObject(extensionFields, application.getExtension());
+  }
+
+  private void updateLocation(Map<String, Object> applicationFields, Integer id){
+    Map<String, Object> collected = applicationFields.entrySet().stream()
+      .filter(x -> x.getKey().equals("startTime") || x.getKey().equals("endTime") )
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    locationUpdateService.update(id,collected);
   }
 
   private <T> boolean hasField(String fieldName, T targetObject) {
