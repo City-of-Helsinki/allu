@@ -3,7 +3,6 @@ package fi.hel.allu.supervision.api.controller;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,16 +19,24 @@ import io.swagger.annotations.*;
 @Api(tags = "Application tags")
 public class ApplicationTagController {
 
-  @Autowired
-  private ApplicationServiceComposer applicationServiceComposer;
-  private List<ApplicationTagType> ALLOWED_TAG_TYPES = Arrays.asList(
-      ApplicationTagType.WAITING,
-      ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
-      ApplicationTagType.STATEMENT_REQUESTED,
-      ApplicationTagType.COMPENSATION_CLARIFICATION,
-      ApplicationTagType.PAYMENT_BASIS_CORRECTION,
-      ApplicationTagType.SURVEY_REQUIRED
+  private final ApplicationServiceComposer applicationServiceComposer;
+  private final List<ApplicationTagType> ALLOWED_TAG_TYPES = Arrays.asList(
+    ApplicationTagType.WAITING,
+    ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
+    ApplicationTagType.STATEMENT_REQUESTED,
+    ApplicationTagType.COMPENSATION_CLARIFICATION,
+    ApplicationTagType.PAYMENT_BASIS_CORRECTION,
+    ApplicationTagType.SURVEY_REQUIRED,
+    ApplicationTagType.OTHER_CHANGES,
+    ApplicationTagType.DECISION_NOT_SENT,
+    ApplicationTagType.CONTRACT_REJECTED
   );
+
+  public ApplicationTagController(ApplicationServiceComposer applicationServiceComposer) {
+    this.applicationServiceComposer = applicationServiceComposer;
+  }
+
+
 
   @ApiOperation(value = "Add new tag for an application with given ID. If application already has a tag with given type no new tag is added.",
       notes = "User is allowed to add following tags:"
@@ -40,6 +47,9 @@ public class ApplicationTagController {
       + " <li>COMPENSATION_CLARIFICATION</li>"
       + " <li>PAYMENT_BASIS_CORRECTION</li>"
       + " <li>SURVEY_REQUIRED</li>"
+        + " <li>OTHER_CHANGES</li>"
+        + " <li>DECISION_NOT_SENT</li>"
+        + " <li>CONTRACT_REJECTED</li>"
       + "</ul>",
       produces = "application/json",
       consumes = "application/json",
