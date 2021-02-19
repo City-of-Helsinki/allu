@@ -47,7 +47,7 @@ public enum ApplicationTagType {
   // Kartoitettava
   SURVEY_REQUIRED(true),
   // Muut muutokset
-  OTHER_CHANGES(false);
+  OTHER_CHANGES(true);
 
   private final List<ApplicationTagType> replaces;
 
