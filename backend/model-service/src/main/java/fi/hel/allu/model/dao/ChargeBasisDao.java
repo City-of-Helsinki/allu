@@ -33,13 +33,19 @@ public class ChargeBasisDao {
       chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable,
       chargeBasis.locked, chargeBasis.invoicable);
 
-  @Autowired
   private SQLQueryFactory queryFactory;
 
-  @Autowired
   private LocationDao locationDao;
 
+
   final QBean<ChargeBasisEntry> chargeBasisBean = bean(ChargeBasisEntry.class, chargeBasis.all());
+
+
+  public ChargeBasisDao(SQLQueryFactory queryFactory, LocationDao locationDao) {
+    this.queryFactory = queryFactory;
+    this.locationDao = locationDao;
+  }
+
 
   /**
    * Get the charge basis entries for an application
@@ -281,6 +287,11 @@ public class ChargeBasisDao {
   public ChargeBasisEntry setInvoicable(int id, boolean invoicable) {
     queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.id.eq(id)).execute();
     return findChargeBasisEntry(id);
+  }
+
+  @Transactional
+  public void setSubChargesInvoicable(boolean invoicable, String parentTag) {
+    queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.referredTag.eq(parentTag)).execute();
   }
 
   @Transactional

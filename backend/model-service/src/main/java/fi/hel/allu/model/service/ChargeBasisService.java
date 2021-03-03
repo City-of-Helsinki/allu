@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.geolatte.common.cql.node.AIsNotNullExpr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,6 @@ public class ChargeBasisService {
   private final InvoicingPeriodService invoicingPeriodService;
   private final PricingService pricingService;
 
-  @Autowired
   public ChargeBasisService(ChargeBasisDao chargeBasisDao, ApplicationDao applicationDao,
       ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService,
       PricingService pricingService) {
@@ -247,8 +247,14 @@ public class ChargeBasisService {
   public ChargeBasisEntry setInvoicable(int applicationId, int entryId, boolean invoiced) {
     validateModificationsAllowed(Collections.singleton(entryId), applicationId);
     ChargeBasisEntry entry = chargeBasisDao.setInvoicable(entryId, invoiced);
+    updateSubCharges(invoiced, entry.getTag());
     handleInvoicingChanged(applicationId);
     return entry;
+  }
+  private void updateSubCharges(boolean invoiced, String parentTag ){
+   if (parentTag != null) {
+     chargeBasisDao.setSubChargesInvoicable(invoiced, parentTag);
+    }
   }
 
   public int getInvoicableSumForLocation(int applicationId, Integer locationId) {
