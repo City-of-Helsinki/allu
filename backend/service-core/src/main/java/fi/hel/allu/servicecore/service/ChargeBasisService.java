@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -30,7 +32,7 @@ public class ChargeBasisService {
   private ApplicationService applicationService;
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
-
+  Logger logger = LoggerFactory.getLogger(ChargeBasisService.class);
   @Autowired
   public ChargeBasisService(ApplicationProperties applicationProperties, RestTemplate restTemplate, ApplicationService applicationService) {
     this.applicationProperties = applicationProperties;
@@ -176,6 +178,8 @@ public class ChargeBasisService {
   public void validateModificationAllowed(Integer applicationId, ChargeBasisEntry existingEntry) {
     validateChargeBasisUpdateForApplicationAllowed(applicationId);
     if (BooleanUtils.isTrue(existingEntry.getLocked()) || BooleanUtils.isNotTrue(existingEntry.getManuallySet())) {
+      logger.warn("Action is forbiden either entry is locked : " +existingEntry.getLocked()
+        + ", or It wasn't manuallly set: " +  existingEntry.getManuallySet() );
       throw new IllegalOperationException("chargebasis.update.forbidden");
     }
   }
