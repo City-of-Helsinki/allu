@@ -5,11 +5,11 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.servicecore.service.LocationService;
 import org.geolatte.geom.Point;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LocationUpdateServiceTest {
 
   private static final Integer LOCATION_ID = 1;
@@ -30,14 +30,13 @@ public class LocationUpdateServiceTest {
   private LocationUpdateService locationUpdateService;
   private Location location;
 
-  @Before
+  @BeforeEach
   public void setup() {
     location = new Location();
     ChargeBasisEntry[] chargeBasisEntries = new ChargeBasisEntry[2];
     locationUpdateService = new LocationUpdateService(locationService, chargeBasisService);
     when(locationService.getLocationById(LOCATION_ID)).thenReturn(location);
     when(locationService.updateLocation(any())).thenReturn(location);
-    when(chargeBasisService.recalculateEntries(any())).thenReturn(chargeBasisEntries);
   }
 
   @Test
@@ -45,7 +44,7 @@ public class LocationUpdateServiceTest {
     Map<String, Object> values = new HashMap<>();
     values.put("additionalInfo", "some info");
     locationUpdateService.update(LOCATION_ID, values);
-    assertEquals(values.get("additionalInfo"), location.getAdditionalInfo());
+    assertEquals("some info", location.getAdditionalInfo());
   }
 
   @Test

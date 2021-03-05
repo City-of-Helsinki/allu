@@ -26,18 +26,10 @@ public class ApplicationTagControllerTest {
   private ApplicationServiceComposer applicationServiceComposer;
   private ApplicationTagController applicationTagController;
 
+  @Mock  //Static variables
+  private static ApplicationServiceComposer staticApplicationServiceComposer;
+  private static ApplicationTagController staticApplicationTagController = new ApplicationTagController(staticApplicationServiceComposer);
 
-  private static final List<ApplicationTagType> ALLOWED_TAG_TYPES = Arrays.asList(
-    ApplicationTagType.WAITING,
-    ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
-    ApplicationTagType.STATEMENT_REQUESTED,
-    ApplicationTagType.COMPENSATION_CLARIFICATION,
-    ApplicationTagType.PAYMENT_BASIS_CORRECTION,
-    ApplicationTagType.SURVEY_REQUIRED,
-    ApplicationTagType.OTHER_CHANGES,
-    ApplicationTagType.DECISION_NOT_SENT,
-    ApplicationTagType.CONTRACT_REJECTED
-  );
 
 
   @ParameterizedTest
@@ -50,7 +42,7 @@ public class ApplicationTagControllerTest {
 
 
   private static Stream<ApplicationTagType> giveApprovalList(){
-    return ALLOWED_TAG_TYPES.stream();
+    return staticApplicationTagController.ALLOWED_TAG_TYPES.stream();
   }
 }
 

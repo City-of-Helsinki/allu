@@ -6,12 +6,12 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.PropertyAccessorFactory;
 
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
@@ -23,12 +23,11 @@ import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import io.swagger.annotations.ApiModelProperty;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ApplicationUpdateServiceTest {
 
   private static final Integer APPLICATION_ID = 1;
@@ -42,14 +41,16 @@ public class ApplicationUpdateServiceTest {
 
 
 
-  @Before
+  @BeforeEach
   public void setup() {
     application = new ApplicationJson();
+    application.setType(ApplicationType.NOTE);
+    application.setLocations(new ArrayList<>(2));
     applicationUpdateService = new ApplicationUpdateService(applicationServiceComposer, locationUpdateService);
-    when(applicationServiceComposer.findApplicationById(APPLICATION_ID)).thenReturn(application);
+    lenient().when(applicationServiceComposer.findApplicationById(APPLICATION_ID)).thenReturn(application);
     ApplicationStatusInfo statusInfo = new ApplicationStatusInfo();
     statusInfo.setStatus(StatusType.HANDLING);
-    when(applicationServiceComposer.getApplicationStatus(APPLICATION_ID)).thenReturn(statusInfo);
+    lenient().when(applicationServiceComposer.getApplicationStatus(APPLICATION_ID)).thenReturn(statusInfo);
   }
 
   @Test
@@ -192,24 +193,27 @@ public class ApplicationUpdateServiceTest {
   @Test
   public void locationIsNotUpdatedOnAreaRental(){
     Map<String, Object> values = new HashMap<>();
-
     application.setType(ApplicationType.AREA_RENTAL);
     applicationUpdateService.update(APPLICATION_ID, 1, values);
     verify(locationUpdateService, Mockito.times(0)).update(anyInt(), anyMap());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowWithInvalidField() {
     Map<String, Object> values = new HashMap<>();
     values.put("foo", "bar");
-    applicationUpdateService.update(APPLICATION_ID, 1, values);
+    assertThrows(IllegalArgumentException.class, () -> {
+      applicationUpdateService.update(APPLICATION_ID, 1, values);
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowIfFieldNotUpdatable() {
     Map<String, Object> values = new HashMap<>();
     values.put("type", ApplicationType.AREA_RENTAL);
-    applicationUpdateService.update(APPLICATION_ID, 1, values);
+    assertThrows(IllegalArgumentException.class, () -> {
+      applicationUpdateService.update(APPLICATION_ID, 1, values);
+    });
   }
 
   @Test
@@ -267,7 +271,8 @@ public class ApplicationUpdateServiceTest {
   private void nonReadOnlyFieldUpdatable(PropertyDescriptor d) {
     ApiModelProperty propertyAnnotation = d.getReadMethod().getAnnotation(ApiModelProperty.class);
     if (propertyAnnotation != null && !propertyAnnotation.readOnly() && !propertyAnnotation.hidden() && d.getWriteMethod() != null) {
-      assertNotNull(d.getName(), d.getWriteMethod().getAnnotation(UpdatableProperty.class));
+      assertNotNull(d.getName());
+      assertNotNull(d.getWriteMethod().getAnnotation(UpdatableProperty.class));
     }
   }
 

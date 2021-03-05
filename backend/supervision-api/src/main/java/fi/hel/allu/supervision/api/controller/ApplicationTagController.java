@@ -20,7 +20,7 @@ import io.swagger.annotations.*;
 public class ApplicationTagController {
 
   private final ApplicationServiceComposer applicationServiceComposer;
-  private final List<ApplicationTagType> ALLOWED_TAG_TYPES = Arrays.asList(
+  public static final List<ApplicationTagType> ALLOWED_TAG_TYPES = Arrays.asList(
     ApplicationTagType.WAITING,
     ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
     ApplicationTagType.STATEMENT_REQUESTED,
