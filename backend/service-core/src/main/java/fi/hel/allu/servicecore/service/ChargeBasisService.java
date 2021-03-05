@@ -178,7 +178,7 @@ public class ChargeBasisService {
   public void validateModificationAllowed(Integer applicationId, ChargeBasisEntry existingEntry) {
     validateChargeBasisUpdateForApplicationAllowed(applicationId);
     if (BooleanUtils.isTrue(existingEntry.getLocked()) || BooleanUtils.isNotTrue(existingEntry.getManuallySet())) {
-      logger.warn("Action is forbiden either entry is locked : " +existingEntry.getLocked()
+      logger.info("Action is forbiden either entry is locked : " +existingEntry.getLocked()
         + ", or It wasn't manuallly set: " +  existingEntry.getManuallySet() );
       throw new IllegalOperationException("chargebasis.update.forbidden");
     }
