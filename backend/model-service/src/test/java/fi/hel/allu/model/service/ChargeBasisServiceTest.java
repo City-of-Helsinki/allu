@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +27,6 @@ class ChargeBasisServiceTest {
 
   ChargeBasisEntry returnChargeBasisEntry;
 
-
   @BeforeEach
   void setUp(){
     returnChargeBasisEntry =  new ChargeBasisEntry();
@@ -42,7 +40,6 @@ class ChargeBasisServiceTest {
     when(chargeBasisDao.setInvoicable(anyInt(),anyBoolean())).thenReturn(returnChargeBasisEntry);
     when(applicationDao.getStatus(anyInt())).thenReturn(StatusType.PENDING);
     chargeBasisService.setInvoicable(1,100, true);
-
     verify(chargeBasisDao, times(1)).setInvoicable(anyInt(),anyBoolean());
   }
 

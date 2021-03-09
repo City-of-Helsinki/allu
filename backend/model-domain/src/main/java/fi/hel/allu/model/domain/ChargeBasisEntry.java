@@ -313,15 +313,24 @@ public class ChargeBasisEntry {
    * @return handled tag
    */
   public String retrieveTagWithoutInvoicePeriodId() {
+   return stringWithoutInvoicePeriodId(tag);
+  }
+  public String retrieveReferenceTagWithoutInvoicePeriodId() {
+    return stringWithoutInvoicePeriodId(referredTag);
+  }
+
+  public String stringWithoutInvoicePeriodId(String tagToParse) {
     String pattern = "(.*)(#\\d+)(#\\d+)";
     Pattern r = Pattern.compile(pattern);
-    Matcher m = r.matcher(tag);
-    if (m.find( )) {
+    Matcher m = r.matcher(tagToParse);
+    if (m.find()) {
       return m.group(1) + m.group(2);
-    }else {
-      return tag;
+    } else {
+      return tagToParse;
     }
   }
+
+
 
   /**
    * Compares content of this object with content of another {@code ChargeBasisEntry}.

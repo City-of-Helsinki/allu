@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.geolatte.common.cql.node.AIsNotNullExpr;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +57,7 @@ public class ChargeBasisService {
         calculatedEntries, false);
     // Filter locked entries when updating calculated entries
     handleModifications(modification.filtered(chargeBasisDao.getLockedChargeBasisIds(applicationId)));
-    deleteOldLockedEntries(applicationId);
+    deleteEntriesWithoutInvoicePeriod(applicationId);
     return modification.hasChanges();
   }
 
@@ -71,7 +69,8 @@ public class ChargeBasisService {
     }
   }
 
-  private void deleteOldLockedEntries(int applicationId) {
+
+  private void deleteEntriesWithoutInvoicePeriod(int applicationId) {
     List<ChargeBasisEntry> oldEntries = getChargeBasis(applicationId).stream()
       .filter(e -> !e.getManuallySet()).collect(Collectors.toList());
     // If there are entries with invoicingPeriodId, delete entries without invoicingPeriodId.
@@ -80,8 +79,7 @@ public class ChargeBasisService {
         oldEntries.stream()
           .filter(oe -> oe.getInvoicingPeriodId() == null)
           .map(oe -> oe.getId())
-          .collect(Collectors.toList()),
-        applicationId
+          .collect(Collectors.toList())
       );
     }
   }
@@ -117,7 +115,7 @@ public class ChargeBasisService {
   @Transactional
   public void deleteEntry(int applicationId, int entryId) {
     validateModificationsAllowed(Collections.singletonList(entryId), applicationId);
-    chargeBasisDao.deleteEntries(Collections.singletonList(entryId), applicationId);
+    chargeBasisDao.deleteEntries(Collections.singletonList(entryId));
     handleInvoicingChanged(applicationId);
   }
 

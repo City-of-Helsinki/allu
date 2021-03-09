@@ -181,7 +181,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
             clearEntries();
             chargeBasisDao.setChargeBasis(modification(appId1.get(), generateTestEntries(1, "auto", null), false));
             List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
-            chargeBasisDao.setChargeBasis(modification(appId1.get(), generateTestEntries(1, "man", entries.get(0).getTag()), true));
+            chargeBasisDao.setChargeBasis(modification(appId1.get(), generateTestEntries(1, "man","ARF"), true));
 
             chargeBasisDao.setChargeBasis(modification(appId2.get(), generateTestEntries(1, "auto", null), false));
             entries = chargeBasisDao.getChargeBasis(appId2.get());

@@ -3,10 +3,10 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.model.domain.Location;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +33,9 @@ public class ChargeBasisDao {
       chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable,
       chargeBasis.locked, chargeBasis.invoicable);
 
-  private SQLQueryFactory queryFactory;
+  private final SQLQueryFactory queryFactory;
 
-  private LocationDao locationDao;
+  private final LocationDao locationDao;
 
 
   final QBean<ChargeBasisEntry> chargeBasisBean = bean(ChargeBasisEntry.class, chargeBasis.all());
@@ -56,7 +56,7 @@ public class ChargeBasisDao {
   @Transactional(readOnly = true)
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
     return queryFactory.select(chargeBasisBean).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId))
-        .orderBy(chargeBasis.manuallySet.asc(), chargeBasis.entryNumber.asc()).fetch();
+      .orderBy(chargeBasis.manuallySet.asc(), chargeBasis.entryNumber.asc()).fetch();
   }
 
   @Transactional(readOnly = true)
@@ -66,10 +66,75 @@ public class ChargeBasisDao {
     Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
     transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
-    Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(e -> e.getId()).collect(Collectors.toSet());
+    Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
     moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
+    entriesToUpdate.putAll(getUpdatedManuallySetReferencingEntries(applicationId,entriesToAdd, oldEntries));
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
   }
+
+  public Map<Integer, ChargeBasisEntry> getUpdatedManuallySetReferencingEntries(int applicationId, List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries) {
+    Map<Integer, ChargeBasisEntry> addedEntries = new HashMap();
+    List<ChargeBasisEntry> noNullTagEntriesToAdd = removeEntriesWithNullTag(entriesToAdd);
+    List<ChargeBasisEntry> noNullTagOldEntries = removeEntriesWithNullTag(oldEntries);
+    List<ChargeBasisEntry> underpasses = getReferencingTagEntries(applicationId);
+
+    for (ChargeBasisEntry oldEntry : noNullTagOldEntries) {
+      List<ChargeBasisEntry> referredEntries = underpasses.stream()
+        .filter(e -> isReferencingTag(oldEntry, e) && e.getManuallySet())
+        .collect(Collectors.toList());
+      if (referredEntries.size() > 0) {
+
+        Map<Integer, Location> locationMap = getEntriesLocations(noNullTagEntriesToAdd,  noNullTagOldEntries);
+
+        ChargeBasisEntry newParentEntry = findSameNewEntry(noNullTagEntriesToAdd, oldEntry, locationMap);
+            for (ChargeBasisEntry referredTagEntry : referredEntries) {
+              ChargeBasisEntry updatedEntry = updateReferencingTagEntry(newParentEntry, referredTagEntry);
+              addedEntries.put(updatedEntry.getId(), updatedEntry);
+            }
+      }
+    }
+    return addedEntries;
+  }
+
+  private ChargeBasisEntry updateReferencingTagEntry(ChargeBasisEntry newParentEntry, ChargeBasisEntry referredTagEntry){
+    referredTagEntry.setReferredTag(newParentEntry.getTag());
+    if (newParentEntry.getInvoicingPeriodId() != null) {
+      referredTagEntry.setInvoicingPeriodId(newParentEntry.getInvoicingPeriodId());
+    } else {
+      referredTagEntry.setInvoicingPeriodId(null);
+    }
+     return referredTagEntry;
+  }
+
+  private ChargeBasisEntry  findSameNewEntry(List<ChargeBasisEntry> entriesToAdd,
+    ChargeBasisEntry oldEntry, Map<Integer, Location> locationMap){
+    for (ChargeBasisEntry newEntry : entriesToAdd) {
+      if (newEntry.equalContent(oldEntry, locationMap)) return newEntry;
+    }
+    return new ChargeBasisEntry();
+  }
+
+  public Map<Integer, Location> getEntriesLocations(List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries){
+    Set<Integer> locationIds = new HashSet<>();
+    oldEntries.stream().filter(e -> e.getLocationId() != null).forEach(e -> locationIds.add(e.getLocationId()));
+    entriesToAdd.stream().filter(e -> e.getLocationId() != null).forEach(e -> locationIds.add(e.getLocationId()));
+   return locationDao.findByIds(new ArrayList<>(locationIds))
+     .stream().collect(Collectors.toMap(Location::getId, Function.identity()));
+  }
+
+  private List<ChargeBasisEntry> removeEntriesWithNullTag(List<ChargeBasisEntry> entries){
+   return entries.stream().filter(e-> e.getTag() != null).collect(Collectors.toList());
+  }
+  public List<ChargeBasisEntry> getReferencingTagEntries(int applicationId){
+    return  queryFactory.select(chargeBasisBean).from(chargeBasis)
+      .where(chargeBasis.referredTag.isNotNull().and(chargeBasis.applicationId.eq(applicationId))).fetch();
+  }
+
+  private Boolean isReferencingTag(ChargeBasisEntry parentEntry, ChargeBasisEntry childEntry){
+    return childEntry.getReferredTag()
+      .equals(parentEntry.getTag());
+  }
+
 
   /**
    * Transfers the {@code invoicable} field data from old {@code ChargeBasisEntry} to the new.
@@ -85,18 +150,15 @@ public class ChargeBasisDao {
     long newCount = entriesToAdd.stream().filter(e->!e.getManuallySet() && e.getLocationId() != null).count();
     if (oldCount > 0 && oldCount == newCount) {
       // Get locations to compare entire entry
-      Set<Integer> locationIds = new HashSet<>();
-      Map<Integer, Location> locationMap = new HashMap<>();
-      oldEntries.stream().filter(e->e.getLocationId() != null).forEach(e->locationIds.add(e.getLocationId()));
-      entriesToAdd.stream().filter(e->e.getLocationId() != null).forEach(e->locationIds.add(e.getLocationId()));
-      locationDao.findByIds(new ArrayList<>(locationIds)).forEach(l->locationMap.put(l.getId(), l));
-
+      Map<Integer, Location> locationMap = getEntriesLocations(entriesToAdd, oldEntries);
+      List<Integer> updatedEntries = new ArrayList<>();
       for (ChargeBasisEntry adding : entriesToAdd) {
         Optional<ChargeBasisEntry> oldOptional = oldEntries.stream()
-          .filter(old->adding.equalContent(old, locationMap))
+          .filter(old->adding.equalContent(old, locationMap) &&  !updatedEntries.contains(old.getId()))
           .findAny();
         oldOptional.ifPresent(old->adding.setInvoicable(old.isInvoicable()));
         oldOptional.ifPresent(old->adding.setLocked(old.getLocked()));
+        oldOptional.ifPresent(old->updatedEntries.add(old.getId()));
       }
     }
   }
@@ -175,8 +237,8 @@ public class ChargeBasisDao {
   @Transactional
   public void setChargeBasis(ChargeBasisModification modification) {
     updateEntries(modification.getEntriesToUpdate());
-    deleteEntries(modification.getEntryIdsToDelete(), modification.getApplicationId());
-    insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId(), modification.isManuallySet()));
+    deleteEntries(modification.getEntryIdsToDelete());
+    insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId()));
     deleteDanglingEntries(modification.getApplicationId());
   }
 
@@ -199,7 +261,7 @@ public class ChargeBasisDao {
     return !entry.equals(old);
   }
 
-  private int nextEntryNumber(int applicationId, boolean manuallySet) {
+  private int nextEntryNumber(int applicationId) {
     Integer maxEntryNumber = queryFactory.select(chargeBasis.entryNumber.max()).from(chargeBasis)
         .where(chargeBasis.applicationId.eq(applicationId)).fetchFirst();
     return maxEntryNumber != null ? maxEntryNumber + 1 : 0;
@@ -207,10 +269,10 @@ public class ChargeBasisDao {
 
   @Transactional
   public ChargeBasisEntry insertManualEntry(int applicationId, ChargeBasisEntry entry) {
-    int entryNumber = nextEntryNumber(applicationId, true);
+    int entryNumber = nextEntryNumber(applicationId);
     entry.setModificationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(chargeBasis)
-        .populate(entry, new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))
+        .populate(entry, new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Collections.singletonList(chargeBasis.manuallySet)))
         .set(chargeBasis.applicationId, applicationId)
         .set(chargeBasis.entryNumber, entryNumber)
         .set(chargeBasis.manuallySet, true)
@@ -226,7 +288,7 @@ public class ChargeBasisDao {
         entry.setModificationTime(modificationTime);
         insert
             .populate(entry,
-                new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))
+                new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Collections.singletonList(chargeBasis.manuallySet)))
             .set(chargeBasis.applicationId, applicationId).set(chargeBasis.entryNumber, nextEntryNumber++)
             .set(chargeBasis.manuallySet, manuallySet)
             .addBatch();
@@ -239,7 +301,7 @@ public class ChargeBasisDao {
   }
 
   @Transactional
-  public void deleteEntries(Collection<Integer> entryIdsToDelete, int applicationId) {
+  public void deleteEntries(Collection<Integer> entryIdsToDelete) {
     // Delete invoice rows created from charge basis entry
     queryFactory.delete(invoiceRow).where(invoiceRow.chargeBasisId.in(entryIdsToDelete)).execute();
     queryFactory.delete(chargeBasis).where(chargeBasis.id.in(entryIdsToDelete)).execute();
@@ -335,7 +397,7 @@ public class ChargeBasisDao {
       e.setId(null);
       e.setLocked(false);
     });
-    insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId, true));
+    insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId));
   }
 
   @Transactional(readOnly = true)
