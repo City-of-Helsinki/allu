@@ -6,15 +6,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.domain.ApplicationExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -30,11 +32,16 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class})
 public class DateReportingServiceTest {
 
   private static final Integer APP_ID = 1234;
@@ -59,18 +66,12 @@ public class DateReportingServiceTest {
   @Mock
   private UserService userService;
 
+  @InjectMocks
   private DateReportingService dateReportingService;
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
-  @Before
+  @BeforeEach
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    dateReportingService = new DateReportingService(applicationService, applicationJsonService,
-        supervisionTaskService, applicationServiceComposer, locationService,
-        applicationHistoryService, invoicingPeriodService, eventDispatcher,
-        userService);
 
     final List<LocationJson> locations = new ArrayList<>();
     LocationJson location = new LocationJson();
@@ -87,33 +88,62 @@ public class DateReportingServiceTest {
     application.setExtension(new AreaRental());
     application.setStatus(StatusType.DECISION);
 
-    Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.any())).thenReturn(applicationJson);
-    Mockito.when(applicationService.setCustomerValidityDates(eq(APP_ID), any(ApplicationDateReport.class))).thenReturn(application);
-    Mockito.when(userService.getCurrentUser()).thenReturn(new UserJson(15));
+    lenient().when(applicationJsonService.getFullyPopulatedApplication(Mockito.any())).thenReturn(applicationJson);
+    lenient().when(applicationService.setCustomerValidityDates(eq(APP_ID), any(ApplicationDateReport.class))).thenReturn(application);
+    lenient().when(userService.getCurrentUser()).thenReturn(new UserJson(15));
   }
 
   @Test
   public void workFinishedDateCantBeBeforeAreaStartDate() {
     Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(Collections.emptyList());
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("workfinisheddate.before.area.start");
 
     final ZonedDateTime workFinishedDate = ZonedDateTime.now().minusDays(10);
-    dateReportingService.reportWorkFinished(APP_ID, workFinishedDate);
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      dateReportingService.reportWorkFinished(APP_ID, workFinishedDate);
+    });
+    assertEquals("workfinisheddate.before.area.start", exception.getMessage());
+
   }
 
-  @Test
-  public void workFinishedDateIsOnInvoicedPeriod() {
+
+  @ParameterizedTest
+  @ValueSource(ints = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4})
+  public void workFinishedDateIsOnInvoicedPeriodExcludingEndDate(int day) {
     final List<InvoicingPeriod> invoicingPeriods = new ArrayList<>();
-    final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(10), ZonedDateTime.now().plusDays(10));
+    final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
     period.setClosed(true);
     invoicingPeriods.add(period);
     Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(invoicingPeriods);
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("workfinisheddate.invoiced.invoicing.period");
+    final ZonedDateTime workFinishedDate = ZonedDateTime.now().plusDays(day);
 
-    final ZonedDateTime workFinishedDate = ZonedDateTime.now().minusDays(10);
-    dateReportingService.reportWorkFinished(APP_ID, workFinishedDate);
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      dateReportingService.reportWorkFinished(APP_ID, workFinishedDate);
+    });
+    assertEquals("workfinisheddate.invoiced.invoicing.period", exception.getMessage());
+
+  }
+
+  @Test
+  public void workFinishedDateIsLastInvoiciPeriodDate() {
+    final List<InvoicingPeriod> invoicingPeriods = new ArrayList<>();
+    final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
+    period.setClosed(true);
+    invoicingPeriods.add(period);
+    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(invoicingPeriods);
+    final ZonedDateTime workFinishedDate = ZonedDateTime.now().plusDays(5);
+    Application dummApplication = new Application();
+    dummApplication.setExtension(new ApplicationExtension() {
+      @Override
+      public ApplicationType getApplicationType() {
+        return null;
+      }
+    });
+    when(applicationService.setTargetState(anyInt(), any())).thenReturn(dummApplication);
+
+      dateReportingService.reportWorkFinished(APP_ID, workFinishedDate);
+
+
+
   }
 
   @Test

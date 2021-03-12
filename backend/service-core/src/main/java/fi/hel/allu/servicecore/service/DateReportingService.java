@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +42,6 @@ public class DateReportingService {
   private final ApplicationEventDispatcher applicationEventDispatcher;
   private final UserService userService;
 
-  @Autowired
   public DateReportingService(
       ApplicationService applicationService,
       ApplicationJsonService applicationJsonService,
@@ -202,10 +199,9 @@ public class DateReportingService {
 
   private void adjustLocationEndDates(int applicationId, ZonedDateTime date) {
     final ZonedDateTime firstPossibleEndDate = firstAllowedInvoicingDate(applicationId);
-    if (firstPossibleEndDate == null || date.isBefore(firstPossibleEndDate)) {
+    if (isDateBefore(firstPossibleEndDate,date) && ! isEndDate(applicationId,date)) {
       throw new IllegalArgumentException("workfinisheddate.invoiced.invoicing.period");
     }
-
     final ApplicationJson application = getApplicationJson(applicationId);
     final List<LocationJson> locationsEndingAfter = application.getLocations().stream()
         .filter(l -> l.getEndTime().isAfter(date))
@@ -218,6 +214,18 @@ public class DateReportingService {
       locationsEndingAfter.stream().forEach(l -> l.setEndTime(date));
       applicationServiceComposer.updateApplication(application.getId(), application);
     }
+  }
+
+  private boolean isDateBefore(ZonedDateTime firstPossibleEndDate, ZonedDateTime date){
+    return firstPossibleEndDate == null || date.isBefore(firstPossibleEndDate);
+  }
+
+  private Boolean isEndDate(int applicationId, ZonedDateTime date){
+    List<InvoicingPeriod> endDates = invoicingPeriodService.getInvoicingPeriods(applicationId)
+      .stream().filter(e-> e.getEndTime().toLocalDate().equals(date.toLocalDate()))
+      .collect(Collectors.toList());;
+
+    return  endDates.size() > 0;
   }
 
   private ZonedDateTime firstAllowedInvoicingDate(int applicationId) {
