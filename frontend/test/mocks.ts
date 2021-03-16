@@ -175,6 +175,7 @@ export class RouterMock {
   }
 }
 
+
 export class ActivatedRouteMock {
   private params$ = new BehaviorSubject({});
   private data$ = new BehaviorSubject({});

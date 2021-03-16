@@ -1,12 +1,12 @@
 import {TestBed} from '@angular/core/testing';
 import {ActivatedRouteSnapshot} from '@angular/router';
 import {REDIRECT_URL} from '../../../src/util/local-storage';
-import {User} from '../../../src/app/model/user/user';
-import {UiConfiguration} from '../../../src/app/model/config/ui-configuration';
-import {AuthGuard} from '../../../src/app/service/authorization/auth-guard.service';
-import {AuthService} from '../../../src/app/service/authorization/auth.service';
-import {ConfigService} from '../../../src/app/service/config/config.service';
-import {EMPTY, Observable, of} from 'rxjs/index';
+import {User} from '@model/user/user';
+import {UiConfiguration} from '@model/config/ui-configuration';
+import {AuthGuard} from '@service/authorization/auth-guard.service';
+import {AuthService} from '@service/authorization/auth.service';
+import {ConfigService} from '@service/config/config.service';
+import {EMPTY, Observable, of} from 'rxjs';
 
 class AuthServiceMock {
   authenticated(): boolean {
@@ -33,6 +33,17 @@ describe('AuthGuard', () => {
   let configService: ConfigServiceMock;
 
   beforeEach(() => {
+    const store = {};
+
+    spyOn(localStorage, 'getItem').and.callFake( (key: string): String => {
+      return store[key] || null;
+    });
+    spyOn(localStorage, 'removeItem').and.callFake((key: string): void =>  {
+      delete store[key];
+    });
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): string =>  {
+      return store[key] = <string>value;
+    });
     const tb = TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -64,12 +75,11 @@ describe('AuthGuard', () => {
   it('redirects to oauth login when no code is found in route parameters', () => {
     spyOn(authService, 'authenticated').and.returnValue(false);
     const getConfiguration = spyOn(configService, 'getConfiguration').and.returnValue(EMPTY);
-    const setItem = spyOn(localStorage, 'setItem');
     activatedRouteSnapshot.queryParams = {code: undefined};
     routerStateSnapshot.url = 'testUrl';
 
     authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot).subscribe();
-    expect(setItem).toHaveBeenCalledWith(REDIRECT_URL, routerStateSnapshot.url);
+    expect(localStorage.getItem(REDIRECT_URL)).toBe(routerStateSnapshot.url);
     expect(getConfiguration).toHaveBeenCalled();
   });
 });
