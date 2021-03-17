@@ -132,7 +132,6 @@ public class ChargeBasisDao {
       // Remove entry from entriesToUpdate
       entriesToUpdate.remove(lockedOldEntryToBeUpdated.getId());
     }
-    entriesToAdd.sort(Comparator.comparing(ChargeBasisEntry::getTag));
     // Add entries to entriesToAdd in the following manner,
     // to ensure the locked entries are first in entryNumber order.
     entriesToAdd.addAll(0, entriesToPrependToAddList);
