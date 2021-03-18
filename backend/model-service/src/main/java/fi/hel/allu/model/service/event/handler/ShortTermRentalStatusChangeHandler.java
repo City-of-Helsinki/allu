@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +30,9 @@ public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeH
 
   @Autowired
   public ShortTermRentalStatusChangeHandler(ApplicationService applicationService,
-      SupervisionTaskService supervisionTaskService, LocationService locationService, ApplicationDao applicationDao,
-      ChargeBasisService chargeBasisService, HistoryDao historyDao, InformationRequestDao informationRequestDao,
-      InvoiceService invoiceService, TerminationDao terminationDao, InvoicingPeriodService invoicingPeriodService) {
+                                            SupervisionTaskService supervisionTaskService, LocationService locationService, ApplicationDao applicationDao,
+                                            ChargeBasisService chargeBasisService, HistoryDao historyDao, InformationRequestDao informationRequestDao,
+                                            InvoiceService invoiceService, TerminationDao terminationDao, InvoicingPeriodService invoicingPeriodService) {
     super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
         informationRequestDao, invoiceService, terminationDao);
     this.invoicingPeriodService = invoicingPeriodService;

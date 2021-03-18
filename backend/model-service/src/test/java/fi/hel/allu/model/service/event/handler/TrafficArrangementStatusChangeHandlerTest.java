@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

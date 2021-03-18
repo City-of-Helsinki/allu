@@ -8,6 +8,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
 import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,6 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

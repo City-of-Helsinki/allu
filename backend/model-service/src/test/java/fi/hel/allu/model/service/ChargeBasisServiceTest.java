@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

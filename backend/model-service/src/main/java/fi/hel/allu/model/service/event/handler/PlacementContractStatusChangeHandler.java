@@ -6,6 +6,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
 import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

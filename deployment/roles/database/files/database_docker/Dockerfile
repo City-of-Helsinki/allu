@@ -14,4 +14,4 @@ ENV LANG fi_FI.utf8
 ARG CACHEBUST=1
 
 # Copy the database initialization script to be run on first DB startup
-COPY init.sql /docker-entrypoint-initdb.d/10-init.sql
+COPY init.sql /docker-entrypoint-initdb.d/

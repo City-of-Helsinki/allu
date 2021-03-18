@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.dao.TerminationDao;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

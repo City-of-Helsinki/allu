@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.model.service.chargeBasis.UpdateChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +22,7 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.service.ChargeBasisService;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import fi.hel.allu.model.service.InvoicingPeriodService;
 import fi.hel.allu.model.service.PricingService;
 
@@ -43,12 +44,14 @@ public class AreaUsageTagTest {
   private ApplicationEventPublisher eventPublisher;
   @Mock
   private PricingService pricingService;
+  @Mock
+  private UpdateChargeBasisService updateChargeBasisService;
   @Captor
   private ArgumentCaptor<List<ChargeBasisEntry>> captor;
 
   @Before
   public void setUp() {
-    chargeBasisService = new ChargeBasisService(chargeBasisDao, applicationDao, eventPublisher, invoicingPeriodService, pricingService);
+    chargeBasisService = new ChargeBasisService(chargeBasisDao, applicationDao, eventPublisher, invoicingPeriodService, pricingService, updateChargeBasisService);
     Mockito.when(invoicingPeriodService.findFirstOpenPeriod(anyInt())).thenReturn(Optional.empty());
   }
 
@@ -57,7 +60,7 @@ public class AreaUsageTagTest {
     ChargeBasisEntry e1 = new ChargeBasisEntry(null, null, true, ChargeBasisType.AREA_USAGE_FEE,
         ChargeBasisUnit.PIECE, 1, "Entry 1", new String[] { "One entry", "Item" }, 1, 1);
     List<ChargeBasisEntry> entries = Arrays.asList(e1);
-    Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
+    Mockito.when(updateChargeBasisService.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
         .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptyMap(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
@@ -74,7 +77,7 @@ public class AreaUsageTagTest {
         ChargeBasisUnit.PIECE, 1, "Entry 2", new String[] { "Discount entry", "Discount" }, 1, 1);
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
-    Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
+    Mockito.when(updateChargeBasisService.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
         .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptyMap(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
@@ -94,7 +97,7 @@ public class AreaUsageTagTest {
         ChargeBasisUnit.PIECE, 1, "Entry 2", new String[] { "One entry", "Item" }, 1, 1);
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
-    Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
+    Mockito.when(updateChargeBasisService.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
     .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptyMap(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
 

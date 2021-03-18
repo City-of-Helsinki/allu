@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

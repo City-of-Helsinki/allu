@@ -8,6 +8,7 @@ import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableReport;
 import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

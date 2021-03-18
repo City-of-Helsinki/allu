@@ -4,11 +4,10 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;

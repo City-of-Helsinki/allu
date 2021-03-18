@@ -1,4 +1,4 @@
-package fi.hel.allu.model.service;
+package fi.hel.allu.model.service.chargeBasis;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fi.hel.allu.model.service.InvoicingPeriodService;
+import fi.hel.allu.model.service.PricingService;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -33,15 +35,17 @@ public class ChargeBasisService {
   private final ApplicationEventPublisher invoicingChangeEventPublisher;
   private final InvoicingPeriodService invoicingPeriodService;
   private final PricingService pricingService;
+  private  final UpdateChargeBasisService updateChargeBasisService;
 
   public ChargeBasisService(ChargeBasisDao chargeBasisDao, ApplicationDao applicationDao,
-      ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService,
-      PricingService pricingService) {
+                            ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService,
+                            PricingService pricingService, UpdateChargeBasisService updateChargeBasisService) {
     this.chargeBasisDao = chargeBasisDao;
     this.applicationDao = applicationDao;
     this.invoicingChangeEventPublisher = invoicingChangeEventPublisher;
     this.invoicingPeriodService = invoicingPeriodService;
     this.pricingService = pricingService;
+    this.updateChargeBasisService = updateChargeBasisService;
   }
 
   /**
@@ -53,7 +57,7 @@ public class ChargeBasisService {
   @Transactional
   public boolean setCalculatedChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
     List<ChargeBasisEntry> calculatedEntries = entries.stream().filter(e -> !e.getManuallySet()).collect(Collectors.toList());
-    ChargeBasisModification modification = chargeBasisDao.getModifications(applicationId,
+    ChargeBasisModification modification = updateChargeBasisService.getModifications(applicationId,
         calculatedEntries, false);
     // Filter locked entries when updating calculated entries
     handleModifications(modification.filtered(chargeBasisDao.getLockedChargeBasisIds(applicationId)));
@@ -134,7 +138,7 @@ public class ChargeBasisService {
         .collect(Collectors.toList());
     manualEntries.forEach(entry -> setPeriodIfMissing(applicationId, entry));
 
-    ChargeBasisModification modification = chargeBasisDao.getModifications(
+    ChargeBasisModification modification = updateChargeBasisService.getModifications(
         applicationId,
         manualEntries,
         true);

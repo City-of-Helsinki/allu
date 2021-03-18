@@ -3,6 +3,7 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -19,7 +20,6 @@ import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.domain.InvoicingPeriod;
-import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.*;
 
 @Service

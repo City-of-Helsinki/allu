@@ -5,6 +5,7 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import org.junit.runner.RunWith;

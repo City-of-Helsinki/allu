@@ -3,6 +3,7 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.model.dao.TerminationDao;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

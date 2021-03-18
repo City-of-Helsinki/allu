@@ -5,6 +5,7 @@ import java.util.*;
 
 import fi.hel.allu.common.util.OptionalUtil;
 import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

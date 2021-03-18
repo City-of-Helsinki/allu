@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.service.chargeBasis.UpdateChargeBasisService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,8 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
 
   @Autowired
   private ChargeBasisDao chargeBasisDao;
+  @Autowired
+  private UpdateChargeBasisService updateChargeBasisService;
 
   {
     describe("ChargeBasisDao", () -> {
@@ -105,7 +108,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
           });
           it("Should return ID of deleted entry", () -> {
             testEntries.remove(0);
-            ChargeBasisModification modification = chargeBasisDao.getModifications(appId1.get(), testEntries, true);
+            ChargeBasisModification modification = updateChargeBasisService.getModifications(appId1.get(), testEntries, true);
             assertEquals(1, modification.getEntryIdsToDelete().size());
             assertTrue(modification.getEntriesToUpdate().isEmpty());
             assertTrue(modification.getEntriesToInsert().isEmpty());
@@ -113,7 +116,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
           });
           it("Should return inserted entry", () -> {
             testEntries.addAll(generateTestEntries(1, "added", null));
-            ChargeBasisModification modification = chargeBasisDao.getModifications(appId1.get(), testEntries, true);
+            ChargeBasisModification modification = updateChargeBasisService.getModifications(appId1.get(), testEntries, true);
             assertEquals(1, modification.getEntriesToInsert().size());
             assertTrue(modification.getEntryIdsToDelete().isEmpty());
             assertTrue(modification.getEntriesToUpdate().isEmpty());
@@ -121,7 +124,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
           it("Should return updated entry", () -> {
             ChargeBasisEntry modified = testEntries.get(0);
             modified.setUnitPrice(modified.getUnitPrice() + 2);
-            ChargeBasisModification modification = chargeBasisDao.getModifications(appId1.get(), testEntries, true);
+            ChargeBasisModification modification = updateChargeBasisService.getModifications(appId1.get(), testEntries, true);
             assertEquals(1, modification.getEntriesToUpdate().size());
             assertTrue(modification.getEntriesToInsert().isEmpty());
             assertTrue(modification.getEntryIdsToDelete().isEmpty());
@@ -154,7 +157,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
 
             context("when clearing manual entries", () -> {
               it("should leave the calculated entries in place", () -> {
-                ChargeBasisModification modification = chargeBasisDao.getModifications(appId1.get(), Collections.emptyList(), true);
+                ChargeBasisModification modification = updateChargeBasisService.getModifications(appId1.get(), Collections.emptyList(), true);
                 chargeBasisDao.setChargeBasis(modification);
                 final List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
                 assertEquals(NUM_CALCULATED_ENTRIES, entries.size());
@@ -165,7 +168,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
 
             context("when clearing calculated entries", () -> {
               it("should leave the manual entries in place", () -> {
-                ChargeBasisModification modification = chargeBasisDao.getModifications(appId1.get(), Collections.emptyList(), false);
+                ChargeBasisModification modification = updateChargeBasisService.getModifications(appId1.get(), Collections.emptyList(), false);
                 chargeBasisDao.setChargeBasis(modification);
                 final List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
                 assertEquals(NUM_MANUAL_ENTRIES, entries.size());
@@ -181,7 +184,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
             clearEntries();
             chargeBasisDao.setChargeBasis(modification(appId1.get(), generateTestEntries(1, "auto", null), false));
             List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
-            chargeBasisDao.setChargeBasis(modification(appId1.get(), generateTestEntries(1, "man","ARF"), true));
+            chargeBasisDao.setChargeBasis(modification(appId1.get(), generateTestEntries(1, "man", "ARF"), true));
 
             chargeBasisDao.setChargeBasis(modification(appId2.get(), generateTestEntries(1, "auto", null), false));
             entries = chargeBasisDao.getChargeBasis(appId2.get());
@@ -191,7 +194,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
 
             context("when clearing calculated entries", () -> {
               it("should remove dangling manual entries for correct application", () -> {
-                ChargeBasisModification modification = chargeBasisDao.getModifications(appId1.get(), Collections.emptyList(), false);
+                ChargeBasisModification modification = updateChargeBasisService.getModifications(appId1.get(), Collections.emptyList(), false);
                 chargeBasisDao.setChargeBasis(modification);
                 List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
                 assertEquals(0, entries.size());

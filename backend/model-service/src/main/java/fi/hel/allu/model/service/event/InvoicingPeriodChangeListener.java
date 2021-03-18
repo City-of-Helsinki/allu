@@ -5,7 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 
 @Service
 public class InvoicingPeriodChangeListener {

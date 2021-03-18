@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

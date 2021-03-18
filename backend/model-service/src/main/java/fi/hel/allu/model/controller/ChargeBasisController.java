@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 
 @RestController
 @RequestMapping("/applications/{id}")

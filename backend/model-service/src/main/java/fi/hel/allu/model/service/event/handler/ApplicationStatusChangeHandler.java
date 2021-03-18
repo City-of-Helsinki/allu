@@ -6,6 +6,7 @@ import java.util.Collections;
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.TerminationDao;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,6 @@ import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
-
-import static fi.hel.allu.QApplication.application;
 
 /**
  * Default handler for application status change events
