@@ -67,7 +67,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler({IOException.class})
-  protected ResponseEntity<Object> handleServerErrorException(RuntimeException e, WebRequest request) {
+  protected ResponseEntity<Object> handleServerErrorException(Exception e, WebRequest request) {
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
