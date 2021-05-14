@@ -115,7 +115,7 @@ public class ApplicationReplacementService {
     Application applicationToReplace = applicationService.findById(applicationId);
     Application replacingApplication = addReplacingApplication(applicationToReplace, userId);
 
-    copyApplicationRelatedData(applicationId, replacingApplication, userId);
+    copyApplicationRelatedData(applicationId, replacingApplication);
 
     // Update application status
     updateStatus(replacingApplication);
@@ -131,7 +131,7 @@ public class ApplicationReplacementService {
     return replacingApplication.getId();
   }
 
-  private void copyApplicationRelatedData(int applicationId, Application replacingApplication, int userId) {
+  private void copyApplicationRelatedData(int applicationId, Application replacingApplication) {
     commentDao.copyApplicationComments(applicationId, replacingApplication.getId(), COMMENT_TYPES_NOT_COPIED);
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
@@ -197,7 +197,7 @@ public class ApplicationReplacementService {
     // Ensures tags are same order.
     if (!locations.isEmpty() && locations.get(0).getId() != null)
       locations.sort(Comparator.comparing(AbstractLocation::getId));
-    locations.forEach(l -> clearIds(l));
+    locations.forEach(this::clearIds);
     application.setLocations(locations);
   }
 
@@ -213,7 +213,7 @@ public class ApplicationReplacementService {
             ApplicationIdUtil.getBaseApplicationId(applicationId));
     if (!appIds.isEmpty()) {
       // Find latest application ID
-      Collections.sort(appIds, (a1, a2) -> Integer.valueOf(a2.getId()).compareTo(a1.getId()));
+      Collections.sort(appIds, (a1, a2) -> Integer.compare(a2.getId(), a1.getId()));
       applicationId = appIds.get(0).getApplicationId();
     }
     return ApplicationIdUtil.generateReplacingApplicationId(applicationId);
@@ -266,21 +266,47 @@ public class ApplicationReplacementService {
     locationDao.findByIds(new ArrayList<>(locationIds)).forEach(e -> locationMap.put(e.getId(), e));
 
     // Handle copying
-    handleEntries(oldApplicationEntries, presentApplicationEntries, locationMap);
+    handleInvoicedEntries(oldInvoicedEntries, presentApplicationEntries, locationMap);
+    handleNotYetInvoicedEntries(oldNonInvoicedEntries, presentApplicationEntries, locationMap);
     // Update entries
     updateChargeBasisEntries(presentApplicationEntries);
   }
 
-  private void handleEntries(List<ChargeBasisEntry> oldApplicationEntries,
-                             List<ChargeBasisEntry> presentApplicationEntries,
-                             Map<Integer, Location> locationMap) {
-    for (ChargeBasisEntry oldEntry : oldApplicationEntries) {
-      presentApplicationEntries.stream()
+  private void handleInvoicedEntries(List<ChargeBasisEntry> oldEntries,
+                                     List<ChargeBasisEntry> presentEntries,
+                                     Map<Integer, Location> locationMap) {
+    for (ChargeBasisEntry oldEntry : oldEntries) {
+      presentEntries.stream()
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
         .forEach(presentEntry -> {
+          presentEntry.setInvoicable(false);
+          presentEntry.setLocked(true);
+        });
+    }
+  }
+
+  private void handleNotYetInvoicedEntries(List<ChargeBasisEntry> oldNonInvoicedEntries,
+                                           List<ChargeBasisEntry> presentApplicationEntries,
+                                           Map<Integer, Location> locationMap) {
+    List<Integer> updatedEntries = new ArrayList<>();
+    for (ChargeBasisEntry oldEntry : oldNonInvoicedEntries) {
+      List<ChargeBasisEntry> result = presentApplicationEntries.stream()
+        .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap)
+          && !updatedEntries.contains(presentEntry.getId())).collect(Collectors.toList());
+      if(!result.isEmpty()){
+        ChargeBasisEntry firstValue = result.get(0);
+        if (firstValue.isUnderPass()){
+          firstValue.setInvoicable(oldEntry.isInvoicable());
+          firstValue.setLocked(false);
+          updatedEntries.add(firstValue.getId());
+        }
+        else {
+          result.forEach(presentEntry -> {
           presentEntry.setInvoicable(oldEntry.isInvoicable());
           presentEntry.setLocked(false);
         });
+        }
+      }
     }
   }
 

@@ -261,8 +261,7 @@ public class ChargeBasisEntry {
     if (!equalDescriptiveContent(other))
       return false;
     if (invoicingPeriodId == null) {
-      if (other.invoicingPeriodId != null)
-        return false;
+      return other.invoicingPeriodId == null;
     } else if (!invoicingPeriodId.equals(other.invoicingPeriodId))
       return false;
     return true;
@@ -352,8 +351,12 @@ public class ChargeBasisEntry {
   public boolean equalContent(ChargeBasisEntry other, Map<Integer, Location> locationMap) {
     // Check only content first, as all entries may not have a location.
     // This leads to locationId in ChargeBasisEntry tag not matching at any case.
+
+    if(isUnderPass() && other.isUnderPass()){
+        return true;
+    }
     if (this.equalDescriptiveContentAndTagPrefix(other)) {
-      if (this.getLocationId() == null && other.getLocationId() == null) {
+      if (isBothLocationIdsNull(this.getLocationId(), other.locationId)) {
         return true;
       }
       else if (this.getLocationId() != null && other.getLocationId() != null) {
@@ -390,4 +393,14 @@ public class ChargeBasisEntry {
   public void setLocationId(Integer locationId) {
     this.locationId = locationId;
   }
+
+  public boolean isUnderPass(){
+    return this.text.equalsIgnoreCase("altakuljettava")
+      && this.quantity == -50;
+  }
+
+  private boolean isBothLocationIdsNull(Integer locationId , Integer otherlocatioId){
+    return locationId == null && otherlocatioId == null;
+  }
+
 }
