@@ -265,28 +265,14 @@ public class ApplicationReplacementService {
     locationDao.findByIds(new ArrayList<>(locationIds)).forEach(e -> locationMap.put(e.getId(), e));
 
     // Handle copying
-    handleInvoicedEntries(oldInvoicedEntries, presentApplicationEntries, locationMap);
-    handleNotYetInvoicedEntries(oldNonInvoicedEntries, presentApplicationEntries, locationMap);
+    handleEntries(oldApplicationEntries, presentApplicationEntries, locationMap);
     // Update entries
     updateChargeBasisEntries(presentApplicationEntries);
   }
 
-  private void handleInvoicedEntries(List<ChargeBasisEntry> oldEntries,
-                                     List<ChargeBasisEntry> presentEntries,
-                                     Map<Integer, Location> locationMap) {
-    for (ChargeBasisEntry oldEntry : oldEntries) {
-      presentEntries.stream()
-        .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
-        .forEach(presentEntry -> {
-          presentEntry.setInvoicable(false);
-          presentEntry.setLocked(true);
-        });
-    }
-  }
-
-  private void handleNotYetInvoicedEntries(List<ChargeBasisEntry> oldNonInvoicedEntries,
-                                           List<ChargeBasisEntry> presentApplicationEntries,
-                                           Map<Integer, Location> locationMap) {
+  private void handleEntries(List<ChargeBasisEntry> oldNonInvoicedEntries,
+                             List<ChargeBasisEntry> presentApplicationEntries,
+                             Map<Integer, Location> locationMap) {
     for (ChargeBasisEntry oldEntry : oldNonInvoicedEntries) {
       presentApplicationEntries.stream()
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
