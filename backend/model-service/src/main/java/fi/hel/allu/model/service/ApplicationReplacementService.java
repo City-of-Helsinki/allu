@@ -270,10 +270,10 @@ public class ApplicationReplacementService {
     updateChargeBasisEntries(presentApplicationEntries);
   }
 
-  private void handleEntries(List<ChargeBasisEntry> oldNonInvoicedEntries,
+  private void handleEntries(List<ChargeBasisEntry> oldApplicationEntries,
                              List<ChargeBasisEntry> presentApplicationEntries,
                              Map<Integer, Location> locationMap) {
-    for (ChargeBasisEntry oldEntry : oldNonInvoicedEntries) {
+    for (ChargeBasisEntry oldEntry : oldApplicationEntries) {
       presentApplicationEntries.stream()
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
         .forEach(presentEntry -> {
