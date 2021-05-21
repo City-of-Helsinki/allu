@@ -13,7 +13,7 @@ describe('LocalStorageUtil', () => {
     });
 
     spyOn(localStorage, 'removeItem').and.callFake((key) => {
-      store[key] = undefined;
+      store[key] = null;
     });
     spyOn(localStorage, 'clear').and.callFake(() =>  {
       store = {};
@@ -28,7 +28,6 @@ describe('LocalStorageUtil', () => {
     LocalStorageUtil.setItemArray(key, items);
     expect(LocalStorageUtil.getItemArray(key)).toEqual(items);
   });
-
   it('get empty array when no item is found', () => {
     expect(LocalStorageUtil.getItemArray('none')).toEqual([]);
   });

@@ -51,15 +51,12 @@ describe('Oauth2Component', () => {
     const navigateByUrl = spyOn(router, 'navigateByUrl');
     comp.ngOnInit();
     expect(localStorage.removeItem(REDIRECT_URL)).toBeUndefined();
-    expect(navigateByUrl).toHaveBeenCalledWith(url);
+     expect(navigateByUrl).toHaveBeenCalledWith(url);
   });
 
   it('should redirect to home when no url is found in localstorage', () => {
-    const removeItem = spyOn(localStorage, 'removeItem');
     const navigate = spyOn(router, 'navigate');
-
     comp.ngOnInit();
-    expect(removeItem).not.toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith(['home']);
   });
 });
