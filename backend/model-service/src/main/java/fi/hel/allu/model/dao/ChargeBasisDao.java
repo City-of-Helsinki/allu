@@ -35,15 +35,13 @@ public class ChargeBasisDao {
 
   private SQLQueryFactory queryFactory;
 
-  private LocationDao locationDao;
 
 
   final QBean<ChargeBasisEntry> chargeBasisBean = bean(ChargeBasisEntry.class, chargeBasis.all());
 
 
-  public ChargeBasisDao(SQLQueryFactory queryFactory, LocationDao locationDao) {
+  public ChargeBasisDao(SQLQueryFactory queryFactory) {
     this.queryFactory = queryFactory;
-    this.locationDao = locationDao;
   }
 
 
@@ -74,7 +72,7 @@ public class ChargeBasisDao {
   @Transactional
   public void setChargeBasis(ChargeBasisModification modification) {
     updateEntries(modification.getEntriesToUpdate());
-    deleteEntries(modification.getEntryIdsToDelete(), modification.getApplicationId());
+    deleteEntries(modification.getEntryIdsToDelete());
     insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId(), modification.isManuallySet()));
     deleteDanglingEntries(modification.getApplicationId());
   }
@@ -128,7 +126,7 @@ public class ChargeBasisDao {
   }
 
   @Transactional
-  public void deleteEntries(Collection<Integer> entryIdsToDelete, int applicationId) {
+  public void deleteEntries(Collection<Integer> entryIdsToDelete) {
     // Delete invoice rows created from charge basis entry
     queryFactory.delete(invoiceRow).where(invoiceRow.chargeBasisId.in(entryIdsToDelete)).execute();
     queryFactory.delete(chargeBasis).where(chargeBasis.id.in(entryIdsToDelete)).execute();

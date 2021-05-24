@@ -27,7 +27,7 @@ import fi.hel.allu.model.service.InvoicingPeriodService;
 import fi.hel.allu.model.service.PricingService;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AreaUsageTagTest {
