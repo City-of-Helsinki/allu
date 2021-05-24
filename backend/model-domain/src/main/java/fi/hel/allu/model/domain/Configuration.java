@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+
 import javax.validation.constraints.NotNull;
 
 public class Configuration {

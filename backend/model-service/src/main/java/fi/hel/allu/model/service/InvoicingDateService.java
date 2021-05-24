@@ -2,10 +2,8 @@ package fi.hel.allu.model.service;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -21,19 +19,24 @@ import fi.hel.allu.model.domain.InvoicingPeriod;
 @Service
 public class InvoicingDateService {
 
-  private Map<ApplicationKind, ConfigurationKey> TERRACE_INVOICINGDATE_CONFIG_BY_KIND = new HashMap<ApplicationKind, ConfigurationKey>() {{
-    put(ApplicationKind.SUMMER_TERRACE, ConfigurationKey.SUMMER_TERRACE_INVOICING_DATE);
-    put(ApplicationKind.WINTER_TERRACE, ConfigurationKey.WINTER_TERRACE_INVOICING_DATE);
-    put(ApplicationKind.PARKLET, ConfigurationKey.PARKLET_INVOICING_DATE);
-  }};
+  private final EnumMap<ApplicationKind, ConfigurationKey> TERRACE_DATE_CONFIG_BY_KIND
+    = new EnumMap<>(ApplicationKind.class);
 
-  @Autowired
-  private ConfigurationDao configurationDao;
+  private final ConfigurationDao configurationDao;
+
+  public InvoicingDateService(ConfigurationDao configurationDao) {
+    this.configurationDao = configurationDao;
+    TERRACE_DATE_CONFIG_BY_KIND.put(ApplicationKind.SUMMER_TERRACE,
+      ConfigurationKey.SUMMER_TERRACE_INVOICING_DATE);
+    TERRACE_DATE_CONFIG_BY_KIND.put(ApplicationKind.WINTER_TERRACE,
+      ConfigurationKey.WINTER_TERRACE_INVOICING_DATE);
+    TERRACE_DATE_CONFIG_BY_KIND.put(ApplicationKind.PARKLET, ConfigurationKey.PARKLET_INVOICING_DATE);
+  }
 
   public ZonedDateTime getInvoicingDate(Application application) {
     if (isTerrace(application)) {
-      return getInvoicingDateForTerracePeriod(application, application.getStartTime(), application.getEndTime(),
-          application.getKind());
+      return getInvoicingDateForTerracePeriod(application.getStartTime(),
+          application.getEndTime(), application.getKind());
     } else {
       return application.getInvoicingDate();
     }
@@ -41,43 +44,37 @@ public class InvoicingDateService {
 
   public ZonedDateTime getInvoicingDateForPeriod(Application application, InvoicingPeriod period) {
     if (isTerrace(application)) {
-      return getInvoicingDateForTerracePeriod(application, period.getStartTime(), period.getEndTime(),
-          application.getKind());
+      return getInvoicingDateForTerracePeriod( period.getStartTime(),
+          period.getEndTime(), application.getKind());
     } else {
       return period.getEndTime();
     }
   }
 
-  private ZonedDateTime getInvoicingDateForTerracePeriod(Application application,
-      ZonedDateTime terracePeriodStartTime, ZonedDateTime terracePeriodEndTime,
-      ApplicationKind kind) {
+  private ZonedDateTime getInvoicingDateForTerracePeriod(
+    ZonedDateTime terracePeriodStartTime, ZonedDateTime terracePeriodEndTime, ApplicationKind kind) {
     ZonedDateTime invoicingDate = getTerraceInvoicingDateForYear(terracePeriodStartTime.getYear(), kind);
-    if (invoicingDate.isAfter(terracePeriodEndTime)) {
-      invoicingDate = invoicingDate.minusYears(1);
-    }
-    if (ZonedDateTime.now().isAfter(invoicingDate)) {
-      return TimeUtil.startOfDay(ZonedDateTime.now());
+    if (terracePeriodStartTime.isAfter(invoicingDate)) {
+      return TimeUtil.startOfDay(terracePeriodEndTime);
     }
     return invoicingDate;
   }
 
   private ZonedDateTime getTerraceInvoicingDateForYear(int year, ApplicationKind kind) {
-    return getDateFromConfiguration(TERRACE_INVOICINGDATE_CONFIG_BY_KIND.get(kind)).withYear(year);
+    return getDateFromConfiguration(TERRACE_DATE_CONFIG_BY_KIND.get(kind)).withYear(year);
   }
 
-  private ZonedDateTime getDateFromConfiguration(ConfigurationKey key) {
+  private ZonedDateTime  getDateFromConfiguration(ConfigurationKey key) {
     return configurationDao.findByKey(key).stream()
         .findFirst()
         .map(Configuration::getValue)
-        .map(value -> LocalDate.parse(value))
-        .map(d -> TimeUtil.startOfDay(d))
+        .map(LocalDate::parse)
+        .map(TimeUtil::startOfDay)
         .orElseThrow(() -> new NoSuchEntityException("Required configuration " + key + " not found."));
-
   }
 
   private boolean isTerrace(Application application) {
     return application.getType() == ApplicationType.SHORT_TERM_RENTAL && application.getKind().isTerrace();
   }
-
 
 }

@@ -43,8 +43,10 @@ public class UpdateChargeBasisServiceTest {
   @BeforeEach
   void setUp(){
     ChargeBasisEntry parent = initializeChargeBasisData(2,"ADF#23#24",false,10);
+    parent.setText("not important");
     testEntries.add(parent);
     ChargeBasisEntry old = initializeChargeBasisData(3,"ADF#23",false,10);
+    old.setText("not important");
     oldEntries.add(old);
     locations = new ArrayList<>();
     Location entry1 = new Location();
@@ -55,8 +57,12 @@ public class UpdateChargeBasisServiceTest {
   @Test
   void updateReferenceTags() {
     ChargeBasisEntry reference1 = initializeReferencingData(200,"ADF#904322",true);
+    reference1.setText("altakuljettava");
+    reference1.setQuantity(-50);
     referenceTagEntries.add(reference1);
     ChargeBasisEntry reference2 = initializeReferencingData(900, "ADF#23", true);
+    reference2.setText("altakuljettava");
+    reference2.setQuantity(-50);
     referenceTagEntries.add(reference2);
     when(chargeBasisDao.getReferencingTagEntries(anyInt())).thenReturn(referenceTagEntries);
     when(locationDao.findByIds(anyList())).thenReturn(locations);
@@ -78,7 +84,7 @@ public class UpdateChargeBasisServiceTest {
   void updateLockedState() {
     oldEntries.get(0).setLocked(true);
     testEntries.get(0).setLocked(false);
-    ChargeBasisEntry updateEntry =  initializeChargeBasisData(3,"adrf23", false, 10);
+    ChargeBasisEntry updateEntry =  initializeChargeBasisData(3,"ADF#25", false, 10);
     updateEntry.setLocked(false);
     Map<Integer, ChargeBasisEntry> entriesToUpdate = new HashMap<>();
     entriesToUpdate.put(updateEntry.getId(), updateEntry);
