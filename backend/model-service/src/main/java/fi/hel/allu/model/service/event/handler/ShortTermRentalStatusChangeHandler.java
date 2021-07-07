@@ -81,17 +81,10 @@ public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeH
   }
 
   private void handleInvoicingPeriodOnTermination(InvoicingPeriod periodOnTermination, Application application,
-      ZonedDateTime expirationTime) {
-    Optional<Invoice> existingInvoice = findInvoiceForPeriod(periodOnTermination);
-    InvoicingPeriod updatedPeriod = invoicingPeriodService.insertInvoicingPeriod(new InvoicingPeriod(application.getId(), periodOnTermination.getStartTime(), expirationTime));
+                                                  ZonedDateTime expirationTime) {
+    invoicingPeriodService.insertInvoicingPeriod(
+      new InvoicingPeriod(application.getId(), periodOnTermination.getStartTime(), expirationTime));
     invoicingPeriodService.deletePeriods(application.getId(), Collections.singletonList(periodOnTermination.getId()));
-    existingInvoice.ifPresent(e ->  getInvoiceService().addInvoiceForPeriod(updatedPeriod, e.getRecipientId(), e.isSapIdPending()));
-  }
-
-  private Optional<Invoice> findInvoiceForPeriod(InvoicingPeriod period) {
-    return getInvoiceService().findByApplication(period.getApplicationId()).stream()
-        .filter(i -> period.getId().equals(i.getInvoicingPeriodId()))
-        .findFirst();
   }
 
   private boolean periodStartsAfter(InvoicingPeriod period, ZonedDateTime date) {

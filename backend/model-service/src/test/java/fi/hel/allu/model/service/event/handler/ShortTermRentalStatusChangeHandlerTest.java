@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
+import fi.hel.allu.model.service.event.InvoicingChangeEvent;
+import fi.hel.allu.model.service.event.InvoicingChangeListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +59,8 @@ public class ShortTermRentalStatusChangeHandlerTest {
   private TerminationDao terminationDao;
   @Mock
   private LocationService locationService;
+  @Mock
+  private InvoicingChangeListener invoicingChangeListener;
 
   private Application application;
   private List<InvoicingPeriod> invoicingPeriods;
@@ -76,6 +80,7 @@ public class ShortTermRentalStatusChangeHandlerTest {
     TerminationInfo terminationInfo = new TerminationInfo();
     terminationInfo.setExpirationTime(TERMINATION_DATE);
     when(terminationDao.getTerminationInfo(APPLICATION_ID)).thenReturn(terminationInfo);
+    invoicingChangeListener = new InvoicingChangeListener(invoiceService, applicationService);
   }
 
   @Test
@@ -112,14 +117,19 @@ public class ShortTermRentalStatusChangeHandlerTest {
   @Test
   public void shouldCreateInvoiceForUpdatedPeriod() {
     setApplicationRecurring();
+    application.setNotBillable(false);
     InvoicingPeriod updatedPeriod = new InvoicingPeriod();
+    updatedPeriod.setApplicationId(APPLICATION_ID);
     Invoice invoice = new Invoice();
     invoice.setRecipientId(INVOICE_RECIPIENT_ID);
     invoice.setInvoicingPeriodId(periodOnTermination);
-    when(invoiceService.findByApplication(APPLICATION_ID)).thenReturn(Collections.singletonList(invoice));
     when(invoicingPeriodService.insertInvoicingPeriod(any(InvoicingPeriod.class))).thenReturn(updatedPeriod);
+    when(applicationService.findById(anyInt())).thenReturn(application);
+    doNothing().when(invoiceService).createInvoices(anyInt(), anyBoolean());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.TERMINATED, USER_ID));
-    verify(invoiceService, times(1)).addInvoiceForPeriod(updatedPeriod, INVOICE_RECIPIENT_ID, false);
+    // Simulate event trigger, as it should be triggered on normal execution
+    invoicingChangeListener.onApplicationInvoicingChange(new InvoicingChangeEvent("event source", APPLICATION_ID));
+    verify(invoiceService, times(1)).createInvoices(updatedPeriod.getApplicationId(), false);
   }
 
   private void createTestPeriods() {
