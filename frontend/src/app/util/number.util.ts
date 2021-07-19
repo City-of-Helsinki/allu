@@ -27,6 +27,7 @@ export class NumberUtil {
   }
 
   static toCents(euros: number): number {
-    return NumberUtil.isDefined(euros) ? euros * CENTS : undefined;
+    const cents = +(euros * CENTS).toFixed(0);
+    return NumberUtil.isDefined(euros) ? cents : undefined;
   }
 }
