@@ -290,22 +290,21 @@ public class ApplicationReplacementService {
                                            Map<Integer, Location> locationMap) {
     List<Integer> updatedEntries = new ArrayList<>();
     for (ChargeBasisEntry oldEntry : oldNonInvoicedEntries) {
-      List<ChargeBasisEntry> result = presentApplicationEntries.stream()
+      List<ChargeBasisEntry> presentEntries = presentApplicationEntries.stream()
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap)
           && !updatedEntries.contains(presentEntry.getId())).collect(Collectors.toList());
-      if(!result.isEmpty()){
-        ChargeBasisEntry firstValue = result.get(0);
-        if (firstValue.isUnderPass()){
-          firstValue.setInvoicable(oldEntry.isInvoicable());
-          firstValue.setLocked(false);
-          updatedEntries.add(firstValue.getId());
-        }
-        else {
-          result.forEach(presentEntry -> {
-          presentEntry.setInvoicable(oldEntry.isInvoicable());
-          presentEntry.setLocked(false);
+      if(!presentEntries.isEmpty()){
+          presentEntries.forEach(presentEntry -> {
+            if (presentEntry.isUnderPass()){
+              presentEntry.setInvoicable(false);
+              presentEntry.setLocked(false);
+              updatedEntries.add(presentEntry.getId());
+            }
+            else {
+              presentEntry.setInvoicable(oldEntry.isInvoicable());
+              presentEntry.setLocked(false);
+            }
         });
-        }
       }
     }
   }
