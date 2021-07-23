@@ -140,7 +140,7 @@
         <snapshotRepository>
             <id>snapshots</id>
             <name>libs-snapshot</name>
-            <url>http://185.26.51.92:8081/artifactory/libs-snapshot-local</url>
+            <url>https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -151,13 +151,13 @@
             </snapshots>
             <id>central</id>
             <name>libs-release</name>
-            <url>http://185.26.51.92:8081/artifactory/libs-release</url>
+            <url>https://allu.jenkins.vincit.io/artifactory/libs-release</url>
         </repository>
         <repository>
             <snapshots/>
             <id>snapshots</id>
             <name>libs-snapshot</name>
-            <url>http://185.26.51.92:8081/artifactory/libs-snapshot</url>
+            <url>https://allu.jenkins.vincit.io/artifactory/libs-snapshot</url>
         </repository>
     </repositories>
     <pluginRepositories>
@@ -167,13 +167,13 @@
             </snapshots>
             <id>central</id>
             <name>plugins-release</name>
-            <url>http://185.26.51.92:8081/artifactory/plugins-release</url>
+            <url>https://allu.jenkins.vincit.io/artifactory/plugins-release</url>
         </pluginRepository>
         <pluginRepository>
             <snapshots/>
             <id>snapshots</id>
             <name>plugins-snapshot</name>
-            <url>http://185.26.51.92:8081/artifactory/plugins-snapshot</url>
+            <url>https://allu.jenkins.vincit.io/artifactory/plugins-snapshot</url>
         </pluginRepository>
     </pluginRepositories>
 </project>
