@@ -280,7 +280,7 @@ public class ApplicationReplacementService {
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
         .forEach(presentEntry -> {
           presentEntry.setInvoicable(false);
-          presentEntry.setLocked(true);
+          presentEntry.setLocked(false);
         });
     }
   }
@@ -296,7 +296,7 @@ public class ApplicationReplacementService {
       if(!presentEntries.isEmpty()){
           presentEntries.forEach(presentEntry -> {
             if (presentEntry.isUnderPass()){
-              presentEntry.setInvoicable(false);
+              presentEntry.setInvoicable(true);
               presentEntry.setLocked(false);
               updatedEntries.add(presentEntry.getId());
             }
