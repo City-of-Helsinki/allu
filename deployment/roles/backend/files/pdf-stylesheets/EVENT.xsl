@@ -276,7 +276,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </xsl:if>
 
-      <section class="unboxed avoid-pb">
+      <section class="unboxed">
         <h2>Ehdot</h2>
         <p>
           Liitteenä olevia ehtoja on noudatettava.
