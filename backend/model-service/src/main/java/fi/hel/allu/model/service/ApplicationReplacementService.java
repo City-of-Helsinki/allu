@@ -64,6 +64,7 @@ public class ApplicationReplacementService {
   private final PricingService pricingService;
   private final ChargeBasisService chargeBasisService;
 
+
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
       LocationService locationService, LocationDao locationDao, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao,
@@ -213,7 +214,7 @@ public class ApplicationReplacementService {
             ApplicationIdUtil.getBaseApplicationId(applicationId));
     if (!appIds.isEmpty()) {
       // Find latest application ID
-      Collections.sort(appIds, (a1, a2) -> Integer.compare(a2.getId(), a1.getId()));
+      appIds.sort((a1, a2) -> Integer.compare(a2.getId(), a1.getId()));
       applicationId = appIds.get(0).getApplicationId();
     }
     return ApplicationIdUtil.generateReplacingApplicationId(applicationId);
@@ -255,59 +256,73 @@ public class ApplicationReplacementService {
 
     // Get locations
     Set<Integer> locationIds = new HashSet<>();
-    oldApplicationEntries.stream()
-      .filter(e->e.getLocationId() != null)
-      .forEach(e -> locationIds.add(e.getLocationId()));
-    presentApplicationEntries.stream()
-      .filter(e->e.getLocationId() != null)
-      .forEach(e -> locationIds.add(e.getLocationId()));
+    locationIds.addAll(getLocations(oldApplicationEntries));
+    locationIds.addAll(getLocations(presentApplicationEntries));
     Map<Integer, Location> locationMap = new HashMap<>();
     // Get distinct list of ids to fetch to minimize db overhead
     locationDao.findByIds(new ArrayList<>(locationIds)).forEach(e -> locationMap.put(e.getId(), e));
 
     // Handle copying
-    handleInvoicedEntries(oldInvoicedEntries, presentApplicationEntries, locationMap);
-    handleNotYetInvoicedEntries(oldNonInvoicedEntries, presentApplicationEntries, locationMap);
+    List<Integer> updatedUnderpasses = new ArrayList<>();
+    handleInvoicedEntries(oldInvoicedEntries, presentApplicationEntries, locationMap, updatedUnderpasses);
+    handleNotYetInvoicedEntries(oldNonInvoicedEntries, presentApplicationEntries, locationMap,
+      updatedUnderpasses);
     // Update entries
     updateChargeBasisEntries(presentApplicationEntries);
   }
 
+  private Set<Integer> getLocations(List<ChargeBasisEntry> entries){
+    return entries.stream()
+      .map(ChargeBasisEntry::getLocationId).filter(Objects::nonNull).collect(Collectors.toSet());
+  }
+
   private void handleInvoicedEntries(List<ChargeBasisEntry> oldEntries,
-                                     List<ChargeBasisEntry> presentEntries,
-                                     Map<Integer, Location> locationMap) {
+                                     List<ChargeBasisEntry> presentApplicationEntries,
+                                     Map<Integer, Location> locationMap, List<Integer> updatedUnderpasses) {
+
     for (ChargeBasisEntry oldEntry : oldEntries) {
-      presentEntries.stream()
+      presentApplicationEntries.stream()
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap))
         .forEach(presentEntry -> {
-          presentEntry.setInvoicable(false);
-          presentEntry.setLocked(false);
+          handleEntry(presentEntry, false);
+          handleUnderpass(presentEntry, presentApplicationEntries, updatedUnderpasses);
         });
     }
   }
 
   private void handleNotYetInvoicedEntries(List<ChargeBasisEntry> oldNonInvoicedEntries,
                                            List<ChargeBasisEntry> presentApplicationEntries,
-                                           Map<Integer, Location> locationMap) {
-    List<Integer> updatedEntries = new ArrayList<>();
+                                           Map<Integer, Location> locationMap,
+                                           List<Integer> updatedUnderpasses) {
     for (ChargeBasisEntry oldEntry : oldNonInvoicedEntries) {
       List<ChargeBasisEntry> presentEntries = presentApplicationEntries.stream()
         .filter(presentEntry -> presentEntry.equalContent(oldEntry, locationMap)
-          && !updatedEntries.contains(presentEntry.getId())).collect(Collectors.toList());
+          && !updatedUnderpasses.contains(presentEntry.getId())).collect(Collectors.toList());
       if(!presentEntries.isEmpty()){
           presentEntries.forEach(presentEntry -> {
-            if (presentEntry.isUnderPass()){
-              presentEntry.setInvoicable(true);
-              presentEntry.setLocked(false);
-              updatedEntries.add(presentEntry.getId());
-            }
-            else {
-              presentEntry.setInvoicable(oldEntry.isInvoicable());
-              presentEntry.setLocked(false);
-            }
+              handleEntry(presentEntry, oldEntry.isInvoicable());
+              handleUnderpass(presentEntry, presentApplicationEntries, updatedUnderpasses);
         });
       }
     }
   }
+  private void handleUnderpass(ChargeBasisEntry refereedEntry, List<ChargeBasisEntry> presentApplicationEntries,
+                               List<Integer> updatedUnderpasses){
+    Optional<ChargeBasisEntry> underpass = presentApplicationEntries.stream()
+      .filter(e ->e.getReferredTag() != null && refereedEntry.isReferencedBy(e.getReferredTag())
+        && e.isUnderPass())
+      .findFirst();
+    if (underpass.isPresent() ){
+      handleEntry(underpass.get(), refereedEntry.isInvoicable());
+      updatedUnderpasses.add(underpass.get().getId());
+    }
+  }
+
+  private void handleEntry(ChargeBasisEntry entry, boolean isInvoicable){
+    entry.setInvoicable(isInvoicable);
+    entry.setLocked(false);
+  }
+
 
   private void updateChargeBasisEntries(List<ChargeBasisEntry> entriesToUpdate) {
     // Disable invoicable for those invoiced and those set as not invoicable in replaced application
