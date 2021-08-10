@@ -54,10 +54,10 @@ public class InvoicingDateService {
   private ZonedDateTime getInvoicingDateForTerracePeriod(
     ZonedDateTime terracePeriodStartTime, ZonedDateTime terracePeriodEndTime, ApplicationKind kind) {
     ZonedDateTime invoicingDate = getTerraceInvoicingDateForYear(terracePeriodStartTime.getYear(), kind);
-    if (terracePeriodStartTime.isAfter(invoicingDate)) {
+    if (kind.equals(ApplicationKind.SUMMER_TERRACE) && terracePeriodStartTime.isAfter(invoicingDate) ) {
       return TimeUtil.startOfDay(terracePeriodEndTime);
     }
-    return invoicingDate;
+    return terracePeriodStartTime.getMonthValue() < 4 ? invoicingDate.minusYears(1) : invoicingDate;
   }
 
   private ZonedDateTime getTerraceInvoicingDateForYear(int year, ApplicationKind kind) {

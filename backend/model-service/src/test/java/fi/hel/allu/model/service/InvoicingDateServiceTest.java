@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,10 +32,10 @@ class InvoicingDateServiceTest {
   Application winterApplication;
   List<Configuration> summerInvoiceDate = new ArrayList<>();
   List<Configuration> winterInvoiceDate= new ArrayList<>();
-  ZoneId zoneId = ZoneId.of("Europe/Helsinki");
 
   @Mock
   ConfigurationDao configurationDao;
+  @InjectMocks
   InvoicingDateService invoicingDateService;
 
   static HashMap<ConfigurationKey,Configuration> configurations = new HashMap<>();
@@ -58,46 +59,64 @@ class InvoicingDateServiceTest {
   }
 
   @Test
-  void getTerraceInvoicingDateOnSummer() {
-    ZonedDateTime expected = ZonedDateTime.parse(
-      "2020-07-15T00:00+03:00[Europe/Helsinki]");
-    invoicingDateService = new InvoicingDateService(configurationDao);
-    ZonedDateTime startTime = ZonedDateTime.parse(
-      "2020-05-01T08:00:00+00:00[Europe/Helsinki]");
+  void summerInvoicingOnInvoicingDate() {
+    ZonedDateTime expected = ZonedDateTime.now().withMonth(7).withDayOfMonth(15);
+    ZonedDateTime startTime = ZonedDateTime.now().withMonth(5).withDayOfMonth(1);
     summerApplication.setStartTime(startTime);
-    ZonedDateTime endTime = ZonedDateTime.parse("2020-08-20T08:00:00+02:00[Europe/Helsinki]");
+    ZonedDateTime endTime = ZonedDateTime.now().withMonth(8).withDayOfMonth(20);
     summerApplication.setEndTime(endTime);
+
     when(configurationDao.findByKey(any())).thenReturn(summerInvoiceDate);
-    ZonedDateTime result = invoicingDateService.getInvoicingDate(summerApplication);
-    assertEquals(expected, result);
+    ZonedDateTime actual = invoicingDateService.getInvoicingDate(summerApplication);
+    assertEquals(expected.toLocalDate(), actual.toLocalDate());
     verify(configurationDao, times(1)).findByKey(any());
   }
 
   @Test
   void summerInvoiceDateIsEndDate() {
-    LocalDateTime ldt = LocalDateTime.of(2020, 9, 24, 0, 0);
-    ZonedDateTime expected = ZonedDateTime.of(ldt, zoneId);
-    invoicingDateService = new InvoicingDateService(configurationDao);
-    ZonedDateTime startTime = ZonedDateTime.parse("2020-08-24T08:00:00+02:00[Europe/Helsinki]");
+    ZonedDateTime expected = ZonedDateTime.now().withMonth(9).withDayOfMonth(24);
+    ZonedDateTime startTime = ZonedDateTime.now().withMonth(8).withDayOfMonth(24);
+
     summerApplication.setStartTime(startTime);
     summerApplication.setEndTime(expected);
+
     when(configurationDao.findByKey(any())).thenReturn(summerInvoiceDate);
-    ZonedDateTime result = invoicingDateService.getInvoicingDate(summerApplication);
-    assertEquals(expected, result);
+    ZonedDateTime actual = invoicingDateService.getInvoicingDate(summerApplication);
+    assertEquals(expected.toLocalDate(), actual.toLocalDate());
     verify(configurationDao, times(1)).findByKey(any());
   }
 
   @Test
-  void winterInvoiceDateNow() {
-    LocalDateTime ldt = LocalDateTime.of(2021, 4, 21, 0, 0);
-    ZonedDateTime expected = ZonedDateTime.of(ldt,zoneId);
-    invoicingDateService = new InvoicingDateService(configurationDao);
-    ZonedDateTime startTime = ZonedDateTime.parse("2020-11-02T08:00:00+02:00[Europe/Helsinki]");
+  void winterInvoiceDate() {
+    ZonedDateTime expected = ZonedDateTime.now().withMonth(9).withDayOfMonth(15);
+    ZonedDateTime startTime = ZonedDateTime.now().withMonth(11).withDayOfMonth(2);
+    ZonedDateTime endTime = ZonedDateTime.now().withMonth(1).withDayOfMonth(20).plusYears(1);
+
+
     winterApplication.setStartTime(startTime);
-    winterApplication.setEndTime(expected);
+    winterApplication.setEndTime(endTime);
+
     when(configurationDao.findByKey(any())).thenReturn(winterInvoiceDate);
-    ZonedDateTime result = invoicingDateService.getInvoicingDate(winterApplication);
-    assertEquals(expected, result);
+    ZonedDateTime actual = invoicingDateService.getInvoicingDate(winterApplication);
+    assertEquals(expected.toLocalDate(), actual.toLocalDate());
+    verify(configurationDao, times(1)).findByKey(any());
+  }
+
+
+
+  @Test
+  void winterInvoiceDateNextYear() {
+    ZonedDateTime expected = ZonedDateTime.now().withMonth(9).withDayOfMonth(15);
+    ZonedDateTime startTime = ZonedDateTime.now().withMonth(1).withDayOfMonth(2).plusYears(1);
+    ZonedDateTime endTime = ZonedDateTime.now().withMonth(1).withDayOfMonth(20).plusYears(1);
+
+
+    winterApplication.setStartTime(startTime);
+    winterApplication.setEndTime(endTime);
+
+    when(configurationDao.findByKey(any())).thenReturn(winterInvoiceDate);
+    ZonedDateTime actual = invoicingDateService.getInvoicingDate(winterApplication);
+    assertEquals(expected.toLocalDate(), actual.toLocalDate());
     verify(configurationDao, times(1)).findByKey(any());
   }
 
