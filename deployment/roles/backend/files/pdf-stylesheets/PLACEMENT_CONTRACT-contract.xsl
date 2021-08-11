@@ -254,7 +254,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="unboxed avoid-pb">
         <h2>Sijoitussopimukset:</h2>
         <p>Kaupunkiympäristö/Alueidenkäyttö ja -valvonta</p>
-        <p>Sörnäistenkatu 1</p>
+        <p>Työpajankatu 8</p>
         <p>PL 58231, 00099 Helsingin kaupunki</p>
         <p>asiakaspalvelu puh. (09) 310 22111</p>
         <p>sähköposti alueidenkaytto@hel.fi</p>
@@ -262,7 +262,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="unboxed avoid-pb">
         <h2>Kaivuilmoitukset:</h2>
         <p>Kaupunkiympäristö/Alueidenkäyttö ja -valvonta</p>
-        <p>Sörnäistenkatu 1</p>
+        <p>Työpajankatu 8</p>
         <p>PL 58231, 00099 Helsingin kaupunki</p>
         <p>asiakaspalvelu puh. (09) 310 22111</p>
         <p>sähköposti luvat@hel.fi</p>
@@ -270,7 +270,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="unboxed avoid-pb">
         <h2>Kartoitus- ja sijaintitiedot:</h2>
         <p>Kaupunkiympäristö/Kaupunkimittauspalvelut</p>
-        <p>Sörnäistenkatu 1</p>
+        <p>Työpajankatu 8</p>
         <p>PL 58232, 00099 Helsingin kaupunki</p>
         <p>puh. (09) 310 31930</p>
         <p>maanalaiset.kaupunkimittaus@hel.fi</p>
