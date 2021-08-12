@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "ng-high-mem": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng",
+    "ng-high-mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng",
     "start": "npm run ng-high-mem serve -- --proxy-config proxy.conf.json",
     "hmr": "npm run ng-high-mem serve -- --configuration hmr --proxy-config proxy.conf.json",
     "build": "ng build",
