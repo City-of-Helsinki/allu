@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import fi.hel.allu.common.util.OptionalUtil;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,6 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 
@@ -175,7 +172,6 @@ public class ApplicationService {
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.
-   * @param   userId      Current user
    * @param   applications  Applications whose owner is updated.
    */
   @Transactional

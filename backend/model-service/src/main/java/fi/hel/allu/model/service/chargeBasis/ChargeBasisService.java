@@ -1,19 +1,5 @@
 package fi.hel.allu.model.service.chargeBasis;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import fi.hel.allu.model.service.InvoicingPeriodService;
-import fi.hel.allu.model.service.PricingService;
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
@@ -25,7 +11,20 @@ import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.pricing.ChargeBasisTag;
+import fi.hel.allu.model.service.InvoicingPeriodService;
+import fi.hel.allu.model.service.PricingService;
 import fi.hel.allu.model.service.event.InvoicingChangeEvent;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ChargeBasisService {
@@ -35,7 +34,7 @@ public class ChargeBasisService {
   private final ApplicationEventPublisher invoicingChangeEventPublisher;
   private final InvoicingPeriodService invoicingPeriodService;
   private final PricingService pricingService;
-  private  final UpdateChargeBasisService updateChargeBasisService;
+  private final UpdateChargeBasisService updateChargeBasisService;
 
   public ChargeBasisService(ChargeBasisDao chargeBasisDao, ApplicationDao applicationDao,
                             ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService,
@@ -51,17 +50,17 @@ public class ChargeBasisService {
   /**
    * Stores calculated charge basis entries for application. Returns value
    * indicating whether changes were made.
+   *
    * @param applicationId id of application for which entries are set
-   * @param entries charge basis entries to set
+   * @param entries       charge basis entries to set
    */
   @Transactional
   public boolean setCalculatedChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
     List<ChargeBasisEntry> calculatedEntries = entries.stream().filter(e -> !e.getManuallySet()).collect(Collectors.toList());
     ChargeBasisModification modification = updateChargeBasisService.getModifications(applicationId,
-        calculatedEntries, false);
+      calculatedEntries, false);
     // Filter locked entries when updating calculated entries
     handleModifications(modification.filtered(chargeBasisDao.getLockedChargeBasisIds(applicationId)));
-    deleteEntriesWithoutInvoicePeriod(applicationId);
     return modification.hasChanges();
   }
 
@@ -71,22 +70,10 @@ public class ChargeBasisService {
       chargeBasisDao.setChargeBasis(modification);
       handleInvoicingChanged(modification.getApplicationId());
     }
+    chargeBasisDao.getChargeBasis(modification.getApplicationId())
+      .forEach(e -> setPeriodIfMissing(modification.getApplicationId(), e));
   }
 
-
-  private void deleteEntriesWithoutInvoicePeriod(int applicationId) {
-    List<ChargeBasisEntry> oldEntries = getChargeBasis(applicationId).stream()
-      .filter(e -> !e.getManuallySet()).collect(Collectors.toList());
-    // If there are entries with invoicingPeriodId, delete entries without invoicingPeriodId.
-    if (oldEntries.stream().anyMatch(oe -> oe.getInvoicingPeriodId() != null)) {
-      chargeBasisDao.deleteEntries(
-        oldEntries.stream()
-          .filter(oe -> oe.getInvoicingPeriodId() == null)
-          .map(oe -> oe.getId())
-          .collect(Collectors.toList())
-      );
-    }
-  }
 
   @Transactional(readOnly = true)
   public ChargeBasisEntry getEntry(int applicationId, int entryId) {
@@ -126,22 +113,23 @@ public class ChargeBasisService {
   /**
    * Stores manual charge basis entries for application. Returns value
    * indicating whether changes were made.
+   *
    * @param applicationId id of application for which entries are set
-   * @param entries charge basis entries to set
+   * @param entries       charge basis entries to set
    */
   @Transactional
   public boolean setManualChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
     final AtomicInteger i = getMaxAreaUsageNumber(entries);
     List<ChargeBasisEntry> manualEntries = entries.stream()
-        .filter(e -> e.getManuallySet())
-        .map(e -> setAreaUsageTagIfMissing(e, i))
-        .collect(Collectors.toList());
+      .filter(ChargeBasisEntry::getManuallySet)
+      .map(e -> setAreaUsageTagIfMissing(e, i))
+      .collect(Collectors.toList());
     manualEntries.forEach(entry -> setPeriodIfMissing(applicationId, entry));
 
     ChargeBasisModification modification = updateChargeBasisService.getModifications(
-        applicationId,
-        manualEntries,
-        true);
+      applicationId,
+      manualEntries,
+      true);
     handleModifications(modification);
     return modification.hasChanges();
 
@@ -149,9 +137,9 @@ public class ChargeBasisService {
 
   private AtomicInteger getMaxAreaUsageNumber(List<ChargeBasisEntry> entries) {
     final Optional<ChargeBasisEntry> maxEntry =
-        entries.stream()
-            .filter(e -> e.getType() == ChargeBasisType.AREA_USAGE_FEE && e.getTag() != null)
-            .max((e1, e2) -> Integer.compare(getNumberPartAreaUsageTag(e1), getNumberPartAreaUsageTag(e2)));
+      entries.stream()
+        .filter(e -> e.getType() == ChargeBasisType.AREA_USAGE_FEE && e.getTag() != null)
+        .max((e1, e2) -> Integer.compare(getNumberPartAreaUsageTag(e1), getNumberPartAreaUsageTag(e2)));
     return new AtomicInteger(maxEntry.map(e -> getNumberPartAreaUsageTag(e)).orElse(0));
   }
 
@@ -164,7 +152,7 @@ public class ChargeBasisService {
   private void setPeriodIfMissing(int applicationId, ChargeBasisEntry e) {
     if (e.getInvoicingPeriodId() == null) {
       if (e.getReferredTag() != null) {
-        Optional<ChargeBasisEntry> referredEntry =  chargeBasisDao.findByTag(applicationId, e.getReferredTag());
+        Optional<ChargeBasisEntry> referredEntry = chargeBasisDao.findByTag(applicationId, e.getReferredTag());
         referredEntry.ifPresent(referred -> e.setInvoicingPeriodId(referred.getInvoicingPeriodId()));
       } else {
         Optional<InvoicingPeriod> invoicingPeriod = invoicingPeriodService.findFirstOpenPeriod(applicationId);
@@ -253,9 +241,10 @@ public class ChargeBasisService {
     handleInvoicingChanged(applicationId);
     return entry;
   }
-  private void updateSubCharges(boolean invoiced, String parentTag ){
-   if (parentTag != null) {
-     chargeBasisDao.setSubChargesInvoicable(invoiced, parentTag);
+
+  private void updateSubCharges(boolean invoiced, String parentTag) {
+    if (parentTag != null) {
+      chargeBasisDao.setSubChargesInvoicable(invoiced, parentTag);
     }
   }
 
@@ -271,18 +260,18 @@ public class ChargeBasisService {
   // Calculates price for one charge basis entry with discounts applied
   private int getEntryPriceWithDiscounts(ChargeBasisEntry entry, List<ChargeBasisEntry> applicationEntries) {
     List<ChargeBasisEntry> discountEntries = applicationEntries
-        .stream()
-        .filter(re -> Objects.equals(re.getReferredTag(), entry.getTag()) && re.isInvoicable())
-        .sorted((re1, re2) -> {
-          if (re1.getUnit() == re2.getUnit()) {
-            return 0;
-          } else if (re1.getUnit() == ChargeBasisUnit.PERCENT) {
-            return -1;
-          } else {
-            return 1;
-          }
-        })
-        .collect(Collectors.toList());
+      .stream()
+      .filter(re -> Objects.equals(re.getReferredTag(), entry.getTag()) && re.isInvoicable())
+      .sorted((re1, re2) -> {
+        if (re1.getUnit() == re2.getUnit()) {
+          return 0;
+        } else if (re1.getUnit() == ChargeBasisUnit.PERCENT) {
+          return -1;
+        } else {
+          return 1;
+        }
+      })
+      .collect(Collectors.toList());
     BigDecimal price = BigDecimal.valueOf(entry.getNetPrice());
     for (ChargeBasisEntry e : discountEntries) {
       price = applyDiscount(price, e);
@@ -306,14 +295,14 @@ public class ChargeBasisService {
     // Sets invoicable value for calculated entries not divided to periods (divided entries must be handled separately since period specific row has different tag)
     calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(chargeBasisDao.isInvoicable(id, e.getTag(), false))));
     // Fetch manual entries from db and add to result.
-    return Stream.concat(calculatedEntries.stream(), getChargeBasis(id).stream().filter(e -> e.getManuallySet()))
-        .collect(Collectors.toList());
+    return Stream.concat(calculatedEntries.stream(), chargeBasisDao.getChargeBasis(id).stream().filter(e -> e.getManuallySet()))
+      .collect(Collectors.toList());
   }
 
   private List<ChargeBasisEntry> getManualEntries(int applicationId) {
     return chargeBasisDao.getChargeBasis(applicationId)
-        .stream()
-        .filter(e -> e.getManuallySet())
-        .collect(Collectors.toList());
+      .stream()
+      .filter(e -> e.getManuallySet())
+      .collect(Collectors.toList());
   }
 }
