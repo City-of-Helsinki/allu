@@ -61,7 +61,22 @@ public class ChargeBasisService {
       calculatedEntries, false);
     // Filter locked entries when updating calculated entries
     handleModifications(modification.filtered(chargeBasisDao.getLockedChargeBasisIds(applicationId)));
+    deleteEntriesWithoutInvoicePeriod(applicationId);
     return modification.hasChanges();
+  }
+
+  private void deleteEntriesWithoutInvoicePeriod(int applicationId) {
+    List<ChargeBasisEntry> oldEntries = getChargeBasis(applicationId).stream()
+      .filter(e -> !e.getManuallySet()).collect(Collectors.toList());
+    // If there are entries with invoicingPeriodId, delete entries without invoicingPeriodId.
+    if (oldEntries.stream().anyMatch(oe -> oe.getInvoicingPeriodId() != null)) {
+      chargeBasisDao.deleteEntries(
+        oldEntries.stream()
+          .filter(oe -> oe.getInvoicingPeriodId() == null)
+          .map(ChargeBasisEntry::getId)
+          .collect(Collectors.toList())
+      );
+    }
   }
 
   private void handleModifications(ChargeBasisModification modification) {
@@ -70,8 +85,6 @@ public class ChargeBasisService {
       chargeBasisDao.setChargeBasis(modification);
       handleInvoicingChanged(modification.getApplicationId());
     }
-    chargeBasisDao.getChargeBasis(modification.getApplicationId())
-      .forEach(e -> setPeriodIfMissing(modification.getApplicationId(), e));
   }
 
 
