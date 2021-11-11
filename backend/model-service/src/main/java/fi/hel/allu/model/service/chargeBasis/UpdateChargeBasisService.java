@@ -4,8 +4,10 @@ package fi.hel.allu.model.service.chargeBasis;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SupervisionTask;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,22 +23,32 @@ public class UpdateChargeBasisService {
 
   private final ChargeBasisDao chargeBasisDao;
   private final LocationDao locationDao;
+  private final SupervisionTaskDao supervisionTaskDao;
 
-  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao) {
+  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao,
+                                  SupervisionTaskDao supervisionTaskDao) {
     this.chargeBasisDao = chargeBasisDao;
     this.locationDao = locationDao;
+    this.supervisionTaskDao = supervisionTaskDao;
   }
 
-
+  /**
+   * Gives object that have all the modificaton that is needed to make in the charge_basis table in database
+   *
+   * @param applicationId int
+   * @param entries       List<ChargeBasesEntry>
+   * @param manuallySet   boolean
+   * @return ChargeBasisModification
+   */
   public ChargeBasisModification getModifications(int applicationId, List<ChargeBasisEntry> entries, boolean manuallySet) {
     List<ChargeBasisEntry> oldEntries = chargeBasisDao.getChargeBasis(applicationId).stream()
       .filter(e -> e.getManuallySet() == manuallySet).collect(Collectors.toList());
     Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
-    transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
+    transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd, applicationId);
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
     moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
-    entriesToUpdate.putAll(getUpdatedManuallySetReferencingEntries(applicationId,entriesToAdd, oldEntries));
+    entriesToUpdate.putAll(getUpdatedManuallySetReferencingEntries(applicationId, entriesToAdd, oldEntries));
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
   }
 
@@ -80,7 +92,7 @@ public class UpdateChargeBasisService {
 
 
   public Map<Integer, ChargeBasisEntry> getUpdatedManuallySetReferencingEntries(int applicationId, List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries) {
-    Map<Integer, ChargeBasisEntry> addedEntries = new HashMap();
+    Map<Integer, ChargeBasisEntry> addedEntries = new HashMap<>();
     List<ChargeBasisEntry> noNullTagEntriesToAdd = removeEntriesWithNullTag(entriesToAdd);
     List<ChargeBasisEntry> noNullTagOldEntries = removeEntriesWithNullTag(oldEntries);
     List<ChargeBasisEntry> underpasses = chargeBasisDao.getReferencingTagEntries(applicationId);
@@ -89,9 +101,9 @@ public class UpdateChargeBasisService {
       List<ChargeBasisEntry> referredEntries = underpasses.stream()
         .filter(e -> isReferencingTag(oldEntry, e) && e.getManuallySet())
         .collect(Collectors.toList());
-      if (referredEntries.size() > 0) {
+      if (referredEntries.isEmpty()) {
 
-        Map<Integer, Location> locationMap = getEntriesLocations(noNullTagEntriesToAdd,  noNullTagOldEntries);
+        Map<Integer, Location> locationMap = getEntriesLocations(noNullTagEntriesToAdd, noNullTagOldEntries);
 
         ChargeBasisEntry newParentEntry = findSameNewEntry(noNullTagEntriesToAdd, oldEntry, locationMap);
         for (ChargeBasisEntry referredTagEntry : referredEntries) {
@@ -103,7 +115,7 @@ public class UpdateChargeBasisService {
     return addedEntries;
   }
 
-  private Map<Integer, Location> getEntriesLocations(List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries){
+  private Map<Integer, Location> getEntriesLocations(List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries) {
     Set<Integer> locationIds = new HashSet<>();
     oldEntries.stream().filter(e -> e.getLocationId() != null).forEach(e -> locationIds.add(e.getLocationId()));
     entriesToAdd.stream().filter(e -> e.getLocationId() != null).forEach(e -> locationIds.add(e.getLocationId()));
@@ -111,15 +123,15 @@ public class UpdateChargeBasisService {
       .stream().collect(Collectors.toMap(Location::getId, Function.identity()));
   }
 
-  private ChargeBasisEntry  findSameNewEntry(List<ChargeBasisEntry> entriesToAdd,
-                                             ChargeBasisEntry oldEntry, Map<Integer, Location> locationMap){
+  private ChargeBasisEntry findSameNewEntry(List<ChargeBasisEntry> entriesToAdd,
+                                            ChargeBasisEntry oldEntry, Map<Integer, Location> locationMap) {
     for (ChargeBasisEntry newEntry : entriesToAdd) {
       if (newEntry.equalContent(oldEntry, locationMap)) return newEntry;
     }
     return new ChargeBasisEntry();
   }
 
-  private ChargeBasisEntry updateReferencingTagEntry(ChargeBasisEntry newParentEntry, ChargeBasisEntry referredTagEntry){
+  private ChargeBasisEntry updateReferencingTagEntry(ChargeBasisEntry newParentEntry, ChargeBasisEntry referredTagEntry) {
     referredTagEntry.setReferredTag(newParentEntry.getTag());
     if (newParentEntry.getInvoicingPeriodId() != null) {
       referredTagEntry.setInvoicingPeriodId(newParentEntry.getInvoicingPeriodId());
@@ -129,11 +141,11 @@ public class UpdateChargeBasisService {
     return referredTagEntry;
   }
 
-  private List<ChargeBasisEntry> removeEntriesWithNullTag(List<ChargeBasisEntry> entries){
-    return entries.stream().filter(e-> e.getTag() != null).collect(Collectors.toList());
+  private List<ChargeBasisEntry> removeEntriesWithNullTag(List<ChargeBasisEntry> entries) {
+    return entries.stream().filter(e -> e.getTag() != null).collect(Collectors.toList());
   }
 
-  private Boolean isReferencingTag(ChargeBasisEntry parentEntry, ChargeBasisEntry childEntry){
+  private Boolean isReferencingTag(ChargeBasisEntry parentEntry, ChargeBasisEntry childEntry) {
     return childEntry.getReferredTag()
       .equals(parentEntry.getTag());
   }
@@ -142,15 +154,17 @@ public class UpdateChargeBasisService {
    * Transfers the {@code invoicable} field data from old {@code ChargeBasisEntry} to the new.
    * Check of equality is done by comparing content of each entry. Only calculated entries are updated
    * Without this function, {@code invoicable} field data would be lost on {@code InvoicingPeriod} update.
-   * @param oldEntries {@code ChargeBasisEntry} list before update
+   *
+   * @param oldEntries   {@code ChargeBasisEntry} list before update
    * @param entriesToAdd {@code ChargeBasisEntry} list to add
    */
-  public void transferInvoicableStatusFromOldToNew(List<ChargeBasisEntry> oldEntries, List<ChargeBasisEntry> entriesToAdd) {
+  public void transferInvoicableStatusFromOldToNew(List<ChargeBasisEntry> oldEntries, List<ChargeBasisEntry> entriesToAdd,
+                                                   int applicationId) {
     // Should be application update that does not tamper calculated charge basis entries.
     // If calculated count is not same in both, either invoicing period or number of locations has changed.
-    long oldCount = oldEntries.stream().filter(e->!e.getManuallySet() && e.getLocationId() != null).count();
-    long newCount = entriesToAdd.stream().filter(e->!e.getManuallySet() && e.getLocationId() != null).count();
-    if (oldCount > 0 && oldCount == newCount) {
+    long oldCount = oldEntries.stream().filter(e -> !e.getManuallySet() && e.getLocationId() != null).count();
+    long newCount = entriesToAdd.stream().filter(e -> !e.getManuallySet() && e.getLocationId() != null).count();
+    if (oldCount > 0 && oldCount == newCount || isFinalSupervisionApproved(applicationId)) {
       // Get locations to compare entire entry
       Map<Integer, Location> locationMap = getEntriesLocations(entriesToAdd, oldEntries);
       List<Integer> UpdatedEntries = new ArrayList<>();
@@ -163,6 +177,22 @@ public class UpdateChargeBasisService {
         oldOptional.ifPresent(old->UpdatedEntries.add(old.getId()));
       }
     }
+
+  }
+
+  /**
+   * Check if Final supervision is aproved
+   * @param applicationId
+   * @return boolean
+   */
+  public boolean isFinalSupervisionApproved(int applicationId) {
+    List<SupervisionTask> supervisionTasks = supervisionTaskDao.findFinalSupervisions(applicationId);
+    if (supervisionTasks.isEmpty()) {
+      return false;
+    } else {
+      return supervisionTasks.stream().anyMatch(value -> value.getActualFinishingTime() != null);
+    }
+
   }
 
   /**
@@ -171,18 +201,19 @@ public class UpdateChargeBasisService {
    * This method is necessary, as entries without a location do not have
    * invoicingPeriodId or locationId in their tag String (see {@link #getEntriesToUpdate}
    * and {@link #hasEntryWithKey}).
-   * @param oldEntries {@code ChargeBasisEntry} list before update
-   * @param entriesToAdd {@code ChargeBasisEntry} list to add
+   *
+   * @param oldEntries      {@code ChargeBasisEntry} list before update
+   * @param entriesToAdd    {@code ChargeBasisEntry} list to add
    * @param entriesToUpdate map of {@code ChargeBasisEntry} objects to be updated
    */
   public void moveOldLockedEntriesToEntriesBeingAdded(List<ChargeBasisEntry> oldEntries,
-                                                       List<ChargeBasisEntry> entriesToAdd,
-                                                       Map<Integer, ChargeBasisEntry> entriesToUpdate) {
+                                                      List<ChargeBasisEntry> entriesToAdd,
+                                                      Map<Integer, ChargeBasisEntry> entriesToUpdate) {
     List<ChargeBasisEntry> oldEntriesToBeUpdated = oldEntries.stream()
       .filter(oe -> Boolean.TRUE.equals(oe.getLocked()) && entriesToUpdate.containsKey(oe.getId()))
       .collect(Collectors.toList());
     List<ChargeBasisEntry> entriesToPrependToAddList = new ArrayList<>();
-    for (ChargeBasisEntry lockedOldEntryToBeUpdated: oldEntriesToBeUpdated) {
+    for (ChargeBasisEntry lockedOldEntryToBeUpdated : oldEntriesToBeUpdated) {
       ChargeBasisEntry entryToUpdate = entriesToUpdate.get(lockedOldEntryToBeUpdated.getId());
       entryToUpdate.setInvoicable(lockedOldEntryToBeUpdated.isInvoicable());
       entryToUpdate.setLocked(lockedOldEntryToBeUpdated.getLocked());
