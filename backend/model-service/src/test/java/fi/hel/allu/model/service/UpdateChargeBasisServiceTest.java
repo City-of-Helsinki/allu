@@ -68,6 +68,8 @@ class UpdateChargeBasisServiceTest {
 
   @Test
   void updateReferenceTags() {
+    oldEntries.get(0).setInvoicingPeriodId(1);
+    testEntries.get(0).setInvoicingPeriodId(12);
     ChargeBasisEntry reference1 = initializeReferencingData(200, "ADF#904322", true);
     reference1.setText("altakuljettava");
     reference1.setQuantity(-50);

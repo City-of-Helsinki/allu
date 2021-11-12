@@ -101,7 +101,7 @@ public class UpdateChargeBasisService {
       List<ChargeBasisEntry> referredEntries = underpasses.stream()
         .filter(e -> isReferencingTag(oldEntry, e) && e.getManuallySet())
         .collect(Collectors.toList());
-      if (referredEntries.isEmpty()) {
+      if (!referredEntries.isEmpty()) {
 
         Map<Integer, Location> locationMap = getEntriesLocations(noNullTagEntriesToAdd, noNullTagOldEntries);
 
