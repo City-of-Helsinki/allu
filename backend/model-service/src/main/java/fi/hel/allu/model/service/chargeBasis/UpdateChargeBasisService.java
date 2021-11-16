@@ -45,7 +45,7 @@ public class UpdateChargeBasisService {
       .filter(e -> e.getManuallySet() == manuallySet).collect(Collectors.toList());
     Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
-    transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd, applicationId);
+    transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
     moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
     entriesToUpdate.putAll(getUpdatedManuallySetReferencingEntries(applicationId, entriesToAdd, oldEntries));
@@ -158,30 +158,24 @@ public class UpdateChargeBasisService {
    * @param oldEntries   {@code ChargeBasisEntry} list before update
    * @param entriesToAdd {@code ChargeBasisEntry} list to add
    */
-  public void transferInvoicableStatusFromOldToNew(List<ChargeBasisEntry> oldEntries, List<ChargeBasisEntry> entriesToAdd,
-                                                   int applicationId) {
-    // Should be application update that does not tamper calculated charge basis entries.
-    // If calculated count is not same in both, either invoicing period or number of locations has changed.
-    long oldCount = oldEntries.stream().filter(e -> !e.getManuallySet() && e.getLocationId() != null).count();
-    long newCount = entriesToAdd.stream().filter(e -> !e.getManuallySet() && e.getLocationId() != null).count();
-    if (oldCount > 0 && oldCount == newCount || isFinalSupervisionApproved(applicationId)) {
-      // Get locations to compare entire entry
-      Map<Integer, Location> locationMap = getEntriesLocations(entriesToAdd, oldEntries);
-      List<Integer> UpdatedEntries = new ArrayList<>();
-      for (ChargeBasisEntry adding : entriesToAdd) {
-        Optional<ChargeBasisEntry> oldOptional = oldEntries.stream()
-          .filter(old->adding.equalContent(old, locationMap) &&  !UpdatedEntries.contains(old.getId()))
-          .findAny();
-        oldOptional.ifPresent(old->adding.setInvoicable(old.isInvoicable()));
-        oldOptional.ifPresent(old->adding.setLocked(old.getLocked()));
-        oldOptional.ifPresent(old->UpdatedEntries.add(old.getId()));
-      }
+  public void transferInvoicableStatusFromOldToNew(List<ChargeBasisEntry> oldEntries, List<ChargeBasisEntry> entriesToAdd) {
+    // Get locations to compare entire entry
+    Map<Integer, Location> locationMap = getEntriesLocations(entriesToAdd, oldEntries);
+    List<Integer> UpdatedEntries = new ArrayList<>();
+    for (ChargeBasisEntry adding : entriesToAdd) {
+      Optional<ChargeBasisEntry> oldOptional = oldEntries.stream()
+        .filter(old -> adding.equalContent(old, locationMap) && !UpdatedEntries.contains(old.getId()))
+        .findAny();
+      oldOptional.ifPresent(old -> adding.setInvoicable(old.isInvoicable()));
+      oldOptional.ifPresent(old -> adding.setLocked(old.getLocked()));
+      oldOptional.ifPresent(old -> UpdatedEntries.add(old.getId()));
     }
 
   }
 
   /**
    * Check if Final supervision is aproved
+   *
    * @param applicationId
    * @return boolean
    */

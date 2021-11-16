@@ -2,11 +2,9 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PostalAddress;
-import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.chargeBasis.UpdateChargeBasisService;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
@@ -41,10 +40,6 @@ class UpdateChargeBasisServiceTest {
 
   @Mock
   LocationDao locationDao;
-
-  @Mock
-  SupervisionTaskDao supervisionTaskDao;
-
 
   @InjectMocks
   UpdateChargeBasisService updateChargeBasisService;
@@ -87,35 +82,6 @@ class UpdateChargeBasisServiceTest {
   }
 
   @Test
-  void invoicableUpdatedOnLastApproval() {
-    oldEntries.get(0).setInvoicable(true);
-    oldEntries.get(0).setInvoicingPeriodId(1);
-    List<SupervisionTask> dummyList = new ArrayList<>();
-    SupervisionTask dummydata = new SupervisionTask();
-    dummydata.setActualFinishingTime(ZonedDateTime.now());
-    dummyList.add(dummydata);
-    oldEntries.add(initializeChargeBasisData(99, "ADF#9043", false, 10));
-    when(locationDao.findByIds(anyList())).thenReturn(locations);
-    when(supervisionTaskDao.findFinalSupervisions(anyInt())).thenReturn(dummyList);
-    updateChargeBasisService.transferInvoicableStatusFromOldToNew(oldEntries, testEntries, 1);
-    assertTrue(testEntries.get(0).isInvoicable());
-  }
-
-  @Test
-  void invoivableIsNotUpdatedOnLastApproval() {
-    oldEntries.get(0).setInvoicable(true);
-    oldEntries.get(0).setInvoicingPeriodId(1);
-    List<SupervisionTask> dummyList = new ArrayList<>();
-    SupervisionTask dummydata = new SupervisionTask();
-    dummyList.add(dummydata);
-    oldEntries.add(initializeChargeBasisData(99, "ADF#9043", false, 10));
-    when(supervisionTaskDao.findFinalSupervisions(anyInt())).thenReturn(dummyList);
-    updateChargeBasisService.transferInvoicableStatusFromOldToNew(oldEntries, testEntries, 1);
-    assertFalse(testEntries.get(0).isInvoicable());
-  }
-
-
-  @Test
   void updateLockedState() {
     oldEntries.get(0).setLocked(true);
     testEntries.get(0).setLocked(false);
@@ -133,7 +99,7 @@ class UpdateChargeBasisServiceTest {
     oldEntries.get(0).setInvoicable(true);
     oldEntries.get(0).setInvoicingPeriodId(1);
     when(locationDao.findByIds(anyList())).thenReturn(locations);
-    updateChargeBasisService.transferInvoicableStatusFromOldToNew(oldEntries, testEntries, 1);
+    updateChargeBasisService.transferInvoicableStatusFromOldToNew(oldEntries, testEntries);
     assertTrue(testEntries.get(0).isInvoicable());
   }
 
