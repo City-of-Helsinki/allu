@@ -4,10 +4,8 @@ package fi.hel.allu.model.service.chargeBasis;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SupervisionTask;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,13 +21,10 @@ public class UpdateChargeBasisService {
 
   private final ChargeBasisDao chargeBasisDao;
   private final LocationDao locationDao;
-  private final SupervisionTaskDao supervisionTaskDao;
 
-  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao,
-                                  SupervisionTaskDao supervisionTaskDao) {
+  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao) {
     this.chargeBasisDao = chargeBasisDao;
     this.locationDao = locationDao;
-    this.supervisionTaskDao = supervisionTaskDao;
   }
 
   /**
@@ -160,33 +155,33 @@ public class UpdateChargeBasisService {
    */
   public void transferInvoicableStatusFromOldToNew(List<ChargeBasisEntry> oldEntries, List<ChargeBasisEntry> entriesToAdd) {
     // Get locations to compare entire entry
+    List<ChargeBasisEntry> oldParentEntries = getParentEntries(oldEntries);
+    List<ChargeBasisEntry> newParentEntries = getParentEntries(entriesToAdd);
+    List<ChargeBasisEntry> newChildrenEntries = entriesToAdd.stream().filter(e -> e.getReferredTag() != null)
+      .collect(Collectors.toList());
     Map<Integer, Location> locationMap = getEntriesLocations(entriesToAdd, oldEntries);
-    List<Integer> UpdatedEntries = new ArrayList<>();
-    for (ChargeBasisEntry adding : entriesToAdd) {
-      Optional<ChargeBasisEntry> oldOptional = oldEntries.stream()
-        .filter(old -> adding.equalContent(old, locationMap) && !UpdatedEntries.contains(old.getId()))
+    List<Integer> updatedEntries = new ArrayList<>();
+    for (ChargeBasisEntry adding : newParentEntries) {
+      Optional<ChargeBasisEntry> oldOptional = oldParentEntries.stream()
+        .filter(old -> adding.equalContent(old, locationMap) && !updatedEntries.contains(old.getId()))
         .findAny();
       oldOptional.ifPresent(old -> adding.setInvoicable(old.isInvoicable()));
       oldOptional.ifPresent(old -> adding.setLocked(old.getLocked()));
-      oldOptional.ifPresent(old -> UpdatedEntries.add(old.getId()));
+      oldOptional.ifPresent(old -> updatedEntries.add(old.getId()));
+      if (oldOptional.isPresent()) {
+        List<ChargeBasisEntry> parentChildren = newChildrenEntries.stream()
+          .filter(e -> isReferencingTag(adding, e))
+          .collect(Collectors.toList());
+        for (ChargeBasisEntry child : parentChildren) {
+          child.setInvoicable(adding.isInvoicable());
+          child.setLocked(adding.getLocked());
+        }
+      }
     }
-
   }
 
-  /**
-   * Check if Final supervision is aproved
-   *
-   * @param applicationId
-   * @return boolean
-   */
-  public boolean isFinalSupervisionApproved(int applicationId) {
-    List<SupervisionTask> supervisionTasks = supervisionTaskDao.findFinalSupervisions(applicationId);
-    if (supervisionTasks.isEmpty()) {
-      return false;
-    } else {
-      return supervisionTasks.stream().anyMatch(value -> value.getActualFinishingTime() != null);
-    }
-
+  private List<ChargeBasisEntry> getParentEntries(List<ChargeBasisEntry> entries) {
+    return entries.stream().filter(e -> e.getReferredTag() == null).collect(Collectors.toList());
   }
 
   /**
