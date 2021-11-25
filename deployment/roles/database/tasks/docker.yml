@@ -76,5 +76,5 @@
   command: psql --host localhost -l -U postgres
   register: result
   until: result.rc != 2
-  retries: 30
-  delay: 1
+  retries: 40
+  delay: 10
