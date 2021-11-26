@@ -14,9 +14,9 @@
     <properties>
         <querydsl.version>4.0.9</querydsl.version>
         <!-- database configuration for source generation: -->
-        <database.user>jenkins</database.user>
-        <database.db>jenkins</database.db>
-        <database.password>sniknej</database.password>
+        <database.user>model_service</database.user>
+        <database.db>model_service</database.db>
+        <database.password>model_service</database.password>
         <database.uri>jdbc:postgresql:///${database.db}</database.uri>
         <spring.flyway.baselineOnMigrate>true</spring.flyway.baselineOnMigrate>
     </properties>
