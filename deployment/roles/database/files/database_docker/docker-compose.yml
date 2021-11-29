@@ -6,7 +6,7 @@ services:
     volumes:
       - ./dev-add-report.sql:/docker-entrypoint-initdb.d/dev-add-report.sql
     ports:
-      # <Port exposed> : < MySQL Port running inside container>
+      # <Port exposed> : < PostgreSQL Port running inside container>
       - "5432:5432"
   allu-node:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
