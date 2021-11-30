@@ -298,7 +298,7 @@ public class ChargeBasisEntry {
   public boolean equalDescriptiveContentAndTagPrefix(ChargeBasisEntry other) {
     String firstTag = this.tag;
     String secondTag = other.getTag();
-    if (!(invoicingPeriodId == null && other.getInvoicingPeriodId() == null)) {
+    if (!(invoicingPeriodId == null || other.getInvoicingPeriodId() == null)) {
       firstTag = retrieveTagWithoutInvoicePeriodId();
       secondTag = other.retrieveTagWithoutInvoicePeriodId();
     }
