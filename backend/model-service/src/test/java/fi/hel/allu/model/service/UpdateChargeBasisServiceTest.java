@@ -49,11 +49,11 @@ class UpdateChargeBasisServiceTest {
   @BeforeEach
   void setUp() {
     ChargeBasisEntry parent = initializeChargeBasisData(2, "ADF#23#24", false, 10);
-    parent.setText("not important");
+    parent.setText("notImportant");
     parent.setInvoicable(false);
     testEntries.add(parent);
     ChargeBasisEntry old = initializeChargeBasisData(3, "ADF#23", false, 10);
-    old.setText("not important");
+    old.setText("notImportant");
     oldEntries.add(old);
     locations = new ArrayList<>();
     Location testLocation = initalizieLocation();
@@ -66,11 +66,11 @@ class UpdateChargeBasisServiceTest {
     oldEntries.get(0).setInvoicingPeriodId(1);
     testEntries.get(0).setInvoicingPeriodId(12);
     ChargeBasisEntry reference1 = initializeReferencingData(200, "ADF#904322", true);
-    reference1.setText("altakuljettava");
+    reference1.setText("teksti");
     reference1.setQuantity(-50);
     referenceTagEntries.add(reference1);
     ChargeBasisEntry reference2 = initializeReferencingData(900, "ADF#23", true);
-    reference2.setText("altakuljettava");
+    reference2.setText("teksti");
     reference2.setQuantity(-50);
     referenceTagEntries.add(reference2);
     when(chargeBasisDao.getReferencingTagEntries(anyInt())).thenReturn(referenceTagEntries);
@@ -98,6 +98,7 @@ class UpdateChargeBasisServiceTest {
   void updateInvoicable() {
     oldEntries.get(0).setInvoicable(true);
     oldEntries.get(0).setInvoicingPeriodId(1);
+    testEntries.get(0).setInvoicingPeriodId(1);
     when(locationDao.findByIds(anyList())).thenReturn(locations);
     updateChargeBasisService.transferInvoicableStatusFromOldToNew(oldEntries, testEntries);
     assertTrue(testEntries.get(0).isInvoicable());
@@ -116,6 +117,7 @@ class UpdateChargeBasisServiceTest {
   private ChargeBasisEntry initializeReferencingData(int id, String referedTag, Boolean manuallySet) {
     ChargeBasisEntry entry = new ChargeBasisEntry();
     entry.setId(id);
+    entry.setTag("notImportant");
     entry.setReferredTag(referedTag);
     entry.setManuallySet(manuallySet);
     return entry;
