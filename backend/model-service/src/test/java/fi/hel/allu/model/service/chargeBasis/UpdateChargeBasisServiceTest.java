@@ -1,4 +1,4 @@
-package fi.hel.allu.model.service;
+package fi.hel.allu.model.service.chargeBasis;
 
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.LocationDao;
@@ -8,6 +8,7 @@ import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.service.chargeBasis.UpdateChargeBasisService;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -79,6 +80,28 @@ class UpdateChargeBasisServiceTest {
       .getUpdatedManuallySetReferencingEntries(2, testEntries, oldEntries);
     assertEquals(1, result.size());
     assertTrue(result.containsKey(900));
+  }
+
+  /**
+   * There might null value if customer puts charges manually
+   */
+  @Test
+  @DisplayName("Check if null tag broke update cycle")
+  void nullValuesPassesOnTagCheck() {
+    oldEntries.get(0).setInvoicingPeriodId(1);
+    testEntries.get(0).setInvoicingPeriodId(12);
+    ChargeBasisEntry reference1 = initializeReferencingData(200, "ADF#904322", false);
+    reference1.setText("teksti");
+    reference1.setQuantity(-50);
+    referenceTagEntries.add(reference1);
+    ChargeBasisEntry reference2 = initializeReferencingData(900, null, true);
+    reference2.setText("teksti");
+    reference2.setQuantity(-50);
+    referenceTagEntries.add(reference2);
+    when(chargeBasisDao.getReferencingTagEntries(anyInt())).thenReturn(referenceTagEntries);
+    Map<Integer, ChargeBasisEntry> result = updateChargeBasisService
+      .getUpdatedManuallySetReferencingEntries(2, testEntries, oldEntries);
+    assertEquals(0, result.size());
   }
 
   @Test

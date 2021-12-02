@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.types.ChargeBasisType;
+import org.apache.commons.lang3.StringUtils;
 
 public class ChargeBasisEntry {
   private Integer id;
@@ -296,14 +297,14 @@ public class ChargeBasisEntry {
    * @return comparison result
    */
   public boolean equalDescriptiveContentAndTagPrefix(ChargeBasisEntry other) {
-    String firstTag = this.tag;
-    String secondTag = other.getTag();
-    if (!(invoicingPeriodId == null || other.getInvoicingPeriodId() == null)) {
-      firstTag = retrieveTagWithoutInvoicePeriodId();
-      secondTag = other.retrieveTagWithoutInvoicePeriodId();
+    String thisTag = this.tag;
+    String otherTag = other.getTag();
+    if (invoicingPeriodId != null && other.getInvoicingPeriodId() != null) {
+      thisTag = retrieveTagWithoutInvoicePeriodId();
+      otherTag = other.retrieveTagWithoutInvoicePeriodId();
     }
     return equalDescriptiveContent(other) &&
-      firstTag.equals(secondTag);
+      StringUtils.equals(thisTag, otherTag);
   }
 
   /**
@@ -313,9 +314,6 @@ public class ChargeBasisEntry {
    */
   public String retrieveTagWithoutInvoicePeriodId() {
    return stringWithoutInvoicePeriodId(tag);
-  }
-  public String retrieveReferenceTagWithoutInvoicePeriodId() {
-    return stringWithoutInvoicePeriodId(referredTag);
   }
 
   public String stringWithoutInvoicePeriodId(String tagToParse) {

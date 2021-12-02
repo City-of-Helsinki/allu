@@ -6,6 +6,7 @@ import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -88,19 +89,17 @@ public class UpdateChargeBasisService {
 
   public Map<Integer, ChargeBasisEntry> getUpdatedManuallySetReferencingEntries(int applicationId, List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries) {
     Map<Integer, ChargeBasisEntry> addedEntries = new HashMap<>();
-    List<ChargeBasisEntry> noNullTagEntriesToAdd = removeEntriesWithNullTag(entriesToAdd);
-    List<ChargeBasisEntry> noNullTagOldEntries = removeEntriesWithNullTag(oldEntries);
     List<ChargeBasisEntry> underpasses = chargeBasisDao.getReferencingTagEntries(applicationId);
 
-    for (ChargeBasisEntry oldEntry : noNullTagOldEntries) {
+    for (ChargeBasisEntry oldEntry : oldEntries) {
       List<ChargeBasisEntry> referredEntries = underpasses.stream()
-        .filter(e -> isReferencingTag(oldEntry, e) && e.getManuallySet())
+        .filter(e -> StringUtils.equals(oldEntry.getTag(), e.getReferredTag()) && e.getManuallySet())
         .collect(Collectors.toList());
       if (!referredEntries.isEmpty()) {
 
-        Map<Integer, Location> locationMap = getEntriesLocations(noNullTagEntriesToAdd, noNullTagOldEntries);
+        Map<Integer, Location> locationMap = getEntriesLocations(entriesToAdd, oldEntries);
 
-        ChargeBasisEntry newParentEntry = findSameNewEntry(noNullTagEntriesToAdd, oldEntry, locationMap);
+        ChargeBasisEntry newParentEntry = findSameNewEntry(entriesToAdd, oldEntry, locationMap);
         for (ChargeBasisEntry referredTagEntry : referredEntries) {
           ChargeBasisEntry updatedEntry = updateReferencingTagEntry(newParentEntry, referredTagEntry);
           addedEntries.put(updatedEntry.getId(), updatedEntry);
@@ -136,15 +135,6 @@ public class UpdateChargeBasisService {
     return referredTagEntry;
   }
 
-  private List<ChargeBasisEntry> removeEntriesWithNullTag(List<ChargeBasisEntry> entries) {
-    return entries.stream().filter(e -> e.getTag() != null).collect(Collectors.toList());
-  }
-
-  private Boolean isReferencingTag(ChargeBasisEntry parentEntry, ChargeBasisEntry childEntry) {
-    return childEntry.getReferredTag()
-      .equals(parentEntry.getTag());
-  }
-
   /**
    * Transfers the {@code invoicable} field data from old {@code ChargeBasisEntry} to the new.
    * Check of equality is done by comparing content of each entry. Only calculated entries are updated
@@ -170,7 +160,7 @@ public class UpdateChargeBasisService {
       oldOptional.ifPresent(old -> updatedEntries.add(old.getId()));
       if (oldOptional.isPresent()) {
         List<ChargeBasisEntry> parentChildren = newChildrenEntries.stream()
-          .filter(e -> isReferencingTag(adding, e))
+          .filter(e -> StringUtils.equals(adding.getTag(), e.getReferredTag()))
           .collect(Collectors.toList());
         for (ChargeBasisEntry child : parentChildren) {
           child.setInvoicable(adding.isInvoicable());

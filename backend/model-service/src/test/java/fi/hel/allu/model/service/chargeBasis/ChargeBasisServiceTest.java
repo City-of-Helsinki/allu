@@ -1,4 +1,4 @@
-package fi.hel.allu.model.service;
+package fi.hel.allu.model.service.chargeBasis;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
