@@ -310,10 +310,10 @@ public class ChargeBasisEntry {
   /**
    * Uses regex to remove invoicePeriod from tag.
    * Only affects tags with both locationId and invoicePeriodId.
-   * @return handled tag
+   * @return handled tag if null returns null
    */
   public String retrieveTagWithoutInvoicePeriodId() {
-   return stringWithoutInvoicePeriodId(tag);
+      return tag == null ? null : stringWithoutInvoicePeriodId(tag);
   }
 
   public String stringWithoutInvoicePeriodId(String tagToParse) {
