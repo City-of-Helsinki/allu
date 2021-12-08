@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -309,7 +310,7 @@ public class ApplicationReplacementService {
   private void handleUnderpass(ChargeBasisEntry refereedEntry, List<ChargeBasisEntry> presentApplicationEntries,
                                List<Integer> updatedUnderpasses){
     Optional<ChargeBasisEntry> underpass = presentApplicationEntries.stream()
-      .filter(e ->e.getReferredTag() != null && refereedEntry.isReferencedBy(e.getReferredTag())
+      .filter(e ->e.getReferredTag() != null && StringUtils.equals(refereedEntry.getTag(), e.getReferredTag())
         && e.isUnderPass())
       .findFirst();
     if (underpass.isPresent() ){

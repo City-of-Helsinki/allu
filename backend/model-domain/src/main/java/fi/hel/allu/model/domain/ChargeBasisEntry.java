@@ -397,11 +397,6 @@ public class ChargeBasisEntry {
       && this.quantity == -50;
   }
 
-  public boolean isReferencedBy(String rerenceTag){
-
-    return  tag.equals(rerenceTag);
-  }
-
   private boolean isBothLocationIdsNull(Integer locationId , Integer otherlocatioId){
     return locationId == null && otherlocatioId == null;
   }
