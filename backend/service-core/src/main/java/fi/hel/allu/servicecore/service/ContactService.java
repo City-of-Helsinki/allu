@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +34,6 @@ public class ContactService {
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
 
-  @Autowired
   public ContactService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
@@ -65,7 +63,7 @@ public class ContactService {
         Contact[].class,
         customerId);
     List<ContactJson> results =
-        Arrays.stream(contactResult.getBody()).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
+        Arrays.stream(contactResult.getBody()).map(customerMapper::createContactJson).collect(Collectors.toList());
     results.forEach(c -> personAuditLogService.log(c, "ContactService"));
     return results;
   }
@@ -78,7 +76,7 @@ public class ContactService {
    */
   public Page<ContactJson> search(QueryParameters queryParameters, Pageable pageRequest) {
     return searchService.searchContact(queryParameters, pageRequest,
-        ids -> getContactsById(ids));
+        ids -> getContactsById(ids).stream().filter(ContactJson::isActive).collect(Collectors.toList()));
   }
 
 
@@ -86,13 +84,13 @@ public class ContactService {
     // Created contacts active by default
     contactJsons.forEach(c -> c.setActive(true));
     ContactChange contactChange = new ContactChange(userService.getCurrentUser().getId(),
-        contactJsons.stream().map(cJson -> customerMapper.createContactModel(cJson)).collect(Collectors.toList()));
+        contactJsons.stream().map(customerMapper::createContactModel).collect(Collectors.toList()));
     Contact[] contacts = restTemplate.postForObject(
         applicationProperties.getContactCreateUrl(),
         contactChange,
         Contact[].class);
     List<ContactJson> createdContactJsons =
-        Arrays.stream(contacts).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
+        Arrays.stream(contacts).map(customerMapper::createContactJson).collect(Collectors.toList());
     searchService.insertContacts(createdContactJsons);
     return createdContactJsons;
   }
@@ -103,7 +101,7 @@ public class ContactService {
 
   public List<ContactJson> updateContacts(List<ContactJson> contactJsons) {
     ContactChange contactChange = new ContactChange(userService.getCurrentUser().getId(),
-        contactJsons.stream().map(cJson -> customerMapper.createContactModel(cJson)).collect(Collectors.toList()));
+        contactJsons.stream().map(customerMapper::createContactModel).collect(Collectors.toList()));
     HttpEntity<ContactChange> requestEntity = new HttpEntity<>(contactChange);
     ResponseEntity<Contact[]> response = restTemplate.exchange(
         applicationProperties.getContactUpdateUrl(),
@@ -111,10 +109,10 @@ public class ContactService {
         requestEntity,
         Contact[].class);
     List<ContactJson> updatedContactJsons =
-        Arrays.stream(response.getBody()).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
+        Arrays.stream(response.getBody()).map(customerMapper::createContactJson).collect(Collectors.toList());
     searchService.updateContacts(updatedContactJsons);
     List<ApplicationWithContactsES> applicationWithContactsESs =
-        findRelatedApplicationsWithContacts(updatedContactJsons.stream().map(cJson -> cJson.getId()).collect(Collectors.toList()));
+        findRelatedApplicationsWithContacts(updatedContactJsons.stream().map(ContactJson::getId).collect(Collectors.toList()));
     searchService.updateContactsOfApplications(applicationWithContactsESs);
     return updatedContactJsons;
   }
@@ -130,8 +128,8 @@ public class ContactService {
         applicationProperties.getContactsByIdUrl(),
         contactIds,
         Contact[].class);
-    List<ContactJson> resultList = Arrays.stream(contacts).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
-    SearchService.orderByIdList(contactIds, resultList, (contact) -> contact.getId());
+    List<ContactJson> resultList = Arrays.stream(contacts).map(customerMapper::createContactJson).collect(Collectors.toList());
+    SearchService.orderByIdList(contactIds, resultList, ContactJson::getId);
     return resultList;
   }
 
@@ -149,14 +147,13 @@ public class ContactService {
         HttpMethod.POST,
         requestEntity,
         typeRef);
-    List<ApplicationWithContactsES> applicationWithContactsESs = applicationWithContacts.getBody().stream()
+    return applicationWithContacts.getBody().stream()
         .map(atc -> new ApplicationWithContactsES(atc.getApplicationId(), atc.getCustomerRoleType(), mapContacts(atc.getContacts())))
         .collect(Collectors.toList());
-    return applicationWithContactsESs;
   }
 
   private List<ContactES> mapContacts(List<Contact> contacts) {
-    return contacts.stream().map(c -> mapContact(c)).collect(Collectors.toList());
+    return contacts.stream().map(this::mapContact).collect(Collectors.toList());
   }
 
   private ContactES mapContact(Contact contact) {
