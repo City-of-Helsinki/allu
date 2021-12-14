@@ -6,14 +6,13 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.NamedXContentRegistry;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.search.SearchModule;
+import org.elasticsearch.xcontent.NamedXContentRegistry;
+import org.elasticsearch.xcontent.XContentBuilder;
+import org.elasticsearch.xcontent.XContentFactory;
+import org.elasticsearch.xcontent.XContentParser;
+import org.elasticsearch.xcontent.json.JsonXContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collections;
+
+import static org.elasticsearch.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * Component for building ElasticSearch mapping configuration i.e. the "schema".
@@ -122,14 +123,14 @@ public class ElasticSearchMappingConfig {
    */
   public XContentBuilder getMappingBuilderForDefaultApplicationsIndex() {
     try {
-    XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+    XContentBuilder mappingBuilder = jsonBuilder()
         .startObject()
           .startObject("_default_")
             .startObject("properties")
             .endObject()
           .endObject()
         .endObject();
-      logger.debug("Default applications index mapping: " + mappingBuilder.string());
+      logger.debug("Default applications index mapping: " + mappingBuilder);
       return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -141,7 +142,7 @@ public class ElasticSearchMappingConfig {
    */
   public XContentBuilder getMappingBuilderForApplication() {
     try {
-      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+      XContentBuilder mappingBuilder = jsonBuilder()
           .startObject()
             .startObject("properties")
               .field("applicationId").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
@@ -201,7 +202,7 @@ public class ElasticSearchMappingConfig {
             .field("date_detection", "false")
           .endObject();
 
-      logger.debug("Applications mapping: " + mappingBuilder.string());
+      logger.debug("Applications mapping: " + mappingBuilder);
       return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -213,7 +214,7 @@ public class ElasticSearchMappingConfig {
    */
   public XContentBuilder getMappingBuilderForProject() {
     try {
-      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+      XContentBuilder mappingBuilder = jsonBuilder()
           .startObject()
             .startObject("properties")
               .field("identifier").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
@@ -222,7 +223,7 @@ public class ElasticSearchMappingConfig {
               .field("customerReference").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
             .endObject()
           .endObject();
-      logger.debug("Project mapping: " + mappingBuilder.string());
+      logger.debug("Project mapping: " + mappingBuilder);
       return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -235,7 +236,7 @@ public class ElasticSearchMappingConfig {
   public XContentBuilder getIndexSettingsForApplication() {
     try {
       XContentBuilder settingsBuilder = commonIndexSettings();
-      logger.debug("application index settings {}", settingsBuilder.string());
+      logger.debug("application index settings {}", settingsBuilder);
       return settingsBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -247,7 +248,7 @@ public class ElasticSearchMappingConfig {
    */
   public XContentBuilder getMappingBuilderForDefaultCustomersIndex() {
     try {
-      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+      XContentBuilder mappingBuilder = jsonBuilder()
           .startObject()
             .startObject("_default_")
               .startObject("properties")
@@ -256,7 +257,7 @@ public class ElasticSearchMappingConfig {
               .endObject()
             .endObject()
           .endObject();
-      logger.debug("Default customers index mapping: " + mappingBuilder.string());
+      logger.debug("Default customers index mapping: " + mappingBuilder);
       return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -268,13 +269,13 @@ public class ElasticSearchMappingConfig {
    */
   public XContentBuilder getMappingBuilderForCustomer() {
     try {
-      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+      XContentBuilder mappingBuilder = jsonBuilder()
           .startObject()
             .startObject("properties")
               .field("registryKey").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer()))
             .endObject()
           .endObject();
-      logger.debug("Customers mapping: " + mappingBuilder.string());
+      logger.debug("Customers mapping: " + mappingBuilder);
       return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -287,7 +288,7 @@ public class ElasticSearchMappingConfig {
   public XContentBuilder getIndexSettingsForCustomer() {
     try {
       XContentBuilder settingsBuilder = commonIndexSettings();
-      logger.debug("customer index settings {}", settingsBuilder.string());
+      logger.debug("customer index settings {}", settingsBuilder);
       return settingsBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
@@ -296,7 +297,7 @@ public class ElasticSearchMappingConfig {
 
   private XContentParser parser(XContentBuilder xContentBuilder) throws IOException {
     SearchModule searchModule = new SearchModule(Settings.EMPTY, false, Collections.emptyList());
-    return JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(searchModule.getNamedXContents()), xContentBuilder.string());
+    return JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(searchModule.getNamedXContents()), xContentBuilder);
   }
 
   private XContentBuilder autocompleteSettingsFilter() throws IOException {
@@ -308,7 +309,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder ngramTokenFilter(int minGram, int maxGram) throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    XContentBuilder builder =  jsonBuilder()
         .startObject()
           .field("type", "edge_ngram")
           .field("min_gram", String.valueOf(minGram))
@@ -320,7 +321,7 @@ public class ElasticSearchMappingConfig {
 
 
   private XContentBuilder autocompleteSettingsAnalyzer() throws IOException {
-    XContentBuilder builder = XContentFactory.jsonBuilder()
+    XContentBuilder builder = jsonBuilder()
         .startObject()
         .field("type", "custom")
         .field("tokenizer", "standard")
@@ -330,7 +331,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder autocompleteSettingsAnalyzerWithKeywordTokenizer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    XContentBuilder builder =  jsonBuilder()
       .startObject()
         .field("type", "custom")
         .field("tokenizer", "keyword")
@@ -343,7 +344,7 @@ public class ElasticSearchMappingConfig {
    * ElasticSearch analyzer settings for mapping with autocomplete and alphabetical sorting.
    */
   private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    XContentBuilder builder =  jsonBuilder()
         .startObject()
           .field("type", "text")
           .field("analyzer", ANALYZER_AUTOCOMPLETE)
@@ -354,7 +355,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    XContentBuilder builder =  jsonBuilder()
         .startObject()
           .field("type", "text")
           .field("analyzer", ANALYZER_AUTOCOMPLETE_KEYWORD)
@@ -365,7 +366,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder caseInsensitiveSortAnalyzer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    XContentBuilder builder =  jsonBuilder()
         .startObject()
           .field("type", "custom")
           .array("char_filter")
@@ -375,7 +376,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder alphasort() throws IOException {
-    return XContentFactory.jsonBuilder()
+    return jsonBuilder()
         .startObject()
           .field("alphasort")
             .startObject()
@@ -386,7 +387,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder commonIndexSettings() throws IOException {
-    return XContentFactory.jsonBuilder()
+    return jsonBuilder()
         .startObject()
           .startObject("analysis")
             .startObject("filter")

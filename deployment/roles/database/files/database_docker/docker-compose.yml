@@ -9,7 +9,7 @@ services:
       # <Port exposed> : < PostgreSQL Port running inside container>
       - "5432:5432"
   allu-node:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.1
     container_name: allu-node
     environment:
       - node.name=allu-node

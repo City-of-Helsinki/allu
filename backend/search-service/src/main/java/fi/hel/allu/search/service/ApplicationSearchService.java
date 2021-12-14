@@ -4,16 +4,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.search.domain.LocationES;
 import org.apache.commons.lang3.BooleanUtils;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.geo.ShapeRelation;
-import org.elasticsearch.common.geo.builders.ShapeBuilders;
-import org.elasticsearch.index.query.*;
-import org.elasticsearch.search.SearchHit;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.PointCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +35,7 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
   @Autowired
   public ApplicationSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client,
+      ElasticsearchClient client,
       ApplicationIndexConductor applicationIndexConductor) {
     super(elasticSearchMappingConfig,
         client,

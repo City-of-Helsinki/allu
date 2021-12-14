@@ -7,37 +7,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.apache.commons.lang3.BooleanUtils;
-import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkProcessor;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.cluster.metadata.AliasMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.common.unit.ByteSizeValue;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.rest.RestStatus;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -94,7 +69,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   private static final String[] ordinalSortFields = { "status", "type" };
 
   private final ElasticSearchMappingConfig elasticSearchMappingConfig;
-  private final Client client;
+  private final ElasticsearchClient client;
   private final String indexTypeName;
   protected final ObjectMapper objectMapper;
   private final IndexConductor indexConductor;
@@ -115,7 +90,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    */
   protected GenericSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client,
+      ElasticsearchClient client,
       String indexTypeName,
       IndexConductor indexConductor,
       Function<T, String> keyMapper,
@@ -186,7 +161,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       String id = keyMapper.apply(indexedObject);
       logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
-          client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
+          client.indices().create()index(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
       if (response.status() != RestStatus.CREATED) {
         throw new SearchException("Unable to insert record to " + indexName + " with id " + id);
       }
@@ -222,7 +197,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    *
    * @param objectsToUpdate List of objects that will be updated to search index
    *          as JSON.
-   * @param keyMapper lambda from object to its key
    */
   public void bulkUpdate(List<T> objectsToUpdate) {
     bulkUpdate(objectsToUpdate, false);
@@ -741,7 +715,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     @Override
     public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-      logger.debug("Bulk execution completed [" + executionId + "]. Took (ms): " + response.getTookInMillis() + ". Failures: "
+      logger.debug("Bulk execution completed [" + executionId + "]. Took (ms): " + response.getIngestTookInMillis() + ". Failures: "
           + response.hasFailures() + ". Count: " + response.getItems().length);
     }
   }

@@ -1,35 +1,31 @@
 package fi.hel.allu.search.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import javax.validation.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Configuration
 @EnableAutoConfiguration
 public class AppConfig {
 
-  @Value("${elasticsearch.host:localhost}")
-  @NotEmpty
-  private String elasticsearchHost;
-  @Value("${elasticsearch.port:9300}")
-  @NotEmpty
-  private int elasticsearchPort;
-
   @Bean
-  public Client client() throws UnknownHostException {
-    Settings settings = Settings.builder().put("cluster.name", "allu-cluster").build();
-    Client client = new PreBuiltTransportClient(settings).addTransportAddress(
-        new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
+  public ElasticsearchClient client() throws UnknownHostException {
+    RestClient restClient = RestClient.builder(
+      new HttpHost("localhost", 9300)).build();
+    // Create the transport with a Jackson mapper
+    ElasticsearchTransport transport = new RestClientTransport(
+      restClient, new JacksonJsonpMapper());
+    // And create the API client
+    ElasticsearchClient client = new ElasticsearchClient(transport);
     return client;
   }
 
