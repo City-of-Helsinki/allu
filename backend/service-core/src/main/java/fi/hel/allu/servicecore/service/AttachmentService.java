@@ -286,7 +286,6 @@ public class AttachmentService {
       result.setDefaultAttachmentId(defaultAttachmentInfoJson.getDefaultAttachmentId());
       result.setApplicationTypes(defaultAttachmentInfoJson.getApplicationTypes());
       result.setFixedLocationAreaId(defaultAttachmentInfoJson.getFixedLocationId());
-      result.setDecisionAttachment(true);
     }
     return result;
   }
