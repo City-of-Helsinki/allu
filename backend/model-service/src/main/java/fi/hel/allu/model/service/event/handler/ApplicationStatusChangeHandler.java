@@ -1,32 +1,30 @@
 package fi.hel.allu.model.service.event.handler;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
 import fi.hel.allu.common.domain.TerminationInfo;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.dao.TerminationDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.InvoiceService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
-import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
 /**
  * Default handler for application status change events
@@ -162,17 +160,16 @@ public class ApplicationStatusChangeHandler {
     if (targetState == null) {
       targetState = getTargetStateForDecisionMaking(application.getId());
       applicationService.setTargetState(application.getId(), targetState);
-      lockChargeBasisEntries(application.getId());
     }
     if (targetState == StatusType.DECISION) {
       // Handler set only when making first "decision"
       applicationService.updateHandler(application.getId(), userId);
-      lockChargeBasisEntries(application.getId());
     }
     if (targetState == StatusType.TERMINATED) {
       terminationDao.updateTerminationHandler(application.getId(), userId);
     }
   }
+
 
 
   protected void handleCancelledStatus(Application application) {
@@ -248,8 +245,8 @@ public class ApplicationStatusChangeHandler {
   protected void createSupervisionTask(Application application, SupervisionTaskType type, Integer userId,
                                        ZonedDateTime plannedTime, Integer locationId) {
     SupervisionTask supervisionTask = new SupervisionTask(null,
-      application.getId(), type, userId, getSupervisionTaskOwner(application), null,
-      plannedTime, null, SupervisionTaskStatusType.OPEN, null, null, locationId);
+            application.getId(), type, userId, getSupervisionTaskOwner(application), null,
+            plannedTime, null, SupervisionTaskStatusType.OPEN, null, null, locationId);
     supervisionTaskService.insert(supervisionTask);
   }
 
@@ -259,8 +256,8 @@ public class ApplicationStatusChangeHandler {
 
   protected boolean hasOpenSupervisionTask(Application application, SupervisionTaskType taskType) {
     return supervisionTaskService.findByApplicationIdAndType(application.getId(), taskType)
-      .stream()
-      .anyMatch(task -> task.getStatus() == SupervisionTaskStatusType.OPEN);
+        .stream()
+        .anyMatch(task -> task.getStatus() == SupervisionTaskStatusType.OPEN);
   }
 
   protected void cancelOpenSupervisionTasks(Integer applicationId) {
@@ -272,7 +269,7 @@ public class ApplicationStatusChangeHandler {
     Integer supervisionTaskOwner = null;
     if (cityDistrict != null) {
       supervisionTaskOwner = locationService.findSupervisionTaskOwner(application.getType(), cityDistrict).map(u -> u.getId())
-        .orElse(null);
+              .orElse(null);
     }
     if (supervisionTaskOwner == null) {
       logger.warn("No final supervision task owner found for application {}", application.getId());
