@@ -46,7 +46,7 @@ public class UpdateChargeBasisService {
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
     transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
-    moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
+    moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate, entryIdsToDelete);
     entriesToUpdate.putAll(getUpdatedManuallySetReferencingEntries(applicationId, entriesToAdd, oldEntries));
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
   }
@@ -193,7 +193,7 @@ public class UpdateChargeBasisService {
    */
   public void moveOldLockedEntriesToEntriesBeingAdded(List<ChargeBasisEntry> oldEntries,
                                                       List<ChargeBasisEntry> entriesToAdd,
-                                                      Map<Integer, ChargeBasisEntry> entriesToUpdate) {
+                                                      Map<Integer, ChargeBasisEntry> entriesToUpdate, Set<Integer> entryIdsToDelete) {
     List<ChargeBasisEntry> oldEntriesToBeUpdated = oldEntries.stream()
       .filter(oe -> Boolean.TRUE.equals(oe.getLocked()) && entriesToUpdate.containsKey(oe.getId()))
       .collect(Collectors.toList());
@@ -211,6 +211,7 @@ public class UpdateChargeBasisService {
       }
       // Remove entry from entriesToUpdate
       entriesToUpdate.remove(lockedOldEntryToBeUpdated.getId());
+      entryIdsToDelete.add(lockedOldEntryToBeUpdated.getId());
     }
     // Add entries to entriesToAdd in the following manner,
     // to ensure the locked entries are first in entryNumber order.
