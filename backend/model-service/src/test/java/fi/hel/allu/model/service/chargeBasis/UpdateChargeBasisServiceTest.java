@@ -16,10 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -113,7 +110,7 @@ class UpdateChargeBasisServiceTest {
     Map<Integer, ChargeBasisEntry> entriesToUpdate = new HashMap<>();
     entriesToUpdate.put(updateEntry.getId(), updateEntry);
     oldEntries.add(updateEntry);
-    updateChargeBasisService.moveOldLockedEntriesToEntriesBeingAdded(oldEntries, testEntries, entriesToUpdate);
+    updateChargeBasisService.moveOldLockedEntriesToEntriesBeingAdded(oldEntries, testEntries, entriesToUpdate, new HashSet<>());
     assertTrue(testEntries.stream().anyMatch(ChargeBasisEntry::getLocked));
   }
 
