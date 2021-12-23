@@ -6,6 +6,7 @@ import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.service.InvoicingPeriodService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +23,12 @@ public class UpdateChargeBasisService {
 
   private final ChargeBasisDao chargeBasisDao;
   private final LocationDao locationDao;
+  private final InvoicingPeriodService invoicingPeriodService;
 
-  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao) {
+  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao, InvoicingPeriodService invoicingPeriodService) {
     this.chargeBasisDao = chargeBasisDao;
     this.locationDao = locationDao;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   /**
@@ -57,12 +60,15 @@ public class UpdateChargeBasisService {
     Map<Integer, ChargeBasisEntry> result = new HashMap<>();
     for (ChargeBasisEntry e : entries) {
       ChargeBasisEntry existing = getExistingEntry(e, oldEntries);
-      if (existing != null && hasChanges(e, existing)) {
+      if (existing != null && hasChanges(e, existing) && !invoicingPeriodService.isLockedPeriod(existing.getInvoicingPeriodId())) {
         result.put(existing.getId(), e);
       }
     }
+
     return result;
   }
+
+
 
 
   private ChargeBasisEntry getExistingEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
