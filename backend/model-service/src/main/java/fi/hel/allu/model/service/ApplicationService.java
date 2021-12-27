@@ -156,7 +156,15 @@ public class ApplicationService {
     } else {
       updateChargeBasis(id, result);
     }
+    handleApplicationInvoice(application, userId);
     return result;
+  }
+
+  private void handleApplicationInvoice(Application application, int userId){
+    List<Invoice> allInvoice = invoiceService.findByApplication(application.getId());
+    if(allInvoice.stream().allMatch(e -> e.isInvoiced())){
+      changeApplicationStatus(application.getId(),StatusType.ARCHIVED, userId);
+    }
   }
 
   private void updateChargeBasis(int id, Application application) {
@@ -175,7 +183,7 @@ public class ApplicationService {
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.
-   * @param   userId      Current user
+   * @param   applications      list of applications
    * @param   applications  Applications whose owner is updated.
    */
   @Transactional
