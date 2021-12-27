@@ -156,14 +156,14 @@ public class ApplicationService {
     } else {
       updateChargeBasis(id, result);
     }
-    handleApplicationInvoice(application, userId);
+    handleApplicationInvoice(id, userId);
     return result;
   }
 
-  private void handleApplicationInvoice(Application application, int userId){
-    List<Invoice> allInvoice = invoiceService.findByApplication(application.getId());
+  private void handleApplicationInvoice(int id, int userId){
+    List<Invoice> allInvoice = invoiceService.findByApplication(id);
     if(allInvoice.stream().allMatch(e -> e.isInvoiced())){
-      changeApplicationStatus(application.getId(),StatusType.ARCHIVED, userId);
+      changeApplicationStatus(id, StatusType.ARCHIVED, userId);
     }
   }
 

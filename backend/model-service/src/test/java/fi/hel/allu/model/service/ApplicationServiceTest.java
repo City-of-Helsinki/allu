@@ -1,10 +1,7 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
@@ -24,6 +21,7 @@ import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 
 public class ApplicationServiceTest {
@@ -78,7 +76,7 @@ public class ApplicationServiceTest {
     Application updated = new Application();
     updated.setId(112);
     Mockito.when(applicationDao.update(Mockito.anyInt(), Mockito.any(Application.class))).thenReturn(updated);
-
+    Mockito.when(invoiceService.findByApplication(Mockito.anyInt())).thenReturn(new ArrayList<>());
     Application application = new Application();
     application.setName("Foo");
     applicationService.update(123, application, 1);
