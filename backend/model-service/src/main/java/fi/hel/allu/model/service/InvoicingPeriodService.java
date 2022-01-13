@@ -200,4 +200,9 @@ public class InvoicingPeriodService {
   public void updatePeriodEndDate(Integer periodId, ZonedDateTime endTime) {
     invoicingPeriodDao.updateEndTime(periodId, endTime);
   }
+
+  @Transactional
+  public boolean isLockedPeriod(Integer periodId){
+   return invoicingPeriodDao.findInvoicingPeriod(periodId).isClosed();
+  }
 }

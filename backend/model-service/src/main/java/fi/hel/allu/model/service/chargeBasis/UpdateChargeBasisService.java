@@ -6,6 +6,7 @@ import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.service.InvoicingPeriodService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +23,13 @@ public class UpdateChargeBasisService {
 
   private final ChargeBasisDao chargeBasisDao;
   private final LocationDao locationDao;
+  private final InvoicingPeriodService invoicingPeriodService;
 
-  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao) {
+  public UpdateChargeBasisService(ChargeBasisDao chargeBasisDao, LocationDao locationDao,
+                                  InvoicingPeriodService invoicingPeriodService) {
     this.chargeBasisDao = chargeBasisDao;
     this.locationDao = locationDao;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   /**
@@ -193,22 +197,31 @@ public class UpdateChargeBasisService {
       .collect(Collectors.toList());
     List<ChargeBasisEntry> entriesToPrependToAddList = new ArrayList<>();
     for (ChargeBasisEntry lockedOldEntryToBeUpdated : oldEntriesToBeUpdated) {
-      ChargeBasisEntry entryToUpdate = entriesToUpdate.get(lockedOldEntryToBeUpdated.getId());
-      entryToUpdate.setInvoicable(lockedOldEntryToBeUpdated.isInvoicable());
-      entryToUpdate.setLocked(lockedOldEntryToBeUpdated.getLocked());
-      // If locationId is null, we can put it first in entryNumber order.
-      // Thus, we can sort the entriesToAdd list, before prepending those without locationId.
-      if (lockedOldEntryToBeUpdated.getLocationId() == null) {
-        entriesToPrependToAddList.add(entryToUpdate);
-      } else {
-        entriesToAdd.add(entryToUpdate);
+      if (isMoveNecessary(lockedOldEntryToBeUpdated)) {
+        ChargeBasisEntry entryToUpdate = entriesToUpdate.get(lockedOldEntryToBeUpdated.getId());
+        entryToUpdate.setInvoicable(lockedOldEntryToBeUpdated.isInvoicable());
+        entryToUpdate.setLocked(lockedOldEntryToBeUpdated.getLocked());
+        // If locationId is null, we can put it first in entryNumber order.
+        // Thus, we can sort the entriesToAdd list, before prepending those without locationId.
+        if (lockedOldEntryToBeUpdated.getLocationId() == null) {
+          entriesToPrependToAddList.add(entryToUpdate);
+        } else {
+          entriesToAdd.add(entryToUpdate);
+        }
+        // Remove entry from entriesToUpdate
+        entriesToUpdate.remove(lockedOldEntryToBeUpdated.getId());
       }
-      // Remove entry from entriesToUpdate
-      entriesToUpdate.remove(lockedOldEntryToBeUpdated.getId());
     }
     // Add entries to entriesToAdd in the following manner,
     // to ensure the locked entries are first in entryNumber order.
     entriesToAdd.addAll(0, entriesToPrependToAddList);
+  }
+
+  private boolean isMoveNecessary(ChargeBasisEntry chargeBasisEntry) {
+    if (chargeBasisEntry.getInvoicingPeriodId() != null) {
+      return !invoicingPeriodService.isLockedPeriod(chargeBasisEntry.getInvoicingPeriodId());
+    }
+    return false;
   }
 
 }

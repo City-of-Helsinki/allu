@@ -42,6 +42,12 @@ public class InvoicingPeriodDao {
     return p;
   }
 
+  @Transactional
+  public InvoicingPeriod findInvoicingPeriod(Integer id){
+    return queryFactory.select(invoicingPeriodBean).from(invoicingPeriod)
+      .where(invoicingPeriod.id.eq(id)).fetchOne();
+  }
+
   @Transactional(readOnly = true)
   public List<InvoicingPeriod> findForApplicationId(Integer applicationId) {
     return queryFactory.select(invoicingPeriodBean).from(invoicingPeriod)
