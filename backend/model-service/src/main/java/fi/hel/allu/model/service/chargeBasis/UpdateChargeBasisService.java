@@ -221,7 +221,7 @@ public class UpdateChargeBasisService {
     if (chargeBasisEntry.getInvoicingPeriodId() != null) {
       return !invoicingPeriodService.isLockedPeriod(chargeBasisEntry.getInvoicingPeriodId());
     }
-    return false;
+    return true;
   }
 
 }
