@@ -82,6 +82,13 @@ class UpdateChargeBasisServiceTest {
     assertTrue(result.containsKey(900));
   }
 
+  @Test
+  void updatingReferenceTagsWhenEmptyList() {
+    Map<Integer, ChargeBasisEntry> result = updateChargeBasisService
+      .getUpdatedManuallySetReferencingEntries(2, new ArrayList<>(), oldEntries);
+    assertEquals(0, result.size());
+  }
+
   /**
    * There might null value if customer puts charges manually
    */

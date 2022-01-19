@@ -93,6 +93,9 @@ public class UpdateChargeBasisService {
 
   public Map<Integer, ChargeBasisEntry> getUpdatedManuallySetReferencingEntries(int applicationId, List<ChargeBasisEntry> entriesToAdd, List<ChargeBasisEntry> oldEntries) {
     Map<Integer, ChargeBasisEntry> addedEntries = new HashMap<>();
+
+    if(entriesToAdd.isEmpty()) return addedEntries;
+
     List<ChargeBasisEntry> underpasses = chargeBasisDao.getReferencingTagEntries(applicationId);
 
     for (ChargeBasisEntry oldEntry : oldEntries) {
