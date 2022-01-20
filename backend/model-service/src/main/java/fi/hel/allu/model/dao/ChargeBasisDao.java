@@ -3,14 +3,10 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
-import fi.hel.allu.model.domain.Location;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
@@ -33,7 +29,7 @@ public class ChargeBasisDao {
       chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable,
       chargeBasis.locked, chargeBasis.invoicable);
 
-  private SQLQueryFactory queryFactory;
+  private final SQLQueryFactory queryFactory;
 
 
 
@@ -73,7 +69,8 @@ public class ChargeBasisDao {
   public void setChargeBasis(ChargeBasisModification modification) {
     updateEntries(modification.getEntriesToUpdate());
     deleteEntries(modification.getEntryIdsToDelete());
-    insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId(), modification.isManuallySet()));
+    insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(),
+      nextEntryNumber(modification.getApplicationId()));
     deleteDanglingEntries(modification.getApplicationId());
   }
 
@@ -94,7 +91,7 @@ public class ChargeBasisDao {
 
   @Transactional
   public ChargeBasisEntry insertManualEntry(int applicationId, ChargeBasisEntry entry) {
-    int entryNumber = nextEntryNumber(applicationId, true);
+    int entryNumber = nextEntryNumber(applicationId);
     entry.setModificationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(chargeBasis)
         .populate(entry, new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))
@@ -136,7 +133,8 @@ public class ChargeBasisDao {
     // Delete possible dangling referred tags left by above delete
     queryFactory.delete(chargeBasis)
     .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.referredTag.isNotNull()).and(chargeBasis.referredTag.notIn(
-        select(chargeBasis.tag).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.tag.isNotNull()))))).execute();
+        select(chargeBasis.tag).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId)
+          .and(chargeBasis.tag.isNotNull()))))).execute();
   }
 
   @Transactional
@@ -166,7 +164,8 @@ public class ChargeBasisDao {
 
   @Transactional(readOnly = true)
   public List<Integer> getLockedChargeBasisIds(int applicationId) {
-    return queryFactory.select(chargeBasis.id).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId), chargeBasis.locked.isTrue()).fetch();
+    return queryFactory.select(chargeBasis.id).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId),
+      chargeBasis.locked.isTrue()).fetch();
   }
 
   @Transactional
@@ -215,17 +214,16 @@ public class ChargeBasisDao {
     queryFactory.select(chargeBasisBean).from(chargeBasis)
         .where(chargeBasis.applicationId.eq(fromApplicationId),
                chargeBasis.manuallySet.isTrue(),
-               chargeBasis.referredTag.isNull(),
                chargeBasis.id.notIn(filteredIds))
         .fetch();
     entries.forEach(e -> {
       e.setId(null);
       e.setLocked(false);
     });
-    insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId, true));
+    insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId));
   }
 
-  private int nextEntryNumber(int applicationId, boolean manuallySet) {
+  private int nextEntryNumber(int applicationId) {
     Integer maxEntryNumber = queryFactory.select(chargeBasis.entryNumber.max()).from(chargeBasis)
       .where(chargeBasis.applicationId.eq(applicationId)).fetchFirst();
     return maxEntryNumber != null ? maxEntryNumber + 1 : 0;
