@@ -285,6 +285,11 @@ public class ChargeBasisEntry {
       return false;
     if (unitPrice != other.unitPrice)
       return false;
+    if (text == null) {
+      if (other.text != null)
+        return false;
+    } else if (!text.equals(other.text))
+      return false;
     return true;
   }
 
