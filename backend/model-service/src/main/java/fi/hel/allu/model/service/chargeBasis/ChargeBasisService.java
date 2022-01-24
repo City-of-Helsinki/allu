@@ -82,7 +82,7 @@ public class ChargeBasisService {
       chargeBasisDao.deleteEntries(
         oldEntries.stream()
           .filter(oe -> oe.getInvoicingPeriodId() == null)
-          .map(oe -> oe.getId())
+          .map(ChargeBasisEntry::getId)
           .collect(Collectors.toList())
       );
     }
@@ -133,7 +133,7 @@ public class ChargeBasisService {
   public boolean setManualChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
     final AtomicInteger i = getMaxAreaUsageNumber(entries);
     List<ChargeBasisEntry> manualEntries = entries.stream()
-        .filter(e -> e.getManuallySet())
+        .filter(ChargeBasisEntry::getManuallySet)
         .map(e -> setAreaUsageTagIfMissing(e, i))
         .collect(Collectors.toList());
     manualEntries.forEach(entry -> setPeriodIfMissing(applicationId, entry));
@@ -151,15 +151,14 @@ public class ChargeBasisService {
     }
     handleModifications(modification);
     return modification.hasChanges();
-
   }
 
   private AtomicInteger getMaxAreaUsageNumber(List<ChargeBasisEntry> entries) {
     final Optional<ChargeBasisEntry> maxEntry =
         entries.stream()
             .filter(e -> e.getType() == ChargeBasisType.AREA_USAGE_FEE && e.getTag() != null)
-            .max((e1, e2) -> Integer.compare(getNumberPartAreaUsageTag(e1), getNumberPartAreaUsageTag(e2)));
-    return new AtomicInteger(maxEntry.map(e -> getNumberPartAreaUsageTag(e)).orElse(0));
+            .max(Comparator.comparingInt(this::getNumberPartAreaUsageTag));
+    return new AtomicInteger(maxEntry.map(this::getNumberPartAreaUsageTag).orElse(0));
   }
 
   @Transactional
@@ -208,8 +207,7 @@ public class ChargeBasisService {
    */
   @Transactional(readOnly = true)
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
-    List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(applicationId);
-    return entries;
+    return chargeBasisDao.getChargeBasis(applicationId);
   }
 
   private void validateModificationsAllowed(ChargeBasisModification modification) {
@@ -271,8 +269,8 @@ public class ChargeBasisService {
     List<ChargeBasisEntry> locationEntries = applicationEntries.stream()
       .filter(c -> Objects.equals(locationId, c.getLocationId()) && c.isInvoicable())
       .collect(Collectors.toList());
-    int sum = locationEntries.stream().collect(Collectors.summingInt(le -> getEntryPriceWithDiscounts(le, applicationEntries)));
-    return sum;
+    return locationEntries.stream().mapToInt(le -> getEntryPriceWithDiscounts(le, applicationEntries)).sum();
+
   }
 
   // Calculates price for one charge basis entry with discounts applied
@@ -307,20 +305,21 @@ public class ChargeBasisService {
     }
   }
 
+  @Transactional(readOnly = true)
   public List<ChargeBasisEntry> findSingleInvoiceByApplicationId(int id) {
     // Get calculated entries without dividing to periods
     List<ChargeBasisEntry> calculatedEntries = pricingService.calculateChargeBasisWithoutInvoicingPeriods(applicationDao.findById(id));
     // Sets invoicable value for calculated entries not divided to periods (divided entries must be handled separately since period specific row has different tag)
     calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(chargeBasisDao.isInvoicable(id, e.getTag(), false))));
     // Fetch manual entries from db and add to result.
-    return Stream.concat(calculatedEntries.stream(), getChargeBasis(id).stream().filter(e -> e.getManuallySet()))
+    return Stream.concat(calculatedEntries.stream(), getChargeBasis(id).stream().filter(ChargeBasisEntry::getManuallySet))
         .collect(Collectors.toList());
   }
 
   private List<ChargeBasisEntry> getManualEntries(int applicationId) {
     return chargeBasisDao.getChargeBasis(applicationId)
         .stream()
-        .filter(e -> e.getManuallySet())
+        .filter(ChargeBasisEntry::getManuallySet)
         .collect(Collectors.toList());
   }
 }
