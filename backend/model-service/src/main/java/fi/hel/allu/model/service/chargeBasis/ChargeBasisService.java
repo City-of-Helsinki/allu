@@ -137,11 +137,18 @@ public class ChargeBasisService {
         .map(e -> setAreaUsageTagIfMissing(e, i))
         .collect(Collectors.toList());
     manualEntries.forEach(entry -> setPeriodIfMissing(applicationId, entry));
-
-    ChargeBasisModification modification = updateChargeBasisService.getModifications(
+    List<ChargeBasisEntry> newManualEntries = updateChargeBasisService.getEntriesToAdd(entries,getChargeBasis(applicationId));
+    ChargeBasisModification modification;
+    if (newManualEntries.stream().allMatch(e -> e.getReferredTag() == null)){
+      modification = new ChargeBasisModification(applicationId,newManualEntries,new HashSet<>(),
+        new HashMap<>(), true);
+    }
+    else {
+      modification = updateChargeBasisService.getModifications(
         applicationId,
         manualEntries,
         true);
+    }
     handleModifications(modification);
     return modification.hasChanges();
 

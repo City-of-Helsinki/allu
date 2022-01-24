@@ -44,7 +44,7 @@ public class UpdateChargeBasisService {
     List<ChargeBasisEntry> oldEntries = chargeBasisDao.getChargeBasis(applicationId).stream()
       .filter(e -> e.getManuallySet() == manuallySet).collect(Collectors.toList());
     Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
-    List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
+    List<ChargeBasisEntry> entriesToAdd = getEntriesToAdd(entries,oldEntries);
     transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
     moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
@@ -52,6 +52,9 @@ public class UpdateChargeBasisService {
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
   }
 
+  public List<ChargeBasisEntry> getEntriesToAdd(List<ChargeBasisEntry> entries, List<ChargeBasisEntry> oldEntries){
+    return entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
+  }
 
   /**
    * Returns map containing entries to update - existing entry ID as key and new entry as value
@@ -80,7 +83,7 @@ public class UpdateChargeBasisService {
     return !entry.equals(old);
   }
 
-  private boolean hasEntryWithKey(List<ChargeBasisEntry> entries, ChargeBasisEntry entry) {
+  public boolean hasEntryWithKey(List<ChargeBasisEntry> entries, ChargeBasisEntry entry) {
     return entries.stream().anyMatch(e -> hasSameKey(e, entry));
   }
 
