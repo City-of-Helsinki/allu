@@ -26,7 +26,7 @@ mail_server_host: smtp.gmail.com
 mail_server_port: 587
 mail_server_auth: true
 email_allowed_addresses: "*@vincit.fi,*@hel.fi"
-email_sender_address: Allu Test Aluevaraus <noreply@test.allu.fi>
+email_sender_address: Alueidenkäyttö ja -valvonta Test <noreply@test.allu.fi>
 
 invoice_sending_enabled: true
 invoice_archivedir: /tmp/allu-invoice-archive

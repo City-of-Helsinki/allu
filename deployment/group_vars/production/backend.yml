@@ -26,7 +26,7 @@ mail_server_port: 25
 mail_server_auth: true
 mail_server_starttls_required: true
 email_allowed_addresses: "*@*"
-email_sender_address: Allu <noreply@kaupunkiymparisto.fi>
+email_sender_address: Alueidenkäyttö ja -valvonta <noreply@kaupunkiymparisto.fi>
 
 applicantreminder_cronstring: "0 0 1 * * MON-FRI"
 
