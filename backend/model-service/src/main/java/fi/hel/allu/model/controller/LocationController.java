@@ -165,10 +165,16 @@ public class LocationController {
 
   @RequestMapping(value = "/city-districts/{cityDistrictId}/supervisor/{type}", method = RequestMethod.GET)
   public ResponseEntity<User> findSupervisionTaskOwner(@PathVariable int cityDistrictId, @PathVariable ApplicationType type) {
+    if (!type.equals(ApplicationType.CABLE_REPORT)){
     final Optional<User> optUser = locationService.findSupervisionTaskOwner(type, cityDistrictId);
-    return optUser
+      return optUser
         .map(user -> ResponseEntity.ok(user))
         .orElseThrow(() -> new NoSuchEntityException("Didn't find supervisor for citydistrict=" + cityDistrictId + " and applicationType=" + type));
+
+    }
+    else {
+      return ResponseEntity.ok(new User());
+    }
   }
 
   @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)
