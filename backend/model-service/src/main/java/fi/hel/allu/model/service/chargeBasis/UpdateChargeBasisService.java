@@ -46,10 +46,19 @@ public class UpdateChargeBasisService {
     Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
     List<ChargeBasisEntry> entriesToAdd = getEntriesToAdd(entries,oldEntries);
     transferInvoicableStatusFromOldToNew(oldEntries, entriesToAdd);
-    Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
+    Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe) && isNotLocked(oe)).map(ChargeBasisEntry::getId).collect(Collectors.toSet());
     moveOldLockedEntriesToEntriesBeingAdded(oldEntries, entriesToAdd, entriesToUpdate);
     entriesToUpdate.putAll(getUpdatedManuallySetReferencingEntries(applicationId, entriesToAdd, oldEntries));
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
+  }
+
+  private boolean isNotLocked(ChargeBasisEntry entry){
+    if (entry.getLocked() == null){
+      return true;
+    }
+    else {
+      return !entry.getLocked();
+    }
   }
 
   public List<ChargeBasisEntry> getEntriesToAdd(List<ChargeBasisEntry> entries, List<ChargeBasisEntry> oldEntries){
@@ -64,7 +73,7 @@ public class UpdateChargeBasisService {
     Map<Integer, ChargeBasisEntry> result = new HashMap<>();
     for (ChargeBasisEntry e : entries) {
       ChargeBasisEntry existing = getExistingEntry(e, oldEntries);
-      if (existing != null && hasChanges(e, existing)) {
+      if (existing != null && hasChanges(e, existing) ) {
         result.put(existing.getId(), e);
       }
     }
@@ -163,7 +172,7 @@ public class UpdateChargeBasisService {
     List<Integer> updatedEntries = new ArrayList<>();
     for (ChargeBasisEntry adding : newParentEntries) {
       Optional<ChargeBasisEntry> oldOptional = oldParentEntries.stream()
-        .filter(old -> adding.equalContent(old, locationMap) && !updatedEntries.contains(old.getId()))
+        .filter(old -> adding.equalContent(old, locationMap) && !updatedEntries.contains(old.getId()) && koe(old, adding))
         .findAny();
       oldOptional.ifPresent(old -> adding.setInvoicable(old.isInvoicable()));
       oldOptional.ifPresent(old -> adding.setLocked(old.getLocked()));
@@ -178,6 +187,13 @@ public class UpdateChargeBasisService {
         }
       }
     }
+  }
+
+  private boolean koe(ChargeBasisEntry old, ChargeBasisEntry adding){
+    if(old.getManuallySet()){
+      return hasSameKey(old, adding);
+    }
+    return true;
   }
 
   private List<ChargeBasisEntry> getParentEntries(List<ChargeBasisEntry> entries) {
