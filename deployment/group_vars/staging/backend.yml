@@ -21,6 +21,7 @@ search_service_port: 9020
 pdf_service_host: localhost
 pdf_service_port: 9030
 
+mail_default_encoding: UTF-8
 mail_server_host: smtp.sendgrid.net
 mail_server_port: 25
 mail_server_auth: true
