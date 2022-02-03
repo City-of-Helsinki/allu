@@ -23,8 +23,8 @@
       </div>
       <div class="department">
         <p>Kaupunkiympäristö</p>
-        <p>Alueidenkäyttö ja -valvonta</p>
-        <p>yksikön päällikkö</p>
+        <p>Alueiden käyttö ja -valvontayksikön katutyö- ja </p>
+        <p>sijaintitiimin tiimipäällikkö</p>
       </div>
       <div class="half-right">
         <h1>Pöytäkirja</h1>
@@ -60,7 +60,8 @@
         <section>
           <h2>Päätös</h2>
           <p class="indented space-above">
-            Yksikön päällikkö päätti hyväksyä ja allekirjoittaa sopimuksen <xsl:value-of select="data/decisionId"/> koskien
+            Alueiden käyttö ja -valvontayksikön katutyö- ja ja sijaintitiimin tiimipäällikkö päätti hyväksyä
+            ja allekirjoittaa sopimuksen <xsl:value-of select="data/decisionId"/> koskien
             rakenteiden sijoittamista kaupungin yleiselle alueelle.</p>
           <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
           <p class="indented">
@@ -111,9 +112,11 @@
         <section>
           <h2>Lisätiedot</h2>
           <p class="indented space-above">
-            Kaupunkiympäristön alueidenkäyttö<br/>
-            alueidenkaytto@hel.fi, 09 310 22111<br/>
-            Sörnäistenkatu 1, 00580 Helsinki
+            Kaupunkiympäristö/Alueidenkäyttö ja -valvonta<br/>
+            Työpajankatu 8<br/>
+            PL 58231, 00099 Helsingin kaupunki<br/>
+            asiakaspalvelu puh. (09) 310 22111<br/>
+            sähköposti alueidenkaytto@hel.fi
           </p>
         </section>
       </div>

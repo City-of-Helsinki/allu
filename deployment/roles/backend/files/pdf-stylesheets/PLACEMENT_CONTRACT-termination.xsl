@@ -112,7 +112,7 @@
             <div class="unboxed avoid-pb">
               <section>
                 <h2>Päätös</h2>
-                <p class="indented space-above">Alueidenkäyttö ja -valvonta yksikön päällikkö päätti irtisanoa sijoitussopimuksen.</p>
+                <p class="indented space-above">Alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikkö päätti irtisanoa sijoitussopimuksen.</p>
                 <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
                 <p class="indented space-above">
                   <xsl:value-of select="data/decisionTimestamp"/>,

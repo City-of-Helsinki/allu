@@ -182,8 +182,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             poistetuista rakenteista, laitteista ja johdoista on ilmoitettava kaupunkiympäristön
             kaupunkimittauspalveluille.</li>
 
-            <li>Mikäli alueiden käytön ja valvonnan yksikön päällikön päätös kumoutuu tai muuttuu
-            oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka jos
+            <li>Mikäli alueiden käyttö ja -valvontayksikön katutyön- ja sijaintitiimin tiimipäällikön päätös kumoutuu
+              tai muuttuu oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka jos
             oikaisuvaatimuksen käsittelevä toimielin tai viranomainen kieltää täytäntöönpanon, katsotaan
             sopimus purkautuneeksi. Kaupunki ei vastaa sopimusosapuolille aiheutuneista kustannuksista,
             mikäli sopimus edellä mainitun mukaisesti katsotaan purkautuneeksi.</li>
@@ -196,8 +196,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <h2>Sopimuksen allekirjoitukset</h2>
 
           <xsl:if test="data/draft = 'false'">
-            <p class="indented">Helsingin kaupungin puolesta alueidenkäyttö ja -valvonta yksikön päällikkö on
-                                allekirjoittanut tämän asiakirjan sähköisesti</p>
+            <p class="indented">Helsingin kaupungin puolesta alueiden käyttö ja -valvontayksikön katutyö- ja sijaintitiimin
+              tiimipäällikkö on allekirjoittanut tämän asiakirjan sähköisesti</p>
             <p class="indented">
               <xsl:value-of select="data/decisionTimestamp"/>,
               <xsl:value-of select="data/deciderTitle"/>,
