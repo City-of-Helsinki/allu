@@ -35,7 +35,7 @@ public class PaymentClassServiceTest {
           "xsi:schemaLocation=\"http://www.opengis.net/wfs " +
           "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd " +
           "https://www.hel.fi/hel " +
-          "https://kartta.hel.fi/ws/geoserver/wfs?service=WFS&amp;version=1.0.0&amp;request=DescribeFeatureType&amp;typeName=helsinki%3AKatutoiden_maksuluokat\">" +
+          "https://kartta.hel.fi/ws/geoserver/helsinki/wfs?service=WFS&amp;version=1.0.0&amp;request=DescribeFeatureType&amp;typeName=helsinki%3AKatutoiden_maksuluokat\">" +
         "<gml:boundedBy><gml:null>unknown</gml:null></gml:boundedBy>" +
         PAYMENT_CLASSES +
       "</wfs:FeatureCollection>";
