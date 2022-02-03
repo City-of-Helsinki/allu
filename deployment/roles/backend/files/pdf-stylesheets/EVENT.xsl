@@ -305,7 +305,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           Hakija on hakenut oikeutta alueen käyttöön, toimittanut hakemuksen liitteineen asukas- ja yrityspalveluihin ja ilmoittanut sitoutuvansa alueen käyttöä koskevaan ohjeistukseen sekä sopimusehtoihin.
         </p>
         <p class="space-above">
-          Alueidenkäyttö ja -valvontayksikön tiimipäällikkö päätti myöntää luvan hakijalle haetun alueen käyttämiseen yllä olevin ehdoin.
+          Alueiden käyttö ja –valvontayksikön tapahtumat ja maanvuokraus –tiimin tiimipäällikkö päätti
+          myöntää luvan hakijalle haetun alueen käyttämiseen yllä olevin ehdoin.
         </p>
         <p class="space-above">
           Tämä päätös on sähköisesti allekirjoitettu.
