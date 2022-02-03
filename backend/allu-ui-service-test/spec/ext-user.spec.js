@@ -11,7 +11,7 @@ describe('Create external user', () => {
       'name': 'Ext User',
       'password': '#alk#%355245lAAA_z24',
       'active': 'true',
-      'expirationTime': '2022-07-07T00:00:00.000Z',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserRkj = {
@@ -20,7 +20,7 @@ describe('Create external user', () => {
       'name': 'RKJ Ext User',
       'password': 'Alk354_3#085pU_24YpA',
       'active': 'true',
-      'expirationTime': '2022-07-07T00:00:00.000Z',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserHsy = {
@@ -29,7 +29,7 @@ describe('Create external user', () => {
       'name': 'HSY Ext User',
       'password': 'as#33_24DFgh_AEfott3',
       'active': 'true',
-      'expirationTime': '2022-07-07T00:00:00.000Z',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserInternal  = {
@@ -38,7 +38,7 @@ describe('Create external user', () => {
       'name': 'Internal Ext User',
       'password': 'asdk#AER5320_23GtuOi',
       'active': 'true',
-      'expirationTime': '2022-07-07T00:00:00.000Z',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_INTERNAL']
     }
     const extUserIbmE  = {
@@ -59,6 +59,15 @@ describe('Create external user', () => {
       'expirationTime': '2022-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
+    const extUserHaitaton = {
+      'id': null,
+      'username': 'ext-user-haitaton',
+      'name': 'Haitaton Ext User',
+      'password': 'h5Q492A*iJVSpUufSFO6',
+      'active': 'true',
+      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'assignedRoles': ['ROLE_TRUSTED_PARTNER']
+    }
 
     let optionsTestUser = TestUtil.getPostOptions('/api/externalusers', extUser);
     let optionsTestUserRkj = TestUtil.getPostOptions('/api/externalusers', extUserRkj);
@@ -66,6 +75,7 @@ describe('Create external user', () => {
     let optionsTestUserInternal = TestUtil.getPostOptions('/api/externalusers', extUserInternal);
     let optionsTestUserIbmE = TestUtil.getPostOptions('/api/externalusers', extUserIbmE);
     let optionsTestUserHelen = TestUtil.getPostOptions('/api/externalusers', extUserHelen);
+    let optionsTestUserHaitaton = TestUtil.getPostOptions('/api/externalusers', extUserHaitaton);
     TestUtil.login('admin')
       .then(token => {
         TestUtil.addAuthorization(optionsTestUser, token);
@@ -74,6 +84,7 @@ describe('Create external user', () => {
         TestUtil.addAuthorization(optionsTestUserInternal, token);
         TestUtil.addAuthorization(optionsTestUserIbmE, token);
         TestUtil.addAuthorization(optionsTestUserHelen, token);
+        TestUtil.addAuthorization(optionsTestUserHaitaton, token);
       })
       .then(() => rp(optionsTestUser))
       .then(() => rp(optionsTestUserRkj))
@@ -81,6 +92,7 @@ describe('Create external user', () => {
       .then(() => rp(optionsTestUserInternal))
       .then(() => rp(optionsTestUserIbmE))
       .then(() => rp(optionsTestUserHelen))
+      .then(() => rp(optionsTestUserHaitaton))
       .then(done, done.fail);
   });
 
