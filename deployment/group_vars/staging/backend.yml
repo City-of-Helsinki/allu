@@ -22,13 +22,12 @@ pdf_service_host: localhost
 pdf_service_port: 9030
 
 mail_default_encoding: UTF-8
-mail_allow_utf8: true
 mail_server_host: smtp.sendgrid.net
 mail_server_port: 25
 mail_server_auth: true
 mail_server_starttls_required: true
 email_allowed_addresses: "*@vincit.fi,*@hel.fi,*@geometrix.fi"
-email_sender_address: Alueidenkäyttö ja -valvonta Staging <noreply@kaupunkiymparisto.fi>
+email_sender_address: Alueidenkaytto ja -valvonta Staging <noreply@kaupunkiymparisto.fi>
 
 invoice_cronstring: "0 0 0 24 4 ?"
 invoice_sending_enabled: false
