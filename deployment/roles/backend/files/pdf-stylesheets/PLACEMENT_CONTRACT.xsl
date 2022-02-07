@@ -24,7 +24,7 @@
       <div class="department">
         <p>Kaupunkiympäristö</p>
         <p>Alueiden käyttö ja -valvontayksikön katutyö- ja </p>
-        <p>sijaintitiimin tiimipäällikkö</p>
+        <p>sijaintipalveluiden tiimipäällikkö</p>
       </div>
       <div class="half-right">
         <h1>Pöytäkirja</h1>
@@ -60,7 +60,7 @@
         <section>
           <h2>Päätös</h2>
           <p class="indented space-above">
-            Alueiden käyttö ja -valvontayksikön katutyö- ja ja sijaintitiimin tiimipäällikkö päätti hyväksyä
+            Alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikkö päätti hyväksyä
             ja allekirjoittaa sopimuksen <xsl:value-of select="data/decisionId"/> koskien
             rakenteiden sijoittamista kaupungin yleiselle alueelle.</p>
           <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
