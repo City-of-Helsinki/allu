@@ -112,7 +112,7 @@
             <div class="unboxed avoid-pb">
               <section>
                 <h2>Päätös</h2>
-                <p class="indented space-above">Alueiden käyttö ja –valvontayksikön tapahtumat ja maanvuokraus–tiimin
+                <p class="indented space-above">Alueiden käyttö ja –valvontayksikön tapahtumat ja maanvuokraus –tiimin
                   tiimipäällikkö päätti irtisanoa vuokrauspäätöksen.</p>
                 <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
                 <p class="indented space-above">
