@@ -182,7 +182,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             poistetuista rakenteista, laitteista ja johdoista on ilmoitettava kaupunkiympäristön
             kaupunkimittauspalveluille.</li>
 
-            <li>Mikäli alueiden käyttö ja -valvontayksikön katutyön- ja sijaintipalveluiden tiimipäällikön päätös kumoutuu
+            <li>Mikäli alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikön päätös kumoutuu
               tai muuttuu oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka jos
             oikaisuvaatimuksen käsittelevä toimielin tai viranomainen kieltää täytäntöönpanon, katsotaan
             sopimus purkautuneeksi. Kaupunki ei vastaa sopimusosapuolille aiheutuneista kustannuksista,
