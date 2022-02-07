@@ -196,7 +196,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <h2>Sopimuksen allekirjoitukset</h2>
 
           <xsl:if test="data/draft = 'false'">
-            <p class="indented">Helsingin kaupungin puolesta alueiden käyttö ja -valvontayksikön katutyö- ja sijaintitiimin
+            <p class="indented">Helsingin kaupungin puolesta alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden
               tiimipäällikkö on allekirjoittanut tämän asiakirjan sähköisesti</p>
             <p class="indented">
               <xsl:value-of select="data/decisionTimestamp"/>,
