@@ -109,11 +109,19 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyShortTermRentalApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
+    app.setType(ApplicationType.SHORT_TERM_RENTAL);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OTHER, Collections.emptyList()));
+    app.setExtension(dummyShortTermRental());
+    return app;
+  }
+
   public Application dummyBridgeBannerApplication(String name, String owner) {
     Application app = dummyBasicApplication(name, owner);
     app.setType(ApplicationType.SHORT_TERM_RENTAL);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.BRIDGE_BANNER, Collections.emptyList()));
-    app.setExtension(dummyBridgeBannerEvent());
+    app.setExtension(dummyShortTermRental());
     return app;
   }
 
@@ -155,7 +163,7 @@ public class TestCommon {
     return event;
   }
 
-  public ApplicationExtension dummyBridgeBannerEvent() {
+  public ApplicationExtension dummyShortTermRental() {
     ShortTermRental shortTermRental = new ShortTermRental();
     shortTermRental.setDescription("desc");
     shortTermRental.setCommercial(true);
