@@ -28,6 +28,7 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
   surfaceHardnessSelectable: boolean;
   ecoCompassSelectable: boolean;
   distanceFromWallSelectable: boolean;
+  distanceFromWallSelectedDefault: boolean;
 
   private billableSalesAreaControl: FormControl;
 
@@ -46,6 +47,11 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
 
     this.distanceFromWallSelectable = [
       ApplicationKind.PROMOTION_OR_SALES,
+      ApplicationKind.SUMMER_TERRACE,
+      ApplicationKind.WINTER_TERRACE
+    ].indexOf(this.application.kind) >= 0;
+
+    this.distanceFromWallSelectedDefault = [
       ApplicationKind.SUMMER_TERRACE,
       ApplicationKind.WINTER_TERRACE
     ].indexOf(this.application.kind) >= 0;

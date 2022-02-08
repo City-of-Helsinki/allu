@@ -42,7 +42,7 @@
       </div>
       <div fxLayout="row" *ngIf="distanceFromWallSelectable">
         <div fxFlex="0 0 auto">
-          <mat-slide-toggle formControlName="billableSalesArea">
+          <mat-slide-toggle formControlName="billableSalesArea" [ngModel]="distanceFromWallSelectedDefault">
             {{'application.pricing.distanceFromWallOver80' | translation}}
           </mat-slide-toggle>
         </div>
