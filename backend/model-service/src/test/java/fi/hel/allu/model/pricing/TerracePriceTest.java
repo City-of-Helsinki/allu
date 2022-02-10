@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class TerracePriceTest {
 
+  private final int STEP_SIZE = 12;
+
   @Autowired
   private TestCommon testCommon;
 
@@ -77,41 +79,41 @@ class TerracePriceTest {
   void test_getSteppedBillableArea11() {
     Application application = testCommon.dummyShortTermRentalApplication("Stepped test 1", "Owner");
     TerracePrice terracePrice = new TerracePrice(15, 11, ZonedDateTime.now(), ZonedDateTime.now(), application);
-    assertEquals(12, terracePrice.getSteppedBillableArea());
+    assertEquals(12, terracePrice.getSteppedBillableArea(STEP_SIZE));
   }
 
   @Test
   void test_getSteppedBillableArea12() {
     Application application = testCommon.dummyShortTermRentalApplication("Stepped test 2", "Owner");
     TerracePrice terracePrice = new TerracePrice(15, 12, ZonedDateTime.now(), ZonedDateTime.now(), application);
-    assertEquals(12, terracePrice.getSteppedBillableArea());
+    assertEquals(12, terracePrice.getSteppedBillableArea(STEP_SIZE));
   }
 
   @Test
   void test_getSteppedBillableArea13() {
     Application application = testCommon.dummyShortTermRentalApplication("Stepped test 3", "Owner");
     TerracePrice terracePrice = new TerracePrice(15, 13, ZonedDateTime.now(), ZonedDateTime.now(), application);
-    assertEquals(24, terracePrice.getSteppedBillableArea());
+    assertEquals(24, terracePrice.getSteppedBillableArea(STEP_SIZE));
   }
 
   @Test
   void test_getSteppedBillableArea23() {
     Application application = testCommon.dummyShortTermRentalApplication("Stepped test 4", "Owner");
     TerracePrice terracePrice = new TerracePrice(15, 23, ZonedDateTime.now(), ZonedDateTime.now(), application);
-    assertEquals(24, terracePrice.getSteppedBillableArea());
+    assertEquals(24, terracePrice.getSteppedBillableArea(STEP_SIZE));
   }
 
   @Test
   void test_getSteppedBillableArea24() {
     Application application = testCommon.dummyShortTermRentalApplication("Stepped test 5", "Owner");
     TerracePrice terracePrice = new TerracePrice(15, 24, ZonedDateTime.now(), ZonedDateTime.now(), application);
-    assertEquals(24, terracePrice.getSteppedBillableArea());
+    assertEquals(24, terracePrice.getSteppedBillableArea(STEP_SIZE));
   }
 
   @Test
   void test_getSteppedBillableArea25() {
     Application application = testCommon.dummyShortTermRentalApplication("Stepped test 6", "Owner");
     TerracePrice terracePrice = new TerracePrice(15, 25, ZonedDateTime.now(), ZonedDateTime.now(), application);
-    assertEquals(36, terracePrice.getSteppedBillableArea());
+    assertEquals(36, terracePrice.getSteppedBillableArea(STEP_SIZE));
   }
 }

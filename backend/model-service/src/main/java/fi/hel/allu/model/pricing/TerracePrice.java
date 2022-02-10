@@ -72,14 +72,14 @@ public class TerracePrice {
 
   public int getMonthlyPrice() {
     if (ApplicationKind.PARKLET.equals(application.getKind())) {
-      return getSteppedBillableArea() * unitPrice;
+      return getSteppedBillableArea(12) * unitPrice;
     }
     return billableArea * unitPrice;
   }
 
-  public int getSteppedBillableArea() {
-    int addOneIfRemainder = (billableArea % 12) == 0 ? 0 : 1;
-    return ((billableArea / 12) + addOneIfRemainder) * 12;
+  public int getSteppedBillableArea(int stepSize) {
+    int addOneIfRemainder = (billableArea % stepSize) == 0 ? 0 : 1;
+    return ((billableArea / stepSize) + addOneIfRemainder) * stepSize;
   }
 
   public int getNetPrice() {
