@@ -20,7 +20,7 @@ public class TerracePrice {
   private static enum TerracePriceInfo {
     SUMMER_TERRACE(ApplicationKind.SUMMER_TERRACE, ChargeBasisTag::SummerTerrace, "Kesäterassi, maksuvyöhyke %s, %.2f EUR/m²/kk"),
     WINTER_TERRACE(ApplicationKind.WINTER_TERRACE, ChargeBasisTag::WinterTerrace, "Talviterassi, maksuvyöhyke %s, %.2f EUR/m²/kk"),
-    PARKLET(ApplicationKind.PARKLET, ChargeBasisTag::Parklet, "Parklet, maksuvyöhyke %s, %.2f EUR/m²/kk");
+    PARKLET(ApplicationKind.PARKLET, ChargeBasisTag::Parklet, "Parklet, %.2f EUR/m²/kk/alkava 12m²");
 
     private final ApplicationKind kind;
     private final Function<Integer, ChargeBasisTag> tagGetter;
@@ -35,6 +35,11 @@ public class TerracePrice {
 
     private static ChargeBasisTag tag(ApplicationKind kind, Integer invoicingPeriod) {
       return forApplicationKind(kind).tagGetter.apply(invoicingPeriod);
+    }
+
+    private static String parkletInvoiceLineText(ApplicationKind kind, int unitPriceInCents) {
+      return String.format(DEFAULT_LOCALE, forApplicationKind(kind).invoiceLineText,
+        unitPriceInCents / 100.0);
     }
 
     private static String invoiceLineText(ApplicationKind kind, String paymentClass, int unitPriceInCents) {
@@ -106,6 +111,10 @@ public class TerracePrice {
 
   public ChargeBasisTag getTag() {
     return TerracePriceInfo.tag(application.getKind(), invoicingPeriodId);
+  }
+
+  public String getParkletInvoiceLineText() {
+    return TerracePriceInfo.parkletInvoiceLineText(application.getKind(), unitPrice);
   }
 
   public String getInvoiceLineText() {

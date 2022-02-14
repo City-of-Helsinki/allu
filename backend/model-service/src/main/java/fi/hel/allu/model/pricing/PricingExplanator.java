@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
@@ -11,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Helper class for generating pricing explanation lines based on location.
  */
 public class PricingExplanator {
   private static final int EXPLANATION_MAX_LENGTH = 70;
+  private static final Locale DEFAULT_LOCALE = new Locale("fi", "FI");
 
   private final LocationDao locationDao;
 
@@ -56,22 +59,32 @@ public class PricingExplanator {
     } else if (locations.isEmpty()) {
       return Collections.emptyList();
     }
+    if (ApplicationKind.PARKLET.equals(application.getKind())) {
+      return formatExplanation(locations.get(0), true, customPeriod);
+    }
     return formatExplanation(locations.get(0), customPeriod);
   }
 
   private List<String> formatExplanation(Location location, String customPeriod) {
+    return formatExplanation(location, false, customPeriod);
+  }
+
+  private List<String> formatExplanation(Location location, boolean includePaymentClass, String customPeriod) {
     final List<FixedLocation> fixedLocations = new ArrayList<>();
     location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fl -> fixedLocations.add(fl)));
     final String fixedLocation = Printable.forFixedLocations(fixedLocations);
     final String locationAddress = Printable.forPostalAddress(location.getPostalAddress());
     final String address = fixedLocation.length() > 0 ? fixedLocation : locationAddress;
 
+    final String paymentClass = includePaymentClass ?
+      String.format(DEFAULT_LOCALE, ", maksuvyöhyke %s", location.getEffectivePaymentTariff()) : "";
+
     final String period = customPeriod != null ? customPeriod :
         Printable.forDayPeriod(location.getStartTime(), location.getEndTime());
 
     final String area = ((int)Math.ceil(location.getEffectiveArea())) + "m²";
 
-    final String explanation = address + " (" + period + "), " + area;
+    final String explanation = address + paymentClass + " (" + period + "), " + area;
     return limitExplanationRowLength(explanation);
   }
 

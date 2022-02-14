@@ -6,9 +6,10 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
-import org.geolatte.geom.builder.DSL;
+import fi.hel.allu.model.domain.util.Printable;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -17,8 +18,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
-import static org.geolatte.geom.builder.DSL.*;
-import static org.geolatte.geom.builder.DSL.c;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,20 +33,45 @@ public class ShortTermRentalPricingTest {
 
   private ShortTermRentalPricing shortTermRentalPricing;
 
+  private Location location;
+
   @Mock
   private PricingDao pricingDao;
   @Mock
   private PricingExplanator pricingExplanator;
   @Mock
+  private LocationDao locationDao;
+  private PricingExplanator properPricingExplanator;
+  @Mock
   private TerminationDao terminationDao;
 
   private Application application;
+  private Application parkletApplication;
   private List<InvoicingPeriod> invoicingPeriods;
 
   @Before
   public void setUp() {
+    properPricingExplanator = new PricingExplanator(locationDao);
     createApplication();
+    createParkletApplication();
+    createLocation();
     invoicingPeriods = null;
+  }
+
+  @Test
+  public void shouldFormatParkletTextAndExplanationCorrect() {
+    ShortTermRental str = (ShortTermRental) parkletApplication.getExtension();
+    str.setBillableSalesArea(false);
+    parkletApplication.setExtension(str);
+    setShortTermRentalPricingWithLocationAndProperPricingExplanator();
+    when(locationDao.findByApplication(anyInt())).thenReturn(Collections.singletonList(location));
+    shortTermRentalPricing.calculatePrice();
+    Assertions.assertEquals(1, shortTermRentalPricing.getChargeBasisEntries().size(), "No chargeBasis objects created");
+    String[] actualExplanation = shortTermRentalPricing.getChargeBasisEntries().get(0).getExplanation();
+    Assertions.assertEquals("Testikatu 42, maksuvyöhyke 3" +
+        " (" + formatPeriod(parkletApplication) + "), " +
+        ((int)Math.ceil(location.getEffectiveArea())) + "m²",
+      actualExplanation[0]);
   }
 
   @Test
@@ -112,9 +136,42 @@ public class ShortTermRentalPricingTest {
     return application;
   }
 
+  private Application createParkletApplication() {
+    parkletApplication = new Application();
+    parkletApplication.setId(APPLICATION_ID);
+    parkletApplication.setType(ApplicationType.SHORT_TERM_RENTAL);
+    ShortTermRental str = new ShortTermRental();
+    str.setBillableSalesArea(true);
+    parkletApplication.setExtension(str);
+    parkletApplication.setKind(ApplicationKind.PARKLET);
+    parkletApplication.setStartTime(TERMINATION_DATE.withYear(PERIODS_START_YEAR).withMonth(PERIOD_START_MONTH).with(lastDayOfMonth()));
+    parkletApplication.setEndTime(TERMINATION_DATE.withYear(PERIODS_END_YEAR).withMonth(PERIOD_END_MONTH).with(lastDayOfMonth()));
+    return parkletApplication;
+  }
+
   private void setShortTermRentalPricing() {
     shortTermRentalPricing = new ShortTermRentalPricing(application, pricingExplanator, pricingDao, terminationDao,
       0, true, invoicingPeriods, Collections.emptyList());
+  }
+
+  private void setShortTermRentalPricingWithLocationAndProperPricingExplanator() {
+    parkletApplication.setLocations(Collections.singletonList(location));
+    shortTermRentalPricing = new ShortTermRentalPricing(parkletApplication, properPricingExplanator, pricingDao, terminationDao,
+      location.getArea(), true, invoicingPeriods, Collections.singletonList(location));
+  }
+
+  private void createLocation() {
+    location = new Location();
+    location.setArea(new Double("14.0"));
+    location.setPaymentTariff("3");
+    location.setPostalAddress(new PostalAddress("Testikatu 42", null, null));
+    location.setStartTime(application.getStartTime());
+    location.setEndTime(application.getEndTime());
+    location.setFixedLocationIds(Collections.emptyList());
+  }
+
+  private String formatPeriod(Application application) {
+    return Printable.forDayPeriod(application.getStartTime(), application.getEndTime());
   }
 
   private void setApplicationRecurring() {

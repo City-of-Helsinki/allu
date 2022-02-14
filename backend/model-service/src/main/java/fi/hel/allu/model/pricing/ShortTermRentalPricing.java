@@ -305,7 +305,9 @@ public class ShortTermRentalPricing extends Pricing {
 
   private void addTerracePeriodPrice(TerracePrice price) {
     addChargeBasisEntry(price.getTag(), ChargeBasisUnit.MONTH, price.getNumberOfBillableMonths(),
-        price.getMonthlyPrice(), price.getInvoiceLineText(), price.getNetPrice(),
+        price.getMonthlyPrice(),
+        ApplicationKind.PARKLET.equals(application.getKind()) ? price.getParkletInvoiceLineText() : price.getInvoiceLineText(),
+        price.getNetPrice(),
         explanationService.getExplanationWithCustomPeriod(application, price.getPricePeriod()),
         null, price.getInvoicingPeriodId(), null);
     setPriceInCents(getPriceInCents() + price.getNetPrice());
