@@ -159,7 +159,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </p>
             </xsl:otherwise>
           </xsl:choose>
-          <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 1.2.2022 § 51.</p>
+          <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.5.2018 § 238
+            tai 15.1.2019 § 15 tai 1.2.2022 § 51.</p>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
             <p class="space-above">Lasku lähetetään erikseen.</p>
