@@ -1,6 +1,7 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
@@ -8,6 +9,7 @@ import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.util.Printable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +19,7 @@ import java.util.Locale;
 /**
  * Helper class for generating pricing explanation lines based on location.
  */
+@Service
 public class PricingExplanator {
   private static final int EXPLANATION_MAX_LENGTH = 70;
   private static final Locale DEFAULT_LOCALE = new Locale("fi", "FI");
@@ -59,7 +62,8 @@ public class PricingExplanator {
     } else if (locations.isEmpty()) {
       return Collections.emptyList();
     }
-    if (ApplicationKind.PARKLET.equals(application.getKind())) {
+    // Check type also, as excavations may have multiple kinds and getKind() throws an exception if more than 1 exist
+    if (ApplicationType.SHORT_TERM_RENTAL.equals(application.getType()) && ApplicationKind.PARKLET.equals(application.getKind())) {
       return formatExplanation(locations.get(0), true, customPeriod);
     }
     return formatExplanation(locations.get(0), customPeriod);
@@ -71,7 +75,7 @@ public class PricingExplanator {
 
   private List<String> formatExplanation(Location location, boolean includePaymentClass, String customPeriod) {
     final List<FixedLocation> fixedLocations = new ArrayList<>();
-    location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fl -> fixedLocations.add(fl)));
+    location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fixedLocations::add));
     final String fixedLocation = Printable.forFixedLocations(fixedLocations);
     final String locationAddress = Printable.forPostalAddress(location.getPostalAddress());
     final String address = fixedLocation.length() > 0 ? fixedLocation : locationAddress;
