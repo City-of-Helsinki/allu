@@ -1,8 +1,9 @@
 package fi.hel.allu.servicecore.service;
 
 import org.geolatte.geom.Geometry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -17,8 +18,9 @@ import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 import java.time.ZonedDateTime;
 
 import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaymentZoneServiceTest {
 
   private static final Geometry GEOMETRY = geometrycollection(3879, polygon(ring(
@@ -61,7 +63,7 @@ public class PaymentZoneServiceTest {
   private static final String URL = "https://geoserver";
 
 
-  @Before
+  @BeforeAll
   public void setup() {
     MockitoAnnotations.initMocks(this);
     paymentZoneService = new PaymentZoneServiceImpl(applicationProperties, restTemplate);

@@ -8,9 +8,11 @@ import static org.geolatte.geom.builder.DSL.c;
 import static org.geolatte.geom.builder.DSL.geometrycollection;
 import static org.geolatte.geom.builder.DSL.polygon;
 import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaymentClassServiceTest {
   private static final String PAYMENT_CLASSES = "<payment_classes>";
   private static final String PAYMENT_CLASS = "<payment_class>";
@@ -70,7 +73,7 @@ public class PaymentClassServiceTest {
   private AsyncWfsRestTemplate restTemplate;
   private PaymentClassService paymentClassService;
 
-  @Before
+  @BeforeAll
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getPaymentClassUrl()).thenReturn("paymentclass");
