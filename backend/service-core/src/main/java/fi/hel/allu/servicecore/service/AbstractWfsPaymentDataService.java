@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.service;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -99,7 +100,7 @@ public abstract class AbstractWfsPaymentDataService {
           applicationProperties.getPaymentClassUrl(),
           HttpMethod.POST,
           requestEntity,
-          String.class)).forEachOrdered(response -> responseFutures.add(response));
+          String.class)).forEachOrdered(responseFutures::add);
     return responseFutures;
   }
 
@@ -122,7 +123,7 @@ public abstract class AbstractWfsPaymentDataService {
       }
       return coordinateArray;
     } else {
-      return Arrays.asList(getCoordinates(location.getGeometry()));
+      return Collections.singletonList(getCoordinates(location.getGeometry()));
     }
   }
 

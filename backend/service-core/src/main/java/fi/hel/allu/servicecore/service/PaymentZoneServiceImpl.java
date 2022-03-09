@@ -39,7 +39,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
         .filter(p -> p.featureMember != null)
         .flatMap(x -> x.featureMember.stream())
         .map(p -> p.paymentZone.getPaymentZone())
-        .filter(z -> StringUtils.isNotBlank(z))
+        .filter(StringUtils::isNotBlank)
         .sorted()
         .findFirst().orElse(DEFAULT_PAYMENT_ZONE);
   }

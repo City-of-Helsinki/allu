@@ -131,8 +131,7 @@ public class PaymentClassServiceTest {
   private String createResponse(List<String> paymentClasses) {
     final StringBuilder builder = new StringBuilder();
     paymentClasses.forEach(p -> builder.append(MEMBER.replaceFirst(PAYMENT_CLASS, p)));
-    String r = RESPONSE.replaceFirst(PAYMENT_CLASSES, builder.toString());
-    return r;
+    return RESPONSE.replaceFirst(PAYMENT_CLASSES, builder.toString());
   }
 
   private LocationJson createLocation(Geometry geometry) {
