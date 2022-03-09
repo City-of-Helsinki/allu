@@ -59,4 +59,9 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   protected String getFeaturePropertyName() {
     return FEATURE_PROPERTY_NAME;
   }
+
+  @Override
+  protected String getFeaturePropertyNameNew() {
+    return getFeaturePropertyName() + "_2022";
+  }
 }

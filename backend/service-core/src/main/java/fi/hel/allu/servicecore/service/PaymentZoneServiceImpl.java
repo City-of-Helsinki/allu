@@ -53,4 +53,9 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   protected String getFeaturePropertyName() {
     return FEATURE_PROPERTY_NAME;
   }
+
+  @Override
+  protected String getFeaturePropertyNameNew() {
+    return getFeaturePropertyName();
+  }
 }

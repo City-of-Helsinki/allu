@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,11 +66,12 @@ public abstract class AbstractWfsPaymentDataService {
   protected abstract String parseResult(List<String> responses);
   protected abstract String getFeatureTypeName();
   protected abstract String getFeaturePropertyName();
+  protected abstract String getFeaturePropertyNameNew();
 
   protected String executeWfsRequest(LocationJson location) {
     final List<String> coordinateArray = getCoordinates(location);
     final List<String> requests = coordinateArray.stream()
-        .map(c -> getRequest().replaceFirst(COORDINATES, c)).collect(Collectors.toList());
+        .map(c -> getRequest(location).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
       final List<String> responses = collectResponses(responseFutures);
@@ -80,7 +82,10 @@ public abstract class AbstractWfsPaymentDataService {
     }
   }
 
-  private String getRequest() {
+  private String getRequest(LocationJson location) {
+    if (location.getStartTime().isBefore(ZonedDateTime.now(location.getStartTime().getZone()).withYear(2022).withMonth(4).withDayOfMonth(1))) {
+      return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyNameNew());
+    }
     return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
   }
 

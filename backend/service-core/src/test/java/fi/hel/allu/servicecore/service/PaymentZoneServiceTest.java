@@ -14,6 +14,8 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 
+import java.time.ZonedDateTime;
+
 import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 
@@ -90,6 +92,7 @@ public class PaymentZoneServiceTest {
   private LocationJson createLocation(Geometry geometry) {
     final LocationJson location = new LocationJson();
     location.setGeometry(geometry);
+    location.setStartTime(ZonedDateTime.now());
     return location;
   }
 

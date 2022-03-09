@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.SettableListenableFuture;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -134,6 +135,7 @@ public class PaymentClassServiceTest {
   private LocationJson createLocation(Geometry geometry) {
     final LocationJson location = new LocationJson();
     location.setGeometry(geometry);
+    location.setStartTime(ZonedDateTime.now());
     return location;
   }
 }
