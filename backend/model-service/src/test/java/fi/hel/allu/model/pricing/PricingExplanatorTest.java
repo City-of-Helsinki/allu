@@ -7,9 +7,9 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.Printable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -37,12 +37,8 @@ class PricingExplanatorTest {
 
   @Mock
   private LocationDao locationDao;
+  @InjectMocks
   private PricingExplanator pricingExplanator;
-
-  @BeforeEach
-  void setUp() {
-    pricingExplanator = new PricingExplanator(locationDao);
-  }
 
   @Test
   public void test_formatExplanation_excavation() {
