@@ -62,4 +62,4 @@ COPY supervisord.conf /etc/supervisord.conf
 ARG CACHEBUST=1
 
 # JAR files
-RUN wget http://185.26.51.92:8081/artifactory/libs-snapshot-local/fi/hel/allu/allu-etl/1.0-SNAPSHOT/allu-etl-1.0-SNAPSHOT.jar --output-document /home/allu/etl/allu-etl.jar
+RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/allu-etl/1.0-SNAPSHOT/allu-etl-1.0-SNAPSHOT.jar --output-document /home/allu/etl/allu-etl.jar
