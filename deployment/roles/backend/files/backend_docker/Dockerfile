@@ -113,4 +113,4 @@ ARG CACHEBUST=1
 
 # JAR files
 RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' -printf "%f\n"`; \
-  do wget http://185.26.51.92:8081/artifactory/libs-snapshot-local/fi/hel/allu/${service}/1.0-SNAPSHOT/${service}-1.0-SNAPSHOT.jar --output-document /home/allu/${service}/${service}.jar; done
+  do wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/${service}/1.0-SNAPSHOT/${service}-1.0-SNAPSHOT.jar --output-document /home/allu/${service}/${service}.jar; done
