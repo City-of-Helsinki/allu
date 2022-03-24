@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -64,7 +63,7 @@ public abstract class AbstractWfsPaymentDataService {
     this.restTemplate = restTemplate;
   }
 
-  protected abstract String parseResult(List<String> responses);
+  protected abstract String parseResult(List<String> responses, LocationJson locationJson);
   protected abstract String getFeatureTypeName();
   protected abstract String getFeaturePropertyName();
   protected abstract String getFeaturePropertyNameNew();
@@ -76,7 +75,7 @@ public abstract class AbstractWfsPaymentDataService {
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
       final List<String> responses = collectResponses(responseFutures);
-      return parseResult(responses);
+      return parseResult(responses, location);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return UNDEFINED;
@@ -84,10 +83,14 @@ public abstract class AbstractWfsPaymentDataService {
   }
 
   private String getRequest(LocationJson location) {
-    if (location.getStartTime().isBefore(ZonedDateTime.now(location.getStartTime().getZone()).withYear(2022).withMonth(4).withDayOfMonth(1))) {
+    if (isNewExcavationPayment(location)) {
       return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyNameNew());
     }
     return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
+  }
+
+  protected boolean isNewExcavationPayment(LocationJson location){
+   return location.getStartTime().isAfter(ZonedDateTime.now(location.getStartTime().getZone()).withYear(2022).withMonth(3).withDayOfMonth(31));
   }
 
   private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
@@ -95,8 +98,8 @@ public abstract class AbstractWfsPaymentDataService {
         applicationProperties.getPaymentClassUsername(),
         applicationProperties.getPaymentClassPassword());
     final List<ListenableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
-    requests.stream().map((request) -> new HttpEntity<>(request, headers))
-      .map((requestEntity) -> restTemplate.exchange(
+    requests.stream().map(request -> new HttpEntity<>(request, headers))
+      .map(requestEntity -> restTemplate.exchange(
           applicationProperties.getPaymentClassUrl(),
           HttpMethod.POST,
           requestEntity,

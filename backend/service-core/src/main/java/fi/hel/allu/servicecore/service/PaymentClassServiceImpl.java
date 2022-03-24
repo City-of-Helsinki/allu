@@ -4,6 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXml;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentNewClassXml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -11,7 +14,7 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.service.geocode.PaymentClassXml;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentOldClassXml;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 
 @Profile("!DEV")
@@ -33,21 +36,30 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   }
 
   @Override
-  protected String parseResult(List<String> responses) {
+  protected String parseResult(List<String> responses, LocationJson locationJson) {
     String paymentClass = UNDEFINED;
     for (String response : responses) {
-      final PaymentClassXml paymentClassXml = WfsUtil.unmarshalWfs(response, PaymentClassXml.class);
-      final List<PaymentClassXml.FeatureMember> paymentClasses = paymentClassXml.featureMember.stream()
-          .sorted(Comparator.comparing(f -> f.paymentClass.getPaymentClass()))
+      final PaymentClassXml paymentOldClassXml = getPaymentClass(response, locationJson);
+      final List<FeatureClassMember> paymentClasses = paymentOldClassXml.getFeatureMemeber().stream()
+          .sorted(Comparator.comparing(f -> f.getMaksuluokka().getPayment()))
           .collect(Collectors.toList());
       if (!paymentClasses.isEmpty()) {
-        final String pc = paymentClasses.get(0).paymentClass.getPaymentClass();
+        final String pc = paymentClasses.get(0).getMaksuluokka().getPayment();
         if (pc.compareTo(paymentClass) < 0) {
           paymentClass = pc;
         }
       }
     }
     return paymentClass;
+  }
+
+  private PaymentClassXml getPaymentClass(String response, LocationJson locationJson){
+    if(isNewExcavationPayment(locationJson)){
+      return WfsUtil.unmarshalWfs(response, PaymentNewClassXml.class);
+    }
+    else{
+      return WfsUtil.unmarshalWfs(response, PaymentOldClassXml.class);
+    }
   }
 
   @Override

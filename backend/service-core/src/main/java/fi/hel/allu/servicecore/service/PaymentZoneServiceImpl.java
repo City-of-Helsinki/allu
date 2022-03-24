@@ -33,12 +33,12 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String parseResult(List<String> responses) {
+  protected String parseResult(List<String> responses, LocationJson locationJson) {
     return responses.stream()
         .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneXml.class))
         .filter(p -> p.featureMember != null)
         .flatMap(x -> x.featureMember.stream())
-        .map(p -> p.paymentZone.getPaymentZone())
+        .map(p -> p.paymentZone.getPayment())
         .filter(StringUtils::isNotBlank)
         .sorted()
         .findFirst().orElse(DEFAULT_PAYMENT_ZONE);
