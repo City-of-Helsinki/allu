@@ -1,12 +1,12 @@
-package fi.hel.allu.servicecore.service.geocode.maksu;
+package fi.hel.allu.servicecore.service.geocode.paymentlevel;
 
 import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class MaksuLuokka extends HelsinkiAlluMaksu {
+public class PaymentLevelZone extends AbstractPaymentLevel {
 
-  @XmlElement(name = "maksuluokka", namespace = VariablesUtils.HELSINKI_NAMESPACE)
+  @XmlElement(name = "maksuvyohyke", namespace = VariablesUtils.HELSINKI_NAMESPACE)
   public String payment;
 
   public String getPayment() {
@@ -18,7 +18,7 @@ public class MaksuLuokka extends HelsinkiAlluMaksu {
   public String toString() {
     return "HelsinkiAlluMaksuvuohyke{" +
       "id=" + id +
-      ", paymentClas ='" + payment + '\'' +
+      ", paymentZone ='" + payment + '\'' +
       '}';
   }
 }

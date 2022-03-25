@@ -65,8 +65,8 @@ public abstract class AbstractWfsPaymentDataService {
 
   protected abstract String parseResult(List<String> responses, LocationJson locationJson);
   protected abstract String getFeatureTypeName();
+  protected abstract String getFeatureTypeNameNew();
   protected abstract String getFeaturePropertyName();
-  protected abstract String getFeaturePropertyNameNew();
 
   protected String executeWfsRequest(LocationJson location) {
     final List<String> coordinateArray = getCoordinates(location);
@@ -84,7 +84,7 @@ public abstract class AbstractWfsPaymentDataService {
 
   private String getRequest(LocationJson location) {
     if (isNewExcavationPayment(location)) {
-      return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyNameNew());
+      return String.format(REQUEST, getFeatureTypeNameNew(), getFeaturePropertyName());
     }
     return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
   }

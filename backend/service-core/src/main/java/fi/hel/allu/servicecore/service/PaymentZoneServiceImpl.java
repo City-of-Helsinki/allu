@@ -38,7 +38,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
         .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneXml.class))
         .filter(p -> p.featureMember != null)
         .flatMap(x -> x.featureMember.stream())
-        .map(p -> p.paymentZone.getPayment())
+        .map(p -> p.paymentLevelZone.getPayment())
         .filter(StringUtils::isNotBlank)
         .sorted()
         .findFirst().orElse(DEFAULT_PAYMENT_ZONE);
@@ -55,7 +55,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String getFeaturePropertyNameNew() {
-    return getFeaturePropertyName();
+  protected String getFeatureTypeNameNew() {
+    return getFeatureTypeName();
   }
 }

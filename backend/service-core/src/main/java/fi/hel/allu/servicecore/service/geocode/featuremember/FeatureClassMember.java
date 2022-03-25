@@ -1,9 +1,9 @@
 package fi.hel.allu.servicecore.service.geocode.featuremember;
 
-import fi.hel.allu.servicecore.service.geocode.maksu.MaksuLuokka;
+import fi.hel.allu.servicecore.service.geocode.paymentlevel.PaymentLevelClass;
 
 public interface FeatureClassMember {
-  MaksuLuokka getMaksuluokka();
+  PaymentLevelClass getMaksuluokka();
 
   String toString();
 
