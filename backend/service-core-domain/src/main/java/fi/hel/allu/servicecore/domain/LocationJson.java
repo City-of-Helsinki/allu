@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "Application location")
 @NotFalse(rules = {"startTime, startTimeNotAfterEndTimeValidation, start time must be before end time"})
-public class LocationJson {
+public class LocationJson implements StartTimeInterface {
   private Integer id;
   private Integer locationKey;
   private Integer locationVersion;

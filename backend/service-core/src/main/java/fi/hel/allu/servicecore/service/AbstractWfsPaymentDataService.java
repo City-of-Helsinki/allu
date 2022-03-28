@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StartTimeInterface;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.geolatte.geom.GeometryType;
@@ -69,9 +71,18 @@ public abstract class AbstractWfsPaymentDataService {
   protected abstract String getFeaturePropertyName();
 
   protected String executeWfsRequest(LocationJson location) {
+    return sendWfsRequest(location, getRequest(location));
+  }
+
+
+  protected String executeWfsRequest(LocationJson location, ApplicationJson applicationJson) {
+    return sendWfsRequest(location, getRequest(applicationJson));
+  }
+
+  private String sendWfsRequest(LocationJson location, String request) {
     final List<String> coordinateArray = getCoordinates(location);
     final List<String> requests = coordinateArray.stream()
-        .map(c -> getRequest(location).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
+      .map(c -> request.replaceFirst(COORDINATES, c)).collect(Collectors.toList());
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
       final List<String> responses = collectResponses(responseFutures);
@@ -82,15 +93,16 @@ public abstract class AbstractWfsPaymentDataService {
     }
   }
 
-  private String getRequest(LocationJson location) {
-    if (isNewExcavationPayment(location)) {
+
+  private String getRequest(StartTimeInterface startTime) {
+    if (isNewExcavationPayment(startTime)) {
       return String.format(REQUEST, getFeatureTypeNameNew(), getFeaturePropertyName());
     }
     return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
   }
 
-  protected boolean isNewExcavationPayment(LocationJson location){
-   return location.getStartTime().isAfter(ZonedDateTime.now(location.getStartTime().getZone()).withYear(2022).withMonth(3).withDayOfMonth(31));
+  protected boolean isNewExcavationPayment(StartTimeInterface startTime){
+   return startTime.getStartTime().isAfter(ZonedDateTime.now(startTime.getStartTime().getZone()).withYear(2022).withMonth(3).withDayOfMonth(31));
   }
 
   private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
@@ -117,7 +129,7 @@ public abstract class AbstractWfsPaymentDataService {
     return listOfResponses;
   }
 
-  private List<String> getCoordinates(LocationJson location) {
+  protected List<String> getCoordinates(LocationJson location) {
     if (location.getGeometry().getGeometryType() == GeometryType.GEOMETRY_COLLECTION) {
       final GeometryCollection gc = (GeometryCollection)location.getGeometry();
       final List<String> coordinateArray = new ArrayList<>();

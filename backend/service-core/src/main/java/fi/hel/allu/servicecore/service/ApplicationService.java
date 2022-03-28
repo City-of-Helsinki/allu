@@ -306,7 +306,7 @@ public class ApplicationService {
   private void setPaymentClasses(ApplicationJson application) {
     if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
         application.getType() == ApplicationType.AREA_RENTAL) {
-      application.getLocations().forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l)));
+      application.getLocations().forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l, application)));
     } else if (needsPaymentZone(application)) {
       application.getLocations().forEach(l -> l.setPaymentTariff(paymentZoneService.getPaymentZone(l)));
     }
@@ -530,7 +530,7 @@ public class ApplicationService {
 
   private UserJson getApplicationUser(String url, Integer applicationId) {
     User user = restTemplate.getForObject(url, User.class, applicationId);
-    return Optional.ofNullable(user).map(u -> UserMapper.mapToUserJson(u)).orElse(null);
+    return Optional.ofNullable(user).map(UserMapper::mapToUserJson).orElse(null);
   }
 
 
@@ -546,10 +546,9 @@ public class ApplicationService {
   private List<CustomerWithContacts> fetchApplicationCustomers(Integer applicationId) {
     ParameterizedTypeReference<List<CustomerWithContacts>> typeRef =
         new ParameterizedTypeReference<List<CustomerWithContacts>>() {};
-    List<CustomerWithContacts> customers = restTemplate
+    return restTemplate
         .exchange(applicationProperties.getCustomerByApplicationIdUrl(), HttpMethod.GET, null, typeRef, applicationId)
         .getBody();
-    return customers;
   }
 
   public List<CustomerWithContacts> findApplicationCustomers(Integer applicationId) {

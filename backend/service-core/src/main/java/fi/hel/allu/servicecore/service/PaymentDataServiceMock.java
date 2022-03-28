@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -21,7 +22,7 @@ public class PaymentDataServiceMock implements PaymentZoneService, PaymentClassS
   }
 
   @Override
-  public String getPaymentClass(LocationJson location) {
+  public String getPaymentClass(LocationJson location, ApplicationJson applicationJson) {
     final String paymentClass = "3";
     logger.info("PaymentDataServiceMock: returning payment class {}", paymentClass);
     return paymentClass;

@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
  * in Finnish: Hakemus
  */
 @ApiModel(value = "Application")
-public class ApplicationJson extends BaseApplicationJson {
+public class ApplicationJson extends BaseApplicationJson implements StartTimeInterface {
 
   @Valid
   private ProjectJson project;

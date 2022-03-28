@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 import org.geolatte.geom.Geometry;
@@ -92,7 +93,7 @@ class PaymentClassServiceTest {
     Mockito.when(restTemplate.exchange(
       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
-    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE));
+    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
     assertEquals("2", paymentClass);
   }
 
@@ -106,7 +107,7 @@ class PaymentClassServiceTest {
     Mockito.when(restTemplate.exchange(
       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
-    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, NEW_PAYMENT_DATE));
+    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, NEW_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
     assertEquals("3", paymentClass);
   }
 
@@ -126,7 +127,7 @@ class PaymentClassServiceTest {
       .thenReturn(future1)
       .thenReturn(future2);
 
-    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY_COLLETION, OLD_PAYMENT_DATE));
+    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY_COLLETION, OLD_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
     assertEquals("1", paymentClass);
   }
 
@@ -140,7 +141,7 @@ class PaymentClassServiceTest {
     Mockito.when(restTemplate.exchange(
       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
-    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE));
+    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE),createApplication(OLD_PAYMENT_DATE));
     assertEquals("undefined", paymentClass);
   }
 
@@ -155,5 +156,11 @@ class PaymentClassServiceTest {
     location.setGeometry(geometry);
     location.setStartTime(zonedDateTime);
     return location;
+  }
+
+  private ApplicationJson createApplication(ZonedDateTime zonedDateTime) {
+    final ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setStartTime(zonedDateTime);
+    return applicationJson;
   }
 }

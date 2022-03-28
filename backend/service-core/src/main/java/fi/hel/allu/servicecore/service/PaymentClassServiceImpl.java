@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXml;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentNewClassXml;
@@ -31,9 +32,11 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   }
 
   @Override
-  public String getPaymentClass(LocationJson location) {
-    return executeWfsRequest(location);
+  public String getPaymentClass(LocationJson location, ApplicationJson applicationJson) {
+    return executeWfsRequest(location, applicationJson);
+
   }
+
 
   @Override
   protected String parseResult(List<String> responses, LocationJson locationJson) {
