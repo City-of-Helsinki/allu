@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +60,7 @@ public abstract class AbstractWfsPaymentDataService {
   private final AsyncWfsRestTemplate restTemplate;
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
+  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 4,1, 0, 0, 0, 0);
 
   protected AbstractWfsPaymentDataService(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
     this.applicationProperties = applicationProperties;
@@ -102,7 +104,10 @@ public abstract class AbstractWfsPaymentDataService {
   }
 
   protected boolean isNewExcavationPayment(StartTimeInterface startTime){
-   return startTime.getStartTime().isAfter(ZonedDateTime.now(startTime.getStartTime().getZone()).withYear(2022).withMonth(3).withDayOfMonth(31));
+    if (startTime.getStartTime() == null){
+      return false;
+    }
+   return startTime.getStartTime().isAfter(ZonedDateTime.of(NEW_PAYMENT_DATE, startTime.getStartTime().getZone()));
   }
 
   private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
