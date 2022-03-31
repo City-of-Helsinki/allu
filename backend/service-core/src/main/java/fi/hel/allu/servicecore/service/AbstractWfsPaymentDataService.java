@@ -60,7 +60,7 @@ public abstract class AbstractWfsPaymentDataService {
   private final AsyncWfsRestTemplate restTemplate;
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
-  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 4,1, 0, 0, 0, 0);
+  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 3,31, 23, 59, 0, 0);
 
   protected AbstractWfsPaymentDataService(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
     this.applicationProperties = applicationProperties;
