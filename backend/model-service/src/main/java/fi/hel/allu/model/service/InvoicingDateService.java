@@ -35,8 +35,7 @@ public class InvoicingDateService {
 
   public ZonedDateTime getInvoicingDate(Application application) {
     if (isTerrace(application)) {
-      return getInvoicingDateForTerracePeriod(application.getStartTime(),
-          application.getEndTime(), application.getKind());
+      return getInvoicingDateForTerracePeriod(application.getStartTime(), application.getKind());
     } else {
       return application.getInvoicingDate();
     }
@@ -44,20 +43,24 @@ public class InvoicingDateService {
 
   public ZonedDateTime getInvoicingDateForPeriod(Application application, InvoicingPeriod period) {
     if (isTerrace(application)) {
-      return getInvoicingDateForTerracePeriod( period.getStartTime(),
-          period.getEndTime(), application.getKind());
+      return getInvoicingDateForTerracePeriod( period.getStartTime(), application.getKind());
     } else {
       return period.getEndTime();
     }
   }
 
-  private ZonedDateTime getInvoicingDateForTerracePeriod(
-    ZonedDateTime terracePeriodStartTime, ZonedDateTime terracePeriodEndTime, ApplicationKind kind) {
-    ZonedDateTime invoicingDate = getTerraceInvoicingDateForYear(terracePeriodStartTime.getYear(), kind);
-    if (kind.equals(ApplicationKind.SUMMER_TERRACE) && terracePeriodStartTime.isAfter(invoicingDate) ) {
-      return TimeUtil.startOfDay(terracePeriodEndTime);
+  private ZonedDateTime getInvoicingDateForTerracePeriod(ZonedDateTime terracePeriodStartTime, ApplicationKind kind) {
+    ZonedDateTime adjustedTerracePeriodStartTime = terracePeriodStartTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId);
+    ZonedDateTime invoicingDate = getTerraceInvoicingDateForYear(adjustedTerracePeriodStartTime.getYear(), kind);
+    if (kind.equals(ApplicationKind.SUMMER_TERRACE) || kind.equals(ApplicationKind.PARKLET)) {
+      return invoicingDate;
     }
-    return terracePeriodStartTime.getMonthValue() < 4 ? invoicingDate.minusYears(1) : invoicingDate;
+    // else is winterTerrace
+    ZonedDateTime winterInvoicingDayLimitInSummer = invoicingDate.withMonth(6).withDayOfMonth(15);
+    if (invoicingDate.isAfter(winterInvoicingDayLimitInSummer)) {
+      return adjustedTerracePeriodStartTime.getMonthValue() < 6 ? invoicingDate.minusYears(1) : invoicingDate;
+    }
+    return adjustedTerracePeriodStartTime.getMonthValue() > 6 ? invoicingDate.plusYears(1) : invoicingDate;
   }
 
   private ZonedDateTime getTerraceInvoicingDateForYear(int year, ApplicationKind kind) {
