@@ -1,15 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.common.wfs.WfsUtil;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.domain.StartTimeInterface;
+import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.geolatte.geom.GeometryType;
@@ -22,16 +19,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
 
-import fi.hel.allu.common.wfs.WfsUtil;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public abstract class AbstractWfsPaymentDataService {
 
+  protected static final String UNDEFINED = "undefined";
   private static final String COORDINATES = "<coordinates>";
   private static final String REQUEST =
-      "<wfs:GetFeature xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+    "<wfs:GetFeature xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
         "xsi:schemaLocation=\"http://www.opengis.net/wfs\" " +
         "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +
         "xmlns:ogc=\"http://www.opengis.net/ogc\" service=\"WFS\" version=\"1.0.0\">" +
@@ -54,13 +55,10 @@ public abstract class AbstractWfsPaymentDataService {
         "</wfs:Query>" +
       "</wfs:GetFeature>";
 
-  protected static final String UNDEFINED = "undefined";
-
+  private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
+  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
   private final ApplicationProperties applicationProperties;
   private final AsyncWfsRestTemplate restTemplate;
-
-  private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
-  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 3,31, 23, 59, 0, 0);
 
   protected AbstractWfsPaymentDataService(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
     this.applicationProperties = applicationProperties;
@@ -68,8 +66,11 @@ public abstract class AbstractWfsPaymentDataService {
   }
 
   protected abstract String parseResult(List<String> responses, LocationJson locationJson);
+
   protected abstract String getFeatureTypeName();
+
   protected abstract String getFeatureTypeNameNew();
+
   protected abstract String getFeaturePropertyName();
 
   protected String executeWfsRequest(LocationJson location) {
@@ -95,7 +96,6 @@ public abstract class AbstractWfsPaymentDataService {
     }
   }
 
-
   private String getRequest(StartTimeInterface startTime) {
     if (isNewExcavationPayment(startTime)) {
       return String.format(REQUEST, getFeatureTypeNameNew(), getFeaturePropertyName());
@@ -103,31 +103,33 @@ public abstract class AbstractWfsPaymentDataService {
     return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
   }
 
-  protected boolean isNewExcavationPayment(StartTimeInterface startTime){
-    if (startTime.getStartTime() == null){
+  protected boolean isNewExcavationPayment(StartTimeInterface startTime) {
+    if (startTime.getStartTime() == null) {
       return false;
     }
-   return startTime.getStartTime().isAfter(ZonedDateTime.of(NEW_PAYMENT_DATE, startTime.getStartTime().getZone()));
+    ZonedDateTime startTimeHelsinkiZone = startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
+
+    return startTimeHelsinkiZone.isAfter(ZonedDateTime.of(NEW_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
   private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
     final HttpHeaders headers = WfsUtil.createAuthHeaders(
-        applicationProperties.getPaymentClassUsername(),
-        applicationProperties.getPaymentClassPassword());
+      applicationProperties.getPaymentClassUsername(),
+      applicationProperties.getPaymentClassPassword());
     final List<ListenableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
     requests.stream().map(request -> new HttpEntity<>(request, headers))
       .map(requestEntity -> restTemplate.exchange(
-          applicationProperties.getPaymentClassUrl(),
-          HttpMethod.POST,
-          requestEntity,
-          String.class)).forEachOrdered(responseFutures::add);
+        applicationProperties.getPaymentClassUrl(),
+        HttpMethod.POST,
+        requestEntity,
+        String.class)).forEachOrdered(responseFutures::add);
     return responseFutures;
   }
 
   private List<String> collectResponses(List<ListenableFuture<ResponseEntity<String>>> responses)
-      throws InterruptedException, ExecutionException {
+    throws InterruptedException, ExecutionException {
     final List<String> listOfResponses = new ArrayList<>();
-    for (ListenableFuture<ResponseEntity<String>> future: responses) {
+    for (ListenableFuture<ResponseEntity<String>> future : responses) {
       final String respBody = future.get().getBody();
       listOfResponses.add(respBody);
     }
@@ -136,7 +138,7 @@ public abstract class AbstractWfsPaymentDataService {
 
   protected List<String> getCoordinates(LocationJson location) {
     if (location.getGeometry().getGeometryType() == GeometryType.GEOMETRY_COLLECTION) {
-      final GeometryCollection gc = (GeometryCollection)location.getGeometry();
+      final GeometryCollection gc = (GeometryCollection) location.getGeometry();
       final List<String> coordinateArray = new ArrayList<>();
       for (int i = 0; i < gc.getNumGeometries(); i++) {
         coordinateArray.add(getCoordinates(gc.getGeometryN(i)));
