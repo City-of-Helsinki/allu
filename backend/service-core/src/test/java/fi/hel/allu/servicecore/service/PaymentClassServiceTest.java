@@ -107,7 +107,7 @@ class PaymentClassServiceTest {
     Mockito.when(restTemplate.exchange(
       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
-    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, NEW_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
+    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, NEW_PAYMENT_DATE), createApplication(NEW_PAYMENT_DATE));
     assertEquals("3", paymentClass);
   }
 
