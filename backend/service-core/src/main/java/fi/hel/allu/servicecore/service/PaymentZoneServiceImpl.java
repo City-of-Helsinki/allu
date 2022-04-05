@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 import java.util.List;
 
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -28,12 +29,12 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  public String getPaymentZone(LocationJson location) {
-    return executeWfsRequest(location);
+  public String getPaymentZone(LocationJson location, ApplicationJson applicationJson) {
+    return executeWfsRequest(location, applicationJson);
   }
 
   @Override
-  protected String parseResult(List<String> responses, LocationJson locationJson) {
+  protected String parseResult(List<String> responses, ApplicationJson applicationJson) {
     return responses.stream()
         .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneXml.class))
         .filter(p -> p.featureMember != null)

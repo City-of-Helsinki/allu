@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.geolatte.geom.Geometry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ public class PaymentZoneServiceTest {
   @Mock
   private AsyncWfsRestTemplate restTemplate;
   private PaymentZoneService paymentZoneService;
+  private static final ZonedDateTime OLD_PAYMENT_DATE = ZonedDateTime.now().withYear(2022).withMonth(1).withDayOfMonth(1);
 
   private static final String PAYMENT_ZONE_PLACEHOLDER = "<paymentzones>";
   private static final String RESPONSE =
@@ -74,13 +76,13 @@ public class PaymentZoneServiceTest {
   @Test
   public void shouldReturnPaymentZone() {
     setResponse(RESPONSE.replace(PAYMENT_ZONE_PLACEHOLDER, PAYMENT_ZONE_MEMBER));
-    assertEquals("1", paymentZoneService.getPaymentZone(createLocation(GEOMETRY)));
+    assertEquals("1", paymentZoneService.getPaymentZone(createLocation(GEOMETRY), createApplication(OLD_PAYMENT_DATE)));
   }
 
   @Test
   public void shouldReturnDefaultIfNotInZone() {
     setResponse(RESPONSE.replace(PAYMENT_ZONE_PLACEHOLDER, ""));
-    assertEquals("2", paymentZoneService.getPaymentZone(createLocation(GEOMETRY)));
+    assertEquals("2", paymentZoneService.getPaymentZone(createLocation(GEOMETRY), createApplication(OLD_PAYMENT_DATE)));
   }
 
   private void setResponse(String response) {
@@ -96,6 +98,12 @@ public class PaymentZoneServiceTest {
     location.setGeometry(geometry);
     location.setStartTime(ZonedDateTime.now());
     return location;
+  }
+
+  private ApplicationJson createApplication(ZonedDateTime zonedDateTime) {
+    final ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setStartTime(zonedDateTime);
+    return applicationJson;
   }
 
 }

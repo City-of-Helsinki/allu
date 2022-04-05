@@ -65,7 +65,7 @@ public abstract class AbstractWfsPaymentDataService {
     this.restTemplate = restTemplate;
   }
 
-  protected abstract String parseResult(List<String> responses, LocationJson locationJson);
+  protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson);
 
   protected abstract String getFeatureTypeName();
 
@@ -73,23 +73,14 @@ public abstract class AbstractWfsPaymentDataService {
 
   protected abstract String getFeaturePropertyName();
 
-  protected String executeWfsRequest(LocationJson location) {
-    return sendWfsRequest(location, getRequest(location));
-  }
-
-
   protected String executeWfsRequest(LocationJson location, ApplicationJson applicationJson) {
-    return sendWfsRequest(location, getRequest(applicationJson));
-  }
-
-  private String sendWfsRequest(LocationJson location, String request) {
     final List<String> coordinateArray = getCoordinates(location);
     final List<String> requests = coordinateArray.stream()
-      .map(c -> request.replaceFirst(COORDINATES, c)).collect(Collectors.toList());
+      .map(c -> getRequest(applicationJson).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
       final List<String> responses = collectResponses(responseFutures);
-      return parseResult(responses, location);
+      return parseResult(responses, applicationJson);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return UNDEFINED;

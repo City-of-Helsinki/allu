@@ -39,10 +39,10 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
 
   @Override
-  protected String parseResult(List<String> responses, LocationJson locationJson) {
+  protected String parseResult(List<String> responses, ApplicationJson applicationJson) {
     String paymentClass = UNDEFINED;
     for (String response : responses) {
-      final PaymentClassXml paymentOldClassXml = getPaymentClass(response, locationJson);
+      final PaymentClassXml paymentOldClassXml = getPaymentClass(response, applicationJson);
       final List<FeatureClassMember> paymentClasses = paymentOldClassXml.getFeatureMemeber().stream()
           .sorted(Comparator.comparing(f -> f.getMaksuluokka().getPayment()))
           .collect(Collectors.toList());
@@ -56,8 +56,8 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return paymentClass;
   }
 
-  private PaymentClassXml getPaymentClass(String response, LocationJson locationJson){
-    if(isNewExcavationPayment(locationJson)){
+  private PaymentClassXml getPaymentClass(String response, ApplicationJson applicationJson){
+    if(isNewExcavationPayment(applicationJson)){
       return WfsUtil.unmarshalWfs(response, PaymentNewClassXml.class);
     }
     else{

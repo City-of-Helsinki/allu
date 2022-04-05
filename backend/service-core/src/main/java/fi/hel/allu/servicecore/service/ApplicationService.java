@@ -308,7 +308,7 @@ public class ApplicationService {
         application.getType() == ApplicationType.AREA_RENTAL) {
       application.getLocations().forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l, application)));
     } else if (needsPaymentZone(application)) {
-      application.getLocations().forEach(l -> l.setPaymentTariff(paymentZoneService.getPaymentZone(l)));
+      application.getLocations().forEach(l -> l.setPaymentTariff(paymentZoneService.getPaymentZone(l, application)));
     }
   }
 

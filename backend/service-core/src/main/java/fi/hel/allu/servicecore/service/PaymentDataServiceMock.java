@@ -15,7 +15,7 @@ public class PaymentDataServiceMock implements PaymentZoneService, PaymentClassS
   private static final Logger logger = LoggerFactory.getLogger(PaymentDataServiceMock.class);
 
   @Override
-  public String getPaymentZone(LocationJson location) {
+  public String getPaymentZone(LocationJson location, ApplicationJson applicationJson) {
     final String paymentZone = "1";
     logger.info("PaymentDataServiceMock: returning payment zone {}", paymentZone);
     return paymentZone;
