@@ -4,6 +4,6 @@
   become: no
   roles:
     - backend
-  envinronment:
+  environment:
     DOCKER_CLIENT_TIMEOUT: 120
     COMPOSE_HTTP_TIMEOUT: 120
