@@ -24,14 +24,12 @@ Governed public areas include:
 For database you need postresql and elasticsearch. Commands has been done in linux environment.  
 
 Postgresql
-1. Go to folder allu/deployment/roles/database/files/database_docker/
-2. Build docker using the Dockerfile on folder : docker build -t allu_database .
-3. Run build docker image:  docker run --rm -P -p 5432:5432 -d allu_database
+1. you need to increase max virtualmemory for elastic search: edit file /etc/sysctl.conf by putting row: __vm.max_map_count=262144__
+2. Go to folder allu/deployment/roles/database/files/database_docker/
+3. run docker-compose up
 
 Elasticsearch
 
-you need to increase max virtualmemory for elastic search:
-edit file /etc/sysctl.conf by putting row: __vm.max_map_count=262144__
 
 ### Setting up backend
 will be found under backend folder and bare minimun is to start 4 service:
@@ -40,12 +38,12 @@ will be found under backend folder and bare minimun is to start 4 service:
 - search-service
 - external-service
 
-Starting class can be insidi <name-of-service>/src/java/  
-If you want swagger to worl you need to star:
+Starting class can be inside <name-of-service>/src/java/  
+If you want swagger to work you need to star:
 - supervision-api  
 url to swagger: http://localhost:9040/api-docs/swagger.json
 
-### Setting up frontend##
+### Setting up frontend ###
 Go to folder frontend.
 1. install dedendencies: npm install
 2. start frontend: npm run start  
