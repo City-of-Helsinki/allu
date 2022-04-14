@@ -1,10 +1,9 @@
-FROM ubuntu:16.04
-
+FROM openjdk:8-jdk-alpine
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apt-get update \
-    && apt-get install -y wget xz-utils supervisor python-pip openjdk-8-jre tzdata autossh \
+RUN apk update \
+    && apk add wget xz supervisor py3-pip tzdata autossh coreutils \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -18,8 +17,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add users
 ######################################################################################
 
-RUN addgroup --gid $CUSTOM_GID allu && \
-    adduser allu --uid $CUSTOM_UID --gid $CUSTOM_GID --disabled-password --gecos ''
+RUN addgroup -g $CUSTOM_GID allu && \
+    adduser allu --uid $CUSTOM_UID --ingroup allu --disabled-password --gecos ''
 
 ######################################################################################
 # Create directories
@@ -62,7 +61,7 @@ EXPOSE 9050
 # Supervisord
 ######################################################################################
 
-RUN pip install supervisor-stdout
+RUN pip3 install supervisor-stdout
 CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
 
 ######################################################################################
@@ -77,12 +76,12 @@ VOLUME /servicehome
 ######################################################################################
 
 # Logging directories (assumes that /servicehome/<servicename>/logs directories exist)
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\n"`; do ln -s /servicehome/logs/"${service}" "/home/allu/${service}"/logs; done
+RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/logs/"${service}" "/home/allu/${service}"/logs; done
 # Service runner scripts (assumes that /servicehome/<servicename> directories exist and contain expected scripts)
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\n"`; do ln -s /servicehome/services/"${service}/run_${service}.sh" "/home/allu/${service}"/run_${service}.sh; done
+RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/services/"${service}/run_${service}.sh" "/home/allu/${service}"/run_${service}.sh; done
 # Service configuration files (assumes that /servicehome/<servicename> directories exist and contain expected configuration files)
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\n"`; do ln -s /servicehome/services/"${service}/included-logback.xml" "/home/allu/${service}"/included-logback.xml; done
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\n"`; do ln -s /servicehome/services/"${service}/${service}.properties" "/home/allu/${service}"/${service}.properties; done
+RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/services/"${service}/included-logback.xml" "/home/allu/${service}"/included-logback.xml; done
+RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/services/"${service}/${service}.properties" "/home/allu/${service}"/${service}.properties; done
 
 # Stylesheets for pdf-service
 RUN ln -s /servicehome/services/pdf-service/stylesheets /home/allu/pdf-service/stylesheets
@@ -112,5 +111,5 @@ COPY known_hosts /home/allu/.ssh/known_hosts
 ARG CACHEBUST=1
 
 # JAR files
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' -printf "%f\n"`; \
+RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' -exec basename \{} \;`; \
   do wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/${service}/1.0-SNAPSHOT/${service}-1.0-SNAPSHOT.jar --output-document /home/allu/${service}/${service}.jar; done
