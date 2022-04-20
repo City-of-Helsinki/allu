@@ -1,22 +1,11 @@
-FROM alpine:3.15
+FROM ubuntu:16.04
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apk update \
-    && apk add build-base tzdata apache2 apache2-mod-wsgi py3-pip py3-yaml python3 python3-dev python3-tkinter bash git proj-util make g++ libjpeg-turbo-dev freetype-dev supervisor \
-        freetype-dev \
-        fribidi-dev \
-        harfbuzz-dev \
-        jpeg-dev \
-        lcms2-dev \
-        libimagequant-dev \
-        openjpeg-dev \
-        tcl-dev \
-        tiff-dev \
-        tk-dev \
-        zlib-dev
-#    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y tzdata apache2 cron libapache2-mod-wsgi python-pip python-imaging python-yaml python-dev libproj9 build-essential libjpeg-dev zlib1g-dev libfreetype6-dev supervisor \
+    && rm -rf /var/lib/apt/lists/*
 
 
 ######################################################################################
@@ -29,8 +18,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add users
 ######################################################################################
 
-RUN addgroup  -g $CUSTOM_GID allu
-RUN  adduser --uid $CUSTOM_UID --ingroup allu --disabled-password --gecos '' allu
+RUN addgroup --gid $CUSTOM_GID allu && \
+    adduser allu --uid $CUSTOM_UID --gid $CUSTOM_GID --disabled-password --gecos ''
 
 ######################################################################################
 # Create directories
@@ -73,19 +62,18 @@ COPY fqdn.conf ssl-params.conf /etc/apache2/conf-available/
 COPY apache_start.sh /home/allu/apache
 RUN chmod ugo+x /home/allu/apache/apache_start.sh
 
-#
-#RUN a2enmod proxy
-#RUN a2enmod proxy_http
-#RUN a2enmod rewrite
-#RUN a2enmod headers
-#RUN a2enmod wsgi
-#RUN a2enconf fqdn ssl-params
-#RUN a2enmod ssl
-#
-#RUN a2dissite 000-default
+RUN a2enmod proxy
+RUN a2enmod proxy_http
+RUN a2enmod rewrite
+RUN a2enmod headers
+RUN a2enmod wsgi
+RUN a2enconf fqdn ssl-params
+RUN a2enmod ssl
+
+RUN a2dissite 000-default
 # Disable automated Apache start on system start-up (Apache is executed in foreground, not as daemon)
-#RUN rc-update del apache2
-#RUN systemctl disable apache2
+RUN update-rc.d apache2 remove
+RUN systemctl disable apache2
 
 ######################################################################################
 # Python pip (mapproxy installation)
@@ -99,7 +87,7 @@ RUN pip install requests==2.18.4
 ######################################################################################
 
 # Apache configuration
-#RUN ln -s /etc/apache2/sites-available/allufront.conf /etc/apache2/sites-enabled/allufront.conf
+RUN ln -s /etc/apache2/sites-available/allufront.conf /etc/apache2/sites-enabled/allufront.conf
 # Mapproxy logging
 RUN ln -s /mapproxy/logs /home/allu/mapproxy/logs
 # Mapproxy cache
