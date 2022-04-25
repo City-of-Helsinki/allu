@@ -2,8 +2,9 @@ FROM openjdk:8-jdk-alpine
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apk update \
-    && apk add wget xz supervisor py3-pip tzdata autossh coreutils \
+RUN apk  update \
+    && apk add wget xz git py3-pip tzdata autossh coreutils \
+    && apk add --upgrade bash\
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -61,7 +62,10 @@ EXPOSE 9050
 # Supervisord
 ######################################################################################
 
-RUN pip3 install supervisor-stdout
+# supervisord
+RUN pip3 install supervisor
+RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
+COPY supervisord.conf /etc/supervisord.conf
 CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
 
 ######################################################################################
@@ -100,8 +104,7 @@ RUN ln -s /servicehome/services/scheduler-service/sap/invoice-archive /home/allu
 # wkhtmltopdf
 COPY wkhtmltox-0.12.3_linux-generic-amd64.tar.xz /tmp/wkhtmltox.tar.xz
 RUN tar xf /tmp/wkhtmltox.tar.xz -C /usr/local && rm /tmp/wkhtmltox.tar.xz
-# supervisord
-COPY supervisord.conf /etc/supervisord.conf
+
 COPY known_hosts /home/allu/.ssh/known_hosts
 
 ######################################################################################
