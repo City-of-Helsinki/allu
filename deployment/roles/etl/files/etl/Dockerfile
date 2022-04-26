@@ -1,10 +1,11 @@
-FROM ubuntu:16.04
+FROM openjdk:8-jdk-alpine
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apt-get update \
-    && apt-get install -y wget xz-utils supervisor python-pip openjdk-8-jre tzdata \
+RUN apk  update \
+    && apk add wget xz git py3-pip tzdata autossh coreutils \
+    && apk add --upgrade bash\
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -18,8 +19,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add users
 ######################################################################################
 
-RUN addgroup --gid $CUSTOM_GID allu && \
-    adduser allu --uid $CUSTOM_UID --gid $CUSTOM_GID --disabled-password --gecos ''
+RUN addgroup -g $CUSTOM_GID allu && \
+    adduser allu --uid $CUSTOM_UID --ingroup allu --disabled-password --gecos ''
 
 ######################################################################################
 # Create directories
@@ -33,7 +34,9 @@ RUN mkdir -p /home/allu/etl
 # Supervisord
 ######################################################################################
 
-RUN pip install supervisor-stdout
+RUN pip3 install supervisor
+RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
+COPY supervisord.conf /etc/supervisord.conf
 CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
 
 
@@ -52,8 +55,7 @@ RUN ln -s /servicehome/services/etl/allu-etl.properties /home/allu/etl/allu-etl.
 # Copy files to image
 ######################################################################################
 
-# supervisord
-COPY supervisord.conf /etc/supervisord.conf
+
 
 ######################################################################################
 # Changes that should not be cached
