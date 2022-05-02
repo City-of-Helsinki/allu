@@ -1,9 +1,8 @@
 package fi.hel.allu.servicecore.security;
 
 import com.greghaskins.spectrum.Spectrum;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.junit.runner.RunWith;
 import org.springframework.security.core.userdetails.User;
 
@@ -11,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.greghaskins.spectrum.Spectrum.*;
+import static io.jsonwebtoken.security.Keys.secretKeyFor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +19,8 @@ public class TokenUtilSpec {
 
   TokenUtil tokenUtil;
 
-  String secret = "test secret";
+  String secret = "SecretMustBeOver512BitsSoThatsWhyThisStringIsSoStupidAssLongBoy" +
+    "ButStillSecurityIsImportantThinkRightAtleastIHopeSoThatThisAlgorithIsLongEnough";
   ZonedDateTime expirationTime = ZonedDateTime.now().plusHours(1);
   String subject = "testuser";
   String simpleClaim = "simpleClaim";
@@ -41,7 +42,7 @@ public class TokenUtilSpec {
         token = tokenUtil.createToken(expirationTime, subject, claims);
       });
       it("should be signed", () -> {
-        JwtParser parser = Jwts.parser().setSigningKey(tokenUtil.getBase64EncodedJWTSecret());
+        JwtParser parser = Jwts.parserBuilder().setSigningKey(tokenUtil.getBase64EncodedJWTKey()).build();
         assertTrue("token must be signed", parser.isSigned(token));
       });
       it("should have subject", () -> {
@@ -54,7 +55,8 @@ public class TokenUtilSpec {
         assertEquals(role, user.getAuthorities().stream().findFirst().get().getAuthority());
       });
       it("should have all claims", () -> {
-        final Claims claims = Jwts.parser().setSigningKey(tokenUtil.getBase64EncodedJWTSecret()).parseClaimsJws(token).getBody();
+        final Claims claims = Jwts.parserBuilder().setSigningKey(tokenUtil.getBase64EncodedJWTKey()).build()
+          .parseClaimsJws(token).getBody();
         assertEquals(5, claims.size());
         // milliseconds seem to disappear from JWT
         assertEquals(Date.from(expirationTime.toInstant()).getTime() / 1000, claims.getExpiration().getTime() / 1000);

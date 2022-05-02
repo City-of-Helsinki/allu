@@ -1,15 +1,16 @@
 package fi.hel.allu.servicecore.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.InvalidKeyException;
+import io.jsonwebtoken.security.Keys;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import java.io.UnsupportedEncodingException;
+import javax.crypto.SecretKey;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,8 +44,9 @@ public class TokenUtil {
     JwtBuilder jwtBuilder = Jwts.builder()
         .setExpiration(convertToDate)
         .setSubject(subject);
+    jwtBuilder.signWith(getBase64EncodedJWTKey(), SignatureAlgorithm.HS512);
     propertyToValue.entrySet().forEach(e -> jwtBuilder.claim(e.getKey(), e.getValue()));
-    return jwtBuilder.signWith(SignatureAlgorithm.HS512, getBase64EncodedJWTSecret()).compact();
+    return jwtBuilder.compact();
   }
 
   /**
@@ -55,7 +57,8 @@ public class TokenUtil {
    * @return <code>User</code> parsed from the token.
    */
   public User parseUserFromToken(String roleClaimName, String token) {
-    final Claims claims = Jwts.parser().setSigningKey(getBase64EncodedJWTSecret()).parseClaimsJws(token).getBody();
+    final Claims claims = Jwts.parserBuilder().setSigningKey(getBase64EncodedJWTKey()).build()
+      .parseClaimsJws(token).getBody();
     return new User(claims.getSubject(), "", getRoles(roleClaimName, claims));
   }
 
@@ -64,10 +67,15 @@ public class TokenUtil {
     return rolesOpt.orElse(Collections.emptyList()).stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toSet());
   }
 
-  String getBase64EncodedJWTSecret() {
+  /**
+   * gives Base64-encoded Secret key
+   * @return SecretKey key
+   */
+  public SecretKey getBase64EncodedJWTKey() {
+    System.out.println(secret);
     try {
-      return new String(java.util.Base64.getEncoder().encode(secret.getBytes()), "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+      return  Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    } catch (InvalidKeyException  e) {
       // should never happen
       throw new RuntimeException(e);
     }

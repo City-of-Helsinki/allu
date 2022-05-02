@@ -2,6 +2,10 @@ package fi.hel.allu.ui.security;
 
 import java.util.*;
 
+import fi.hel.allu.servicecore.security.TokenUtil;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.InvalidKeyException;
+import io.jsonwebtoken.security.Keys;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +24,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 
+import javax.crypto.SecretKey;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -32,13 +38,14 @@ public class TokenAuthenticationServiceTest {
 
   private final String code = "123";
   private final String USER_NAME = "username";
-  private final String REAL_NAME = "John Doe";
+  private final String REAL_NAME = "John sDoe";
   private final String EMAIL = "john.doe@foo.bar";
   private final String ALLU_GROUP_ID = "124-abc-345";
 
   private UserJson userJson;
   private Claims claims;
   private AdClaims adClaims;
+  private TokenUtil tokenUtil;
 
   @Before
   public void init() {
@@ -48,7 +55,8 @@ public class TokenAuthenticationServiceTest {
     claims = Mockito.mock(Claims.class);
     adClaims = new AdClaims(claims);
 
-    Mockito.when(applicationProperties.getJwtSecret()).thenReturn("test secret");
+    Mockito.when(applicationProperties.getJwtSecret()).thenReturn("LookslikeWhiteSpaceAreNotAcceptedOnBase64Encoding" +
+      "AlsoThisNeedsToBeOver516bitLonSoNowImWritingLongAssTextThatFulfillsCriteria");
     Mockito.when(applicationProperties.getAlluAdGroupId()).thenReturn(ALLU_GROUP_ID);
     Mockito.when(applicationProperties.getJwtExpirationHours()).thenReturn(12);
     Mockito.when(claims.get("upn", String.class)).thenReturn(USER_NAME);
@@ -117,8 +125,10 @@ public class TokenAuthenticationServiceTest {
   public void testCreateValidJWT() {
     String token = tokenAuthenticationService.createTokenForUser(userJson);
     assertNotNull("token must not be null", token);
-    JwtParser parser = Jwts.parser().setSigningKey(applicationProperties.getJwtSecret());
+    JwtParser parser = Jwts.parserBuilder().setSigningKey
+      (Keys.hmacShaKeyFor(Decoders.BASE64.decode(applicationProperties.getJwtSecret()))).build();
     assertTrue("token must be signed", parser.isSigned(token));
   }
+
 
 }
