@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.security.PublicKey;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,14 +34,15 @@ public class AadService {
   private static final String OAUTH2_GRANT_TYPE = "authorization_code";
 
   @Lazy
-  @Autowired
   private AdAuthenticationProperties properties;
-
-  @Autowired
   private RestTemplate restTemplate;
-
-  @Autowired
   private JwksService jwksService;
+
+  public AadService(AdAuthenticationProperties properties, RestTemplate restTemplate, JwksService jwksService) {
+    this.properties = properties;
+    this.restTemplate = restTemplate;
+    this.jwksService = jwksService;
+  }
 
   public AdClaims exchangeCodeForToken(String authCode) throws MalformedURLException, JwkException {
     HttpHeaders headers = new HttpHeaders();
