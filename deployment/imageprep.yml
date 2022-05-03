@@ -1,12 +1,12 @@
-# runs preparation tasks against a fresh Ubuntu 16.04 image
+# runs preparation tasks against a fresh Ubuntu image
 - name: prepare  Ubuntu for Allu deployment (done for all Ansible roles)
   hosts: all
   remote_user: "{{ deployment_user }}"
   become: yes
   gather_facts: no
   pre_tasks:
-    - name: install python2 before other Ansible tasks, because Ansible modules depend on Python
-      raw: apt-get -y install python-simplejson
+    - name: install python before other Ansible tasks, because Ansible modules depend on Python
+      raw: apt -y install python3 pip python-simplejson
     - name: gather facts for later use
       setup:
   roles:
