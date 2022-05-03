@@ -5,8 +5,7 @@
 - name: install docker-py dependency for managing Docker with Ansible
   pip:
     name:
-      - backports.ssl-match-hostname
-      - docker-py
+      - docker
 
 - name: check does Docker daemon already exist
   stat:
