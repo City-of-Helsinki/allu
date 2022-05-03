@@ -2,7 +2,7 @@
 - name: install pip for Python dependency management
   apt: name=python3-pip state=present
 
-- name: install docker-py dependency for managing Docker with Ansible
+- name: install docker dependency for managing Docker with Ansible
   pip:
     name:
       - docker
