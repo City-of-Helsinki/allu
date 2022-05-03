@@ -43,9 +43,9 @@ public class TokenUtil {
     Date convertToDate = Date.from(expirationTime.toInstant());
     JwtBuilder jwtBuilder = Jwts.builder()
         .setExpiration(convertToDate)
+        .signWith(getBase64EncodedJWTKey(), SignatureAlgorithm.HS512)
         .setSubject(subject);
-    jwtBuilder.signWith(getBase64EncodedJWTKey(), SignatureAlgorithm.HS512);
-    propertyToValue.entrySet().forEach(e -> jwtBuilder.claim(e.getKey(), e.getValue()));
+    propertyToValue.forEach((key, value) -> jwtBuilder.claim(key, value));
     return jwtBuilder.compact();
   }
 
@@ -64,7 +64,7 @@ public class TokenUtil {
 
   private Set<GrantedAuthority> getRoles(String roleClaimName, Claims claims) {
     Optional<List<String>> rolesOpt = Optional.ofNullable(claims.get(roleClaimName, List.class));
-    return rolesOpt.orElse(Collections.emptyList()).stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toSet());
+    return rolesOpt.orElse(Collections.emptyList()).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
   }
 
   /**
@@ -72,7 +72,6 @@ public class TokenUtil {
    * @return SecretKey key
    */
   public SecretKey getBase64EncodedJWTKey() {
-    System.out.println(secret);
     try {
       return  Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     } catch (InvalidKeyException  e) {

@@ -4,7 +4,6 @@ import java.util.*;
 
 import fi.hel.allu.servicecore.security.TokenUtil;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,8 +23,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 
-import javax.crypto.SecretKey;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -38,7 +35,7 @@ public class TokenAuthenticationServiceTest {
 
   private final String code = "123";
   private final String USER_NAME = "username";
-  private final String REAL_NAME = "John sDoe";
+  private final String REAL_NAME = "John Doe";
   private final String EMAIL = "john.doe@foo.bar";
   private final String ALLU_GROUP_ID = "124-abc-345";
 
@@ -65,21 +62,21 @@ public class TokenAuthenticationServiceTest {
 
     tokenAuthenticationService = new TokenAuthenticationService(applicationProperties, userService, aadService);
 
-    List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+    List<GrantedAuthority> roles = new ArrayList<>();
     roles.add(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
     roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()));
     userJson = new UserJson(
-        1,
-        USER_NAME,
-        REAL_NAME,
-        EMAIL,
-        "123-321",
-        "Johtaja",
-        true,
-        null,
-        Collections.emptyList(),
-        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN),
-        Collections.emptyList());
+      1,
+      USER_NAME,
+      REAL_NAME,
+      EMAIL,
+      "123-321",
+      "Johtaja",
+      true,
+      null,
+      Collections.emptyList(),
+      Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN),
+      Collections.emptyList());
   }
 
   @Test
@@ -109,6 +106,7 @@ public class TokenAuthenticationServiceTest {
     Assert.assertFalse(userJsonOpt.isPresent());
   }
 
+  @Test
   public void testAuthenticateWithOAuth2CodeInvalidCode() throws Exception {
     Mockito.when(aadService.exchangeCodeForToken(code)).thenThrow(new IllegalArgumentException());
     Optional<UserJson> userJsonOpt = tokenAuthenticationService.authenticateWithOAuth2Code(code);
