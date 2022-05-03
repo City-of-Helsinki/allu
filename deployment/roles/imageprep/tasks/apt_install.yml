@@ -1,6 +1,6 @@
 
 - name: install pip for Python dependency management
-  apt: name=python-pip state=present
+  apt: name=python3-pip state=present
 
 - name: install docker-py dependency for managing Docker with Ansible
   pip: name=docker-py
@@ -27,7 +27,7 @@
 - name: copy Docker deb-package to target host
   copy: src=docker-ce_18.06.3_ce_3-0_ubuntu_amd64.deb dest=/tmp/docker.deb
 
-# Docker deb packages are available at https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/
+# Docker deb packages are available at https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/
 - name: Install Docker from deb package
   apt:
     deb: /tmp/docker.deb

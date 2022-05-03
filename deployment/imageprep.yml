@@ -1,5 +1,5 @@
 # runs preparation tasks against a fresh Ubuntu 16.04 image
-- name: prepare fresh Ubuntu 16.04 for Allu deployment (done for all Ansible roles)
+- name: prepare  Ubuntu for Allu deployment (done for all Ansible roles)
   hosts: all
   remote_user: "{{ deployment_user }}"
   become: yes
