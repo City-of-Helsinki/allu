@@ -1,5 +1,5 @@
 - name: install PostgreSQL Python module needed by Ansible postgresql_user module
-  apt: name=python-psycopg2 state=present
+  apt: name=python3-psycopg2 state=present
   become: yes
 
 - name: install support for psql command
