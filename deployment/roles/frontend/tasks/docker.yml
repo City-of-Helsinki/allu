@@ -10,7 +10,8 @@
         CACHEBUST: "{{ 9999999 |random }}"
       path: "{{ role_path }}/files/frontend_docker"
     name: allu_frontend
-    force: true
+    force_absent: true
+    force_source: true
 
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_frontend.tar state=absent
