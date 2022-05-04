@@ -25,5 +25,5 @@ searchservers
 sftpserver
 reporting_dbserver
 
-[backendservers:vars]
+[test:vars]
 ansible_python_interpreter=/usr/bin/python3
