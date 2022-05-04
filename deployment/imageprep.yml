@@ -7,7 +7,7 @@
   pre_tasks:
     - name: install python before other Ansible tasks, because Ansible modules depend on Python
       raw: apt -y install python3 pip python-simplejson
-    - name: gather facts
-      ansible.builtin.setup:
+    - name: gather facts for later use
+      setup:
   roles:
     - imageprep
