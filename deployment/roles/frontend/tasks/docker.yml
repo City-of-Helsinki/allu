@@ -3,7 +3,8 @@
   local_action:
     module: docker_image
     source: build
-    path: "{{ role_path }}/files/frontend_docker"
+    build:
+      path: "{{ role_path }}/files/frontend_docker"
     name: allu_frontend
     force: true
     buildargs:
