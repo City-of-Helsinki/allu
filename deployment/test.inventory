@@ -24,3 +24,6 @@ backendservers
 searchservers
 sftpserver
 reporting_dbserver
+
+[backendservers:vars]
+ansible_python_interpreter=/usr/bin/python5
