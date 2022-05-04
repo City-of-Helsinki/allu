@@ -26,4 +26,4 @@ sftpserver
 reporting_dbserver
 
 [backendservers:vars]
-ansible_python_interpreter=/usr/bin/python5
+ansible_python_interpreter=/usr/bin/python3
