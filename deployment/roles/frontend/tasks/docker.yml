@@ -2,6 +2,7 @@
 - name: Build frontend Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
     module: docker_image
+    source: build
     path: "{{ role_path }}/files/frontend_docker"
     name: allu_frontend
     force: true
