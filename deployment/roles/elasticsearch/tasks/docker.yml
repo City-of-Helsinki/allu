@@ -22,7 +22,7 @@
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
   local_action: docker_image
-                source=locals
+                source=local
                 name=allu_elasticsearch
                 archive_path=/tmp/allu_elasticsearch.tar
                 state=present
