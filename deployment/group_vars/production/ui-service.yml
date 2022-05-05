@@ -1,3 +1,3 @@
-environment: PRODUCTION
+profile_environment: PRODUCTION
 
 oauth2_redirect_uri: https://allu.kaupunkiymparisto.fi/oauth2/
