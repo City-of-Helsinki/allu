@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PublicKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,10 @@ import com.auth0.jwk.UrlJwkProvider;
 @Service
 public class JwksService {
 
-  private final AdAuthenticationProperties properties;
+  @Lazy
+  @Autowired
+  private AdAuthenticationProperties properties;
 
-  public JwksService(@Lazy AdAuthenticationProperties properties) {
-    this.properties = properties;
-  }
 
   public PublicKey getAdPublicKey(String accessToken) throws MalformedURLException, JwkException {
     JwkProvider provider = new UrlJwkProvider(new URL(properties.getOauth2JwksUri()));
