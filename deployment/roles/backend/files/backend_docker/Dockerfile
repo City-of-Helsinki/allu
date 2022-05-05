@@ -106,6 +106,7 @@ COPY wkhtmltox-0.12.3_linux-generic-amd64.tar.xz /tmp/wkhtmltox.tar.xz
 RUN tar xf /tmp/wkhtmltox.tar.xz -C /usr/local && rm /tmp/wkhtmltox.tar.xz
 
 COPY known_hosts /home/allu/.ssh/known_hosts
+RUN chmod ugo+x /home/allu/.ssh/known_hosts
 
 ######################################################################################
 # Changes that should not be cached
