@@ -55,7 +55,7 @@
     name=allu_frontend
     state=absent
     force_absent=true
-    force_source=gtrue
+    force_source=true
   become: yes
 
 - name: add container to Docker
