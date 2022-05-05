@@ -1,12 +1,16 @@
 - name: Build ElasticSearch Docker image
   local_action:
     module: docker_image
-    path: "{{ role_path }}/files/elasticsearch_docker"
+    source: build
+    build:
+      args:
+        CUSTOM_UID: "{{ system_user_id_allu }}"
+        CUSTOM_GID: "{{ system_group_id_allu }}"
+      path: "{{ role_path }}/files/elasticsearch_docker"
     name: allu_elasticsearch
-    force: true
-    buildargs:
-      CUSTOM_UID: "{{ system_user_id_allu }}"
-      CUSTOM_GID: "{{ system_group_id_allu }}"
+    force_absent: true
+    force_source: true
+
 
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_elasticsearch.tar state=absent
@@ -14,10 +18,11 @@
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_elasticsearch.tar.gz state=absent
 
-# This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
+# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
   local_action: docker_image
+                source=locals
                 name=allu_elasticsearch
                 archive_path=/tmp/allu_elasticsearch.tar
                 state=present
@@ -48,11 +53,13 @@
   docker_image:
     name=allu_elasticsearch
     state=absent
-    force=true
+    force_absent=true
+    force_source=true
   become: yes
 
 - name: add container to Docker
   docker_image:
+    source=load
     name=allu_elasticsearch
     state=present
     load_path=/tmp/allu_elasticsearch.tar

@@ -2,13 +2,16 @@
 - name: Build Allu ETL Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
     module: docker_image
-    path: "{{ role_path }}/files/etl"
+    source: build
+    build:
+      args:
+        CUSTOM_UID: "{{ system_user_id_allu }}"
+        CUSTOM_GID: "{{ system_group_id_allu }}"
+        CACHEBUST: "{{ 9999999 |random }}"
+      path: "{{ role_path }}/files/etl"
     name: allu_etl
-    force: true
-    buildargs:
-      CUSTOM_UID: "{{ system_user_id_allu }}"
-      CUSTOM_GID: "{{ system_group_id_allu }}"
-      CACHEBUST: "{{ 9999999 |random }}"
+    force_absent: true
+    force_source: true
 
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_etl.tar state=absent
@@ -16,10 +19,11 @@
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_etl.tar.gz state=absent
 
-# This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
+# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
   local_action: docker_image
+                source=local
                 name=allu_etl
                 archive_path=/tmp/allu_etl.tar
                 state=present
@@ -50,11 +54,13 @@
   docker_image:
     name=allu_etl
     state=absent
-    force=true
+    force_absent=true
+    force_source=true
   become: yes
 
 - name: add container to Docker
   docker_image:
+    source=loads
     name=allu_etl
     state=present
     load_path=/tmp/allu_etl.tar

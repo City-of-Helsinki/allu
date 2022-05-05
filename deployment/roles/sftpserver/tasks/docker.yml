@@ -1,9 +1,12 @@
 - name: Build Test SFTP Server Docker image
   local_action:
     module: docker_image
-    path: "{{ role_path }}/files/sftpserver_docker"
+    source: build
+    build:
+      path: "{{ role_path }}/files/sftpserver_docker"
     name: allu_sftpserver
-    force: true
+    force_absent: true
+    force_source: true
 
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_sftpserver.tar state=absent
@@ -11,10 +14,11 @@
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_sftpserver.tar.gz state=absent
 
-# This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
+# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
   local_action: docker_image
+                source=local
                 name=allu_sftpserver
                 archive_path=/tmp/allu_sftpserver.tar
                 state=present
@@ -45,11 +49,13 @@
   docker_image:
     name=allu_sftpserver
     state=absent
-    force=true
+    force_absent=true
+    force_source=true
   become: yes
 
 - name: add container to Docker
   docker_image:
+    source=load
     name=allu_sftpserver
     state=present
     load_path=/tmp/allu_sftpserver.tar

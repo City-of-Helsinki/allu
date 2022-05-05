@@ -19,7 +19,7 @@
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_frontend.tar.gz state=absent
 
-# This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
+# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
   local_action: docker_image
@@ -60,10 +60,10 @@
 
 - name: add container to Docker
   docker_image:
+    source=load
     name=allu_frontend
     state=present
     load_path=/tmp/allu_frontend.tar
-    source=load
   become: yes
 
 - name: start container
