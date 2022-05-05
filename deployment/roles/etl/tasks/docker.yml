@@ -60,7 +60,7 @@
 
 - name: add container to Docker
   docker_image:
-    source=loads
+    source=load
     name=allu_etl
     state=present
     load_path=/tmp/allu_etl.tar
