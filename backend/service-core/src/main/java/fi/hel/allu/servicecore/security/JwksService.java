@@ -16,9 +16,9 @@ import com.auth0.jwk.UrlJwkProvider;
 @Service
 public class JwksService {
 
-  @Lazy
-  private AdAuthenticationProperties properties;
-  public JwksService(AdAuthenticationProperties properties) {
+  private final AdAuthenticationProperties properties;
+
+  public JwksService(@Lazy AdAuthenticationProperties properties) {
     this.properties = properties;
   }
 

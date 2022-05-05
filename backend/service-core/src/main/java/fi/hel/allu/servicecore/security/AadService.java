@@ -33,12 +33,12 @@ public class AadService {
   private static final String OAUTH2_GRANT_TYPE_PARAM = "grant_type";
   private static final String OAUTH2_GRANT_TYPE = "authorization_code";
 
-  @Lazy
-  private AdAuthenticationProperties properties;
-  private RestTemplate restTemplate;
-  private JwksService jwksService;
 
-  public AadService(AdAuthenticationProperties properties, RestTemplate restTemplate, JwksService jwksService) {
+  private final AdAuthenticationProperties properties;
+  private final RestTemplate restTemplate;
+  private final JwksService jwksService;
+
+  public AadService(@Lazy AdAuthenticationProperties properties, RestTemplate restTemplate, JwksService jwksService) {
     this.properties = properties;
     this.restTemplate = restTemplate;
     this.jwksService = jwksService;
@@ -62,13 +62,14 @@ public class AadService {
   public AdClaims parseToken(String token) throws MalformedURLException, JwkException {
     PublicKey publicKey = jwksService.getAdPublicKey(token);
     // Validates signature and expiration time
-    final Claims claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token).getBody();
+    final Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build()
+      .parseClaimsJws(token).getBody();
     validateClaims(claims);
     return new AdClaims(claims);
   }
 
   private void validateClaims(Claims claims) {
-    if (!Objects.equals(claims.getAudience(),properties.getOauth2ClientId())) {
+    if (!Objects.equals(claims.getAudience(), properties.getOauth2ClientId())) {
       throw new IllegalArgumentException("Invalid audience in access token");
     }
   }
