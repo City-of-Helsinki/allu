@@ -23,6 +23,7 @@
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
   local_action: docker_image
+                source=local
                 name=allu_frontend
                 archive_path=/tmp/allu_frontend.tar
                 state=present
@@ -53,7 +54,8 @@
   docker_image:
     name=allu_frontend
     state=absent
-    force=true
+    force_absent=true
+    force_source=gtrue
   become: yes
 
 - name: add container to Docker
@@ -61,6 +63,7 @@
     name=allu_frontend
     state=present
     load_path=/tmp/allu_frontend.tar
+    source=load
   become: yes
 
 - name: start container
