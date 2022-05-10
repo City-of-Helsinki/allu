@@ -29,10 +29,7 @@ import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -223,7 +220,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    *
    * @param objectsToUpdate List of objects that will be updated to search index
    *                        as JSON.
-   * @param keyMapper       lambda from object to its key
    */
   public void bulkUpdate(List<T> objectsToUpdate) {
     bulkUpdate(objectsToUpdate, false);
@@ -350,7 +346,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
 
     logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
-      srBuilder.toString());
+      srBuilder);
     return srBuilder;
   }
 
@@ -362,7 +358,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     List<QueryParameter> parameters = queryParameters.getQueryParameters().stream().filter(QueryParameter::hasValue)
       .collect(Collectors.toList());
     for (QueryParameter param : parameters) {
-      if (matchAny) {
+      if (Boolean.TRUE.equals(matchAny)) {
         qb.should(createQueryBuilder(param));
       } else {
         qb.must(createQueryBuilder(param));
@@ -413,7 +409,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   protected void handleActive(BoolQueryBuilder qb, QueryParameter active) {
     Optional.ofNullable(active)
       .map(a -> QueryBuilders.termQuery(a.getFieldName(), a.getFieldValue()))
-      .ifPresent(activeQuery -> qb.filter(activeQuery));
+      .ifPresent(qb::filter);
   }
 
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
@@ -440,7 +436,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * Insert objects to temporary index for syncing them to ElasticSearch.
    *
    * @param objectsToSync list of objects to sync into temporary index.
-   * @param keyMapper     lambda from object to its key.
    */
   public void syncData(List<T> objectsToSync) {
     if (indexConductor.isSyncActive()) {
@@ -517,7 +512,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     QueryBuilder qb = QueryBuilders.matchQuery("_id", id);
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName()).setTypes(indexTypeName)
       .setQuery(qb);
-    logger.debug("Finding object with the following query:\n {}", srBuilder.toString());
+    logger.debug("Finding object with the following query:\n {}", srBuilder);
     SearchResponse response = srBuilder.execute().actionGet();
     if (response != null) {
       SearchHits hits = response.getHits();
@@ -622,8 +617,12 @@ public class GenericSearchService<T, Q extends QueryParameters> {
           queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND))
         .boost(queryParameter.getBoost());
     } else if (queryParameter.getFieldValue() != null) {
-      return QueryBuilders.matchQuery(
-        queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND).fuzziness(Fuzziness.AUTO);
+      MatchQueryBuilder builder = QueryBuilders.matchQuery(
+        queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND);
+      if (!"registryKey".equals(queryParameter.getFieldName())) {
+        builder.fuzziness(Fuzziness.AUTO);
+      }
+      return builder;
     } else if (queryParameter.getStartDateValue() != null || queryParameter.getEndDateValue() != null) {
       ZonedDateTime startDate = queryParameter.getStartDateValue() != null ? queryParameter.getStartDateValue() : RecurringApplication.BEGINNING_1972_DATE;
       ZonedDateTime endDate = queryParameter.getEndDateValue() != null ? queryParameter.getEndDateValue() : RecurringApplication.MAX_END_TIME;
@@ -637,7 +636,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       }
       return qb;
     } else {
-      throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass().toString());
+      throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass());
     }
   }
 
@@ -711,11 +710,12 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
       .build();
 
-    requests.forEach(req -> bp.add(req));
+    requests.forEach(bp::add);
 
     try {
       bp.awaitClose(10, TimeUnit.MINUTES);
     } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
       throw new SearchException(e);
     }
   }
@@ -742,8 +742,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     @Override
     public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-      logger.debug("Bulk execution completed [" + executionId + "]. Took (ms): " + response.getTookInMillis() + ". Failures: "
-        + response.hasFailures() + ". Count: " + response.getItems().length);
+      logger.debug("Bulk execution completed [{}]. Took (ms): {}. Failures: {}. Count: {}",
+        executionId, response.getTookInMillis(), response.hasFailures(), response.getItems().length);
     }
   }
 }
