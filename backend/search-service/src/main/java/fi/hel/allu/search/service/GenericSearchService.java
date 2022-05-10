@@ -27,6 +27,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.unit.ByteSizeValue;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
@@ -74,24 +75,24 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   /* Fields that should be sorted alphabetically */
   private static final String[] alphaSortFields = {
-      "name",
-      "customers.applicant.customer.name",
-      "customer.name",
-      "contacts.name",
-      "locations.streetAddress",
-      "locations.address",
-      "applicationId",
-      "ownerName",
-      "owner.userName",
-      "owner.realName",
-      "registryKey",
-      "project.identifier",
-      "identifier"
+    "name",
+    "customers.applicant.customer.name",
+    "customer.name",
+    "contacts.name",
+    "locations.streetAddress",
+    "locations.address",
+    "applicationId",
+    "ownerName",
+    "owner.userName",
+    "owner.realName",
+    "registryKey",
+    "project.identifier",
+    "identifier"
 
-      };
+  };
 
   /* Fields that should be sorted ordinally */
-  private static final String[] ordinalSortFields = { "status", "type" };
+  private static final String[] ordinalSortFields = {"status", "type"};
 
   private final ElasticSearchMappingConfig elasticSearchMappingConfig;
   private final Client client;
@@ -106,20 +107,20 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * Instantiate a search service.
    *
    * @param elasticSearchMappingConfig {@link ElasticSearchMappingConfig} to use
-   * @param client The ElasticSearch client
-   * @param indexTypeName Type name in index
-   * @param indexConductor An index conductor for managing/tracking the index
-   *          state
-   * @param keyMapper Lambda from element to its key
-   * @param valueType The element's class type for JSON parsing
+   * @param client                     The ElasticSearch client
+   * @param indexTypeName              Type name in index
+   * @param indexConductor             An index conductor for managing/tracking the index
+   *                                   state
+   * @param keyMapper                  Lambda from element to its key
+   * @param valueType                  The element's class type for JSON parsing
    */
   protected GenericSearchService(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client,
-      String indexTypeName,
-      IndexConductor indexConductor,
-      Function<T, String> keyMapper,
-      Class<T> valueType) {
+    ElasticSearchMappingConfig elasticSearchMappingConfig,
+    Client client,
+    String indexTypeName,
+    IndexConductor indexConductor,
+    Function<T, String> keyMapper,
+    Class<T> valueType) {
     this.elasticSearchMappingConfig = elasticSearchMappingConfig;
     this.client = client;
     this.indexTypeName = indexTypeName;
@@ -170,7 +171,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   /**
    * Insert given JSON to search index using given type.
    *
-   * @param indexedObject   Data added to search index.
+   * @param indexedObject Data added to search index.
    */
   public void insert(T indexedObject) {
     insertInto(indexConductor.getIndexAliasName(), indexedObject);
@@ -186,7 +187,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       String id = keyMapper.apply(indexedObject);
       logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
-          client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
+        client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
       if (response.status() != RestStatus.CREATED) {
         throw new SearchException("Unable to insert record to " + indexName + " with id " + id);
       }
@@ -199,7 +200,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * Bulk insert objects to search index.
    *
    * @param objectsToInsert List of objects that will be inserted to search
-   *          index as JSON.
+   *                        index as JSON.
    */
   public void bulkInsert(List<T> objectsToInsert) {
     bulkInsertInto(indexConductor.getIndexAliasName(), objectsToInsert);
@@ -211,8 +212,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   /* Bulk insert into given index */
   private void bulkInsertInto(String indexName, List<T> objectsToInsert) {
     List<DocWriteRequest<?>> indexRequests =
-        objectsToInsert.stream().map(entry -> createRequestInto(indexName, keyMapper.apply(entry), entry))
-            .collect(Collectors.toList());
+      objectsToInsert.stream().map(entry -> createRequestInto(indexName, keyMapper.apply(entry), entry))
+        .collect(Collectors.toList());
 
     executeBulk(indexRequests, null);
   }
@@ -221,8 +222,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * Bulk update of the search index.
    *
    * @param objectsToUpdate List of objects that will be updated to search index
-   *          as JSON.
-   * @param keyMapper lambda from object to its key
+   *                        as JSON.
+   * @param keyMapper       lambda from object to its key
    */
   public void bulkUpdate(List<T> objectsToUpdate) {
     bulkUpdate(objectsToUpdate, false);
@@ -246,8 +247,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   private void bulkUpdateInto(String indexName, List<T> objectsToUpdate, RefreshPolicy refreshPolicy) {
     List<DocWriteRequest<?>> updateRequests =
-        objectsToUpdate.stream().map(entry -> updateRequestInto(indexName, keyMapper.apply(entry), entry))
-            .collect(Collectors.toList());
+      objectsToUpdate.stream().map(entry -> updateRequestInto(indexName, keyMapper.apply(entry), entry))
+        .collect(Collectors.toList());
 
     executeBulk(updateRequests, refreshPolicy);
   }
@@ -257,8 +258,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * them.
    *
    * @param idToPartialUpdateObj Map where key is the key of the object to
-   *          partially update and value is an object (or map) containing the
-   *          fields to modify and their new values.
+   *                             partially update and value is an object (or map) containing the
+   *                             fields to modify and their new values.
    */
   public void partialUpdate(Map<Integer, Object> idToPartialUpdateObj, Boolean waitRefresh) {
     partialUpdateInto(indexConductor.getIndexAliasName(), idToPartialUpdateObj, waitRefresh);
@@ -269,8 +270,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   public void partialUpdateInto(String indexName, Map<Integer, Object> idToPartialUpdateObj, Boolean waitRefresh) {
     List<DocWriteRequest<?>> updateRequests = idToPartialUpdateObj.entrySet().stream()
-        .map(entry -> updateRequestInto(indexName, entry.getKey().toString(), entry.getValue()))
-        .collect(Collectors.toList());
+      .map(entry -> updateRequestInto(indexName, entry.getKey().toString(), entry.getValue()))
+      .collect(Collectors.toList());
     RefreshPolicy refreshPolicy = BooleanUtils.isTrue(waitRefresh) ? RefreshPolicy.WAIT_UNTIL : null;
     executeBulk(updateRequests, refreshPolicy);
   }
@@ -278,7 +279,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   /**
    * Update customers and their contacts on an application
    *
-   * @param applicationId application whose customers and contacts to update
+   * @param applicationId       application whose customers and contacts to update
    * @param customersByRoleType new customer and contact data mapped by the role of the customer
    */
   public void updateCustomersWithContacts(Integer applicationId, Map<CustomerRoleType, CustomerWithContactsES> customersByRoleType) {
@@ -289,7 +290,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   /**
    * Delete object from search index.
    *
-   * @param id              Id to be deleted.
+   * @param id Id to be deleted.
    */
   public void delete(String id) {
     deleteFrom(indexConductor.getIndexAliasName(), id);
@@ -313,10 +314,10 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * {{@link ElasticSearchMappingConfig}}.
    *
    * @param queryParameters Query parameters.
-   * @param pageRequest Page request. Can be null, in which case the default
-   *          request is assumed.
+   * @param pageRequest     Page request. Can be null, in which case the default
+   *                        request is assumed.
    * @return A page of matching application IDs. Results are ordered as
-   *         specified by the query parameters.
+   * specified by the query parameters.
    */
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest, Boolean matchAny) {
     if (pageRequest == null) {
@@ -338,7 +339,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   }
 
   public SearchRequestBuilder buildSearchRequest(Q queryParameters, Pageable pageRequest,
-      Boolean matchAny) {
+                                                 Boolean matchAny) {
     boolean isScoringQuery = isScoringQuery(queryParameters);
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
     QueryParameter active = queryParameters.remove("active");
@@ -349,7 +350,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
 
     logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
-        srBuilder.toString());
+      srBuilder.toString());
     return srBuilder;
   }
 
@@ -359,7 +360,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   protected void addQueryParameters(QueryParameters queryParameters, Boolean matchAny, BoolQueryBuilder qb) {
     List<QueryParameter> parameters = queryParameters.getQueryParameters().stream().filter(QueryParameter::hasValue)
-        .collect(Collectors.toList());
+      .collect(Collectors.toList());
     for (QueryParameter param : parameters) {
       if (matchAny) {
         qb.should(createQueryBuilder(param));
@@ -371,8 +372,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   protected SearchRequestBuilder prepareSearch(Pageable pageRequest, QueryBuilder qb) {
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
-        .setFrom((int)pageRequest.getOffset()).setSize(pageRequest.getPageSize())
-        .setTypes(indexTypeName).setQuery(qb);
+      .setFrom((int) pageRequest.getOffset()).setSize(pageRequest.getPageSize())
+      .setTypes(indexTypeName).setQuery(qb);
     return addFieldFilter(srBuilder);
   }
 
@@ -411,8 +412,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   protected void handleActive(BoolQueryBuilder qb, QueryParameter active) {
     Optional.ofNullable(active)
-        .map(a -> QueryBuilders.termQuery(a.getFieldName(), a.getFieldValue()))
-        .ifPresent(activeQuery -> qb.filter(activeQuery));
+      .map(a -> QueryBuilders.termQuery(a.getFieldName(), a.getFieldValue()))
+      .ifPresent(activeQuery -> qb.filter(activeQuery));
   }
 
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
@@ -428,7 +429,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         indexConductor.generateNewIndexName();
         initializeIndex(indexConductor.getNewIndexName());
         indexConductor.setSyncActive();
-      } catch(Exception e) {
+      } catch (Exception e) {
         indexConductor.setSyncPassive();
         throw e;
       }
@@ -439,7 +440,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * Insert objects to temporary index for syncing them to ElasticSearch.
    *
    * @param objectsToSync list of objects to sync into temporary index.
-   * @param keyMapper lambda from object to its key.
+   * @param keyMapper     lambda from object to its key.
    */
   public void syncData(List<T> objectsToSync) {
     if (indexConductor.isSyncActive()) {
@@ -481,7 +482,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   private String getCurrentIndexName() {
 
     ImmutableOpenMap<String, List<AliasMetaData>> aliases =
-        client.admin().indices().prepareGetAliases(indexConductor.getIndexAliasName()).get().getAliases();
+      client.admin().indices().prepareGetAliases(indexConductor.getIndexAliasName()).get().getAliases();
 
     if (aliases.isEmpty()) {
       return null;
@@ -515,7 +516,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   public Optional<T> findObjectById(String id) {
     QueryBuilder qb = QueryBuilders.matchQuery("_id", id);
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName()).setTypes(indexTypeName)
-        .setQuery(qb);
+      .setQuery(qb);
     logger.debug("Finding object with the following query:\n {}", srBuilder.toString());
     SearchResponse response = srBuilder.execute().actionGet();
     if (response != null) {
@@ -618,17 +619,17 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       return createRecurringQueryBuilder(queryParameter);
     } else if (queryParameter.getBoost() != null) {
       return QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery(
-        queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND))
+          queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND))
         .boost(queryParameter.getBoost());
     } else if (queryParameter.getFieldValue() != null) {
       return QueryBuilders.matchQuery(
-          queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND);
+        queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND).fuzziness(Fuzziness.AUTO);
     } else if (queryParameter.getStartDateValue() != null || queryParameter.getEndDateValue() != null) {
       ZonedDateTime startDate = queryParameter.getStartDateValue() != null ? queryParameter.getStartDateValue() : RecurringApplication.BEGINNING_1972_DATE;
       ZonedDateTime endDate = queryParameter.getEndDateValue() != null ? queryParameter.getEndDateValue() : RecurringApplication.MAX_END_TIME;
       return QueryBuilders.rangeQuery(queryParameter.getFieldName())
-          .gte(startDate.toInstant().toEpochMilli())
-          .lte(endDate.toInstant().toEpochMilli());
+        .gte(startDate.toInstant().toEpochMilli())
+        .lte(endDate.toInstant().toEpochMilli());
     } else if (queryParameter.getFieldMultiValue() != null) {
       BoolQueryBuilder qb = QueryBuilders.boolQuery();
       for (String searchTerm : queryParameter.getFieldMultiValue()) {
@@ -645,13 +646,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * period1: search start time <= application end time AND search end time >= application start time
    * OR
    * period2: search start time <= application end time AND search end time >= application start time
-   *
+   * <p>
    * The period1 and period2 are calculated from given search period. If search period overlaps with one or more calendar years, the search
    * period is divided into two periods: period1 and period2.
    */
   private QueryBuilder createRecurringQueryBuilder(QueryParameter queryParameter) {
     ZonedDateTime startDate =
-        queryParameter.getStartDateValue() == null ? RecurringApplication.BEGINNING_1972_DATE : queryParameter.getStartDateValue();
+      queryParameter.getStartDateValue() == null ? RecurringApplication.BEGINNING_1972_DATE : queryParameter.getStartDateValue();
     ZonedDateTime endDate = queryParameter.getEndDateValue() == null ? RecurringApplication.MAX_END_TIME : queryParameter.getEndDateValue();
     RecurringApplication recurringApplication = new RecurringApplication(startDate, endDate, endDate);
 
@@ -705,10 +706,10 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   private void executeBulk(List<DocWriteRequest<?>> requests, RefreshPolicy refreshPolicy) {
     final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener(refreshPolicy))
-        .setConcurrentRequests(1)           // at most 1 concurrent request
-        .setBulkActions(1000)               // maximum of 1000 updates per request
-        .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
-        .build();
+      .setConcurrentRequests(1)           // at most 1 concurrent request
+      .setBulkActions(1000)               // maximum of 1000 updates per request
+      .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
+      .build();
 
     requests.forEach(req -> bp.add(req));
 
@@ -742,7 +743,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     @Override
     public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
       logger.debug("Bulk execution completed [" + executionId + "]. Took (ms): " + response.getTookInMillis() + ". Failures: "
-          + response.hasFailures() + ". Count: " + response.getItems().length);
+        + response.hasFailures() + ". Count: " + response.getItems().length);
     }
   }
 }
