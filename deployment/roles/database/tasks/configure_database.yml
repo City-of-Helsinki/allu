@@ -5,6 +5,7 @@
     password={{ database_password }}
     state=present
     role_attr_flags=NOCREATEDB,NOSUPERUSER,LOGIN
+    login_password=Fucking_Ultimate_Password_Must_But_it_to_credentials_file
   become: yes
   become_user: postgres
 
@@ -14,6 +15,7 @@
     name={{ database_reporting_user }}
     password={{ reporting_user_password }}
     state=present
+    login_password=Fucking_Ultimate_Password_Must_But_it_to_credentials_file
   become: yes
   become_user: postgres
 
@@ -25,6 +27,7 @@
     roles=PUBLIC
     privs=ALL
     type=database
+    login_password=Fucking_Ultimate_Password_Must_But_it_to_credentials_file
   become: yes
   become_user: postgres
 
@@ -37,6 +40,7 @@
     privs=ALL
     type=database
     grant_option=yes
+    login_password=Fucking_Ultimate_Password_Must_But_it_to_credentials_file
   become: yes
   become_user: postgres
 
@@ -48,5 +52,6 @@
     state=present
     privs=CONNECT
     type=database
+    login_password=Fucking_Ultimate_Password_Must_But_it_to_credentials_file
   become: yes
   become_user: postgres

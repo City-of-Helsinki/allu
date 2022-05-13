@@ -1,4 +1,10 @@
-# TODO: add apt-get update to make sure everything is up-to-date
+- name: Install aptitude and update server
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: yes
+  become: yes
+
 - include: hosts.yml
 
 - include: firewall.yml

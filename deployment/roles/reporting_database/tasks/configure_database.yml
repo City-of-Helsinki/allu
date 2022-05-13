@@ -1,4 +1,3 @@
-
 - name: Create database user {{ reporting_database_user }}
   postgresql_user:
     login_host=localhost

@@ -1,7 +1,8 @@
 - name: install PostgreSQL Python module needed by Ansible postgresql_user module
   apt:
     name:
-      -  libpq-dev
+      - libpq5
+      - libpq-dev
       - python3-dev
     state: present
   become: yes
@@ -9,8 +10,25 @@
 - name: Install psycopg2 with pip
   pip: name=psycopg2
 
+- name: Add Postgres official GPG key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+  become: yes
+
+- name: register ubuntu version
+  shell: lsb_release -cs
+  register: ubuntu_version
+  ignore_errors: true
+
+- name: Add Postgres Repository
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ubuntu_version.stdout}}-pgdg main"
+    state: present
+  become: yes
+
 - name: install support for psql command
-  apt: name=postgresql-client-9.5 state=present
+  apt: name=postgresql-client-14 state=present
   become: yes
 
 - name: allow postgresql connections from local network
