@@ -81,10 +81,12 @@
   file: path=/tmp/allu_reporting_database.tar state=absent
 
 - name: wait for Postgresql to initialize
-  command: psql --host localhost -p 5433 -l -U postgres
+  postgresql_ping:
+    login_host: localhost
+    port: 5432
   register: result
-  until: result.rc != 2
+  until: result.is_available
   retries: 30
-  delay: 1
+  delay: 4
   become: yes
   become_user: postgres

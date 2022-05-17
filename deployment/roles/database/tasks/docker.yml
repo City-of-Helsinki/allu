@@ -70,7 +70,7 @@
     image: allu_database
     restart_policy: always
     env:
-      POSTGRES_PASSWORD: Fucking_Ultimate_Password_Must_But_it_to_credentials_file
+      POSTGRES_PASSWORD: "{{ database_password_postgres }}"
     volumes:
       - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
     published_ports:
@@ -85,9 +85,9 @@
     login_host: localhost
     port: 5432
     login_user: postgres
-    login_password: Fucking_Ultimate_Password_Must_But_it_to_credentials_file
+    login_password: "{{ database_password_postgres }}"
   register: result
   until: result.is_available
-  retries: 40
-  delay: 10
+  retries: 30
+  delay: 4
 
