@@ -50,7 +50,7 @@
     state: absent
   become: yes
 
-- name: remove existing container from Docker
+- name: remove existing image from Docker
   docker_image:
     name=allu_reporting_database
     state=absent
