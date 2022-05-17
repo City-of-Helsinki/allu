@@ -5,6 +5,8 @@ services:
     build: ./
     volumes:
       - ./dev-add-report.sql:/docker-entrypoint-initdb.d/dev-add-report.sql
+    environment:
+      POSTGRES_PASSWORD: postgres
     ports:
       # <Port exposed> : < PostgreSQL Port running inside container>
       - "5432:5432"
@@ -12,8 +14,8 @@ services:
     build: ./elasticsearch/
     container_name: allu-node
     environment:
-      - node.name=allu-node
-      - cluster.name=allu-cluster
+      node.name: allu-node
+      cluster.name: allu-cluster
     ports:
       - "9200:9200"
       - "9300:9300"

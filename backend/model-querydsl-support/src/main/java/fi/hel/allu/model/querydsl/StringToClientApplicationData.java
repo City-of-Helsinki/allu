@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +13,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.sql.types.AbstractType;
 
 import fi.hel.allu.model.domain.ClientApplicationData;
+import org.springframework.lang.Nullable;
 
 public class StringToClientApplicationData extends AbstractType<ClientApplicationData> {
 

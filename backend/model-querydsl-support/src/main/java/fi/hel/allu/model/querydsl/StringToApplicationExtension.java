@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.sql.types.AbstractType;
 import fi.hel.allu.model.domain.ApplicationExtension;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -9,6 +9,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.spatial.GeometryPath;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
@@ -388,7 +389,7 @@ public class SupervisionTaskDao {
   }
 
   private void setLocationGeometry(SupervisionTaskLocation location) {
-    List<Geometry> geometries = queryFactory.select(supervisionTaskLocationGeometry.geometry)
+    List<Geometry> geometries = queryFactory.select(new GeometryPath<>("geometry"))
       .from(supervisionTaskLocationGeometry)
       .where(supervisionTaskLocationGeometry.supervisionLocationId.eq(location.getId()))
       .fetch();
