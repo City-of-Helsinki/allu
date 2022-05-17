@@ -9,14 +9,13 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -83,7 +82,7 @@ public class ApplicationSequenceDao {
   private SQLQueryFactory queryFactory;
 
   @Autowired
-  private DataSource dataSource;
+  private JdbcTemplate jdbcTemplate;
 
   /**
    * Returns the next value for given application type's sequence.
@@ -130,15 +129,7 @@ public class ApplicationSequenceDao {
     String sql = "ALTER SEQUENCE " + getSequenceName(prefix) + " RESTART WITH " + newValue;
     // Using connection from DataSource, because QueryDSL's SQLQueryFactory.getConnection() seems to have problems (or possible problems)
     // with making sure the connection is closed
-    try (Connection connection = dataSource.getConnection(); Statement stmt = connection.createStatement()) {
-      connection.setAutoCommit(false);
-      stmt.executeUpdate(sql);
-      connection.commit();
-    } catch (SQLException e) {
-      logger.error("Failed to reset sequence " + getSequenceName(prefix), e);
-      throw new RuntimeException("Failed to reset sequence: " + getSequenceName(prefix), e);
-    }
-
+      jdbcTemplate.execute(sql);
   }
 
   void setClock(Clock clock) {
