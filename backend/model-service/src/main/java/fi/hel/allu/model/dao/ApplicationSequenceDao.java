@@ -9,6 +9,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,7 +130,12 @@ public class ApplicationSequenceDao {
     String sql = "ALTER SEQUENCE " + getSequenceName(prefix) + " RESTART WITH " + newValue;
     // Using connection from DataSource, because QueryDSL's SQLQueryFactory.getConnection() seems to have problems (or possible problems)
     // with making sure the connection is closed
+    try {
       jdbcTemplate.execute(sql);
+    } catch (DataAccessException e) {
+      logger.error("Failed to reset sequence " + getSequenceName(prefix), e);
+      throw new RuntimeException("Failed to reset sequence: " + getSequenceName(prefix), e);
+    }
   }
 
   void setClock(Clock clock) {
