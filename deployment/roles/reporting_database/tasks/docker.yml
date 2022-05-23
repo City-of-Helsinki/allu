@@ -83,7 +83,7 @@
 - name: wait for Postgresql to initialize
   postgresql_ping:
     login_host: localhost
-    port: 5432
+    port: 5433
   register: result
   until: result.is_available
   retries: 30
