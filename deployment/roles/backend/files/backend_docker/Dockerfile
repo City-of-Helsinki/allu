@@ -1,3 +1,8 @@
+FROM node:16-alpine3.15 as build
+COPY ./wkhtml/package.json ./package.json
+COPY ./wkhtml/package-lock.json ./package-lock.json
+RUN npm install
+
 FROM openjdk:8-jdk-alpine
 ARG CUSTOM_UID
 ARG CUSTOM_GID
@@ -5,6 +10,8 @@ ARG CUSTOM_GID
 RUN apk  update \
     && apk add wget xz git py3-pip tzdata autossh coreutils \
     && apk add --upgrade bash\
+    && apk add libgcc libstdc++ libx11 glib libxrender libxext libintl \
+                   ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family \
     && rm -rf /var/lib/apt/lists/*
 
 
