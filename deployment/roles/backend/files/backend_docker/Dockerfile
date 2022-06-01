@@ -1,12 +1,9 @@
-FROM openjdk:8-jdk-alpine
-ARG CUSTOM_UID
-ARG CUSTOM_GID
+FROM openjdk:8-slim-buster
+ARG CUSTOM_UID=4232
+ARG CUSTOM_GID=798
 
-RUN apk  update \
-    && apk add wget xz git py3-pip tzdata autossh coreutils \
-    && apk add --upgrade bash\
-    && apk add libgcc libstdc++ libx11 glib libxrender libxext libintl \
-                   ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family \
+RUN apt-get -y  update \
+    && apt-get -y install wget xz-utils git python3-pip tzdata autossh coreutils \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -65,6 +62,7 @@ EXPOSE 9050
 ######################################################################################
 
 # supervisord
+RUN pip3 install --upgrade pip
 RUN pip3 install supervisor
 RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
 COPY supervisord.conf /etc/supervisord.conf
