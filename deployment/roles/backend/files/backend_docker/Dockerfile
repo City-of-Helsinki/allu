@@ -1,8 +1,3 @@
-FROM node:16-alpine3.15 as build
-COPY ./wkhtml/package.json ./package.json
-COPY ./wkhtml/package-lock.json ./package-lock.json
-RUN npm install
-
 FROM openjdk:8-jdk-alpine
 ARG CUSTOM_UID
 ARG CUSTOM_GID
@@ -25,7 +20,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add users
 ######################################################################################
 
-RUN addgroup -g $CUSTOM_GID allu && \
+RUN addgroup --gid $CUSTOM_GID allu && \
     adduser allu --uid $CUSTOM_UID --ingroup allu --disabled-password --gecos ''
 
 ######################################################################################
