@@ -126,8 +126,6 @@ public class PdfService {
 
     cmdLine.addArgument(pdfPath.toString());
 
-   logger.info("Call to get create pdf file: {}", cmdLine);
-
     try {
       executioner.execute(cmdLine);
     } catch (IOException e) {
