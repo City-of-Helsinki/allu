@@ -29,7 +29,6 @@ Postgresql
 2. Go to folder allu/deployment/roles/database/files/database_docker/
 3. run docker-compose up
 
-Elasticsearch
 
 
 ### Setting up backend
