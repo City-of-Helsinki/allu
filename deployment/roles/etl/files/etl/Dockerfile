@@ -1,11 +1,10 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-slim-buster
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apk  update \
-    && apk add wget xz git py3-pip tzdata autossh coreutils \
-    && apk add --upgrade bash\
+RUN apt-get  update \
+    && apt-get install wget xz-utils git python3-pip tzdata autossh coreutils \
     && rm -rf /var/lib/apt/lists/*
 
 
