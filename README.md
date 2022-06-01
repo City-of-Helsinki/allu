@@ -19,6 +19,7 @@ Governed public areas include:
 - Maven 3.3.9 or newer version
   - add to settings.xml file artifactory repositorie credentials: https://alluprojekti.atlassian.net/wiki/spaces/ALLU/pages/1933330/Kehitysymp+rist+n+pystytys
 - Docker
+- wkhtmltopdf
 
 ### Setting up Database ###
 For database you need postresql and elasticsearch. Commands has been done in linux environment.  
@@ -38,7 +39,9 @@ will be found under backend folder and bare minimun is to start 4 service:
 - search-service
 - external-service
 
-Starting class can be inside <name-of-service>/src/java/  
+Starting class for each service can be found inside <name-of-service>/src/java/
+You also need to install wkhtmltopdf and set it in /backend/pdf-service/src/resources/pd-service.properties.
+There you change pdf.generator to point where you installed wkhtmltopdf. 
 If you want swagger to work you need to star:
 - supervision-api  
 url to swagger: http://localhost:9040/api-docs/swagger.json
