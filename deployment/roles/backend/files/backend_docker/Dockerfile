@@ -1,11 +1,11 @@
-FROM eclipse-temurin:8-jre-alpine
+FROM openjdk:8-jre-slim-bullseye
+
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apk update \
-    && apk add wget xz git py3-pip tzdata autossh libxtst fontconfig bash \
+RUN apt-get -y  update \
+    && apt-get -y install wget xz-utils git python3-pip tzdata autossh libxrender1 libfontconfig libxtst6 \
     && rm -rf /var/lib/apt/lists/*
-
 
 ######################################################################################
 # Time zone
@@ -66,7 +66,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install supervisor
 RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
 COPY supervisord.conf /etc/supervisord.conf
-CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
+CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 
 ######################################################################################
 # Host volumes

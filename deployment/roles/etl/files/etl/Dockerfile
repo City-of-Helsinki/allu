@@ -1,4 +1,4 @@
-FROM openjdk:8-slim-bullseye
+FROM openjdk:8-jre-slim-bullseye
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
