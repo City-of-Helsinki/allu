@@ -3,7 +3,7 @@ ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apk update \
-    && apk add wget xz git py3-pip tzdata autossh libxtst fontconfig \
+    && apk add wget xz git py3-pip tzdata autossh libxtst fontconfig bash \
     && rm -rf /var/lib/apt/lists/*
 
 
