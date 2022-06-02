@@ -1,10 +1,10 @@
-FROM openjdk:8-slim-buster
+FROM openjdk:8-slim-bullseye
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apt-get  update \
-    && apt-get install wget xz-utils git python3-pip tzdata autossh coreutils \
+RUN apt-get -y update \
+    && apt-get -y install wget xz-utils git python3-pip tzdata autossh coreutils \
     && rm -rf /var/lib/apt/lists/*
 
 
