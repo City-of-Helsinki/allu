@@ -77,7 +77,7 @@
   become_user: postgres
 
 - name: Add foreign data wrapper
-  command:  psql {{ reporting_database_name }} --host localhost -p 5433  -c "CREATE SERVER allu_operative FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '{{ operative_database_host }}', dbname '{{ operative_database_name }}', port '5432', updatable 'false');"
+  command:  psql {{ reporting_database_name }} --host localhost -p 5433  -c "CREATE SERVER allu_operative FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '{{ operative_database_host }}', dbname '{{ operative_database_name }}', port '5432', updatable 'false', password '{{database_reporting_user_password}}', user 'database_reporting_user');"
   become: yes
   become_user: postgres
 
@@ -96,51 +96,51 @@
   become: yes
   become_user: postgres
 
-- name: Import foreign schema
-  command: >
-          psql {{ reporting_database_name }} --host localhost -p 5433 -c
-          'CREATE SCHEMA IF NOT EXISTS allu_operative;
-          IMPORT FOREIGN SCHEMA allu
-          LIMIT TO (
-          application,
-          application_attachment,
-          application_customer,
-          application_kind,
-          application_tag,
-          attachment,
-          attachment_data,
-          change_history,
-          charge_basis,
-          city_district,
-          codeset,
-          comment,
-          contact,
-          contract,
-          customer,
-          decision,
-          deposit,
-          distribution_entry,
-          field_change,
-          fixed_location,
-          information_request,
-          information_request_field,
-          invoice,
-          invoice_recipient,
-          invoice_row,
-          kind_specifier,
-          location,
-          location_area,
-          location_flids,
-          location_geometry,
-          postal_address,
-          project,
-          supervision_task,
-          "user",
-          invoicing_period,
-          customer_location_validity,
-          termination) FROM SERVER allu_operative INTO allu_operative;'
-  become: yes
-  become_user: postgres
+#- name: Import foreign schema
+#  command: >
+#          psql {{ reporting_database_name }} --host localhost -p 5433 -c
+#          'CREATE SCHEMA IF NOT EXISTS allu_operative;
+#          IMPORT FOREIGN SCHEMA allu
+#          LIMIT TO (
+#          application,
+#          application_attachment,
+#          application_customer,
+#          application_kind,
+#          application_tag,
+#          attachment,
+#          attachment_data,
+#          change_history,
+#          charge_basis,
+#          city_district,
+#          codeset,
+#          comment,
+#          contact,
+#          contract,
+#          customer,
+#          decision,
+#          deposit,
+#          distribution_entry,
+#          field_change,
+#          fixed_location,
+#          information_request,
+#          information_request_field,
+#          invoice,
+#          invoice_recipient,
+#          invoice_row,
+#          kind_specifier,
+#          location,
+#          location_area,
+#          location_flids,
+#          location_geometry,
+#          postal_address,
+#          project,
+#          supervision_task,
+#          "user",
+#          invoicing_period,
+#          customer_location_validity,
+#          termination) FROM SERVER allu_operative INTO allu_operative;'
+#  become: yes
+#  become_user: postgres
 
 - name: Grant usage to operative schema for {{ reporting_database_user }}
   command:  psql {{ reporting_database_name }} --host localhost -p 5433 -c 'GRANT USAGE ON SCHEMA allu_operative to  "{{ reporting_database_user }}";'
