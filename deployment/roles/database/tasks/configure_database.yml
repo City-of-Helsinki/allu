@@ -13,7 +13,7 @@
   postgresql_user:
     login_host=localhost
     name={{ database_reporting_user }}
-    password={{ reporting_user_password }}
+    password={{ database_reporting_user_password }}
     state=present
     login_password={{ database_password_postgres }}
   become: yes
