@@ -18,7 +18,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add users
 ######################################################################################
 
-RUN addgroup -g $CUSTOM_GID allu && \
+RUN addgroup --gid $CUSTOM_GID allu && \
     adduser allu --uid $CUSTOM_UID --ingroup allu --disabled-password --gecos ''
 
 ######################################################################################
