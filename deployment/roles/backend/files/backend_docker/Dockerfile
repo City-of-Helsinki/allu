@@ -1,9 +1,9 @@
-FROM openjdk:8-jre-slim-bullseye
-ARG CUSTOM_UID=4232
-ARG CUSTOM_GID=798
+FROM eclipse-temurin:8-jre-alpine
+ARG CUSTOM_UID
+ARG CUSTOM_GID
 
-RUN apt-get -y  update \
-    && apt-get -y install wget xz-utils git python3-pip tzdata autossh libxrender1 libfontconfig libxtst6 \
+RUN apk update \
+    && apk add wget xz git py3-pip tzdata autossh libxtst fontconfig \
     && rm -rf /var/lib/apt/lists/*
 
 
