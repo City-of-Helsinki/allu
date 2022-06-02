@@ -36,7 +36,7 @@ RUN mkdir -p /home/allu/etl
 RUN pip3 install supervisor
 RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
 COPY supervisord.conf /etc/supervisord.conf
-CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
+CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 
 
 ######################################################################################
