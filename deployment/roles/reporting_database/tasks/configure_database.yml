@@ -76,26 +76,26 @@
   become: yes
   become_user: postgres
 
-- name: Add foreign data wrapper
-  command:  psql {{ reporting_database_name }} --host localhost -p 5433  -c "CREATE SERVER allu_operative FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '{{ operative_database_host }}', dbname '{{ operative_database_name }}', port '5432', updatable 'false');"
-  become: yes
-  become_user: postgres
-
-- name: Change owner of foreign data wrapper
-  command: psql {{ reporting_database_name }} --host localhost -p 5433 -c "ALTER SERVER foreigndb_fdw OWNER TO {{ reporting_database_user }};"
-  become: yes
-  become_user: postgres
-
-- name: Create user mapping for postgres
-  command: psql {{ reporting_database_name }} --host localhost -p 5433 -c "CREATE USER MAPPING FOR postgres SERVER foreigndb_fdw OPTIONS (user '{{ reporting_database_user }}', password '{{ operative_database_password }}');"
-  become: yes
-  become_user: postgres
-
-- name: Create user mapping for {{ reporting_database_user }}
-  command: psql {{ reporting_database_name }} --host localhost -p 5433 -c "CREATE USER MAPPING FOR {{ reporting_database_user }} SERVER foreigndb_fdw OPTIONS (user '{{ reporting_database_user }}', password '{{ operative_database_password }}');"
-  become: yes
-  become_user: postgres
-
+#- name: Add foreign data wrapper
+#  command:  psql {{ reporting_database_name }} --host localhost -p 5433  -c "CREATE SERVER allu_operative FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '{{ operative_database_host }}', dbname '{{ operative_database_name }}', port '5432', updatable 'false');"
+#  become: yes
+#  become_user: postgres
+#
+#- name: Change owner of foreign data wrapper
+#  command: psql {{ reporting_database_name }} --host localhost -p 5433 -c "ALTER SERVER foreigndb_fdw OWNER TO {{ reporting_database_user }};"
+#  become: yes
+#  become_user: postgres
+#
+#- name: Create user mapping for postgres
+#  command: psql {{ reporting_database_name }} --host localhost -p 5433 -c "CREATE USER MAPPING FOR postgres SERVER foreigndb_fdw OPTIONS (user '{{ reporting_database_user }}', password '{{ operative_database_password }}');"
+#  become: yes
+#  become_user: postgres
+#
+#- name: Create user mapping for {{ reporting_database_user }}
+#  command: psql {{ reporting_database_name }} --host localhost -p 5433 -c "CREATE USER MAPPING FOR {{ reporting_database_user }} SERVER foreigndb_fdw OPTIONS (user '{{ reporting_database_user }}', password '{{ operative_database_password }}');"
+#  become: yes
+#  become_user: postgres
+#
 #- name: Import foreign schema
 #  command: >
 #          psql {{ reporting_database_name }} --host localhost -p 5433 -c
@@ -141,22 +141,22 @@
 #          termination) FROM SERVER foreigndb_fdw INTO allu_operative;'
 #  become: yes
 #  become_user: postgres
-
-- name: Grant usage to operative schema for {{ reporting_database_user }}
-  command:  psql {{ reporting_database_name }} --host localhost -p 5433 -c 'GRANT USAGE ON SCHEMA allu_operative to  "{{ reporting_database_user }}";'
-  become: yes
-  become_user: postgres
-
-- name: Grant select to operative schema for {{ reporting_database_user }}
-  command:  psql {{ reporting_database_name }} --host localhost -p 5433 -c 'GRANT SELECT ON ALL TABLES IN SCHEMA allu_operative to  "{{ reporting_database_user }}";'
-  become: yes
-  become_user: postgres
-
-- name: Create schema for views
-  postgresql_schema:
-    login_host=localhost
-    port=5433
-    database={{ reporting_database_name }}
-    name=allu_report_views
-  become: yes
-  become_user: postgres
+#
+#- name: Grant usage to operative schema for {{ reporting_database_user }}
+#  command:  psql {{ reporting_database_name }} --host localhost -p 5433 -c 'GRANT USAGE ON SCHEMA allu_operative to  "{{ reporting_database_user }}";'
+#  become: yes
+#  become_user: postgres
+#
+#- name: Grant select to operative schema for {{ reporting_database_user }}
+#  command:  psql {{ reporting_database_name }} --host localhost -p 5433 -c 'GRANT SELECT ON ALL TABLES IN SCHEMA allu_operative to  "{{ reporting_database_user }}";'
+#  become: yes
+#  become_user: postgres
+#
+#- name: Create schema for views
+#  postgresql_schema:
+#    login_host=localhost
+#    port=5433
+#    database={{ reporting_database_name }}
+#    name=allu_report_views
+#  become: yes
+#  become_user: postgres
