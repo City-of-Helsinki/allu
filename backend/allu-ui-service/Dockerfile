@@ -38,15 +38,12 @@ RUN mkdir -p /home/allu/allu-ui-service
 # allu-ui-service
 EXPOSE 9000
 
-
 ######################################################################################
 # Host volumes
 ######################################################################################
 
 # Service home with runner scripts, configuration etc.
 VOLUME /home/allu
-
-
 
 
 ######################################################################################
@@ -56,7 +53,5 @@ VOLUME /home/allu
 ARG CACHEBUST=1
 
 # JAR files
-RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/allu-ui-service/1.0-SNAPSHOT/allu-ui-service-1.0-SNAPSHOT.jar  \
-    --output-document /home/allu-ui-service.jar
-#RUN chmod 777 /home/allu/allu-ui-service/allu-ui-service.jar
+COPY ./target/allu-ui-service-1.0-SNAPSHOT.jar /home/allu-ui-service.jar
 ENTRYPOINT ["java","-jar","/home/allu-ui-service.jar"]
