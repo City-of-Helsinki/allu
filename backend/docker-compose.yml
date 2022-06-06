@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  allu_ui-service-container:
+    build: ./allu-ui-service/
+    #never use this and host mode on production. Only used for decoupling of project
+    #used for communicating between host ports and docker container ports
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: "host"
+    ports:
+      # <Port exposed> : < Allu-ui-service running inside container>
+      - "9000:9000"
