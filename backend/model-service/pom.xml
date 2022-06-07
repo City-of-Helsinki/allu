@@ -85,7 +85,14 @@
             </exclusion>
           </exclusions>
         </dependency>
-        <dependency>
+      <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.10.14</version>
+      </dependency>
+
+      <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>

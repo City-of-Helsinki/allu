@@ -3,8 +3,8 @@ package fi.hel.allu.etl.config;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
 
+import org.codehaus.commons.nullanalysis.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
