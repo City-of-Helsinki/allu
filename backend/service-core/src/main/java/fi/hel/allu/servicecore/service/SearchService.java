@@ -34,6 +34,7 @@ import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
 import fi.hel.allu.servicecore.util.RestResponsePage;
+import reactor.util.retry.Retry;
 
 @Service
 public class SearchService {
@@ -360,7 +361,7 @@ public class SearchService {
     .bodyValue(requestBody)
     .retrieve()
     .bodyToMono(Void.class)
-    .retryBackoff(RETRY_COUNT, Duration.ofSeconds(RETRY_FIRST_BACKOFF_SECONDS))
+      .retryWhen(Retry.backoff(RETRY_COUNT, Duration.ofSeconds(RETRY_FIRST_BACKOFF_SECONDS)))
     .subscribe(c -> {}, t -> onError(t, uri, HttpMethod.PUT));
   }
 
@@ -371,7 +372,7 @@ public class SearchService {
     .bodyValue(requestBody)
     .retrieve()
     .bodyToMono(Void.class)
-    .retryBackoff(RETRY_COUNT, Duration.ofSeconds(RETRY_FIRST_BACKOFF_SECONDS))
+    .retryWhen(Retry.backoff(RETRY_COUNT, Duration.ofSeconds(RETRY_FIRST_BACKOFF_SECONDS)))
     .subscribe(c -> {}, t -> onError(t, uri, HttpMethod.POST));
   }
 
@@ -381,7 +382,7 @@ public class SearchService {
     .uri(uri, uriVariables)
     .retrieve()
     .bodyToMono(Void.class)
-    .retryBackoff(RETRY_COUNT, Duration.ofSeconds(RETRY_FIRST_BACKOFF_SECONDS))
+      .retryWhen(Retry.backoff(RETRY_COUNT, Duration.ofSeconds(RETRY_FIRST_BACKOFF_SECONDS)))
     .subscribe(c -> {}, t -> onError(t, uri, HttpMethod.DELETE));
   }
 

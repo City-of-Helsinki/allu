@@ -1,6 +1,8 @@
 package fi.hel.allu.model.config;
 
+import java.sql.Connection;
 
+import javax.inject.Provider;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,7 @@ public class JdbcConfiguration {
 
   @Bean
   public SQLQueryFactory queryFactory() {
-    SpringConnectionProvider provider = new SpringConnectionProvider(dataSource());
+    Provider<Connection> provider = new SpringConnectionProvider(dataSource());
     return new SQLQueryFactory(querydslConfiguration(), provider);
   }
 
