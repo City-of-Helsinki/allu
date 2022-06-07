@@ -43,7 +43,7 @@ EXPOSE 9000
 ######################################################################################
 
 # Service home with runner scripts, configuration etc.
-VOLUME /home/allu
+VOLUME /home/allu/allu-ui-service
 
 
 ######################################################################################
@@ -52,6 +52,9 @@ VOLUME /home/allu
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
 
+COPY ./src/main/resources/application.properties /home/allu/allu-ui-service/allu-ui-service.properties
+COPY ./src/main/resources/logback.xml /home/allu/allu-ui-service/logback.xml
 # JAR files
-COPY ./target/allu-ui-service-1.0-SNAPSHOT.jar /home/allu-ui-service.jar
-ENTRYPOINT ["java","-jar","/home/allu-ui-service.jar"]
+COPY ./target/allu-ui-service-1.0-SNAPSHOT.jar /home/allu/allu-ui-service.jar
+ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/allu-ui-service", \
+ "-jar","/home/allu/allu-ui-service.jar", "--spring.config.location=file:/home/allu/allu-ui-service/allu-ui-service.properties"]
