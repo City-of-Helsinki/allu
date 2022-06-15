@@ -304,7 +304,7 @@ public class ApplicationController {
    * @return all invoices for given application ID
    */
   @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW,ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_VIEW', 'ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<InvoiceJson>> getInvoices(@PathVariable int id) {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
   }
