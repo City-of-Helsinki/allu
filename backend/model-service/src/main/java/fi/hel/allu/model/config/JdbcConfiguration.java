@@ -79,7 +79,7 @@ public class JdbcConfiguration {
 
   @Bean
   public SQLQueryFactory queryFactory() {
-    Provider<Connection> provider = new SpringConnectionProvider(dataSource());
+    SpringConnectionProvider provider = new SpringConnectionProvider(dataSource());
     return new SQLQueryFactory(querydslConfiguration(), provider);
   }
 
