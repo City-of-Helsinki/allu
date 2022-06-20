@@ -12,13 +12,14 @@
     <artifactId>model-service</artifactId>
 
     <properties>
-        <querydsl.version>4.0.9</querydsl.version>
+        <querydsl.version>4.4.0</querydsl.version>
         <!-- database configuration for source generation: -->
         <database.user>model_service</database.user>
         <database.db>model_service</database.db>
         <database.password>model_service</database.password>
         <database.uri>jdbc:postgresql:///${database.db}</database.uri>
         <spring.flyway.baselineOnMigrate>true</spring.flyway.baselineOnMigrate>
+        <flyway.version>8.5.0</flyway.version>
     </properties>
 
     <dependencies>
@@ -95,6 +96,7 @@
       <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
         <dependency>
             <!-- support for conditional processing of logback configuration file -->
@@ -123,6 +125,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
                 <configuration>
                     <locations>
                         <location>filesystem:src/main/resources/db/migration</location>
