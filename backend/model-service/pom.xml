@@ -12,7 +12,7 @@
     <artifactId>model-service</artifactId>
 
     <properties>
-        <querydsl.version>4.4.0</querydsl.version>
+        <querydsl.version>5.0.0</querydsl.version>
         <!-- database configuration for source generation: -->
         <database.user>model_service</database.user>
         <database.db>model_service</database.db>
@@ -51,6 +51,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
         </dependency>
+      <dependency>
+        <groupId>org.locationtech.jts</groupId>
+        <artifactId>jts-core</artifactId>
+        <version>1.16.1</version>
+      </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-sql</artifactId>
@@ -64,6 +69,22 @@
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-sql-spatial</artifactId>
+            <version>${querydsl.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.vividsolutions</groupId>
+              <artifactId>jts</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-codegen</artifactId>
+            <version>${querydsl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-sql-codegen</artifactId>
             <version>${querydsl.version}</version>
         </dependency>
         <dependency>
@@ -173,6 +194,8 @@
                     <packageName>fi.hel.allu</packageName>
                     <targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
                     <sourceFolder>${project.basedir}/target/generated-sources</sourceFolder>
+                    <serializerClass>fi.hel.allu.model.querydsl.util.CustomMetaDataSerializer</serializerClass>
+                    <generatedAnnotationClass>javax.annotation.Generated</generatedAnnotationClass>
                     <typeMappings>
                         <!-- Override default DateTime mapping -->
                         <typeMapping>
@@ -716,6 +739,21 @@
                         <groupId>fi.hel.allu</groupId>
                         <artifactId>common</artifactId>
                         <version>${project.parent.version}</version>
+                    </dependency>
+                  <dependency>
+                    <groupId>com.querydsl</groupId>
+                    <artifactId>querydsl-sql-spatial</artifactId>
+                    <version>${querydsl.version}</version>
+                  </dependency>
+                    <dependency>
+                        <groupId>com.querydsl</groupId>
+                        <artifactId>querydsl-codegen</artifactId>
+                        <version>${querydsl.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.querydsl</groupId>
+                        <artifactId>querydsl-sql-codegen</artifactId>
+                        <version>${querydsl.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

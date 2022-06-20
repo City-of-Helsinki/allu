@@ -1,25 +1,22 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.model.dao.TerminationDao;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.context.ApplicationEventPublisher;
-
 import com.greghaskins.spectrum.Spectrum;
-
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(Spectrum.class)

@@ -1,36 +1,37 @@
 package fi.hel.allu.model.service.event.handler;
 
+import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AreaRental;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
+import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.model.dao.InformationRequestDao;
-import fi.hel.allu.model.dao.TerminationDao;
-import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.model.service.*;
-import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AreaRentalStatusChangeHandlerTest {
 
   private static final Integer USER_ID = 99;
@@ -67,7 +68,7 @@ public class AreaRentalStatusChangeHandlerTest {
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
 
-  @Before
+  @BeforeEach
   public void setup() {
     supervisor = new User();
     supervisor.setId(228);
@@ -78,7 +79,7 @@ public class AreaRentalStatusChangeHandlerTest {
     application.setExtension(areaRental);
     statusChangeHandler = new AreaRentalStatusChangeHandler(applicationService, supervisionTaskService, locationService,
         applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService, terminationDao, invoicingPeriodService);
-    when(locationService.findSupervisionTaskOwner(ApplicationType.AREA_RENTAL,
+    lenient().when(locationService.findSupervisionTaskOwner(ApplicationType.AREA_RENTAL,
         location1.getCityDistrictId())).thenReturn(Optional.of(supervisor));
 
   }

@@ -1,20 +1,18 @@
 package fi.hel.allu.model.service.event;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import fi.hel.allu.model.dao.CustomerUpdateLogDao;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerUpdateLog;
 import fi.hel.allu.model.domain.PostalAddress;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CustomerUpdateListenerTest {
 
   @Mock
@@ -24,7 +22,7 @@ public class CustomerUpdateListenerTest {
   private Customer customerOld;
   private Customer customerUpdated;
 
-  @Before
+  @BeforeEach
   public void setup() {
     listener = new CustomerUpdateListener(logDao);
     createTestCustomers();

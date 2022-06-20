@@ -7,7 +7,10 @@ import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.InvoiceService;
+import fi.hel.allu.model.service.LocationService;
+import fi.hel.allu.model.service.SupervisionTaskService;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import org.junit.Before;
@@ -25,7 +28,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -36,7 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -88,14 +88,14 @@ public class DateReportingServiceTest {
     application.setExtension(new AreaRental());
     application.setStatus(StatusType.DECISION);
 
-    lenient().when(applicationJsonService.getFullyPopulatedApplication(Mockito.any())).thenReturn(applicationJson);
+    lenient().when(applicationJsonService.getFullyPopulatedApplication(any())).thenReturn(applicationJson);
     lenient().when(applicationService.setCustomerValidityDates(eq(APP_ID), any(ApplicationDateReport.class))).thenReturn(application);
     lenient().when(userService.getCurrentUser()).thenReturn(new UserJson(15));
   }
 
   @Test
   public void workFinishedDateCantBeBeforeAreaStartDate() {
-    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(Collections.emptyList());
+    Mockito.when(invoicingPeriodService.getInvoicingPeriods(any())).thenReturn(Collections.emptyList());
 
     final ZonedDateTime workFinishedDate = ZonedDateTime.now().minusDays(10);
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -113,7 +113,7 @@ public class DateReportingServiceTest {
     final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
     period.setClosed(true);
     invoicingPeriods.add(period);
-    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(invoicingPeriods);
+    Mockito.when(invoicingPeriodService.getInvoicingPeriods(any())).thenReturn(invoicingPeriods);
     final ZonedDateTime workFinishedDate = ZonedDateTime.now().plusDays(day);
 
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -129,7 +129,7 @@ public class DateReportingServiceTest {
     final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
     period.setClosed(true);
     invoicingPeriods.add(period);
-    Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.any())).thenReturn(invoicingPeriods);
+    Mockito.when(invoicingPeriodService.getInvoicingPeriods(any())).thenReturn(invoicingPeriods);
     final ZonedDateTime workFinishedDate = ZonedDateTime.now().plusDays(5);
     Application dummApplication = new Application();
     dummApplication.setExtension(new ApplicationExtension() {
@@ -152,7 +152,7 @@ public class DateReportingServiceTest {
     final SupervisionTaskJson task = new SupervisionTaskJson();
     task.setType(SupervisionTaskType.WORK_TIME_SUPERVISION);
     task.setStatus(SupervisionTaskStatusType.OPEN);
-    Mockito.when(supervisionTaskService.findByLocationId(Mockito.eq(LOC_ID))).thenReturn(Arrays.asList(task));
+    Mockito.when(supervisionTaskService.findByLocationId(eq(LOC_ID))).thenReturn(Arrays.asList(task));
 
     dateReportingService.reportCustomerLocationValidity(APP_ID, LOC_ID, dateReport);
     Mockito.verify(supervisionTaskService).updateSupervisionTaskDate(

@@ -1,10 +1,12 @@
 package fi.hel.allu.model.config;
 
-import java.sql.Connection;
 
-import javax.inject.Provider;
-import javax.sql.DataSource;
-
+import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.SQLTemplates;
+import com.querydsl.sql.spatial.PostGISTemplates;
+import com.querydsl.sql.spring.SpringConnectionProvider;
+import com.querydsl.sql.spring.SpringExceptionTranslator;
+import fi.hel.allu.model.querydsl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +15,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.SQLTemplates;
-import com.querydsl.sql.spatial.PostGISTemplates;
-import com.querydsl.sql.spring.SpringConnectionProvider;
-import com.querydsl.sql.spring.SpringExceptionTranslator;
-
-import fi.hel.allu.model.querydsl.*;
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @Configuration
 @EnableTransactionManagement
@@ -78,7 +75,7 @@ public class JdbcConfiguration {
   }
 
   @Bean
-  public SQLQueryFactory queryFactory() {
+  public SQLQueryFactory queryFactory() throws SQLException {
     SpringConnectionProvider provider = new SpringConnectionProvider(dataSource());
     return new SQLQueryFactory(querydslConfiguration(), provider);
   }

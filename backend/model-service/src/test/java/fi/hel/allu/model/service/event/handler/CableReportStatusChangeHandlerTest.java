@@ -7,26 +7,29 @@ import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableReport;
-import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.InvoiceService;
+import fi.hel.allu.model.service.LocationService;
+import fi.hel.allu.model.service.SupervisionTaskService;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CableReportStatusChangeHandlerTest {
 
   private static final Integer USER_ID = Integer.valueOf(99);
@@ -56,7 +59,7 @@ public class CableReportStatusChangeHandlerTest {
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
 
-  @Before
+  @BeforeEach
   public void setup() {
     statusChangeHandler = new CableReportStatusChangeHandler(applicationService, supervisionTaskService,
         locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao,

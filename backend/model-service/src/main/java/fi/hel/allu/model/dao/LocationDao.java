@@ -26,6 +26,7 @@ import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.geolatte.geom.GeometryType;
+import org.geolatte.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -64,14 +65,16 @@ public class LocationDao {
     final QBean<FixedLocationArea> locationAreaBean = bean(FixedLocationArea.class, locationArea.all());
     final QBean<LocationGeometry> locationGeometryBean = bean(LocationGeometry.class, locationGeometry.all());
     final QBean<LocationFlids> locationFlidsBean = bean(LocationFlids.class, locationFlids.all());
-    private final SQLQueryFactory queryFactory;
-    private final PostalAddressDao postalAddressDao;
-    private final CoordinateTransformation coordinateTransformation;
-    private final GeometrySimplification geometrySimplification;
     BiConsumer<List<Geometry>, Location> setGeometry = (geometries, location) -> location.setGeometry(
             GeometryUtil.toGeometryCollection(geometries));
     BiConsumer<List<Integer>, Location> setFixedLocation = (fixedLocations, location) -> location.setFixedLocationIds(
             fixedLocations);
+
+
+    private final SQLQueryFactory queryFactory;
+    private final PostalAddressDao postalAddressDao;
+    private final CoordinateTransformation coordinateTransformation;
+    private final GeometrySimplification geometrySimplification;
 
     public LocationDao(SQLQueryFactory queryFactory, PostalAddressDao postalAddressDao,
                        CoordinateTransformation coordinateTransformation,
@@ -512,12 +515,14 @@ public class LocationDao {
     }
 
     private double getArea(int locationId) {
-        SQLQuery<Double> query = queryFactory.select(locationGeometry.geometry.asPolygon().area().sum())
-                .from(locationGeometry).where(locationGeometry.locationId.eq(locationId));
-        logger.debug("Executing query {}", query.getSQL().getSQL());
-        Optional<Double> area = Optional.ofNullable(query.fetchOne());
-        logger.debug("Area for location ID {} is {} m2", locationId, area.orElse(0.0));
-        return area.orElse(0.0);
+        double result;
+        SQLQuery<Polygon> query = (SQLQuery<Polygon>) queryFactory.select(locationGeometry.geometry.asPolygon())
+            .from(locationGeometry).where(locationGeometry.locationId.eq(locationId));
+        logger.debug("Executing getArea query {}", query.getSQL().getSQL());
+        Optional<List<Polygon>> areas = Optional.ofNullable(query.fetch());
+        result = areas.orElse(new ArrayList<>()).stream().map(Polygon::getArea).mapToDouble(Double::doubleValue).sum();
+        logger.debug("Area for location ID {} is {} m2", locationId, 0);
+        return result;
     }
 
     private GeometryCollection removeOverlaps(GeometryCollection coll) {

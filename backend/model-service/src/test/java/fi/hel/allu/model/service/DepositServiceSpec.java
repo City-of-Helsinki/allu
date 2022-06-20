@@ -1,26 +1,24 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
 import com.greghaskins.spectrum.Spectrum;
-
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.DepositStatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DepositDao;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.Deposit;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
+import java.time.ZonedDateTime;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
 public class DepositServiceSpec {
