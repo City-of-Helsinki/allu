@@ -1,16 +1,14 @@
 package fi.hel.allu.common.domain;
 
-
-
 import javax.validation.constraints.NotBlank;
+
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public class TerminationInfo {
 
   private Integer id;
-
-
+  @NotNull
   private Integer applicationId;
   private ZonedDateTime creationTime;
   @NotNull
