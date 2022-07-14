@@ -11,3 +11,8 @@ services:
     image: allu_model_service
     container_name: allu_model_service_container
     network_mode: host
+  search-service:
+    build: ./search-service/
+    image: allu_search_service
+    container_name: allu_search_service_container
+    network_mode: host
