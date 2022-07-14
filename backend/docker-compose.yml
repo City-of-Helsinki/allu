@@ -6,3 +6,8 @@ services:
     image: allu_ui_service
     container_name: allu_ui_service_container
     network_mode: host
+  model-service:
+    build: ./model-service/
+    image: allu_model_service
+    container_name: allu_model_service_container
+    network_mode: host
