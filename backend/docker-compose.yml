@@ -16,3 +16,8 @@ services:
     image: allu_search_service
     container_name: allu_search_service_container
     network_mode: host
+  pdf-service:
+    build: ./pdf-service/
+    image: allu_pdf_service
+    container_name: allu_pdf_service_container
+    network_mode: host
