@@ -15,6 +15,14 @@ services:
       - "9010"
     volumes:
       - /home/allu/model-service:/servicehome:rw
+  search-service:
+    build: ./search-service/
+    image: allu_search_service
+    container_name: allu-search-service
+    expose:
+      - "9020"
+    volumes:
+      - /home/allu/search-service:/servicehome:rw
   allu-backend:
     build:
       context: .
@@ -22,7 +30,6 @@ services:
     image: allu_backend
     container_name: allu-backend
     expose:
-      - "9020"
       - "9030"
     ports:
       - "9040:9040"
