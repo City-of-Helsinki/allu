@@ -7,6 +7,14 @@ services:
     container_name: allu-ui-service
     ports:
       - "9000:9000"
+  model-service:
+    build: ./model-service/
+    image: allu_model_service
+    container_name: allu-model-service
+    expose:
+      - "9010"
+    volumes:
+      - /home/allu/model-service:/servicehome:rw
   allu-backend:
     build:
       context: .
@@ -14,7 +22,6 @@ services:
     image: allu_backend
     container_name: allu-backend
     expose:
-      - "9010"
       - "9020"
       - "9030"
     ports:

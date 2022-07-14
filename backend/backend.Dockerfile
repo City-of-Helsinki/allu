@@ -28,7 +28,6 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 RUN mkdir -p /var/log/supervisor
 
 # project setup
-RUN mkdir -p /home/allu/model-service
 RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
@@ -40,8 +39,6 @@ RUN mkdir -p /home/allu/supervision-api
 # Expose ports
 ######################################################################################
 
-# model-service
-EXPOSE 9010
 # search-service
 EXPOSE 9020
 # pdf-service
@@ -75,35 +72,30 @@ VOLUME /servicehome
 
 RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/logs/"${service}" "/home/allu/${service}"/logs; done
 # Service runner scripts (assumes that /home/allu/<servicename> directories exist and contain expected scripts)
-COPY backend.run_service.sh /home/allu/model-service/run_model-service.sh
 COPY backend.run_service.sh /home/allu/search-service/run_search-service.sh
 COPY backend.run_service.sh /home/allu/pdf-service/run_pdf-service.sh
 COPY backend.run_service.sh /home/allu/scheduler-service/run_scheduler-service.sh
 COPY backend.run_service.sh /home/allu/external-service/run_external-service.sh
 COPY backend.run_service.sh /home/allu/supervision-api/run_supervision-api.sh
 # Service configuration files (assumes that /home/allu/<servicename> directories exist and contain expected configuration files)
-COPY model-service/src/main/resources/logback.xml /home/allu/model-service/logback.xml
 COPY search-service/src/main/resources/logback.xml /home/allu/search-service/logback.xml
 COPY pdf-service/src/main/resources/logback.xml /home/allu/pdf-service/logback.xml
 COPY scheduler-service/src/main/resources/logback.xml /home/allu/scheduler-service/logback.xml
 COPY external-service/src/main/resources/logback.xml /home/allu/external-service/logback.xml
 COPY supervision-api/src/main/resources/logback.xml /home/allu/supervision-api/logback.xml
 
-COPY model-service/src/main/resources/application.properties /home/allu/model-service/model-service.properties
 COPY search-service/src/main/resources/application.properties /home/allu/search-service/search-service.properties
 COPY pdf-service/src/main/resources/application.properties /home/allu/pdf-service/pdf-service.properties
 COPY scheduler-service/src/main/resources/application.properties /home/allu/scheduler-service/scheduler-service.properties
 COPY external-service/src/main/resources/application.properties /home/allu/external-service/external-service.properties
 COPY supervision-api/src/main/resources/application.properties /home/allu/supervision-api/supervision-api.properties
 # Properties for running services on Docker locally
-COPY backend.properties /home/allu/model-service/application-docker.properties
 COPY backend.properties /home/allu/search-service/application-docker.properties
 COPY backend.properties /home/allu/pdf-service/application-docker.properties
 COPY backend.properties /home/allu/scheduler-service/application-docker.properties
 COPY backend.properties /home/allu/external-service/application-docker.properties
 COPY backend.properties /home/allu/supervision-api/application-docker.properties
 
-COPY model-service/target/model-service-1.0-SNAPSHOT.jar /home/allu/model-service/model-service.jar
 COPY search-service/target/search-service-1.0-SNAPSHOT.jar /home/allu/search-service/search-service.jar
 COPY pdf-service/target/pdf-service-1.0-SNAPSHOT.jar /home/allu/pdf-service/pdf-service.jar
 COPY scheduler-service/target/scheduler-service-1.0-SNAPSHOT.jar /home/allu/scheduler-service/scheduler-service.jar
