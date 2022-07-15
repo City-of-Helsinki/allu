@@ -47,7 +47,7 @@ RUN mkdir -p /home/allu/supervision-api
 EXPOSE 9000
 # model-service
 EXPOSE 9010
-# allu-ui-service
+# search-service
 EXPOSE 9020
 # pdf-service
 EXPOSE 9030
