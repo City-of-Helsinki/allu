@@ -21,6 +21,11 @@ services:
     image: allu_pdf_service
     container_name: allu_pdf_service_container
     network_mode: host
+  scheduler-service:
+    build: ./scheduler-service/
+    image: allu_scheduler_service
+    container_name: allu_scheduler_service_container
+    network_mode: host
   external-service:
     build: ./external-service/
     image: allu_external_service
