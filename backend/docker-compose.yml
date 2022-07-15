@@ -31,3 +31,8 @@ services:
     image: allu_external_service
     container_name: allu_external_service_container
     network_mode: host
+  supervision-api:
+    build: ./supervision-api/
+    image: allu_supervision_api
+    container_name: allu_supervision_api_container
+    network_mode: host
