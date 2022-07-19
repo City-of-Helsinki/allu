@@ -1,10 +1,10 @@
-FROM ubuntu:16.04
+FROM debian:bullseye-20220711-slim
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apt-get update \
-    && apt-get install -y tzdata apache2 cron libapache2-mod-wsgi python-pip python-imaging python-yaml python-dev libproj9 build-essential libjpeg-dev zlib1g-dev libfreetype6-dev supervisor \
+    && apt-get install -y tzdata systemctl cron apache2 libapache2-mod-wsgi-py3 python3-pip libproj19 build-essential libjpeg-dev zlib1g-dev libfreetype6-dev supervisor python3.6 \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -24,7 +24,6 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 ######################################################################################
 # Create directories
 ######################################################################################
-
 RUN mkdir -p /home/allu/mapproxy
 RUN mkdir -p /home/allu/apache
 
@@ -39,8 +38,8 @@ EXPOSE 443
 ######################################################################################
 # Supervisord
 ######################################################################################
-
-RUN pip install supervisor-stdout
+RUN pip3 install --upgrade pip
+RUN pip3 install supervisor-stdout
 CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
 
 ######################################################################################
@@ -72,15 +71,18 @@ RUN a2enmod ssl
 
 RUN a2dissite 000-default
 # Disable automated Apache start on system start-up (Apache is executed in foreground, not as daemon)
+RUN update-rc.d apache2 disable
 RUN update-rc.d apache2 remove
-RUN systemctl disable apache2
+
 
 ######################################################################################
 # Python pip (mapproxy installation)
 ######################################################################################
-RUN pip install Pillow
-RUN pip install MapProxy==1.11.0
-RUN pip install requests==2.18.4
+
+RUN pip3 install pyyaml
+RUN pip3 install Pillow
+RUN pip3 install MapProxy==1.11.0
+RUN pip3 install requests==2.18.4
 
 ######################################################################################
 # Symbolic links
