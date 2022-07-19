@@ -79,10 +79,10 @@ RUN update-rc.d apache2 remove
 # Python pip (mapproxy installation)
 ######################################################################################
 
-RUN pip3 install pyyaml
-RUN pip3 install Pillow
-RUN pip3 install MapProxy==1.11.0
-RUN pip3 install requests==2.18.4
+RUN pip3 install PyYAML==6.0
+RUN pip3 install Pillow==9.2.0
+RUN pip3 install MapProxy==1.15.1
+RUN pip3 install requests==2.28.1
 
 ######################################################################################
 # Symbolic links
