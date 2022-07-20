@@ -83,7 +83,7 @@ RUN pip3 install PyYAML==6.0
 RUN pip3 install Pillow==9.2.0
 RUN pip3 install MapProxy==1.15.1
 RUN pip3 install requests==2.28.1
-
+RUN pip3 install six==1.16.0
 ######################################################################################
 # Symbolic links
 ######################################################################################
