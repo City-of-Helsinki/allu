@@ -88,5 +88,3 @@
   until: result.is_available
   retries: 30
   delay: 4
-  become: yes
-  become_user: postgres
