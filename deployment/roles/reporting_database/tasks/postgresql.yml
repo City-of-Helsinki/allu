@@ -9,6 +9,7 @@
 
 - name: Install psycopg2 with pip
   pip: name=psycopg2
+  become: yes
 
 - name: Add Postgres official GPG key
   apt_key:
