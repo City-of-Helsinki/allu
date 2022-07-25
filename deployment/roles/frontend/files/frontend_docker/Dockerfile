@@ -5,7 +5,7 @@ ARG CUSTOM_GID
 
 RUN apt-get update \
     && apt-get install -y tzdata systemctl python3-dev cron apache2 libapache2-mod-wsgi-py3 python3-pip supervisor \
-    python3-yaml python3-proj build-essential libjpeg-dev python3-dev zlib1g-dev libfreetype6-dev\
+    python3-yaml python3-pyproj build-essential libjpeg-dev python3-dev zlib1g-dev libfreetype6-dev\
     && rm -rf /var/lib/apt/lists/*
 
 
