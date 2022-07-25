@@ -4,7 +4,8 @@ ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apt-get update \
-    && apt-get install -y tzdata systemctl python3-pyproj cron apache2 libapache2-mod-wsgi-py3 python3-pip libproj19 libproj-dev build-essential libjpeg-dev zlib1g-dev libfreetype6-dev supervisor \
+    && apt-get install -y tzdata systemctl python3-dev cron apache2 libapache2-mod-wsgi-py3 python3-pip supervisor \
+    python3-yaml python3-proj build-essential libjpeg-dev python3-dev zlib1g-dev libfreetype6-dev\
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -79,7 +80,6 @@ RUN update-rc.d apache2 remove
 # Python pip (mapproxy installation)
 ######################################################################################
 
-RUN pip3 install PyYAML==6.0
 RUN pip3 install Pillow==9.2.0
 RUN pip3 install MapProxy==1.15.1
 RUN pip3 install requests==2.28.1
