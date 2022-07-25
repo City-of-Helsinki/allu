@@ -25,7 +25,7 @@ def authorize(service, layers=[], environ=None, **kw):
     if not restricted:
         return {'authorized': 'full'}
     else:
-        if environ in 'HTTP_AUTHORIZATION':
+        if 'HTTP_AUTHORIZATION' in environ:
             headers = {'Authorization': environ['HTTP_AUTHORIZATION']}
             # call backend to validate the given token
             r = requests.get('{{ proxypass_api_target }}users/isauthenticated', headers=headers)
