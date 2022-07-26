@@ -11,15 +11,15 @@ import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 
 import org.elasticsearch.client.Client;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -32,604 +32,614 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppTestConfig.class)
 public class ApplicationSearchTest {
 
-  private static final String USERNAME = "someusername";
-
-  @Autowired
-  private Client client;
-  private ApplicationSearchService applicationSearchService;
-
-
-  @Before
-  public void setUp() throws Exception {
-    ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-    applicationSearchService = new ApplicationSearchService(
-        elasticSearchMappingConfig,
-        client, new ApplicationIndexConductor());
-  }
-
-  @Test
-  public void testInsertApplication() {
-    ApplicationES applicationES = new ApplicationES();
-    applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
-    applicationES.setId(1);
-    applicationES.setOwner(createUser());
-    applicationES.setName("Ensimmäinen testi");
-    applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
-    applicationES.setApplicationTypeData(createApplicationTypeData());
-
-    applicationSearchService.insert(applicationES);
-  }
-
-  @Test
-  public void testFindByField() {
-    ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES);
-
-    verifyOneQueryResult("name", "testi");
-    applicationSearchService.delete("1");
-  }
-
-  @Test
-  public void testFindByFieldPartial() {
-    ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES);
-    applicationSearchService.refreshIndex();
-
-    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("applicationId", "TP00");
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
-
-    params = SearchTestUtil.createApplicationQueryParameters("applicationId", "TP000001");
-    appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
-
-    applicationSearchService.delete("1");
-  }
-
-  @Test
-  public void testFindByFieldSorted() {
-    ApplicationES applicationES1 = createApplication(1);
-    applicationES1.setName("c 3");
-    ApplicationES applicationES2 = createApplication(2);
-    applicationES2.setName("a 2");
-    ApplicationES applicationES3 = createApplication(3);
-    applicationES3.setName("b 1");
-    applicationSearchService.insert(applicationES1);
-    applicationSearchService.insert(applicationES2);
-    applicationSearchService.insert(applicationES3);
-
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    PageRequest pageRequest = PageRequest.of(0, 100, Direction.ASC, "name");
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertNotNull(appList);
-    assertEquals(3, appList.size());
-    assertEquals(2, appList.get(0).intValue());
-    assertEquals(3, appList.get(1).intValue());
-    assertEquals(1, appList.get(2).intValue());
-    applicationSearchService.delete("1");
-    applicationSearchService.delete("2");
-    applicationSearchService.delete("3");
-  }
-
-  @Test
-  public void testPagedSearch() {
-    for (int i = 10; i < 99; ++i) {
-      ApplicationES applicationES = createApplication(i);
-      applicationES.setName("Application #" + i);
-      applicationSearchService.insert(applicationES);
-    }
-    applicationSearchService.refreshIndex();
-    ApplicationQueryParameters parameters = new ApplicationQueryParameters();
-    parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
-    Page<Integer> appPage = applicationSearchService.findByField(parameters,
-        PageRequest.of(2, 10, Direction.ASC, "name"));
-    assertEquals(10, appPage.getSize());
-    assertEquals(Arrays.asList(30, 31, 32, 33, 34, 35, 36, 37, 38, 39), appPage.getContent());
-    assertEquals(89, appPage.getTotalElements());
-  }
-
-  @Test
-  public void testFieldMappingsAndSorting() {
-    ApplicationES applicationES1 = createApplication(1);
-
-    applicationES1.setName(USERNAME + " " + 1);
-    applicationES1.setOwner(new UserES(USERNAME + " " + 1, "not used"));
-    CustomerES customerES = new CustomerES();
-    customerES.setName(USERNAME + " " + 1);
-    RoleTypedCustomerES roleTypedCustomerES =
-        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
-    applicationES1.setCustomers(roleTypedCustomerES);
-
-    applicationES1.setLocations(Arrays.asList(
-        new LocationES(1, "AEnsimmäinen osoite 9", "00100", "Sinki", 1, "Eka lisätieto"),
-        new LocationES(2, "Zviimonen 777", "00100", "Sinki", 5, "Vika lisätieto")));
-
-    ApplicationES applicationES2 = createApplication(2);
-    applicationES2.setName(USERNAME + " " + 2);
-    applicationES2.setOwner(new UserES(USERNAME + " " + 2, "not used"));
-    customerES = new CustomerES();
-    customerES.setName(USERNAME + " " + 2);
-    roleTypedCustomerES =
-        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
-    applicationES2.setCustomers(roleTypedCustomerES);
-    applicationES2.setLocations(
-        Collections.singletonList(new LocationES(3, "bToinen osoite 1", "00100", "Sinki", 2, "Toka lisätieto")));
-
-    ApplicationES applicationES3 = createApplication(3);
-    applicationES3.setName(USERNAME + " " + 3);
-    applicationES3.setOwner(new UserES(USERNAME + " " + 3, "not used"));
-    customerES = new CustomerES();
-    customerES.setName(USERNAME + " " + 3);
-    roleTypedCustomerES =
-        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
-    applicationES3.setCustomers(roleTypedCustomerES);
-    applicationES3.setLocations(Arrays.asList(
-        new LocationES(4, "Zviimonen 777", "00100", "Sinki", 3, "Vika lisätieto"),
-        new LocationES(5, "Ckolmas osoite 5", "00100", "Sinki", 4, "Kolmoslisätieto")));
-
-    applicationSearchService.insert(applicationES1);
-    applicationSearchService.insert(applicationES2);
-    applicationSearchService.insert(applicationES3);
-    applicationSearchService.refreshIndex();
-
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    QueryParameter nameParameter = new QueryParameter("name", USERNAME);
-    QueryParameter ownerNameParameter = new QueryParameter("owner.userName", Arrays.asList(USERNAME));
-    QueryParameter customerNameParameter = new QueryParameter("customers.applicant.customer.name", Arrays.asList(USERNAME));
-
-    List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, ownerNameParameter, customerNameParameter));
-    params.setQueryParameters(parameterList);
-    PageRequest pageRequest = PageRequest.of(0, 100, Direction.ASC, "name");
-    List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertEquals(3, appList.size());
-    assertEquals(Arrays.asList(1, 2, 3), appList);
-
-    pageRequest = PageRequest.of(0, 100, Direction.ASC, "owner.userName");
-    appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertEquals(3, appList.size());
-    assertEquals(Arrays.asList(1, 2, 3), appList);
-
-    pageRequest = PageRequest.of(0, 100, Direction.ASC, "customers.applicant.customer.name");
-    appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertEquals(3, appList.size());
-    assertEquals(Arrays.asList(1, 2, 3), appList);
-
-    pageRequest = PageRequest.of(0, 100, Direction.ASC, "locations.streetAddress");
-    appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertEquals(3, appList.size());
-    assertEquals(Arrays.asList(1, 2, 3), appList);
-
-    pageRequest = PageRequest.of(0, 100, Direction.ASC, "locations.cityDistrictId");
-    appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertEquals(3, appList.size());
-    assertEquals(Arrays.asList(1, 2, 3), appList);
-  }
-
-    @Test
-  public void testFindByMultipleTypesSorted() {
-    ApplicationES applicationES1 = createApplication(1);
-    ApplicationES applicationES2 = createApplication(2);
-    ApplicationES applicationES3 = createApplication(3);
-
-    applicationES1.setStatus(new StatusTypeES(StatusType.FINISHED));
-    applicationES2.setStatus(new StatusTypeES(StatusType.HANDLING));
-    applicationES3.setStatus(new StatusTypeES(StatusType.DECISION));
-
-    applicationSearchService.insert(applicationES1);
-    applicationSearchService.insert(applicationES2);
-    applicationSearchService.insert(applicationES3);
-
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    QueryParameter parameter = new QueryParameter(
-        "status.value", Arrays.asList(StatusType.FINISHED.name(), StatusType.HANDLING.name(), StatusType.DECISION.name()));
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    PageRequest pageRequest = PageRequest.of(0, 100, Direction.ASC, "status");
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
-    assertNotNull(appList);
-    assertEquals(3, appList.size());
-    // results should be sorted by the enumeration order of StatusType
-    assertEquals(2, appList.get(0).intValue());
-    assertEquals(3, appList.get(1).intValue());
-    assertEquals(1, appList.get(2).intValue());
-    applicationSearchService.delete("1");
-    applicationSearchService.delete("2");
-    applicationSearchService.delete("3");
-  }
-
-  @Test
-  public void testFindByContact() {
-    ApplicationES applicationES = createApplication(1);
-    CustomerES customerES = new CustomerES();
-    RoleTypedCustomerES roleTypedCustomerES =
-        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT,
-            SearchTestUtil.createCustomerWithContacts(customerES, createContacts())));
-    applicationES.setCustomers(roleTypedCustomerES);
-    applicationSearchService.insert(applicationES);
-
-    verifyOneQueryResult("customers.applicant.contacts.name", "kontakti");
-    applicationSearchService.delete("1");
-  }
-
-  @Test
-  public void testFindByMultipleOwners() {
-    ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES);
-
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
-    applicationSearchService.delete("1");
-  }
-
-  @Test
-  public void testFindByMultipleStatuses() {
-    ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES);
-
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    QueryParameter parameter = new QueryParameter("status.value", Arrays.asList(StatusType.PENDING.name(), StatusType.CANCELLED.name()));
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
-    applicationSearchService.delete("1");
-  }
-
-  @Test
-  public void testFindByDateField() {
-    ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES);
-    applicationSearchService.refreshIndex();
-
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    ZonedDateTime testStartTime = ZonedDateTime.parse("2016-07-05T06:10:10.000Z");
-    ZonedDateTime testEndTime = ZonedDateTime.parse(  "2016-07-06T05:10:10.000Z");
-    QueryParameter parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
-
-    testStartTime = ZonedDateTime.parse("2016-07-03T06:10:10.000Z");
-    testEndTime = ZonedDateTime.parse(  "2016-07-04T05:10:10.000Z");
-    parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
-    parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(0, appList.size());
-
-    applicationSearchService.delete("1");
-  }
-
-  @Test
-  public void testUpdateApplication() {
-    ApplicationES applicationES = createApplication(100);
-    applicationSearchService.insert(applicationES);
-
-    final String newName = "Päivitetty testi";
-    applicationES.setName(newName);
-
-    applicationSearchService.bulkUpdate(Collections.singletonList(applicationES));
-    applicationSearchService.refreshIndex();
-
-    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("name", newName);
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertEquals(1, appList.size());
-    applicationSearchService.delete("100");
-  }
-
-  @Test
-  public void testUpdateCustomerWithContacts() {
-    // create data
-    int applicationId = 100;
-    ApplicationES applicationES = createApplication(applicationId, CustomerRoleType.APPLICANT,
-      "applicant", createContacts(Arrays.asList("kontakti ihminen", "toinen contact")));
-    applicationSearchService.insert(applicationES);
-
-    // update data
-    Map<CustomerRoleType, CustomerWithContactsES> testUpdateData = Collections.singletonMap(
-      CustomerRoleType.APPLICANT,
-      SearchTestUtil.createCustomerWithContacts(
-        createCustomer("anewname"),
-        createContacts(Arrays.asList("uusi nimi", "joku tyyppi"))));
-    applicationSearchService.updateCustomersWithContacts(applicationId, testUpdateData);
-
-    // verify update
-    verifyOneQueryResult("customers.applicant.customer.name", "anewname");
-    verifyOneQueryResult("customers.applicant.contacts.name", "tyyppi");
-
-    // clean up
-    applicationSearchService.delete("100");
-  }
-
-  @Test
-  public void testRecurringApplicationWithinOneCalendarYear() {
-    ApplicationES applicationES = createApplication(100);
-    RecurringApplication recurringApplication = new RecurringApplication(
-        ZonedDateTime.parse("2016-07-05T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-08-05T06:23:04.000Z"),
-        RecurringApplication.MAX_END_TIME);
-    applicationES.setRecurringApplication(recurringApplication);
-    applicationSearchService.insert(applicationES);
-    applicationSearchService.refreshIndex();
-
-
-    // test period completely outside recurring period, before recurring period
-    List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // test period completely outside recurring period, after recurring period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-08-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-09-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // test period completely within recurring period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-07-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // test period partially within recurring period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-05-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-
-    // test period partially within recurring period (beginning of test period) and that overlaps with two calendar years.
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-07-04T06:23:04.000Z"),
-        ZonedDateTime.parse("2017-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-
-    // test period partially within recurring period (end of test period) and that overlaps with two calendar years
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2015-12-04T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-
-    applicationSearchService.delete("100");
-  }
-
-  @Test
-  public void testRecurringApplicationWithinTwoCalendarYears() {
-    ApplicationES applicationES = createApplication(100);
-    RecurringApplication recurringApplication = new RecurringApplication(
-        ZonedDateTime.parse("2015-11-05T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
-        RecurringApplication.MAX_END_TIME);
-    applicationES.setRecurringApplication(recurringApplication);
-    applicationSearchService.insert(applicationES);
-    applicationSearchService.refreshIndex();
-
-    // test period completely outside recurring period
-    List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // test period completely within recurring period, in the first period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2015-11-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2015-11-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // test period completely within recurring period, in the second period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-01-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-02-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // test period longer than one year, match in the end of long period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2010-05-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // test period longer than one year, match in the beginning of long period
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2018-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2018-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2020-07-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-
-    applicationSearchService.delete("100");
-  }
-
-  @Test
-  public void testRecurringApplicationBeginEndYears() {
-    int withEndYearAppId = 100;
-    ApplicationES applicationESWithEndYear = createApplication(withEndYearAppId);
-    RecurringApplication recurringApplication = new RecurringApplication(
-        ZonedDateTime.parse("2015-11-05T06:23:04.000Z"),
-        ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
-        ZonedDateTime.parse("2020-04-05T10:23:04.000Z"));
-    applicationESWithEndYear.setRecurringApplication(recurringApplication);
-    applicationSearchService.insert(applicationESWithEndYear);
-    applicationSearchService.refreshIndex();
-
-    // find within period, but before begin year
-    List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2013-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2014-03-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // find outside period, on initial year
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2014-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2015-03-11T06:07:08.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // find within period, but after end year
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2021-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2021-03-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // find within period, after initial year
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2019-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2019-03-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // find within period, on the final year
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2020-03-10T06:23:04.000Z"),
-        ZonedDateTime.parse("2020-03-11T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // find outside period, on the final year
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2020-04-06T06:23:04.000Z"),
-        ZonedDateTime.parse("2020-04-07T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-    // find within period, no end time
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2016-04-04T06:23:04.000Z"),
-        null
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // find within recurring period, no end time
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2017-05-04T06:23:04.000Z"),
-        null
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // find outside recurring period, no end time
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        ZonedDateTime.parse("2021-01-04T06:23:04.000Z"),
-        null
-    ), null).getContent();
-    assertEquals(0, appList.size());
-
-    // find within period, no start time
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        null,
-        ZonedDateTime.parse("2015-12-04T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(1, appList.size());
-    // find outside recurring period, no start time
-    appList = applicationSearchService.findByField(createRecurringQuery(
-        null,
-        ZonedDateTime.parse("2015-05-04T06:23:04.000Z")
-    ), null).getContent();
-    assertEquals(0, appList.size());
-
-    applicationSearchService.delete("100");
-  }
-
-  public static ApplicationQueryParameters createRecurringQuery(ZonedDateTime begin, ZonedDateTime end) {
-    QueryParameter recurringQP = new QueryParameter(QueryParameter.FIELD_NAME_RECURRING_APPLICATION, begin, end);
-    ApplicationQueryParameters params = new ApplicationQueryParameters();
-    params.setQueryParameters(Collections.singletonList(recurringQP));
-    return params;
-  }
-
-  public static ApplicationES createApplication(Integer id) {
-    ApplicationES applicationES = new ApplicationES();
-    applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
-    applicationES.setId(id);
-    applicationES.setApplicationId("TP000001");
-    applicationES.setOwner(createUser());
-    applicationES.setName("Mock testi");
-    applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
-    ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
-    applicationES.setCreationTime(dateTime.toInstant().toEpochMilli());
-
-    applicationES.setApplicationTypeData(createApplicationTypeData());
-    return applicationES;
-  }
-
-  public static List<ESFlatValue> createApplicationTypeData() {
-    List<ESFlatValue> esFlatValues = new ArrayList<>();
-    ZonedDateTime zonedDateTimeStart = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
-    ZonedDateTime zonedDateTimeEnd = ZonedDateTime.parse("2016-07-06T06:23:04.000Z");
-
-    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
-    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
-    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "attendees", 1000L));
-    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
-    return esFlatValues;
-  }
-
-  public static List<ContactES> createContacts() {
-    return createContacts(Arrays.asList("kontakti ihminen", "toinen contact"));
-  }
-
-  public static List<ContactES> createContacts(Collection<String> contactNames) {
-    ArrayList<ContactES> contacts = new ArrayList<>();
-    Integer idCounter = 1;
-    for (String contactName : contactNames) {
-      contacts.add(new ContactES(idCounter, contactName, true));
-      idCounter++;
-    }
-    return contacts;
-  }
-
-  private ApplicationES createApplication(int applicationId, CustomerRoleType customerRoleType,
-                                          String customerName, List<ContactES> contacts) {
-    ApplicationES applicationES = createApplication(applicationId);
-    CustomerES customerES = createCustomer(customerName);
-    RoleTypedCustomerES roleTypedCustomerES =
-      new RoleTypedCustomerES(Collections.singletonMap(customerRoleType,
-        SearchTestUtil.createCustomerWithContacts(customerES, contacts)));
-    applicationES.setCustomers(roleTypedCustomerES);
-    return applicationES;
-  }
-
-  private CustomerES createCustomer(String customerName) {
-    CustomerES customerES = new CustomerES();
-    customerES.setName(customerName);
-    return customerES;
-  }
-
-  public static UserES createUser() {
-    return new UserES(USERNAME, "real name");
-  }
-
-  private void verifyOneQueryResult(String fieldName, String parameter) {
-    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters(fieldName, parameter);
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
-    assertNotNull(appList);
-    assertEquals(1, appList.size());
-  }
+	private static final String USERNAME = "someusername";
+
+	@Autowired
+	private Client client;
+	private ApplicationSearchService applicationSearchService;
+
+
+	@BeforeEach
+	public void setUp() throws Exception {
+		ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
+		applicationSearchService = new ApplicationSearchService(
+				elasticSearchMappingConfig,
+				client, new ApplicationIndexConductor());
+	}
+
+	@Test
+	void testInsertApplication() {
+		ApplicationES applicationES = new ApplicationES();
+		applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
+		applicationES.setId(1);
+		applicationES.setOwner(createUser());
+		applicationES.setName("Ensimmäinen testi");
+		applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
+		applicationES.setApplicationTypeData(createApplicationTypeData());
+
+		applicationSearchService.insert(applicationES);
+	}
+
+	@Test
+	void testFindByField() {
+		ApplicationES applicationES = createApplication(1);
+		applicationSearchService.insert(applicationES);
+
+		verifyOneQueryResult("name", "testi");
+		applicationSearchService.delete("1");
+	}
+
+
+	@Test
+	void testFindByFieldAddress() {
+		ApplicationES applicationES = createApplication(1);
+		applicationSearchService.insert(applicationES);
+
+		verifyOneQueryResult("name", "testi");
+		applicationSearchService.delete("1");
+	}
+
+	@Test
+	void testFindByFieldPartial() {
+		ApplicationES applicationES = createApplication(1);
+		applicationSearchService.insert(applicationES);
+		applicationSearchService.refreshIndex();
+
+		ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("applicationId", "TP00");
+		List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(1, appList.size());
+
+		params = SearchTestUtil.createApplicationQueryParameters("applicationId", "TP000001");
+		appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(1, appList.size());
+
+		applicationSearchService.delete("1");
+	}
+
+	@Test
+	void testFindByFieldSorted() {
+		ApplicationES applicationES1 = createApplication(1);
+		applicationES1.setName("c 3");
+		ApplicationES applicationES2 = createApplication(2);
+		applicationES2.setName("a 2");
+		ApplicationES applicationES3 = createApplication(3);
+		applicationES3.setName("b 1");
+		applicationSearchService.insert(applicationES1);
+		applicationSearchService.insert(applicationES2);
+		applicationSearchService.insert(applicationES3);
+
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
+		List<QueryParameter> parameterList = new ArrayList<>();
+		parameterList.add(parameter);
+		params.setQueryParameters(parameterList);
+		PageRequest pageRequest = PageRequest.of(0, 100, Direction.ASC, "name");
+		applicationSearchService.refreshIndex();
+		List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertNotNull(appList);
+		assertEquals(3, appList.size());
+		assertEquals(2, appList.get(0).intValue());
+		assertEquals(3, appList.get(1).intValue());
+		assertEquals(1, appList.get(2).intValue());
+		applicationSearchService.delete("1");
+		applicationSearchService.delete("2");
+		applicationSearchService.delete("3");
+	}
+
+	@Test
+	void testPagedSearch() {
+		for (int i = 10; i < 99; ++i) {
+			ApplicationES applicationES = createApplication(i);
+			applicationES.setName("Application #" + i);
+			applicationSearchService.insert(applicationES);
+		}
+		applicationSearchService.refreshIndex();
+		ApplicationQueryParameters parameters = new ApplicationQueryParameters();
+		parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
+		Page<Integer> appPage = applicationSearchService.findByField(parameters,
+				PageRequest.of(2, 10, Direction.ASC, "name"));
+		assertEquals(10, appPage.getSize());
+		assertEquals(Arrays.asList(30, 31, 32, 33, 34, 35, 36, 37, 38, 39), appPage.getContent());
+		assertEquals(89, appPage.getTotalElements());
+	}
+
+	@Test
+	void testFieldMappingsAndSorting() {
+		ApplicationES applicationES1 = createApplication(1);
+
+		applicationES1.setName(USERNAME + " " + 1);
+		applicationES1.setOwner(new UserES(USERNAME + " " + 1, "not used"));
+		CustomerES customerES = new CustomerES();
+		customerES.setName(USERNAME + " " + 1);
+		RoleTypedCustomerES roleTypedCustomerES =
+				new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
+		applicationES1.setCustomers(roleTypedCustomerES);
+
+		applicationES1.setLocations(Arrays.asList(
+				new LocationES(1, "AEnsimmäinen osoite 9", "00100", "Sinki", 1, "Eka lisätieto"),
+				new LocationES(2, "Zviimonen 777", "00100", "Sinki", 5, "Vika lisätieto")));
+
+		ApplicationES applicationES2 = createApplication(2);
+		applicationES2.setName(USERNAME + " " + 2);
+		applicationES2.setOwner(new UserES(USERNAME + " " + 2, "not used"));
+		customerES = new CustomerES();
+		customerES.setName(USERNAME + " " + 2);
+		roleTypedCustomerES =
+				new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
+		applicationES2.setCustomers(roleTypedCustomerES);
+		applicationES2.setLocations(
+				Collections.singletonList(new LocationES(3, "bToinen osoite 1", "00100", "Sinki", 2, "Toka lisätieto")));
+
+		ApplicationES applicationES3 = createApplication(3);
+		applicationES3.setName(USERNAME + " " + 3);
+		applicationES3.setOwner(new UserES(USERNAME + " " + 3, "not used"));
+		customerES = new CustomerES();
+		customerES.setName(USERNAME + " " + 3);
+		roleTypedCustomerES =
+				new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
+		applicationES3.setCustomers(roleTypedCustomerES);
+		applicationES3.setLocations(Arrays.asList(
+				new LocationES(4, "Zviimonen 777", "00100", "Sinki", 3, "Vika lisätieto"),
+				new LocationES(5, "Ckolmas osoite 5", "00100", "Sinki", 4, "Kolmoslisätieto")));
+
+		applicationSearchService.insert(applicationES1);
+		applicationSearchService.insert(applicationES2);
+		applicationSearchService.insert(applicationES3);
+		applicationSearchService.refreshIndex();
+
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		QueryParameter nameParameter = new QueryParameter("name", USERNAME);
+		QueryParameter ownerNameParameter = new QueryParameter("owner.userName", Arrays.asList(USERNAME));
+		QueryParameter customerNameParameter = new QueryParameter("customers.applicant.customer.name", Arrays.asList(USERNAME));
+
+		List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, ownerNameParameter, customerNameParameter));
+		params.setQueryParameters(parameterList);
+		PageRequest pageRequest = PageRequest.of(0, 100, Direction.ASC, "name");
+		List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertEquals(3, appList.size());
+		assertEquals(Arrays.asList(1, 2, 3), appList);
+
+		pageRequest = PageRequest.of(0, 100, Direction.ASC, "owner.userName");
+		appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertEquals(3, appList.size());
+		assertEquals(Arrays.asList(1, 2, 3), appList);
+
+		pageRequest = PageRequest.of(0, 100, Direction.ASC, "customers.applicant.customer.name");
+		appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertEquals(3, appList.size());
+		assertEquals(Arrays.asList(1, 2, 3), appList);
+
+		pageRequest = PageRequest.of(0, 100, Direction.ASC, "locations.streetAddress");
+		appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertEquals(3, appList.size());
+		assertEquals(Arrays.asList(1, 2, 3), appList);
+
+		pageRequest = PageRequest.of(0, 100, Direction.ASC, "locations.cityDistrictId");
+		appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertEquals(3, appList.size());
+		assertEquals(Arrays.asList(1, 2, 3), appList);
+	}
+
+	@Test
+	void testFindByMultipleTypesSorted() {
+		ApplicationES applicationES1 = createApplication(1);
+		ApplicationES applicationES2 = createApplication(2);
+		ApplicationES applicationES3 = createApplication(3);
+
+		applicationES1.setStatus(new StatusTypeES(StatusType.FINISHED));
+		applicationES2.setStatus(new StatusTypeES(StatusType.HANDLING));
+		applicationES3.setStatus(new StatusTypeES(StatusType.DECISION));
+
+		applicationSearchService.insert(applicationES1);
+		applicationSearchService.insert(applicationES2);
+		applicationSearchService.insert(applicationES3);
+
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		QueryParameter parameter = new QueryParameter(
+				"status.value", Arrays.asList(StatusType.FINISHED.name(), StatusType.HANDLING.name(), StatusType.DECISION.name()));
+		List<QueryParameter> parameterList = new ArrayList<>();
+		parameterList.add(parameter);
+		params.setQueryParameters(parameterList);
+		PageRequest pageRequest = PageRequest.of(0, 100, Direction.ASC, "status");
+		applicationSearchService.refreshIndex();
+		List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
+		assertNotNull(appList);
+		assertEquals(3, appList.size());
+		// results should be sorted by the enumeration order of StatusType
+		assertEquals(2, appList.get(0).intValue());
+		assertEquals(3, appList.get(1).intValue());
+		assertEquals(1, appList.get(2).intValue());
+		applicationSearchService.delete("1");
+		applicationSearchService.delete("2");
+		applicationSearchService.delete("3");
+	}
+
+	@Test
+	void testFindByContact() {
+		ApplicationES applicationES = createApplication(1);
+		CustomerES customerES = new CustomerES();
+		RoleTypedCustomerES roleTypedCustomerES =
+				new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT,
+						SearchTestUtil.createCustomerWithContacts(customerES, createContacts())));
+		applicationES.setCustomers(roleTypedCustomerES);
+		applicationSearchService.insert(applicationES);
+
+		verifyOneQueryResult("customers.applicant.contacts.name", "kontakti");
+		applicationSearchService.delete("1");
+	}
+
+	@Test
+	void testFindByMultipleOwners() {
+		ApplicationES applicationES = createApplication(1);
+		applicationSearchService.insert(applicationES);
+
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
+		List<QueryParameter> parameterList = new ArrayList<>();
+		parameterList.add(parameter);
+		params.setQueryParameters(parameterList);
+		applicationSearchService.refreshIndex();
+		List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(1, appList.size());
+		applicationSearchService.delete("1");
+	}
+
+	@Test
+	void testFindByMultipleStatuses() {
+		ApplicationES applicationES = createApplication(1);
+		applicationSearchService.insert(applicationES);
+
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		QueryParameter parameter = new QueryParameter("status.value", Arrays.asList(StatusType.PENDING.name(), StatusType.CANCELLED.name()));
+		List<QueryParameter> parameterList = new ArrayList<>();
+		parameterList.add(parameter);
+		params.setQueryParameters(parameterList);
+		applicationSearchService.refreshIndex();
+		List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(1, appList.size());
+		applicationSearchService.delete("1");
+	}
+
+	@Test
+	void testFindByDateField() {
+		ApplicationES applicationES = createApplication(1);
+		applicationSearchService.insert(applicationES);
+		applicationSearchService.refreshIndex();
+
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		ZonedDateTime testStartTime = ZonedDateTime.parse("2016-07-05T06:10:10.000Z");
+		ZonedDateTime testEndTime = ZonedDateTime.parse("2016-07-06T05:10:10.000Z");
+		QueryParameter parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
+		List<QueryParameter> parameterList = new ArrayList<>();
+		parameterList.add(parameter);
+		params.setQueryParameters(parameterList);
+		List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(1, appList.size());
+
+		testStartTime = ZonedDateTime.parse("2016-07-03T06:10:10.000Z");
+		testEndTime = ZonedDateTime.parse("2016-07-04T05:10:10.000Z");
+		parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
+		parameterList = new ArrayList<>();
+		parameterList.add(parameter);
+		params.setQueryParameters(parameterList);
+		appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(0, appList.size());
+
+		applicationSearchService.delete("1");
+	}
+
+	@Test
+	void testUpdateApplication() {
+		ApplicationES applicationES = createApplication(100);
+		applicationSearchService.insert(applicationES);
+
+		final String newName = "Päivitetty testi";
+		applicationES.setName(newName);
+
+		applicationSearchService.bulkUpdate(Collections.singletonList(applicationES));
+		applicationSearchService.refreshIndex();
+
+		ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("name", newName);
+		List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+		assertEquals(1, appList.size());
+		applicationSearchService.delete("100");
+	}
+
+	@Test
+	void testUpdateCustomerWithContacts() {
+		// create data
+		int applicationId = 100;
+		ApplicationES applicationES = createApplication(applicationId, CustomerRoleType.APPLICANT,
+				"applicant", createContacts(Arrays.asList("kontakti ihminen", "toinen contact")));
+		applicationSearchService.insert(applicationES);
+
+		// update data
+		Map<CustomerRoleType, CustomerWithContactsES> testUpdateData = Collections.singletonMap(
+				CustomerRoleType.APPLICANT,
+				SearchTestUtil.createCustomerWithContacts(
+						createCustomer("anewname"),
+						createContacts(Arrays.asList("uusi nimi", "joku tyyppi"))));
+		applicationSearchService.updateCustomersWithContacts(applicationId, testUpdateData);
+
+		// verify update
+		verifyOneQueryResult("customers.applicant.customer.name", "anewname");
+		verifyOneQueryResult("customers.applicant.contacts.name", "tyyppi");
+
+		// clean up
+		applicationSearchService.delete("100");
+	}
+
+	@Test
+	void testRecurringApplicationWithinOneCalendarYear() {
+		ApplicationES applicationES = createApplication(100);
+		RecurringApplication recurringApplication = new RecurringApplication(
+				ZonedDateTime.parse("2016-07-05T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-08-05T06:23:04.000Z"),
+				RecurringApplication.MAX_END_TIME);
+		applicationES.setRecurringApplication(recurringApplication);
+		applicationSearchService.insert(applicationES);
+		applicationSearchService.refreshIndex();
+
+
+		// test period completely outside recurring period, before recurring period
+		List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// test period completely outside recurring period, after recurring period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-08-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-09-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// test period completely within recurring period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-07-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// test period partially within recurring period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-05-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+
+		// test period partially within recurring period (beginning of test period) and that overlaps with two calendar years.
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-07-04T06:23:04.000Z"),
+				ZonedDateTime.parse("2017-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+
+		// test period partially within recurring period (end of test period) and that overlaps with two calendar years
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2015-12-04T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+
+		applicationSearchService.delete("100");
+	}
+
+	@Test
+	void testRecurringApplicationWithinTwoCalendarYears() {
+		ApplicationES applicationES = createApplication(100);
+		RecurringApplication recurringApplication = new RecurringApplication(
+				ZonedDateTime.parse("2015-11-05T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
+				RecurringApplication.MAX_END_TIME);
+		applicationES.setRecurringApplication(recurringApplication);
+		applicationSearchService.insert(applicationES);
+		applicationSearchService.refreshIndex();
+
+		// test period completely outside recurring period
+		List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// test period completely within recurring period, in the first period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2015-11-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2015-11-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// test period completely within recurring period, in the second period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-01-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-02-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// test period longer than one year, match in the end of long period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2010-05-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// test period longer than one year, match in the beginning of long period
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2018-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2018-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2020-07-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+
+		applicationSearchService.delete("100");
+	}
+
+	@Test
+	void testRecurringApplicationBeginEndYears() {
+		int withEndYearAppId = 100;
+		ApplicationES applicationESWithEndYear = createApplication(withEndYearAppId);
+		RecurringApplication recurringApplication = new RecurringApplication(
+				ZonedDateTime.parse("2015-11-05T06:23:04.000Z"),
+				ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
+				ZonedDateTime.parse("2020-04-05T10:23:04.000Z"));
+		applicationESWithEndYear.setRecurringApplication(recurringApplication);
+		applicationSearchService.insert(applicationESWithEndYear);
+		applicationSearchService.refreshIndex();
+
+		// find within period, but before begin year
+		List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2013-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2014-03-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// find outside period, on initial year
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2014-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2015-03-11T06:07:08.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// find within period, but after end year
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2021-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2021-03-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// find within period, after initial year
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2019-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2019-03-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// find within period, on the final year
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2020-03-10T06:23:04.000Z"),
+				ZonedDateTime.parse("2020-03-11T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// find outside period, on the final year
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2020-04-06T06:23:04.000Z"),
+				ZonedDateTime.parse("2020-04-07T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+		// find within period, no end time
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2016-04-04T06:23:04.000Z"),
+				null
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// find within recurring period, no end time
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2017-05-04T06:23:04.000Z"),
+				null
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// find outside recurring period, no end time
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				ZonedDateTime.parse("2021-01-04T06:23:04.000Z"),
+				null
+		), null).getContent();
+		assertEquals(0, appList.size());
+
+		// find within period, no start time
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				null,
+				ZonedDateTime.parse("2015-12-04T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(1, appList.size());
+		// find outside recurring period, no start time
+		appList = applicationSearchService.findByField(createRecurringQuery(
+				null,
+				ZonedDateTime.parse("2015-05-04T06:23:04.000Z")
+		), null).getContent();
+		assertEquals(0, appList.size());
+
+		applicationSearchService.delete("100");
+	}
+
+	public static ApplicationQueryParameters createRecurringQuery(ZonedDateTime begin, ZonedDateTime end) {
+		QueryParameter recurringQP = new QueryParameter(QueryParameter.FIELD_NAME_RECURRING_APPLICATION, begin, end);
+		ApplicationQueryParameters params = new ApplicationQueryParameters();
+		params.setQueryParameters(Collections.singletonList(recurringQP));
+		return params;
+	}
+
+	public static ApplicationES createApplication(Integer id) {
+		ApplicationES applicationES = new ApplicationES();
+		applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
+		applicationES.setId(id);
+		applicationES.setApplicationId("TP000001");
+		applicationES.setOwner(createUser());
+		applicationES.setName("Mock testi");
+		applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
+		ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
+		applicationES.setCreationTime(dateTime.toInstant().toEpochMilli());
+
+		applicationES.setApplicationTypeData(createApplicationTypeData());
+		return applicationES;
+	}
+
+	public static List<ESFlatValue> createApplicationTypeData() {
+		List<ESFlatValue> esFlatValues = new ArrayList<>();
+		ZonedDateTime zonedDateTimeStart = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
+		ZonedDateTime zonedDateTimeEnd = ZonedDateTime.parse("2016-07-06T06:23:04.000Z");
+
+		esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
+		esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
+		esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "attendees", 1000L));
+		esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
+		return esFlatValues;
+	}
+
+	public static List<ContactES> createContacts() {
+		return createContacts(Arrays.asList("kontakti ihminen", "toinen contact"));
+	}
+
+	public static List<ContactES> createContacts(Collection<String> contactNames) {
+		ArrayList<ContactES> contacts = new ArrayList<>();
+		Integer idCounter = 1;
+		for (String contactName : contactNames) {
+			contacts.add(new ContactES(idCounter, contactName, true));
+			idCounter++;
+		}
+		return contacts;
+	}
+
+	private ApplicationES createApplication(int applicationId, CustomerRoleType customerRoleType,
+											String customerName, List<ContactES> contacts) {
+		ApplicationES applicationES = createApplication(applicationId);
+		CustomerES customerES = createCustomer(customerName);
+		RoleTypedCustomerES roleTypedCustomerES =
+				new RoleTypedCustomerES(Collections.singletonMap(customerRoleType,
+						SearchTestUtil.createCustomerWithContacts(customerES, contacts)));
+		applicationES.setCustomers(roleTypedCustomerES);
+		return applicationES;
+	}
+
+	private CustomerES createCustomer(String customerName) {
+		CustomerES customerES = new CustomerES();
+		customerES.setName(customerName);
+		return customerES;
+	}
+
+	public static UserES createUser() {
+		return new UserES(USERNAME, "real name");
+	}
+
+	private void verifyOneQueryResult(String fieldName, String parameter) {
+		ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters(fieldName, parameter);
+		applicationSearchService.refreshIndex();
+		List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+		assertNotNull(appList);
+		assertEquals(1, appList.size());
+	}
 }
