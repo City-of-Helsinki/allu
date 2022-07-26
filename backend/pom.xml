@@ -64,6 +64,7 @@
                         <!-- Also Spec i.e. Spectrum tests are considered as tests -->
                         <include>**/*Test.java</include>
                         <include>**/*Spec.java</include>
+                        <include>**/*IT.java</include>
                     </includes>
                     <argLine>-Duser.language=en</argLine>
                     <useSystemClassLoader>false</useSystemClassLoader>
