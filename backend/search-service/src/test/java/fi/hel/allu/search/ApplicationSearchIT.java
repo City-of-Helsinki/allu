@@ -1,46 +1,44 @@
 package fi.hel.allu.search;
 
 
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
-
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-
-import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @ExtendWith(SpringExtension.class)
 @Testcontainers
 class ApplicationSearchIT {
-
+	private final String CLUSTER_NAME = "allu-cluster";
+	private final String NODE_NAME = "allu-node";
+	private final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:5.6.0";
 	@Container
-	private ElasticsearchContainer container = new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:5.6.0")
-			.withExposedPorts(9300, 9200);
+	private final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9300, 9200).withEnv("xpack.security.enabled", "false").withEnv("network.host", "_site_").withEnv("network.publish_host", "_local_").withEnv("node.name", NODE_NAME).withEnv("cluster.name", CLUSTER_NAME);
+	private Client client;
 
-	RestClient client;
+	private ApplicationSearchService applicationSearchService;
+
 
 	@BeforeEach
-	void SetUp(){
-		final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "changeme"));
-		 client = RestClient.builder(HttpHost.create(container.getHttpHostAddress()))
-				.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
-				.build();
+	void SetUp() throws UnknownHostException {
+		TransportAddress transportAddress = new InetSocketTransportAddress(InetAddress.getByName(container.getHost()), container.getMappedPort(9300));
+		Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
+		client = new PreBuiltTransportClient(settings).addTransportAddress(transportAddress);
 	}
-
 
 	@Test
 	void isRunning() {
@@ -48,14 +46,9 @@ class ApplicationSearchIT {
 	}
 
 	@Test
-	void testClusterHealth() throws IOException {
-
-
-
-		Response response = client.performRequest("GET", "/_cluster/health");
-		System.out.println(response.toString());
-		Assertions.assertFalse(response.toString().isEmpty());
-
-
+	void testSettings() {
+		ClusterHealthResponse healths = client.admin().cluster().prepareHealth().get();
+		String clusterName = healths.getClusterName();
+		Assertions.assertEquals(clusterName, CLUSTER_NAME);
 	}
 }
