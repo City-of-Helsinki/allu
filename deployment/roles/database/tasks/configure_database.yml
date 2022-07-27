@@ -19,6 +19,16 @@
   become: yes
   become_user: postgres
 
+- name: Create database user {{ database_geo_user }}
+  postgresql_user:
+    login_host=localhost
+    name={{ database_geo_user }}
+    password={{ kami_hki_password }}
+    state=present
+    login_password={{ database_password_postgres }}
+  become: yes
+  become_user: postgres
+
 - name: drop all public access rights to {{ database_name }} database
   postgresql_privs:
     login_host=localhost
@@ -38,6 +48,19 @@
     roles={{ database_user }}
     state=present
     privs=ALL
+    type=database
+    grant_option=yes
+    login_password={{ database_password_postgres }}
+  become: yes
+  become_user: postgres
+
+- name: add SELECT rights to {{ database_name }} database for {{ database_geo_user }} user
+  postgresql_privs:
+    host=localhost
+    database={{ database_name }}
+    roles={{ database_geo_user }}
+    state=present
+    privs=SELECT
     type=database
     grant_option=yes
     login_password={{ database_password_postgres }}
