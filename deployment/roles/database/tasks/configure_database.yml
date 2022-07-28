@@ -54,14 +54,14 @@
   become: yes
   become_user: postgres
 
-- name: add CONNECT rights to {{ database_name }} database for {{ database_geo_user }} user
+- name: add  CONNECT rights to {{ database_name }} database for {{ database_geo_user }} user
   postgresql_privs:
     host: localhost
     database: "{{ database_name }}"
     roles: "{{ database_geo_user }}"
     state: present
-    privs: CONNECT
     type: database
+    privs: CONNECT
     login_password: "{{ database_password_postgres }}"
   become: yes
   become_user: postgres
@@ -72,8 +72,9 @@
     database: "{{ database_name }}"
     roles: "{{ database_geo_user }}"
     state: present
+    type: default_privs
     privs: SELECT
-    objs: ALL_IN_SCHEMA
+    objs: TABLES,SEQUENCES
     login_password: "{{ database_password_postgres }}"
   become: yes
   become_user: postgres
