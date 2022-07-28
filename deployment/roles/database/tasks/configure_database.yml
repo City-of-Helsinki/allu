@@ -60,7 +60,8 @@
     database={{ database_name }}
     roles={{ database_geo_user }}
     state=present
-    privs=SELECT
+    privs=SELECT, CONNECT
+    type=database
     objs=ALL_IN_SCHEMA
     login_password={{ database_password_postgres }}
   become: yes
