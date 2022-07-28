@@ -56,14 +56,14 @@
 
 - name: add SELECT rights to {{ database_name }} database for {{ database_geo_user }} user
   postgresql_privs:
-    host=localhost
-    database={{ database_name }}
-    roles={{ database_geo_user }}
-    state=present
-    privs=SELECT, CONNECT
-    type=database
-    objs=ALL_IN_SCHEMA
-    login_password={{ database_password_postgres }}
+    host: localhost
+    database: {{ database_name }}
+    roles: {{ database_geo_user }}
+    state: present
+    privs: SELECT, CONNECT
+    type: database
+    objs: ALL_IN_SCHEMA
+    login_password: {{ database_password_postgres }}
   become: yes
   become_user: postgres
 
