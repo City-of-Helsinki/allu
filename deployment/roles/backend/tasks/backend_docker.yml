@@ -46,7 +46,7 @@
 
 - name: stop and remove existing container from Docker
   docker_container:
-    name: allu_backend_container
+    name: allu_backend
     state: absent
   become: yes
 
@@ -68,13 +68,12 @@
 
 - name: start container
   docker_container:
-    name: allu_backend_container
+    name: allu_backend
     image: allu_backend
     restart_policy: always
     volumes:
       - /srv/data/allu:/servicehome:rw
     published_ports:
-      - "9000:9000"
       - "9040:9040"
       - "9050:9050"
   become: yes
