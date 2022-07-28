@@ -29,7 +29,6 @@ RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /home/allu/.ssh
 
 # project setup
-RUN mkdir -p /home/allu/allu-ui-service
 RUN mkdir -p /home/allu/model-service
 RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/search-service
@@ -43,8 +42,6 @@ RUN mkdir -p /home/allu/supervision-api
 # Expose ports
 ######################################################################################
 
-# allu-ui-service
-EXPOSE 9000
 # model-service
 EXPOSE 9010
 # allu-ui-service
