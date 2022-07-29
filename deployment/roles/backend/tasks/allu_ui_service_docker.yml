@@ -1,4 +1,11 @@
 
+- name: Login to GitLab repository
+  local_action:
+    module: docker_login
+    registry: "{{ gitlab_registry_url }}"
+    username: "{{ gitlab_deploy_user }}" #ansible-deploy-token
+    password: "{{ gitlab_deploy_token }}" #ansible-deploy-token
+
 - name: Build allu-ui-service Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
     module: docker_image
@@ -9,36 +16,17 @@
         CUSTOM_GID: "{{ system_group_id_allu }}"
         CACHEBUST: "{{ 9999999 |random }}"
       path: "{{ role_path }}/files/allu_ui_docker"
-    name: allu_ui_service
+    name: "allu_ui_service:{{ branch }}"
     force_absent: true
     force_source: true
 
-- name: remove existing docker image to avoid Ansible task caching
-  local_action: file path=/tmp/allu_ui_service.tar state=absent
-
-- name: remove existing zipped docker image
-  local_action: file path=/tmp/allu_ui_service.tar.gz state=absent
-
-# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
-# able to use docker without super user rights
-- name: save local Docker image as file on local host
-  local_action: docker_image
-                source=local
-                name=allu_ui_service
-                archive_path=/tmp/allu_ui_service.tar
-                state=present
-
-- name: gzip Docker image on local host
-  local_action: command pigz /tmp/allu_ui_service.tar
-
-- name: copy Docker image to target host
-  copy: src=/tmp/allu_ui_service.tar.gz dest=/tmp
-            owner=allu
-            group=allu
-            mode="u=rwx,g=rx,o=rx"
-
-- name: extract tar from Docker gzipped image
-  command: gunzip -f /tmp/allu_ui_service.tar.gz
+- name: Push built allu-ui-service Docker image to GitLab repository
+  local_action:
+    module: docker_image
+    push: true
+    source: local
+    repository: "allu_ui_service:{{ branch }}"
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
 
 - name: start Docker services on remote host
   service: name=docker state=started
@@ -50,32 +38,29 @@
     state: absent
   become: yes
 
-- name: remove existing container from Docker
+- name: remove existing image from Docker
   docker_image:
     name=allu_ui_service
     state=absent
     force_absent=true
     force_source=true
   become: yes
+  when: {{ branch }}  == "master"
 
-- name: add container to Docker
-  docker_image:
-    source=load
-    name=allu_ui_service
-    state=present
-    load_path=/tmp/allu_ui_service.tar
-  become: yes
+- name: Pull allu-ui-service Docker image from GitLab repository
+  local_action:
+    module: docker_image
+    source: pull
+    repository: "allu_ui_service:{{ branch }}"
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
 
 - name: start container
   docker_container:
     name: allu_ui_service
-    image: allu_ui_service
+    image: allu_ui_service:{{ branch }}
     restart_policy: always
     volumes:
       - /srv/data/allu:/servicehome:rw
     published_ports:
       - "9000:9000"
   become: yes
-
-- name: remove Docker image tar file
-  file: path=/tmp/allu_ui_service.tar state=absent
