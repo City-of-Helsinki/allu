@@ -303,7 +303,7 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder autocompleteSettingsFilter() throws IOException {
-    return ngramTokenFilter(1, 40);
+    return ngramTokenFilter(1, 28);
   }
 
   private XContentBuilder autocompleteKeywordSettingsFilter() throws IOException {
