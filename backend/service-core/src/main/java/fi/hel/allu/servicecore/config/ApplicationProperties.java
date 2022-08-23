@@ -1415,11 +1415,11 @@ public class ApplicationProperties {
   }
 
   public String getInformationRequestCreateUrl() {
-    return getModelServiceUrl("applications/{id}/informationrequest");
+    return getModelServiceUrl("/applications/{id}/informationrequest");
   }
 
   public String getApplicationOpenInformationRequestFindUrl() {
-    return getModelServiceUrl("applications/{id}/informationrequest/open");
+    return getModelServiceUrl("/applications/{id}/informationrequest/open");
   }
 
   public String getApplicationActiveInformationRequestFindUrl() {
