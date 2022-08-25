@@ -53,31 +53,49 @@ public class ApplicationServiceExt {
   private static final List<ChangeType> HISTORY_CHANGE_TYPES_INCLUDED = Arrays.asList(ChangeType.STATUS_CHANGED, ChangeType.CONTRACT_STATUS_CHANGED,
       ChangeType.COMMENT_ADDED);
   private static final String HISTORY_INCLUDED_COMMENT_TYPE = CommentType.TO_EXTERNAL_SYSTEM.name();
-
-  @Autowired
-  private ApplicationServiceComposer applicationServiceComposer;
-  @Autowired
-  private ApplicationHistoryService applicationHistoryService;
-  @Autowired
-  private ExternalUserService externalUserService;
-  @Autowired
-  private AttachmentService attachmentService;
-  @Autowired
-  private ApplicationProperties applicationProperties;
-  @Autowired
-  private RestTemplate restTemplate;
-  @Autowired
-  private SupervisionTaskService supervisionTaskService;
-  @Autowired
-  private InformationRequestService informationRequestService;
-  @Autowired
-  private CustomerExtMapper customerMapper;
-  @Autowired
-  private ApplicationEventDispatcher applicationEventDispatcher;
-  @Autowired
-  private UserService userService;
+  private final Map<StatusType, String> notAllowedStatusErrors;
 
 
+  private final ApplicationServiceComposer applicationServiceComposer;
+  private final ApplicationHistoryService applicationHistoryService;
+  private final ExternalUserService externalUserService;
+  private final AttachmentService attachmentService;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final SupervisionTaskService supervisionTaskService;
+  private final InformationRequestService informationRequestService;
+  private final CustomerExtMapper customerMapper;
+  private final ApplicationEventDispatcher applicationEventDispatcher;
+  private final UserService userService;
+
+  public ApplicationServiceExt(ApplicationServiceComposer applicationServiceComposer,
+                               ApplicationHistoryService applicationHistoryService,
+                               ExternalUserService externalUserService, AttachmentService attachmentService,
+                               ApplicationProperties applicationProperties, RestTemplate restTemplate,
+                               SupervisionTaskService supervisionTaskService,
+                               InformationRequestService informationRequestService, CustomerExtMapper customerMapper,
+                               ApplicationEventDispatcher applicationEventDispatcher, UserService userService) {
+    this.applicationServiceComposer = applicationServiceComposer;
+    this.applicationHistoryService = applicationHistoryService;
+    this.externalUserService = externalUserService;
+    this.attachmentService = attachmentService;
+    this.applicationProperties = applicationProperties;
+    this.restTemplate = restTemplate;
+    this.supervisionTaskService = supervisionTaskService;
+    this.informationRequestService = informationRequestService;
+    this.customerMapper = customerMapper;
+    this.applicationEventDispatcher = applicationEventDispatcher;
+    this.userService = userService;
+    notAllowedStatusErrors = new EnumMap<>(StatusType.class);
+    mapErrors(notAllowedStatusErrors);
+  }
+
+  private void mapErrors(Map<StatusType, String> notAllowedStatusErrors) {
+    notAllowedStatusErrors.put(StatusType.OPERATIONAL_CONDITION, "application.ext.notAllowedWhenOpCond");
+    notAllowedStatusErrors.put(StatusType.FINISHED, "application.ext.notAllowedWhenFinished");
+    notAllowedStatusErrors.put(StatusType.CANCELLED, "application.ext.notAllowedWhenCancelled");
+    notAllowedStatusErrors.put(StatusType.ARCHIVED, "application.ext.notAllowedWhenArchived");
+  }
   public <T extends BaseApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
     applicationJson.setReceivedTime(ZonedDateTime.now());
@@ -146,6 +164,12 @@ public class ApplicationServiceExt {
     return application.getId();
   }
 
+  public void validateModificationAllowed(Integer applicationId) {
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
+    if (notAllowedStatusErrors.containsKey(applicationJson.getStatus())) {
+      throw new IllegalOperationException(notAllowedStatusErrors.get(applicationJson.getStatus()));
+    }
+  }
   public void validateFullUpdateAllowed(Integer applicationId) {
     StatusType status = applicationServiceComposer.getApplicationStatus(applicationId).getStatus();
     if (!(status == StatusType.PENDING_CLIENT || status == StatusType.PENDING)) {

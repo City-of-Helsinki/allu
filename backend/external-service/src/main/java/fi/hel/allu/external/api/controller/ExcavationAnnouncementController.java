@@ -75,6 +75,7 @@ public class ExcavationAnnouncementController
       @ApiParam(value = "Operational condition date") @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
+    applicationService.validateModificationAllowed(applicationId);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), operationalConditionDate, null);
     dateReportingService.reportCustomerOperationalCondition(applicationId, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
