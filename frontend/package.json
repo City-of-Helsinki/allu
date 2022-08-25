@@ -12,7 +12,11 @@
     "build-test": "npm run ng-high-mem build  -- --configuration=test",
     "test": " ng lint && ng test --watch=false",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "engines": {
+      "node": "12.x",
+      "npm": "6.x"
+    }
   },
   "private": true,
   "dependencies": {
@@ -82,7 +86,7 @@
     "@types/jasminewd2": "^2.0.5",
     "@types/leaflet": "1.2.5",
     "@types/leaflet-draw": "0.4.14",
-    "@types/lodash": "^4.14.117",
+    "@types/lodash": "4.14.182",
     "@types/node": "^6.14.0",
     "@types/proj4leaflet": "1.0.5",
     "codelyzer": "^5.0.1",
