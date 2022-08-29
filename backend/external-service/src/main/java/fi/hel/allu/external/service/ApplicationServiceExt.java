@@ -1,21 +1,7 @@
 package fi.hel.allu.external.service;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Sets;
-
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -42,6 +28,17 @@ import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
 import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Service with application-related operations that are only needed in
@@ -50,9 +47,12 @@ import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryServ
 @Service
 public class ApplicationServiceExt {
 
-  private static final List<ChangeType> HISTORY_CHANGE_TYPES_INCLUDED = Arrays.asList(ChangeType.STATUS_CHANGED, ChangeType.CONTRACT_STATUS_CHANGED,
-      ChangeType.COMMENT_ADDED);
+  private static final List<ChangeType> HISTORY_CHANGE_TYPES_INCLUDED = Arrays.asList(ChangeType.STATUS_CHANGED,
+                                                                                      ChangeType.CONTRACT_STATUS_CHANGED,
+                                                                                      ChangeType.COMMENT_ADDED);
   private static final String HISTORY_INCLUDED_COMMENT_TYPE = CommentType.TO_EXTERNAL_SYSTEM.name();
+
+
   private final Map<StatusType, String> notAllowedStatusErrors;
 
 
@@ -96,7 +96,9 @@ public class ApplicationServiceExt {
     notAllowedStatusErrors.put(StatusType.CANCELLED, "application.ext.notAllowedWhenCancelled");
     notAllowedStatusErrors.put(StatusType.ARCHIVED, "application.ext.notAllowedWhenArchived");
   }
-  public <T extends BaseApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+
+  public <T extends BaseApplicationExt> Integer createApplication(T application,
+                                                                  ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
     applicationJson.setReceivedTime(ZonedDateTime.now());
     StatusType status = application.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
@@ -109,45 +111,48 @@ public class ApplicationServiceExt {
 
   public List<ApplicationHistoryExt> searchApplicationHistory(ApplicationHistorySearchExt searchParameters) {
     Integer externalUserId = getExternalUserId();
-    HistorySearchCriteria searchCriteria = new HistorySearchCriteria(searchParameters.getApplicationIds(), HISTORY_CHANGE_TYPES_INCLUDED, searchParameters.getEventsAfter());
-    Map<Integer, List<ChangeHistoryItem>> changeHistory = applicationHistoryService.getExternalOwnerApplicationHistory(externalUserId, searchCriteria);
-    Map<Integer, List<SupervisionTask>> supervisionTaskHistory = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalUserId, searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
+    HistorySearchCriteria searchCriteria = new HistorySearchCriteria(searchParameters.getApplicationIds(),
+                                                                     HISTORY_CHANGE_TYPES_INCLUDED,
+                                                                     searchParameters.getEventsAfter());
+    Map<Integer, List<ChangeHistoryItem>> changeHistory =
+            applicationHistoryService.getExternalOwnerApplicationHistory(
+                    externalUserId, searchCriteria);
+    Map<Integer, List<SupervisionTask>> supervisionTaskHistory =
+            supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(
+                    externalUserId, searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
     return Sets.union(changeHistory.keySet(), supervisionTaskHistory.keySet()).stream()
-      .map(id -> new ApplicationHistoryExt(id, toStatusEvents(id, changeHistory.get(id)), toSupervisionEvents(id, supervisionTaskHistory.get(id))))
-      .collect(Collectors.toList());
-  }
-
-  private List<SupervisionEventExt> toSupervisionEvents(Integer id, List<SupervisionTask> tasks) {
-    return Optional.ofNullable(tasks).orElse(Collections.emptyList())
-            .stream()
-            .map(t -> new SupervisionEventExt(t.getActualFinishingTime(), t.getType(), t.getStatus(), t.getResult()))
+            .map(id -> new ApplicationHistoryExt(id, toStatusEvents(changeHistory.get(id)),
+                                                 toSupervisionEvents(supervisionTaskHistory.get(id))))
             .collect(Collectors.toList());
   }
 
-  private List<ApplicationStatusEventExt> toStatusEvents(Integer applicationId, List<ChangeHistoryItem> items) {
-    return Optional.ofNullable(items).orElse(Collections.emptyList())
-            .stream()
-            .filter(i -> isChangeIncluded(i))
-            .map(i ->
-              new ApplicationStatusEventExt(i.getChangeTime(),
-                  getEventName(i),
-                  i.getInfo().getApplicationId(),
-                  i.getChangeSpecifier2())
-             )
+  private List<SupervisionEventExt> toSupervisionEvents(List<SupervisionTask> tasks) {
+    return Optional.ofNullable(tasks).orElse(Collections.emptyList()).stream()
+            .map(t -> new SupervisionEventExt(t.getActualFinishingTime(), t.getType(), t.getStatus(),
+                                              t.getResult())).collect(Collectors.toList());
+  }
+
+  private List<ApplicationStatusEventExt> toStatusEvents(List<ChangeHistoryItem> items) {
+    return Optional.ofNullable(items).orElse(Collections.emptyList()).stream().filter(this::isChangeIncluded)
+            .map(i -> new ApplicationStatusEventExt(i.getChangeTime(), getEventName(i),
+                                                    i.getInfo().getApplicationId(), i.getChangeSpecifier2()))
             .collect(Collectors.toList());
   }
 
   private String getEventName(ChangeHistoryItem item) {
     // For status change events return new status from change specifier as event name, for comments change type.
-    return item.getChangeType() == ChangeType.COMMENT_ADDED ? ChangeType.COMMENT_ADDED.name() : item.getChangeSpecifier();
+    return item.getChangeType() == ChangeType.COMMENT_ADDED ? ChangeType.COMMENT_ADDED.name() :
+            item.getChangeSpecifier();
   }
 
   private boolean isChangeIncluded(ChangeHistoryItem item) {
     // If change type is "comment added" include it in history only if comment is targeted to external system
-    return item.getChangeType() != ChangeType.COMMENT_ADDED || item.getChangeSpecifier().equals(HISTORY_INCLUDED_COMMENT_TYPE);
+    return item.getChangeType() != ChangeType.COMMENT_ADDED || item.getChangeSpecifier()
+            .equals(HISTORY_INCLUDED_COMMENT_TYPE);
   }
 
-  public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+  public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt,
+                                                                  ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson application = mapper.mapExtApplication(applicationExt, getExternalUserId());
     // Set optimistic lock version since it's currently not available from ext api
     application.setVersion(applicationServiceComposer.getApplicationVersion(id));
@@ -164,12 +169,6 @@ public class ApplicationServiceExt {
     return application.getId();
   }
 
-  public void validateModificationAllowed(Integer applicationId) {
-    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
-    if (notAllowedStatusErrors.containsKey(applicationJson.getStatus())) {
-      throw new IllegalOperationException(notAllowedStatusErrors.get(applicationJson.getStatus()));
-    }
-  }
   public void validateFullUpdateAllowed(Integer applicationId) {
     StatusType status = applicationServiceComposer.getApplicationStatus(applicationId).getStatus();
     if (!(status == StatusType.PENDING_CLIENT || status == StatusType.PENDING)) {
@@ -193,22 +192,31 @@ public class ApplicationServiceExt {
     }
   }
 
-  public void addAttachment(Integer applicationId, AttachmentInfoExt metadata, MultipartFile file) throws IOException {
+  public void validateModificationAllowed(Integer applicationId) {
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
+    if (notAllowedStatusErrors.containsKey(applicationJson.getStatus())) {
+      throw new IllegalOperationException(notAllowedStatusErrors.get(applicationJson.getStatus()));
+    }
+  }
+
+  public void addAttachment(Integer applicationId, AttachmentInfoExt metadata,
+                            MultipartFile file) throws IOException {
     if (file.isEmpty()) {
       throw new IllegalArgumentException("attachment.empty");
     }
-   attachmentService.addAttachment(applicationId, AttachmentMapper.toAttachmentInfoJson(metadata), file);
+    attachmentService.addAttachment(applicationId, AttachmentMapper.toAttachmentInfoJson(metadata), file);
   }
 
-  public void saveOriginalApplication(Integer id, Integer informationRequestId, ApplicationJson originalApplication) throws JsonProcessingException {
-    ExternalApplication externalApplication = createExternalApplication(id, informationRequestId, originalApplication);
-    restTemplate.postForObject(
-        applicationProperties.getExternalApplicationCreateUrl(),
-        externalApplication, Void.class, id);
+  public void saveOriginalApplication(Integer id, Integer informationRequestId,
+                                      ApplicationJson originalApplication) throws JsonProcessingException {
+    ExternalApplication externalApplication = createExternalApplication(id, informationRequestId,
+                                                                        originalApplication);
+    restTemplate.postForObject(applicationProperties.getExternalApplicationCreateUrl(), externalApplication,
+                               Void.class, id);
   }
 
-  public ExternalApplication createExternalApplication(Integer id, Integer informationRequestId, ApplicationJson originalApplication)
-      throws JsonProcessingException {
+  public ExternalApplication createExternalApplication(Integer id, Integer informationRequestId,
+                                                       ApplicationJson originalApplication) throws JsonProcessingException {
     ExternalApplication externalApplication = new ExternalApplication();
     externalApplication.setApplicationId(id);
     externalApplication.setInformationRequestId(informationRequestId);
@@ -217,7 +225,8 @@ public class ApplicationServiceExt {
   }
 
   public <T extends BaseApplicationExt> void addInformationRequestResponse(Integer applicationId, Integer requestId,
-      InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+                                                                           InformationRequestResponseExt<T> response,
+                                                                           ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     validateOwnedByExternalUser(applicationId);
     validateInformationRequestOpen(requestId);
     addResponseForRequest(applicationId, requestId, response, mapper);
@@ -225,13 +234,16 @@ public class ApplicationServiceExt {
   }
 
   public <T extends BaseApplicationExt> void reportApplicationChange(Integer applicationId,
-      InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+                                                                     InformationRequestResponseExt<T> response,
+                                                                     ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     validateOwnedByExternalUser(applicationId);
     validateApplicationChangePossible(applicationId);
-    InformationRequest request = informationRequestService.createForResponse(applicationId, Collections.emptyList());
+    InformationRequest request = informationRequestService.createForResponse(applicationId,
+                                                                             Collections.emptyList());
     addResponseForRequest(applicationId, request.getId(), response, mapper);
     addTag(applicationId, ApplicationTagType.OTHER_CHANGES);
-    applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(), ApplicationNotificationType.EXTERNAL_OTHER_CHANGE);
+    applicationEventDispatcher.dispatchUpdateEvent(applicationId, userService.getCurrentUser().getId(),
+                                                   ApplicationNotificationType.EXTERNAL_OTHER_CHANGE);
   }
 
   public void addTag(Integer applicationId, ApplicationTagType tagType) {
@@ -239,7 +251,7 @@ public class ApplicationServiceExt {
   }
 
   private void validateInformationRequestOpen(Integer requestId) {
-    InformationRequest request =  informationRequestService.findById(requestId);
+    InformationRequest request = informationRequestService.findById(requestId);
     if (request.getStatus() != InformationRequestStatus.OPEN) {
       throw new IllegalOperationException("informationrequest.notopen");
     }
@@ -253,15 +265,15 @@ public class ApplicationServiceExt {
   }
 
   private <T extends BaseApplicationExt> void addResponseForRequest(Integer applicationId, Integer requestId,
-      InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+                                                                    InformationRequestResponseExt<T> response,
+                                                                    ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(response.getApplicationData(), getExternalUserId());
     ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
     informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
   }
 
   public void cancelApplication(Integer id) {
-    applicationServiceComposer.changeStatus(
-        id, StatusType.CANCELLED, new StatusChangeInfoJson());
+    applicationServiceComposer.changeStatus(id, StatusType.CANCELLED, new StatusChangeInfoJson());
   }
 
   public void markSurveyDone(Integer id) {
@@ -290,18 +302,13 @@ public class ApplicationServiceExt {
   }
 
   public List<byte[]> getDecisionAttachmentDocuments(Integer applicationId) {
-    return getDecisionAttachments(applicationId)
-        .stream()
-        .map(a -> attachmentService.getAttachmentData(a.getId()))
-        .collect(Collectors.toList());
+    return getDecisionAttachments(applicationId).stream().map(a -> attachmentService.getAttachmentData(a.getId()))
+            .collect(Collectors.toList());
   }
 
   public AttachmentInfoExt getDecisionAttachmentInfo(Integer applicationId, int attachmentId) {
-    return getDecisionAttachments(applicationId)
-        .stream()
-        .filter(a -> a.getId().equals(attachmentId))
-        .findFirst()
-        .orElseThrow(() -> new NoSuchEntityException("attachment.decision.notFound"));
+    return getDecisionAttachments(applicationId).stream().filter(a -> a.getId().equals(attachmentId)).findFirst()
+            .orElseThrow(() -> new NoSuchEntityException("attachment.decision.notFound"));
   }
 
   public byte[] getDecisionAttachmentData(int attachmentId) {
@@ -309,10 +316,9 @@ public class ApplicationServiceExt {
   }
 
   public List<AttachmentInfoExt> getDecisionAttachments(Integer applicationId) {
-    return attachmentService.findDecisionAttachmentsForApplication(applicationId)
-        .stream()
-        .map(a -> new AttachmentInfoExt(a.getId(), a.getMimeType(), a.getName(), a.getDescription()))
-        .collect(Collectors.toList());
+    return attachmentService.findDecisionAttachmentsForApplication(applicationId).stream()
+            .map(a -> new AttachmentInfoExt(a.getId(), a.getMimeType(), a.getName(), a.getDescription()))
+            .collect(Collectors.toList());
   }
 
   private void setDefaultImages(Integer applicationId, List<Integer> trafficArrangementImages) {
@@ -321,7 +327,7 @@ public class ApplicationServiceExt {
 
   public Map<CustomerRoleType, CustomerWithContactsExt> findApplicationCustomers(Integer applicationId) {
     return applicationServiceComposer.findApplicationCustomers(applicationId).stream().collect(
-        Collectors.toMap(CustomerWithContacts::getRoleType, c -> customerMapper.mapCustomerWithContactsExt(c)));
+            Collectors.toMap(CustomerWithContacts::getRoleType, customerMapper::mapCustomerWithContactsExt));
   }
 
   public CustomerExt findInvoiceRecipient(Integer applicationId) {

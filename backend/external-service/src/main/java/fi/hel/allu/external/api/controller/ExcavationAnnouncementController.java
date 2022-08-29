@@ -1,16 +1,5 @@
 package fi.hel.allu.external.api.controller;
 
-import java.time.ZonedDateTime;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
@@ -22,24 +11,37 @@ import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.DateReportingService;
 import io.swagger.annotations.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping({"/v1/excavationannouncements", "/v2/excavationannouncements"})
 @Api(tags = "Excavation announcements")
 public class ExcavationAnnouncementController
-    extends BaseApplicationController<ExcavationAnnouncementExt, ExcavationAnnouncementExtMapper> {
+        extends BaseApplicationController<ExcavationAnnouncementExt, ExcavationAnnouncementExtMapper> {
+  private final ExcavationAnnouncementExtMapper mapper;
 
-  @Autowired
-  private ExcavationAnnouncementExtMapper mapper;
+  private final ApplicationServiceExt applicationService;
 
-  @Autowired
-  private ApplicationServiceExt applicationService;
+  private final ApprovalDocumentService approvalDocumentService;
 
-  @Autowired
-  private ApprovalDocumentService approvalDocumentService;
+  private final DateReportingService dateReportingService;
 
-  @Autowired
-  private DateReportingService dateReportingService;
+  public ExcavationAnnouncementController(ExcavationAnnouncementExtMapper mapper,
+                                          ApplicationServiceExt applicationService,
+                                          ApprovalDocumentService approvalDocumentService,
+                                          DateReportingService dateReportingService) {
+    this.mapper = mapper;
+    this.applicationService = applicationService;
+    this.approvalDocumentService = approvalDocumentService;
+    this.dateReportingService = dateReportingService;
+  }
 
   @Override
   protected ExcavationAnnouncementExtMapper getMapper() {
@@ -47,15 +49,15 @@ public class ExcavationAnnouncementController
   }
 
   @ApiOperation(value = "Report work finished date for excavation announcement specified by ID parameter.",
-      authorizations=@Authorization(value ="api_key"))
-  @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Date reported successfully", response = Void.class),
+          authorizations = @Authorization(value = "api_key"))
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Date reported successfully", response = Void.class),
   })
-  @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/workfinished")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> reportWorkFinished(
-      @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
-      @ApiParam(value = "Work finished date") @RequestBody @NotNull ZonedDateTime workFinishedDate) {
+          @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+          @ApiParam(value = "Work finished date") @RequestBody @NotNull ZonedDateTime workFinishedDate) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), workFinishedDate, null);
@@ -64,87 +66,98 @@ public class ExcavationAnnouncementController
   }
 
   @ApiOperation(value = "Report operational condition date for excavation announcement specified by ID parameter.",
-      authorizations=@Authorization(value ="api_key"))
-  @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Date reported successfully", response = Void.class),
+          authorizations = @Authorization(value = "api_key"))
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Date reported successfully", response = Void.class),
   })
-  @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/operationalcondition")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> reportOperationalCondition(
-      @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
-      @ApiParam(value = "Operational condition date") @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
+          @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+          @ApiParam(value = "Operational condition date") @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     applicationService.validateModificationAllowed(applicationId);
-    ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), operationalConditionDate, null);
+    ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), operationalConditionDate,
+                                                                 null);
     dateReportingService.reportCustomerOperationalCondition(applicationId, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Report change in application validity period. Operation is not allowed if application is already finished.",
-      authorizations=@Authorization(value ="api_key"))
-  @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Validity period change reported successfully", response = Void.class),
+  @ApiOperation(value = "Report change in application validity period. Operation is not allowed if application is " +
+          "already finished.",
+          authorizations = @Authorization(value = "api_key"))
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Validity period change reported successfully", response = Void.class),
   })
-  @RequestMapping(value = "/{id}/validityperiod", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/validityperiod")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> reportValidityPeriod(
-      @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
-      @ApiParam(value = "Work finished date") @RequestBody @Valid ValidityPeriodExt validityPeriod) {
+          @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
+          @ApiParam(value = "Work finished date") @RequestBody @Valid ValidityPeriodExt validityPeriod) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(),
-        validityPeriod.getValidityPeriodStart(), validityPeriod.getValidityPeriodEnd());
+                                                                 validityPeriod.getValidityPeriodStart(), validityPeriod.getValidityPeriodEnd());
     dateReportingService.reportCustomerValidity(applicationId, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @ApiOperation(value = "Gets operational condition approval document for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array")
-  @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Approval document retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No approval document found for given application", response = ErrorInfo.class)
+          authorizations = @Authorization(value = "api_key"),
+          response = byte.class,
+          responseContainer = "Array")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Approval document retrieved successfully", response = byte.class,
+                  responseContainer = "Array"),
+          @ApiResponse(code = 404, message = "No approval document found for given application", response =
+                  ErrorInfo.class)
   })
-  @RequestMapping(value = "/{id}/approval/operationalcondition", method = RequestMethod.GET, produces = "application/pdf")
+  @GetMapping(value = "/{id}/approval/operationalcondition", produces = "application" +
+          "/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getOperationalConditionApprovalDocument(@PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.OPERATIONAL_CONDITION);
+    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId,
+                                                                    ApprovalDocumentType.OPERATIONAL_CONDITION);
     return PdfResponseBuilder.createResponseEntity(bytes);
   }
 
   @ApiOperation(value = "Gets work finished approval document for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array")
-  @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Approval document retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No approval document found for given application", response = ErrorInfo.class)
+          authorizations = @Authorization(value = "api_key"),
+          response = byte.class,
+          responseContainer = "Array")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Approval document retrieved successfully", response = byte.class,
+                  responseContainer = "Array"),
+          @ApiResponse(code = 404, message = "No approval document found for given application", response =
+                  ErrorInfo.class)
   })
-  @RequestMapping(value = "/{id}/approval/workfinished", method = RequestMethod.GET, produces = "application/pdf")
+  @GetMapping(value = "/{id}/approval/workfinished", produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getWorkFinishedApprovalDocument(@PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED);
+    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId,
+                                                                    ApprovalDocumentType.WORK_FINISHED);
     return PdfResponseBuilder.createResponseEntity(bytes);
   }
 
   @ApiOperation(value = "Gets excavation announcement with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = ExcavationAnnouncementOutExt.class)
-  @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Application retrieved successfully", response = ExcavationAnnouncementOutExt.class  ),
-      @ApiResponse(code = 404, message = "No excavation announcement found for given ID", response = ErrorInfo.class)
+          authorizations = @Authorization(value = "api_key"),
+          response = ExcavationAnnouncementOutExt.class)
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Application retrieved successfully", response =
+                  ExcavationAnnouncementOutExt.class),
+          @ApiResponse(code = 404, message = "No excavation announcement found for given ID", response =
+                  ErrorInfo.class)
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<ExcavationAnnouncementOutExt> getExcavationAnnouncement(@PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    return ResponseEntity.ok(applicationService.findById(applicationId, (a -> mapper.mapApplicationJson(a))));
+    return ResponseEntity.ok(applicationService.findById(applicationId, (mapper::mapApplicationJson)));
   }
 }
