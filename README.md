@@ -13,8 +13,10 @@ Governed public areas include:
 
 ## Setting up Local Environment ##
 
+- Recomendation is to open allu project into three projects when you develop it: backend, frontend and deployment
+
 ### Requirements ###
-- NodeJS 8.9.1 or newer version
+- NodeJS 12 or newer version
 - Java 1.8
 - Maven 3.3.9 or newer version
   - add to settings.xml file artifactory repositorie credentials: https://alluprojekti.atlassian.net/wiki/spaces/ALLU/pages/1933330/Kehitysymp+rist+n+pystytys
@@ -22,10 +24,10 @@ Governed public areas include:
 - wkhtmltopdf
 
 ### Setting up Database ###
-For database you need postresql and elasticsearch. Commands has been done in linux environment.  
+For database you need docker. Docker will start up postgresql and elasticsearch for project. Commands has been done in linux environment.  
 
 Postgresql
-1. you need to increase max virtualmemory for elastic search: edit file /etc/sysctl.conf by putting row: __vm.max_map_count=262144__
+1. you need to increase max virtualmemory for elastic search: edit file /etc/sysctl.conf by putting row: __vm.max_map_count=262144__ 
 2. Go to folder allu/deployment/roles/database/files/database_docker/
 3. run docker-compose up
 
@@ -41,15 +43,20 @@ will be found under backend folder and bare minimun is to start 4 service:
 Starting class for each service can be found inside <name-of-service>/src/java/
 You also need to install wkhtmltopdf and set it in /backend/pdf-service/src/resources/pd-service.properties.
 There you change pdf.generator to point where you installed wkhtmltopdf. 
+Correct version of wkhtmltopdf can be found deployment/roles/backend/files/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
 If you want swagger to work you need to star:
 - supervision-api  
 url to swagger: http://localhost:9040/api-docs/swagger.json
 
 ### Setting up frontend ###
 Go to folder frontend.
-1. install dedendencies: npm install
+1. npm install -g @angular/cli
+2. install dedendencies: npm install
 2. start frontend: npm run start  
 Optional: if you want hot reload run npm run hmr
+
+When you have database, backend and frontend running you can access to site from localhost:3000/login.
+Username:allute
 
 
 ## License
