@@ -45,7 +45,7 @@
     force_absent=true
     force_source=true
   become: yes
-  when: {{ branch }}  == "master"
+  when: "{{ branch }}"  == "master"
 
 - name: Pull allu-ui-service Docker image from GitLab repository
   local_action:
@@ -57,7 +57,7 @@
 - name: start container
   docker_container:
     name: allu_ui_service
-    image: allu_ui_service:{{ branch }}
+    image: "allu_ui_service:{{ branch }}"
     restart_policy: always
     volumes:
       - /srv/data/allu:/servicehome:rw
