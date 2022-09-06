@@ -5,6 +5,16 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,32 +27,28 @@ import org.springframework.web.multipart.MultipartFile;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.AttachmentInfoExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping({"/v1", "/v2"})
-@Api(tags = "Application attachments")
+@Tag(name = "Application attachments")
 public class ApplicationAttachmentController {
 
   @Autowired
   private ApplicationServiceExt applicationService;
 
-  @ApiOperation(value = "Add new attachment for an application with given ID.",
-      notes = "Note: This API does not work through swagger. Please use postman to test this API.\n" +
+  @Operation(summary = "Add new attachment for an application with given ID.",
+      description = "Note: This API does not work through swagger. Please use postman to test this API.\n" +
         "In postman, the JSON formatted metadata should be appended as a .json file.",
-      produces = "application/json",
-      consumes = "multipart/form-data",
-      response = Integer.class,
-      authorizations=@Authorization(value ="api_key"))
+      security=@SecurityRequirement(name = "api_key"))
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Attachment added successfully", response = Void.class),
-      @ApiResponse(code = 400, message = "Invalid request data", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Attachment added successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/applications/{id}/attachments", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> create(@ApiParam(value = "Application ID to add attachment for") @PathVariable Integer id,
-                                     @ApiParam(value = "Attachment info in JSON", required = true) @Valid @RequestPart(value="metadata",required=true) AttachmentInfoExt metadata,
-                                     @ApiParam(value = "Attachment data", required = true) @RequestPart(value="file", required=true) MultipartFile file ) throws IOException {
+  public ResponseEntity<Void> create(@Parameter(name = "Application ID to add attachment for") @PathVariable Integer id,
+                                     @Parameter(name = "Attachment info in JSON", required = true) @Valid @RequestPart(value="metadata",required=true) AttachmentInfoExt metadata,
+                                     @Parameter(name = "Attachment data", required = true) @RequestPart(value="file", required=true) MultipartFile file ) throws IOException {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     applicationService.addAttachment(applicationId, metadata, file);
@@ -50,28 +56,25 @@ public class ApplicationAttachmentController {
   }
 
 
-  @ApiOperation(value = "List decision attachments of an application with given ID",
-      produces = "application/json",
-      response = AttachmentInfoExt.class,
-      responseContainer = "List",
-      authorizations=@Authorization(value ="api_key"))
-  @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Attachments listed successfully", response = Void.class),
+  @Operation(summary = "List decision attachments of an application with given ID",
+          security = @SecurityRequirement(name = "api_key"))
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Attachments listed successfully"),
   })
   @RequestMapping(value = "/applications/{id}/attachments", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<AttachmentInfoExt>> getAttachments(@ApiParam(value = "Application ID to get attachments for") @PathVariable Integer id) {
+  public ResponseEntity<List<AttachmentInfoExt>> getAttachments(
+          @Parameter(name = "Application ID to get attachments for") @PathVariable Integer id) {
+
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(applicationService.getDecisionAttachments(applicationId));
   }
 
-  @ApiOperation(value = "Get attachment data of an attachment with given attachment ID.",
-      response = byte.class,
-      responseContainer = "Array",
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Get attachment data of an attachment with given attachment ID.",
+          security = @SecurityRequirement(name = "api_key"))
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Attachment data fetched successfully", response = byte.class, responseContainer="Array"),
+      @ApiResponse(responseCode = "200", description = "Attachment data fetched successfully",  content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @RequestMapping(value = "/applications/{id}/attachments/{attachmentId}/data", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
