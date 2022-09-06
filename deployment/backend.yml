@@ -3,6 +3,6 @@
   remote_user: allu
   become: no
   vars:
-    branch: "master"
+    default_branch: "master"
   roles:
-    - { role: backend, branch: "{{ branch }}" }
+    - { role: backend, branch: "{{ branch | default(default_branch) }}" }
