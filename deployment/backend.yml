@@ -5,4 +5,4 @@
   vars:
     default_branch: "master"
   roles:
-    - { role: backend, branch: "{{ branch | default(default_branch) }}" }
+    - { role: backend, branch: "{{ param_branch | default(default_branch) }}" }
