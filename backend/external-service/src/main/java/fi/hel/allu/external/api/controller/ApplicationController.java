@@ -4,6 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +23,11 @@ import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.service.LocationServiceExt;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping({"/v1/applications", "/v2/applications"})
-@Api(tags= "Applications")
+@Tag(name = "Applications")
+@SecurityRequirement(name = "bearerAuth")
 public class ApplicationController {
 
   @Autowired
@@ -32,96 +39,90 @@ public class ApplicationController {
   @Autowired
   private SupervisionTaskService supervisionTasksService;
 
-  @ApiOperation(value = "Sets Allu application cancelled",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
-  @RequestMapping(value = "/{id}/cancelled", method = RequestMethod.PUT)
+  @Operation(summary = "Sets Allu application cancelled"
+        )
+  @RequestMapping(value = "/{id}/cancelled", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> cancelApplication(@ApiParam(value = "Id of the application to cancel.") @PathVariable Integer id) {
+  public ResponseEntity<Void> cancelApplication(@Parameter(description = "Id of the application to cancel.") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     applicationService.cancelApplication(applicationId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Gets Allu application data for given application ID",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
-  @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Application retrieved successfully", response = ApplicationExt.class),
-      @ApiResponse(code = 404, message = "No application found for given ID")
+  @Operation(summary = "Gets Allu application data for given application ID")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Application retrieved successfully",  content  = @Content(schema =
+      @Schema(implementation = ApplicationExt.class))),
+      @ApiResponse(responseCode = "404", description = "No application found for given ID")
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<ApplicationExt> getApplication(@ApiParam(value = "Id of the application to get") @PathVariable Integer id) {
+  public ResponseEntity<ApplicationExt> getApplication(@Parameter(description = "Id of the application to get") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(applicationService.findById(applicationId, ApplicationExtMapper::mapToApplicationExt));
   }
 
-  @ApiOperation(value = "Gets application location data for given application ID",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Gets application location data for given application ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Location data retrieved successfully", response = LocationExt.class),
-      @ApiResponse(code = 404, message = "No location data found for given ID")
+      @ApiResponse(responseCode = "200", description = "Location data retrieved successfully", content = @Content(schema =
+      @Schema(implementation = LocationExt.class))),
+      @ApiResponse(responseCode = "404", description = "No location data found for given ID")
   })
-  @RequestMapping(value = "/{id}/location", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/location", method = RequestMethod.GET,  produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<LocationExt> getLocation(@ApiParam(value = "Id of the application") @PathVariable Integer id,
-      @ApiParam(value = "Spatial reference system ID of the  geometry.", required = false, defaultValue = "3879") @RequestParam(required = false) Integer srId) {
+  public ResponseEntity<LocationExt> getLocation(@Parameter(description = "Id of the application") @PathVariable Integer id,
+      @Parameter(description = "Spatial reference system ID of the  geometry.", allowEmptyValue = true) @RequestParam(required = false) Integer srId) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(locationService.findByApplicationId(applicationId, srId));
   }
 
-  @ApiOperation(value = "Gets application customers for given application ID in a map, customer role as a key.",
-      notes = "Customer roles: "
+  @Operation(summary = "Gets application customers for given application ID in a map, customer role as a key.",
+      description = "Customer roles: "
               + "<ul>"
               + "<li>APPLICANT (hakija)</li>"
               + "<li>PROPERTY_DEVELOPER (rakennuttaja)</li>"
               + "<li>REPRESENTATIVE (asiamies)</li>"
               + "<li>CONTRACTOR (urakoitsija)</li>"
-              + "</ul>",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
+              + "</ul>")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Customers retrieved successfully", response = CustomerWithContactsExt.class, responseContainer = "Map"),
-      @ApiResponse(code = 404, message = "No customer data found for given ID")
+      @ApiResponse(responseCode = "200", description = "Customers retrieved successfully", content = @Content(schema =
+      @Schema(implementation = CustomerWithContactsExt.class))),
+      @ApiResponse(responseCode = "404", description = "No customer data found for given ID")
   })
-  @RequestMapping(value = "/{id}/customers", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/customers", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Map<CustomerRoleType, CustomerWithContactsExt>> getCustomers(@ApiParam(value = "Id of the application") @PathVariable Integer id) {
+  public ResponseEntity<Map<CustomerRoleType, CustomerWithContactsExt>> getCustomers(@Parameter(description = "Id of the application") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(applicationService.findApplicationCustomers(applicationId));
   }
 
-  @ApiOperation(value = "Gets invoice recipient for given application ID.",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Gets invoice recipient for given application ID.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Invoice recipient retrieved successfully", response = CustomerExt.class),
-      @ApiResponse(code = 404, message = "No invoice recipient found for application with given ID")
+      @ApiResponse(responseCode = "200", description = "Invoice recipient retrieved successfully", content  = @Content(schema =
+      @Schema(implementation = CustomerExt.class)) ),
+      @ApiResponse(responseCode = "404", description = "No invoice recipient found for application with given ID")
   })
-  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET,  produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<CustomerExt> getInvoiceRecipient(@ApiParam(value = "Id of the application") @PathVariable Integer id) {
+  public ResponseEntity<CustomerExt> getInvoiceRecipient(@Parameter(description = "Id of the application") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(applicationService.findInvoiceRecipient(applicationId));
   }
 
-  @ApiOperation(value = "Gets supervision tasks for application with given application ID.",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Gets supervision tasks for application with given application ID.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Tasks retrieved successfully", response = SupervisionTaskExt.class, responseContainer = "List"),
-      @ApiResponse(code = 404, message = "No tasks found for given application ID")
+      @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully", content  = @Content(schema =
+      @Schema(implementation = SupervisionTaskExt.class))),
+      @ApiResponse(responseCode = "404", description = "No tasks found for given application ID")
   })
-  @RequestMapping(value = "/{id}/supervisiontasks", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/supervisiontasks", method = RequestMethod.GET,  produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<SupervisionTaskExt>> getSupervisionTasks(@ApiParam(value = "Id of the application") @PathVariable Integer id) {
+  public ResponseEntity<List<SupervisionTaskExt>> getSupervisionTasks(@Parameter(description = "Id of the application") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     List<SupervisionTaskExt> supervisionTasks = supervisionTasksService.findByApplicationId(applicationId).stream()
@@ -133,12 +134,10 @@ public class ApplicationController {
     return ResponseEntity.ok(supervisionTasks);
   }
 
-  @ApiOperation(value = "Marks required survey done for given application ID",
-    produces = "application/json",
-    authorizations=@Authorization(value ="api_key"))
-  @RequestMapping(value = "/{id}/surveydone", method = RequestMethod.PUT)
+  @Operation(summary = "Marks required survey done for given application ID")
+  @RequestMapping(value = "/{id}/surveydone", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> markSurveyDone(@ApiParam(value = "Id of the application to mark survey done for.") @PathVariable Integer id) {
+  public ResponseEntity<Void> markSurveyDone(@Parameter(description = "Id of the application to mark survey done for.") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     applicationService.markSurveyDone(applicationId);
