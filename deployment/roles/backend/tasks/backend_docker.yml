@@ -25,8 +25,8 @@
     module: docker_image
     push: true
     source: local
-    repository: "allu_backend:{{ branch }}"
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+    name: "allu_backend:{{ branch }}"
+    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
 
 - name: start Docker services on remote host
   service: name=docker state=started
@@ -51,8 +51,8 @@
   local_action:
     module: docker_image
     source: pull
-    repository: "allu_backend:{{ branch }}"
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+    name: "allu_backend:{{ branch }}"
+    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
 
 - name: start container
   docker_container:
