@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,11 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import fi.hel.allu.external.config.ApplicationProperties;
 import fi.hel.allu.external.domain.LoginExt;
 import fi.hel.allu.servicecore.security.TokenUtil;
-import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping({"/v1/login", "/v2/login"})
-@Api(tags = "Authentication")
+@Tag(name = "Authentication")
 public class AuthenticationController {
 
   @Autowired
