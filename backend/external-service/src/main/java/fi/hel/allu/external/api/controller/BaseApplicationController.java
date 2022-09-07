@@ -5,11 +5,17 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import fi.hel.allu.external.domain.*;
 import fi.hel.allu.servicecore.service.TerminationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
@@ -19,20 +25,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.util.PdfMerger;
-import fi.hel.allu.external.domain.BaseApplicationExt;
-import fi.hel.allu.external.domain.DecisionExt;
-import fi.hel.allu.external.domain.InformationRequestResponseExt;
-import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
 import fi.hel.allu.external.validation.DefaultImageValidator;
 import fi.hel.allu.servicecore.service.DecisionService;
-import io.swagger.annotations.*;
 
 /**
  * Base class for external application controllers
  */
+@SecurityRequirement(name = "bearerAuth")
 public abstract class BaseApplicationController<T extends BaseApplicationExt, M extends ApplicationExtMapper<T>>  {
 
   @Autowired
@@ -63,37 +65,35 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
   protected void addApplicationTypeSpecificValidators(WebDataBinder binder) {
   }
 
-  @ApiOperation(value = "Create new application. Returns ID of the created application. "
+  @Operation(summary = "Create new application", description =  "Create new application. Returns ID of the created application. "
       + "If application is still pending in client side, pendingOnClient should be set to true to prevent handling "
       + "of application in Allu and to allow later modification of application data by client. If application is ready to be handled "
-      + "in Allu, pendingOnClient should be set to false.",
-      produces = "application/json",
-      response = Integer.class,
-      authorizations=@Authorization(value ="api_key"))
+      + "in Allu, pendingOnClient should be set to false.")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Application added successfully", response = Integer.class),
-      @ApiResponse(code = 400, message = "Invalid application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Application added successfully", content = @Content(schema =
+      @Schema(implementation = Integer.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid application", content = @Content(schema =
+      @Schema(implementation = ErrorInfo.class)) )
   })
-  @RequestMapping(method = RequestMethod.POST)
+  @RequestMapping(method = RequestMethod.POST, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Integer> create(@ApiParam(value = "Application data", required = true)
+  public ResponseEntity<Integer> create(@Parameter(description = "Application data", required = true)
                                         @Valid @RequestBody T applicationExt) throws JsonProcessingException {
     return new ResponseEntity<>(applicationService.createApplication(applicationExt, getMapper()), HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Update application. Allowed only if handling of application has not been started",
-      produces = "application/json",
-      response = Integer.class,
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Update application. Allowed only if handling of application has not been started")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Application updated successfully", response = Integer.class),
-      @ApiResponse(code = 400, message = "Invalid application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Application updated successfully", content = @Content(schema =
+      @Schema(implementation = Integer.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid application",  content = @Content(schema =
+      @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Integer> update(@ApiParam(value = "Id of the application to update.")
+  public ResponseEntity<Integer> update(@Parameter(description = "Id of the application to update.")
                                         @PathVariable Integer id,
-                                        @ApiParam(value = "Application data", required = true)
+                                        @Parameter(description = "Application data", required = true)
                                         @Valid @RequestBody T application) throws JsonProcessingException {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateFullUpdateAllowed(applicationId);
@@ -101,47 +101,48 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return new ResponseEntity<>(applicationService.updateApplication(applicationId, application, getMapper()), HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Send response for information request specified by ID parameter. Only fields listed in response are processed in Allu. "
-      + "Also data sent through some separate API (e.g. application attachments) should be included in field list of response.",
-      produces = "application/json",
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Send response for information request specified by ID parameter.", description =
+          "Only fields listed in response are processed in Allu. Also data sent through some separate API " +
+                  "(e.g. application attachments) should be included in field list of response.")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Response added successfully", response = Void.class),
-      @ApiResponse(code = 400, message = "Invalid request response", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Response added successfully", content = @Content(schema =
+      @Schema(implementation = ErrorInfo.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid request response", content = @Content(schema =
+      @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "{applicationid}/informationrequests/{requestid}/response", method = RequestMethod.POST)
+  @RequestMapping(value = "{applicationid}/informationrequests/{requestid}/response", method = RequestMethod.POST, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> addResponse(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
-                                          @ApiParam(value = "Id of the information request") @PathVariable("requestid") Integer requestId,
-                                          @ApiParam(value = "Content of the response") @RequestBody @Valid InformationRequestResponseExt<T> response) throws JsonProcessingException {
+  public ResponseEntity<Void> addResponse(@Parameter(description = "Id of the application") @PathVariable("applicationid") Integer applicationId,
+                                          @Parameter(description = "Id of the information request") @PathVariable("requestid") Integer requestId,
+                                          @Parameter(description = "Content of the response") @RequestBody @Valid InformationRequestResponseExt<T> response) throws JsonProcessingException {
     applicationService.addInformationRequestResponse(applicationService.getApplicationIdForExternalId(applicationId), requestId, response, getMapper());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Report application changes. Only fields listed in change information are processed in Allu. "
+  @Operation(summary = "Report application changes.", description = "Only fields listed in change information are processed in Allu. "
     + "Also data sent through some separate API (e.g. application attachments) should be included in field list of change. " +
-    "Reporting changes is only allowed for application in \"decision\" or \"operational condition\" states.",
-    produces = "application/json",
-    authorizations=@Authorization(value ="api_key"))
+    "Reporting changes is only allowed for application in \"decision\" or \"operational condition\" states.")
   @ApiResponses(value =  {
-    @ApiResponse(code = 200, message = "Change reported successfully", response = Void.class),
-    @ApiResponse(code = 400, message = "Invalid change information", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Reported change not allowed", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Change reported successfully", content = @Content),
+    @ApiResponse(responseCode = "400", description = "Invalid change information", content = @Content(schema =
+    @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Reported change not allowed", content = @Content(schema =
+    @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "{applicationid}/reportchange", method = RequestMethod.POST)
+  @RequestMapping(value = "{applicationid}/reportchange", method = RequestMethod.POST, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> reportChange(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
-                                           @ApiParam(value = "Contents of the change") @RequestBody @Valid InformationRequestResponseExt<T> change) throws JsonProcessingException {
+  public ResponseEntity<Void> reportChange(@Parameter(description = "Id of the application") @PathVariable("applicationid") Integer applicationId,
+                                           @Parameter(description = "Contents of the change") @RequestBody @Valid InformationRequestResponseExt<T> change) throws JsonProcessingException {
     applicationService.reportApplicationChange(applicationService.getApplicationIdForExternalId(applicationId), change, getMapper());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Gets decision document for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      responseContainer = "Array")
+  @Operation(summary = "Gets decision document for application with given ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Decision document retrieved successfully", content = @Content(schema =
+      @Schema(implementation = byte.class))),
+      @ApiResponse(responseCode = "404", description = "No decision document found for given application", content = @Content(schema =
+      @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
@@ -158,11 +159,10 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return applicationService.getDecisionAttachmentDocuments(applicationId);
   }
 
-  @ApiOperation(value = "Gets decision metadata for application with given ID. If there's not yet decision for application, decision maker is null",
-      authorizations = @Authorization(value ="api_key"),
-      response = DecisionExt.class)
+  @Operation(summary = "Gets decision metadata for application with given ID. If there's not yet decision for application, decision maker is null")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Decision metadata retrieved successfully", response = DecisionExt.class),
+      @ApiResponse(responseCode = "200", description = "Decision metadata retrieved successfully", content = @Content(schema =
+      @Schema(implementation = DecisionExt.class))),
   })
   @RequestMapping(value = "/{id}/decision/metadata", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
