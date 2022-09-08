@@ -9,6 +9,10 @@
     <artifactId>external-service</artifactId>
     <description>Public REST interface of Allu</description>
 
+    <properties>
+        <open.api.version>1.6.11</open.api.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>fi.hel.allu</groupId>
@@ -33,17 +37,17 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.11</version>
+            <version>${open.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-data-rest</artifactId>
-            <version>1.6.11</version>
+            <version>${open.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-security</artifactId>
-            <version>1.6.11</version>
+            <version>${open.api.version}</version>
         </dependency>
         <dependency>
             <!-- support for conditional processing of logback configuration file -->
