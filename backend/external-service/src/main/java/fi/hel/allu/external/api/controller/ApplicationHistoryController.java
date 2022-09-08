@@ -33,7 +33,7 @@ public class ApplicationHistoryController {
 
   @Operation(summary = "Get Allu application history. Returns result containing application status changes and supervision events.")
   @ApiResponses(value = {
-          @ApiResponse(responseCode = "200", description = "data retrieved",
+          @ApiResponse(responseCode = "200", description = "Data retrieved",
                   content = @Content(schema = @Schema(implementation = ApplicationHistoryExt.class))),
           @ApiResponse(responseCode = "404", description = "Data not found", content = @Content)
   })
