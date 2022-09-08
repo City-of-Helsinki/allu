@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,8 +29,11 @@ import fi.hel.allu.servicecore.service.AttachmentService;
 @Tag(name = "Traffic arrangement images")
 public class TrafficArrangementImageController {
 
-  @Autowired
   private AttachmentService attachmentService;
+
+  public TrafficArrangementImageController(AttachmentService attachmentService) {
+    this.attachmentService = attachmentService;
+  }
 
   @Operation(summary = "Lists traffic arrangement images for given application type")
   @ApiResponses( value = {
@@ -39,12 +41,12 @@ public class TrafficArrangementImageController {
                   content = @Content(schema = @Schema(implementation = TrafficArrangementImageExt.class))),
           @ApiResponse(responseCode = "404", description = "No images for given type", content = @Content)
   })
-  @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+  @GetMapping(produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<TrafficArrangementImageExt>> getAllImages(@Parameter(description = "Application type", required = true)
-                                                      @RequestParam(required = true) ApplicationType applicationType) {
-    List<TrafficArrangementImageExt> images = attachmentService.getDefaultImagesForApplicationType(applicationType).stream()
-        .map(a -> new TrafficArrangementImageExt(a.getId(), a.getName())).collect(Collectors.toList());
+  public ResponseEntity<List<TrafficArrangementImageExt>> getAllImages(
+          @Parameter(description = "Application type", required = true) @RequestParam ApplicationType applicationType) {
+    List<TrafficArrangementImageExt> images = attachmentService.getDefaultImagesForApplicationType(applicationType)
+            .stream().map(a -> new TrafficArrangementImageExt(a.getId(), a.getName())).collect(Collectors.toList());
     return ResponseEntity.ok(images);
   }
 
@@ -55,7 +57,7 @@ public class TrafficArrangementImageController {
       @ApiResponse(responseCode = "404", description = "No image found for ID",
               content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/pdf")
+  @GetMapping(value = "/{id}", produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
     byte[] data = attachmentService.getDefaultImage(id);
