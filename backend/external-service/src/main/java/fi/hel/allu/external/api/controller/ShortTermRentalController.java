@@ -16,10 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.external.domain.ShortTermRentalExt;
 import fi.hel.allu.external.mapper.ShortTermRentalExtMapper;
@@ -31,9 +28,9 @@ import fi.hel.allu.external.validation.ShortTermRentalExtValidator;
 @Tag(name = "Short term rentals")
 public class ShortTermRentalController extends BaseApplicationController<ShortTermRentalExt, ShortTermRentalExtMapper> {
 
-  private ShortTermRentalExtMapper shortTermRentalMapper;
+  private final ShortTermRentalExtMapper shortTermRentalMapper;
 
-  private ShortTermRentalExtValidator validator;
+  private final ShortTermRentalExtValidator validator;
 
   public ShortTermRentalController(ApplicationServiceExt applicationService,
                                    ApplicationExtGeometryValidator geometryValidator,
@@ -64,7 +61,7 @@ public class ShortTermRentalController extends BaseApplicationController<ShortTe
     @ApiResponse(responseCode = "404", description = "No termination document found for given application",
     content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}/termination", method = RequestMethod.GET, produces = "application/pdf")
+  @GetMapping(value = "/{id}/termination", produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getTermination(@PathVariable Integer id) {
     return getTerminationDocument(id);
