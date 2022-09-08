@@ -13,7 +13,14 @@ import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
 import fi.hel.allu.external.validation.DefaultImageValidator;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.TerminationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,11 +40,11 @@ import fi.hel.allu.external.mapper.PlacementContractExtMapper;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping({"/v1/placementcontracts", "/v2/placementcontracts"})
-@Api(tags = "Placement contracts")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Placement contracts")
 public class PlacementContractController extends BaseApplicationController<PlacementContractExt, PlacementContractExtMapper> {
 
 
@@ -68,13 +75,12 @@ public class PlacementContractController extends BaseApplicationController<Place
     return placementContractMapper;
   }
 
-  @ApiOperation(value = "Gets contract proposal PDF for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array")
+  @Operation(summary = "Gets contract proposal PDF for application with given ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Contract proposal retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No contract found for given application or contract is not in proposal state", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Contract proposal retrieved successfully",
+              content = @Content(schema = @Schema(implementation = byte.class))),
+      @ApiResponse(responseCode = "404", description = "No contract found for given application or contract is not in proposal state",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/contract/proposal", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
@@ -86,13 +92,12 @@ public class PlacementContractController extends BaseApplicationController<Place
     return PdfResponseBuilder.createResponseEntity(PdfMerger.appendDocuments(contract, attachments));
   }
 
-  @ApiOperation(value = "Gets final contract PDF for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array")
+  @Operation(summary = "Gets final contract PDF for application with given ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Contract retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No contract found for given application or contract is still waiting decision", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Contract retrieved successfully",
+              content = @Content(schema = @Schema(implementation = byte.class))),
+      @ApiResponse(responseCode = "404", description = "No contract found for given application or contract is still waiting decision",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/contract/final", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
@@ -104,12 +109,12 @@ public class PlacementContractController extends BaseApplicationController<Place
     return PdfResponseBuilder.createResponseEntity(PdfMerger.appendDocuments(contract, attachments));
   }
 
-  @ApiOperation(value = "Gets contract metadata for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = ContractExt.class)
+  @Operation(summary = "Gets contract metadata for application with given ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Contract metadata retrieved successfully", response = ContractExt.class),
-      @ApiResponse(code = 404, message = "No contract found for given application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Contract metadata retrieved successfully",
+              content = @Content(schema = @Schema(implementation = ContractExt.class))),
+      @ApiResponse(responseCode = "404", description = "No contract found for given application",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/contract/metadata", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
@@ -127,19 +132,16 @@ public class PlacementContractController extends BaseApplicationController<Place
   }
 
 
-  @ApiOperation(value = "Approve contract",
-      produces = "application/json",
-      consumes = "application/json",
-      response = Void.class,
-      authorizations=@Authorization(value ="api_key"))
+  @Operation(summary = "Approve contract")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Contract approved successfully", response = Void.class),
-      @ApiResponse(code = 400, message = "Invalid request data", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Contract approved successfully", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid request data",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}/contract/approved", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id}/contract/approved", method = RequestMethod.POST, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> approve(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
-                                      @ApiParam(value = "Signing information")
+  public ResponseEntity<Void> approve(@Parameter(description = "Application ID of the contract") @PathVariable Integer id,
+                                      @Parameter(description = "Signing information")
                                       @Valid @RequestBody ContractSigningInfoExt signingInfo) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
@@ -147,18 +149,16 @@ public class PlacementContractController extends BaseApplicationController<Place
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Reject contract",
-      produces = "application/json",
-      response = Void.class,
-      authorizations = @Authorization(value ="api_key"))
+  @Operation(summary = "Reject contract")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Contract rejected successfully", response = Void.class),
-      @ApiResponse(code = 400, message = "Invalid request data", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Contract rejected successfully", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid request data",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}/contract/rejected", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id}/contract/rejected", method = RequestMethod.POST, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Void> reject(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
-                                     @ApiParam(value = "Reject reason", required = true) @NotBlank(message = "{contract.rejectreason}") @RequestBody String rejectReason) {
+  public ResponseEntity<Void> reject(@Parameter(description = "Application ID of the contract") @PathVariable Integer id,
+                                     @Parameter(description = "Reject reason", required = true) @NotBlank(message = "{contract.rejectreason}") @RequestBody String rejectReason) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     commentService.addApplicationComment(applicationId, new CommentJson(CommentType.EXTERNAL_SYSTEM, rejectReason));
@@ -166,13 +166,12 @@ public class PlacementContractController extends BaseApplicationController<Place
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Gets termination document for application with given ID",
-    authorizations = @Authorization(value ="api_key"),
-    response = byte.class,
-    responseContainer = "Array")
+  @Operation(summary = "Gets termination document for application with given ID")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Termination document retrieved successfully", response = byte.class, responseContainer = "Array"),
-    @ApiResponse(code = 404, message = "No termination document found for given application", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Termination document retrieved successfully",
+            content = @Content(schema = @Schema(implementation = byte.class))),
+    @ApiResponse(responseCode = "404", description = "No termination document found for given application",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/termination", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
