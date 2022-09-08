@@ -37,20 +37,26 @@ import fi.hel.allu.servicecore.service.DecisionService;
 @SecurityRequirement(name = "bearerAuth")
 public abstract class BaseApplicationController<T extends BaseApplicationExt, M extends ApplicationExtMapper<T>>  {
 
-  @Autowired
   protected ApplicationServiceExt applicationService;
 
-  @Autowired
   protected ApplicationExtGeometryValidator geometryValidator;
 
-  @Autowired
   protected DefaultImageValidator defaultImageValidator;
 
-  @Autowired
   private DecisionService decisionService;
 
-  @Autowired
   private TerminationService terminationService;
+
+  public BaseApplicationController(ApplicationServiceExt applicationService,
+                                   ApplicationExtGeometryValidator geometryValidator,
+                                   DefaultImageValidator defaultImageValidator, DecisionService decisionService,
+                                   TerminationService terminationService) {
+    this.applicationService = applicationService;
+    this.geometryValidator = geometryValidator;
+    this.defaultImageValidator = defaultImageValidator;
+    this.decisionService = decisionService;
+    this.terminationService = terminationService;
+  }
 
   protected abstract M getMapper();
 
@@ -75,7 +81,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
       @ApiResponse(responseCode = "400", description = "Invalid application", content = @Content(schema =
       @Schema(implementation = ErrorInfo.class)) )
   })
-  @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+  @PostMapping(produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> create(@Parameter(description = "Application data", required = true)
                                         @Valid @RequestBody T applicationExt) throws JsonProcessingException {
@@ -89,7 +95,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
       @ApiResponse(responseCode = "400", description = "Invalid application",  content = @Content(schema =
       @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+  @PutMapping(value = "/{id}", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> update(@Parameter(description = "Id of the application to update.")
                                         @PathVariable Integer id,
@@ -110,7 +116,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
       @ApiResponse(responseCode = "400", description = "Invalid request response", content = @Content(schema =
       @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "{applicationid}/informationrequests/{requestid}/response", method = RequestMethod.POST, produces = "application/json")
+  @PostMapping(value = "{applicationid}/informationrequests/{requestid}/response", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> addResponse(@Parameter(description = "Id of the application") @PathVariable("applicationid") Integer applicationId,
                                           @Parameter(description = "Id of the information request") @PathVariable("requestid") Integer requestId,
@@ -129,7 +135,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     @ApiResponse(responseCode = "403", description = "Reported change not allowed", content = @Content(schema =
     @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "{applicationid}/reportchange", method = RequestMethod.POST, produces = "application/json")
+  @PostMapping(value = "{applicationid}/reportchange", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> reportChange(@Parameter(description = "Id of the application") @PathVariable("applicationid") Integer applicationId,
                                            @Parameter(description = "Contents of the change") @RequestBody @Valid InformationRequestResponseExt<T> change) throws JsonProcessingException {
@@ -144,7 +150,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
       @ApiResponse(responseCode = "404", description = "No decision document found for given application", content = @Content(schema =
       @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
+  @GetMapping(value = "/{id}/decision", produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) throws IOException {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
@@ -164,7 +170,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
       @ApiResponse(responseCode = "200", description = "Decision metadata retrieved successfully", content = @Content(schema =
       @Schema(implementation = DecisionExt.class))),
   })
-  @RequestMapping(value = "/{id}/decision/metadata", method = RequestMethod.GET, produces = "application/json")
+  @GetMapping(value = "/{id}/decision/metadata", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<DecisionExt> getDecisionMetadata(@PathVariable Integer id)  {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);

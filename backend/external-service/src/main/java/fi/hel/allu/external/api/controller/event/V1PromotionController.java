@@ -6,6 +6,11 @@ import fi.hel.allu.external.domain.DecisionExt;
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.domain.PromotionExt;
 import fi.hel.allu.external.mapper.event.PromotionExtMapper;
+import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
+import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.servicecore.service.DecisionService;
+import fi.hel.allu.servicecore.service.TerminationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +28,18 @@ import java.io.IOException;
 @Api(tags = "Events")
 public class V1PromotionController extends BaseApplicationController<PromotionExt, PromotionExtMapper> {
 
-  @Autowired
+
   private PromotionExtMapper promotionMapper;
+
+  public V1PromotionController(ApplicationServiceExt applicationService,
+                               ApplicationExtGeometryValidator geometryValidator,
+                               DefaultImageValidator defaultImageValidator,
+                               DecisionService decisionService,
+                               TerminationService terminationService,
+                               PromotionExtMapper promotionMapper) {
+    super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+    this.promotionMapper = promotionMapper;
+  }
 
   @Override
   protected PromotionExtMapper getMapper() {

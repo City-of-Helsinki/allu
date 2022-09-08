@@ -1,6 +1,11 @@
 package fi.hel.allu.external.api.controller;
 
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
+import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.servicecore.service.DecisionService;
+import fi.hel.allu.servicecore.service.TerminationService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +25,21 @@ import fi.hel.allu.external.validation.ShortTermRentalExtValidator;
 @Api(tags = "Short term rentals")
 public class ShortTermRentalController extends BaseApplicationController<ShortTermRentalExt, ShortTermRentalExtMapper> {
 
-  @Autowired
   private ShortTermRentalExtMapper shortTermRentalMapper;
 
-  @Autowired
   private ShortTermRentalExtValidator validator;
+
+  public ShortTermRentalController(ApplicationServiceExt applicationService,
+                                   ApplicationExtGeometryValidator geometryValidator,
+                                   DefaultImageValidator defaultImageValidator,
+                                   DecisionService decisionService,
+                                   TerminationService terminationService,
+                                   ShortTermRentalExtMapper shortTermRentalMapper,
+                                   ShortTermRentalExtValidator validator) {
+    super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+    this.shortTermRentalMapper = shortTermRentalMapper;
+    this.validator = validator;
+  }
 
   @Override
   protected void addApplicationTypeSpecificValidators(WebDataBinder binder) {

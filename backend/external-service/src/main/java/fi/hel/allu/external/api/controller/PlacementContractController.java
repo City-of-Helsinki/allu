@@ -7,6 +7,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import javax.validation.constraints.NotBlank;
+
+import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
+import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.servicecore.service.DecisionService;
+import fi.hel.allu.servicecore.service.TerminationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +40,28 @@ import io.swagger.annotations.*;
 @Api(tags = "Placement contracts")
 public class PlacementContractController extends BaseApplicationController<PlacementContractExt, PlacementContractExtMapper> {
 
-  @Autowired
+
   private PlacementContractExtMapper placementContractMapper;
 
-  @Autowired
+
   private ContractService contractService;
 
-  @Autowired
+
   private CommentService commentService;
+
+  public PlacementContractController(ApplicationServiceExt applicationService,
+                                     ApplicationExtGeometryValidator geometryValidator,
+                                     DefaultImageValidator defaultImageValidator,
+                                     DecisionService decisionService,
+                                     TerminationService terminationService,
+                                     PlacementContractExtMapper placementContractMapper,
+                                     ContractService contractService,
+                                     CommentService commentService) {
+    super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+    this.placementContractMapper = placementContractMapper;
+    this.contractService = contractService;
+    this.commentService = commentService;
+  }
 
   @Override
   protected PlacementContractExtMapper getMapper() {
