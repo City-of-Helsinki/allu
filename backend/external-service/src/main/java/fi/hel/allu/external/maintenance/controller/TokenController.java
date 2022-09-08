@@ -3,6 +3,7 @@ package fi.hel.allu.external.maintenance.controller;
 import fi.hel.allu.external.config.ApplicationProperties;
 import fi.hel.allu.external.service.ServerTokenAuthenticationService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.Properties;
 
 @RestController
 @RequestMapping("/token")
+@Tag(name = "Token", description = "Used only for maintenance")
 public class TokenController {
 
   private static final String GRANT_TYPE = "grant_type";

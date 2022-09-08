@@ -1,5 +1,6 @@
 package fi.hel.allu.external.maintenance.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import fi.hel.allu.servicecore.service.CustomerService;
  */
 @RestController
 @RequestMapping("/v1/customers")
+@Tag(name = "Customer", description = "Used only for maintenance")
 public class CustomerController {
 
   @Autowired

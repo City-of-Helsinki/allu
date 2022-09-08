@@ -2,6 +2,7 @@ package fi.hel.allu.external.maintenance.controller;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import fi.hel.allu.servicecore.service.ApplicationArchiverService;
  */
 @RestController
 @RequestMapping("/v1/applications")
+@Tag(name = "Applicaton arvhieve", description = "Used only for maintanence")
 public class ApplicationArchiveController {
 
   @Autowired
