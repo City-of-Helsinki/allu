@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
@@ -28,14 +27,18 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 @Tag(name = "Notes")
 public class NoteController {
 
-  @Autowired
-  protected ApplicationServiceComposer applicationServiceComposer;
+  private final ApplicationServiceComposer applicationServiceComposer;
 
-  @Autowired
-  protected ApplicationExtGeometryValidator geometryValidator;
+  private final ApplicationExtGeometryValidator geometryValidator;
 
-  @Autowired
-  private NoteExtMapper noteMapper;
+  private final NoteExtMapper noteMapper;
+
+  public NoteController(ApplicationServiceComposer applicationServiceComposer,
+                        ApplicationExtGeometryValidator geometryValidator, NoteExtMapper noteMapper) {
+    this.applicationServiceComposer = applicationServiceComposer;
+    this.geometryValidator = geometryValidator;
+    this.noteMapper = noteMapper;
+  }
 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
@@ -49,7 +52,7 @@ public class NoteController {
       @ApiResponse(responseCode = "400", description = "Invalid input data",
               content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+  @PostMapping(produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL')")
   public ResponseEntity<Integer> create(@Parameter(description = "Application data", required = true)
                                         @Valid @RequestBody NoteExt noteExt) {
@@ -61,7 +64,7 @@ public class NoteController {
   @ApiResponses(value =  {
       @ApiResponse(responseCode = "200", description = "Note deleted successfully")
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL')")
   public ResponseEntity<Void> delete(@PathVariable Integer id) {
     applicationServiceComposer.deleteNote(id);
