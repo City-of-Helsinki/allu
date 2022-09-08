@@ -11,6 +11,10 @@
     <artifactId>supervision-api</artifactId>
     <description>Supervision REST API of Allu</description>
 
+    <properties>
+        <open.api.version>1.6.11</open.api.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>fi.hel.allu</groupId>
@@ -37,14 +41,19 @@
             <artifactId>janino</artifactId>
         </dependency>
         <dependency>
-          <groupId>io.springfox</groupId>
-          <artifactId>springfox-swagger2</artifactId>
-          <version>2.9.2</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${open.api.version}</version>
         </dependency>
         <dependency>
-          <groupId>io.springfox</groupId>
-          <artifactId>springfox-swagger-ui</artifactId>
-          <version>2.9.2</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-data-rest</artifactId>
+            <version>${open.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${open.api.version}</version>
         </dependency>
     </dependencies>
 
