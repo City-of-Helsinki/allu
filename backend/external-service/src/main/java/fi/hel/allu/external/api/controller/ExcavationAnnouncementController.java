@@ -8,8 +8,9 @@ import fi.hel.allu.external.domain.ExcavationAnnouncementOutExt;
 import fi.hel.allu.external.domain.ValidityPeriodExt;
 import fi.hel.allu.external.mapper.ExcavationAnnouncementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.servicecore.service.ApprovalDocumentService;
-import fi.hel.allu.servicecore.service.DateReportingService;
+import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
+import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.servicecore.service.*;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +28,20 @@ public class ExcavationAnnouncementController
         extends BaseApplicationController<ExcavationAnnouncementExt, ExcavationAnnouncementExtMapper> {
   private final ExcavationAnnouncementExtMapper mapper;
 
-  private final ApplicationServiceExt applicationService;
-
   private final ApprovalDocumentService approvalDocumentService;
 
   private final DateReportingService dateReportingService;
 
   public ExcavationAnnouncementController(ExcavationAnnouncementExtMapper mapper,
-                                          ApplicationServiceExt applicationService,
+                                          ApplicationServiceExt applicationServiceExt,
                                           ApprovalDocumentService approvalDocumentService,
-                                          DateReportingService dateReportingService) {
+                                          DateReportingService dateReportingService,
+                                          ApplicationExtGeometryValidator geometryValidator,
+                                          DefaultImageValidator defaultImageValidator,
+                                          DecisionService decisionService,
+                                          TerminationService terminationService) {
+    super(applicationServiceExt, geometryValidator, defaultImageValidator, decisionService, terminationService);
     this.mapper = mapper;
-    this.applicationService = applicationService;
     this.approvalDocumentService = approvalDocumentService;
     this.dateReportingService = dateReportingService;
   }
