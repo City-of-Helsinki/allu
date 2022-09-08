@@ -1,6 +1,6 @@
-package fi.hel.allu.external.api.controller.event;
+package fi.hel.allu.external.controller.api.event;
 
-import fi.hel.allu.external.api.controller.BaseApplicationController;
+import fi.hel.allu.external.controller.api.BaseApplicationController;
 import fi.hel.allu.external.domain.PromotionExt;
 import fi.hel.allu.external.mapper.event.PromotionExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;

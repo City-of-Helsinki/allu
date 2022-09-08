@@ -1,4 +1,4 @@
-package fi.hel.allu.external.maintenance.controller;
+package fi.hel.allu.external.controller.maintenance;
 
 import java.util.List;
 
@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.servicecore.service.ApplicationArchiverService;
 
@@ -25,21 +22,21 @@ public class ApplicationArchiveController {
   @Autowired
   ApplicationArchiverService applicationArchiverService;
 
-  @RequestMapping(value = "/finished/status", method = RequestMethod.PATCH)
+  @PatchMapping(value = "/finished/status")
   @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> updateStatusForFinishedApplications() {
     applicationArchiverService.updateStatusForFinishedApplications();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/terminated/status", method = RequestMethod.PATCH)
+  @PatchMapping(value = "/terminated/status")
   @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> updateStatusForTerminatedApplications() {
     applicationArchiverService.updateStatusForTerminatedApplications();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/finished/archive", method = RequestMethod.PATCH)
+  @PatchMapping(value = "/finished/archive")
   @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> archiveFinishedApplications(@RequestBody List<Integer> applicationIds) {
     applicationArchiverService.archiveApplicationsIfNecessary(applicationIds);

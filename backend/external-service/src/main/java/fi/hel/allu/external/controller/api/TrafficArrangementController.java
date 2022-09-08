@@ -1,4 +1,4 @@
-package fi.hel.allu.external.api.controller;
+package fi.hel.allu.external.controller.api;
 
 import fi.hel.allu.external.domain.TrafficArrangementExt;
 import fi.hel.allu.external.mapper.TrafficArrangementExtMapper;

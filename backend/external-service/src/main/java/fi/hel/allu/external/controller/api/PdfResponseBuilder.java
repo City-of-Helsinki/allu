@@ -1,4 +1,4 @@
-package fi.hel.allu.external.api.controller;
+package fi.hel.allu.external.controller.api;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

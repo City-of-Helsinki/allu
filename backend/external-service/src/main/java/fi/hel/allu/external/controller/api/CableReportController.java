@@ -1,4 +1,4 @@
-package fi.hel.allu.external.api.controller;
+package fi.hel.allu.external.controller.api;
 
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.validation.Validators;

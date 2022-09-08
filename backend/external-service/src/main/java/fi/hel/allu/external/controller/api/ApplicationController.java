@@ -1,4 +1,4 @@
-package fi.hel.allu.external.api.controller;
+package fi.hel.allu.external.controller.api;
 
 import java.util.List;
 import java.util.Map;

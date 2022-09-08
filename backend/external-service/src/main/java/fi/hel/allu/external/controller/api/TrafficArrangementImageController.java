@@ -1,4 +1,4 @@
-package fi.hel.allu.external.api.controller;
+package fi.hel.allu.external.controller.api;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ import fi.hel.allu.servicecore.service.AttachmentService;
 @Tag(name = "Traffic arrangement images")
 public class TrafficArrangementImageController {
 
-  private AttachmentService attachmentService;
+  private final AttachmentService attachmentService;
 
   public TrafficArrangementImageController(AttachmentService attachmentService) {
     this.attachmentService = attachmentService;

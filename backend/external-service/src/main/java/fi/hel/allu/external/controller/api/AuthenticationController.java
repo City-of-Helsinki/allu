@@ -1,4 +1,4 @@
-package fi.hel.allu.external.api.controller;
+package fi.hel.allu.external.controller.api;
 
 import fi.hel.allu.external.config.ApplicationProperties;
 import fi.hel.allu.external.domain.LoginExt;
