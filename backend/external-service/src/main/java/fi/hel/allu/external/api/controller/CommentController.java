@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,11 +30,14 @@ import fi.hel.allu.external.service.CommentServiceExt;
 @Tag(name = "Comments")
 public class CommentController {
 
-  @Autowired
-  private CommentServiceExt commentService;
+  private final CommentServiceExt commentService;
 
-  @Autowired
-  private ApplicationServiceExt applicationService;
+  private final ApplicationServiceExt applicationService;
+
+  public CommentController(CommentServiceExt commentService, ApplicationServiceExt applicationService) {
+    this.commentService = commentService;
+    this.applicationService = applicationService;
+  }
 
   @Operation(summary = "Adds comment for application. Returns ID of the created comment")
   @ApiResponses(value =  {
@@ -44,7 +46,7 @@ public class CommentController {
       @ApiResponse(responseCode = "400", description = "Invalid comment", content = @Content(schema =
       @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/{id}/comments", method = RequestMethod.POST, produces = "application/json")
+  @PostMapping(value = "/{id}/comments", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> addComment(@Parameter(description = "Id of the application to add comment for.") @PathVariable Integer id,
                                             @Parameter(description = "Comments to add") @RequestBody @Valid CommentExt comment) {
@@ -54,7 +56,7 @@ public class CommentController {
   }
 
   @Operation(summary = "Removes given comment from application")
-  @RequestMapping(value = "/comments/{id}", method = RequestMethod.DELETE, produces = "application/json")
+  @DeleteMapping(value = "/comments/{id}", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> deleteComment(@Parameter(description = "Comment id to delete") @PathVariable Integer id) {
     commentService.deleteComment(id);
@@ -62,14 +64,14 @@ public class CommentController {
   }
 
   @Operation(summary = "Gets comments sent by Allu handler to client system")
-  @RequestMapping(value = "/{id}/comments/received", method = RequestMethod.GET, produces = "application/json")
+  @GetMapping(value = "/{id}/comments/received", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<List<CommentOutExt>> getReceivedComments(@Parameter(description = "Application id to get comments for") @PathVariable Integer id) {
     return getComments(id, CommentType.TO_EXTERNAL_SYSTEM);
   }
 
   @Operation(summary = "Gets own comments sent from client system to Allu handler")
-  @RequestMapping(value = "/{id}/comments/sent", method = RequestMethod.GET, produces = "application/json")
+  @GetMapping(value = "/{id}/comments/sent", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<List<CommentOutExt>> getSentComments(@Parameter(description = "Application id to get comments for") @PathVariable Integer id) {
     return getComments(id, CommentType.EXTERNAL_SYSTEM);
