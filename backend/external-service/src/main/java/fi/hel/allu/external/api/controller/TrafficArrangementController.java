@@ -3,8 +3,7 @@ package fi.hel.allu.external.api.controller;
 import fi.hel.allu.external.domain.TrafficArrangementExt;
 import fi.hel.allu.external.mapper.TrafficArrangementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.external.validation.Validators;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.TerminationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,12 +21,11 @@ public class TrafficArrangementController extends BaseApplicationController<Traf
   private final TrafficArrangementExtMapper trafficArrangementMapper;
 
   public TrafficArrangementController(ApplicationServiceExt applicationService,
-                                      ApplicationExtGeometryValidator geometryValidator,
-                                      DefaultImageValidator defaultImageValidator,
+                                      Validators validators,
                                       DecisionService decisionService,
                                       TerminationService terminationService,
                                       TrafficArrangementExtMapper trafficArrangementMapper) {
-    super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+    super(applicationService, decisionService, validators, terminationService);
     this.trafficArrangementMapper = trafficArrangementMapper;
   }
 

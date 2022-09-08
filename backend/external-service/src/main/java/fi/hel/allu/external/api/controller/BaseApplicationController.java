@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import fi.hel.allu.external.domain.*;
+import fi.hel.allu.external.validation.Validators;
 import fi.hel.allu.servicecore.service.TerminationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +27,6 @@ import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.util.PdfMerger;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import fi.hel.allu.external.validation.DefaultImageValidator;
 import fi.hel.allu.servicecore.service.DecisionService;
 
 /**
@@ -39,21 +37,18 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
 
   protected ApplicationServiceExt applicationService;
 
-  protected ApplicationExtGeometryValidator geometryValidator;
+  protected Validators validators;
 
-  protected DefaultImageValidator defaultImageValidator;
+  private final DecisionService decisionService;
 
-  private DecisionService decisionService;
+  private final TerminationService terminationService;
 
-  private TerminationService terminationService;
-
-  public BaseApplicationController(ApplicationServiceExt applicationService,
-                                   ApplicationExtGeometryValidator geometryValidator,
-                                   DefaultImageValidator defaultImageValidator, DecisionService decisionService,
+  protected BaseApplicationController(ApplicationServiceExt applicationService,
+                                    DecisionService decisionService,
+                                   Validators validators,
                                    TerminationService terminationService) {
     this.applicationService = applicationService;
-    this.geometryValidator = geometryValidator;
-    this.defaultImageValidator = defaultImageValidator;
+    this.validators = validators;
     this.decisionService = decisionService;
     this.terminationService = terminationService;
   }
@@ -63,7 +58,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
     if (binder.getTarget() != null && BaseApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
-      binder.addValidators(geometryValidator, defaultImageValidator);
+      binder.addValidators(validators.getAllValidators());
       addApplicationTypeSpecificValidators(binder);
     }
   }

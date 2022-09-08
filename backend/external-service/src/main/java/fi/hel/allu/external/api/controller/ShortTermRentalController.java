@@ -2,8 +2,7 @@ package fi.hel.allu.external.api.controller;
 
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.external.validation.Validators;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.TerminationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,12 +14,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.external.domain.ShortTermRentalExt;
 import fi.hel.allu.external.mapper.ShortTermRentalExtMapper;
-import fi.hel.allu.external.validation.ShortTermRentalExtValidator;
 
 @RestController
 @RequestMapping({"/v1/shorttermrentals", "/v2/shorttermrentals"})
@@ -30,24 +27,16 @@ public class ShortTermRentalController extends BaseApplicationController<ShortTe
 
   private final ShortTermRentalExtMapper shortTermRentalMapper;
 
-  private final ShortTermRentalExtValidator validator;
 
   public ShortTermRentalController(ApplicationServiceExt applicationService,
-                                   ApplicationExtGeometryValidator geometryValidator,
-                                   DefaultImageValidator defaultImageValidator,
+                                   Validators validators,
                                    DecisionService decisionService,
                                    TerminationService terminationService,
-                                   ShortTermRentalExtMapper shortTermRentalMapper,
-                                   ShortTermRentalExtValidator validator) {
-    super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+                                   ShortTermRentalExtMapper shortTermRentalMapper) {
+    super(applicationService,  decisionService, validators, terminationService);
     this.shortTermRentalMapper = shortTermRentalMapper;
-    this.validator = validator;
   }
 
-  @Override
-  protected void addApplicationTypeSpecificValidators(WebDataBinder binder) {
-    binder.addValidators(validator);
-  }
 
   @Override
   protected ShortTermRentalExtMapper getMapper() {

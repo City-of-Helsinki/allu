@@ -4,8 +4,7 @@ import fi.hel.allu.external.api.controller.BaseApplicationController;
 import fi.hel.allu.external.domain.OutdoorEventExt;
 import fi.hel.allu.external.mapper.event.OutdoorEventExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.external.validation.Validators;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.TerminationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,15 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Events")
 public class OutdoorEventController extends BaseApplicationController<OutdoorEventExt, OutdoorEventExtMapper> {
 
-  private OutdoorEventExtMapper eventMapper;
+  private final OutdoorEventExtMapper eventMapper;
 
   public OutdoorEventController(ApplicationServiceExt applicationService,
-                                ApplicationExtGeometryValidator geometryValidator,
-                                DefaultImageValidator defaultImageValidator,
+                                Validators validators,
                                 DecisionService decisionService,
                                 TerminationService terminationService,
                                 OutdoorEventExtMapper eventMapper) {
-    super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+    super(applicationService, decisionService, validators, terminationService);
     this.eventMapper = eventMapper;
   }
 

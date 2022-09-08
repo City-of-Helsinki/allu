@@ -8,8 +8,7 @@ import fi.hel.allu.external.domain.ExcavationAnnouncementOutExt;
 import fi.hel.allu.external.domain.ValidityPeriodExt;
 import fi.hel.allu.external.mapper.ExcavationAnnouncementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.external.validation.Validators;
 import fi.hel.allu.servicecore.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,11 +43,10 @@ public class ExcavationAnnouncementController
                                           ApplicationServiceExt applicationServiceExt,
                                           ApprovalDocumentService approvalDocumentService,
                                           DateReportingService dateReportingService,
-                                          ApplicationExtGeometryValidator geometryValidator,
-                                          DefaultImageValidator defaultImageValidator,
+                                          Validators validators,
                                           DecisionService decisionService,
                                           TerminationService terminationService) {
-    super(applicationServiceExt, geometryValidator, defaultImageValidator, decisionService, terminationService);
+    super(applicationServiceExt, decisionService, validators, terminationService);
     this.mapper = mapper;
     this.approvalDocumentService = approvalDocumentService;
     this.dateReportingService = dateReportingService;

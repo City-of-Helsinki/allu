@@ -12,8 +12,7 @@ import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.external.validation.Validators;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
@@ -55,14 +54,13 @@ public class PlacementContractController extends BaseApplicationController<Place
 		private final CommentService commentService;
 
 		public PlacementContractController(ApplicationServiceExt applicationService,
-																			 ApplicationExtGeometryValidator geometryValidator,
-																			 DefaultImageValidator defaultImageValidator,
+																			 Validators validators,
 																			 DecisionService decisionService,
 																			 TerminationService terminationService,
 																			 PlacementContractExtMapper placementContractMapper,
 																			 ContractService contractService,
 																			 CommentService commentService) {
-				super(applicationService, geometryValidator, defaultImageValidator, decisionService, terminationService);
+				super(applicationService, decisionService, validators, terminationService);
 				this.placementContractMapper = placementContractMapper;
 				this.contractService = contractService;
 				this.commentService = commentService;
