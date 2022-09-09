@@ -5,6 +5,13 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +28,11 @@ import fi.hel.allu.supervision.api.domain.ApplicationSearchResult;
 import fi.hel.allu.supervision.api.mapper.ApplicationSearchParameterMapper;
 import fi.hel.allu.supervision.api.mapper.ApplicationSearchResultMapper;
 import fi.hel.allu.supervision.api.mapper.MapperUtil;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
-@Api(tags = "Applications")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Applications")
 public class ApplicationSearchController {
 
   @Autowired
@@ -33,15 +40,12 @@ public class ApplicationSearchController {
   @Autowired
   private ApplicationSearchResultMapper applicationMapper;
 
-  @ApiOperation(value = "Search applications",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = ApplicationSearchResult.class,
-      responseContainer="List"
-      )
+  @Operation(summary = "Search applications")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Applications retrieved successfully", response = ApplicationSearchResult.class, responseContainer="List"),
-      @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Applications retrieved successfully",
+              content = @Content(schema = @Schema(implementation = ApplicationSearchResult.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid search parameters",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/applications/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -53,14 +57,10 @@ public class ApplicationSearchController {
     return ResponseEntity.ok(response);
   }
 
-  @ApiOperation(value = "Get applications of project",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = ApplicationSearchResult.class,
-      responseContainer="List"
-      )
+  @Operation(summary = "Get applications of project")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Applications retrieved successfully", response = ApplicationSearchResult.class, responseContainer="List"),
+      @ApiResponse(responseCode = "200", description = "Applications retrieved successfully",
+              content = @Content(schema = @Schema(implementation = ApplicationSearchResult.class))),
   })
   @RequestMapping(value = "/projects/{projectId}/applications", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
