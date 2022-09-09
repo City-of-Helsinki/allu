@@ -13,7 +13,12 @@ import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.supervision.api.domain.DecisionInfo;
 import fi.hel.allu.supervision.api.validation.DecisionMakerValidator;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +37,8 @@ import java.util.stream.Stream;
  */
 @RestController
 @RequestMapping("/v1")
-@Api(tags = "Applications")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Applications")
 public class ApplicationController {
 
   private final ApplicationServiceComposer applicationServiceComposer;
@@ -54,44 +60,34 @@ public class ApplicationController {
     binder.addValidators(decisionMakerValidator);
   }
 
-  @ApiOperation(value = "Update application owner.",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json"
-  )
+  @Operation(summary = "Update application owner.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Application owner updated successfully"),
+    @ApiResponse(responseCode = "200", description = "Application owner updated successfully"),
   })
-  @PutMapping(value = "/applications/{id}/owner")
+  @PutMapping(value = "/applications/{id}/owner",  produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> updateOwner(@PathVariable Integer id,
-                                          @ApiParam(value = "Id of the new owner") @RequestParam Integer ownerId) {
+                                          @Parameter(description = "Id of the new owner") @RequestParam Integer ownerId) {
     applicationServiceComposer.updateApplicationOwner(ownerId, Collections.singletonList(id), true);
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Remove application owner.",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json"
-  )
+  @Operation(summary = "Remove application owner.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Application owner removed successfully"),
+    @ApiResponse(responseCode = "200", description = "Application owner removed successfully"),
   })
-  @DeleteMapping(value = "/applications/{id}/owner")
+  @DeleteMapping(value = "/applications/{id}/owner", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> removeOwner(@PathVariable Integer id) {
     applicationServiceComposer.removeApplicationOwner(Collections.singletonList(id), true);
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Move application to handling. Allowed if current state is pending.",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json"
-  )
+  @Operation(summary = "Move application to handling. Allowed if current state is pending.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Application moved to handling successfully"),
+    @ApiResponse(responseCode = "200", description = "Application moved to handling successfully"),
   })
-  @PutMapping(value = "/applications/{id}/handling"
-  )
+  @PutMapping(value = "/applications/{id}/handling", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> moveToHandling(@PathVariable Integer id) {
     validateApplicationStatus(id, Collections.singletonList(StatusType.PENDING));
@@ -99,14 +95,11 @@ public class ApplicationController {
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Cancel application. Allowed if current state is decision or earlier",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json"
-  )
+  @Operation(summary = "Cancel application. Allowed if current state is decision or earlier")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Application cancelled successfully"),
+    @ApiResponse(responseCode = "200", description = "Application cancelled successfully"),
   })
-  @PutMapping(value = "/applications/{id}/cancelled")
+  @PutMapping(value = "/applications/{id}/cancelled", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> cancel(@PathVariable Integer id) {
     List<StatusType> cancellationAllowedStatuses = Stream.of(StatusType.values())
@@ -117,15 +110,12 @@ public class ApplicationController {
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Move application to decision making. " +
-    "Allowed if current state is handling or returned to preparation.",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json"
-  )
+  @Operation(summary = "Move application to decision making. " +
+    "Allowed if current state is handling or returned to preparation.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Application moved to decision making successfully"),
+    @ApiResponse(responseCode = "200", description = "Application moved to decision making successfully"),
   })
-  @PutMapping(value = "/applications/{id}/decisionmaking", consumes = "application/json")
+  @PutMapping(value = "/applications/{id}/decisionmaking", consumes = "application/json",   produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> moveToDecisionMaking(@PathVariable Integer id, @RequestBody @Valid DecisionInfo decisionInfo) {
     validateApplicationStatus(id,  Stream.of(StatusType.HANDLING, StatusType.RETURNED_TO_PREPARATION).collect(Collectors.toList()));
