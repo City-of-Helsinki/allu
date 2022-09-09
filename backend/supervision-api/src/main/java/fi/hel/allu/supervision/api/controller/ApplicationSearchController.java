@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +34,14 @@ import fi.hel.allu.supervision.api.mapper.MapperUtil;
 @Tag(name = "Applications")
 public class ApplicationSearchController {
 
-  @Autowired
-  private ApplicationServiceComposer applicationServiceComposer;
-  @Autowired
-  private ApplicationSearchResultMapper applicationMapper;
+  private final ApplicationServiceComposer applicationServiceComposer;
+  private final ApplicationSearchResultMapper applicationMapper;
+
+  public ApplicationSearchController(ApplicationServiceComposer applicationServiceComposer,
+                                     ApplicationSearchResultMapper applicationMapper) {
+    this.applicationServiceComposer = applicationServiceComposer;
+    this.applicationMapper = applicationMapper;
+  }
 
   @Operation(summary = "Search applications")
   @ApiResponses( value = {
@@ -47,13 +50,13 @@ public class ApplicationSearchController {
       @ApiResponse(responseCode = "400", description = "Invalid search parameters",
               content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/applications/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+  @PostMapping(value = "/applications/search", produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<Page<ApplicationSearchResult>> search(@RequestBody @Valid ApplicationSearchParameters searchParameters) {
     ApplicationQueryParameters queryParameters = ApplicationSearchParameterMapper.mapToQueryParameters(searchParameters);
     Pageable pageable = MapperUtil.mapToPageRequest(searchParameters);
     Page<ApplicationES> result = applicationServiceComposer.search(queryParameters, pageable, Boolean.FALSE);
-    Page<ApplicationSearchResult> response = result.map(a -> applicationMapper.mapToSearchResult(a));
+    Page<ApplicationSearchResult> response = result.map(applicationMapper::mapToSearchResult);
     return ResponseEntity.ok(response);
   }
 
@@ -62,12 +65,12 @@ public class ApplicationSearchController {
       @ApiResponse(responseCode = "200", description = "Applications retrieved successfully",
               content = @Content(schema = @Schema(implementation = ApplicationSearchResult.class))),
   })
-  @RequestMapping(value = "/projects/{projectId}/applications", method = RequestMethod.GET, produces = "application/json")
+  @GetMapping(value = "/projects/{projectId}/applications", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<ApplicationSearchResult>> getProjectApplications(@PathVariable Integer projectId) {
     ApplicationQueryParameters queryParameters = ApplicationSearchParameterMapper.queryParametersForProject(projectId);
     Page<ApplicationES> result = applicationServiceComposer.search(queryParameters, MapperUtil.DEFAULT_PAGE_REQUEST, Boolean.FALSE);
-    Page<ApplicationSearchResult> response = result.map(a -> applicationMapper.mapToSearchResult(a));
+    Page<ApplicationSearchResult> response = result.map(applicationMapper::mapToSearchResult);
     return ResponseEntity.ok(response.getContent());
   }
 
