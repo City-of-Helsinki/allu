@@ -3,6 +3,13 @@ package fi.hel.allu.supervision.api.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,11 +19,10 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import io.swagger.annotations.*;
-
 @RestController
 @RequestMapping("/v1/applications")
-@Api(tags = "Application tags")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Application tags")
 public class ApplicationTagController {
 
   private final ApplicationServiceComposer applicationServiceComposer;
@@ -38,8 +44,8 @@ public class ApplicationTagController {
 
 
 
-  @ApiOperation(value = "Add new tag for an application with given ID. If application already has a tag with given type no new tag is added.",
-      notes = "User is allowed to add following tags:"
+  @Operation(summary = "Add new tag for an application with given ID. If application already has a tag with given type no new tag is added.",
+      description = "User is allowed to add following tags:"
       + "<ul>"
       + " <li>WAITING</li>"
       + " <li>ADDITIONAL_INFORMATION_REQUESTED</li>"
@@ -50,24 +56,23 @@ public class ApplicationTagController {
         + " <li>OTHER_CHANGES</li>"
         + " <li>DECISION_NOT_SENT</li>"
         + " <li>CONTRACT_REJECTED</li>"
-      + "</ul>",
-      produces = "application/json",
-      consumes = "application/json",
-      response = ApplicationTagJson.class,
-      authorizations = @Authorization(value ="api_key"))
+      + "</ul>")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Tag added successfully", response = ApplicationTagJson.class),
-      @ApiResponse(code = 400, message = "Invalid tag type", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Tag added successfully",
+              content = @Content(schema = @Schema(implementation = ApplicationTagJson.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid tag type",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/applications/{id}/tags", method = RequestMethod.POST)
+  @RequestMapping(value = "/applications/{id}/tags", method = RequestMethod.POST, produces = "application/json",
+          consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ApplicationTagJson> addTag(@PathVariable Integer id, @RequestBody ApplicationTagType tagType) {
     validateTagType(tagType);
     return ResponseEntity.ok(applicationServiceComposer.addTag(id, new ApplicationTagJson(null, tagType, null)));
   }
 
-  @ApiOperation(value = "Remove tag from an application with given ID.",
-      notes = "User is allowed to remove following tags:"
+  @Operation(summary = "Remove tag from an application with given ID.",
+      description = "User is allowed to remove following tags:"
       + "<ul>"
       + " <li>WAITING</li>"
       + " <li>ADDITIONAL_INFORMATION_REQUESTED</li>"
@@ -75,15 +80,14 @@ public class ApplicationTagController {
       + " <li>COMPENSATION_CLARIFICATION</li>"
       + " <li>PAYMENT_BASIS_CORRECTION</li>"
       + " <li>SURVEY_REQUIRED</li>"
-      + "</ul>",
-      produces = "application/json",
-      consumes = "application/json",
-      authorizations = @Authorization(value ="api_key"))
+      + "</ul>")
   @ApiResponses(value =  {
-      @ApiResponse(code = 200, message = "Tag removed successfully"),
-      @ApiResponse(code = 400, message = "Invalid tag type", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Tag removed successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid tag type",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @RequestMapping(value = "/applications/{id}/tags/{tagType}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/applications/{id}/tags/{tagType}", method = RequestMethod.DELETE,
+          produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> deleteTag(@PathVariable Integer id, @PathVariable ApplicationTagType tagType) {
     validateTagType(tagType);
