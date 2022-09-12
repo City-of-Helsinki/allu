@@ -45,7 +45,7 @@
     force_absent=true
     force_source=true
   become: yes
-  when: "{{ branch }}  == 'master'"
+  when: branch == "master"
 
 - name: Pull allu-ui-service Docker image from GitLab repository
   local_action:
