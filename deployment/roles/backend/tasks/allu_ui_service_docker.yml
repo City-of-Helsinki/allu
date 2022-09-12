@@ -40,10 +40,10 @@
 
 - name: remove existing image from Docker
   docker_image:
-    name=allu_ui_service
-    state=absent
-    force_absent=true
-    force_source=true
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
+    state: absent
+    force_absent: true
+    force_source: true
   become: yes
   when: branch == "master"
 
@@ -51,13 +51,12 @@
   local_action:
     module: docker_image
     source: pull
-    name: "allu_ui_service:{{ branch }}"
-    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
 
 - name: start container
   docker_container:
     name: allu_ui_service
-    image: "allu_ui_service:{{ branch }}"
+    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
     restart_policy: always
     volumes:
       - /srv/data/allu:/servicehome:rw
