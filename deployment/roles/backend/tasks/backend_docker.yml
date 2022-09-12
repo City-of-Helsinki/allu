@@ -3,8 +3,8 @@
   local_action:
     module: docker_login
     registry: "{{ gitlab_registry_url }}"
-    username: "{{ gitlab_deploy_user }}" #ansible-deploy-token
-    password: "{{ gitlab_deploy_token }}" #ansible-deploy-token
+    username: "{{ gitlab_deploy_user }}"
+    password: "{{ gitlab_deploy_token }}"
 
 - name: Build backend Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
