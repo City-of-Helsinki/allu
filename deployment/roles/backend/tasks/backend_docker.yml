@@ -54,8 +54,7 @@
     password: "{{ gitlab_deploy_token }}"
 
 - name: Pull allu_backend Docker image from GitLab repository
-  local_action:
-    module: docker_image
+  docker_image:
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
 
