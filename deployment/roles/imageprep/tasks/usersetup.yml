@@ -4,7 +4,7 @@
   group: name=allu gid={{ system_group_id_allu }} state=present
 
 - name: add allu user to system
-  user: name=allu uid={{ system_user_id_allu }} group=allu groups=adm,sudo, docker
+  user: name=allu uid={{ system_user_id_allu }} group=allu groups=adm,sudo,docker
         password={{ system_password_allu }}
         shell=/bin/bash
 
