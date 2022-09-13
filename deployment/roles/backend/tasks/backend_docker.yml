@@ -28,17 +28,17 @@
     name: "allu_backend:{{ branch }}"
     repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
 
-- name: start Docker services on remote host
+- name: Start Docker services on remote host
   service: name=docker state=started
   become: yes
 
-- name: stop and remove existing container from Docker
+- name: Stop and remove existing allu_backend container from Docker
   docker_container:
     name: allu_backend
     state: absent
   become: yes
 
-- name: remove existing image from Docker
+- name: Remove existing allu_backend image from Docker
   docker_image:
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
     state: absent
@@ -59,7 +59,7 @@
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
 
-- name: start container
+- name: Start allu_backend container
   docker_container:
     name: allu_backend
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"

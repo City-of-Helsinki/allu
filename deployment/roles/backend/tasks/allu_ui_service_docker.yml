@@ -6,7 +6,7 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
 
-- name: Build allu-ui-service Docker image. Uses random numbers to force Docker to build certain parts of image every time
+- name: Build allu_ui_service Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
     module: docker_image
     source: build
@@ -20,7 +20,7 @@
     force_absent: true
     force_source: true
 
-- name: Push built allu-ui-service Docker image to GitLab repository
+- name: Push built allu_ui_service Docker image to GitLab repository
   local_action:
     module: docker_image
     push: true
@@ -28,17 +28,17 @@
     name: "allu_ui_service:{{ branch }}"
     repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
 
-- name: start Docker services on remote host
+- name: Start Docker services on remote host
   service: name=docker state=started
   become: yes
 
-- name: stop and remove existing container from Docker
+- name: Stop and remove existing allu_ui_service container from Docker
   docker_container:
     name: allu_ui_service
     state: absent
   become: yes
 
-- name: remove existing image from Docker
+- name: Remove existing allu_ui_service image from Docker
   docker_image:
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
     state: absent
@@ -53,13 +53,13 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
 
-- name: Pull allu-ui-service Docker image from GitLab repository
+- name: Pull allu_ui_service Docker image from GitLab repository
   local_action:
     module: docker_image
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
 
-- name: start container
+- name: Start allu_ui_service container
   docker_container:
     name: allu_ui_service
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
