@@ -12,6 +12,13 @@ import fi.hel.allu.servicecore.domain.DistributionEntryJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.service.LocationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,10 +37,9 @@ import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.supervision.api.domain.BaseApplication;
 import fi.hel.allu.supervision.api.service.ApplicationUpdateService;
-import io.swagger.annotations.*;
 
 import javax.validation.Valid;
-
+@SecurityRequirement(name = "bearerAuth")
 public abstract class BaseApplicationDetailsController<A extends BaseApplication<?>, U extends CreateApplicationJson> {
 
 
@@ -55,12 +61,9 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   @Autowired
   protected CustomerMapper customerMapper;
 
-  @ApiOperation(value = "Get application details",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json"
-      )
+  @Operation(summary = "Get application details")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Application retrieved successfully"),
+      @ApiResponse(responseCode = "200", description = "Application retrieved successfully"),
   })
   @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -70,15 +73,11 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(mapApplication(application));
   }
 
-  @ApiOperation(value = "Get applications with given list of IDs",
-      authorizations = @Authorization(value ="api_key"),
-      consumes = "application/json",
-      produces = "application/json"
-      )
+  @Operation(summary = "Get applications with given list of IDs")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Applications retrieved successfully"),
+      @ApiResponse(responseCode = "200", description = "Applications retrieved successfully"),
   })
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<List<A>> getApplicationsWithIds(@RequestParam("ids") final List<Integer> ids) {
     List<ApplicationJson> applications = applicationServiceComposer.findApplicationsByIds(ids);
@@ -86,43 +85,41 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(applications.stream().map(a -> mapApplication(a)).collect(Collectors.toList()));
   }
 
-  @ApiOperation(value = "Update application with given version number.",
-      notes =
+  @Operation(summary = "Update application with given version number.",
+      description =
         "<p>Data is given as key/value pair updated field being the key and it's new value (as JSON) the value. "
       + "All fields that are not marked as read only can be updated through this API.</p>"
       + "<p>Update is allowed only if the status of the application is PENDING and application is not an external application "
-      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.</p>",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json"
+      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.</p>"
       )
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Application updated successfully"),
-      @ApiResponse(code = 409, message = "Update failed, given version of application updated by another user", response = ErrorInfo.class),
-      @ApiResponse(code = 403, message = "Application update forbidden", response = ErrorInfo.class),
+      @ApiResponse(responseCode = "200", description = "Application updated successfully"),
+      @ApiResponse(responseCode = "409", description = "Update failed, given version of application updated by another user",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
+      @ApiResponse(responseCode = "403", description = "Application update forbidden",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
 
   })
   @RequestMapping(value = "/{id}/version/{version}", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<A> updateApplication(@PathVariable Integer id, @PathVariable Integer version,
-      @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
+      @RequestBody @Parameter( description = "Map containing field names with their new values.") Map<String, Object> fields) {
     validateType(id);
     ApplicationJson updatedApplication = applicationUpdateService.update(id, version, fields);
     return ResponseEntity.ok(mapApplication(updatedApplication));
   }
 
-  @ApiOperation(value = "Create new application",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Create new application")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Application created successfully"),
-    @ApiResponse(code = 400, message = "Invalid application data", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Application creation forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Application created successfully"),
+    @ApiResponse(responseCode = "400", description = "Invalid application data",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Application creation forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<A> createApplication(@RequestBody @Valid @ApiParam("New application") U application) {
+  public ResponseEntity<A> createApplication(@RequestBody @Valid @Parameter(description = "New application") U application) {
     application.setType(getApplicationType());
 
     ApplicationJson newApplication = applicationMapper.mapCreateJsonToApplicationJson(application);
@@ -152,15 +149,13 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Update applicant",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Update applicant")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Customer updated successfully"),
-    @ApiResponse(code = 400, message = "Invalid customer data", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
+    @ApiResponse(responseCode = "400", description = "Invalid customer data",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Customer update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(Integer applicationId, CreateCustomerWithContactsJson customer) {
@@ -170,14 +165,11 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update property developer",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Update property developer")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Customer updated successfully"),
-    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Customer update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerPropertyDeveloper(Integer applicationId, CreateCustomerWithContactsJson customer) {
@@ -187,14 +179,11 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update contractor",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Update contractor")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Customer updated successfully"),
-    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Customer update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerContractor(Integer applicationId, CreateCustomerWithContactsJson customer) {
@@ -204,14 +193,11 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update representative",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Update representative")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Customer updated successfully"),
-    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Customer update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(Integer applicationId, CreateCustomerWithContactsJson customer) {
@@ -221,66 +207,54 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update distribution list",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Update distribution list")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Distribution list updated successfully"),
-    @ApiResponse(code = 403, message = "Distribution list update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Distribution list updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Distribution list update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @RequestMapping(value = "/{id}/distributionList", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ApplicationJson> updateDistributionList(@PathVariable Integer id,
-                                                                @RequestBody @ApiParam("The new distribution list")
+                                                                @RequestBody @Parameter(description = "The new distribution list")
                                                                   List<DistributionEntryJson> distributionList) {
     validateType(id);
     ApplicationJson result = applicationServiceComposer.replaceDistributionList(id, distributionList);
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Update invoice recipient",
-    authorizations = @Authorization(value ="api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Update invoice recipient")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Invoice recipient updated successfully"),
-    @ApiResponse(code = 403, message = "Invoice recipient update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Invoice recipient updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Invoice recipient update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @RequestMapping(value = "/{id}/invoiceRecipient", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> updateInvoiceRecipient(@PathVariable Integer id,
-                                               @RequestBody @ApiParam("The new invoice recipient id")
+                                               @RequestBody @Parameter( description = "The new invoice recipient id")
                                                  Integer invoiceRecipientId) {
     validateType(id);
     applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Remove property developer",
-      authorizations = @Authorization(value ="api_key"),
-      consumes = "application/json",
-      produces = "application/json"
-    )
+  @Operation(summary = "Remove property developer")
     @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Property developer removed successfully"),
-      @ApiResponse(code = 403, message = "Removal forbidden", response = ErrorInfo.class),
+      @ApiResponse(responseCode = "200", description = "Property developer removed successfully"),
+      @ApiResponse(responseCode = "403", description = "Removal forbidden",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
     })
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> removePropertyDeveloper(Integer applicationId) {
     return removeCustomerWithRole(applicationId, CustomerRoleType.PROPERTY_DEVELOPER);
   }
 
-  @ApiOperation(value = "Remove representative",
-      authorizations = @Authorization(value ="api_key"),
-      consumes = "application/json",
-      produces = "application/json"
-    )
+  @Operation(summary = "Remove representative")
     @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Representative removed successfully"),
-      @ApiResponse(code = 403, message = "Removal forbidden", response = ErrorInfo.class),
+      @ApiResponse(responseCode = "200", description = "Representative removed successfully"),
+      @ApiResponse(responseCode = "403", description = "Removal forbidden",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
     })
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> removeRepresentative(Integer applicationId) {
