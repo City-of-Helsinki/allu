@@ -96,7 +96,8 @@ public class ChargeBasisController {
     @ApiResponse(responseCode = "403", description = "Entry addition forbidden",
             content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @PostMapping(value = "/applications/{applicationid}/chargebasisentries", consumes = "application/json", produces = "application/json")
+  @PostMapping(value = "/applications/{applicationid}/chargebasisentries", consumes = "application/json",
+          produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ChargeBasisEntryJson> addChargeBasisEntry(@PathVariable(value = "applicationid") Integer applicationId,
                                                                   @RequestBody @Valid ChargeBasisEntryJson entry) {
