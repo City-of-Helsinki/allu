@@ -7,6 +7,14 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,11 +35,10 @@ import fi.hel.allu.supervision.api.domain.AreaRentalApplication;
 import fi.hel.allu.supervision.api.domain.DatePeriodReportJson;
 import fi.hel.allu.supervision.api.domain.DateReportJson;
 import fi.hel.allu.supervision.api.domain.InvoicingPeriodJson;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/arearentals")
-@Api(tags = "Applications")
+@Tag(name = "Applications")
 public class AreaRentalController extends BaseApplicationDetailsController<AreaRentalApplication, CreateAreaRentalApplicationJson> {
 
   private static final List<Integer> ALLOWABLE_PERIOD_LENGTHS = Arrays.asList(1, 3, 6, 12);
@@ -58,14 +65,14 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return new AreaRentalApplication(application);
   }
 
-  @ApiOperation(value = "Gets work finished approval document for area rental with given ID. Returns draft if work finished is not yet approved.",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array")
+  @Operation(summary = "Gets work finished approval document for area rental with given ID. Returns draft if work finished is not yet approved.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Document retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No document found for given application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Document retrieved successfully",
+              content = @Content( schema = @Schema(implementation = byte.class))),
+      @ApiResponse(responseCode = "404", description = "No document found for given application",
+              content = @Content( schema = @Schema(implementation = ErrorInfo.class)))
   })
+  @SecurityRequirement(name = "bearerAuth")
   @RequestMapping(value = "/{id}/approval/workfinished", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
   public ResponseEntity<byte[]> getWorkFinishedDocument(@PathVariable Integer id) {
@@ -73,13 +80,12 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return getApprovalDocument(id, ApprovalDocumentType.WORK_FINISHED);
   }
 
-  @ApiOperation(value = "Sends the work finished approval document for given application as email to "
-      + "an specified distribution list.",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Sends the work finished approval document for given application as email to "
+      + "an specified distribution list.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Approval document sent successfully")
+      @ApiResponse(responseCode = "200", description = "Approval document sent successfully")
   })
+  @SecurityRequirement(name = "bearerAuth")
   @RequestMapping(value = "/{id}/workfinished/send", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> sendWorkFinishedDocument(@PathVariable Integer id,
@@ -89,16 +95,16 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Create a new location",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json",
-    response = Location.class)
+  @Operation(summary = "Create a new location")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Location created successfully", response = Location.class),
-    @ApiResponse(code = 400, message = "Invalid location data", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Location addition forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Location created successfully",
+            content = @Content( schema = @Schema(implementation = Location.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid location data",
+            content = @Content( schema = @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Location addition forbidden",
+            content = @Content( schema = @Schema(implementation = ErrorInfo.class)))
   })
+  @SecurityRequirement(name = "bearerAuth")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   @RequestMapping(value = "/{applicationId}/locations", method = RequestMethod.POST,
     produces = "application/json", consumes = "application/json")
@@ -110,14 +116,16 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return ResponseEntity.ok(createdLocation);
   }
 
-  @ApiOperation(value = "Delete an existing location",
-    authorizations = @Authorization(value = "api_key"),
-    response = Location.class)
+  @Operation(summary = "Delete an existing location")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Location deleted successfully", response = Location.class),
-    @ApiResponse(code = 400, message = "Invalid location data or attempt to remove the last location", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Location deletion forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Location deleted successfully",
+            content = @Content( schema = @Schema(implementation = Location.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid location data or attempt to remove the last location",
+            content = @Content( schema = @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Location deletion forbidden",
+            content = @Content( schema = @Schema(implementation = ErrorInfo.class)))
   })
+  @SecurityRequirement(name = "bearerAuth")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   @RequestMapping(value = "/{applicationId}/locations/{locationId}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteLocation(@PathVariable Integer applicationId,
@@ -138,28 +146,28 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
   @Override
   @RequestMapping(value = "/{applicationId}/applicant", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
-                                                                          @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+                                                                          @RequestBody @Parameter(description = "The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerApplicant(applicationId, customer);
   }
 
   @Override
   @RequestMapping(value = "/{applicationId}/propertyDeveloper", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerPropertyDeveloper(@PathVariable Integer applicationId,
-                                                                                  @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+                                                                                  @RequestBody @Parameter(description = "The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerPropertyDeveloper(applicationId, customer);
   }
 
   @Override
   @RequestMapping(value = "/{applicationId}/contractor", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerContractor(@PathVariable Integer applicationId,
-                                                                           @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+                                                                           @RequestBody @Parameter(description = "The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerContractor(applicationId, customer);
   }
 
   @Override
   @RequestMapping(value = "/{applicationId}/representative", method = RequestMethod.PUT, produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerRepresentative(@PathVariable Integer applicationId,
-                                                                               @RequestBody @ApiParam("The new customer with contacts") CreateCustomerWithContactsJson customer) {
+                                                                               @RequestBody @Parameter(description = "The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerRepresentative(applicationId, customer);
   }
 
@@ -175,19 +183,16 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return super.removeRepresentative(applicationId);
   }
 
-  @ApiOperation(value = "Set invoicing period length for area rental with given ID. Ignored if application is not billable.",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = InvoicingPeriodJson.class,
-      responseContainer="List"
-  )
+  @Operation(summary = "Set invoicing period length for area rental with given ID. Ignored if application is not billable.")
+  @SecurityRequirement(name = "bearerAuth")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Invoicing period length set successfully", response = InvoicingPeriodJson.class, responseContainer="List")
+      @ApiResponse(responseCode = "200", description = "Invoicing period length set successfully",
+              content = @Content( schema = @Schema(implementation = InvoicingPeriodJson.class)))
   })
   @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<List<InvoicingPeriodJson>> setInvoicingPeriodLength(@PathVariable Integer id,
-      @ApiParam(value = "Period length in months", allowableValues = "1, 3, 6, 12") @RequestParam int periodLength) {
+      @Parameter(description = "Period length in months",  example = "1, 3, 6, 12") @RequestParam int periodLength) {
     validateType(id);
     validateUpdateAllowed(id);
     validatePeriodLength(periodLength);
@@ -203,13 +208,11 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Remove invoicing periods from area rental with given ID.",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json"
-  )
+  @Operation(summary = "Remove invoicing periods from area rental with given ID.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Invoicing periods removed successfully")
+      @ApiResponse(responseCode = "200", description = "Invoicing periods removed successfully")
   })
+  @SecurityRequirement(name = "bearerAuth")
   @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.DELETE, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> deleteInvoicingPeriods(@PathVariable Integer id) {
@@ -220,37 +223,31 @@ public class AreaRentalController extends BaseApplicationDetailsController<AreaR
   }
 
 
-  @ApiOperation(value = "Report customer work finished date",
-      authorizations = @Authorization(value ="api_key"),
-      consumes = "application/json",
-      produces = "application/json"
-    )
+  @Operation(summary = "Report customer work finished date")
     @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Date reported successfully"),
+      @ApiResponse(responseCode = "200", description = "Date reported successfully"),
     })
-  @RequestMapping(value = "/{id}/customerworkfinished", method = RequestMethod.PUT)
+  @SecurityRequirement(name = "bearerAuth")
+  @RequestMapping(value = "/{id}/customerworkfinished", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
-  public ResponseEntity<Void> reportCustomerWorkFinished(@ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
-                                                         @ApiParam(value = "Date report containing reporting date and work finished date")
+  public ResponseEntity<Void> reportCustomerWorkFinished(@Parameter(description = "Id of the application") @PathVariable("id") Integer id,
+                                                         @Parameter(description = "Date report containing reporting date and work finished date")
                                                          @RequestBody @Valid DateReportJson dateReport) {
     validateType(id);
     dateReportingService.reportCustomerWorkFinished(id, new ApplicationDateReport(dateReport.getReportingDate(), dateReport.getReportedDate(), null));
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Report customer location validity period",
-      authorizations = @Authorization(value ="api_key"),
-      consumes = "application/json",
-      produces = "application/json"
-    )
+  @Operation(summary = "Report customer location validity period")
+  @SecurityRequirement(name = "bearerAuth")
     @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Period reported successfully"),
+      @ApiResponse(responseCode = "200", description = "Period reported successfully"),
     })
-  @RequestMapping(value = "/{applicationId}/locations/{locationId}/customervalidity", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{applicationId}/locations/{locationId}/customervalidity", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
-  public ResponseEntity<Void> reportCustomerLocationValidityPeriod(@ApiParam(value = "Id of the application") @PathVariable("applicationId") Integer applicationId,
-                                                                   @ApiParam(value = "Id of the location") @PathVariable("locationId") Integer locationId,
-                                                                   @ApiParam(value = "Period report containing reporting date and reported period")
+  public ResponseEntity<Void> reportCustomerLocationValidityPeriod(@Parameter(description = "Id of the application") @PathVariable("applicationId") Integer applicationId,
+                                                                   @Parameter(description = "Id of the location") @PathVariable("locationId") Integer locationId,
+                                                                   @Parameter(description = "Period report containing reporting date and reported period")
                                                                    @RequestBody @Valid DatePeriodReportJson dateReport) {
     validateType(applicationId);
     validateApplicationHasLocation(applicationId, locationId);
