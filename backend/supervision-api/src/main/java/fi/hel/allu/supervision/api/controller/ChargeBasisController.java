@@ -9,7 +9,13 @@ import fi.hel.allu.servicecore.service.InvoicingPeriodService;
 import fi.hel.allu.supervision.api.domain.ChargeBasisEntryJson;
 import fi.hel.allu.supervision.api.domain.InvoicingPeriodJson;
 import fi.hel.allu.supervision.api.mapper.ChargeBasisEntryMapper;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +28,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/")
-@Api(tags = "Charge basis entries")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Charge basis entries")
 public class ChargeBasisController {
 
   private final ChargeBasisService chargeBasisService;
@@ -37,14 +44,10 @@ public class ChargeBasisController {
     this.applicationService = applicationService;
   }
 
-  @ApiOperation(value = "List charge basis entries for application with given ID",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json",
-    response = ChargeBasisEntryJson.class,
-    responseContainer = "List"
-  )
+  @Operation(summary = "List charge basis entries for application with given ID")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Charge basis entries retrieved successfully", response = ChargeBasisEntryJson.class, responseContainer = "List")
+    @ApiResponse(responseCode = "200", description = "Charge basis entries retrieved successfully",
+            content = @Content(schema = @Schema(implementation = ChargeBasisEntryJson.class)))
   })
   @GetMapping(value = "/applications/{id}/chargebasisentries", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -65,14 +68,11 @@ public class ChargeBasisController {
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "List invoicing periods for application with given ID",
-    authorizations = @Authorization(value = "api_key"),
-    produces = "application/json",
-    response = InvoicingPeriodJson.class,
-    responseContainer = "List"
+  @Operation(summary = "List invoicing periods for application with given ID"
   )
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Invoicing periods retrieved successfully", response = InvoicingPeriodJson.class, responseContainer = "List")
+    @ApiResponse(responseCode = "200", description = "Invoicing periods retrieved successfully",
+            content = @Content(schema = @Schema(implementation = InvoicingPeriodJson.class)))
   })
   @GetMapping(value = "/applications/{id}/invoicingperiods", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -89,17 +89,14 @@ public class ChargeBasisController {
     return ResponseEntity.ok(result);
   }
 
-  @ApiOperation(value = "Add charge basis entry for application. Returns created entry.",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json",
-    response = ChargeBasisEntryJson.class
-  )
+  @Operation(summary = "Add charge basis entry for application. Returns created entry.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Entry added successfully", response = ChargeBasisEntryJson.class),
-    @ApiResponse(code = 403, message = "Entry addition forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Entry added successfully",
+            content = @Content(schema = @Schema(implementation = ChargeBasisEntryJson.class))),
+    @ApiResponse(responseCode = "403", description = "Entry addition forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @PostMapping(value = "/applications/{applicationid}/chargebasisentries", produces = "application/json")
+  @PostMapping(value = "/applications/{applicationid}/chargebasisentries", consumes = "application/json", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ChargeBasisEntryJson> addChargeBasisEntry(@PathVariable(value = "applicationid") Integer applicationId,
                                                                   @RequestBody @Valid ChargeBasisEntryJson entry) {
@@ -107,17 +104,14 @@ public class ChargeBasisController {
     return ResponseEntity.ok(ChargeBasisEntryMapper.mapToJson(inserted));
   }
 
-  @ApiOperation(value = "Update charge basis entry. Returns updated entry.",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json",
-    response = ChargeBasisEntryJson.class
-  )
+  @Operation(summary = "Update charge basis entry. Returns updated entry.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Entry updated successfully", response = ChargeBasisEntryJson.class),
-    @ApiResponse(code = 403, message = "Entry update forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Entry updated successfully",
+            content = @Content(schema = @Schema(implementation = ChargeBasisEntryJson.class))),
+    @ApiResponse(responseCode = "403", description = "Entry update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @PutMapping(value = "/applications/{applicationid}/chargebasisentries/{id}", produces = "application/json")
+  @PutMapping(value = "/applications/{applicationid}/chargebasisentries/{id}", produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ChargeBasisEntryJson> updateChargeBasisEntry(@PathVariable(value = "applicationid") Integer applicationId,
                                                                      @PathVariable(value = "id") Integer id, @RequestBody @Valid ChargeBasisEntryJson entry) {
@@ -125,16 +119,14 @@ public class ChargeBasisController {
     return ResponseEntity.ok(ChargeBasisEntryMapper.mapToJson(updated));
   }
 
-  @ApiOperation(value = "Delete charge basis entry.",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Delete charge basis entry.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Entry deleted successfully"),
-    @ApiResponse(code = 403, message = "Entry deletion forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Entry deleted successfully"),
+    @ApiResponse(responseCode = "403", description = "Entry deletion forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @DeleteMapping(value = "/applications/{applicationid}/chargebasisentries/{id}", produces = "application/json")
+  @DeleteMapping(value = "/applications/{applicationid}/chargebasisentries/{id}", produces = "application/json",
+          consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> deleteChargeBasisEntry(@PathVariable(value = "applicationid") Integer applicationId,
                                                      @PathVariable(value = "id") Integer id) {
@@ -142,16 +134,14 @@ public class ChargeBasisController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Set charge basis entry invoicable / not invoicable.",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json"
-  )
+  @Operation(summary = "Set charge basis entry invoicable / not invoicable.")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Entry updated successfully"),
-    @ApiResponse(code = 403, message = "Entry update forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Entry updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Entry update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
-  @PutMapping(value = "/applications/{applicationId}/chargebasisentries/{id}/invoicable", produces = "application/json")
+  @PutMapping(value = "/applications/{applicationId}/chargebasisentries/{id}/invoicable", produces = "application/json",
+          consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ChargeBasisEntryJson> setInvoicable(@PathVariable int applicationId, @PathVariable int id,
                                                             @RequestParam("invoicable") boolean invoicable) {
