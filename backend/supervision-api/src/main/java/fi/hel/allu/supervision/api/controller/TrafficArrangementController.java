@@ -3,6 +3,12 @@ package fi.hel.allu.supervision.api.controller;
 import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.CreateTrafficArrangementApplicationJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.ApprovalDocumentService;
+import fi.hel.allu.servicecore.service.ChargeBasisService;
+import fi.hel.allu.servicecore.service.LocationService;
+import fi.hel.allu.supervision.api.mapper.ApplicationMapperCollector;
+import fi.hel.allu.supervision.api.service.ApplicationUpdateService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +26,16 @@ import io.swagger.annotations.Api;
 @RequestMapping("/v1/trafficarrangements")
 @Api(tags = "Applications")
 public class TrafficArrangementController extends BaseApplicationDetailsController<TrafficArrangementApplication, CreateTrafficArrangementApplicationJson> {
+
+  public TrafficArrangementController(ApprovalDocumentService approvalDocumentService,
+                                      ChargeBasisService chargeBasisService,
+                                      ApplicationServiceComposer applicationServiceComposer,
+                                      ApplicationUpdateService applicationUpdateService,
+                                      LocationService locationService,
+                                      ApplicationMapperCollector applicationMapperCollector) {
+    super(approvalDocumentService, chargeBasisService, applicationServiceComposer, applicationUpdateService,
+          locationService, applicationMapperCollector);
+  }
 
   @Override
   protected ApplicationType getApplicationType() {
