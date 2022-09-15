@@ -13,11 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -26,7 +22,7 @@ import java.util.Map;
 @SecurityRequirement(name = "bearerAuth")
 @Api(tags = "Locations")
 public class LocationController {
-  private LocationUpdateService locationUpdateService;
+  private final LocationUpdateService locationUpdateService;
 
   @Autowired
   public LocationController(LocationUpdateService locationUpdateService) {
@@ -45,7 +41,7 @@ public class LocationController {
     @ApiResponse(code = 403, message = "Location update forbidden", response = ErrorInfo.class),
 
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+  @PutMapping(value = "/{id}", produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Location> updateLocation(@PathVariable Integer id,
                                                  @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
