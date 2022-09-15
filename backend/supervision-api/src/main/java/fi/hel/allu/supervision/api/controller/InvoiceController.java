@@ -2,6 +2,13 @@ package fi.hel.allu.supervision.api.controller;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,24 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.servicecore.domain.InvoiceJson;
 import fi.hel.allu.servicecore.service.InvoiceService;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
-@Api(tags = "Invoices")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Invoices")
 public class InvoiceController {
 
   @Autowired
   private InvoiceService invoiceService;
 
-  @ApiOperation(value = "Get invoices of the application including invoiced invoices from replaced applications",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = InvoiceJson.class,
-      responseContainer="List"
-      )
+  @Operation(summary = "Get invoices of the application including invoiced invoices from replaced applications")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Invoices of application retrieved successfully", response = InvoiceJson.class, responseContainer="List"),
+      @ApiResponse(responseCode = "200", description = "Invoices of application retrieved successfully",
+          content = @Content(schema = @Schema(implementation = InvoiceJson.class))),
   })
   @RequestMapping(value = "/applications/{applicationId}/invoices", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
