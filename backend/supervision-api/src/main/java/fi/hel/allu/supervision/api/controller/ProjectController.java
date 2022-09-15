@@ -5,6 +5,14 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +35,11 @@ import fi.hel.allu.supervision.api.mapper.MapperUtil;
 import fi.hel.allu.supervision.api.mapper.ProjectSearchParameterMapper;
 import fi.hel.allu.supervision.api.mapper.ProjectSearchResultMapper;
 import fi.hel.allu.supervision.api.validation.ProjectCustomerValidator;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/projects")
-@Api(tags = "Projects")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Projects")
 public class ProjectController {
 
   @Autowired
@@ -53,15 +61,12 @@ public class ProjectController {
     binder.addValidators(projectCustomerValidator);
   }
 
-  @ApiOperation(value = "Search projects",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = ProjectSearchResult.class,
-      responseContainer="List"
-      )
+  @Operation(summary = "Search projects")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Projects retrieved successfully", response = ProjectSearchResult.class, responseContainer="List"),
-      @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Projects retrieved successfully",
+          content = @Content(schema = @Schema(implementation = ProjectSearchResult.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid search parameters",
+          content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -71,12 +76,11 @@ public class ProjectController {
     return ResponseEntity.ok(projectServiceComposer.search(queryParameters, pageRequest).map(p -> searchResultMapper.mapToSearchResult(p)));
   }
 
-  @ApiOperation(value = "Create new project. Generates default identifier if not given in input model. Returns ID of the created project.",
-      authorizations = @Authorization(value ="api_key"),
-      response = Integer.class
-  )
+  @Operation(summary = "Create new project. Generates default identifier if not given in input model. " +
+      "Returns ID of the created project.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Project created successfully", response = Integer.class),
+      @ApiResponse(responseCode = "200", description = "Project created successfully",
+          content = @Content(schema = @Schema(implementation = Integer.class)))
   })
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -85,13 +89,10 @@ public class ProjectController {
     return ResponseEntity.ok(createdProject.getId());
   }
 
-  @ApiOperation(value = "Get project by ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = ProjectJson.class,
-      produces = "application/json"
-      )
+  @Operation(summary = "Get project by ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Project fetched successfully", response = ProjectJson.class)
+      @ApiResponse(responseCode = "200", description = "Project fetched successfully",
+          content = @Content(schema = @Schema(implementation = ProjectJson.class)))
   })
   @RequestMapping(value = "/{id}",  method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -99,11 +100,9 @@ public class ProjectController {
     return ResponseEntity.ok(projectServiceComposer.findById(id));
   }
 
-  @ApiOperation(value = "Remove project",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Remove project")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Project deleted successfully")
+      @ApiResponse(responseCode = "200", description = "Project deleted successfully")
   })
   @RequestMapping(value = "/{id}",  method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -112,30 +111,26 @@ public class ProjectController {
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Add applications to project. If application already is in some other project, it's moved to this project",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Add applications to project. If application already is in some other project, it's moved to this project")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Applications added successfully")
+      @ApiResponse(responseCode = "200", description = "Applications added successfully")
   })
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> addApplications(@PathVariable int id,
-      @ApiParam(value = "Ids of the applications to be added") @RequestBody List<Integer> applicationIds) {
+      @Parameter(description = "Ids of the applications to be added") @RequestBody List<Integer> applicationIds) {
     projectServiceComposer.addApplications(id, applicationIds);
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Remove application from project",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Remove application from project")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Application removed successfully")
+      @ApiResponse(responseCode = "200", description = "Application removed successfully")
   })
   @RequestMapping(value = "/{id}/applications/{applicationId}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> removeApplication(@PathVariable int id,
-      @ApiParam(value = "Id of the application to be remove") @PathVariable Integer applicationId) {
+      @Parameter(description = "Id of the application to be remove") @PathVariable Integer applicationId) {
     if (!projectServiceComposer.projectHasApplication(id, applicationId)) {
       throw new IllegalOperationException("project.application.notfound");
     }
@@ -143,44 +138,35 @@ public class ProjectController {
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "Update project. ",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = ProjectJson.class
-  )
+  @Operation(summary = "Update project. ")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Project updated successfully", response = ProjectJson.class)
+      @ApiResponse(responseCode = "200", description = "Project updated successfully",
+          content = @Content(schema = @Schema(implementation = ProjectJson.class)))
   })
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ProjectJson> update(@PathVariable int id,
-      @ApiParam(value = "Updated project data") @RequestBody @Valid ModifyProjectJson project) {
+      @Parameter(description = "Updated project data") @RequestBody @Valid ModifyProjectJson project) {
     return ResponseEntity.ok(projectServiceComposer.update(id, project));
   }
 
-  @ApiOperation(value = "Add child projects for project. If child project is currently child of some other project, parent of the"
-      + " child project is updated.",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Add child projects for project. If child project is currently child of some other project, " +
+      "parent of the child project is updated.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Child projects added successfully")
+      @ApiResponse(responseCode = "200", description = "Child projects added successfully")
   })
   @RequestMapping(value = "/{id}/childProjects", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Void> addChildProjects(@PathVariable int id,
-      @ApiParam(value = "Ids of the projects to be added") @RequestBody List<Integer> childProjectIds) {
+      @Parameter(description = "Ids of the projects to be added") @RequestBody List<Integer> childProjectIds) {
     childProjectIds.forEach(childId -> projectServiceComposer.updateProjectParent(childId, id));
     return ResponseEntity.ok().build();
   }
 
-  @ApiOperation(value = "List child projects of the project",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = ProjectJson.class,
-      responseContainer = "List"
-        )
+  @Operation(summary = "List child projects of the project")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Projects listed successfully", response = ProjectJson.class, responseContainer = "List")
+      @ApiResponse(responseCode = "200", description = "Projects listed successfully",
+          content = @Content(schema = @Schema(implementation = ProjectJson.class)))
   })
   @RequestMapping(value = "/{id}/childProjects", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -188,16 +174,14 @@ public class ProjectController {
     return ResponseEntity.ok(projectService.findProjectChildren(id));
   }
 
-  @ApiOperation(value = "Remove child project from project. Removes only parent-child relationship, does not delete child project.",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Remove child project from project. Removes only parent-child relationship, does not delete child project.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Child project removed successfully")
+      @ApiResponse(responseCode = "200", description = "Child project removed successfully")
   })
   @RequestMapping(value = "/{id}/childProjects/{childProjectId}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Void> removeChildProject(@PathVariable(value = "id") @ApiParam(value = "ID of the parent project") int id,
-      @PathVariable(value = "childProjectId") @ApiParam(value = "ID of the child project to remove") int childProjectId) {
+  public ResponseEntity<Void> removeChildProject(@PathVariable(value = "id") @Parameter(description = "ID of the parent project") int id,
+      @PathVariable(value = "childProjectId") @Parameter(description = "ID of the child project to remove") int childProjectId) {
     if (!projectService.findProjectChildren(id).stream().anyMatch(c -> c.getId().equals(childProjectId))) {
       throw new IllegalArgumentException("project.childproject.notfound");
     }
