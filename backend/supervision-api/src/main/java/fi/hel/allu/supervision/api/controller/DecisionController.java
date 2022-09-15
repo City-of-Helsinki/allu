@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,11 +29,11 @@ import fi.hel.allu.servicecore.domain.DistributionEntryJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.DecisionService;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/applications")
-@Api(tags = "Applications")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Applications")
 public class DecisionController {
 
   @Autowired
@@ -36,15 +43,13 @@ public class DecisionController {
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
 
-  @ApiOperation(value = "Gets decision document for application with given ID. Returns draft if decision is not yet made. "
-      + "Available for all application types except notes.",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array"
-      )
+  @Operation(summary = "Gets decision document for application with given ID. Returns draft if decision is not yet made. "
+      + "Available for all application types except notes.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Decision document retrieved successfully",
+          content = @Content(schema = @Schema(implementation = byte.class))),
+      @ApiResponse(responseCode = "404", description = "No decision document found for given application",
+          content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -60,12 +65,11 @@ public class DecisionController {
     return new ResponseEntity<>(PdfMerger.appendDocuments(decision, attachments), httpHeaders, HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Sends the decision document for given application as email to an specified distribution list.",
-      authorizations = @Authorization(value ="api_key")
-  )
+  @Operation(summary = "Sends the decision document for given application as email to an specified distribution list.")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Decision document sent successfully"),
-      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Decision document sent successfully"),
+      @ApiResponse(responseCode = "404", description = "No decision document found for given application",
+          content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/{id}/decision/send", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
