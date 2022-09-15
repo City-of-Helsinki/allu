@@ -1,10 +1,10 @@
-FROM openjdk:8-jre-slim-bullseye
+FROM eclipse-temurin:8-jre-alpine
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apt-get -y  update \
-    && apt-get -y install wget xz-utils git python3-pip tzdata autossh libxrender1 libfontconfig libxtst6 \
+RUN apk update \
+    && apk add wget tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
@@ -25,7 +25,7 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 ######################################################################################
 
 # general setup
-RUN mkdir -p /var/log/supervisor
+RUN mkdir -p /home/allu/.ssh
 
 # project setup
 RUN mkdir -p /home/allu/allu-ui-service
@@ -36,17 +36,6 @@ RUN mkdir -p /home/allu/allu-ui-service
 
 # allu-ui-service
 EXPOSE 9000
-
-######################################################################################
-# Supervisord
-######################################################################################
-
-# supervisord
-RUN pip3 install --upgrade pip
-RUN pip3 install supervisor
-RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
-COPY supervisord.conf /etc/supervisord.conf
-CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 
 ######################################################################################
 # Host volumes
@@ -68,6 +57,13 @@ RUN ln -s /servicehome/services/allu-ui-service/included-logback.xml /home/allu/
 RUN ln -s /servicehome/services/allu-ui-service/allu-ui-service.properties /home/allu/allu-ui-service/allu-ui-service.properties;
 
 ######################################################################################
+# Copy files to image
+######################################################################################
+
+COPY known_hosts /home/allu/.ssh/known_hosts
+RUN chmod 777 /home/allu/.ssh/known_hosts
+
+######################################################################################
 # Changes that should not be cached
 ######################################################################################
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
@@ -75,3 +71,5 @@ ARG CACHEBUST=1
 
 # JAR files
 RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/allu-ui-service/1.0-SNAPSHOT/allu-ui-service-1.0-SNAPSHOT.jar --output-document /home/allu/allu-ui-service/allu-ui-service.jar;
+ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/allu-ui-service", \
+ "-jar","/home/allu/allu-ui-service.jar", "--spring.config.location=file:/home/allu/allu-ui-service/allu-ui-service.properties"]
