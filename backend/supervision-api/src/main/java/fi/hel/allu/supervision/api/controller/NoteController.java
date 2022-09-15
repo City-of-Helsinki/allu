@@ -12,11 +12,7 @@ import fi.hel.allu.supervision.api.service.ApplicationUpdateService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -48,7 +44,7 @@ public class NoteController extends BaseApplicationDetailsController<NoteApplica
   }
 
   @Override
-  @RequestMapping(value = "/{applicationId}/applicant", method = RequestMethod.PUT, produces = "application/json")
+  @PutMapping(value = "/{applicationId}/applicant", produces = "application/json")
   public ResponseEntity<CustomerWithContactsJson> updateCustomerApplicant(@PathVariable Integer applicationId,
                                                                           @RequestBody @Parameter(description = "The new customer with contacts") CreateCustomerWithContactsJson customer) {
     return super.updateCustomerApplicant(applicationId, customer);
