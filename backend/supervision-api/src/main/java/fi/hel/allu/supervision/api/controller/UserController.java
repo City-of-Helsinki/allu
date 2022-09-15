@@ -1,11 +1,16 @@
 package fi.hel.allu.supervision.api.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,11 +26,11 @@ import fi.hel.allu.servicecore.service.ApplicationService;
 import fi.hel.allu.servicecore.service.ConfigurationService;
 import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
-@Api(tags = "Users")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Users")
 public class UserController {
 
   @Autowired
@@ -40,7 +45,7 @@ public class UserController {
   @Autowired
   private LocationService locationService;
 
-  private static final Map<ApplicationType, ConfigurationKey> APPLICATION_TYPE_TO_DECISION_MAKER_KEY = new HashMap<ApplicationType, ConfigurationKey>() {{
+  private static final EnumMap<ApplicationType, ConfigurationKey> APPLICATION_TYPE_TO_DECISION_MAKER_KEY = new EnumMap<ApplicationType, ConfigurationKey>(ApplicationType.class) {{
     put(ApplicationType.EXCAVATION_ANNOUNCEMENT, ConfigurationKey.EXCAVATION_ANNOUNCEMENT_DECISION_MAKER);
     put(ApplicationType.AREA_RENTAL, ConfigurationKey.AREA_RENTAL_DECISION_MAKER);
     put(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, ConfigurationKey.TEMPORARY_TRAFFIC_ARRANGEMENTS_DECISION_MAKER);
@@ -49,13 +54,10 @@ public class UserController {
     put(ApplicationType.SHORT_TERM_RENTAL, ConfigurationKey.SHORT_TERM_RENTAL_DECISION_MAKER);
   }};
 
-  @ApiOperation(value = "Get user by user name",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = UserJson.class
-      )
+  @Operation(summary = "Get user by user name")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "User retrieved successfully", response = UserJson.class),
+      @ApiResponse(responseCode = "200", description = "User retrieved successfully",
+          content = @Content(schema = @Schema(implementation = UserJson.class))),
   })
   @RequestMapping(value = "/users/username/{username}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -63,13 +65,10 @@ public class UserController {
     return ResponseEntity.ok(userService.findUserByUserName(username));
   }
 
-  @ApiOperation(value = "Get user by user ID",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = UserJson.class
-      )
+  @Operation(summary = "Get user by user ID")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "User retrieved successfully", response = UserJson.class)
+      @ApiResponse(responseCode = "200", description = "User retrieved successfully",
+          content = @Content(schema = @Schema(implementation = UserJson.class)))
   })
   @RequestMapping(value = "/users/{id}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -77,14 +76,10 @@ public class UserController {
     return ResponseEntity.ok(userService.findUserById(id));
   }
 
-  @ApiOperation(value = "Get active users by user role",
-      authorizations = @Authorization(value = "api_key"),
-      produces = "application/json",
-      response = UserJson.class,
-      responseContainer = "List"
-      )
+  @Operation(summary = "Get active users by user role")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Users retrieved successfully", response = UserJson.class, responseContainer = "List")
+      @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
+          content = @Content(schema = @Schema(implementation = UserJson.class)))
   })
   @RequestMapping(value = "/users/role/{roleType}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -92,14 +87,10 @@ public class UserController {
     return ResponseEntity.ok(activeUsers(userService.findUserByRole(roleType)));
   }
 
-  @ApiOperation(value = "Get all active users",
-      authorizations = @Authorization(value = "api_key"),
-      produces = "application/json",
-      response = UserJson.class,
-      responseContainer = "List"
-      )
+  @Operation(summary = "Get all active users")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Users retrieved successfully", response = UserJson.class, responseContainer = "List")
+      @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
+          content = @Content(schema = @Schema(implementation = UserJson.class)))
   })
   @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
@@ -107,33 +98,26 @@ public class UserController {
     return ResponseEntity.ok(activeUsers(userService.findAllActiveUsers()));
   }
 
-  @ApiOperation(value = "Get default decision maker for given application type",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = UserJson.class
-      )
+  @Operation(summary = "Get default decision maker for given application type")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Decision maker retrieved successfully", response = UserJson.class),
+      @ApiResponse(responseCode = "200", description = "Decision maker retrieved successfully",
+          content = @Content(schema = @Schema(implementation = UserJson.class))),
   })
   @RequestMapping(value = "/users/decisionmakers", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<UserJson> getDecisionMaker(@ApiParam(allowableValues = "EXCAVATION_ANNOUNCEMENT, AREA_RENTAL, TEMPORARY_TRAFFIC_ARRANGEMENTS, PLACEMENT_CONTRACT, EVENT, SHORT_TERM_RENTAL")
-                                                   @RequestParam ApplicationType applicationType) {
+  public ResponseEntity<UserJson> getDecisionMaker(@RequestParam ApplicationType applicationType) {
     UserJson decisionMaker = findDecisionMakerForApplicationType(applicationType);
     return ResponseEntity.ok(decisionMaker);
   }
 
-  @ApiOperation(value = "Get default supervisor for application with given ID. ",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = UserJson.class
-      )
+  @Operation(summary = "Get default supervisor for application with given ID. ")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Supervisor retrieved successfully", response = UserJson.class),
+      @ApiResponse(responseCode = "200", description = "Supervisor retrieved successfully",
+          content = @Content(schema = @Schema(implementation = UserJson.class))),
   })
   @RequestMapping(value = "/applications/{applicationId}/defaultsupervisor", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<UserJson> getDecisionMaker(@ApiParam(value = "Application ID") @PathVariable Integer applicationId) {
+  public ResponseEntity<UserJson> getDecisionMaker(@Parameter(description = "Application ID") @PathVariable Integer applicationId) {
     UserJson supervisor = findSupervisorForApplication(applicationId);
     return ResponseEntity.ok(supervisor);
   }
@@ -151,7 +135,7 @@ public class UserController {
 
   private List<UserJson> activeUsers(List<UserJson> users) {
     return users.stream()
-        .filter(u -> u.isActive())
+        .filter(UserJson::isActive)
         .collect(Collectors.toList());
   }
 }
