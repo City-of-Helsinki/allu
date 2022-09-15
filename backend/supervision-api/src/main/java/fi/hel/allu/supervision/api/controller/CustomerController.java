@@ -1,12 +1,19 @@
 package fi.hel.allu.supervision.api.controller;
 
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.ErrorInfo;
-import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
@@ -29,11 +35,11 @@ import fi.hel.allu.supervision.api.mapper.CustomerSearchParameterMapper;
 import fi.hel.allu.supervision.api.mapper.CustomerSearchResultMapper;
 import fi.hel.allu.supervision.api.mapper.MapperUtil;
 import fi.hel.allu.supervision.api.service.CustomerUpdateService;
-import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
-@Api(tags = "Customers")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Customers")
 public class CustomerController {
 
   @Autowired
@@ -48,15 +54,12 @@ public class CustomerController {
   @Autowired
   private ContactService contactService;
 
-  @ApiOperation(value = "Search customers",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = CustomerSearchResult.class,
-      responseContainer="List"
-      )
+  @Operation(summary = "Search customers")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Customers retrieved successfully", response = CustomerSearchResult.class, responseContainer="List"),
-      @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
+      @ApiResponse(responseCode = "200", description = "Customers retrieved successfully",
+              content = @Content(schema = @Schema(implementation = CustomerSearchResult.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid search parameters",
+              content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/customers/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -68,14 +71,10 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
-  @ApiOperation(value = "Search contacts",
-      authorizations = @Authorization(value ="api_key"),
-      produces = "application/json",
-      response = ContactSearchResult.class,
-      responseContainer="List"
-      )
+  @Operation(summary = "Search contacts")
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Contacts retrieved successfully", response = ContactSearchResult.class, responseContainer="List")
+      @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully",
+              content = @Content(schema = @Schema(implementation = ContactSearchResult.class)))
   })
   @RequestMapping(value = "/contacts/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -87,15 +86,14 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
-  @ApiOperation(value = "Create a new customer",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json",
-    response = CustomerSearchResult.class)
+  @Operation(summary = "Create a new customer")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Customer created successfully", response = CustomerSearchResult.class),
-    @ApiResponse(code = 400, message = "Invalid customer data", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Customer addition forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Customer created successfully",
+            content = @Content(schema = @Schema(implementation = CustomerSearchResult.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid customer data",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Customer addition forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/customers", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -104,33 +102,29 @@ public class CustomerController {
     return ResponseEntity.ok(customerSearchResultMapper.mapToSearchResult(createdCustomer));
   }
 
-  @ApiOperation(value = "Update a customer",
-    notes =
+  @Operation(summary = "Update a customer",
+    description =
       "<p>Data is given as key/value pair updated field being the key and it's new value (as JSON) the value. "
-        + "All fields that are not marked as read only can be updated through this API.</p>",
-    authorizations = @Authorization(value ="api_key"),
-    produces = "application/json"
-  )
+        + "All fields that are not marked as read only can be updated through this API.</p>")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Customer updated successfully"),
-    @ApiResponse(code = 403, message = "Customer update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Customer update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
 
   })
   @RequestMapping(value = "/customers/{id}", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<CustomerSearchResult> updateCustomer(@PathVariable Integer id,
-                                                             @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
+                                                             @RequestBody @Parameter( description = "Map containing field names with their new values.") Map<String, Object> fields) {
     CustomerJson updatedCustomer = customerUpdateService.update(id, fields);
     return ResponseEntity.ok(customerSearchResultMapper.mapToSearchResult(updatedCustomer));
   }
 
-  @ApiOperation(value = "Get customer by ID",
-    authorizations = @Authorization(value ="api_key"),
-    produces = "application/json"
-  )
+  @Operation(summary = "Get customer by ID")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Customer retrieved successfully"),
-    @ApiResponse(code = 404, message = "Customer not found", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Customer retrieved successfully"),
+    @ApiResponse(responseCode = "404", description = "Customer not found",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
   })
   @RequestMapping(value = "/customers/{id}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -138,14 +132,10 @@ public class CustomerController {
     return ResponseEntity.ok(customerService.findCustomerById(id));
   }
 
-  @ApiOperation(value = "List contacts of a customer",
-    authorizations = @Authorization(value ="api_key"),
-    produces = "application/json",
-    response = ContactJson.class,
-    responseContainer="List"
-  )
+  @Operation(summary = "List contacts of a customer" )
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Contacts retrieved successfully", response = ContactJson.class, responseContainer="List")
+    @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully",
+            content = @Content(schema = @Schema(implementation = ContactJson.class)))
   })
   @RequestMapping(value = "/customers/{customerId}/contacts", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
@@ -154,15 +144,14 @@ public class CustomerController {
     return ResponseEntity.ok(contacts);
   }
 
-  @ApiOperation(value = "Create a new contact",
-    authorizations = @Authorization(value = "api_key"),
-    consumes = "application/json",
-    produces = "application/json",
-    response = ContactJson.class)
+  @Operation(summary = "Create a new contact")
   @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Contact created successfully", response = ContactJson.class),
-    @ApiResponse(code = 400, message = "Invalid contact data", response = ErrorInfo.class),
-    @ApiResponse(code = 403, message = "Contact addition forbidden", response = ErrorInfo.class)
+    @ApiResponse(responseCode = "200", description = "Contact created successfully",
+            content = @Content(schema = @Schema(implementation = ContactJson.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid contact data",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
+    @ApiResponse(responseCode = "403", description = "Contact addition forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class)))
   })
   @RequestMapping(value = "/customers/{customerId}/contacts", method = RequestMethod.POST,
     produces = "application/json", consumes = "application/json")
@@ -174,23 +163,21 @@ public class CustomerController {
     return ResponseEntity.ok(createdContact);
   }
 
-  @ApiOperation(value = "Update a contact",
-    notes =
+  @Operation(summary = "Update a contact",
+    description =
       "<p>Data is given as key/value pair updated field being the key and it's new value (as JSON) the value. "
-        + "All fields that are not marked as read only can be updated through this API.</p>",
-    authorizations = @Authorization(value ="api_key"),
-    produces = "application/json"
-  )
+        + "All fields that are not marked as read only can be updated through this API.</p>")
   @ApiResponses( value = {
-    @ApiResponse(code = 200, message = "Contact updated successfully"),
-    @ApiResponse(code = 403, message = "Contact update forbidden", response = ErrorInfo.class),
+    @ApiResponse(responseCode = "200", description = "Contact updated successfully"),
+    @ApiResponse(responseCode = "403", description = "Contact update forbidden",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),
 
   })
   @RequestMapping(value = "/customers/{customerId}/contacts/{contactId}", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ContactJson> updateContact(@PathVariable Integer customerId,
                                                    @PathVariable Integer contactId,
-                                                   @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
+                                                   @RequestBody @Parameter(description = "Map containing field names with their new values.") Map<String, Object> fields) {
 
     ContactJson updatedContact = customerUpdateService.updateContact(customerId, contactId, fields);
     return ResponseEntity.ok(updatedContact);
