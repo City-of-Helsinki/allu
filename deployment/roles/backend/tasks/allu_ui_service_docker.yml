@@ -15,6 +15,7 @@
         CUSTOM_UID: "{{ system_user_id_allu }}"
         CUSTOM_GID: "{{ system_group_id_allu }}"
         CACHEBUST: "{{ 9999999 |random }}"
+        SERVICE_MEMORY: "{{ allu_service_memory_limit['allu-ui-service'] }}"
       path: "{{ role_path }}/files/allu_ui_docker"
     name: "allu_ui_service:{{ branch }}"
     force_absent: true
