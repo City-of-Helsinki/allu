@@ -9,6 +9,7 @@ import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.ProjectIndexConductor;
 import fi.hel.allu.search.service.ProjectSearchService;
 
+import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -16,45 +17,27 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.elasticsearch.ElasticsearchContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_ALIAS;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.PROJECT_INDEX_ALIAS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 @ExtendWith(SpringExtension.class)
-@Testcontainers
-class ProjectSearchTest {
-
-
-
-	private static final String CLUSTER_NAME = "allu-cluster";
-	private static final String NODE_NAME = "allu-node";
-	private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.0.0";
-
-
-	@Container
-	private static final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE)
-			.withExposedPorts(9300, 9200)
-			.withEnv("xpack.security" + ".enabled", "false")
-			.withEnv("network.host", "_site_")
-			.withEnv("network" + ".publish_host", "_local_")
-			.withEnv("node.name", NODE_NAME)
-			.withEnv("cluster.name", CLUSTER_NAME);
-	private Client client;
+class ProjectSearchTest extends BaseIntegrationTest {
 	private ProjectSearchService projectSearchService;
 	private ApplicationSearchService applicationSearchService;
 
 	private static final String projectName = "testiname";
+
+	private Client client;
 
 	@BeforeEach
 	public void setUp() throws UnknownHostException {
@@ -77,24 +60,39 @@ class ProjectSearchTest {
 	void testInsertProject() {
 		ProjectES projectES = createProject(1, 2);
 		projectSearchService.insert(projectES);
+		projectSearchService.refreshIndex();
+		assertInsertion(PROJECT_INDEX_ALIAS);
 	}
 
 	@Test
 	void testInsertApplicationAndProject() {
 		ProjectES projectES = createProject(1, 2);
-		ApplicationES applicationES = ApplicationSearchTest.createApplication(123);
+		ApplicationES applicationES = ApplicationSearchIT.createApplication(123);
 		// insert both project and application to catch possible property type mismatches: project first and then application
 		projectSearchService.insert(projectES);
 		applicationSearchService.insert(applicationES);
+		projectSearchService.refreshIndex();
+		applicationSearchService.refreshIndex();
+		assertInsertion(PROJECT_INDEX_ALIAS);
+		assertInsertion(APPLICATION_INDEX_ALIAS);
 	}
 
 	@Test
 	void testInsertProjectAndApplication() {
 		ProjectES projectES = createProject(1, 2);
-		ApplicationES applicationES = ApplicationSearchTest.createApplication(123);
+		ApplicationES applicationES = ApplicationSearchIT.createApplication(123);
 		// insert both project and application to catch possible property type mismatches: : application first and then project
 		applicationSearchService.insert(applicationES);
 		projectSearchService.insert(projectES);
+		projectSearchService.refreshIndex();
+		applicationSearchService.refreshIndex();
+		assertInsertion(PROJECT_INDEX_ALIAS);
+		assertInsertion(APPLICATION_INDEX_ALIAS);
+	}
+
+	private void assertInsertion(String index){
+		IndicesStatsResponse indicesStatsResponse = client.admin().indices().prepareStats(index).get();
+		assertEquals(1, indicesStatsResponse.getIndices().get(index).getTotal().docs.getCount());
 	}
 
 	@Test

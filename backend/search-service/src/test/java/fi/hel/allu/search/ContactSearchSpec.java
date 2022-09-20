@@ -13,10 +13,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -38,6 +36,7 @@ public class ContactSearchSpec {
   private static final String CLUSTER_NAME = "allu-cluster";
   private static final String NODE_NAME = "allu-node";
   private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.0.0";
+
   @Container
   private static final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE)
       .withExposedPorts(9300, 9200)
@@ -46,14 +45,13 @@ public class ContactSearchSpec {
       .withEnv("network" + ".publish_host", "_local_")
       .withEnv("node.name", NODE_NAME)
       .withEnv("cluster.name", CLUSTER_NAME);
-
   private Client client;
   private ApplicationSearchService applicationSearchService;
 
   private ContactSearchService contactSearchService;
   private QueryParameters params;
 
-  private ContactES testContact = new ContactES(1, "testable name", true);
+  private final ContactES testContact = new ContactES(1, "testable name", true);
 
   ElasticSearchMappingConfig elasticSearchMappingConfig;
 
@@ -69,11 +67,9 @@ public class ContactSearchSpec {
     });
 
     describe("contactSearchService", () -> {
-      beforeEach(() -> {
-        contactSearchService = new ContactSearchService(
-                elasticSearchMappingConfig,
-            client, new ContactIndexConductor());
-      });
+      beforeEach(() -> contactSearchService = new ContactSearchService(
+              elasticSearchMappingConfig,
+          client, new ContactIndexConductor()));
       describe("findByField", ()-> {
         context("with single inserted contact", ()-> {
           beforeEach(() -> {
@@ -95,17 +91,13 @@ public class ContactSearchSpec {
               assertEquals(1, (int) contacts.get(0));
             });
           });
-          context("when searching with non-existing name", ()-> {
-            it("should not find contact", () -> {
-              params = SearchTestUtil.createQueryParameters("name", "non-existent");
-              List<Integer> contacts = contactSearchService.findByField(params, null).getContent();
-              assertEquals(0, contacts.size());
-            });
-          });
+          context("when searching with non-existing name", ()-> it("should not find contact", () -> {
+            params = SearchTestUtil.createQueryParameters("name", "non-existent");
+            List<Integer> contacts = contactSearchService.findByField(params, null).getContent();
+            assertEquals(0, contacts.size());
+          }));
 
-          afterEach(() -> {
-            contactSearchService.delete(Integer.toString(testContact.getId()));
-          });
+          afterEach(() -> contactSearchService.delete(Integer.toString(testContact.getId())));
         });
 
         context("with multiple separately inserted contacts", ()-> {
@@ -167,15 +159,13 @@ public class ContactSearchSpec {
     });
 
     describe("applicationSearchService", ()-> {
-      beforeEach(() -> {
-        applicationSearchService = new ApplicationSearchService(
-                elasticSearchMappingConfig,
-            client, new ApplicationIndexConductor());
-      });
+      beforeEach(() -> applicationSearchService = new ApplicationSearchService(
+              elasticSearchMappingConfig,
+          client, new ApplicationIndexConductor()));
 
       describe("findByField", () -> {
-        List<ContactES> contacts = ApplicationSearchTest.createContacts();
-        ApplicationES applicationES = ApplicationSearchTest.createApplication(1);
+        List<ContactES> contacts = ApplicationSearchIT.createContacts();
+        ApplicationES applicationES = ApplicationSearchIT.createApplication(1);
 
         beforeEach(()-> {
           CustomerES customerES = new CustomerES();
