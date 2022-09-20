@@ -5,20 +5,24 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.search.service.ApplicationIndexConductor;
-import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.ContactSearchService;
-import fi.hel.allu.search.service.CustomerIndexConductor;
+import fi.hel.allu.search.service.*;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.net.InetAddress;
 import java.util.*;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
@@ -26,14 +30,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Spectrum.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@Testcontainers
 public class ContactSearchSpec {
 
-  @Autowired
+
+
+  private static final String CLUSTER_NAME = "allu-cluster";
+  private static final String NODE_NAME = "allu-node";
+  private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.0.0";
+  @Container
+  private static final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE)
+      .withExposedPorts(9300, 9200)
+      .withEnv("xpack.security" + ".enabled", "false")
+      .withEnv("network.host", "_site_")
+      .withEnv("network" + ".publish_host", "_local_")
+      .withEnv("node.name", NODE_NAME)
+      .withEnv("cluster.name", CLUSTER_NAME);
+
   private Client client;
+  private ApplicationSearchService applicationSearchService;
 
   private ContactSearchService contactSearchService;
-  private ApplicationSearchService applicationSearchService;
   private QueryParameters params;
 
   private ContactES testContact = new ContactES(1, "testable name", true);
@@ -42,7 +59,12 @@ public class ContactSearchSpec {
 
   {
     beforeAll(() -> {
+      container.start();
       new TestContextManager(getClass()).prepareTestInstance(this);
+      TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(container.getHost()),
+                                                               container.getMappedPort(9300));
+      Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
+      client = new PreBuiltTransportClient(settings).addTransportAddress(transportAddress);
       elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
     });
 
@@ -50,7 +72,7 @@ public class ContactSearchSpec {
       beforeEach(() -> {
         contactSearchService = new ContactSearchService(
                 elasticSearchMappingConfig,
-            client, new CustomerIndexConductor());
+            client, new ContactIndexConductor());
       });
       describe("findByField", ()-> {
         context("with single inserted contact", ()-> {

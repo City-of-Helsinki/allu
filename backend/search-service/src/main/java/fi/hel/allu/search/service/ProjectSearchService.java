@@ -15,12 +15,12 @@ public class ProjectSearchService extends GenericSearchService<ProjectES, QueryP
   public ProjectSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
       Client client,
-      ApplicationIndexConductor applicationIndexConductor) {
+      ProjectIndexConductor projectIndexConductor) {
     super(elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.PROJECT_TYPE_NAME,
-        applicationIndexConductor,
-        p -> p.getId().toString(),
-        ProjectES.class);
+          client,
+          ElasticSearchMappingConfig.PROJECT_TYPE_NAME,
+          projectIndexConductor,
+          p -> p.getId().toString(),
+          ProjectES.class);
   }
 }

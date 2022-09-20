@@ -14,12 +14,12 @@ public class ContactSearchService extends GenericSearchService<ContactES, QueryP
   public ContactSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
       Client client,
-      CustomerIndexConductor customerIndexConductor) {
+      ContactIndexConductor contactIndexConductor) {
     super(elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.CONTACT_TYPE_NAME,
-        customerIndexConductor,
-        c -> c.getId().toString(),
-        ContactES.class);
+          client,
+          ElasticSearchMappingConfig.CONTACT_TYPE_NAME,
+          contactIndexConductor,
+          c -> c.getId().toString(),
+          ContactES.class);
   }
 }

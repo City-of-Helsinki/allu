@@ -6,16 +6,25 @@ import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.ProjectIndexConductor;
 import fi.hel.allu.search.service.ProjectSearchService;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -23,10 +32,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@Testcontainers
 class ProjectSearchTest {
 
-	@Autowired
+
+
+	private static final String CLUSTER_NAME = "allu-cluster";
+	private static final String NODE_NAME = "allu-node";
+	private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.0.0";
+
+
+	@Container
+	private static final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE)
+			.withExposedPorts(9300, 9200)
+			.withEnv("xpack.security" + ".enabled", "false")
+			.withEnv("network.host", "_site_")
+			.withEnv("network" + ".publish_host", "_local_")
+			.withEnv("node.name", NODE_NAME)
+			.withEnv("cluster.name", CLUSTER_NAME);
 	private Client client;
 	private ProjectSearchService projectSearchService;
 	private ApplicationSearchService applicationSearchService;
@@ -34,17 +57,20 @@ class ProjectSearchTest {
 	private static final String projectName = "testiname";
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() throws UnknownHostException {
+		TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(container.getHost()),
+																														 container.getMappedPort(9300));
+		Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
+		client = new PreBuiltTransportClient(settings).addTransportAddress(transportAddress);
 		ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-		ApplicationIndexConductor conductor = new ApplicationIndexConductor();
 		projectSearchService = new ProjectSearchService(
 				elasticSearchMappingConfig,
 				client,
-				conductor);
+				new ProjectIndexConductor());
 		applicationSearchService = new ApplicationSearchService(
 				elasticSearchMappingConfig,
 				client,
-				conductor);
+				new ApplicationIndexConductor());
 	}
 
 	@Test

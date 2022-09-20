@@ -11,7 +11,8 @@
 
     <artifactId>search-service</artifactId>
     <properties>
-        <elasticsearch.version>5.6.0</elasticsearch.version>
+        <elasticsearch.version>6.0.0</elasticsearch.version>
+        <test.container.version>1.17.3</test.container.version>
     </properties>
 
     <dependencies>
@@ -31,9 +32,14 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <!--The version of Elastic Search library should match the version of Elastic Search. See Elastic Search deployment -->
+            <!--The version of Elasticsearch library should match the version of Elastic Search. See Elastic Search deployment -->
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
@@ -83,19 +89,19 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.17.3</version>
+            <version>${test.container.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.17.3</version>
+            <version>${test.container.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>1.17.3</version>
+            <version>${test.container.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

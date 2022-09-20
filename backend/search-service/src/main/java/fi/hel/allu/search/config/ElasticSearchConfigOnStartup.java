@@ -9,6 +9,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.*;
+
 /**
  * Basic configuration for ElasticSearch mappings done during Search Service start-up.
  */
@@ -42,8 +44,8 @@ public class ElasticSearchConfigOnStartup implements ApplicationListener<Applica
   public void onApplicationEvent(final ApplicationReadyEvent event) {
     applicationSearchService.initIndex(true);
     customerSearchService.initIndex(true);
-    contactSearchService.initIndex(false);
-    projectSearchService.initIndex(false);
+    contactSearchService.initIndex(true);
+    projectSearchService.initIndex(true);
     elasticSearchMappingConfig.updateMappingsVersionToIndex();
   }
 }

@@ -10,7 +10,6 @@ import fi.hel.allu.search.service.ApplicationSearchService;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.jupiter.api.Assertions;
@@ -35,7 +34,7 @@ import static fi.hel.allu.search.ApplicationSearchTest.createUser;
 class ApplicationSearchIT {
 	private static final String CLUSTER_NAME = "allu-cluster";
 	private static final String NODE_NAME = "allu-node";
-	private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:5.6.0";
+	private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.0.0";
 	@Container
 	private static final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE)
 			.withExposedPorts(9300, 9200)
@@ -51,7 +50,7 @@ class ApplicationSearchIT {
 
 	@BeforeEach
 	void SetUp() throws UnknownHostException {
-		TransportAddress transportAddress = new InetSocketTransportAddress(InetAddress.getByName(container.getHost()),
+		TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(container.getHost()),
 				container.getMappedPort(9300));
 		Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
 		client = new PreBuiltTransportClient(settings).addTransportAddress(transportAddress);

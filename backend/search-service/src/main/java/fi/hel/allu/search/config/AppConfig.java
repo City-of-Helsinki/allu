@@ -3,7 +3,7 @@ package fi.hel.allu.search.config;
 import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import javax.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +29,7 @@ public class AppConfig {
   public Client client() throws UnknownHostException {
     Settings settings = Settings.builder().put("cluster.name", "allu-cluster").build();
     Client client = new PreBuiltTransportClient(settings).addTransportAddress(
-        new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
+        new TransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
     return client;
   }
 

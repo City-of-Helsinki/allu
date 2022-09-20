@@ -10,8 +10,7 @@ import org.elasticsearch.index.IndexNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_ALIAS;
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.CUSTOMER_INDEX_ALIAS;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.*;
 
 public class SearchTestUtil {
 
@@ -22,16 +21,22 @@ public class SearchTestUtil {
       // delete indexes
       client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_INDEX_ALIAS)).actionGet();
       client.admin().indices().delete(new DeleteIndexRequest(CUSTOMER_INDEX_ALIAS)).actionGet();
+      client.admin().indices().delete(new DeleteIndexRequest(PROJECT_INDEX_ALIAS)).actionGet();
+      client.admin().indices().delete(new DeleteIndexRequest(CONTACT_INDEX_ALIAS)).actionGet();
     } catch (IndexNotFoundException e) {
       System.out.println("Index not found for deleting...");
     }
 
     elasticSearchMappingConfig.initializeIndex(APPLICATION_INDEX_ALIAS);
     elasticSearchMappingConfig.initializeIndex(CUSTOMER_INDEX_ALIAS);
+    elasticSearchMappingConfig.initializeIndex(PROJECT_INDEX_ALIAS);
+    elasticSearchMappingConfig.initializeIndex(CONTACT_INDEX_ALIAS);
 
     try {
       client.admin().indices().prepareGetMappings(APPLICATION_INDEX_ALIAS).get();
       client.admin().indices().prepareGetMappings(CUSTOMER_INDEX_ALIAS).get();
+      client.admin().indices().prepareGetMappings(PROJECT_INDEX_ALIAS).get();
+      client.admin().indices().prepareGetMappings(CONTACT_INDEX_ALIAS).get();
     } catch (IndexNotFoundException e) {
       System.out.println("Warning, indexes were not created immediately... test may fail because of this");
     }

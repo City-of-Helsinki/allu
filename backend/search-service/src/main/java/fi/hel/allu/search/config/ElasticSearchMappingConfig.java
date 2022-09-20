@@ -29,8 +29,11 @@ import java.util.Collections;
 public class ElasticSearchMappingConfig {
 
   public static final String APPLICATION_INDEX_ALIAS = "applications";
+
+  public static final String PROJECT_INDEX_ALIAS = "projects";
   public static final String CUSTOMER_INDEX_ALIAS = "customers";
 
+  public static final String CONTACT_INDEX_ALIAS = "contacts";
   public static final String PROPERTIES_INDEX_ALIAS = "properties";
 
   public static final String APPLICATION_TYPE_NAME = "application";
@@ -45,7 +48,7 @@ public class ElasticSearchMappingConfig {
   private static final String FILTER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword_filter";
 
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
-  private static final String MAPPINGS_VERSION_NUMBER = "25";
+  private static final String MAPPINGS_VERSION_NUMBER = "26";
 
   private static final String VERSION_INDEX_NAME = "versions";
   private static final String VERSION_TYPE_NAME = "version";
@@ -88,7 +91,6 @@ public class ElasticSearchMappingConfig {
             .setSettings(getIndexSettingsForApplication());
         createIndexRequestBuilder.addMapping(MAPPING_TYPE, getMappingBuilderForDefaultApplicationsIndex());
         createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
-        createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
         createIndexRequestBuilder.execute().actionGet();
       } else if (indexName.startsWith(CUSTOMER_INDEX_ALIAS)) {
         CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
@@ -96,6 +98,18 @@ public class ElasticSearchMappingConfig {
         createIndexRequestBuilder.addMapping(MAPPING_TYPE, getMappingBuilderForDefaultCustomersIndex());
         createIndexRequestBuilder.addMapping(CUSTOMER_TYPE_NAME, getMappingBuilderForCustomer());
         createIndexRequestBuilder.execute().actionGet();
+      } else if (indexName.startsWith(PROJECT_INDEX_ALIAS)) {
+        CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
+            .setSettings(getIndexSettingsForApplication());
+        createIndexRequestBuilder.addMapping(MAPPING_TYPE, getMappingBuilderForDefaultApplicationsIndex());
+       createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
+        createIndexRequestBuilder.execute().actionGet();
+      } else if (indexName.startsWith(CONTACT_INDEX_ALIAS)) {
+        CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
+            .setSettings(getIndexSettingsForCustomer());
+        createIndexRequestBuilder.addMapping(MAPPING_TYPE, getMappingBuilderForDefaultCustomersIndex());
+        createIndexRequestBuilder.execute().actionGet();
+        createIndexRequestBuilder.addMapping(CONTACT_TYPE_NAME, getMappingBuilderForCustomer());
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
@@ -323,13 +337,12 @@ public class ElasticSearchMappingConfig {
 
 
   private XContentBuilder autocompleteSettingsAnalyzer() throws IOException {
-    XContentBuilder builder = XContentFactory.jsonBuilder()
+    return XContentFactory.jsonBuilder()
         .startObject()
         .field("type", "custom")
         .field("tokenizer", "standard")
         .array("filter", "lowercase", FILTER_AUTOCOMPLETE)
         .endObject();
-    return builder;
   }
 
   private XContentBuilder autocompleteSettingsAnalyzerWithKeywordTokenizer() throws IOException {
@@ -398,8 +411,6 @@ public class ElasticSearchMappingConfig {
             .endObject()
             .startObject("analyzer")
               .field(ANALYZER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsAnalyzer()))
-            .endObject()
-            .startObject("analyzer")
               .field(ANALYZER_AUTOCOMPLETE_KEYWORD).copyCurrentStructure(parser(autocompleteSettingsAnalyzerWithKeywordTokenizer()))
             .endObject()
             .startObject("normalizer")
