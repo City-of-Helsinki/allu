@@ -66,6 +66,13 @@
     load_path=/tmp/allu_reporting_database.tar
   become: yes
 
+- name: Start Docker bridge network if not already running
+  docker_network:
+    name: allu_backend_bridge_network
+    driver: bridge
+    appends: yes
+  become: yes
+
 - name: start container
   docker_container:
     name: allu_reporting_database_container
@@ -75,6 +82,8 @@
       - /srv/data/allu/reporting_database/data:/var/lib/postgresql/data:rw
     published_ports:
       - "5433:5432"
+    networks:
+      - name: allu_backend_bridge_network
   become: yes
 
 - name: remove Docker image tar file

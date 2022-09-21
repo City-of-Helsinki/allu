@@ -61,6 +61,13 @@
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
   become: yes
 
+- name: Start Docker bridge network if not already running
+  docker_network:
+    name: allu_backend_bridge_network
+    driver: bridge
+    appends: yes
+  become: yes
+
 - name: Start allu_backend container
   docker_container:
     name: allu_backend
@@ -71,4 +78,6 @@
     published_ports:
       - "9040:9040"
       - "9050:9050"
+    networks:
+      - name: allu_backend_bridge_network
   become: yes

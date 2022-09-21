@@ -66,6 +66,13 @@
     load_path=/tmp/allu_etl.tar
   become: yes
 
+- name: Start Docker bridge network if not already running
+  docker_network:
+    name: allu_backend_bridge_network
+    driver: bridge
+    appends: yes
+  become: yes
+
 - name: start container
   docker_container:
     name: allu_etl_container
@@ -73,6 +80,8 @@
     restart_policy: always
     volumes:
       - /home/allu:/servicehome:rw
+    networks:
+      - name: allu_backend_bridge_network
   become: yes
 
 - name: remove Docker image tar file
