@@ -5,6 +5,7 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.util.Constants;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -28,7 +29,7 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
       CustomerIndexConductor customerIndexConductor) {
     super(elasticSearchMappingConfig,
         client,
-        ElasticSearchMappingConfig.CUSTOMER_TYPE_NAME,
+        Constants.CUSTOMER_TYPE_NAME,
         customerIndexConductor,
         c -> c.getId().toString(),
         CustomerES.class);
@@ -63,8 +64,8 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
 
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
-    logger.debug("Searching index {} with the following query:\n {}", ElasticSearchMappingConfig.CUSTOMER_INDEX_ALIAS,
-        srBuilder.toString());
+    logger.debug("Searching index {} with the following query:\n {}", Constants.CUSTOMER_INDEX_ALIAS,
+                 srBuilder.toString());
     return srBuilder;
   }
 }

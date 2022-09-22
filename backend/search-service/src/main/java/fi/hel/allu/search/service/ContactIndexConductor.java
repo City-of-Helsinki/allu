@@ -1,13 +1,13 @@
 package fi.hel.allu.search.service;
 
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.search.util.Constants;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ContactIndexConductor extends IndexConductor {
 
 	public ContactIndexConductor() {
-		super(ElasticSearchMappingConfig.CONTACT_INDEX_ALIAS);
+		super(Constants.CONTACT_INDEX_ALIAS);
 	}
 
 }

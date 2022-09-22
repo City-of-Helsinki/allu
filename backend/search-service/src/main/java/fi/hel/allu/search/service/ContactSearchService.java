@@ -3,6 +3,7 @@ package fi.hel.allu.search.service;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.util.Constants;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class ContactSearchService extends GenericSearchService<ContactES, QueryP
       ContactIndexConductor contactIndexConductor) {
     super(elasticSearchMappingConfig,
           client,
-          ElasticSearchMappingConfig.CONTACT_TYPE_NAME,
+          Constants.CONTACT_TYPE_NAME,
           contactIndexConductor,
           c -> c.getId().toString(),
           ContactES.class);

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.search.domain.LocationES;
+import fi.hel.allu.search.util.Constants;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -43,11 +44,11 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
       Client client,
       ApplicationIndexConductor applicationIndexConductor) {
     super(elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME,
-        applicationIndexConductor,
+          client,
+          Constants.APPLICATION_TYPE_NAME,
+          applicationIndexConductor,
         a -> a.getId().toString(),
-        ApplicationES.class);
+          ApplicationES.class);
   }
 
   public Page<ApplicationES> findApplicationByField(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {

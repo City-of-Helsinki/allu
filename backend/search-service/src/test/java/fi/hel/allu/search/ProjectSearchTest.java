@@ -24,8 +24,8 @@ import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_ALIAS;
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.PROJECT_INDEX_ALIAS;
+import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
+import static fi.hel.allu.search.util.Constants.PROJECT_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

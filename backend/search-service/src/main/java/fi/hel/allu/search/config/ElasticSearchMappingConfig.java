@@ -9,6 +9,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+
+import static fi.hel.allu.search.util.Constants.*;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
@@ -27,19 +29,6 @@ import java.util.Collections;
  */
 @Component
 public class ElasticSearchMappingConfig {
-
-  public static final String APPLICATION_INDEX_ALIAS = "applications";
-
-  public static final String PROJECT_INDEX_ALIAS = "projects";
-  public static final String CUSTOMER_INDEX_ALIAS = "customers";
-
-  public static final String CONTACT_INDEX_ALIAS = "contacts";
-  public static final String PROPERTIES_INDEX_ALIAS = "properties";
-
-  public static final String APPLICATION_TYPE_NAME = "application";
-  public static final String PROJECT_TYPE_NAME = "project";
-  public static final String CUSTOMER_TYPE_NAME = "customer";
-  public static final String CONTACT_TYPE_NAME = "contact";
 
   private static final String ANALYZER_CASE_INSENSITIVE_SORT = "case_insensitive_sort";
   private static final String ANALYZER_AUTOCOMPLETE = "autocomplete";

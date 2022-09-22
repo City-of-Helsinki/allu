@@ -10,7 +10,7 @@ import org.elasticsearch.index.IndexNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.*;
+import static fi.hel.allu.search.util.Constants.*;
 
 public class SearchTestUtil {
 

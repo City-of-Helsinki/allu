@@ -32,7 +32,7 @@ import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_ALIAS;
+import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

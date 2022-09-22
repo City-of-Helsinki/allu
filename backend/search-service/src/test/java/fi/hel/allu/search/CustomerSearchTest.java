@@ -25,7 +25,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.CUSTOMER_INDEX_ALIAS;
+import static fi.hel.allu.search.util.Constants.CUSTOMER_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
 

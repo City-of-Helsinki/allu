@@ -5,6 +5,7 @@ import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.ContactSearchService;
+import fi.hel.allu.search.util.Constants;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
