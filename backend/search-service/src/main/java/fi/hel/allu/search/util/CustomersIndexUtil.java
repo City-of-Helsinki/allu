@@ -5,14 +5,11 @@ import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
-import fi.hel.allu.search.domain.RoleTypedCustomerES;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static fi.hel.allu.search.util.Constants.CUSTOMER_INDEX_ALIAS;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -20,10 +17,14 @@ import static java.util.stream.Collectors.groupingBy;
  */
 public class CustomersIndexUtil {
 
+
+  private CustomersIndexUtil() {
+    throw new IllegalStateException("Utility class");
+  }
   private static final Map<CustomerRoleType, String> customerRoleTypeToPropertyName;
 
   static {
-    customerRoleTypeToPropertyName = new HashMap<>();
+    customerRoleTypeToPropertyName = new EnumMap<>(CustomerRoleType.class);
     customerRoleTypeToPropertyName.put(CustomerRoleType.APPLICANT, "applicant");
     customerRoleTypeToPropertyName.put(CustomerRoleType.PROPERTY_DEVELOPER, "propertyDeveloper");
     customerRoleTypeToPropertyName.put(CustomerRoleType.CONTRACTOR, "contractor");
@@ -35,7 +36,7 @@ public class CustomersIndexUtil {
    * inside an {@link fi.hel.allu.search.domain.ApplicationES}. It's assumed that the partially updated customer has the following path:
    * <ApplicationES>.customers.<CustomerRoleType>.customer.
    */
-  public static Map getCustomerUpdateStructure(List<CustomerRoleType> customerRoleTypes, CustomerES customerES) {
+  public static Map<String, Object> getCustomerUpdateStructure(List<CustomerRoleType> customerRoleTypes, CustomerES customerES) {
     return getCustomerUpdateStructure(customerRoleTypes.stream().collect(
       Collectors.toMap(customerRoleType -> customerRoleType, __ -> customerES)));
   }
@@ -47,7 +48,7 @@ public class CustomersIndexUtil {
         e -> Collections.singletonMap("customer", e.getValue())
       )
     );
-    return Collections.singletonMap("customers", customerRoleTypeToCustomer);
+    return Collections.singletonMap(CUSTOMER_INDEX_ALIAS, customerRoleTypeToCustomer);
   }
 
   /**
@@ -59,12 +60,12 @@ public class CustomersIndexUtil {
    * @param applicationWithContactsESs  List of <code>ApplicationWithContactES</code> objects whose update map is requested.
    * @return A map having application id as key and ES update structure as value.
    */
-  public static Map<Integer, Map> getContactsUpdateStructure(
+  public static Map<Integer,  Map<String, Map<String, Map<String, List<ContactES>>>>> getContactsUpdateStructure(
       List<ApplicationWithContactsES> applicationWithContactsESs) {
     Map<Integer, List<ApplicationWithContactsES>> applicationIdToATC = applicationWithContactsESs.stream()
         .collect(groupingBy(ApplicationWithContactsES::getApplicationId));
     return applicationIdToATC.entrySet().stream().collect(
-        Collectors.toMap(entry -> entry.getKey(), entry -> getSingleContactsUpdateStructure(entry.getValue())));
+        Collectors.toMap(Map.Entry::getKey, entry -> getSingleContactsUpdateStructure(entry.getValue())));
   }
 
   /**
@@ -75,11 +76,11 @@ public class CustomersIndexUtil {
    *
    * @param applicationWithContactsESs  List of <code>ApplicationWithContactES</code> objects having the same application id.
    */
-  private static Map getSingleContactsUpdateStructure(List<ApplicationWithContactsES> applicationWithContactsESs) {
+  private static Map<String, Map<String, Map<String, List<ContactES>>>> getSingleContactsUpdateStructure(List<ApplicationWithContactsES> applicationWithContactsESs) {
     Map<String, Map<String, List<ContactES>>> customerRoleTypeToContacts = applicationWithContactsESs.stream().collect(Collectors.toMap(
         appWithContact -> customerRoleTypeToPropertyName.get(appWithContact.getCustomerRoleType()),
         appWithContact -> Collections.singletonMap("contacts", appWithContact.getContacts())));
-    return Collections.singletonMap("customers", customerRoleTypeToContacts);
+    return Collections.singletonMap(CUSTOMER_INDEX_ALIAS, customerRoleTypeToContacts);
   }
 
   /**
@@ -105,6 +106,6 @@ public class CustomersIndexUtil {
         }
       )
     );
-    return Collections.singletonMap("customers", customerRoleTypeToContacts);
+    return Collections.singletonMap(CUSTOMER_INDEX_ALIAS, customerRoleTypeToContacts);
   }
 }

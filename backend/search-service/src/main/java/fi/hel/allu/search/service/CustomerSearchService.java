@@ -64,8 +64,10 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
 
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
-    logger.debug("Searching index {} with the following query:\n {}", Constants.CUSTOMER_INDEX_ALIAS,
-                 srBuilder.toString());
+    if (logger.isDebugEnabled()) {
+      logger.debug("Searching index {} with the following query:\n {}", Constants.CUSTOMER_INDEX_ALIAS,
+                   srBuilder);
+    }
     return srBuilder;
   }
 }
