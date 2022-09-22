@@ -38,46 +38,46 @@ public class ContactController {
     this.applicationSearchService = applicationSearchService;
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<Void> create(@RequestBody List<ContactES> contactES) {
     contactSearchService.bulkInsert(contactES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/update", method = RequestMethod.PUT)
+  @PutMapping(value = "/update")
   public ResponseEntity<Void> update(@RequestBody List<ContactES> contactESs) {
     contactSearchService.bulkUpdate(contactESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications", method = RequestMethod.PUT)
+  @PutMapping(value = "/applications")
   public ResponseEntity<Void> updateContactsOfApplications(@RequestBody List<ApplicationWithContactsES> applicationWithContacts) {
     Map<Integer, Object> contactsUpdateStructure =
         CustomersIndexUtil.getContactsUpdateStructure(applicationWithContacts).entrySet().stream().collect(
-            Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<Integer, Map> to Map<Integer, Object>
+            Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); // rather silly way to cast Map<Integer, Map> to Map<Integer, Object>
     applicationSearchService.partialUpdate(contactsUpdateStructure, false);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     contactSearchService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/index", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/index")
   public ResponseEntity<Void> deleteIndex() {
     contactSearchService.deleteIndex();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(contactSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  @PostMapping(value = "/sync/data")
   public ResponseEntity<Void> syncData(@Valid @RequestBody List<ContactES> contactESs) {
     contactSearchService.syncData(contactESs);
     return new ResponseEntity<>(HttpStatus.OK);

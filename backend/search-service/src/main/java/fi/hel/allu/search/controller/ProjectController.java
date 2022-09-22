@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/projects")
 public class ProjectController {
 
-  private ProjectSearchService projectSearchService;
+  private final ProjectSearchService projectSearchService;
 
   @Autowired
   public ProjectController(ProjectSearchService projectSearchService) {
@@ -30,28 +30,28 @@ public class ProjectController {
   }
 
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<Void> create(@RequestBody ProjectES projectES) {
     projectSearchService.insert(projectES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   public ResponseEntity<Void> update(
       @PathVariable String id,
-      @RequestBody(required = true) ProjectES projectES) {
+      @RequestBody ProjectES projectES) {
     projectES.setId(Integer.parseInt(id));
     projectSearchService.bulkUpdate(Collections.singletonList(projectES));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/update", method = RequestMethod.PUT)
-  public ResponseEntity<Void> update(@RequestBody(required = true) List<ProjectES> projectESs) {
+  @PutMapping(value = "/update")
+  public ResponseEntity<Void> update(@RequestBody List<ProjectES> projectESs) {
     projectSearchService.bulkUpdate(projectESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(
       @PathVariable String id) {
     projectSearchService.delete(id);
@@ -59,19 +59,19 @@ public class ProjectController {
   }
 
 
-  @RequestMapping(value = "/index", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/index")
   public ResponseEntity<Void> deleteIndex() {
     projectSearchService.deleteIndex();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(projectSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  @PostMapping(value = "/sync/data")
   public ResponseEntity<Void> syncData(@Valid @RequestBody List<ProjectES> projectESs) {
     projectSearchService.syncData(projectESs);
     return new ResponseEntity<>(HttpStatus.OK);

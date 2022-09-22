@@ -31,8 +31,8 @@ import fi.hel.allu.search.util.CustomersIndexUtil;
 @RequestMapping("/customers")
 public class CustomerController {
 
-  private CustomerSearchService customerSearchService;
-  private ApplicationSearchService applicationSearchService;
+  private final CustomerSearchService customerSearchService;
+  private final ApplicationSearchService applicationSearchService;
 
   @Autowired
   public CustomerController(CustomerSearchService customerSearchService,
@@ -41,50 +41,50 @@ public class CustomerController {
     this.applicationSearchService = applicationSearchService;
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<Void> create(@RequestBody CustomerES customerES) {
     customerSearchService.insert(customerES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/update", method = RequestMethod.PUT)
+  @PutMapping(value = "/update")
   public ResponseEntity<Void> update(@RequestBody List<CustomerES> customerESses) {
     customerSearchService.bulkUpdate(customerESses);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/applications")
   public ResponseEntity<Void> updateCustomerOfApplications(
       @PathVariable String id,
       @RequestBody Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleTypes) {
     CustomerES customerES = customerSearchService.findObjectById(id)
         .orElseThrow(() -> new NoSuchEntityException("No such customer in ElasticSearch", id));
     Map<Integer, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
-        acrt -> acrt.getKey(),
+        Map.Entry::getKey,
         acrt -> CustomersIndexUtil.getCustomerUpdateStructure(acrt.getValue(), customerES)));
     applicationSearchService.partialUpdate(idToCustomer, false);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     customerSearchService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/index", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/index")
   public ResponseEntity<Void> deleteIndex() {
     customerSearchService.deleteIndex();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(customerSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search/{type}", method = RequestMethod.POST)
+  @PostMapping(value = "/search/{type}")
   public ResponseEntity<Page<Integer>> searchByType(@PathVariable CustomerType type,
       @Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest,
@@ -93,7 +93,7 @@ public class CustomerController {
   }
 
 
-  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  @PostMapping(value = "/sync/data")
   public ResponseEntity<Void> syncData(@Valid @RequestBody List<CustomerES> customerESs) {
     customerSearchService.syncData(customerESs);
     return new ResponseEntity<>(HttpStatus.OK);
