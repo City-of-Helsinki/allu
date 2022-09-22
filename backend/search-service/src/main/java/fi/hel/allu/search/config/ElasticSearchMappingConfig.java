@@ -47,9 +47,12 @@ public class ElasticSearchMappingConfig {
   private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
   private static final String FILTER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword_filter";
 
+  private static final String FILTER = "filter";
+
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
   private static final String MAPPINGS_VERSION_NUMBER = "26";
 
+  private static final String FIELDS = "fields";
   private static final String VERSION_INDEX_NAME = "versions";
   private static final String VERSION_TYPE_NAME = "version";
   private static final String VERSION_NUMBER_KEY = "versionNumber";
@@ -57,6 +60,7 @@ public class ElasticSearchMappingConfig {
   private static final String MAPPING_TYPE = "_default_";
 
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
+  private static final String BUILDER_ERROR = "Unexpected exception while creating ElasticSearch mapping builder";
   private final Client client;
 
   @Autowired
@@ -135,7 +139,7 @@ public class ElasticSearchMappingConfig {
   /**
    * Default mappings for applications index that's applicable to all types.
    *
-   * @return
+   * @return XContentBuilder
    */
   public XContentBuilder getMappingBuilderForDefaultApplicationsIndex() {
     try {
@@ -146,10 +150,12 @@ public class ElasticSearchMappingConfig {
             .endObject()
           .endObject()
         .endObject();
+    if(logger.isDebugEnabled()) {
       logger.debug("Default applications index mapping: {}", mappingBuilder.string());
+    }
       return mappingBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -168,11 +174,11 @@ public class ElasticSearchMappingConfig {
                     .field("userName").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer()))
                   .startObject("realName")
                     .field("type", "text")
-                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                    .field(FIELDS).copyCurrentStructure(parser(alphasort()))
                   .endObject()
                 .endObject()
               .endObject()
-              .startObject("customers") // alphabetical sorting for applicant name i.e. customers.applicant.customer.name
+              .startObject(CUSTOMER_INDEX_ALIAS) // alphabetical sorting for applicant name i.e. customers.applicant.customer.name
                 .startObject(PROPERTIES_INDEX_ALIAS)
                   .startObject("applicant")
                     .startObject(PROPERTIES_INDEX_ALIAS)
@@ -181,7 +187,7 @@ public class ElasticSearchMappingConfig {
                           .field("name").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
                         .endObject()
                       .endObject()
-                      .startObject("contacts")
+                      .startObject(CONTACT_INDEX_ALIAS)
                         .startObject(PROPERTIES_INDEX_ALIAS)
                           .field("name").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
                         .endObject()
@@ -196,7 +202,7 @@ public class ElasticSearchMappingConfig {
                   .field("extendedAddress").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
                   .startObject("streetAddress")
                     .field("type", "text")
-                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                    .field(FIELDS).copyCurrentStructure(parser(alphasort()))
                   .endObject()
                   .startObject("searchGeometry")
                     .field("type", "geo_shape")
@@ -205,11 +211,11 @@ public class ElasticSearchMappingConfig {
                   .endObject()
                 .endObject()
               .endObject()
-              .startObject("project") // alphabetical sorting for project.identifier
+              .startObject(PROJECT_TYPE_NAME) // alphabetical sorting for project.identifier
                 .startObject(PROPERTIES_INDEX_ALIAS)
                   .startObject("identifier")
                     .field("type", "text")
-                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                    .field(FIELDS).copyCurrentStructure(parser(alphasort()))
                   .endObject()
                 .endObject()
               .endObject()
@@ -218,10 +224,12 @@ public class ElasticSearchMappingConfig {
             .field("date_detection", "false")
           .endObject();
 
-      logger.debug("Applications mapping: {}", mappingBuilder.string());
+      if (logger.isDebugEnabled()) {
+        logger.debug("Applications mapping: {}", mappingBuilder.string());
+      }
       return mappingBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -239,10 +247,12 @@ public class ElasticSearchMappingConfig {
               .field("customerReference").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
             .endObject()
           .endObject();
-      logger.debug("Project mapping: {}", mappingBuilder.string());
+      if (logger.isDebugEnabled()) {
+        logger.debug("Project mapping: {}", mappingBuilder.string());
+      }
       return mappingBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -252,10 +262,12 @@ public class ElasticSearchMappingConfig {
   public XContentBuilder getIndexSettingsForApplication() {
     try {
       XContentBuilder settingsBuilder = commonIndexSettings();
-      logger.debug("application index settings {}", settingsBuilder.string());
+      if (logger.isDebugEnabled()) {
+        logger.debug("application index settings {}", settingsBuilder.string());
+      }
       return settingsBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -273,10 +285,13 @@ public class ElasticSearchMappingConfig {
               .endObject()
             .endObject()
           .endObject();
-      logger.debug("Default customers index mapping: {}", mappingBuilder.string());
+
+      if (logger.isDebugEnabled()) {
+        logger.debug("Default customers index mapping: {}", mappingBuilder.string());
+      }
       return mappingBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -291,10 +306,12 @@ public class ElasticSearchMappingConfig {
               .field("registryKey").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer()))
             .endObject()
           .endObject();
-      logger.debug("Customers mapping: {}", mappingBuilder.string());
+      if (logger.isDebugEnabled()) {
+        logger.debug("Customers mapping: {}", mappingBuilder.string());
+      }
       return mappingBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -304,10 +321,12 @@ public class ElasticSearchMappingConfig {
   public XContentBuilder getIndexSettingsForCustomer() {
     try {
       XContentBuilder settingsBuilder = commonIndexSettings();
-      logger.debug("customer index settings {}", settingsBuilder.string());
+      if (logger.isDebugEnabled()) {
+        logger.debug("customer index settings {}", settingsBuilder.string());
+      }
       return settingsBuilder;
     } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -325,13 +344,12 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder ngramTokenFilter(int minGram, int maxGram) throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    return XContentFactory.jsonBuilder()
         .startObject()
           .field("type", "edge_ngram")
           .field("min_gram", String.valueOf(minGram))
           .field("max_gram", String.valueOf(maxGram))
         .endObject();
-    return builder;
 
   }
 
@@ -341,53 +359,49 @@ public class ElasticSearchMappingConfig {
         .startObject()
         .field("type", "custom")
         .field("tokenizer", "standard")
-        .array("filter", "lowercase", FILTER_AUTOCOMPLETE)
+        .array(FILTER, "lowercase", FILTER_AUTOCOMPLETE)
         .endObject();
   }
 
   private XContentBuilder autocompleteSettingsAnalyzerWithKeywordTokenizer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    return XContentFactory.jsonBuilder()
       .startObject()
         .field("type", "custom")
         .field("tokenizer", "keyword")
-        .array("filter", "lowercase", FILTER_AUTOCOMPLETE_KEYWORD)
+        .array(FILTER, "lowercase", FILTER_AUTOCOMPLETE_KEYWORD)
       .endObject();
-    return builder;
   }
 
   /**
    * ElasticSearch analyzer settings for mapping with autocomplete and alphabetical sorting.
    */
   private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    return XContentFactory.jsonBuilder()
         .startObject()
           .field("type", "text")
           .field("analyzer", ANALYZER_AUTOCOMPLETE)
           .field("search_analyzer", "standard")
-          .field("fields").copyCurrentStructure(parser(alphasort()))
+          .field(FIELDS).copyCurrentStructure(parser(alphasort()))
         .endObject();
-    return builder;
   }
 
   private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    return XContentFactory.jsonBuilder()
         .startObject()
           .field("type", "text")
           .field("analyzer", ANALYZER_AUTOCOMPLETE_KEYWORD)
           .field("search_analyzer", "keyword")
-          .field("fields").copyCurrentStructure(parser(alphasort()))
+          .field(FIELDS).copyCurrentStructure(parser(alphasort()))
         .endObject();
-    return builder;
   }
 
   private XContentBuilder caseInsensitiveSortAnalyzer() throws IOException {
-    XContentBuilder builder =  XContentFactory.jsonBuilder()
+    return XContentFactory.jsonBuilder()
         .startObject()
           .field("type", "custom")
           .array("char_filter")
-          .array("filter", "lowercase", "asciifolding")
+          .array(FILTER, "lowercase", "asciifolding")
         .endObject();
-    return builder;
   }
 
   private XContentBuilder alphasort() throws IOException {
@@ -405,7 +419,7 @@ public class ElasticSearchMappingConfig {
     return XContentFactory.jsonBuilder()
         .startObject()
           .startObject("analysis")
-            .startObject("filter")
+            .startObject(FILTER)
               .field(FILTER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsFilter()))
               .field(FILTER_AUTOCOMPLETE_KEYWORD).copyCurrentStructure(parser(autocompleteKeywordSettingsFilter()))
             .endObject()

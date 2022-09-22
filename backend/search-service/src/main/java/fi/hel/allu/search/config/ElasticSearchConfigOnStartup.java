@@ -9,7 +9,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.*;
 
 /**
  * Basic configuration for ElasticSearch mappings done during Search Service start-up.

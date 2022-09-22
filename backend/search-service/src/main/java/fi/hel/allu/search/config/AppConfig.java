@@ -28,9 +28,9 @@ public class AppConfig {
   @Bean
   public Client client() throws UnknownHostException {
     Settings settings = Settings.builder().put("cluster.name", "allu-cluster").build();
-    Client client = new PreBuiltTransportClient(settings).addTransportAddress(
+    return new PreBuiltTransportClient(settings).addTransportAddress(
         new TransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
-    return client;
+
   }
 
   @Bean
