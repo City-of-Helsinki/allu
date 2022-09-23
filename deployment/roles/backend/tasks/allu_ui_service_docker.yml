@@ -5,7 +5,6 @@
     registry: "{{ gitlab_registry_url }}"
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
-  become: yes
 
 - name: Build allu_ui_service Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
@@ -21,7 +20,6 @@
     name: "allu_ui_service:{{ branch }}"
     force_absent: true
     force_source: true
-  become: yes
 
 - name: Push built allu_ui_service Docker image to GitLab repository
   local_action:
@@ -30,7 +28,6 @@
     source: local
     name: "allu_ui_service:{{ branch }}"
     repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
-  become: yes
 
 - name: Start Docker services on remote host
   service: name=docker state=started
