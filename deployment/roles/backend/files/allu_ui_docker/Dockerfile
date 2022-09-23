@@ -74,4 +74,4 @@ ENV SERVICE_MEMORY=$SERVICE_MEMORY
 # JAR files
 RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/allu-ui-service/1.0-SNAPSHOT/allu-ui-service-1.0-SNAPSHOT.jar --output-document /home/allu/allu-ui-service/allu-ui-service.jar;
 ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/allu-ui-service \
-    -jar /home/allu/allu-ui-service/allu-ui-service.jar --spring.config.location=file:/home/allu/allu-ui-service/allu-ui-service.properties
+    -jar /home/allu/allu-ui-service/allu-ui-service.jar --spring.config.additional-location=file:/home/allu/allu-ui-service/allu-ui-service.properties
