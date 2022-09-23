@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 
 public class PdfResponseBuilder {
 
-  public static ResponseEntity<byte[]> createResponseEntity(byte[] bytes) {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-  }
+    public static ResponseEntity<byte[]> createResponseEntity(byte[] bytes) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    }
 }

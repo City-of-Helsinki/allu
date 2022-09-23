@@ -27,33 +27,29 @@ import java.util.stream.Collectors;
 @Tag(name = "Authentication")
 public class AuthenticationController {
 
-		private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-		private final ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
-		public AuthenticationController(AuthenticationManager authenticationManager,
-																		ApplicationProperties applicationProperties) {
-				this.authenticationManager = authenticationManager;
-				this.applicationProperties = applicationProperties;
-		}
+    public AuthenticationController(AuthenticationManager authenticationManager,
+                                    ApplicationProperties applicationProperties) {
+        this.authenticationManager = authenticationManager;
+        this.applicationProperties = applicationProperties;
+    }
 
-		@PostMapping
-		public ResponseEntity<String> login(@Valid @RequestBody LoginExt loginRequest) {
-				Authentication authentication = authenticationManager.authenticate(
-								new UsernamePasswordAuthenticationToken(
-												loginRequest.getUsername(),
-												loginRequest.getPassword()
-								)
-				);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-				User user = (User) authentication.getPrincipal();
-				Map<String, Object> roleMap = Collections.singletonMap(
-								TokenUtil.PROPERTY_ROLE_ALLU_PUBLIC,
-								user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-				String token = new TokenUtil(applicationProperties.getJwtSecret()).createToken(
-								ZonedDateTime.now().plusMinutes(applicationProperties.getJwtExpirationTime()),
-								user.getUsername(),
-								roleMap);
-				return ResponseEntity.ok(token);
-		}
+    @PostMapping
+    public ResponseEntity<String> login(@Valid @RequestBody LoginExt loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = (User) authentication.getPrincipal();
+        Map<String, Object> roleMap = Collections.singletonMap(TokenUtil.PROPERTY_ROLE_ALLU_PUBLIC,
+                                                               user.getAuthorities().stream()
+                                                                       .map(GrantedAuthority::getAuthority)
+                                                                       .collect(Collectors.toList()));
+        String token = new TokenUtil(applicationProperties.getJwtSecret()).createToken(
+                ZonedDateTime.now().plusMinutes(applicationProperties.getJwtExpirationTime()), user.getUsername(),
+                roleMap);
+        return ResponseEntity.ok(token);
+    }
 }

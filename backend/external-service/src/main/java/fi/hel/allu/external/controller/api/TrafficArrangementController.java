@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/v1/trafficarrangements", "/v2/trafficarrangements"})
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Traffic arrangements")
-public class TrafficArrangementController extends BaseApplicationController<TrafficArrangementExt, TrafficArrangementExtMapper> {
+public class TrafficArrangementController extends BaseApplicationController<TrafficArrangementExt,
+        TrafficArrangementExtMapper> {
 
+    private final TrafficArrangementExtMapper trafficArrangementMapper;
 
-  private final TrafficArrangementExtMapper trafficArrangementMapper;
+    public TrafficArrangementController(ApplicationServiceExt applicationService,
+                                        Validators validators,
+                                        DecisionService decisionService,
+                                        TerminationService terminationService,
+                                        TrafficArrangementExtMapper trafficArrangementMapper) {
+        super(applicationService, decisionService, validators, terminationService);
+        this.trafficArrangementMapper = trafficArrangementMapper;
+    }
 
-  public TrafficArrangementController(ApplicationServiceExt applicationService,
-                                      Validators validators,
-                                      DecisionService decisionService,
-                                      TerminationService terminationService,
-                                      TrafficArrangementExtMapper trafficArrangementMapper) {
-    super(applicationService, decisionService, validators, terminationService);
-    this.trafficArrangementMapper = trafficArrangementMapper;
-  }
-
-  @Override
-  protected TrafficArrangementExtMapper getMapper() {
-    return trafficArrangementMapper;
-  }
+    @Override
+    protected TrafficArrangementExtMapper getMapper() {
+        return trafficArrangementMapper;
+    }
 }

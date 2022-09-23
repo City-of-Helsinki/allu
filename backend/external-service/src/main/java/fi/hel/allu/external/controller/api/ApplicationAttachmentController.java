@@ -29,65 +29,61 @@ import java.util.List;
 @Tag(name = "Application attachments")
 public class ApplicationAttachmentController {
 
-		private final ApplicationServiceExt applicationService;
+    private final ApplicationServiceExt applicationService;
 
-		public ApplicationAttachmentController(ApplicationServiceExt applicationService) {
-				this.applicationService = applicationService;
-		}
+    public ApplicationAttachmentController(ApplicationServiceExt applicationService) {
+        this.applicationService = applicationService;
+    }
 
-		@Operation(summary = "Add new attachment for an application with given ID.",
-						description = "Note: This API does not work through swagger. Please use postman to test this API.\n" +
-										"In postman, the JSON formatted metadata should be appended as a .json file.")
-		@ApiResponses(value = {
-						@ApiResponse(responseCode = "200", description = "Attachment added successfully"),
-						@ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content(schema =
-            @Schema(implementation = ErrorInfo.class)))
-		})
-		@PostMapping(value = "/applications/{id}/attachments", produces = "application/json")
-		@PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-		public ResponseEntity<Void> create(
-						@Parameter(name = "Application ID to add attachment for") @PathVariable Integer id,
-						@Parameter(name = "Attachment info in JSON", required = true) @Valid @RequestPart(value = "metadata") AttachmentInfoExt metadata,
-						@Parameter(name = "Attachment data", required = true) @RequestPart(value = "file") MultipartFile file) throws IOException {
-				Integer applicationId = applicationService.getApplicationIdForExternalId(id);
-				applicationService.validateOwnedByExternalUser(applicationId);
-				applicationService.addAttachment(applicationId, metadata, file);
-				return new ResponseEntity<>(HttpStatus.OK);
-		}
+    @Operation(summary = "Add new attachment for an application with given ID.",
+            description = "Note: This API does not work through swagger. Please use postman to test this API.\n" +
+					"In " + "postman, the JSON formatted metadata should be appended as a .json file.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "Attachment added successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request data",
+                    content = @Content(schema = @Schema(implementation = ErrorInfo.class)))})
+    @PostMapping(value = "/applications/{id}/attachments", produces = "application/json")
+    @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+    public ResponseEntity<Void> create(
+            @Parameter(name = "Application ID to add attachment for") @PathVariable Integer id,
+            @Parameter(name = "Attachment info in JSON", required = true) @Valid @RequestPart(value = "metadata")
+            AttachmentInfoExt metadata,
+            @Parameter(name = "Attachment data", required = true) @RequestPart(value = "file")
+            MultipartFile file) throws IOException {
+        Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+        applicationService.validateOwnedByExternalUser(applicationId);
+        applicationService.addAttachment(applicationId, metadata, file);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
-		@Operation(summary = "List decision attachments of an application with given ID")
-		@ApiResponses(value = {
-						@ApiResponse(responseCode = "200", description = "Attachments listed successfully"),
-		})
-		@GetMapping(value = "/applications/{id}/attachments", produces = "application/json")
-		@PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-		public ResponseEntity<List<AttachmentInfoExt>> getAttachments(
-						@Parameter(name = "Application ID to get attachments for") @PathVariable Integer id) {
+    @Operation(summary = "List decision attachments of an application with given ID")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Attachments listed successfully"),})
+    @GetMapping(value = "/applications/{id}/attachments", produces = "application/json")
+    @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+    public ResponseEntity<List<AttachmentInfoExt>> getAttachments(
+            @Parameter(name = "Application ID to get attachments for") @PathVariable Integer id) {
 
-				Integer applicationId = applicationService.getApplicationIdForExternalId(id);
-				applicationService.validateOwnedByExternalUser(applicationId);
-				return ResponseEntity.ok(applicationService.getDecisionAttachments(applicationId));
-		}
+        Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+        applicationService.validateOwnedByExternalUser(applicationId);
+        return ResponseEntity.ok(applicationService.getDecisionAttachments(applicationId));
+    }
 
-		@Operation(summary = "Get attachment data of an attachment with given attachment ID.")
-		@ApiResponses(value = {
-						@ApiResponse(responseCode = "200", description = "Attachment data fetched successfully", content =
-            @Content(schema = @Schema(implementation = ErrorInfo.class))),
-		})
-		@GetMapping(value = "/applications/{id}/attachments/{attachmentId}/data",
-            produces = "application/pdf")
-		@PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-		public ResponseEntity<byte[]> getAttachmentData(@PathVariable(value = "id") Integer id,
-																										@PathVariable(value = "attachmentId") Integer attachmentId) {
-				Integer applicationId = applicationService.getApplicationIdForExternalId(id);
-				applicationService.validateOwnedByExternalUser(applicationId);
-				AttachmentInfoExt info = applicationService.getDecisionAttachmentInfo(applicationId, attachmentId);
-				byte[] attachmentData = applicationService.getDecisionAttachmentData(attachmentId);
-				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add("Content-Disposition", "attachment; filename=" + info.getName());
-				httpHeaders.setContentType(MediaType.parseMediaType(info.getMimeType()));
-				return new ResponseEntity<>(attachmentData, httpHeaders, HttpStatus.OK);
-		}
+    @Operation(summary = "Get attachment data of an attachment with given attachment ID.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Attachment data fetched successfully",
+            content = @Content(schema = @Schema(implementation = ErrorInfo.class))),})
+    @GetMapping(value = "/applications/{id}/attachments/{attachmentId}/data", produces = "application/pdf")
+    @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+    public ResponseEntity<byte[]> getAttachmentData(@PathVariable(value = "id") Integer id,
+                                                    @PathVariable(value = "attachmentId") Integer attachmentId) {
+        Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+        applicationService.validateOwnedByExternalUser(applicationId);
+        AttachmentInfoExt info = applicationService.getDecisionAttachmentInfo(applicationId, attachmentId);
+        byte[] attachmentData = applicationService.getDecisionAttachmentData(attachmentId);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-Disposition", "attachment; filename=" + info.getName());
+        httpHeaders.setContentType(MediaType.parseMediaType(info.getMimeType()));
+        return new ResponseEntity<>(attachmentData, httpHeaders, HttpStatus.OK);
+    }
 
 }
