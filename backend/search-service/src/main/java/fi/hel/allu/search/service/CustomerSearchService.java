@@ -8,8 +8,10 @@ import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.util.Constants;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,10 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
   @Autowired
   public CustomerSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client,
+      RestHighLevelClient client,
       CustomerIndexConductor customerIndexConductor) {
     super(elasticSearchMappingConfig,
         client,
-        Constants.CUSTOMER_TYPE_NAME,
         customerIndexConductor,
         c -> c.getId().toString(),
         CustomerES.class);
@@ -44,11 +45,11 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
       pageRequest = DEFAULT_PAGEREQUEST;
     }
 
-    SearchRequestBuilder srBuilder = buildSearchRequest(type, queryParameters, pageRequest, matchAny);
+    SearchSourceBuilder srBuilder = buildSearchRequest(type, queryParameters, pageRequest, matchAny);
     return fetchResponse(pageRequest, srBuilder);
   }
 
-  private SearchRequestBuilder buildSearchRequest(CustomerType type, QueryParameters queryParameters,
+  private SearchSourceBuilder buildSearchRequest(CustomerType type, QueryParameters queryParameters,
       Pageable pageRequest, Boolean matchAny) {
     boolean isScoringQuery = isScoringQuery(queryParameters);
 
@@ -62,7 +63,7 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
     addQueryParameters(queryParameters, matchAny, fieldQb);
     qb.must(fieldQb);
 
-    SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
+    SearchSourceBuilder srBuilder = prepareSearch(pageRequest, qb);
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
     if (logger.isDebugEnabled()) {
       logger.debug("Searching index {} with the following query:\n {}", Constants.CUSTOMER_INDEX_ALIAS,

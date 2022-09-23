@@ -1,7 +1,7 @@
 ########################################################################################################
 # Modified ElasticSearch Docker image to support change of uid and gid running the ElasticSearch process
 ########################################################################################################
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.0.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.0
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 USER root
@@ -17,12 +17,9 @@ RUN  rm /usr/share/elasticsearch/lib/log4j-api-2.9.1.jar \
     && rm /usr/share/elasticsearch/lib/log4j-1.2-api-2.9.1.jar \
     && rm  /usr/share/elasticsearch/lib/log4j-core-2.9.1.jar
 
-
 COPY ./lib/log4j-core-2.17.1.jar /usr/share/elasticsearch/lib
 COPY ./lib/log4j-1.2-api-2.17.1.jar /usr/share/elasticsearch/lib
 COPY ./lib/log4j-api-2.17.1.jar /usr/share/elasticsearch/lib
 
 # Remove x-pack since it requires a license
-RUN elasticsearch-plugin remove x-pack --purge
-RUN sed -i.bak -e /xpack.license.self_generated.type/d config/elasticsearch.yml
 USER elasticsearch

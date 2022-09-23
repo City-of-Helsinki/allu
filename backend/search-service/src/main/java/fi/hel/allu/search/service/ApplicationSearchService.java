@@ -6,24 +6,23 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.search.domain.LocationES;
-import fi.hel.allu.search.util.Constants;
 import org.apache.commons.lang3.BooleanUtils;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.geo.ShapeRelation;
-import org.elasticsearch.common.geo.builders.ShapeBuilders;
+import org.elasticsearch.common.geo.builders.*;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.PointCollection;
+import org.locationtech.jts.geom.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.vividsolutions.jts.geom.Coordinate;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.SearchException;
@@ -41,11 +40,10 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
   @Autowired
   public ApplicationSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client,
+      RestHighLevelClient client,
       ApplicationIndexConductor applicationIndexConductor) {
     super(elasticSearchMappingConfig,
           client,
-          Constants.APPLICATION_TYPE_NAME,
           applicationIndexConductor,
           a -> a.getId().toString(),
           ApplicationES.class);
@@ -56,8 +54,8 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
       pageRequest = DEFAULT_PAGEREQUEST;
     }
     try {
-      SearchRequestBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
-      SearchResponse response = srBuilder.execute().actionGet();
+      SearchSourceBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
+      SearchResponse response = executeSearchRequest(srBuilder);
       return createResult(pageRequest, response, queryParameters.getZoom());
     } catch (IOException e) {
       throw new SearchException(e);
@@ -90,8 +88,8 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
   }
 
   @Override
-  protected SearchRequestBuilder addFieldFilter(SearchRequestBuilder srBuilder) {
-    return srBuilder.setFetchSource(null, RESPONSE_FILTERED_FIELDS);
+  protected SearchSourceBuilder addFieldFilter(SearchSourceBuilder srBuilder) {
+    return srBuilder.fetchSource(null, RESPONSE_FILTERED_FIELDS);
   }
 
   private void addGeometryParameter(Geometry intersectingGeometry, BoolQueryBuilder qb) {
@@ -100,8 +98,10 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     for (int i = 0; i < points.size(); i++) {
       coordinates.add(new Coordinate(points.getX(i), points.getY(i)));
     }
+    ShapeBuilder pointBuilder = new PointBuilder();
+    pointBuilder.coordinates(coordinates);
     try {
-      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", ShapeBuilders.newPolygon(coordinates)).relation(ShapeRelation.INTERSECTS);
+      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", pointBuilder).relation(ShapeRelation.INTERSECTS);
       qb.must(geomQb);
     } catch (IOException ex) {
       throw new SearchException(ex);

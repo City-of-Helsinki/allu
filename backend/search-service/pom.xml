@@ -11,8 +11,9 @@
 
     <artifactId>search-service</artifactId>
     <properties>
-        <elasticsearch.version>6.0.0</elasticsearch.version>
+        <elasticsearch.version>6.8.0</elasticsearch.version>
         <test.container.version>1.17.3</test.container.version>
+        <log4j.version>2.17.1</log4j.version>
     </properties>
 
     <dependencies>
@@ -34,10 +35,11 @@
         <dependency>
             <!--The version of Elasticsearch library should match the version of Elasticsearch. See Elasticsearch deployment -->
             <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
+            <!--The version of Elasticsearch library should match the version of Elasticsearch. See Elasticsearch deployment -->
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.version}</version>
@@ -57,13 +59,13 @@
             <!-- ElasticSearch code requires log4j dependencies, which are newer than the ones coming with Spring Boot -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.17.1</version>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <!-- ElasticSearch code requires log4j dependencies, which are newer than the ones coming with Spring Boot -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.1</version>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <!--  Pageable et al -->
@@ -73,7 +75,7 @@
         <dependency>
             <groupId>org.locationtech.spatial4j</groupId>
             <artifactId>spatial4j</artifactId>
-            <version>0.6</version>
+            <version>0.7</version>
         </dependency>
         <dependency>
           <groupId>org.locationtech.jts</groupId>

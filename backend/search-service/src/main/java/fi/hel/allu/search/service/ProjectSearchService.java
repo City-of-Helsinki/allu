@@ -2,6 +2,7 @@ package fi.hel.allu.search.service;
 
 import fi.hel.allu.search.util.Constants;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,10 @@ public class ProjectSearchService extends GenericSearchService<ProjectES, QueryP
   @Autowired
   public ProjectSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client,
+      RestHighLevelClient client,
       ProjectIndexConductor projectIndexConductor) {
     super(elasticSearchMappingConfig,
           client,
-          Constants.PROJECT_TYPE_NAME,
           projectIndexConductor,
           p -> p.getId().toString(),
           ProjectES.class);

@@ -1,41 +1,40 @@
 package fi.hel.allu.search.config;
 
 import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import javax.validation.constraints.NotEmpty;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.InetAddress;
+import javax.validation.constraints.NotEmpty;
 import java.net.UnknownHostException;
 
 @Configuration
 @EnableAutoConfiguration
 public class AppConfig {
 
-  @Value("${elasticsearch.host:localhost}")
-  @NotEmpty
-  private String elasticsearchHost;
-  @Value("${elasticsearch.port:9300}")
-  @NotEmpty
-  private int elasticsearchPort;
+    @Value("${elasticsearch.host:localhost}")
+    @NotEmpty
+    private String elasticsearchHost;
+    @Value("${elasticsearch.port:9300}")
+    @NotEmpty
+    private int elasticsearchPort;
 
-  @Bean
-  public Client client() throws UnknownHostException {
-    Settings settings = Settings.builder().put("cluster.name", "allu-cluster").build();
-    return new PreBuiltTransportClient(settings).addTransportAddress(
-        new TransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
-  }
+    @Bean
+    public RestHighLevelClient client() throws UnknownHostException {
+        return new RestHighLevelClient(
+                RestClient.builder(new HttpHost(elasticsearchHost, elasticsearchPort, "http")));
 
-  @Bean
-  public ControllerExceptionHandlerConfig controllerExceptionHandlerConfig() {
-    ControllerExceptionHandlerConfig config = new ControllerExceptionHandlerConfig();
-    config.setTranslateErrorMessages(false);
-    return config;
-  }
+
+    }
+
+    @Bean
+    public ControllerExceptionHandlerConfig controllerExceptionHandlerConfig() {
+        ControllerExceptionHandlerConfig config = new ControllerExceptionHandlerConfig();
+        config.setTranslateErrorMessages(false);
+        return config;
+    }
 }

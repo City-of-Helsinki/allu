@@ -95,6 +95,7 @@
       cluster.name: allu-cluster
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
       bootstrap.memory_lock: "true"
+      xpack.security.enabled: "false"
     ulimits:
       - "nofile:65536:65536"
       - "memlock:-1:-1"
