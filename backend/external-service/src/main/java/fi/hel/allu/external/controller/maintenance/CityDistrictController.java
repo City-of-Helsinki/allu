@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "City District", description = "Used only for maintenance")
 public class CityDistrictController {
 
-  CityDistrictUpdaterService updaterService;
+    CityDistrictUpdaterService updaterService;
 
-  public CityDistrictController(CityDistrictUpdaterService updaterService) {
-    this.updaterService = updaterService;
-  }
+    public CityDistrictController(CityDistrictUpdaterService updaterService) {
+        this.updaterService = updaterService;
+    }
 
-  @PutMapping
-  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
-  public ResponseEntity<Void> update() {
-    updaterService.update();
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
+    @PutMapping
+    @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
+    public ResponseEntity<Void> update() {
+        updaterService.update();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
