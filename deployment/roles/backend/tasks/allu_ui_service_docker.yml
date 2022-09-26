@@ -26,6 +26,7 @@
     module: docker_image
     push: true
     source: local
+    force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
     name: "allu_ui_service:{{ branch }}"
     repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
 
