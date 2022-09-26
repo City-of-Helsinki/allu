@@ -16,19 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Events")
 public class PromotionController extends BaseApplicationController<PromotionExt, PromotionExtMapper> {
 
-  private final PromotionExtMapper eventMapper;
+    private final PromotionExtMapper eventMapper;
 
-  public PromotionController(ApplicationServiceExt applicationService,
-                             Validators validators,
-                             DecisionService decisionService,
-                             TerminationService terminationService,
-                             PromotionExtMapper eventMapper) {
-    super(applicationService, decisionService, validators, terminationService);
-    this.eventMapper = eventMapper;
-  }
+    public PromotionController(ApplicationServiceExt applicationService, Validators validators,
+                               DecisionService decisionService, TerminationService terminationService,
+                               PromotionExtMapper eventMapper) {
+        super(applicationService, decisionService, validators, terminationService);
+        this.eventMapper = eventMapper;
+    }
 
-  @Override
-  protected PromotionExtMapper getMapper() {
-    return eventMapper;
-  }
+    @Override
+    protected PromotionExtMapper getMapper() {
+        return eventMapper;
+    }
 }

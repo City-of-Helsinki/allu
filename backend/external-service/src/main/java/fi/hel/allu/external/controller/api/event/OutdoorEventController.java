@@ -18,19 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Events")
 public class OutdoorEventController extends BaseApplicationController<OutdoorEventExt, OutdoorEventExtMapper> {
 
-  private final OutdoorEventExtMapper eventMapper;
+    private final OutdoorEventExtMapper eventMapper;
 
-  public OutdoorEventController(ApplicationServiceExt applicationService,
-                                Validators validators,
-                                DecisionService decisionService,
-                                TerminationService terminationService,
-                                OutdoorEventExtMapper eventMapper) {
-    super(applicationService, decisionService, validators, terminationService);
-    this.eventMapper = eventMapper;
-  }
+    public OutdoorEventController(ApplicationServiceExt applicationService, Validators validators,
+                                  DecisionService decisionService, TerminationService terminationService,
+                                  OutdoorEventExtMapper eventMapper) {
+        super(applicationService, decisionService, validators, terminationService);
+        this.eventMapper = eventMapper;
+    }
 
-  @Override
-  protected OutdoorEventExtMapper getMapper() {
-    return eventMapper;
-  }
+    @Override
+    protected OutdoorEventExtMapper getMapper() {
+        return eventMapper;
+    }
 }

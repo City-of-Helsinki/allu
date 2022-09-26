@@ -19,19 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class BigEventController extends BaseApplicationController<BigEventExt, BigEventExtMapper> {
 
 
-  private final BigEventExtMapper eventMapper;
+    private final BigEventExtMapper eventMapper;
 
-  public BigEventController(ApplicationServiceExt applicationService,
-                            Validators validators,
-                            DecisionService decisionService,
-                            TerminationService terminationService,
-                            BigEventExtMapper eventMapper) {
-    super(applicationService, decisionService, validators, terminationService);
-    this.eventMapper = eventMapper;
-  }
+    public BigEventController(ApplicationServiceExt applicationService, Validators validators,
+                              DecisionService decisionService, TerminationService terminationService,
+                              BigEventExtMapper eventMapper) {
+        super(applicationService, decisionService, validators, terminationService);
+        this.eventMapper = eventMapper;
+    }
 
-  @Override
-  protected BigEventExtMapper getMapper() {
-    return eventMapper;
-  }
+    @Override
+    protected BigEventExtMapper getMapper() {
+        return eventMapper;
+    }
 }
