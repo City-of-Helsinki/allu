@@ -11,16 +11,7 @@ allu_service_memory_limit:
   external-service: 128m
   supervision-api: 128m
 
-database_host: 172.17.0.1
-
-model_service_host: localhost
-model_service_port: 9010
-
-search_service_host: localhost
-search_service_port: 9020
-
-pdf_service_host: localhost
-pdf_service_port: 9030
+database_host: allu_database_container
 
 mail_default_encoding: UTF-8
 mail_server_host: smtp.gmail.com
@@ -32,12 +23,12 @@ email_sender_address: Alueidenkaytto ja -valvonta Test <noreply@test.allu.fi>
 invoice_sending_enabled: true
 invoice_archivedir: /tmp/allu-invoice-archive
 invoice_cronstring: "0 */15 * * * *"
-sap_ftp_invoice_host: 172.17.0.1
+sap_ftp_invoice_host: allu_sftpserver_container
 sap_ftp_invoice_port: 2222
 sap_ftp_invoice_directory: /invoice/
 
 # Customer update SFTP configuration
-sap_ftp_customer_host: 172.17.0.1
+sap_ftp_customer_host: allu_sftpserver_container
 sap_ftp_customer_port: 2222
 sap_ftp_customer_directory: /customer/
 sap_ftp_customer_arch_directory: /customer/arch/
