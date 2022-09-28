@@ -1,8 +1,8 @@
-model_service_host: allu_backend
+model_service_host: 172.18.0.1
 model_service_port: 9010
 
-search_service_host: allu_backend
+search_service_host: 172.18.0.1
 search_service_port: 9020
 
-pdf_service_host: allu_backend
+pdf_service_host: 172.18.0.1
 pdf_service_port: 9030

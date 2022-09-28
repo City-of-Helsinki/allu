@@ -1,2 +1,2 @@
-elasticsearch_host: allu_elasticsearch_container
+elasticsearch_host: 172.18.0.1
 elasticsearch_port: 9300
