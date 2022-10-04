@@ -6,7 +6,7 @@ services:
     image: allu_database
     container_name: allu_database_container
     volumes:
-      - ./dev-add-report.sql:/docker-entrypoint-initdb.d/dev-add-report.sql
+      - ./local_development_conf/dev-add-report.sql:/docker-entrypoint-initdb.d/dev-add-report.sql
     environment:
       POSTGRES_PASSWORD: postgres
     ports:
