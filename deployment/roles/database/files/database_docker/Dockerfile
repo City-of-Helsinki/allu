@@ -30,5 +30,8 @@ ENV LANG=fi_FI.utf8 \
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
 
+#copy needed postgre setting on docker
+COPY ./postgresql.conf /var/lib/postgresql/data/postgresql.conf
+
 # Copy the database initialization script to be run on first DB startup
 COPY init.sql /docker-entrypoint-initdb.d/
