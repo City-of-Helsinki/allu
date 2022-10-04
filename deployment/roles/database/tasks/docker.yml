@@ -69,7 +69,7 @@
     name: allu_backend_bridge_network
     driver: bridge
     driver_options:
-      com.docker.network.bridge.host_binding_ipv4: 172.18.0.1
+      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
     ipam_config:
       - subnet: '172.18.0.0/16'
         gateway: 172.18.0.1
