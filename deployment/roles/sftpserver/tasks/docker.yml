@@ -85,6 +85,8 @@
       - "2222:22"
     networks:
       - name: allu_backend_bridge_network
+        aliases:
+          - sftpservercontainer
     command: "{{ sap_ftp_invoice_user }}:{{ sap_ftp_invoice_password }}:{{ system_user_id_allu}}:{{ system_group_id_allu }}:/customer/arch"
   become: yes
 

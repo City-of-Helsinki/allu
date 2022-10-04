@@ -89,6 +89,8 @@
       - "5432:5432"
     networks:
       - name: allu_backend_bridge_network
+        aliases:
+          - databasecontainer
   become: yes
 
 - name: remove Docker image tar file

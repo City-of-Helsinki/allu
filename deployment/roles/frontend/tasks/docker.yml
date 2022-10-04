@@ -79,6 +79,10 @@
     published_ports:
       - "80:80"
       - "443:443"
+    networks:
+      - name: allu_backend_bridge_network
+        aliases:
+          - frontendcontainer
   become: yes
 
 - name: remove Docker image tar file

@@ -89,6 +89,8 @@
       - "9300:9300"
     networks:
       - name: allu_backend_bridge_network
+        aliases:
+          - escontainer
     env:
       cluster.name: allu-cluster
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"

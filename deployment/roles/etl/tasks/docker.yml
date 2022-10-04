@@ -87,6 +87,8 @@
       - /home/allu:/servicehome:rw
     networks:
       - name: allu_backend_bridge_network
+        aliases:
+          - etlcontainer
   become: yes
 
 - name: remove Docker image tar file

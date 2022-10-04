@@ -85,4 +85,6 @@
       - "9000:9000"
     networks:
       - name: allu_backend_bridge_network
+        aliases:
+          - uicontainer
   become: yes

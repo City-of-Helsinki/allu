@@ -81,11 +81,10 @@
     volumes:
       - /srv/data/allu:/servicehome:rw
     published_ports:
-      - "172.18.0.0:9010:9010"
-      - "172.18.0.0:9020:9020"
-      - "172.18.0.0:9030:9030"
       - "9040:9040"
       - "9050:9050"
     networks:
       - name: allu_backend_bridge_network
+        aliases:
+          - backendcontainer
   become: yes
