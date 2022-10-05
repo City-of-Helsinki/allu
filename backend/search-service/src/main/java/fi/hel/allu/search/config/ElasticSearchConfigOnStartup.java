@@ -15,20 +15,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class ElasticSearchConfigOnStartup implements ApplicationListener<ApplicationReadyEvent> {
 
-    private final ElasticSearchMappingConfig elasticSearchMappingConfig;
     private final ApplicationSearchService applicationSearchService;
     private final ContactSearchService contactSearchService;
     private final CustomerSearchService customerSearchService;
     private final ProjectSearchService projectSearchService;
 
     @Autowired
-    public ElasticSearchConfigOnStartup(
-            ElasticSearchMappingConfig elasticSearchMappingConfig,
-            ApplicationSearchService applicationSearchService,
-            ContactSearchService contactSearchService,
-            CustomerSearchService customerSearchService,
-            ProjectSearchService projectSearchService) {
-        this.elasticSearchMappingConfig = elasticSearchMappingConfig;
+    public ElasticSearchConfigOnStartup(ApplicationSearchService applicationSearchService,
+                                        ContactSearchService contactSearchService,
+                                        CustomerSearchService customerSearchService,
+                                        ProjectSearchService projectSearchService) {
         this.applicationSearchService = applicationSearchService;
         this.contactSearchService = contactSearchService;
         this.customerSearchService = customerSearchService;
@@ -40,9 +36,9 @@ public class ElasticSearchConfigOnStartup implements ApplicationListener<Applica
      */
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        applicationSearchService.initIndex(true);
-        customerSearchService.initIndex(true);
-        contactSearchService.initIndex(true);
-        projectSearchService.initIndex(true);
+        applicationSearchService.initIndex();
+        customerSearchService.initIndex();
+        contactSearchService.initIndex();
+        projectSearchService.initIndex();
     }
 }

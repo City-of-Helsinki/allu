@@ -27,8 +27,6 @@ public class AppConfig {
     public RestHighLevelClient client() throws UnknownHostException {
         return new RestHighLevelClient(
                 RestClient.builder(new HttpHost(elasticsearchHost, elasticsearchPort, "http")));
-
-
     }
 
     @Bean

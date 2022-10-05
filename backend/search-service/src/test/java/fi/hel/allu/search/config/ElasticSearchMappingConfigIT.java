@@ -26,7 +26,6 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
 
     private RestHighLevelClient client;
 
-    private ElasticSearchMappingConfig elasticSearchMappingConfig;
     private ApplicationSearchService applicationSearchService;
 
     @BeforeEach
@@ -36,7 +35,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         ElasticSearchMappingConfig elasticSearchMappingConfig = new ElasticSearchMappingConfig(client);
         applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
                                                                 new ApplicationIndexConductor());
-        applicationSearchService.initIndex(true);
+        applicationSearchService.initIndex();
     }
 
     @Test
@@ -67,7 +66,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
         assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
-        applicationSearchService.initIndex(true);
+        applicationSearchService.initIndex();
          getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
                 "_doc",

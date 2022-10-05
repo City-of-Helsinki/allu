@@ -1,21 +1,16 @@
 package fi.hel.allu.search.config;
 
 import org.elasticsearch.ResourceAlreadyExistsException;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.settings.Settings;
 
 import org.elasticsearch.common.xcontent.DeprecationHandler;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
-import org.elasticsearch.index.IndexNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,26 +56,23 @@ public class ElasticSearchMappingConfig {
         indexRequest.settings(getIndexSettingsForApplication());
         indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
         indexRequest.mapping(getMappingBuilderForApplication());
-        client.indices().create(indexRequest, RequestOptions.DEFAULT);
       } else if (indexName.startsWith(CUSTOMER_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForCustomer());
         indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Customer"));
         indexRequest.mapping(getMappingBuilderForCustomer());
-        client.indices().create(indexRequest, RequestOptions.DEFAULT);
       } else if (indexName.startsWith(PROJECT_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForApplication());
         indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
         indexRequest.mapping(getMappingBuilderForProject());
-        client.indices().create(indexRequest, RequestOptions.DEFAULT);
       } else if (indexName.startsWith(CONTACT_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForCustomer());
         indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Contact"));
         indexRequest.mapping(getMappingBuilderForContact());
-        client.indices().create(indexRequest, RequestOptions.DEFAULT);
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
       }
+      client.indices().create(indexRequest, RequestOptions.DEFAULT);
     } catch (ResourceAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index {} not created, because it exists already.", indexName);
     } catch (IOException e) {
@@ -246,7 +238,6 @@ public class ElasticSearchMappingConfig {
       throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
-
 
   public XContentBuilder getMappingBuilderForContact() {
     try {

@@ -54,7 +54,6 @@ public class SearchTestUtil {
         return elasticSearchMappingConfig;
     }
 
-
     public static QueryParameters createQueryParameters(String fieldName, String queryParameter) {
         QueryParameters params = new QueryParameters();
         QueryParameter parameter = new QueryParameter(fieldName, queryParameter);
@@ -73,7 +72,6 @@ public class SearchTestUtil {
         return params;
     }
 
-
     public static CustomerWithContactsES createCustomerWithContacts(CustomerES customerES) {
         CustomerWithContactsES cwcES = new CustomerWithContactsES();
         cwcES.setCustomer(customerES);
@@ -85,6 +83,4 @@ public class SearchTestUtil {
         cwcES.setContacts(contacts);
         return cwcES;
     }
-
-
 }

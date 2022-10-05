@@ -12,10 +12,8 @@ public class Constants {
     public static final String CUSTOMER_INDEX_ALIAS = "customers";
     public static final String CONTACT_INDEX_ALIAS = "contacts";
     public static final String PROPERTIES_INDEX_ALIAS = "properties";
-    public static final String APPLICATION_TYPE_NAME = "application";
     public static final String PROJECT_TYPE_NAME = "project";
     public static final String CUSTOMER_TYPE_NAME = "customer";
-    public static final String CONTACT_TYPE_NAME = "contact";
 
     private Constants() {
         throw new IllegalStateException("Utility class");
