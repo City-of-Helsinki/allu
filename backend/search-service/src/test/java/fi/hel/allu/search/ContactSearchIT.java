@@ -14,7 +14,6 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +27,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static fi.hel.allu.search.util.Constants.CONTACT_INDEX_ALIAS;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests of this class share same container because it saves time on testing.
@@ -45,17 +42,13 @@ public class ContactSearchIT extends BaseIntegrationTest {
 
     private ElasticSearchMappingConfig elasticSearchMappingConfig;
 
-
     @BeforeEach
     void setUp() {
-        client = new RestHighLevelClient(
-                RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
+        client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
         elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-        contactSearchService = new ContactSearchService(
-                elasticSearchMappingConfig, client, new ContactIndexConductor());
-
+        contactSearchService = new ContactSearchService(elasticSearchMappingConfig, client,
+                                                        new ContactIndexConductor());
     }
-
 
     @Test
     void testInsertContact() throws IOException {
@@ -63,10 +56,7 @@ public class ContactSearchIT extends BaseIntegrationTest {
         ContactES contactES = createContact(id, "goku");
         contactSearchService.insert(contactES);
         contactSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(
-                CONTACT_INDEX_ALIAS,
-                "_doc",
-                "42");
+        GetRequest getRequest = new GetRequest(CONTACT_INDEX_ALIAS, "_doc", id.toString());
         GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
         assertTrue(getResponse.isExists());
         contactSearchService.delete(id.toString());
@@ -94,7 +84,6 @@ public class ContactSearchIT extends BaseIntegrationTest {
         assertEquals(0, appList.size());
     }
 
-
     @Test
     void testFindMultipleResult() {
         ContactES contact1 = createContact(1, "alpha one searchstr");
@@ -111,7 +100,6 @@ public class ContactSearchIT extends BaseIntegrationTest {
         contactSearchService.delete("2");
         contactSearchService.delete("3");
     }
-
 
     @Test
     void testAlphabeticalSort() {
@@ -148,7 +136,6 @@ public class ContactSearchIT extends BaseIntegrationTest {
         contactSearchService.delete("3");
     }
 
-
     @Test
     void testFindByQuery() {
         ApplicationSearchService applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig,
@@ -171,7 +158,6 @@ public class ContactSearchIT extends BaseIntegrationTest {
         assertEquals(1, appList.size());
     }
 
-
     @Test
     void testUpdate() {
         ApplicationSearchService applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig,
@@ -190,17 +176,15 @@ public class ContactSearchIT extends BaseIntegrationTest {
 
         contacts.get(0).setName("updated 1");
 
-        ApplicationWithContactsES applicationWithContactsES1 =
-                new ApplicationWithContactsES(applicationES.getId(),
-                                              CustomerRoleType.APPLICANT,
-                                              contacts);
-        ApplicationWithContactsES applicationWithContactsES2 =
-                new ApplicationWithContactsES(applicationES.getId(),
-                                              CustomerRoleType.CONTRACTOR,
-                                              Collections.singletonList(
-                                                      new ContactES(100,
-                                                                    "kontraktori",
-                                                                    true)));
+        ApplicationWithContactsES applicationWithContactsES1 = new ApplicationWithContactsES(applicationES.getId(),
+                                                                                             CustomerRoleType.APPLICANT,
+                                                                                             contacts);
+        ApplicationWithContactsES applicationWithContactsES2 = new ApplicationWithContactsES(applicationES.getId(),
+                                                                                             CustomerRoleType.CONTRACTOR,
+                                                                                             Collections.singletonList(
+                                                                                                     new ContactES(100,
+                                                                                                                   "kontraktori",
+                                                                                                                   true)));
         Map contactsMap = CustomersIndexUtil.getContactsUpdateStructure(
                 Arrays.asList(applicationWithContactsES1, applicationWithContactsES2));
         applicationSearchService.partialUpdate(contactsMap, false);
@@ -210,9 +194,8 @@ public class ContactSearchIT extends BaseIntegrationTest {
                 "customers.applicant.contacts.name", "updated 1");
         List<Integer> appList = applicationSearchService.findByField(appParams, null).getContent();
         assertNotNull(appList);
-        Assert.assertEquals(1, appList.size());
+        assertEquals(1, appList.size());
     }
-
 
     private void verifyResult(String fieldName, String parameter, Integer id, int size) {
         ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters(fieldName, parameter);
@@ -221,9 +204,7 @@ public class ContactSearchIT extends BaseIntegrationTest {
         assertNotNull(appList);
         assertEquals(size, appList.size());
         assertEquals(appList.get(0), id);
-
     }
-
 
     private ContactES createContact(int id, String name) {
         ContactES contactES = new ContactES();
@@ -232,43 +213,4 @@ public class ContactSearchIT extends BaseIntegrationTest {
         contactES.setActive(true);
         return contactES;
     }
-
-
-//
-//        context("when updating application with new and updated contacts", ()-> {
-//          beforeEach(()-> {
-//            contacts.get(0).setName("updated 1");
-//
-//            ApplicationWithContactsES applicationWithContactsES1 =
-//                    new ApplicationWithContactsES(applicationES.getId(), CustomerRoleType.APPLICANT, contacts);
-//            ApplicationWithContactsES applicationWithContactsES2 = new ApplicationWithContactsES(
-//                    applicationES.getId(), CustomerRoleType.CONTRACTOR, Collections.singletonList(new ContactES
-//                    (100, "kontraktori", true)));
-//            Map contactsMap =
-//                    CustomersIndexUtil.getContactsUpdateStructure(Arrays.asList(applicationWithContactsES1,
-//                    applicationWithContactsES2));
-//            applicationSearchService.partialUpdate(contactsMap, false);
-//            applicationSearchService.refreshIndex();
-//          });
-//
-//          it("should find applications updated contact of a customer", () -> {
-//            ApplicationQueryParameters appParams = SearchTestUtil.createApplicationQueryParameters("customers
-//            .applicant.contacts.name", "updated 1");
-//            List<Integer> appList = applicationSearchService.findByField(appParams, null).getContent();
-//            assertNotNull(appList);
-//            assertEquals(1, appList.size());
-//          });
-//
-//          it("should find applications freshly inserted contact of a customer", () -> {
-//            ApplicationQueryParameters appParams = SearchTestUtil.createApplicationQueryParameters("customers.contractor.contacts.name", "kontraktori");
-//            List<Integer> appList = applicationSearchService.findByField(appParams, null).getContent();
-//            assertNotNull(appList);
-//            assertEquals(1, appList.size());
-//          });
-//        });
-//
-//        afterEach(()-> applicationSearchService.delete("1"));
-//      });
-//    });
-//  }
 }

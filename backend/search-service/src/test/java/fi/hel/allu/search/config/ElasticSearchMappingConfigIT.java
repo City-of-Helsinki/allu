@@ -1,7 +1,6 @@
 package fi.hel.allu.search.config;
 
 import fi.hel.allu.search.BaseIntegrationTest;
-import fi.hel.allu.search.SearchTestUtil;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
@@ -11,6 +10,8 @@ import org.elasticsearch.action.main.MainResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetMappingsRequest;
+import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +22,12 @@ import java.io.IOException;
 import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ElasticSearchMappingConfigTest extends BaseIntegrationTest {
+class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
 
     private RestHighLevelClient client;
 
     private ElasticSearchMappingConfig elasticSearchMappingConfig;
     private ApplicationSearchService applicationSearchService;
-
 
     @BeforeEach
     void SetUp() {
@@ -41,7 +41,7 @@ class ElasticSearchMappingConfigTest extends BaseIntegrationTest {
 
     @Test
     void testCorrectSettings() {
-        MainResponse response = null;
+        MainResponse response;
 
         try {
             response = client.info(RequestOptions.DEFAULT);
@@ -55,7 +55,6 @@ class ElasticSearchMappingConfigTest extends BaseIntegrationTest {
 
     @Test
     void testReindexing() throws IOException {
-
         Integer id = 1;
         ApplicationES applicationES = createApplication(id);
         applicationES.setName("testi");
@@ -77,6 +76,15 @@ class ElasticSearchMappingConfigTest extends BaseIntegrationTest {
         getRequest.storedFields("_none_");
         assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
         applicationSearchService.delete(id.toString());
+    }
+
+    @Test
+    void testCheckingMappign() throws IOException {
+        GetMappingsRequest request = new GetMappingsRequest();
+        request.indices(APPLICATION_INDEX_ALIAS);
+
+        GetMappingsResponse getMappingResponse = client.indices().getMapping(request, RequestOptions.DEFAULT);
+        System.out.println(getMappingResponse.mappings());
     }
 
 }

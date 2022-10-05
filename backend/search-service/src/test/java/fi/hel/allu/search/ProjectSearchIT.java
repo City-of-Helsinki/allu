@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static fi.hel.allu.search.util.Constants.*;
+import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
+import static fi.hel.allu.search.util.Constants.PROJECT_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
-
 
 @ExtendWith(SpringExtension.class)
 class ProjectSearchIT extends BaseIntegrationTest {
@@ -36,7 +36,7 @@ class ProjectSearchIT extends BaseIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-		client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
+        client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
         ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
         projectSearchService = new ProjectSearchService(
                 elasticSearchMappingConfig,
@@ -61,7 +61,7 @@ class ProjectSearchIT extends BaseIntegrationTest {
         ProjectES projectES = createProject(1, 2);
         ApplicationES applicationES = ApplicationSearchIT.createApplication(123);
         // insert both project and application to catch possible property type mismatches: project first and then
-		// application
+        // application
         projectSearchService.insert(projectES);
         applicationSearchService.insert(applicationES);
         projectSearchService.refreshIndex();
@@ -75,7 +75,7 @@ class ProjectSearchIT extends BaseIntegrationTest {
         ProjectES projectES = createProject(1, 2);
         ApplicationES applicationES = ApplicationSearchIT.createApplication(123);
         // insert both project and application to catch possible property type mismatches: : application first and
-		// then project
+        // then project
         applicationSearchService.insert(applicationES);
         projectSearchService.insert(projectES);
         projectSearchService.refreshIndex();
@@ -108,7 +108,6 @@ class ProjectSearchIT extends BaseIntegrationTest {
         assertNotNull(appList);
         assertEquals(1, appList.size());
     }
-
 
     private ProjectES createProject(int projectId, int projectParentId) {
         ProjectES projectES = new ProjectES();
