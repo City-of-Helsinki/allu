@@ -63,7 +63,7 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_backend_bridge_network
+    name: allu_bridge_network
     driver: bridge
     driver_options:
       com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
@@ -84,7 +84,7 @@
     ports:
       - "2222:22"
     networks:
-      - name: allu_backend_bridge_network
+      - name: allu_bridge_network
         aliases:
           - sftpservercontainer
     command: "{{ sap_ftp_invoice_user }}:{{ sap_ftp_invoice_password }}:{{ system_user_id_allu}}:{{ system_group_id_allu }}:/customer/arch"

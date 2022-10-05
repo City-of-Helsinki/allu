@@ -63,7 +63,7 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_backend_bridge_network
+    name: allu_bridge_network
     driver: bridge
     driver_options:
       com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
@@ -84,7 +84,7 @@
       - "9040:9040"
       - "9050:9050"
     networks:
-      - name: allu_backend_bridge_network
+      - name: allu_bridge_network
         aliases:
           - backendcontainer
   become: yes
