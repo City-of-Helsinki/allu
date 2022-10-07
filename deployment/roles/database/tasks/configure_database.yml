@@ -59,30 +59,30 @@
 
 - name: Set shared buffer
   postgresql_set:
-    login_host: localhost
-    login_password: {{ database_password_postgres }}
-    name: shared_buffer
-    value: 1024mb
+    login_host=localhost
+    login_password={{ database_password_postgres }}
+    name=shared_buffer
+    value=1024mb
   register: set
   become: yes
   become_user: postgres
 
 - name: Enable login collector
   postgresql_set:
-    login_host: localhost
-    login_password: {{ database_password_postgres }}
-    name: logging_collector
-    value: on
+    login_host=localhost
+    login_password={{ database_password_postgres }}
+    name=logging_collector
+    value=on
   register: set
   become: yes
   become_user: postgres
 
 - name: Log only queries that takes 500ms or longer
   postgresql_set:
-    login_host: localhost
-    login_password: {{ database_password_postgres }}
-    name: log_min_duration_statement
-    value: 500
+    login_host=localhost
+    login_password={{ database_password_postgres }}
+    name=log_min_duration_statement
+    value=500
   register: set
   become: yes
   become_user: postgres
