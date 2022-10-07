@@ -47,7 +47,7 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
           client,
           Constants.APPLICATION_TYPE_NAME,
           applicationIndexConductor,
-        a -> a.getId().toString(),
+          a -> a.getId().toString(),
           ApplicationES.class);
   }
 

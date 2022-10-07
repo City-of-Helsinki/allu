@@ -41,9 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ApplicationSearchIT extends BaseIntegrationTest {
 	private static final String USERNAME = "someusername";
 	private static Client client;
-
 	private static ApplicationSearchService applicationSearchService;
-
 
 	@BeforeAll
 	static void SetUp() throws UnknownHostException {
@@ -55,7 +53,6 @@ class ApplicationSearchIT extends BaseIntegrationTest {
 		applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
 				new ApplicationIndexConductor());
 	}
-
 
 	@Test
 	void correctSettings() {
@@ -85,8 +82,6 @@ class ApplicationSearchIT extends BaseIntegrationTest {
 		verifyOneQueryResult("name", "test");
 		applicationSearchService.delete("1");
 	}
-
-
 
 	@ParameterizedTest
 	@ValueSource(strings = {"TP000001", "TP00"})
@@ -145,7 +140,6 @@ class ApplicationSearchIT extends BaseIntegrationTest {
 		assertEquals(Arrays.asList(30, 31, 32, 33, 34, 35, 36, 37, 38, 39), appPage.getContent());
 		assertEquals(89, appPage.getTotalElements());
 	}
-
 
 	/**
 	 * Name search is sort id determinied by id number
@@ -360,7 +354,6 @@ class ApplicationSearchIT extends BaseIntegrationTest {
 		applicationES.setRecurringApplication(recurringApplication);
 		applicationSearchService.insert(applicationES);
 		applicationSearchService.refreshIndex();
-
 
 		// test period completely outside recurring period, before recurring period
 		List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
@@ -582,13 +575,10 @@ class ApplicationSearchIT extends BaseIntegrationTest {
 		assertEquals(1, appList.size());
 	}
 
-
-
 	private List<Integer> getOneQueryResult(ApplicationQueryParameters params) {
 		applicationSearchService.refreshIndex();
 		return applicationSearchService.findByField(params, null).getContent();
 	}
-
 
 	public static ApplicationES createApplication(Integer id, Integer ownerid){
 		ApplicationES applicationES = createApplication(id);

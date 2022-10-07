@@ -56,8 +56,6 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
 
-
-
 /**
  * Generic ElasticSearch functionality for different kinds of searches.
  */
@@ -133,14 +131,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     propertyToSort = createPropertyToSort();
   }
 
-  public void initIndex(boolean checkVersion)  {
+  public void initIndex(boolean checkVersion) {
     String currentIndexName = getCurrentIndexName(indexConductor.getIndexAliasName());
 
     if (checkVersion && currentIndexName != null && !elasticSearchMappingConfig.areMappingsUpToDate()) {
       logger.debug("Index {} is outdated, deleting it", currentIndexName);
 
       deleteIndex(indexConductor.getIndexAliasName());
-
       currentIndexName = null;
     }
 
@@ -186,9 +183,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       String id = keyMapper.apply(indexedObject);
-      if(logger.isDebugEnabled()){
-        logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
-      }
+      logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
           client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
       if (response.status() != RestStatus.CREATED) {
@@ -351,9 +346,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, withAdditionalParameters);
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
 
-      logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
-          srBuilder);
-
+    logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
+        srBuilder.toString());
     return srBuilder;
   }
 
@@ -365,7 +359,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     List<QueryParameter> parameters = queryParameters.getQueryParameters().stream().filter(QueryParameter::hasValue)
         .collect(Collectors.toList());
     for (QueryParameter param : parameters) {
-      if (Boolean.TRUE.equals(matchAny)) {
+      if (matchAny) {
         qb.should(createQueryBuilder(param));
       } else {
         qb.must(createQueryBuilder(param));
@@ -391,7 +385,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       srBuilder.addSort(SortBuilders.scoreSort());
     }
 
-    Optional.of(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
+    Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
       SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
       if (o.isAscending()) {
         sb.order(SortOrder.ASC);
@@ -416,7 +410,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   protected void handleActive(BoolQueryBuilder qb, QueryParameter active) {
     Optional.ofNullable(active)
         .map(a -> QueryBuilders.termQuery(a.getFieldName(), a.getFieldValue()))
-        .ifPresent(qb::filter);
+        .ifPresent(activeQuery -> qb.filter(activeQuery));
   }
 
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
@@ -485,7 +479,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     ImmutableOpenMap<String, List<AliasMetaData>> aliases =
         client.admin().indices().prepareGetAliases().setIndices(indexAliasName+"*").get().getAliases();
 
-
     if (aliases.isEmpty()) {
       return null;
     }
@@ -517,9 +510,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     QueryBuilder qb = QueryBuilders.matchQuery("_id", id);
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName()).setTypes(indexTypeName)
         .setQuery(qb);
-    if (logger.isDebugEnabled()) {
-      logger.debug("Finding object with the following query:\n {}", srBuilder);
-    }
+    logger.debug("Finding object with the following query:\n {}", srBuilder.toString());
     SearchResponse response = srBuilder.execute().actionGet();
     if (response != null) {
       SearchHits hits = response.getHits();
@@ -564,10 +555,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   private UpdateRequest updateRequestInto(String indexName, String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("Creating update request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
-      }
+      logger.debug("Creating update request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
       UpdateRequest updateRequest = new UpdateRequest();
       updateRequest.index(indexName);
       updateRequest.type(indexTypeName);
@@ -582,9 +570,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   private IndexRequest createRequestInto(String indexName, String id, T indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Creating create request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
-      }
+      logger.debug("Creating create request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
       IndexRequest indexRequest = new IndexRequest();
       indexRequest.index(indexName);
       indexRequest.type(indexTypeName);
@@ -595,8 +581,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       throw new SearchException(e);
     }
   }
-
-
+  
   private List<Integer> iterateIntSearchResponse(SearchResponse response) throws IOException {
     List<Integer> appList = new ArrayList<>();
     if (response != null) {
@@ -615,6 +600,9 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       return id;
     }
 
+    public void setId(Integer id) {
+      this.id = id;
+    }
   }
 
   private QueryBuilder createQueryBuilder(QueryParameter queryParameter) {
@@ -641,7 +629,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       }
       return qb;
     } else {
-      throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass());
+      throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass().toString());
     }
   }
 
@@ -650,6 +638,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * period1: search start time <= application end time AND search end time >= application start time
    * OR
    * period2: search start time <= application end time AND search end time >= application start time
+   *
    * The period1 and period2 are calculated from given search period. If search period overlaps with one or more calendar years, the search
    * period is divided into two periods: period1 and period2.
    */
@@ -667,30 +656,30 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     long startPeriod2 = getRangeSearchCompliantPeriodLimit(recurringApplication.getPeriod2Start());
     long endPeriod2 = getRangeSearchCompliantPeriodLimit(recurringApplication.getPeriod2End());
 
-    BoolQueryBuilder qbPeriod11 = QueryBuilders.boolQuery();
-    qbPeriod11 = qbPeriod11.must(QueryBuilders.rangeQuery("recurringApplication.period1Start").lte(endPeriod1));
-    qbPeriod11 = qbPeriod11.must(QueryBuilders.rangeQuery("recurringApplication.period1End").gte(startPeriod1));
+    BoolQueryBuilder qbPeriod1_1 = QueryBuilders.boolQuery();
+    qbPeriod1_1 = qbPeriod1_1.must(QueryBuilders.rangeQuery("recurringApplication.period1Start").lte(endPeriod1));
+    qbPeriod1_1 = qbPeriod1_1.must(QueryBuilders.rangeQuery("recurringApplication.period1End").gte(startPeriod1));
 
-    BoolQueryBuilder qbPeriod12 = QueryBuilders.boolQuery();
-    qbPeriod12 = qbPeriod12.must(QueryBuilders.rangeQuery("recurringApplication.period1Start").lte(endPeriod2));
-    qbPeriod12 = qbPeriod12.must(QueryBuilders.rangeQuery("recurringApplication.period1End").gte(startPeriod2));
+    BoolQueryBuilder qbPeriod1_2 = QueryBuilders.boolQuery();
+    qbPeriod1_2 = qbPeriod1_2.must(QueryBuilders.rangeQuery("recurringApplication.period1Start").lte(endPeriod2));
+    qbPeriod1_2 = qbPeriod1_2.must(QueryBuilders.rangeQuery("recurringApplication.period1End").gte(startPeriod2));
 
-    BoolQueryBuilder qbPeriod21 = QueryBuilders.boolQuery();
-    qbPeriod21 = qbPeriod21.must(QueryBuilders.rangeQuery("recurringApplication.period2Start").lte(endPeriod1));
-    qbPeriod21 = qbPeriod21.must(QueryBuilders.rangeQuery("recurringApplication.period2End").gte(startPeriod1));
+    BoolQueryBuilder qbPeriod2_1 = QueryBuilders.boolQuery();
+    qbPeriod2_1 = qbPeriod2_1.must(QueryBuilders.rangeQuery("recurringApplication.period2Start").lte(endPeriod1));
+    qbPeriod2_1 = qbPeriod2_1.must(QueryBuilders.rangeQuery("recurringApplication.period2End").gte(startPeriod1));
 
-    BoolQueryBuilder qbPeriod22 = QueryBuilders.boolQuery();
-    qbPeriod22 = qbPeriod22.must(QueryBuilders.rangeQuery("recurringApplication.period2Start").lte(endPeriod2));
-    qbPeriod22 = qbPeriod22.must(QueryBuilders.rangeQuery("recurringApplication.period2End").gte(startPeriod2));
+    BoolQueryBuilder qbPeriod2_2 = QueryBuilders.boolQuery();
+    qbPeriod2_2 = qbPeriod2_2.must(QueryBuilders.rangeQuery("recurringApplication.period2Start").lte(endPeriod2));
+    qbPeriod2_2 = qbPeriod2_2.must(QueryBuilders.rangeQuery("recurringApplication.period2End").gte(startPeriod2));
 
     BoolQueryBuilder qbRecurring1 = QueryBuilders.boolQuery();
-    qbRecurring1 = qbRecurring1.should(qbPeriod11);
-    qbRecurring1 = qbRecurring1.should(qbPeriod12);
+    qbRecurring1 = qbRecurring1.should(qbPeriod1_1);
+    qbRecurring1 = qbRecurring1.should(qbPeriod1_2);
     qbRecurring1.minimumShouldMatch(1);
 
     BoolQueryBuilder qbRecurring2 = QueryBuilders.boolQuery();
-    qbRecurring2 = qbRecurring2.should(qbPeriod21);
-    qbRecurring2 = qbRecurring2.should(qbPeriod22);
+    qbRecurring2 = qbRecurring2.should(qbPeriod2_1);
+    qbRecurring2 = qbRecurring2.should(qbPeriod2_2);
     qbRecurring2.minimumShouldMatch(1);
 
     BoolQueryBuilder qbCombined = QueryBuilders.boolQuery();
@@ -714,7 +703,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
         .build();
 
-    requests.forEach(bp::add);
+    requests.forEach(req -> bp.add(req));
 
     try {
       bp.awaitClose(10, TimeUnit.MINUTES);
@@ -723,7 +712,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
   }
 
-  private static class BulkProcessorListener implements BulkProcessor.Listener {
+  private class BulkProcessorListener implements BulkProcessor.Listener {
 
     private final RefreshPolicy refreshPolicy;
 
@@ -745,8 +734,9 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     @Override
     public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-      logger.debug("Bulk execution completed [ {} ]. Took (ms): {}. Failures: {}. Count: {}",
-                   executionId,response.getIngestTookInMillis(), response.hasFailures(), response.getItems().length);
+      logger.debug("Bulk execution completed [{}]. Took (ms): {}. Failures: {}. Count: {}",
+                   executionId, response.getIngestTookInMillis(), response.hasFailures(), response.getItems().length);
+
     }
   }
 }

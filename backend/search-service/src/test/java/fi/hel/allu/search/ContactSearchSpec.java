@@ -31,8 +31,6 @@ import static org.junit.Assert.assertNotNull;
 @Testcontainers
 public class ContactSearchSpec {
 
-
-
   private static final String CLUSTER_NAME = "allu-cluster";
   private static final String NODE_NAME = "allu-node";
   private static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.0.0";

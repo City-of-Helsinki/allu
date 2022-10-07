@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContactIndexConductor extends IndexConductor {
 
-	public ContactIndexConductor() {
-		super(Constants.CONTACT_INDEX_ALIAS);
-	}
+    public ContactIndexConductor() {
+        super(Constants.CONTACT_INDEX_ALIAS);
+    }
 
 }

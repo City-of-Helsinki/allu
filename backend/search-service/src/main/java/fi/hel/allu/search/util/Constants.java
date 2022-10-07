@@ -5,18 +5,19 @@ package fi.hel.allu.search.util;
  */
 public class Constants {
 
-	public static final int DEFAULT_PAGE_NUMBER = 0;
-	public static final int DEFAULT_PAGE_SIZE = 100;
-	public static final String APPLICATION_INDEX_ALIAS = "applications";
-	public static final String PROJECT_INDEX_ALIAS = "projects";
-	public static final String CUSTOMER_INDEX_ALIAS = "customers";
-	public static final String CONTACT_INDEX_ALIAS = "contacts";
-	public static final String PROPERTIES_INDEX_ALIAS = "properties";
-	public static final String APPLICATION_TYPE_NAME = "application";
-	public static final String PROJECT_TYPE_NAME = "project";
-	public static final String CUSTOMER_TYPE_NAME = "customer";
-	public static final String CONTACT_TYPE_NAME = "contact";
-	private Constants() {
-		throw new IllegalStateException("Utility class");
-	}
+    public static final int DEFAULT_PAGE_NUMBER = 0;
+    public static final int DEFAULT_PAGE_SIZE = 100;
+    public static final String APPLICATION_INDEX_ALIAS = "applications";
+    public static final String PROJECT_INDEX_ALIAS = "projects";
+    public static final String CUSTOMER_INDEX_ALIAS = "customers";
+    public static final String CONTACT_INDEX_ALIAS = "contacts";
+    public static final String PROPERTIES_INDEX_ALIAS = "properties";
+    public static final String APPLICATION_TYPE_NAME = "application";
+    public static final String PROJECT_TYPE_NAME = "project";
+    public static final String CUSTOMER_TYPE_NAME = "customer";
+    public static final String CONTACT_TYPE_NAME = "contact";
+
+    private Constants() {
+        throw new IllegalStateException("Utility class");
+    }
 }

@@ -9,7 +9,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-
 /**
  * Basic configuration for ElasticSearch mappings done during Search Service start-up.
  */

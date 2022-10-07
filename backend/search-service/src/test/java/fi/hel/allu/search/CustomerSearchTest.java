@@ -28,7 +28,6 @@ import java.util.*;
 import static fi.hel.allu.search.util.Constants.CUSTOMER_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @ExtendWith(SpringExtension.class)
 class CustomerSearchTest extends BaseIntegrationTest {
 

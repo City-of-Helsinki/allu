@@ -30,7 +30,6 @@ public class AppConfig {
     Settings settings = Settings.builder().put("cluster.name", "allu-cluster").build();
     return new PreBuiltTransportClient(settings).addTransportAddress(
         new TransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
-
   }
 
   @Bean

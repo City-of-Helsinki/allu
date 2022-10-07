@@ -32,7 +32,7 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <!--The version of Elasticsearch library should match the version of Elastic Search. See Elastic Search deployment -->
+            <!--The version of Elasticsearch library should match the version of Elasticsearch. See Elasticsearch deployment -->
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
             <version>${elasticsearch.version}</version>

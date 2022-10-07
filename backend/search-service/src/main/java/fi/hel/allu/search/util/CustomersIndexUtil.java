@@ -17,10 +17,10 @@ import static java.util.stream.Collectors.groupingBy;
  */
 public class CustomersIndexUtil {
 
-
   private CustomersIndexUtil() {
     throw new IllegalStateException("Utility class");
   }
+
   private static final Map<CustomerRoleType, String> customerRoleTypeToPropertyName;
 
   static {

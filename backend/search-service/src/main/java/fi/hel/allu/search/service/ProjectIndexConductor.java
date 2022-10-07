@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectIndexConductor extends IndexConductor {
 
-	public ProjectIndexConductor() {
-		super(Constants.PROJECT_INDEX_ALIAS);
-	}
+    public ProjectIndexConductor() {
+        super(Constants.PROJECT_INDEX_ALIAS);
+    }
 
 }

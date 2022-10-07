@@ -29,7 +29,6 @@ import static fi.hel.allu.search.util.Constants.PROJECT_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @ExtendWith(SpringExtension.class)
 class ProjectSearchTest extends BaseIntegrationTest {
 	private ProjectSearchService projectSearchService;
