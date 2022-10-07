@@ -61,7 +61,7 @@
   postgresql_set:
     login_host=localhost
     login_password={{ database_password_postgres }}
-    name=shared_buffer
+    name=shared_buffers
     value=1024mb
   register: set
   become: yes
