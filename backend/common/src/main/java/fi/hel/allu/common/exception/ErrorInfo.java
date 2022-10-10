@@ -1,14 +1,15 @@
 package fi.hel.allu.common.exception;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Error information")
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
+
+@Schema(name = "Error information")
 public class ErrorInfo {
   private String errorMessage;
   private String additionalInfo;
 
-  @ApiModelProperty(value = "Error message")
+  @SchemaProperty(name = "Error message")
   public String getErrorMessage() {
     return errorMessage;
   }
@@ -17,7 +18,7 @@ public class ErrorInfo {
     this.errorMessage = errorMessage;
   }
 
-  @ApiModelProperty(value = "Additional information, typically name of the field causing validation error.")
+  @SchemaProperty(name = "Additional information, typically name of the field causing validation error.")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
