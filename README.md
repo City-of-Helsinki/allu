@@ -17,11 +17,39 @@ Governed public areas include:
 
 ### Requirements ###
 - NodeJS 12 or newer version
-- Java 1.8
+- Java 8 and 11
 - Maven 3.3.9 or newer version
   - add to settings.xml file artifactory repositorie credentials: https://alluprojekti.atlassian.net/wiki/spaces/ALLU/pages/1933330/Kehitysymp+rist+n+pystytys
+  - add toolchains.xml file to ~/.m2/ . Example down below
 - Docker
 - wkhtmltopdf
+
+### Setting up toolchains ###
+Example of toolchains.xml file . Change jdKHome path to were your designated version of Java 8 and 11 is.
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<toolchains>
+    <!-- JDK toolchains -->
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>8</version>
+        </provides>
+        <configuration>
+            <jdkHome>path to Java 8 JDK</jdkHome>
+        </configuration>
+    </toolchain>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>11</version>
+        </provides>
+        <configuration>
+            <jdkHome>path to Java 11 JDK</jdkHome>
+        </configuration>
+    </toolchain>
+</toolchains>
+```
 
 ### Setting up Database ###
 For database you need docker. Docker will start up postgresql and elasticsearch for project. Commands has been done in linux environment.  
