@@ -1,7 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.MailSenderLog;
-import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.model.MailMessage.InlineResource;
@@ -9,7 +8,6 @@ import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
