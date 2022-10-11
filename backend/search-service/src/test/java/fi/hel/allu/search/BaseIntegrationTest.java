@@ -23,7 +23,7 @@ public abstract class BaseIntegrationTest {
     protected static final String USERNAME = "someusername";
 
     @Container
-    protected ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9300, 9200)
+    protected static ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9300, 9200)
             .withEnv("xpack.security.enabled", "false").withEnv("network.host", "_site_")
             .withEnv("network.publish_host", "_local_").withEnv("node.name", NODE_NAME)
             .withEnv("cluster.name", CLUSTER_NAME);
