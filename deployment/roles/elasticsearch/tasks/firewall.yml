@@ -1,5 +1,5 @@
 - name: allow Docker container access to local services in test environment
-  ufw: rule=allow port={{ item }} src=172.18.0.1/24
+  ufw: rule=allow port={{ item }} src=172.17.0.1/24
   when: "'test' in group_names or 'staging' in group_names or 'production' in group_names"
   become: yes
   with_items:

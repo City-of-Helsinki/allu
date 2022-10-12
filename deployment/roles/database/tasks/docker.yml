@@ -64,18 +64,6 @@
     load_path=/tmp/allu_database.tar
   become: yes
 
-- name: Start Docker bridge network if not already running
-  docker_network:
-    name: allu_bridge_network
-    driver: bridge
-    driver_options:
-      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-    ipam_config:
-      - subnet: '172.18.0.0/16'
-        gateway: 172.18.0.1
-    appends: yes
-  become: yes
-
 - name: start container
   docker_container:
     name: allu_database_container
@@ -87,10 +75,6 @@
       - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
     published_ports:
       - "5432:5432"
-    networks:
-      - name: allu_bridge_network
-        aliases:
-          - databasecontainer
   become: yes
 
 - name: remove Docker image tar file
