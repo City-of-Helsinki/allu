@@ -66,6 +66,13 @@
     load_path=/tmp/allu_frontend.tar
   become: yes
 
+- name: Start Docker bridge network if not already running
+  docker_network:
+    name: allu_bridge_network
+    driver: bridge
+    appends: yes
+  become: yes
+
 - name: start container
   docker_container:
     name: allu_frontend_container
@@ -79,6 +86,10 @@
     published_ports:
       - "80:80"
       - "443:443"
+    networks:
+      - name: allu_bridge_network
+        aliases:
+          - frontendcontainer
   become: yes
 
 - name: remove Docker image tar file

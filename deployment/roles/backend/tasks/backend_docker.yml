@@ -71,4 +71,8 @@
     published_ports:
       - "9040:9040"
       - "9050:9050"
+    networks:
+      - name: allu_bridge_network
+        aliases:
+          - backendcontainer
   become: yes
