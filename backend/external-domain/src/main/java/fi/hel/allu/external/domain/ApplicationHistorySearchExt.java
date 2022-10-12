@@ -21,9 +21,17 @@ public class ApplicationHistorySearchExt {
     this.applicationIds = applicationIds;
   }
 
+  /**
+   * If time is null, return date time that is in the year 2010,
+   * day being in the first day of month to avoid leap year issues.
+   * This software deployed first time to production 2016,
+   * so any date before that should be OK to return if time is null.
+   * @return ZonedDateTime
+   */
   @Schema(description = "Time limit for events - only events after given time are returned. If null, complete history is returned.")
   public ZonedDateTime getEventsAfter() {
-    return eventsAfter;
+    if(eventsAfter != null) return eventsAfter;
+    else return ZonedDateTime.now().withYear(2010).withMonth(1);
   }
 
   public void setEventsAfter(ZonedDateTime eventsAfter) {

@@ -43,9 +43,8 @@ public class ApplicationHistoryController {
     @PostMapping(produces = "application/json")
     @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
     public ResponseEntity<List<ApplicationHistoryExt>> searchApplicationHistory(
-            @Parameter(
-                    description = "Application history search parameters.") @RequestBody
-            ApplicationHistorySearchExt searchParameters) {
+            @Parameter( description = "Application history search parameters.")
+            @RequestBody ApplicationHistorySearchExt searchParameters) {
         return new ResponseEntity<>(applicationService.searchApplicationHistory(searchParameters), HttpStatus.OK);
     }
 
