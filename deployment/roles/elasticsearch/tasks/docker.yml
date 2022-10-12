@@ -65,6 +65,18 @@
     load_path=/tmp/allu_elasticsearch.tar
   become: yes
 
+- name: Start Docker bridge network if not already running
+  docker_network:
+    name: allu_bridge_network
+    driver: bridge
+    driver_options:
+      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+    ipam_config:
+      - subnet: '172.18.0.0/16'
+        gateway: 172.18.0.1
+    appends: yes
+  become: yes
+
 - name: start container
   docker_container:
     name: allu_elasticsearch_container
@@ -75,6 +87,10 @@
     published_ports:
       - "9200:9200"
       - "9300:9300"
+    networks:
+      - name: allu_bridge_network
+        aliases:
+          - escontainer
     env:
       cluster.name: allu-cluster
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
