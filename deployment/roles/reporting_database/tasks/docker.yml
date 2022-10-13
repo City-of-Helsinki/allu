@@ -1,5 +1,11 @@
+- name: Login to GitLab repository locally
+  local_action:
+    module: docker_login
+    registry: "{{ gitlab_registry_url }}"
+    username: "{{ gitlab_deploy_user }}"
+    password: "{{ gitlab_deploy_token }}"
 
-- name: Build database Docker image. Uses random numbers to force Docker to build certain parts of image every time
+- name: Build allu_reporting_database Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
     module: docker_image
     source: build
@@ -8,68 +14,53 @@
         CACHEBUST: "{{ 9999999 |random }}"
         POSTGRES_PWD: "{{ database_password_allu_reporting_postgres }}"
       path: "{{ role_path }}/files/reporting_database_docker"
-    name: allu_reporting_database
-    force_absent: true
+    name: "allu_reporting_database:{{ branch }}"
     force_source: true
 
+- name: Push built allu_reporting_database Docker image to GitLab repository
+  local_action:
+    module: docker_image
+    push: true
+    source: local
+    force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
+    name: "allu_reporting_database:{{ branch }}"
+    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_reporting_database:{{ branch }}"
 
-- name: remove existing docker image to avoid Ansible task caching
-  local_action: file path=/tmp/allu_reporting_database.tar state=absent
-
-- name: remove existing zipped docker
-  local_action: file path=/tmp/allu_reporting_database.tar.gz state=absent
-
-# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
-# able to use docker without super user rights
-- name: save local Docker image as file on local host
-  local_action: docker_image
-                source=local
-                name=allu_reporting_database
-                archive_path=/tmp/allu_reporting_database.tar
-                state=present
-
-- name: gzip Docker image on local host
-  local_action: command pigz /tmp/allu_reporting_database.tar
-
-- name: copy Docker image to target host
-  copy: src=/tmp/allu_reporting_database.tar.gz dest=/tmp
-            owner=allu
-            group=allu
-            mode="u=rwx,g=rx,o=rx"
-
-- name: extract tar from Docker gzipped image
-  command: gunzip -f /tmp/allu_reporting_database.tar.gz
-
-- name: start Docker services on remote host
+- name: Start Docker services on remote host
   service: name=docker state=started
   become: yes
 
-- name: stop and remove existing container from Docker
+- name: Stop and remove existing allu_reporting_database container from Docker
   docker_container:
-    name: allu_reporting_database_container
+    name: "{{ reporting_database_name }}"
     state: absent
   become: yes
 
-- name: remove existing image from Docker
+- name: Remove existing allu_reporting_database image from Docker
   docker_image:
-    name=allu_reporting_database
-    state=absent
-    force_absent=true
-    force_source=true
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_reporting_database:{{ branch }}"
+    state: absent
+    force_absent: true
+  become: yes
+  when: "'test' in group_names or 'staging' in group_names"
+
+- name: Login to GitLab repository at the remote
+  docker_login:
+    registry: "{{ gitlab_registry_url }}/vincit/allu/allu"
+    username: "{{ gitlab_deploy_user }}"
+    password: "{{ gitlab_deploy_token }}"
   become: yes
 
-- name: add container to Docker
+- name: Pull allu_reporting_database Docker image from GitLab repository
   docker_image:
-    source=load
-    name=allu_reporting_database
-    state=present
-    load_path=/tmp/allu_reporting_database.tar
+    source: pull
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_reporting_database:{{ branch }}"
   become: yes
 
-- name: start container
+- name: Start allu_reporting_database container
   docker_container:
-    name: "{{ reporting_database_container_name }}"
-    image: allu_reporting_database
+    name: "{{ reporting_database_name }}"
+    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_reporting_database:{{ branch }}"
     shm_size: "{{ container_shm_size }}"
     restart_policy: always
     volumes:
@@ -81,9 +72,6 @@
         aliases:
           - reportingdatabasecontainer
   become: yes
-
-- name: remove Docker image tar file
-  file: path=/tmp/allu_reporting_database.tar state=absent
 
 - name: wait for Postgresql to initialize
   postgresql_ping:

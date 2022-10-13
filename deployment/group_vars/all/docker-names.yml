@@ -3,5 +3,5 @@ backend_container_name: allu-backend
 database_name: allu-database
 network_name: allu-network
 elasticsearch_name: allu-elasticsearch
-reporting_database_container_name: allu-reporting-database
+reporting_database_name: allu-reporting-database
 sftp_server_name: sftp-server
