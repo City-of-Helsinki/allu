@@ -2,4 +2,4 @@
   hosts: reporting_dbserver
   remote_user: allu
   roles:
-    - etl
+    - { role: etl, branch: "{{ var_branch | default('master') }}" }

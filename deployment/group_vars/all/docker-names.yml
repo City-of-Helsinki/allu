@@ -4,4 +4,5 @@ database_name: allu-database
 network_name: allu-network
 elasticsearch_name: allu-elasticsearch
 reporting_database_name: allu-reporting-database
+etl_service_name: allu-etl
 sftp_server_name: sftp-server
