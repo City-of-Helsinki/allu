@@ -1,3 +1,10 @@
+- name: Login to GitLab repository locally
+  local_action:
+    module: docker_login
+    registry: "{{ gitlab_registry_url }}"
+    username: "{{ gitlab_deploy_user }}"
+    password: "{{ gitlab_deploy_token }}"
+
 - name: Build ElasticSearch Docker image
   local_action:
     module: docker_image
@@ -7,68 +14,53 @@
         CUSTOM_UID: "{{ system_user_id_allu }}"
         CUSTOM_GID: "{{ system_group_id_allu }}"
       path: "{{ role_path }}/files/elasticsearch_docker"
-    name: allu_elasticsearch
-    force_absent: true
+    name: "allu_elasticsearch:{{ branch }}"
     force_source: true
 
+- name: Push built allu_elasticsearch Docker image to GitLab repository
+  local_action:
+    module: docker_image
+    push: true
+    source: local
+    force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
+    name: "allu_elasticsearch:{{ branch }}"
+    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_elasticsearch:{{ branch }}"
 
-- name: remove existing docker image to avoid Ansible task caching
-  local_action: file path=/tmp/allu_elasticsearch.tar state=absent
-
-- name: remove existing zipped docker image
-  local_action: file path=/tmp/allu_elasticsearch.tar.gz state=absent
-
-# This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
-# able to use docker without super user rights
-- name: save local Docker image as file on local host
-  local_action: docker_image
-                source=local
-                name=allu_elasticsearch
-                archive_path=/tmp/allu_elasticsearch.tar
-                state=present
-
-- name: gzip Docker image on local host
-  local_action: command pigz /tmp/allu_elasticsearch.tar
-
-- name: copy Docker image to target host
-  copy: src=/tmp/allu_elasticsearch.tar.gz dest=/tmp
-            owner=allu
-            group=allu
-            mode="u=rwx,g=rx,o=rx"
-
-- name: extract tar from Docker gzipped image
-  command: gunzip -f /tmp/allu_elasticsearch.tar.gz
-
-- name: start Docker services on remote host
+- name: Start Docker services on remote host
   service: name=docker state=started
   become: yes
 
-- name: stop and remove existing container from Docker
+- name: Stop and remove existing allu_elasticsearch container from Docker
   docker_container:
     name: "{{ elasticsearch_name }}"
     state: absent
   become: yes
 
-- name: remove existing container from Docker
+- name: Remove existing allu_elasticsearch image from Docker
   docker_image:
-    name=allu_elasticsearch
-    state=absent
-    force_absent=true
-    force_source=true
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_elasticsearch:{{ branch }}"
+    state: absent
+    force_absent: true
+  become: yes
+  when: "'test' in group_names or 'staging' in group_names"
+
+- name: Login to GitLab repository at the remote
+  docker_login:
+    registry: "{{ gitlab_registry_url }}/vincit/allu/allu"
+    username: "{{ gitlab_deploy_user }}"
+    password: "{{ gitlab_deploy_token }}"
   become: yes
 
-- name: add container to Docker
+- name: Pull allu_elasticsearch Docker image from GitLab repository
   docker_image:
-    source=load
-    name=allu_elasticsearch
-    state=present
-    load_path=/tmp/allu_elasticsearch.tar
+    source: pull
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_elasticsearch:{{ branch }}"
   become: yes
 
-- name: start container
+- name: Start allu_elasticsearch container
   docker_container:
     name: "{{ elasticsearch_name }}"
-    image: allu_elasticsearch
+    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_elasticsearch:{{ branch }}"
     restart_policy: always
     volumes:
       - /srv/data/allu/elasticsearch:/usr/share/elasticsearch/data:rw
@@ -88,6 +80,3 @@
       - "nofile:65536:65536"
       - "memlock:-1:-1"
   become: yes
-
-- name: remove Docker image tar file
-  file: path=/tmp/allu_elasticsearch.tar state=absent

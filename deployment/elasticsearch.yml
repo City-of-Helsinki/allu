@@ -2,4 +2,4 @@
   hosts: searchservers
   remote_user: allu
   roles:
-    - elasticsearch
+    - { role: elasticsearch, branch: "{{ var_branch | default('master') }}" }
