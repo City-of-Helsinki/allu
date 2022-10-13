@@ -2,4 +2,4 @@
   hosts: dbservers
   remote_user: allu
   roles:
-    - database
+    - { role: database, branch: "{{ var_branch | default('master') }}" }

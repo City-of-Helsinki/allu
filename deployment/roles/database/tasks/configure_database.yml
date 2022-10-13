@@ -89,7 +89,7 @@
 
 - name: Restart a container
   docker_container:
-    name: "{{ database_container_name }}"
+    name: "{{ database_name }}"
     state: started
     restart: true
   become: yes

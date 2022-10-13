@@ -11,7 +11,7 @@ allu_service_memory_limit:
   external-service: 128m
   supervision-api: 128m
 
-database_host: "{{ database_container_name }}"
+database_host: "{{ database_name }}"
 
 mail_default_encoding: UTF-8
 mail_server_host: smtp.gmail.com
@@ -41,4 +41,3 @@ customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
 customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 
 supervision_api_basepath: /supervision-api
-

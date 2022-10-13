@@ -1,6 +1,6 @@
 allu_ui_service_name: allu-ui-service
 backend_container_name: allu-backend
-database_container_name: allu-database
+database_name: allu-database
 network_name: allu-network
 elasticsearch_name: allu-elasticsearch
 reporting_database_container_name: allu-reporting-database
