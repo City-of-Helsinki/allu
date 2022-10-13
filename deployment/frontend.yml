@@ -3,4 +3,4 @@
   remote_user: allu
   become: no
   roles:
-    - frontend
+    - { role: frontend, branch: "{{ var_branch | default('master') }}" }

@@ -1,3 +1,4 @@
+frontend_name: allu-frontend
 allu_ui_service_name: allu-ui-service
 backend_container_name: allu-backend
 database_name: allu-database
