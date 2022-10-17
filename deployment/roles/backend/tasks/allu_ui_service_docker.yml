@@ -64,13 +64,8 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
-    driver_options:
-      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-    ipam_config:
-      - subnet: '172.18.0.0/16'
-        gateway: 172.18.0.1
     appends: yes
   become: yes
 
@@ -79,14 +74,12 @@
     name: allu_ui_service
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
     restart_policy: always
-    networks:
-      - name: "{{ network_name }}"
     volumes:
       - /srv/data/allu:/servicehome:rw
     published_ports:
       - "9000:9000"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - uicontainer
   become: yes

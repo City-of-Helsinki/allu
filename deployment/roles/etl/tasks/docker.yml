@@ -70,11 +70,6 @@
   docker_network:
     name: allu_bridge_network
     driver: bridge
-    driver_options:
-      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-    ipam_config:
-      - subnet: '172.18.0.0/16'
-        gateway: 172.18.0.1
     appends: yes
   become: yes
 
@@ -86,7 +81,7 @@
     volumes:
       - /home/allu:/servicehome:rw
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - etlcontainer
   become: yes

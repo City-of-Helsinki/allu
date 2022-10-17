@@ -66,13 +66,8 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
-    driver_options:
-      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-    ipam_config:
-      - subnet: '172.18.0.0/16'
-        gateway: 172.18.0.1
     appends: yes
   become: yes
 
@@ -80,8 +75,6 @@
   docker_container:
     name: "{{ database_container_name }}"
     image: allu_database
-    networks:
-      - name: "{{ network_name }}"
     restart_policy: always
     env:
       POSTGRES_PASSWORD: "{{ database_password_postgres }}"
@@ -90,7 +83,7 @@
     published_ports:
       - "5432:5432"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - databasecontainer
   become: yes

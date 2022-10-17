@@ -61,32 +61,18 @@
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
   become: yes
 
-- name: Start Docker bridge network if not already running
-  docker_network:
-    name: allu_bridge_network
-    driver: bridge
-    driver_options:
-      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-    ipam_config:
-      - subnet: '172.18.0.0/16'
-        gateway: 172.18.0.1
-    appends: yes
-  become: yes
-
 - name: Start allu_backend container
   docker_container:
     name: "{{ backend_container_name }}"
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
     restart_policy: always
-    networks:
-      - name: "{{ network_name }}"
     volumes:
       - /srv/data/allu:/servicehome:rw
     published_ports:
       - "9040:9040"
       - "9050:9050"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - backendcontainer
   become: yes
