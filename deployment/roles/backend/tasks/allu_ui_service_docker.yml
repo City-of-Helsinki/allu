@@ -67,6 +67,8 @@
     name: allu_ui_service
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
     restart_policy: always
+    networks:
+      - name: "{{ network_name }}"
     volumes:
       - /srv/data/allu:/servicehome:rw
     published_ports:

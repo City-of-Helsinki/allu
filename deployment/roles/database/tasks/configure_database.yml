@@ -89,6 +89,6 @@
 
 - name: Restart a container
   docker_container:
-    name: allu_database_container
+    name: "{{ database_container_name }}"
     state: started
     restart: true

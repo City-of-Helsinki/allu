@@ -1,0 +1,3 @@
+backend_container_name: backend-service-container
+database_container_name: allu-database-container
+network_name: backend-network
