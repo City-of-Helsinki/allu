@@ -1,2 +1,2 @@
-elasticsearch_host: escontainer
-elasticsearch_port: 9300
+elasticsearch_host: "{{ elasticsearch_name }}"
+elasticsearch_port: 9200

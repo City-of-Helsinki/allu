@@ -68,7 +68,7 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
     appends: yes
   become: yes
