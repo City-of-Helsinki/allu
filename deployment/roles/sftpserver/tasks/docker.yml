@@ -63,14 +63,14 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
     appends: yes
   become: yes
 
 - name: start container
   docker_container:
-    name: allu_sftpserver_container
+    name: "{{ sftp_server_container_name }}"
     image: allu_sftpserver
     restart_policy: always
     volumes:
@@ -79,7 +79,7 @@
     ports:
       - "2222:22"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - sftpservercontainer
     command: "{{ sap_ftp_invoice_user }}:{{ sap_ftp_invoice_password }}:{{ system_user_id_allu}}:{{ system_group_id_allu }}:/customer/arch"

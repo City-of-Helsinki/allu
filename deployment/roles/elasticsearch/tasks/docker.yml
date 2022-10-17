@@ -45,7 +45,7 @@
 
 - name: stop and remove existing container from Docker
   docker_container:
-    name: allu_elasticsearch_container
+    name: "{{ elasticsearch_name }}"
     state: absent
   become: yes
 
@@ -67,14 +67,14 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
     appends: yes
   become: yes
 
 - name: start container
   docker_container:
-    name: allu_elasticsearch_container
+    name: "{{ elasticsearch_name }}"
     image: allu_elasticsearch
     restart_policy: always
     volumes:
@@ -83,7 +83,7 @@
       - "9200:9200"
       - "9300:9300"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - escontainer
     env:

@@ -68,7 +68,7 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
     appends: yes
   become: yes
@@ -81,7 +81,7 @@
     volumes:
       - /home/allu:/servicehome:rw
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - etlcontainer
   become: yes

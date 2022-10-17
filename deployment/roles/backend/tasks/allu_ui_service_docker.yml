@@ -36,7 +36,7 @@
 
 - name: Stop and remove existing allu_ui_service container from Docker
   docker_container:
-    name: allu_ui_service
+    name: "{{ allu_ui_service_name }}"
     state: absent
   become: yes
 
@@ -64,14 +64,14 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
     appends: yes
   become: yes
 
 - name: Start allu_ui_service container
   docker_container:
-    name: allu_ui_service
+    name: "{{ allu_ui_service_name }}"
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
     restart_policy: always
     volumes:
@@ -79,7 +79,7 @@
     published_ports:
       - "9000:9000"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - uicontainer
   become: yes

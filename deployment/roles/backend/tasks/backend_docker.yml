@@ -63,7 +63,7 @@
 
 - name: Start allu_backend container
   docker_container:
-    name: allu_backend
+    name: "{{ backend_container_name }}"
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
     restart_policy: always
     volumes:
@@ -72,7 +72,7 @@
       - "9040:9040"
       - "9050:9050"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - backendcontainer
   become: yes

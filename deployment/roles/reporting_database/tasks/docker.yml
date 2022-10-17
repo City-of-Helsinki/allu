@@ -68,14 +68,14 @@
 
 - name: Start Docker bridge network if not already running
   docker_network:
-    name: allu_bridge_network
+    name: "{{ network_name }}"
     driver: bridge
     appends: yes
   become: yes
 
 - name: start container
   docker_container:
-    name: allu_reporting_database_container
+    name: "{{ reporting_database_container_name }}"
     image: allu_reporting_database
     restart_policy: always
     volumes:
@@ -83,7 +83,7 @@
     published_ports:
       - "5433:5432"
     networks:
-      - name: allu_bridge_network
+      - name: "{{ network_name }}"
         aliases:
           - reportingdatabasecontainer
   become: yes
