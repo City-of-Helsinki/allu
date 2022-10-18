@@ -65,6 +65,10 @@
   docker_network:
     name: "{{ network_name }}"
     driver: bridge
+    ipam_config:
+      - subnet: '172.18.0.0/16'
+        gateway: 172.18.0.1
+    force: yes
     appends: yes
   become: yes
 
