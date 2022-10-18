@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
+import fi.hel.allu.search.service.ContactSearchService;
+import fi.hel.allu.search.service.ProjectSearchService;
 import fi.hel.allu.search.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,12 +29,18 @@ public class ApplicationController {
 
   private final ApplicationSearchService applicationSearchService;
   private final CustomerSearchService customerSearchService;
+  private final ContactSearchService contactSearchService;
+  private final ProjectSearchService projectSearchService;
 
   @Autowired
   public ApplicationController(ApplicationSearchService applicationSearchService,
-                               CustomerSearchService customerSearchService) {
+                               CustomerSearchService customerSearchService,
+                               ContactSearchService contactSearchService,
+                               ProjectSearchService projectSearchService) {
     this.applicationSearchService = applicationSearchService;
     this.customerSearchService = customerSearchService;
+    this.contactSearchService = contactSearchService;
+    this.projectSearchService = projectSearchService;
   }
 
   @PostMapping
@@ -96,6 +104,8 @@ public class ApplicationController {
   public ResponseEntity<Void> startSync() {
     applicationSearchService.prepareSync();
     customerSearchService.prepareSync();
+    contactSearchService.prepareSync();
+    projectSearchService.prepareSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -103,6 +113,8 @@ public class ApplicationController {
   public ResponseEntity<Void> commitSync() {
     applicationSearchService.endSync();
     customerSearchService.endSync();
+    contactSearchService.endSync();
+    projectSearchService.endSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -110,6 +122,8 @@ public class ApplicationController {
   public ResponseEntity<Void> cancelSync() {
     applicationSearchService.cancelSync();
     customerSearchService.cancelSync();
+    contactSearchService.cancelSync();
+    projectSearchService.cancelSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

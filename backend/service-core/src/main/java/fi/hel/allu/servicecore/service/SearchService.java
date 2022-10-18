@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,13 +40,13 @@ import reactor.util.retry.Retry;
 @Service
 public class SearchService {
 
-  private ApplicationProperties applicationProperties;
-  private WebClient webClient;
+  private final ApplicationProperties applicationProperties;
+  private final WebClient webClient;
 
-  private ApplicationMapper applicationMapper;
-  private CustomerMapper customerMapper;
-  private ProjectMapper projectMapper;
-  private LocationService locationService;
+  private final ApplicationMapper applicationMapper;
+  private final CustomerMapper customerMapper;
+  private final ProjectMapper projectMapper;
+  private final LocationService locationService;
 
   private static final Logger logger = LoggerFactory.getLogger(SearchService.class);
   private static final long REQUEST_TIME_OUT_SECONDS = 10;
@@ -66,10 +67,9 @@ public class SearchService {
     this.customerMapper = customerMapper;
     this.projectMapper = projectMapper;
     this.locationService = locationService;
-    webClient = webClientBuilder
-        .exchangeStrategies(
-            builder -> builder.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
-        )
+    ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder().codecs(
+            codecs -> codecs.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE)).build();
+    webClient = webClientBuilder.exchangeStrategies(exchangeStrategies)
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
   }
@@ -90,7 +90,7 @@ public class SearchService {
 
   public void updateApplications(List<ApplicationJson> applicationJsons, boolean waitRefresh) {
     List<ApplicationES> applications =
-      applicationJsons.stream().map(a -> applicationMapper.createApplicationESModel(a)).collect(Collectors.toList());
+      applicationJsons.stream().map(applicationMapper::createApplicationESModel).collect(Collectors.toList());
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdateUrl())
       .queryParam("waitRefresh", waitRefresh)
       .buildAndExpand().toUri();
@@ -175,7 +175,7 @@ public class SearchService {
    * @param projectJsons Projects to be updated.
    */
   public void updateProjects(List<ProjectJson> projectJsons) {
-    List<ProjectES> projects = projectJsons.stream().map(p -> projectMapper.createProjectESModel(p)).collect(Collectors.toList());
+    List<ProjectES> projects = projectJsons.stream().map(projectMapper::createProjectESModel).collect(Collectors.toList());
     executePutWithRetry(applicationProperties.getProjectsSearchUpdateUrl(), projects);
   }
 
@@ -199,7 +199,7 @@ public class SearchService {
    */
   public void updateCustomers(List<CustomerJson> customerJsons) {
     List<CustomerES> customers = customerJsons.stream()
-      .map(a -> customerMapper.createCustomerES(a))
+      .map(customerMapper::createCustomerES)
       .collect(Collectors.toList());
     executePutWithRetry(applicationProperties.getCustomersSearchUpdateUrl(), customers);
   }
@@ -347,7 +347,8 @@ public class SearchService {
         .put()
         .uri(url, uriVariables)
         .bodyValue(request)
-        .exchange()
+        .retrieve()
+              .bodyToMono(Void.class)
         .block(Duration.ofSeconds(REQUEST_TIME_OUT_SECONDS));
     } else {
       executePutWithRetry(url, request, uriVariables);
@@ -376,7 +377,7 @@ public class SearchService {
     .subscribe(c -> {}, t -> onError(t, uri, HttpMethod.POST));
   }
 
-  public <T> void executeDeleteWithRetry(String uri, Object... uriVariables) {
+  public void executeDeleteWithRetry(String uri, Object... uriVariables) {
     webClient
     .delete()
     .uri(uri, uriVariables)
