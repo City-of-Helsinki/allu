@@ -70,7 +70,7 @@
 
 - name: start container
   docker_container:
-    name: allu_sftpserver_container
+    name: "{{ sap_ftp_customer_name }}"
     image: allu_sftpserver
     restart_policy: always
     volumes:

@@ -1,4 +1,5 @@
 backend_container_name: backend-service-container
 database_container_name: allu-database-container
 network_name: backend-network
-elasticsearch_name: allu_elasticsearch_container
+elasticsearch_name: allu-elasticsearch-container
+sap_ftp_customer_name: allu_sftpserver_container

@@ -28,7 +28,6 @@ sap_ftp_invoice_port: 2222
 sap_ftp_invoice_directory: /invoice/
 
 # Customer update SFTP configuration
-sap_ftp_customer_host: sftpservercontainer
 sap_ftp_customer_port: 2222
 sap_ftp_customer_directory: /customer/
 sap_ftp_customer_arch_directory: /customer/arch/
