@@ -51,6 +51,8 @@ public class ApplicationProperties {
     this.cityDistrictUrl = cityDistrictUrl;
   }
 
+  public static final String PATH_PREFIX = "http://";
+
   /**
    * Model-service path to find application by identifier
    */
@@ -105,7 +107,7 @@ public class ApplicationProperties {
    * @return absolute url to search-service resource
    */
   public String getSearchServiceUrl(String path) {
-    return searchServiceHost + ":" + searchServicePort + path;
+    return PATH_PREFIX + searchServiceHost + ":" + searchServicePort + path;
   }
 
   /**
@@ -117,7 +119,7 @@ public class ApplicationProperties {
    * @return absolute url to pdf-service resource
    */
   private String getPdfServiceUrl(String path) {
-    return pdfServiceHost + ":" + pdfServicePort + path;
+    return PATH_PREFIX + pdfServiceHost + ":" + pdfServicePort + path;
   }
 
   /**
@@ -1195,7 +1197,7 @@ public class ApplicationProperties {
    * @return the base URL for model service.
    */
   private String modelServiceBaseUrl() {
-    return modelServiceHost + ":" + modelServicePort;
+    return PATH_PREFIX + modelServiceHost + ":" + modelServicePort;
   }
 
   /**
@@ -1542,6 +1544,7 @@ public class ApplicationProperties {
 
   /**
    * WFS payment class URL
+   * @return
    */
   public String getPaymentClassUrl() {
     return paymentClassUrl;
