@@ -4,7 +4,6 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.ConfigurationKey;
 
-import java.net.URI;
 import java.util.List;
 
 public class ApplicationProperties {
@@ -51,8 +50,6 @@ public class ApplicationProperties {
     this.paymentClassPassword = paymentClassPassword;
     this.cityDistrictUrl = cityDistrictUrl;
   }
-
-  public static final String PATH_PREFIX = "http://";
 
   /**
    * Model-service path to find application by identifier
@@ -108,7 +105,7 @@ public class ApplicationProperties {
    * @return absolute url to search-service resource
    */
   public String getSearchServiceUrl(String path) {
-    return PATH_PREFIX + searchServiceHost + ":" + searchServicePort + path;
+    return searchServiceHost + ":" + searchServicePort + path;
   }
 
   /**
@@ -120,7 +117,7 @@ public class ApplicationProperties {
    * @return absolute url to pdf-service resource
    */
   private String getPdfServiceUrl(String path) {
-    return PATH_PREFIX + pdfServiceHost + ":" + pdfServicePort + path;
+    return pdfServiceHost + ":" + pdfServicePort + path;
   }
 
   /**
@@ -1198,7 +1195,7 @@ public class ApplicationProperties {
    * @return the base URL for model service.
    */
   private String modelServiceBaseUrl() {
-    return PATH_PREFIX + modelServiceHost + ":" + modelServicePort;
+    return modelServiceHost + ":" + modelServicePort;
   }
 
   /**
@@ -1545,7 +1542,6 @@ public class ApplicationProperties {
 
   /**
    * WFS payment class URL
-   * @return
    */
   public String getPaymentClassUrl() {
     return paymentClassUrl;
