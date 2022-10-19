@@ -2,10 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import java.time.ZonedDateTime;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application invoicing period")
+@Schema(description = "Application invoicing period")
 public class InvoicingPeriodJson {
 
   private Integer id;
@@ -21,7 +20,7 @@ public class InvoicingPeriodJson {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Id of the period")
+  @Schema(description = "Id of the period")
   public Integer getId() {
     return id;
   }
@@ -30,7 +29,7 @@ public class InvoicingPeriodJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Start time of the period")
+  @Schema(description = "Start time of the period")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -39,7 +38,7 @@ public class InvoicingPeriodJson {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "End time of the period")
+  @Schema(description = "End time of the period")
   public ZonedDateTime getEndTime() {
     return endTime;
   }

@@ -2,10 +2,9 @@ package fi.hel.allu.servicecore.domain;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Contact person")
+@Schema(description = "Contact person")
 public class ContactJson {
   private Integer id;
   private Integer customerId;
@@ -27,7 +26,7 @@ public class ContactJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the contact")
+  @Schema(description = "Id of the contact")
   public Integer getId() {
     return id;
   }
@@ -36,7 +35,7 @@ public class ContactJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the customer whose contact this is")
+  @Schema(description = "Id of the customer whose contact this is")
   public Integer getCustomerId() {
     return customerId;
   }
@@ -45,7 +44,7 @@ public class ContactJson {
     this.customerId = customerId;
   }
 
-  @ApiModelProperty(value = "Name of the contact")
+  @Schema(description = "Name of the contact")
   public String getName() {
     return name;
   }
@@ -54,7 +53,7 @@ public class ContactJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Street address of the contact")
+  @Schema(description = "Street address of the contact")
   public String getStreetAddress() {
     return streetAddress;
   }
@@ -63,7 +62,7 @@ public class ContactJson {
     this.streetAddress = streetAddress;
   }
 
-  @ApiModelProperty(value = "Postal code of the contact")
+  @Schema(description = "Postal code of the contact")
   public String getPostalCode() {
     return postalCode;
   }
@@ -72,7 +71,7 @@ public class ContactJson {
     this.postalCode = postalCode;
   }
 
-  @ApiModelProperty(value = "City of the contact")
+  @Schema(description = "City of the contact")
   public String getCity() {
     return city;
   }
@@ -81,7 +80,7 @@ public class ContactJson {
     this.city = city;
   }
 
-  @ApiModelProperty(value = "Email of the contact")
+  @Schema(description = "Email of the contact")
   public String getEmail() {
     return email;
   }
@@ -90,7 +89,7 @@ public class ContactJson {
     this.email = email;
   }
 
-  @ApiModelProperty(value = "Phone number of the contact")
+  @Schema(description = "Phone number of the contact")
   public String getPhone() {
     return phone;
   }
@@ -99,7 +98,7 @@ public class ContactJson {
     this.phone = phone;
   }
 
-  @ApiModelProperty(value = "True, if the user is active i.e. has not been marked as deleted.")
+  @Schema(description = "True, if the user is active i.e. has not been marked as deleted.")
   public boolean isActive() {
     return active;
   }
@@ -108,7 +107,7 @@ public class ContactJson {
     this.active = active;
   }
 
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   public Boolean getOrderer() {
     return orderer;
   }

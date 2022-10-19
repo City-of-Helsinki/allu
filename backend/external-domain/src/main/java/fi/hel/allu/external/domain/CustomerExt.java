@@ -6,15 +6,14 @@ import javax.validation.constraints.Size;
 import javax.validation.constraints.NotBlank;
 
 import fi.hel.allu.common.domain.types.CustomerType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * in Finnish: Asiakas (esimerkiksi Hakija, Rakennuttaja, Työn suorittaja ja Asiamies).
  *
  * <p>A customer is either person, organization or a company.
  */
-@ApiModel(value="Application customer information")
+@Schema(description="Application customer information")
 public class CustomerExt {
   private Integer id;
   @NotNull(message = "{customer.type.notnull}")
@@ -40,7 +39,7 @@ public class CustomerExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value="Customer type", required = true, allowableValues = "PERSON, COMPANY, ASSOCIATION, OTHER")
+  @Schema(description="Customer type", required = true, allowableValues = "PERSON, COMPANY, ASSOCIATION, OTHER")
   public CustomerType getType() {
     return type;
   }
@@ -49,7 +48,7 @@ public class CustomerExt {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "The name of the customer person, company or organization.", required = true)
+  @Schema(description = "The name of the customer person, company or organization.", required = true)
   public String getName() {
     return name;
   }
@@ -58,7 +57,7 @@ public class CustomerExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "The postal address of the customer")
+  @Schema(description = "The postal address of the customer")
   public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
@@ -67,7 +66,7 @@ public class CustomerExt {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value = "Email of the customer person, company or organization.")
+  @Schema(description = "Email of the customer person, company or organization.")
   public String getEmail() {
     return email;
   }
@@ -76,7 +75,7 @@ public class CustomerExt {
     this.email = email;
   }
 
-  @ApiModelProperty(value = "Phone number of the customer person, company or organization.")
+  @Schema(description = "Phone number of the customer person, company or organization.")
   public String getPhone() {
     return phone;
   }
@@ -85,7 +84,7 @@ public class CustomerExt {
     this.phone = phone;
   }
 
-  @ApiModelProperty(value = "The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.")
+  @Schema(description = "The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.")
   public String getRegistryKey() {
     return registryKey;
   }
@@ -94,7 +93,7 @@ public class CustomerExt {
     this.registryKey = registryKey;
   }
 
-  @ApiModelProperty(value = "E-invoice identifier of the customer (OVT-tunnus).")
+  @Schema(description = "E-invoice identifier of the customer (OVT-tunnus).")
   public String getOvt() {
     return ovt;
   }
@@ -103,7 +102,7 @@ public class CustomerExt {
     this.ovt = ovt;
   }
 
-  @ApiModelProperty(value = "E-invoicing operator code.")
+  @Schema(description = "E-invoicing operator code.")
   public String getInvoicingOperator() {
     return invoicingOperator;
   }
@@ -112,7 +111,7 @@ public class CustomerExt {
     this.invoicingOperator = invoicingOperator;
   }
 
-  @ApiModelProperty(value = "Customer's country (ISO 3166-1 alpha-2 country code).", required = true)
+  @Schema(description = "Customer's country (ISO 3166-1 alpha-2 country code).", required = true)
   public String getCountry() {
     return country;
   }
@@ -121,7 +120,7 @@ public class CustomerExt {
     this.country = country;
   }
 
-  @ApiModelProperty(value = "Customer's SAP number")
+  @Schema(description = "Customer's SAP number")
   public String getSapCustomerNumber() {
     return sapCustomerNumber;
   }

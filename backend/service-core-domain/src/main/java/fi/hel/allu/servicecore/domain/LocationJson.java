@@ -15,13 +15,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * in Finnish: Hakemuksen sijainti
  */
-@ApiModel(value = "Application location")
+@Schema(description = "Application location")
 @NotFalse(rules = {"startTime, startTimeNotAfterEndTimeValidation, start time must be before end time"})
 public class LocationJson implements StartTimeInterface {
   private Integer id;
@@ -58,7 +57,7 @@ public class LocationJson implements StartTimeInterface {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Location key. Each new location for one application gets a key greater than the previous key.", readOnly = true)
+  @Schema(description = "Location key. Each new location for one application gets a key greater than the previous key.", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getLocationKey() {
     return locationKey;
   }
@@ -67,7 +66,7 @@ public class LocationJson implements StartTimeInterface {
     this.locationKey = locationKey;
   }
 
-  @ApiModelProperty(value = "Version of the location. If the location is updated, then new version will get higher version number than the previous.", readOnly = true)
+  @Schema(description = "Version of the location. If the location is updated, then new version will get higher version number than the previous.", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getLocationVersion() {
     return locationVersion;
   }
@@ -77,7 +76,7 @@ public class LocationJson implements StartTimeInterface {
   }
 
 
-  @ApiModelProperty(value = "The time location use starts", required = true)
+  @Schema(description = "The time location use starts", required = true)
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -86,7 +85,7 @@ public class LocationJson implements StartTimeInterface {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "The time location use ends", required = true)
+  @Schema(description = "The time location use ends", required = true)
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -95,7 +94,7 @@ public class LocationJson implements StartTimeInterface {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Additional information for the location")
+  @Schema(description = "Additional information for the location")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -104,7 +103,7 @@ public class LocationJson implements StartTimeInterface {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value =
+  @Schema(description =
       "Location geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
       +"<ul>"
       +"<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"
@@ -118,7 +117,7 @@ public class LocationJson implements StartTimeInterface {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Calculated location area in sq meters", readOnly = true)
+  @Schema(description = "Calculated location area in sq meters", accessMode = Schema.AccessMode.READ_ONLY)
   public Double getArea() {
     return area;
   }
@@ -127,7 +126,7 @@ public class LocationJson implements StartTimeInterface {
     this.area = area;
   }
 
-  @ApiModelProperty(value = "The user overridden area in sq. meters or null, if override is not set")
+  @Schema(description = "The user overridden area in sq. meters or null, if override is not set")
   public Double getAreaOverride() {
     return areaOverride;
   }
@@ -136,7 +135,7 @@ public class LocationJson implements StartTimeInterface {
     this.areaOverride = areaOverride;
   }
 
-  @ApiModelProperty(value = "Address of the location")
+  @Schema(description = "Address of the location")
   public PostalAddressJson getPostalAddress() {
     return postalAddress;
   }
@@ -145,7 +144,7 @@ public class LocationJson implements StartTimeInterface {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value = "Fixed location IDs for this area")
+  @Schema(description = "Fixed location IDs for this area")
   public List<Integer> getFixedLocationIds() {
     return fixedLocationIds;
   }
@@ -154,7 +153,7 @@ public class LocationJson implements StartTimeInterface {
     this.fixedLocationIds = fixedLocationIds;
   }
 
-  @ApiModelProperty(value = "Calculated city district ID for the location", readOnly = true)
+  @Schema(description = "Calculated city district ID for the location", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getCityDistrictId() {
     return cityDistrictId;
   }
@@ -163,7 +162,7 @@ public class LocationJson implements StartTimeInterface {
     this.cityDistrictId = cityDistrictId;
   }
 
-  @ApiModelProperty(value = "The user overridden city district id")
+  @Schema(description = "The user overridden city district id")
   public Integer getCityDistrictIdOverride() {
     return cityDistrictIdOverride;
   }
@@ -172,7 +171,7 @@ public class LocationJson implements StartTimeInterface {
     this.cityDistrictIdOverride = cityDistrictIdOverride;
   }
 
-  @ApiModelProperty(value = "Calculated payment tariff (maksuluokka) of the location", readOnly = true)
+  @Schema(description = "Calculated payment tariff (maksuluokka) of the location", accessMode = Schema.AccessMode.READ_ONLY)
   public String getPaymentTariff() {
     return paymentTariff;
   }
@@ -181,7 +180,7 @@ public class LocationJson implements StartTimeInterface {
     this.paymentTariff = paymentTariff;
   }
 
-  @ApiModelProperty(value = "User overridden payment tariff (maksuluokka) of the location")
+  @Schema(description = "User overridden payment tariff (maksuluokka) of the location")
   public String getPaymentTariffOverride() {
     return paymentTariffOverride;
   }
@@ -191,7 +190,7 @@ public class LocationJson implements StartTimeInterface {
   }
 
 
-  @ApiModelProperty(value = "Underpass (altakuljettava)")
+  @Schema(description = "Underpass (altakuljettava)")
   public Boolean getUnderpass() {
     return underpass;
   }
@@ -212,12 +211,12 @@ public class LocationJson implements StartTimeInterface {
     return address;
   }
 
-  @ApiModelProperty(value = "Location address in string or name of the fixed location", readOnly = true)
+  @Schema(description = "Location address in string or name of the fixed location", accessMode = Schema.AccessMode.READ_ONLY)
   public void setAddress(String address) {
     this.address = address;
   }
 
-  @ApiModelProperty(value = "Location start time reported by the customer")
+  @Schema(description = "Location start time reported by the customer")
   public ZonedDateTime getCustomerStartTime() {
     return customerStartTime;
   }
@@ -226,7 +225,7 @@ public class LocationJson implements StartTimeInterface {
     this.customerStartTime = customerStartTime;
   }
 
-  @ApiModelProperty(value = "Location end time reported by the customer")
+  @Schema(description = "Location end time reported by the customer")
   public ZonedDateTime getCustomerEndTime() {
     return customerEndTime;
   }
@@ -235,7 +234,7 @@ public class LocationJson implements StartTimeInterface {
     this.customerEndTime = customerEndTime;
   }
 
-  @ApiModelProperty(value = "Time when customer reported start and/or end time for the location")
+  @Schema(description = "Time when customer reported start and/or end time for the location")
   public ZonedDateTime getCustomerReportingTime() {
     return customerReportingTime;
   }

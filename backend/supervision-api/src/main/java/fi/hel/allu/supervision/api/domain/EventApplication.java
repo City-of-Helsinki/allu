@@ -2,9 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.EventJson;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Event application")
+@Schema(description = "Event application")
 public class EventApplication extends BaseApplication<EventJson> {
 
   public EventApplication() {

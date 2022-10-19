@@ -1,10 +1,9 @@
 package fi.hel.allu.external.domain;
 
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Field of information request.")
+@Schema(description ="Field of information request.")
 public class InformationRequestFieldExt {
 
   private String requestDescription;
@@ -18,7 +17,7 @@ public class InformationRequestFieldExt {
     this.requestDescription = requestDescription;
   }
 
-  @ApiModelProperty(value = "Handler's description for information request.")
+  @Schema(description = "Handler's description for information request.")
   public String getRequestDescription() {
     return requestDescription;
   }
@@ -27,7 +26,7 @@ public class InformationRequestFieldExt {
     this.requestDescription = requestDescription;
   }
 
-  @ApiModelProperty(value = "Key of the information request field")
+  @Schema(description = "Key of the information request field")
   public InformationRequestFieldKey getFieldKey() {
     return fieldKey;
   }

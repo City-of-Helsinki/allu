@@ -1,6 +1,6 @@
 package fi.hel.allu.external.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Base class for decision / approval document search results.
@@ -20,7 +20,7 @@ public abstract class AbstractDocumentSearchResult {
     this.address = address;
   }
 
-  @ApiModelProperty(value = "Application ID")
+  @Schema(description = "Application ID")
   public Integer getId() {
     return id;
   }
@@ -29,7 +29,7 @@ public abstract class AbstractDocumentSearchResult {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Application identifier (hakemustunnus)")
+  @Schema(description = "Application identifier (hakemustunnus)")
   public String getApplicationId() {
     return applicationId;
   }
@@ -38,7 +38,7 @@ public abstract class AbstractDocumentSearchResult {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Application address / fixed location name")
+  @Schema(description = "Application address / fixed location name")
   public String getAddress() {
     return address;
   }

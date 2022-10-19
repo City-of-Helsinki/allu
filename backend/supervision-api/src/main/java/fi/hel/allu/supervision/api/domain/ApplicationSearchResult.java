@@ -6,10 +6,9 @@ import java.util.List;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application search result")
+@Schema(description = "Application search result")
 public class ApplicationSearchResult {
 
   private Integer id;
@@ -27,7 +26,7 @@ public class ApplicationSearchResult {
   private ZonedDateTime endTime;
   private List<LocationSearchResult> locations;
 
-  @ApiModelProperty(value = "Id of the application")
+  @Schema(description = "Id of the application")
   public Integer getId() {
     return id;
   }
@@ -36,7 +35,7 @@ public class ApplicationSearchResult {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Application identifier (hakemustunniste)")
+  @Schema(description = "Application identifier (hakemustunniste)")
   public String getApplicationId() {
     return applicationId;
   }
@@ -45,7 +44,7 @@ public class ApplicationSearchResult {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Project identifier (hanketunniste)")
+  @Schema(description = "Project identifier (hanketunniste)")
   public String getProjectIdentfier() {
     return projectIdentifier;
   }
@@ -54,7 +53,7 @@ public class ApplicationSearchResult {
     this.projectIdentifier = projectIdentifier;
   }
 
-  @ApiModelProperty(value = "Id of the project")
+  @Schema(description = "Id of the project")
   public Integer getProjectId() {
     return projectId;
   }
@@ -63,7 +62,7 @@ public class ApplicationSearchResult {
     this.projectId = projectId;
   }
 
-  @ApiModelProperty(value = "Application owner username")
+  @Schema(description = "Application owner username")
   public String getOwnerUserName() {
     return ownerUserName;
   }
@@ -72,7 +71,7 @@ public class ApplicationSearchResult {
     this.ownerUserName = ownerUserName;
   }
 
-  @ApiModelProperty(value = "Application owner real name")
+  @Schema(description = "Application owner real name")
   public String getOwnerRealName() {
     return ownerRealName;
   }
@@ -81,7 +80,7 @@ public class ApplicationSearchResult {
     this.ownerRealName = ownerRealName;
   }
 
-  @ApiModelProperty(value = "Status of the application")
+  @Schema(description = "Status of the application")
   public StatusType getStatus() {
     return status;
   }
@@ -90,7 +89,7 @@ public class ApplicationSearchResult {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Application type")
+  @Schema(description = "Application type")
   public ApplicationType getType() {
     return type;
   }
@@ -99,7 +98,7 @@ public class ApplicationSearchResult {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Application tags")
+  @Schema(description = "Application tags")
   public List<ApplicationTagType> getApplicationTags() {
     return applicationTags;
   }
@@ -108,7 +107,7 @@ public class ApplicationSearchResult {
     this.applicationTags = applicationTags;
   }
 
-  @ApiModelProperty(value = "Id of the applicant")
+  @Schema(description = "Id of the applicant")
   public Integer getApplicantId() {
     return applicantId;
   }
@@ -117,7 +116,7 @@ public class ApplicationSearchResult {
     this.applicantId = applicantId;
   }
 
-  @ApiModelProperty(value = "Name of the applicant")
+  @Schema(description = "Name of the applicant")
   public String getApplicantName() {
     return applicantName;
   }
@@ -126,7 +125,7 @@ public class ApplicationSearchResult {
     this.applicantName = applicantName;
   }
 
-  @ApiModelProperty(value = "Application locations")
+  @Schema(description = "Application locations")
   public List<LocationSearchResult> getLocations() {
     return locations;
   }
@@ -135,7 +134,7 @@ public class ApplicationSearchResult {
     this.locations = locations;
   }
 
-  @ApiModelProperty(value = "Starting time of the application")
+  @Schema(description = "Starting time of the application")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -144,7 +143,7 @@ public class ApplicationSearchResult {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "Ending time of the application")
+  @Schema(description = "Ending time of the application")
   public ZonedDateTime getEndTime() {
     return endTime;
   }

@@ -9,13 +9,12 @@ import javax.validation.constraints.NotEmpty;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * in Finnish: Hakemus
  */
-@ApiModel(value = "Application")
+@Schema(description = "Application")
 public class ApplicationJson extends BaseApplicationJson implements StartTimeInterface {
 
   @Valid
@@ -63,7 +62,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
   public ApplicationJson() {
   }
 
-  @ApiModelProperty(value = "Project this application belongs to")
+  @Schema(description = "Project this application belongs to")
   public ProjectJson getProject() {
     return project;
   }
@@ -73,7 +72,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.project = project;
   }
 
-  @ApiModelProperty(value = "Owner of the application", readOnly = true)
+  @Schema(description = "Owner of the application", accessMode = Schema.AccessMode.READ_ONLY)
   public UserJson getOwner() {
     return owner;
   }
@@ -82,7 +81,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.owner = owner;
   }
 
-  @ApiModelProperty(value = "Handler of the application", readOnly = true)
+  @Schema(description = "Handler of the application", accessMode = Schema.AccessMode.READ_ONLY)
   public UserJson getHandler() {
     return handler;
   }
@@ -91,7 +90,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.handler = handler;
   }
 
-  @ApiModelProperty(value = "Application creation time", readOnly = true)
+  @Schema(description = "Application creation time", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -100,7 +99,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "The user who made the decision", readOnly = true)
+  @Schema(description = "The user who made the decision", accessMode = Schema.AccessMode.READ_ONLY)
   public UserJson getDecisionMaker() {
     return decisionMaker;
   }
@@ -109,7 +108,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.decisionMaker = decisionMaker;
   }
 
-  @ApiModelProperty(value = "Decision distribution list", readOnly = true)
+  @Schema(description = "Decision distribution list", accessMode = Schema.AccessMode.READ_ONLY)
   public List<DistributionEntryJson> getDecisionDistributionList() {
     return decisionDistributionList;
   }
@@ -118,7 +117,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.decisionDistributionList = decisionDistributionList;
   }
 
-  @ApiModelProperty(value = "Attachments of the application", readOnly = true)
+  @Schema(description = "Attachments of the application", accessMode = Schema.AccessMode.READ_ONLY)
   public List<AttachmentInfoJson> getAttachmentList() {
     return attachmentList;
   }
@@ -127,7 +126,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.attachmentList = attachmentList;
   }
 
-  @ApiModelProperty(value = "Comments of the application", readOnly = true)
+  @Schema(description = "Comments of the application", accessMode = Schema.AccessMode.READ_ONLY)
   public List<CommentJson> getComments() {
     return comments;
   }
@@ -136,7 +135,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.comments = comments;
   }
 
-  @ApiModelProperty(value = "Calculated price of the application (in cents)", readOnly = true)
+  @Schema(description = "Calculated price of the application (in cents)", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getCalculatedPrice() {
     return calculatedPrice;
   }
@@ -145,7 +144,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.calculatedPrice = calculatedPrice;
   }
 
-  @ApiModelProperty(value = "ID of the application which is replaced by this application", readOnly = true)
+  @Schema(description = "ID of the application which is replaced by this application", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getReplacesApplicationId() {
     return replacesApplicationId;
   }
@@ -154,7 +153,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.replacesApplicationId = replacesApplicationId;
   }
 
-  @ApiModelProperty(value = "ID of the application which has replaced this application", readOnly = true)
+  @Schema(description = "ID of the application which has replaced this application", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getReplacedByApplicationId() {
     return replacedByApplicationId;
   }
@@ -163,7 +162,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.replacedByApplicationId = replacedByApplicationId;
   }
 
-  @ApiModelProperty(value = "Invoicing date of the application")
+  @Schema(description = "Invoicing date of the application")
   public ZonedDateTime getInvoicingDate() {
     return invoicingDate;
   }
@@ -173,7 +172,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.invoicingDate = invoicingDate;
   }
 
-  @ApiModelProperty(value = "True if application is (completely) invoiced", readOnly = true)
+  @Schema(description = "True if application is (completely) invoiced", accessMode = Schema.AccessMode.READ_ONLY)
   public Boolean getInvoiced() {
     return invoiced;
   }
@@ -190,7 +189,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.clientApplicationData = clientApplicationData;
   }
 
-  @ApiModelProperty(value = "Application identification number (asiointitunnus)")
+  @Schema(description = "Application identification number (asiointitunnus)")
   public String getIdentificationNumber() {
     return identificationNumber;
   }
@@ -200,7 +199,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.identificationNumber = identificationNumber;
   }
 
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   public StatusType getTargetState() {
     return targetState;
   }
@@ -209,7 +208,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.targetState = targetState;
   }
 
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   public Integer getExternalOwnerId() {
     return externalOwnerId;
   }
@@ -218,7 +217,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.externalOwnerId = externalOwnerId;
   }
 
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   public Integer getExternalApplicationId() {
     return externalApplicationId;
   }
@@ -226,12 +225,12 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
   public void setExternalApplicationId(Integer externalApplicationId) {
     this.externalApplicationId = externalApplicationId;
   }
-  @ApiModelProperty(value = "Value indicating whether application is received from external system", readOnly = true)
+  @Schema(description = "Value indicating whether application is received from external system", accessMode = Schema.AccessMode.READ_ONLY)
   public boolean isExternalApplication() {
     return externalOwnerId != null;
   }
 
-  @ApiModelProperty(value = "Value indicating whether application requires owners attention (has changes made by other users etc)", readOnly = true)
+  @Schema(description = "Value indicating whether application requires owners attention (has changes made by other users etc)", accessMode = Schema.AccessMode.READ_ONLY)
   public Boolean getOwnerNotification() {
     return ownerNotification;
   }
@@ -240,7 +239,7 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
     this.ownerNotification = ownerNotification;
   }
 
-  @ApiModelProperty(value = "Application customers with their contacts", readOnly = true)
+  @Schema(description = "Application customers with their contacts", accessMode = Schema.AccessMode.READ_ONLY)
   public List<CustomerWithContactsJson> getCustomersWithContacts() {
     return customersWithContacts;
   }

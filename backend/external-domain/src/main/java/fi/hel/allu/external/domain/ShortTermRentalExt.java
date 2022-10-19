@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
@@ -19,7 +18,7 @@ import java.util.Optional;
     "within80cmFromWall, kindWithin80cm, {shorttermrental.kindWithin80cm}",
     "commercial, kindCommercial, {shorttermrental.kindCommercial}"
  })
-@ApiModel("Short term rental (lyhytaikainen maanvuokraus) input model.")
+@Schema(description ="Short term rental (lyhytaikainen maanvuokraus) input model.")
 public class ShortTermRentalExt extends BaseApplicationExt {
 
   private List<Integer> fixedLocationIds;
@@ -30,7 +29,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
   private Boolean within80cmFromWall;
   private Boolean commercial;
 
-  @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
+  @Schema(description = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
   public List<Integer> getFixedLocationIds() {
     return fixedLocationIds;
   }
@@ -39,7 +38,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.fixedLocationIds = fixedLocationIds;
   }
 
-  @ApiModelProperty(value = "Description")
+  @Schema(description = "Description")
   public String getDescription() {
     return description;
   }
@@ -48,7 +47,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Application kind.", required = true)
+  @Schema(description = "Application kind.", required = true)
   public ApplicationKind getApplicationKind() {
     return applicationKind;
   }
@@ -57,7 +56,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.applicationKind = applicationKind;
   }
 
-  @ApiModelProperty(value = "The last year the recurring application is active. Application may recur for certain time every year. For example, an area might " +
+  @Schema(description = "The last year the recurring application is active. Application may recur for certain time every year. For example, an area might " +
     "be used for storing snow every year and such application should be created as a recurring application instead of creating " +
     "application for each year separately.")
   public Integer getRecurringEndYear() {
@@ -68,7 +67,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.recurringEndYear = recurringEndYear;
   }
 
-  @ApiModelProperty(value = "Describes whether rental area is within 80cm from actual business space. " +
+  @Schema(description = "Describes whether rental area is within 80cm from actual business space. " +
     "This can be set for SUMMER_TERRACE, WINTER_TERRACE and PROMOTION_OR_SALES.")
   public Boolean getWithin80cmFromWall() {
     return within80cmFromWall;
@@ -78,7 +77,7 @@ public class ShortTermRentalExt extends BaseApplicationExt {
     this.within80cmFromWall = within80cmFromWall;
   }
 
-  @ApiModelProperty(value = "True, if rental has commercial nature. Value allowed only for kind BRIDGE_BANNER.")
+  @Schema(description = "True, if rental has commercial nature. Value allowed only for kind BRIDGE_BANNER.")
   public Boolean getCommercial() {
     return commercial;
   }

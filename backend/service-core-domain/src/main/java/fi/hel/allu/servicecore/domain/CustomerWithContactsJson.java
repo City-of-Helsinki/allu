@@ -1,13 +1,12 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ApiModel(value = "Application customer and related contacts")
+@Schema(description = "Application customer and related contacts")
 public class CustomerWithContactsJson {
 
   private CustomerRoleType roleType;
@@ -28,12 +27,12 @@ public class CustomerWithContactsJson {
     this.contacts = contacts;
   }
 
-  @ApiModelProperty(value = "Id of the customer (if present)")
+  @Schema(description = "Id of the customer (if present)")
   public Integer getId() {
     return (customer == null) ? null : customer.getId();
   }
 
-  @ApiModelProperty(value = "Customer role type")
+  @Schema(description = "Customer role type")
   public CustomerRoleType getRoleType() {
     return roleType;
   }
@@ -42,7 +41,7 @@ public class CustomerWithContactsJson {
     this.roleType = roleType;
   }
 
-  @ApiModelProperty(value = "Application customer")
+  @Schema(description = "Application customer")
   public CustomerJson getCustomer() {
     return customer;
   }
@@ -51,7 +50,7 @@ public class CustomerWithContactsJson {
     this.customer = customer;
   }
 
-  @ApiModelProperty(value = "Contacts of the application customer")
+  @Schema(description = "Contacts of the application customer")
   public List<ContactJson> getContacts() {
     return contacts;
   }

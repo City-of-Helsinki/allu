@@ -1,11 +1,9 @@
 package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel(value = "Comment ouput model")
+@Schema(description = "Comment ouput model")
 public class CommentOutExt extends CommentExt {
 
   private ZonedDateTime creationTime;
@@ -18,7 +16,7 @@ public class CommentOutExt extends CommentExt {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Comment creation time", readOnly = true)
+  @Schema(description = "Comment creation time", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }

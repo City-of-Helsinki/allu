@@ -2,7 +2,7 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
   @Valid
   private CreateCustomerWithContactsJson customerApplicantWithContacts;
 
-  @ApiModelProperty(value = "Project this application belongs to")
+  @Schema(description = "Project this application belongs to")
   public Integer getProjectId() {
     return projectId;
   }
@@ -29,7 +29,7 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
     this.projectId = projectId;
   }
 
-  @ApiModelProperty(value = "Owner of the application")
+  @Schema(description = "Owner of the application")
   public Integer getOwnerId() {
     return ownerId;
   }
@@ -38,7 +38,7 @@ public abstract class CreateApplicationJson extends BaseApplicationJson {
     this.ownerId = ownerId;
   }
 
-  @ApiModelProperty(value = "Handler of the application")
+  @Schema(description = "Handler of the application")
   public Integer getHandlerId() {
     return handlerId;
   }

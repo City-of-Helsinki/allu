@@ -7,8 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SearchParameters <T extends SearchField> {
 
@@ -24,7 +23,7 @@ public class SearchParameters <T extends SearchField> {
   @Min(value = 1, message = "{search.pagesize.invalid}")
   private Integer pageSize = Integer.valueOf(100);
 
-  @ApiModelProperty(value = "Search parameters in key-value map", required = true)
+  @Schema(description = "Search parameters in key-value map", required = true)
   public Map<T, String> getSearchParameters() {
     return searchParameters;
   }
@@ -33,7 +32,7 @@ public class SearchParameters <T extends SearchField> {
     this.searchParameters = searchParameters;
   }
 
-  @ApiModelProperty(value = "Zero-based page index.", required = true)
+  @Schema(description = "Zero-based page index.", required = true)
   public Integer getPage() {
     return page;
   }
@@ -42,7 +41,7 @@ public class SearchParameters <T extends SearchField> {
     this.page = page;
   }
 
-  @ApiModelProperty(value = "Page size (default = 100)")
+  @Schema(description = "Page size (default = 100)")
   public Integer getPageSize() {
     return pageSize;
   }
@@ -51,7 +50,7 @@ public class SearchParameters <T extends SearchField> {
     this.pageSize = pageSize;
   }
 
-  @ApiModelProperty(value = "Search sorting parameters")
+  @Schema(description = "Search sorting parameters")
   public List<SortOrder<T>> getSort() {
     return sort;
   }

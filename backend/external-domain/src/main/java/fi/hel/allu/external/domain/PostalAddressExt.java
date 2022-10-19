@@ -2,10 +2,9 @@ package fi.hel.allu.external.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Postal address")
+@Schema(description ="Postal address")
 public class PostalAddressExt {
   private StreetAddressExt streetAddress;
   private String postalCode;
@@ -21,7 +20,7 @@ public class PostalAddressExt {
     this.city = city;
   }
 
-  @ApiModelProperty("Street address")
+  @Schema(description = "Street address")
   public StreetAddressExt getStreetAddress() {
     return streetAddress;
   }
@@ -30,7 +29,7 @@ public class PostalAddressExt {
     this.streetAddress = streetAddress;
   }
 
-  @ApiModelProperty("Postal code")
+  @Schema(description = "Postal code")
   public String getPostalCode() {
     return postalCode;
   }
@@ -39,7 +38,7 @@ public class PostalAddressExt {
     this.postalCode = postalCode;
   }
 
-  @ApiModelProperty("City")
+  @Schema(description = "City")
   public String getCity() {
     return city;
   }

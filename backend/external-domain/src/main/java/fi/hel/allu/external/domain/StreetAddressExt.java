@@ -4,11 +4,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel("Street address in JHS106 format. "
+@Schema(description ="Street address in JHS106 format. "
     + "If structured street address format is not available in client system, "
     + "street address can be set into field streetName.")
 public class StreetAddressExt {
@@ -25,7 +23,7 @@ public class StreetAddressExt {
     this.streetName = streetAddress;
   }
 
-  @ApiModelProperty("Street name (kadun tai tien nimi)")
+  @Schema(description = "Street name (kadun tai tien nimi)")
   public String getStreetName() {
     return streetName;
   }
@@ -34,7 +32,7 @@ public class StreetAddressExt {
     this.streetName = streetName;
   }
 
-  @ApiModelProperty("Premise number (osoitenumero)")
+  @Schema(description = "Premise number (osoitenumero)")
   public String getPremiseNumber() {
     return premiseNumber;
   }
@@ -43,7 +41,7 @@ public class StreetAddressExt {
     this.premiseNumber = premiseNumber;
   }
 
-  @ApiModelProperty("Entrance letter (kirjainosa, porras)")
+  @Schema(description = "Entrance letter (kirjainosa, porras)")
   public String getEntranceLetter() {
     return entranceLetter;
   }
@@ -52,7 +50,7 @@ public class StreetAddressExt {
     this.entranceLetter = entranceLetter;
   }
 
-  @ApiModelProperty("Apartment number (numero-osa, huoneistonumero)")
+  @Schema(description = "Apartment number (numero-osa, huoneistonumero)")
   public String getApartmentNumber() {
     return apartmentNumber;
   }
@@ -61,7 +59,7 @@ public class StreetAddressExt {
     this.apartmentNumber = apartmentNumber;
   }
 
-  @ApiModelProperty("Division letter (jakokirjainosa)")
+  @Schema( description = "Division letter (jakokirjainosa)")
   public String getDivisionLetter() {
     return divisionLetter;
   }

@@ -7,10 +7,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
 
 import fi.hel.allu.common.types.CommentType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Comment for an application")
+@Schema(description = "Comment for an application")
 public class CommentJson {
   private Integer id;
   @NotNull
@@ -30,7 +29,7 @@ public class CommentJson {
     this.text = text;
   }
 
-  @ApiModelProperty(value = "Id of the comment. Should be null when creating new comment", readOnly = true)
+  @Schema(description = "Id of the comment. Should be null when creating new comment", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getId() {
     return id;
   }
@@ -40,7 +39,7 @@ public class CommentJson {
   }
 
 
-  @ApiModelProperty(value = "Type of the comment", required = true)
+  @Schema(description = "Type of the comment", required = true)
   public CommentType getType() {
     return type;
   }
@@ -49,7 +48,7 @@ public class CommentJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Comment text", required = true)
+  @Schema(description = "Comment text", required = true)
   public String getText() {
     return text;
   }
@@ -58,7 +57,7 @@ public class CommentJson {
     this.text = text;
   }
 
-  @ApiModelProperty(value = "Comment creation time", readOnly = true)
+  @Schema(description = "Comment creation time", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCreateTime() {
     return createTime;
   }
@@ -67,7 +66,7 @@ public class CommentJson {
     this.createTime = createTime;
   }
 
-  @ApiModelProperty(value = "Comment last update time", readOnly = true)
+  @Schema(description = "Comment last update time", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getUpdateTime() {
     return updateTime;
   }
@@ -77,7 +76,7 @@ public class CommentJson {
   }
 
 
-  @ApiModelProperty(value = "User who last updated comment", readOnly = true)
+  @Schema(description = "User who last updated comment", accessMode = Schema.AccessMode.READ_ONLY)
   public UserJson getUser() {
     return user;
   }
@@ -86,7 +85,7 @@ public class CommentJson {
     this.user = user;
   }
 
-  @ApiModelProperty(value = "Name of the commentator")
+  @Schema(description = "Name of the commentator")
   public String getCommentator() {
     return commentator;
   }

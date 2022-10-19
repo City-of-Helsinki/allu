@@ -2,9 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.NoteJson;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Note application")
+@Schema(description = "Note application")
 public class NoteApplication extends BaseApplication<NoteJson> {
 
   public NoteApplication() {

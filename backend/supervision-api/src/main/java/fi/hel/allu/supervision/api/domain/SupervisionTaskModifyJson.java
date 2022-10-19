@@ -4,10 +4,9 @@ import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Model to modify supervision task data")
+@Schema(description = "Model to modify supervision task data")
 public class SupervisionTaskModifyJson {
 
   @NotNull(message = "{supervisiontask.ownerId}")
@@ -16,7 +15,7 @@ public class SupervisionTaskModifyJson {
   private ZonedDateTime plannedFinishingTime;
   private String description;
 
-  @ApiModelProperty(value = "ID of the user (supervisor) who owns the task", required = true)
+  @Schema(description = "ID of the user (supervisor) who owns the task", required = true)
   public Integer getOwnerId() {
     return ownerId;
   }
@@ -25,7 +24,7 @@ public class SupervisionTaskModifyJson {
     this.ownerId = ownerId;
   }
 
-  @ApiModelProperty(value = "Planned finishing time for the task", required = true)
+  @Schema(description = "Planned finishing time for the task", required = true)
   public ZonedDateTime getPlannedFinishingTime() {
     return plannedFinishingTime;
   }
@@ -34,7 +33,7 @@ public class SupervisionTaskModifyJson {
     this.plannedFinishingTime = plannedFinishingTime;
   }
 
-  @ApiModelProperty(value = "Task description")
+  @Schema(description = "Task description")
   public String getDescription() {
     return description;
   }

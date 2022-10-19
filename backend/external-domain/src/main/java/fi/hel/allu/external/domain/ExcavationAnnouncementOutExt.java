@@ -3,10 +3,9 @@ package fi.hel.allu.external.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Excavation annoucement (kaivuilmoitus) output model")
+@Schema(description = "Excavation annoucement (kaivuilmoitus) output model")
 public class ExcavationAnnouncementOutExt extends ApplicationExt {
 
   private ZonedDateTime operationalConditionDate;
@@ -28,7 +27,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
   private boolean emergencyWork;
   private String trafficArrangements;
 
-  @ApiModelProperty(value = "Operational condition date")
+  @Schema(description = "Operational condition date")
   public ZonedDateTime getOperationalConditionDate() {
     return operationalConditionDate;
   }
@@ -37,7 +36,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.operationalConditionDate = operationalConditionDate;
   }
 
-  @ApiModelProperty(value = "Work finished date")
+  @Schema(description = "Work finished date")
   public ZonedDateTime getWorkFinishedDate() {
     return workFinishedDate;
   }
@@ -46,7 +45,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.workFinishedDate = workFinishedDate;
   }
 
-  @ApiModelProperty(value = "Operational condition date reported by the customer")
+  @Schema(description = "Operational condition date reported by the customer")
   public ZonedDateTime getReportedOperationalConditionDate() {
     return reportedOperationalConditionDate;
   }
@@ -55,7 +54,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.reportedOperationalConditionDate = reportedOperationalConditionDate;
   }
 
-  @ApiModelProperty(value = "Work finished date reported by the customer")
+  @Schema(description = "Work finished date reported by the customer")
   public ZonedDateTime getReportedWorkFinishedDate() {
     return reportedWorkFinishedDate;
   }
@@ -64,7 +63,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.reportedWorkFinishedDate = reportedWorkFinishedDate;
   }
 
-  @ApiModelProperty(value = "Start time reported by the customer")
+  @Schema(description = "Start time reported by the customer")
   public ZonedDateTime getReportedStartTime() {
     return reportedStartTime;
   }
@@ -73,7 +72,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.reportedStartTime = reportedStartTime;
   }
 
-  @ApiModelProperty(value = "End time reported by the customer")
+  @Schema(description = "End time reported by the customer")
   public ZonedDateTime getReportedEndTime() {
     return reportedEndTime;
   }
@@ -82,7 +81,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.reportedEndTime = reportedEndTime;
   }
 
-  @ApiModelProperty(value = "Compaction and bearing capacity measurement (tiiveys- ja kantavuusmittaus)")
+  @Schema(description = "Compaction and bearing capacity measurement (tiiveys- ja kantavuusmittaus)")
   public boolean isCompactionAndBearingCapacityMeasurement() {
     return compactionAndBearingCapacityMeasurement;
   }
@@ -91,7 +90,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
   }
 
-  @ApiModelProperty(value = "Quality assurance test (päällysteen laadunvarmistus)")
+  @Schema(description = "Quality assurance test (päällysteen laadunvarmistus)")
   public boolean isQualityAssuranceTest() {
     return qualityAssuranceTest;
   }
@@ -100,7 +99,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.qualityAssuranceTest = qualityAssuranceTest;
   }
 
-  @ApiModelProperty(value = "Work purpose")
+  @Schema(description = "Work purpose")
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -109,7 +108,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.workPurpose = workPurpose;
   }
 
-  @ApiModelProperty(value = "Additional information")
+  @Schema(description = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -118,7 +117,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value = "Cable report identifiers (liittyvien johtoselvitysten hakemustunnukset)")
+  @Schema(description = "Cable report identifiers (liittyvien johtoselvitysten hakemustunnukset)")
   public List<String> getCableReports() {
     return cableReports;
   }
@@ -127,7 +126,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.cableReports = cableReports;
   }
 
-  @ApiModelProperty(value = "Placement contract identifiers (liittyvien sijoitussopimusten hakemustunnukset)")
+  @Schema(description = "Placement contract identifiers (liittyvien sijoitussopimusten hakemustunnukset)")
   public List<String> getPlacementContracts() {
     return placementContracts;
   }
@@ -136,7 +135,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.placementContracts = placementContracts;
   }
 
-  @ApiModelProperty(value = "Self supervision (omavalvonta)")
+  @Schema(description = "Self supervision (omavalvonta)")
   public boolean isSelfSupervision() {
     return selfSupervision;
   }
@@ -145,7 +144,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.selfSupervision = selfSupervision;
   }
 
-  @ApiModelProperty(value = "Emergency work")
+  @Schema(description = "Emergency work")
   public boolean isEmergencyWork() {
     return emergencyWork;
   }
@@ -154,7 +153,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.emergencyWork = emergencyWork;
   }
 
-  @ApiModelProperty(value = "Traffic arrangements")
+  @Schema(description = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -163,7 +162,7 @@ public class ExcavationAnnouncementOutExt extends ApplicationExt {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Warranty end time")
+  @Schema(description = "Warranty end time")
   public ZonedDateTime getWarrantyEndTime() {
     return warrantyEndTime;
   }

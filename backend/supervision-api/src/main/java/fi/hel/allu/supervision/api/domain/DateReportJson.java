@@ -4,10 +4,9 @@ import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Model to hold application date reported by customer")
+@Schema(description = "Model to hold application date reported by customer")
 public class DateReportJson {
 
   @NotNull
@@ -18,7 +17,7 @@ public class DateReportJson {
   public DateReportJson() {
   }
 
-  @ApiModelProperty(value = "Date when customer reported application date")
+  @Schema(description = "Date when customer reported application date")
   public ZonedDateTime getReportingDate() {
     return reportingDate;
   }
@@ -27,7 +26,7 @@ public class DateReportJson {
     this.reportingDate = reportingDate;
   }
 
-  @ApiModelProperty(value = "Reported date")
+  @Schema(description = "Reported date")
   public ZonedDateTime getReportedDate() {
     return reportedDate;
   }

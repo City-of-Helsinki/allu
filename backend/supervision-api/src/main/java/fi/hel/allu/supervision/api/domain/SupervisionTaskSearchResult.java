@@ -7,10 +7,9 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Supervision task")
+@Schema(description = "Supervision task")
 public class SupervisionTaskSearchResult {
 
   private Integer id;
@@ -34,7 +33,7 @@ public class SupervisionTaskSearchResult {
   public SupervisionTaskSearchResult() {
   }
 
-  @ApiModelProperty(value = "Id of the supervision task")
+  @Schema(description = "Id of the supervision task")
   public Integer getId() {
     return id;
   }
@@ -43,7 +42,7 @@ public class SupervisionTaskSearchResult {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the application this task belongs to")
+  @Schema(description = "Id of the application this task belongs to")
   public Integer getApplicationId() {
     return applicationId;
   }
@@ -52,7 +51,7 @@ public class SupervisionTaskSearchResult {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "ID of the location this task applies to (present only in work time supervision tasks of area rentals)")
+  @Schema(description = "ID of the location this task applies to (present only in work time supervision tasks of area rentals)")
   public Integer getLocationId() {
     return locationId;
   }
@@ -61,7 +60,7 @@ public class SupervisionTaskSearchResult {
     this.locationId = locationId;
   }
 
-  @ApiModelProperty(value = "Key of the location this task applies to (present only in work time supervision tasks of area rentals)")
+  @Schema(description = "Key of the location this task applies to (present only in work time supervision tasks of area rentals)")
   public Integer getLocationKey() {
     return locationKey;
   }
@@ -70,7 +69,7 @@ public class SupervisionTaskSearchResult {
     this.locationKey = locationKey;
   }
 
-  @ApiModelProperty(value = "Supervision task type")
+  @Schema(description = "Supervision task type")
   public SupervisionTaskType getType() {
     return type;
   }
@@ -79,7 +78,7 @@ public class SupervisionTaskSearchResult {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Supervision task owner (supervisor)")
+  @Schema(description = "Supervision task owner (supervisor)")
   public String getOwnerRealName() {
     return ownerRealName;
   }
@@ -88,7 +87,7 @@ public class SupervisionTaskSearchResult {
     this.ownerRealName = ownerRealName;
   }
 
-  @ApiModelProperty(value = "Supervision task owner's username")
+  @Schema(description = "Supervision task owner's username")
   public String getOwnerUserName() {
     return ownerUserName;
   }
@@ -97,7 +96,7 @@ public class SupervisionTaskSearchResult {
     this.ownerUserName = ownerUserName;
   }
 
-  @ApiModelProperty(value = "Task creation time")
+  @Schema(description = "Task creation time")
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -106,7 +105,7 @@ public class SupervisionTaskSearchResult {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Planned finishing time for task")
+  @Schema(description = "Planned finishing time for task")
   public ZonedDateTime getPlannedFinishingTime() {
     return plannedFinishingTime;
   }
@@ -115,7 +114,7 @@ public class SupervisionTaskSearchResult {
     this.plannedFinishingTime = plannedFinishingTime;
   }
 
-  @ApiModelProperty(value = "Actual finishing time")
+  @Schema(description = "Actual finishing time")
   public ZonedDateTime getActualFinishingTime() {
     return actualFinishingTime;
   }
@@ -124,7 +123,7 @@ public class SupervisionTaskSearchResult {
     this.actualFinishingTime = actualFinishingTime;
   }
 
-  @ApiModelProperty(value = "Status of the task")
+  @Schema(description = "Status of the task")
   public SupervisionTaskStatusType getStatus() {
     return status;
   }
@@ -133,7 +132,7 @@ public class SupervisionTaskSearchResult {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Task description")
+  @Schema(description = "Task description")
   public String getDescription() {
     return description;
   }
@@ -142,7 +141,7 @@ public class SupervisionTaskSearchResult {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Result (supervisor's comment)")
+  @Schema(description = "Result (supervisor's comment)")
   public String getResult() {
     return result;
   }
@@ -151,7 +150,7 @@ public class SupervisionTaskSearchResult {
     this.result = result;
   }
 
-  @ApiModelProperty(value = "Application identifier (hakemustunniste")
+  @Schema(description = "Application identifier (hakemustunniste")
   public String getApplicationIdentifier() {
     return applicationIdentifier;
   }
@@ -160,7 +159,7 @@ public class SupervisionTaskSearchResult {
     this.applicationIdentifier = applicationIdentifier;
   }
 
-  @ApiModelProperty(value = "Status of the application")
+  @Schema(description = "Status of the application")
   public StatusType getApplicationStatus() {
     return applicationStatus;
   }
@@ -169,7 +168,7 @@ public class SupervisionTaskSearchResult {
     this.applicationStatus = applicationStatus;
   }
 
-  @ApiModelProperty(value = "Application type")
+  @Schema(description = "Application type")
   public ApplicationType getApplicationType() {
     return applicationType;
   }
@@ -178,7 +177,7 @@ public class SupervisionTaskSearchResult {
     this.applicationType = applicationType;
   }
 
-  @ApiModelProperty(value = "Address(es) of the supervision task.")
+  @Schema(description = "Address(es) of the supervision task.")
   public List<String> getAddresses() {
     return addresses;
   }

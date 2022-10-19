@@ -8,13 +8,12 @@ import javax.validation.constraints.NotBlank;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * JSON mapping for Allu user data.
  */
-@ApiModel(value = "Allu user")
+@Schema(description = "Allu user")
 public class UserJson {
   private Integer id;
   @NotBlank(message = "{user.userName}")
@@ -65,7 +64,7 @@ public class UserJson {
     this.cityDistrictIds = cityDistrictIds;
   }
 
-  @ApiModelProperty(value = "Id of the user")
+  @Schema(description = "Id of the user")
   public Integer getId() {
     return id;
   }
@@ -75,7 +74,7 @@ public class UserJson {
   }
 
 
-  @ApiModelProperty(value = "User name (as specified by AD)")
+  @Schema(description = "User name (as specified by AD)")
   public String getUserName() {
     return userName;
   }
@@ -85,7 +84,7 @@ public class UserJson {
   }
 
 
-  @ApiModelProperty(value = "User full name")
+  @Schema(description = "User full name")
   public String getRealName() {
     return realName;
   }
@@ -94,7 +93,7 @@ public class UserJson {
     this.realName = realName;
   }
 
-  @ApiModelProperty(value = "User email address")
+  @Schema(description = "User email address")
   public String getEmailAddress() {
     return emailAddress;
   }
@@ -103,7 +102,7 @@ public class UserJson {
     this.emailAddress = emailAddress;
   }
 
-  @ApiModelProperty(value = "User phone number")
+  @Schema(description = "User phone number")
   public String getPhone() {
     return phone;
   }
@@ -112,7 +111,7 @@ public class UserJson {
     this.phone = phone;
   }
 
-  @ApiModelProperty(value = "Title of the user")
+  @Schema(description = "Title of the user")
   public String getTitle() {
     return title;
   }
@@ -121,7 +120,7 @@ public class UserJson {
     this.title = title;
   }
 
-  @ApiModelProperty(value = "True if the user is active in the system.")
+  @Schema(description = "True if the user is active in the system.")
   public boolean isActive() {
     return isActive;
   }
@@ -130,7 +129,7 @@ public class UserJson {
     isActive = active;
   }
 
-  @ApiModelProperty(value = "Last login time")
+  @Schema(description = "Last login time")
   public ZonedDateTime getLastLogin() {
     return lastLogin;
   }
@@ -139,7 +138,7 @@ public class UserJson {
     this.lastLogin = lastLogin;
   }
 
-  @ApiModelProperty(value = "Application types user is allowed to alter.")
+  @Schema(description = "Application types user is allowed to alter.")
   public List<ApplicationType> getAllowedApplicationTypes() {
     return allowedApplicationTypes;
   }
@@ -148,7 +147,7 @@ public class UserJson {
     this.allowedApplicationTypes = allowedApplicationTypes;
   }
 
-  @ApiModelProperty(value = "List of roles assigned to the user")
+  @Schema(description = "List of roles assigned to the user")
   public List<RoleType> getAssignedRoles() {
     return assignedRoles;
   }
@@ -157,7 +156,7 @@ public class UserJson {
     this.assignedRoles = assignedRoles;
   }
 
-  @ApiModelProperty(value = "List of city district IDs assigned to the user")
+  @Schema(description = "List of city district IDs assigned to the user")
   public List<Integer> getCityDistrictIds() {
     return cityDistrictIds;
   }

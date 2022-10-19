@@ -1,14 +1,10 @@
 package fi.hel.allu.servicecore.domain;
 
-import java.time.ZonedDateTime;
-
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-
-@ApiModel(value = "Placement contract specific data")
+@Schema(description = "Placement contract specific data")
 public class PlacementContractJson extends ApplicationExtensionJson {
   private String propertyIdentificationNumber;
   private String additionalInfo;
@@ -16,13 +12,13 @@ public class PlacementContractJson extends ApplicationExtensionJson {
   private Integer sectionNumber;
   private String rationale;
 
-  @ApiModelProperty(value = "Application type (always PLACEMENT_CONTRACT).", allowableValues="PLACEMENT_CONTRACT", required = true)
+  @Schema(description = "Application type (always PLACEMENT_CONTRACT).", allowableValues="PLACEMENT_CONTRACT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.PLACEMENT_CONTRACT;
   }
 
-  @ApiModelProperty(value = "Property identification number (kiinteistötunnus)")
+  @Schema(description = "Property identification number (kiinteistötunnus)")
   public String getPropertyIdentificationNumber() {
     return propertyIdentificationNumber;
   }
@@ -32,7 +28,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.propertyIdentificationNumber = propertyIdentificationNumber;
   }
 
-  @ApiModelProperty(value = "Additional information")
+  @Schema(description = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -42,7 +38,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value = "Contract text")
+  @Schema(description = "Contract text")
   public String getContractText() {
     return contractText;
   }
@@ -52,7 +48,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.contractText = contractText;
   }
 
-  @ApiModelProperty(value = "Section number (pykälänumero)", readOnly = true)
+  @Schema(description = "Section number (pykälänumero)", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getSectionNumber() {
     return sectionNumber;
   }
@@ -62,7 +58,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.sectionNumber = sectionNumber;
   }
 
-  @ApiModelProperty(value = "Rationale")
+  @Schema(description = "Rationale")
   public String getRationale() {
     return rationale;
   }

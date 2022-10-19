@@ -8,10 +8,9 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Event specific fields")
+@Schema(description = "Event specific fields")
 public class EventJson extends ApplicationExtensionJson {
   private EventNature nature;
   private String description;
@@ -32,14 +31,14 @@ public class EventJson extends ApplicationExtensionJson {
   @NotNull(message = "{event.surfaceHardness}")
   private SurfaceHardness surfaceHardness;
 
-  @ApiModelProperty(value = "Application type (always EVENT).", allowableValues="EVENT", required = true)
+  @Schema(description = "Application type (always EVENT).", allowableValues="EVENT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.EVENT;
   }
 
 
-  @ApiModelProperty(value = "Event nature. Can be changed only for outdoor events (allowed natures for outdoor events: PUBLIC_FREE, PUBLIC_NONFREE, CLOSED)")
+  @Schema(description = "Event nature. Can be changed only for outdoor events (allowed natures for outdoor events: PUBLIC_FREE, PUBLIC_NONFREE, CLOSED)")
   public EventNature getNature() {
     return nature;
   }
@@ -49,7 +48,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.nature = nature;
   }
 
-  @ApiModelProperty(value = "Event description")
+  @Schema(description = "Event description")
   public String getDescription() {
     return description;
   }
@@ -62,7 +61,7 @@ public class EventJson extends ApplicationExtensionJson {
   /**
    * in Finnish: Tapahtuman WWW-sivu
    */
-  @ApiModelProperty(value = "Event's WWW page")
+  @Schema(description = "Event's WWW page")
   public String getUrl() {
     return url;
   }
@@ -72,7 +71,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.url = url;
   }
 
-  @ApiModelProperty(value = "Event start time", required = true)
+  @Schema(description = "Event start time", required = true)
   public ZonedDateTime getEventStartTime() {
     return eventStartTime;
   }
@@ -82,7 +81,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.eventStartTime = eventStartTime;
   }
 
-  @ApiModelProperty(value = "Event end time", required = true)
+  @Schema(description = "Event end time", required = true)
   public ZonedDateTime getEventEndTime() {
     return eventEndTime;
   }
@@ -92,7 +91,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.eventEndTime = eventEndTime;
   }
 
-  @ApiModelProperty(value = "Estimated number of attendees")
+  @Schema(description = "Estimated number of attendees")
   public int getAttendees() {
     return attendees;
   }
@@ -102,7 +101,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.attendees = attendees;
   }
 
-  @ApiModelProperty(value = "Entry fee")
+  @Schema(description = "Entry fee")
   public int getEntryFee() {
     return entryFee;
   }
@@ -112,7 +111,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.entryFee = entryFee;
   }
 
-  @ApiModelProperty(value = "True if applicant has EcoCompass")
+  @Schema(description = "True if applicant has EcoCompass")
   public boolean isEcoCompass() {
     return ecoCompass;
   }
@@ -122,7 +121,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.ecoCompass = ecoCompass;
   }
 
-  @ApiModelProperty(value = "True if there's food sales in event")
+  @Schema(description = "True if there's food sales in event")
   public boolean isFoodSales() {
     return foodSales;
   }
@@ -132,7 +131,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.foodSales = foodSales;
   }
 
-  @ApiModelProperty(value = "Food providers")
+  @Schema(description = "Food providers")
   public String getFoodProviders() {
     return foodProviders;
   }
@@ -142,7 +141,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.foodProviders = foodProviders;
   }
 
-  @ApiModelProperty(value = "Marketing providers")
+  @Schema(description = "Marketing providers")
   public String getMarketingProviders() {
     return marketingProviders;
   }
@@ -152,7 +151,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.marketingProviders = marketingProviders;
   }
 
-  @ApiModelProperty(value = "Total area of structures in sq. meters")
+  @Schema(description = "Total area of structures in sq. meters")
   public float getStructureArea() {
     return structureArea;
   }
@@ -162,7 +161,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.structureArea = structureArea;
   }
 
-  @ApiModelProperty(value = "Description of the structures")
+  @Schema(description = "Description of the structures")
   public String getStructureDescription() {
     return structureDescription;
   }
@@ -173,7 +172,7 @@ public class EventJson extends ApplicationExtensionJson {
   }
 
 
-  @ApiModelProperty(value = "Event time exceptions")
+  @Schema(description = "Event time exceptions")
   public String getTimeExceptions() {
     return timeExceptions;
   }
@@ -183,7 +182,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.timeExceptions = timeExceptions;
   }
 
-  @ApiModelProperty(value = "Surface type")
+  @Schema(description = "Surface type")
   public SurfaceHardness getSurfaceHardness() {
     return surfaceHardness;
   }

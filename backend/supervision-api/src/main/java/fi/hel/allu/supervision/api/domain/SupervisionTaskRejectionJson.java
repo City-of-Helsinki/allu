@@ -6,10 +6,9 @@ import javax.validation.constraints.NotNull;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Supervision task rejection data")
+@Schema(description ="Supervision task rejection data")
 public class SupervisionTaskRejectionJson {
 
   @NotBlank(message = "{supervisiontask.result}")
@@ -17,7 +16,7 @@ public class SupervisionTaskRejectionJson {
   @NotNull(message = "{supervisiontask.newSupervisionDate}")
   private ZonedDateTime newSupervisionDate;
 
-  @ApiModelProperty(value = "Result (supervisor's comment)", required = true)
+  @Schema(description = "Result (supervisor's comment)", required = true)
   public String getResult() {
     return result;
   }
@@ -26,7 +25,7 @@ public class SupervisionTaskRejectionJson {
     this.result = result;
   }
 
-  @ApiModelProperty(value = "Date for new supervision task.", required = true)
+  @Schema(description = "Date for new supervision task.", required = true)
   public ZonedDateTime getNewSupervisionDate() {
     return newSupervisionDate;
   }

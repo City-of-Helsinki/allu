@@ -1,9 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(
-    value = "Contact search parameters",
+@Schema(name = "Contact search parameters",
     description =
     "<ul>"
   + "<li><b>Page:</b> Zero-based page index</li>"

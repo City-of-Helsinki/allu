@@ -2,10 +2,9 @@ package fi.hel.allu.servicecore.domain;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Project creation and modification model")
+@Schema(description = "Project creation and modification model")
 public class ModifyProjectJson extends BaseProjectJson {
 
   @NotNull(message = "{customerWithContacts.customer}")
@@ -17,7 +16,7 @@ public class ModifyProjectJson extends BaseProjectJson {
     super();
   }
 
-  @ApiModelProperty(value = "Project customer ID")
+  @Schema(description = "Project customer ID")
   public Integer getCustomerId() {
     return customerId;
   }
@@ -26,7 +25,7 @@ public class ModifyProjectJson extends BaseProjectJson {
     this.customerId = customerId;
   }
 
-  @ApiModelProperty(value = "Project contact ID")
+  @Schema(description = "Project contact ID")
   public Integer getContactId() {
     return contactId;
   }

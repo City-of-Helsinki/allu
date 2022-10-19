@@ -2,23 +2,22 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Short term rental specific fields")
+@Schema(description = "Short term rental specific fields")
 public class ShortTermRentalJson extends ApplicationExtensionJson {
 
   private String description;
   private Boolean commercial;
   private Boolean billableSalesArea;
 
-  @ApiModelProperty(value = "Application type (always SHORT_TERM_RENTAL).", allowableValues="SHORT_TERM_REANTAL", required = true)
+  @Schema(description = "Application type (always SHORT_TERM_RENTAL).", allowableValues="SHORT_TERM_REANTAL", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.SHORT_TERM_RENTAL;
   }
 
-  @ApiModelProperty(value = "Description of the rental")
+  @Schema(description = "Description of the rental")
   public String getDescription() {
     return description;
   }
@@ -28,7 +27,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "True, if rental has commercial nature.")
+  @Schema(description = "True, if rental has commercial nature.")
   public Boolean getCommercial() {
     return commercial;
   }
@@ -38,7 +37,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     this.commercial = commercial;
   }
 
-  @ApiModelProperty(value = "True if the sales area is billable (over 80cm from the wall)")
+  @Schema(description = "True if the sales area is billable (over 80cm from the wall)")
   public Boolean getBillableSalesArea() {
     return billableSalesArea;
   }

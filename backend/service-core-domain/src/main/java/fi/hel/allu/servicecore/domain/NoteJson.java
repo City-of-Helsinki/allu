@@ -2,22 +2,20 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-
-@ApiModel(value = "Note specific fields")
+@Schema(description = "Note specific fields")
 public class NoteJson extends ApplicationExtensionJson {
 
   private String description;
 
-  @ApiModelProperty(value = "Application type (always NOTE).", allowableValues="NOTE", required = true)
+  @Schema(description = "Application type (always NOTE).", allowableValues="NOTE", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.NOTE;
   }
 
-  @ApiModelProperty(value = "Description of the note")
+  @Schema(description = "Description of the note")
   public String getDescription() {
     return description;
   }

@@ -1,8 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Project search parameter fields")
+@Schema(description = "Project search parameter fields")
 public enum ProjectSearchParameterField implements SearchField {
   IDENTIFIER("identifier", "identifier"),
   NAME("name", null),

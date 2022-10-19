@@ -5,10 +5,9 @@ import java.time.ZonedDateTime;
 import javax.validation.constraints.NotNull;
 
 import fi.hel.allu.common.types.AttachmentType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Attachment information")
+@Schema(description = "Attachment information")
 public class AttachmentInfoJson {
 
   private Integer id;
@@ -40,7 +39,7 @@ public class AttachmentInfoJson {
   private ZonedDateTime creationTime;
   private boolean decisionAttachment;
 
-  @ApiModelProperty(value = "The attachment ID", readOnly = true)
+  @Schema(description = "The attachment ID", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getId() {
     return id;
   }
@@ -49,7 +48,7 @@ public class AttachmentInfoJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the user who has made the latest change to the attachment.", readOnly = true)
+  @Schema(description = "Id of the user who has made the latest change to the attachment.", accessMode = Schema.AccessMode.READ_ONLY)
   public String getHandlerName() {
     return handlerName;
   }
@@ -58,7 +57,7 @@ public class AttachmentInfoJson {
     this.handlerName = handlerName;
   }
 
-  @ApiModelProperty(value = "Type of the attachment.", required = true)
+  @Schema(description = "Type of the attachment.", required = true)
   public AttachmentType getType() {
     return type;
   }
@@ -67,7 +66,7 @@ public class AttachmentInfoJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Attachments mime type")
+  @Schema(description = "Attachments mime type")
   public String getMimeType() {
     return mimeType;
   }
@@ -76,7 +75,7 @@ public class AttachmentInfoJson {
     this.mimeType = mimeType;
   }
 
-  @ApiModelProperty(value = "Attachment name (file name)", required = true)
+  @Schema(description = "Attachment name (file name)", required = true)
   public String getName() {
     return name;
   }
@@ -85,7 +84,7 @@ public class AttachmentInfoJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Attachment description")
+  @Schema(description = "Attachment description")
   public String getDescription() {
     return description;
   }
@@ -94,7 +93,7 @@ public class AttachmentInfoJson {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Attachment size", readOnly = true)
+  @Schema(description = "Attachment size", accessMode = Schema.AccessMode.READ_ONLY)
   public Long getSize() {
     return size;
   }
@@ -103,7 +102,7 @@ public class AttachmentInfoJson {
     this.size = size;
   }
 
-  @ApiModelProperty(value = "Attachment creation time", readOnly = true)
+  @Schema(description = "Attachment creation time", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -112,7 +111,7 @@ public class AttachmentInfoJson {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Indication if attachment should be included in decision distribution. Only PDF attachments are allowed as decision attachments.")
+  @Schema(description = "Indication if attachment should be included in decision distribution. Only PDF attachments are allowed as decision attachments.")
   public boolean isDecisionAttachment() {
     return decisionAttachment;
   }

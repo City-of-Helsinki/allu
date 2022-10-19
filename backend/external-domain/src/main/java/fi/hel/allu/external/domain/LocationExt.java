@@ -9,10 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application location information")
+@Schema(description = "Application location information")
 public class LocationExt {
 
 
@@ -28,7 +27,7 @@ public class LocationExt {
   private Double area;
   private List<Integer> fixedLocationIds;
 
-  @ApiModelProperty(value = "Location geometry")
+  @Schema(description = "Location geometry")
   public Geometry getGeometry() {
     return geometry;
   }
@@ -37,7 +36,7 @@ public class LocationExt {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Payment tariff (alueen maksuluokka)")
+  @Schema(description = "Payment tariff (alueen maksuluokka)")
   public String getPaymentTariff() {
     return paymentTariff;
   }
@@ -47,7 +46,7 @@ public class LocationExt {
   }
 
 
-  @ApiModelProperty(value = "Address")
+  @Schema(description = "Address")
   public PostalAddressExt getAddress() {
     return address;
   }
@@ -56,7 +55,7 @@ public class LocationExt {
     this.address = address;
   }
 
-  @ApiModelProperty(value = "City district name")
+  @Schema(description = "City district name")
   public String getCityDistrict() {
     return cityDistrict;
   }
@@ -65,7 +64,7 @@ public class LocationExt {
     this.cityDistrict = cityDistrict;
   }
 
-  @ApiModelProperty(value = "Application area in sq. meters")
+  @Schema(description = "Application area in sq. meters")
   public Double getArea() {
     return area;
   }
@@ -74,7 +73,7 @@ public class LocationExt {
     this.area = area;
   }
 
-  @ApiModelProperty(value = "Additional information about location")
+  @Schema(description = "Additional information about location")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -83,7 +82,7 @@ public class LocationExt {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value = "Fixed location IDs")
+  @Schema(description = "Fixed location IDs")
   public List<Integer> getFixedLocationIds() {
     return fixedLocationIds;
   }

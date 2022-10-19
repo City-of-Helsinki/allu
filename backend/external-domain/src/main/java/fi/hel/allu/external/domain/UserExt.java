@@ -1,9 +1,8 @@
 package fi.hel.allu.external.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Allu user")
+@Schema(description = "Allu user")
 public class UserExt {
 
   private String name;
@@ -17,7 +16,7 @@ public class UserExt {
     this.title = title;
   }
 
-  @ApiModelProperty(value = "User's name")
+  @Schema(description = "User's name")
   public String getName() {
     return name;
   }
@@ -26,7 +25,7 @@ public class UserExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "User's title")
+  @Schema(description = "User's title")
   public String getTitle() {
     return title;
   }

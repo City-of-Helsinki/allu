@@ -5,17 +5,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
 
 import fi.hel.allu.common.types.CommentType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Model for creating new comments")
+@Schema(description = "Model for creating new comments")
 public class CommentCreateJson {
   @NotNull(message = "{comment.type}")
   private CommentType type;
   @NotBlank(message = "{comment.content.empty}")
   private String text;
 
-  @ApiModelProperty(value = "Comment type", required = true)
+  @Schema(description = "Comment type", required = true)
   public CommentType getType() {
     return type;
   }
@@ -24,7 +23,7 @@ public class CommentCreateJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Comment content", required = true)
+  @Schema(description = "Comment content", required = true)
   public String getText() {
     return text;
   }

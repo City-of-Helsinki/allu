@@ -2,9 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ShortTermRentalJson;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Short term rental application")
+@Schema(description = "Short term rental application")
 public class ShortTermRentalApplication extends BaseApplication<ShortTermRentalJson> {
 
   public ShortTermRentalApplication() {

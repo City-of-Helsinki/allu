@@ -2,9 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.PlacementContractJson;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Placement contract application")
+@Schema(description = "Placement contract application")
 public class PlacementContractApplication extends BaseApplication<PlacementContractJson> {
 
   public PlacementContractApplication() {

@@ -16,8 +16,7 @@ import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @NotFalse(rules = {
     "startTime, startTimeNotAfterEndTime, {application.startTime}",
@@ -25,7 +24,7 @@ import io.swagger.annotations.ApiModelProperty;
     "recurringEndYear, lessThanYearActivity, {application.lessThanYearActivity}"
 })
 
-@ApiModel("Note (muistiinpano) input model.")
+@Schema(description ="Note (muistiinpano) input model.")
 public class NoteExt implements HasGeometry {
 
   @NotNull(message = "{application.kind}")
@@ -46,7 +45,7 @@ public class NoteExt implements HasGeometry {
   private String description;
 
 
-  @ApiModelProperty(value = "Application kind.", required = true)
+  @Schema(description = "Application kind.", required = true)
   public ApplicationKind getApplicationKind() {
     return applicationKind;
   }
@@ -55,7 +54,7 @@ public class NoteExt implements HasGeometry {
     this.applicationKind = applicationKind;
   }
 
-  @ApiModelProperty(value = "Postal address")
+  @Schema(description = "Postal address")
   public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
@@ -64,7 +63,7 @@ public class NoteExt implements HasGeometry {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value="Name for the note", required = true)
+  @Schema(description="Name for the note", required = true)
   public String getName() {
     return name;
   }
@@ -73,7 +72,7 @@ public class NoteExt implements HasGeometry {
     this.name = name;
   }
 
-  @ApiModelProperty(value =
+  @Schema(description =
       "Application geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
       +"<ul>"
       +"<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"
@@ -89,7 +88,7 @@ public class NoteExt implements HasGeometry {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Start time of the note.", required = true)
+  @Schema(description = "Start time of the note.", required = true)
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -98,12 +97,12 @@ public class NoteExt implements HasGeometry {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "End time of the note.", required = true)
+  @Schema(description = "End time of the note.", required = true)
   public ZonedDateTime getEndTime() {
     return endTime;
   }
 
-  @ApiModelProperty(value = "The last year the recurring note is active. Null if note is not recurring.")
+  @Schema(description = "The last year the recurring note is active. Null if note is not recurring.")
   public Integer getRecurringEndYear() {
     return recurringEndYear;
   }
@@ -116,7 +115,7 @@ public class NoteExt implements HasGeometry {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Area in square meters")
+  @Schema(description = "Area in square meters")
   public Double getArea() {
     return area;
   }
@@ -125,7 +124,7 @@ public class NoteExt implements HasGeometry {
     this.area = area;
   }
 
-  @ApiModelProperty(value = "Note description")
+  @Schema(description = "Note description")
   public String getDescription() {
     return description;
   }

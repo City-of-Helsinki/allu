@@ -6,10 +6,9 @@ import javax.validation.constraints.NotNull;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Placement contract signing information")
+@Schema(description = "Placement contract signing information")
 public class ContractSigningInfoExt {
 
   @NotBlank(message = "{contract.signer}")
@@ -18,7 +17,7 @@ public class ContractSigningInfoExt {
   private ZonedDateTime signingTime;
 
 
-  @ApiModelProperty(value = "Name of the contract signer", required = true)
+  @Schema(description = "Name of the contract signer", required = true)
   public String getSigner() {
     return signer;
   }
@@ -27,7 +26,7 @@ public class ContractSigningInfoExt {
     this.signer = signer;
   }
 
-  @ApiModelProperty(value = "Contract signing time", required = true)
+  @Schema(description = "Contract signing time", required = true)
   public ZonedDateTime getSigningTime() {
     return signingTime;
   }

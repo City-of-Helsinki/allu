@@ -5,8 +5,7 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -14,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NotFalse(rules = {
     "applicationKind, kindMatchType, {trafficarrangements.kind}"
  })
-@ApiModel("Temporary traffic arrangement (tilapäinen liikennejärjestely) input model.")
+@Schema(description ="Temporary traffic arrangement (tilapäinen liikennejärjestely) input model.")
 public class TrafficArrangementExt extends BaseApplicationExt {
 
   @NotNull(message = "{trafficarrangements.contractor}")
@@ -31,7 +30,7 @@ public class TrafficArrangementExt extends BaseApplicationExt {
   @NotNull(message = "{application.workPurpose}")
   private String workPurpose;
 
-  @ApiModelProperty(value = "Contractor (työn suorittaja)", required = true)
+  @Schema(description = "Contractor (työn suorittaja)", required = true)
   public CustomerWithContactsExt getContractorWithContacts() {
     return contractorWithContacts;
   }
@@ -40,7 +39,7 @@ public class TrafficArrangementExt extends BaseApplicationExt {
     this.contractorWithContacts = contractorWithContacts;
   }
 
-  @ApiModelProperty(value = "Property developer (rakennuttaja)")
+  @Schema(description = "Property developer (rakennuttaja)")
   public CustomerWithContactsExt getPropertyDeveloperWithContacts() {
     return propertyDeveloperWithContacts;
   }
@@ -49,7 +48,7 @@ public class TrafficArrangementExt extends BaseApplicationExt {
     this.propertyDeveloperWithContacts = propertyDeveloperWithContacts;
   }
 
-  @ApiModelProperty(value = "Application kind.", required = true)
+  @Schema(description = "Application kind.", required = true)
   public ApplicationKind getApplicationKind() {
     return applicationKind;
   }
@@ -58,7 +57,7 @@ public class TrafficArrangementExt extends BaseApplicationExt {
     this.applicationKind = applicationKind;
   }
 
-  @ApiModelProperty(value = "Traffic arrangements (suoritettavat liikennejärjestelyt)")
+  @Schema(description = "Traffic arrangements (suoritettavat liikennejärjestelyt)")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -67,7 +66,7 @@ public class TrafficArrangementExt extends BaseApplicationExt {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment (liikennejärjestelyn haitta)")
+  @Schema(description = "Traffic arrangement impediment (liikennejärjestelyn haitta)")
   public TrafficArrangementImpedimentType getTrafficArrangementImpediment() {
     return trafficArrangementImpediment;
   }
@@ -76,7 +75,7 @@ public class TrafficArrangementExt extends BaseApplicationExt {
     this.trafficArrangementImpediment = trafficArrangementImpediment;
   }
 
-  @ApiModelProperty(value = "Work purpose (työn tarkoitus)", required = true)
+  @Schema(description = "Work purpose (työn tarkoitus)", required = true)
   public String getWorkPurpose() {
     return workPurpose;
   }

@@ -3,7 +3,7 @@ package fi.hel.allu.external.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -22,7 +22,7 @@ public abstract class EventExt extends BaseApplicationExt {
   @NotNull(message = "{event.endtime}")
   private ZonedDateTime eventEndTime;
 
-  @ApiModelProperty(value = "Structure area in square meters")
+  @Schema(description = "Structure area in square meters")
   public Integer getStructureArea() {
     return structureArea;
   }
@@ -31,7 +31,7 @@ public abstract class EventExt extends BaseApplicationExt {
     this.structureArea = structureArea;
   }
 
-  @ApiModelProperty(value = "Description of structures")
+  @Schema(description = "Description of structures")
   public String getStructureDescription() {
     return structureDescription;
   }
@@ -40,7 +40,7 @@ public abstract class EventExt extends BaseApplicationExt {
     this.structureDescription = structureDescription;
   }
 
-  @ApiModelProperty(value = "Event description")
+  @Schema(description = "Event description")
   public String getDescription() {
     return description;
   }
@@ -49,7 +49,7 @@ public abstract class EventExt extends BaseApplicationExt {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Start time of the event. If event's start time is after application's start time " +
+  @Schema(description = "Start time of the event. If event's start time is after application's start time " +
     "it means that period between those days is reserved for building structures.", required = true)
   public ZonedDateTime getEventStartTime() {
     return eventStartTime;
@@ -59,7 +59,7 @@ public abstract class EventExt extends BaseApplicationExt {
     this.eventStartTime = eventStartTime;
   }
 
-  @ApiModelProperty(value = "End time of the event. If event's end time is before application's end time " +
+  @Schema(description = "End time of the event. If event's end time is before application's end time " +
     "it means that period between those days is reserved for disassembling structures.", required = true)
   public ZonedDateTime getEventEndTime() {
     return eventEndTime;

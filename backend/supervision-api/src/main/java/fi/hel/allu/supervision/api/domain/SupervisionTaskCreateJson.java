@@ -6,11 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @NotFalse(rules = {"type, isAllowedType, {supervisiontask.create.type}"})
-@ApiModel(value = "Supervision task creation model")
+@Schema(description = "Supervision task creation model")
 public class SupervisionTaskCreateJson extends SupervisionTaskModifyJson {
 
   @NotNull(message = "{supervisiontask.type}")
@@ -18,7 +17,7 @@ public class SupervisionTaskCreateJson extends SupervisionTaskModifyJson {
   @NotNull(message = "{supervisiontask.applicationId}")
   private Integer applicationId;
 
-  @ApiModelProperty(value = "Type of the supervision task", allowableValues = "SUPERVISION, PRELIMINARY_SUPERVISION", required = true)
+  @Schema(description = "Type of the supervision task", allowableValues = "SUPERVISION, PRELIMINARY_SUPERVISION", required = true)
   public SupervisionTaskType getType() {
     return type;
   }
@@ -27,7 +26,7 @@ public class SupervisionTaskCreateJson extends SupervisionTaskModifyJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Application ID", required = true)
+  @Schema(description = "Application ID", required = true)
   public Integer getApplicationId() {
     return applicationId;
   }

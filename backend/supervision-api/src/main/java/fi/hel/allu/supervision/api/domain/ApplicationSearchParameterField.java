@@ -1,8 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application search parameter fields")
+@Schema(description = "Application search parameter fields")
 public enum ApplicationSearchParameterField implements SearchField {
 
   APPLICATION_IDENTIFIER("applicationId", "applicationId", SearchParameterType.STRING, false),

@@ -1,13 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-@ApiModel(value = "CreateAreaRentalApplicationJson", description = "Model for creating new area rentals")
+@Schema(name = "CreateAreaRentalApplicationJson", description = "Model for creating new area rentals")
 public class CreateAreaRentalApplicationJson extends CreateApplicationJson {
 
   @Valid

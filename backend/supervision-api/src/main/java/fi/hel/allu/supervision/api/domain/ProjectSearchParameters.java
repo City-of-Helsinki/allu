@@ -1,9 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(
-    value = "Project search parameters",
+@Schema(name = "Project search parameters",
     description =
        "<ul>"
      + "<li><b>Intersecting geometry:</b> Geometry intersecting with one of the project's application geometry</li>"

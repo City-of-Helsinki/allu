@@ -1,11 +1,11 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
 
-@ApiModel(value = "CreateNoteApplicationJson", description = "Model for creating new notes")
+@Schema(name = "CreateNoteApplicationJson", description = "Model for creating new notes")
 public class CreateNoteApplicationJson extends CreateApplicationJson {
   public Map<CustomerRoleType, CreateCustomerWithContactsJson> getAllCustomersWithContactsByCustomerRoleType() {
     return super.getAllCustomersWithContactsByCustomerRoleType();

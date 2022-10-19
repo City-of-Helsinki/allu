@@ -7,11 +7,10 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @NotFalse(rules = {"startDate, startDateNotAfterEndDate, {validityperiod.start}"})
-@ApiModel(value = "Model to hold date period reported by customer")
+@Schema(description = "Model to hold date period reported by customer")
 public class DatePeriodReportJson {
 
   @NotNull
@@ -22,7 +21,7 @@ public class DatePeriodReportJson {
   public DatePeriodReportJson() {
   }
 
-  @ApiModelProperty(value = "Date when customer reported period")
+  @Schema(description = "Date when customer reported period")
   public ZonedDateTime getReportingDate() {
     return reportingDate;
   }
@@ -31,7 +30,7 @@ public class DatePeriodReportJson {
     this.reportingDate = reportingDate;
   }
 
-  @ApiModelProperty(value = "Reported start date")
+  @Schema(description = "Reported start date")
   public ZonedDateTime getReportedStartDate() {
     return reportedStartDate;
   }
@@ -40,7 +39,7 @@ public class DatePeriodReportJson {
     this.reportedStartDate = reportedStartDate;
   }
 
-  @ApiModelProperty(value = "Reported end date")
+  @Schema(description = "Reported end date")
   public ZonedDateTime getReportedEndDate() {
     return reportedEndDate;
   }

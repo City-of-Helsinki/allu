@@ -5,10 +5,9 @@ import java.util.List;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Cable report specific fields")
+@Schema(description ="Cable report specific fields")
 public class CableReportJson extends ApplicationExtensionJson {
 
   private String cableReportId;
@@ -22,13 +21,13 @@ public class CableReportJson extends ApplicationExtensionJson {
   private ZonedDateTime validityTime;
   private Integer orderer;
 
-  @ApiModelProperty(value = "Application type (always CABLE_REPORT).", allowableValues="CABLE_REPORT", required = true)
+  @Schema(description = "Application type (always CABLE_REPORT).", allowableValues="CABLE_REPORT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.CABLE_REPORT;
   }
 
-  @ApiModelProperty(value = "Cable report identifier (johtoselvitystunnus)")
+  @Schema(description = "Cable report identifier (johtoselvitystunnus)")
   public String getCableReportId() {
     return cableReportId;
   }
@@ -39,7 +38,7 @@ public class CableReportJson extends ApplicationExtensionJson {
   }
 
 
-  @ApiModelProperty(value = "Work description")
+  @Schema(description = "Work description")
   public String getWorkDescription() {
     return workDescription;
   }
@@ -49,7 +48,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.workDescription = workDescription;
   }
 
-  @ApiModelProperty(value = "Map extract count")
+  @Schema(description = "Map extract count")
   public Integer getMapExtractCount() {
     return mapExtractCount;
   }
@@ -59,7 +58,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.mapExtractCount = mapExtractCount;
   }
 
-  @ApiModelProperty(value = "Cable info entries (johtotiedot)")
+  @Schema(description = "Cable info entries (johtotiedot)")
   public List<CableInfoEntryJson> getInfoEntries() {
     return infoEntries;
   }
@@ -69,7 +68,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.infoEntries = infoEntries;
   }
 
-  @ApiModelProperty(value = "Construction work")
+  @Schema(description = "Construction work")
   public Boolean getConstructionWork() {
     return constructionWork;
   }
@@ -79,7 +78,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.constructionWork = constructionWork;
   }
 
-  @ApiModelProperty(value = "Maintenance work")
+  @Schema(description = "Maintenance work")
   public Boolean getMaintenanceWork() {
     return maintenanceWork;
   }
@@ -89,7 +88,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.maintenanceWork = maintenanceWork;
   }
 
-  @ApiModelProperty(value = "Emergency work")
+  @Schema(description = "Emergency work")
   public Boolean getEmergencyWork() {
     return emergencyWork;
   }
@@ -99,7 +98,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.emergencyWork = emergencyWork;
   }
 
-  @ApiModelProperty(value = "Property connectivity (tontti-/kiinteistöliitos)")
+  @Schema(description = "Property connectivity (tontti-/kiinteistöliitos)")
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;
   }
@@ -109,7 +108,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.propertyConnectivity = propertyConnectivity;
   }
 
-  @ApiModelProperty(value = "Validity time of the cable report")
+  @Schema(description = "Validity time of the cable report")
   public ZonedDateTime getValidityTime() {
     return validityTime;
   }
@@ -119,7 +118,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.validityTime = validityTime;
   }
 
-  @ApiModelProperty(value = "Id of the contact person who ordered the cable report.  ")
+  @Schema(description = "Id of the contact person who ordered the cable report.  ")
   public Integer getOrderer() {
     return orderer;
   }

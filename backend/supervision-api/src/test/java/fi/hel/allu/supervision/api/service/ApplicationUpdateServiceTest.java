@@ -21,7 +21,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -269,8 +269,8 @@ public class ApplicationUpdateServiceTest {
   }
 
   private void nonReadOnlyFieldUpdatable(PropertyDescriptor d) {
-    ApiModelProperty propertyAnnotation = d.getReadMethod().getAnnotation(ApiModelProperty.class);
-    if (propertyAnnotation != null && !propertyAnnotation.readOnly() && !propertyAnnotation.hidden() && d.getWriteMethod() != null) {
+    Schema propertyAnnotation = d.getReadMethod().getAnnotation(Schema.class);
+    if (propertyAnnotation != null && !propertyAnnotation.accessMode().equals(Schema.AccessMode.READ_ONLY) && !propertyAnnotation.hidden() && d.getWriteMethod() != null) {
       assertNotNull(d.getName());
       assertNotNull(d.getWriteMethod().getAnnotation(UpdatableProperty.class));
     }

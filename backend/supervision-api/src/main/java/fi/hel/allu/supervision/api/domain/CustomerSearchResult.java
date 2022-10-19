@@ -2,10 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Customer search result")
+@Schema(description = "Customer search result")
 public class CustomerSearchResult {
 
   private Integer id;
@@ -24,7 +23,7 @@ public class CustomerSearchResult {
   private String country;
   private String projectIdentifierPrefix;
 
-  @ApiModelProperty(value = "Id of the customer")
+  @Schema(description = "Id of the customer")
   public Integer getId() {
     return id;
   }
@@ -33,7 +32,7 @@ public class CustomerSearchResult {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Type of the customer")
+  @Schema(description = "Type of the customer")
   public CustomerType getType() {
     return type;
   }
@@ -42,7 +41,7 @@ public class CustomerSearchResult {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Name of the customer")
+  @Schema(description = "Name of the customer")
   public String getName() {
     return name;
   }
@@ -51,7 +50,7 @@ public class CustomerSearchResult {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Postal address of the customer")
+  @Schema(description = "Postal address of the customer")
   public PostalAddressJson getPostalAddress() {
     return postalAddress;
   }
@@ -60,7 +59,7 @@ public class CustomerSearchResult {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value = "Email address of the customer")
+  @Schema(description = "Email address of the customer")
   public String getEmail() {
     return email;
   }
@@ -69,7 +68,7 @@ public class CustomerSearchResult {
     this.email = email;
   }
 
-  @ApiModelProperty(value = "Phone number of the customer")
+  @Schema(description = "Phone number of the customer")
   public String getPhone() {
     return phone;
   }
@@ -78,7 +77,7 @@ public class CustomerSearchResult {
     this.phone = phone;
   }
 
-  @ApiModelProperty(value = "Registry key of the customer")
+  @Schema(description = "Registry key of the customer")
   public String getRegistryKey() {
     return registryKey;
   }
@@ -87,7 +86,7 @@ public class CustomerSearchResult {
     this.registryKey = registryKey;
   }
 
-  @ApiModelProperty(value = "OVT number of the customer")
+  @Schema(description = "OVT number of the customer")
   public String getOvt() {
     return ovt;
   }
@@ -96,7 +95,7 @@ public class CustomerSearchResult {
     this.ovt = ovt;
   }
 
-  @ApiModelProperty(value = "Is the customer entity currently active? Inactive customers are ignored in most functionality")
+  @Schema(description = "Is the customer entity currently active? Inactive customers are ignored in most functionality")
   public boolean isActive() {
     return active;
   }
@@ -105,7 +104,7 @@ public class CustomerSearchResult {
     this.active = active;
   }
 
-  @ApiModelProperty(value = "SAP number of the customer")
+  @Schema(description = "SAP number of the customer")
   public String getSapCustomerNumber() {
     return sapCustomerNumber;
   }
@@ -114,7 +113,7 @@ public class CustomerSearchResult {
     this.sapCustomerNumber = sapCustomerNumber;
   }
 
-  @ApiModelProperty(value = "Is invoicing of the customer prohibited")
+  @Schema(description = "Is invoicing of the customer prohibited")
   public boolean isInvoicingProhibited() {
     return invoicingProhibited;
   }
@@ -123,7 +122,7 @@ public class CustomerSearchResult {
     this.invoicingProhibited = invoicingProhibited;
   }
 
-  @ApiModelProperty(value = "Invoicing operator of the customer")
+  @Schema(description = "Invoicing operator of the customer")
   public String getInvoicingOperator() {
     return invoicingOperator;
   }
@@ -132,7 +131,7 @@ public class CustomerSearchResult {
     this.invoicingOperator = invoicingOperator;
   }
 
-  @ApiModelProperty(value = "Is the customer for invoicing only")
+  @Schema(description = "Is the customer for invoicing only")
   public boolean isInvoicingOnly() {
     return invoicingOnly;
   }
@@ -141,7 +140,7 @@ public class CustomerSearchResult {
     this.invoicingOnly = invoicingOnly;
   }
 
-  @ApiModelProperty(value = "Country of the customer")
+  @Schema(description = "Country of the customer")
   public String getCountry() {
     return country;
   }
@@ -150,7 +149,7 @@ public class CustomerSearchResult {
     this.country = country;
   }
 
-  @ApiModelProperty(value = "Project identifier prefix of the customer")
+  @Schema(description = "Project identifier prefix of the customer")
   public String getProjectIdentifierPrefix() {
     return projectIdentifierPrefix;
   }

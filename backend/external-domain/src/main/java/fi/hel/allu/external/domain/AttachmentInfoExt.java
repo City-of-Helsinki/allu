@@ -4,11 +4,9 @@ import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel(value = "Attachment meta data")
+@Schema(description = "Attachment meta data")
 public class AttachmentInfoExt {
 
   private Integer id;
@@ -21,7 +19,7 @@ public class AttachmentInfoExt {
   public AttachmentInfoExt() {
   }
 
-  @ApiModelProperty(value = "Attachment mime type", required = true)
+  @Schema(description = "Attachment mime type", required = true)
   public String getMimeType() {
     return mimeType;
   }
@@ -38,7 +36,7 @@ public class AttachmentInfoExt {
     this.mimeType = mimeType;
   }
 
-  @ApiModelProperty(value = "Attachment name", required = true)
+  @Schema(description = "Attachment name", required = true)
   public String getName() {
     return name;
   }
@@ -47,7 +45,7 @@ public class AttachmentInfoExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Attachment description")
+  @Schema(description = "Attachment description")
   public String getDescription() {
     return description;
   }
@@ -56,7 +54,7 @@ public class AttachmentInfoExt {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Attachment ID (readonly)")
+  @Schema(description = "Attachment ID (readonly)")
   @JsonProperty(access = Access.READ_ONLY)
   public Integer getId() {
     return id;

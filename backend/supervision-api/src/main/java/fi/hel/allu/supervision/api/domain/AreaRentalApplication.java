@@ -2,9 +2,9 @@ package fi.hel.allu.supervision.api.domain;
 
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.AreaRentalJson;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Area rental application")
+@Schema(description = "Area rental application")
 public class AreaRentalApplication extends BaseApplication<AreaRentalJson> {
 
   public AreaRentalApplication() {

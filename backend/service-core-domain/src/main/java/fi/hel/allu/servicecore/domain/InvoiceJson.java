@@ -5,10 +5,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Invoice")
+@Schema(description = "Invoice")
 public class InvoiceJson {
   private Integer id;
   private Integer applicationId;
@@ -34,7 +33,7 @@ public class InvoiceJson {
     // for deserialization
   }
 
-  @ApiModelProperty(value = "ID of the invoice")
+  @Schema(description = "ID of the invoice")
   public Integer getId() {
     return id;
   }
@@ -43,7 +42,7 @@ public class InvoiceJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "ID of the application this invoice belongs to")
+  @Schema(description = "ID of the application this invoice belongs to")
   public Integer getApplicationId() {
     return applicationId;
   }
@@ -52,7 +51,7 @@ public class InvoiceJson {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Time after which this invoice is invoicable")
+  @Schema(description = "Time after which this invoice is invoicable")
   public ZonedDateTime getInvoicableTime() {
     return invoicableTime;
   }
@@ -61,7 +60,7 @@ public class InvoiceJson {
     this.invoicableTime = invoicableTime;
   }
 
-  @ApiModelProperty(value = "Value indicating whether this invoice has been sent to invoicing")
+  @Schema(description = "Value indicating whether this invoice has been sent to invoicing")
   public boolean isInvoiced() {
     return invoiced;
   }
@@ -70,7 +69,7 @@ public class InvoiceJson {
     this.invoiced = invoiced;
   }
 
-  @ApiModelProperty(value = "Is this invoice waiting for invoicee's SAP ID")
+  @Schema(description = "Is this invoice waiting for invoicee's SAP ID")
   public boolean isSapIdPending() {
     return sapIdPending;
   }
@@ -79,7 +78,7 @@ public class InvoiceJson {
     this.sapIdPending = sapIdPending;
   }
 
-  @ApiModelProperty(value = "Rows of the invoice")
+  @Schema(description = "Rows of the invoice")
   public List<InvoiceRowJson> getRows() {
     return rows;
   }
@@ -88,7 +87,7 @@ public class InvoiceJson {
     this.rows = rows;
   }
 
-  @ApiModelProperty(value = "Time when invoice was sent to invoicing")
+  @Schema(description = "Time when invoice was sent to invoicing")
   public ZonedDateTime getSentTime() {
     return sentTime;
   }

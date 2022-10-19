@@ -5,23 +5,22 @@ import javax.validation.constraints.NotNull;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Traffic arrangement specific fields")
+@Schema(description = "Traffic arrangement specific fields")
 public class TrafficArrangementJson extends ApplicationExtensionJson {
   private String workPurpose;
   private String trafficArrangements;
   @NotNull(message = "{application.trafficarrangements.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
-  @ApiModelProperty(value = "Application type (always TEMPORARY_TRAFFIC_ARRANGEMENTS).", allowableValues="TEMPORARY_TRAFFIC_ARRANGEMENTS", required = true)
+  @Schema(description = "Application type (always TEMPORARY_TRAFFIC_ARRANGEMENTS).", allowableValues="TEMPORARY_TRAFFIC_ARRANGEMENTS", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS;
   }
 
-  @ApiModelProperty(value = "Purpose of the work")
+  @Schema(description = "Purpose of the work")
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -31,7 +30,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     this.workPurpose = workPurpose;
   }
 
-  @ApiModelProperty(value = "Traffic arrangements")
+  @Schema(description = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -41,7 +40,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment type", required = true)
+  @Schema(description = "Traffic arrangement impediment type", required = true)
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }

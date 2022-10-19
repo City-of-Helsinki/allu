@@ -5,10 +5,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Project (hanke)")
+@Schema(description = "Project (hanke)")
 public class ProjectJson extends BaseProjectJson {
   private Integer id;
   private ZonedDateTime startTime;
@@ -28,7 +27,7 @@ public class ProjectJson extends BaseProjectJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the project")
+  @Schema(description = "Id of the project")
   public Integer getId() {
     return id;
   }
@@ -37,7 +36,7 @@ public class ProjectJson extends BaseProjectJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Start time of the project. Calculated from the applications of the project.")
+  @Schema(description = "Start time of the project. Calculated from the applications of the project.")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -46,7 +45,7 @@ public class ProjectJson extends BaseProjectJson {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "End time of the project. Calculated from the applications of the project.")
+  @Schema(description = "End time of the project. Calculated from the applications of the project.")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -55,7 +54,7 @@ public class ProjectJson extends BaseProjectJson {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "City districts of the project. Calculated from the applications of the project.")
+  @Schema(description = "City districts of the project. Calculated from the applications of the project.")
   public List<Integer> getCityDistricts() {
     return cityDistricts;
   }
@@ -64,7 +63,7 @@ public class ProjectJson extends BaseProjectJson {
     this.cityDistricts = cityDistricts;
   }
 
-  @ApiModelProperty(value = "Id of the parent project")
+  @Schema(description = "Id of the parent project")
   public Integer getParentId() {
     return parentId;
   }
@@ -73,7 +72,7 @@ public class ProjectJson extends BaseProjectJson {
     this.parentId = parentId;
   }
 
-  @ApiModelProperty(value = "Customer of the project")
+  @Schema(description = "Customer of the project")
   public CustomerJson getCustomer() {
     return customer;
   }
@@ -82,7 +81,7 @@ public class ProjectJson extends BaseProjectJson {
     this.customer = customer;
   }
 
-  @ApiModelProperty(value = "Contact of the project")
+  @Schema(description = "Contact of the project")
   public ContactJson getContact() {
     return contact;
   }
@@ -91,7 +90,7 @@ public class ProjectJson extends BaseProjectJson {
     this.contact = contact;
   }
 
-  @ApiModelProperty(value = "Creator of the project")
+  @Schema(description = "Creator of the project")
   public UserJson getCreator() {
     return creator;
   }

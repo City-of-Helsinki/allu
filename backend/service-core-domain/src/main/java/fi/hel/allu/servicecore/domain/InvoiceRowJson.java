@@ -1,10 +1,9 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Invoice row")
+@Schema(description = "Invoice row")
 public class InvoiceRowJson {
   private ChargeBasisUnit unit;
   private double quantity;
@@ -27,7 +26,7 @@ public class InvoiceRowJson {
   }
 
 
-  @ApiModelProperty(value = "Unit of the invoice row")
+  @Schema(description = "Unit of the invoice row")
   public ChargeBasisUnit getUnit() {
     return unit;
   }
@@ -36,7 +35,7 @@ public class InvoiceRowJson {
     this.unit = unit;
   }
 
-  @ApiModelProperty(value = "Amount of units on this row")
+  @Schema(description = "Amount of units on this row")
   public double getQuantity() {
     return quantity;
   }
@@ -45,7 +44,7 @@ public class InvoiceRowJson {
     this.quantity = quantity;
   }
 
-  @ApiModelProperty(value = "Explanatory text for the row")
+  @Schema(description = "Explanatory text for the row")
   public String getText() {
     return text;
   }
@@ -54,7 +53,7 @@ public class InvoiceRowJson {
     this.text = text;
   }
 
-  @ApiModelProperty(value = "Explanation texts for the row")
+  @Schema(description = "Explanation texts for the row")
   public String[] getExplanation() {
     return explanation == null ? new String[0] : explanation;
   }
@@ -63,7 +62,7 @@ public class InvoiceRowJson {
     this.explanation = explanation;
   }
 
-  @ApiModelProperty(value = "Price for one unit, in cents")
+  @Schema(description = "Price for one unit, in cents")
   public int getUnitPrice() {
     return unitPrice;
   }
@@ -72,7 +71,7 @@ public class InvoiceRowJson {
     this.unitPrice = unitPrice;
   }
 
-  @ApiModelProperty(value = "Total price for this row, in cents")
+  @Schema(description = "Total price for this row, in cents")
   public int getNetPrice() {
     return netPrice;
   }

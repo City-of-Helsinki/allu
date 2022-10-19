@@ -1,6 +1,5 @@
 package fi.hel.allu.external.domain;
-
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class EventAdditionalDetails {
   private String url;
@@ -11,7 +10,7 @@ public class EventAdditionalDetails {
   private String marketingProviders;
   private String timeExceptions;
 
-  @ApiModelProperty(value = "Event's web page url")
+  @Schema(description = "Event's web page url")
   public String getUrl() {
     return url;
   }
@@ -20,7 +19,7 @@ public class EventAdditionalDetails {
     this.url = url;
   }
 
-  @ApiModelProperty(value = "Number of attendees (Yleisömäärä)")
+  @Schema(description = "Number of attendees (Yleisömäärä)")
   public int getAttendees() {
     return attendees;
   }
@@ -29,17 +28,17 @@ public class EventAdditionalDetails {
     this.attendees = attendees;
   }
 
-  @ApiModelProperty(value = "Entry fee for the event if applicable")
+  @Schema(description = "Entry fee for the event if applicable")
   public int getEntryFee() {
     return entryFee;
   }
 
-  @ApiModelProperty(value = "Entry fee for the event if applicable")
+  @Schema(description = "Entry fee for the event if applicable")
   public void setEntryFee(int entryFee) {
     this.entryFee = entryFee;
   }
 
-  @ApiModelProperty(value = "Applicant has EcoCompass event sertificate")
+  @Schema(description = "Applicant has EcoCompass event sertificate")
   public Boolean getEcoCompass() {
     return ecoCompass;
   }
@@ -48,7 +47,7 @@ public class EventAdditionalDetails {
     this.ecoCompass = ecoCompass;
   }
 
-  @ApiModelProperty(value = "Description of food sales or services")
+  @Schema(description = "Description of food sales or services")
   public String getFoodProviders() {
     return foodProviders;
   }
@@ -57,7 +56,7 @@ public class EventAdditionalDetails {
     this.foodProviders = foodProviders;
   }
 
-  @ApiModelProperty(value = "Description of marketing or commercials")
+  @Schema(description = "Description of marketing or commercials")
   public String getMarketingProviders() {
     return marketingProviders;
   }
@@ -66,7 +65,7 @@ public class EventAdditionalDetails {
     this.marketingProviders = marketingProviders;
   }
 
-  @ApiModelProperty(value = "Description of event time exceptions")
+  @Schema(description = "Description of event time exceptions")
   public String getTimeExceptions() {
     return timeExceptions;
   }

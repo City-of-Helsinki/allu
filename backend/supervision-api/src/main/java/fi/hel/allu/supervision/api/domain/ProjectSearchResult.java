@@ -3,10 +3,9 @@ package fi.hel.allu.supervision.api.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Project search result")
+@Schema(description = "Project search result")
 public class ProjectSearchResult {
   private Integer id;
   private String identifier;
@@ -18,7 +17,7 @@ public class ProjectSearchResult {
   private String customerReference;
   private List<LocationSearchResult> locations;
 
-  @ApiModelProperty(value = "Id of the project")
+  @Schema(description = "Id of the project")
   public Integer getId() {
     return id;
   }
@@ -27,7 +26,7 @@ public class ProjectSearchResult {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Project identifier (hanketunniste)")
+  @Schema(description = "Project identifier (hanketunniste)")
   public String getIdentifier() {
     return identifier;
   }
@@ -36,7 +35,7 @@ public class ProjectSearchResult {
     this.identifier = identifier;
   }
 
-  @ApiModelProperty(value = "Name of the project")
+  @Schema(description = "Name of the project")
   public String getName() {
     return name;
   }
@@ -45,7 +44,7 @@ public class ProjectSearchResult {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Start time of the project")
+  @Schema(description = "Start time of the project")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -54,7 +53,7 @@ public class ProjectSearchResult {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "End time of the project")
+  @Schema(description = "End time of the project")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -63,7 +62,7 @@ public class ProjectSearchResult {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Owner (customer) of the project")
+  @Schema(description = "Owner (customer) of the project")
   public String getOwnerName() {
     return ownerName;
   }
@@ -72,7 +71,7 @@ public class ProjectSearchResult {
     this.ownerName = ownerName;
   }
 
-  @ApiModelProperty(value = "Contact person of the project")
+  @Schema(description = "Contact person of the project")
   public String getContactName() {
     return contactName;
   }
@@ -81,7 +80,7 @@ public class ProjectSearchResult {
     this.contactName = contactName;
   }
 
-  @ApiModelProperty(value = "Customer reference")
+  @Schema(description = "Customer reference")
   public String getCustomerReference() {
     return customerReference;
   }
@@ -90,7 +89,7 @@ public class ProjectSearchResult {
     this.customerReference = customerReference;
   }
 
-  @ApiModelProperty(value = "Project locations (locations of applications belonging to project)")
+  @Schema(description = "Project locations (locations of applications belonging to project)")
   public List<LocationSearchResult> getLocations() {
     return locations;
   }

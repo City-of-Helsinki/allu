@@ -1,6 +1,5 @@
 package fi.hel.allu.servicecore.domain;
-
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public abstract class BaseProjectJson {
   private String name;
@@ -8,7 +7,7 @@ public abstract class BaseProjectJson {
   private String identifier;
   private String additionalInfo;
 
-  @ApiModelProperty(value = "Name of the project")
+  @Schema(description = "Name of the project")
   public String getName() {
     return name;
   }
@@ -17,7 +16,7 @@ public abstract class BaseProjectJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Customer reference (asiakkaan viite tai työnumero) ")
+  @Schema(description = "Customer reference (asiakkaan viite tai työnumero) ")
   public String getCustomerReference() {
     return customerReference;
   }
@@ -26,7 +25,7 @@ public abstract class BaseProjectJson {
     this.customerReference = customerReference;
   }
 
-  @ApiModelProperty(value = "Project identifier (hanketunniste)")
+  @Schema(description = "Project identifier (hanketunniste)")
   public String getIdentifier() {
     return identifier;
   }
@@ -35,7 +34,7 @@ public abstract class BaseProjectJson {
     this.identifier = identifier;
   }
 
-  @ApiModelProperty(value = "Additional information")
+  @Schema(description = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }

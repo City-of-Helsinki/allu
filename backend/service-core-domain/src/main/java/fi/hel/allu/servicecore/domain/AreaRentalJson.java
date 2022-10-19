@@ -3,8 +3,7 @@ package fi.hel.allu.servicecore.domain;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -12,7 +11,7 @@ import java.time.ZonedDateTime;
 /**
  * Area rental (aluevuokraus) specific data.
  */
-@ApiModel("Area rental specific fields")
+@Schema(description ="Area rental specific fields")
 public class AreaRentalJson extends ApplicationExtensionJson {
   private Boolean pksCard;
   private Boolean majorDisturbance;
@@ -26,13 +25,13 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   @NotNull(message = "{application.arearental.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
-  @ApiModelProperty(value = "Application type (always AREA_RENTAL).", allowableValues="AREA_RENTAL", required = true)
+  @Schema(description = "Application type (always AREA_RENTAL).", allowableValues="AREA_RENTAL", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.AREA_RENTAL;
   }
 
-  @ApiModelProperty(value = "True, if the contractor doing the actual work has PKS-card")
+  @Schema(description = "True, if the contractor doing the actual work has PKS-card")
   public Boolean getPksCard() {
     return pksCard;
   }
@@ -45,7 +44,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   /**
    * Vähäistä suurempaa haittaa aiheuttava työ.
    */
-  @ApiModelProperty(value = "Work causing major disturbance (vähäistä suurempaa haittaa aiheuttava työ)")
+  @Schema(description = "Work causing major disturbance (vähäistä suurempaa haittaa aiheuttava työ)")
   public Boolean getMajorDisturbance() {
     return majorDisturbance;
   }
@@ -55,7 +54,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.majorDisturbance = majorDisturbance;
   }
 
-  @ApiModelProperty(value = "Work purpose", required = true)
+  @Schema(description = "Work purpose", required = true)
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -65,7 +64,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workPurpose = workPurpose;
   }
 
-  @ApiModelProperty(value = "Additional information")
+  @Schema(description = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -75,7 +74,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value = "Traffic arrangements")
+  @Schema(description = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -85,7 +84,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Work finished date", readOnly = true)
+  @Schema(description = "Work finished date", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
@@ -94,7 +93,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workFinished = workFinished;
   }
 
-  @ApiModelProperty(value = "Work finished date reported by customer", readOnly = true)
+  @Schema(description = "Work finished date reported by customer", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
@@ -103,7 +102,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.customerWorkFinished = customerWorkFinished;
   }
 
-  @ApiModelProperty(value = "Date when customer reported work finished date", readOnly = true)
+  @Schema(description = "Date when customer reported work finished date", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
@@ -112,7 +111,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workFinishedReported = workFinishedReported;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment", required = true)
+  @Schema(description = "Traffic arrangement impediment", required = true)
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }

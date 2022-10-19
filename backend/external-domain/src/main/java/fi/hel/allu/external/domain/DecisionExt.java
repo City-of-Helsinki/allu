@@ -1,9 +1,8 @@
 package fi.hel.allu.external.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Decision metadata")
+@Schema(description = "Decision metadata")
 public class DecisionExt {
   private UserExt handler;
   private UserExt decisionMaker;
@@ -16,7 +15,7 @@ public class DecisionExt {
     this.decisionMaker = decisionMaker;
   }
 
-  @ApiModelProperty(value = "User that created proposal")
+  @Schema(description = "User that created proposal")
   public UserExt getHandler() {
     return handler;
   }
@@ -25,7 +24,7 @@ public class DecisionExt {
     this.handler = handler;
   }
 
-  @ApiModelProperty(value = "Decision maker (päättäjä).")
+  @Schema(description = "Decision maker (päättäjä).")
   public UserExt getDecisionMaker() {
     return decisionMaker;
   }

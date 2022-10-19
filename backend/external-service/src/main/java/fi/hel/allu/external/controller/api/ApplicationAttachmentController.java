@@ -45,10 +45,10 @@ public class ApplicationAttachmentController {
     @PostMapping(value = "/applications/{id}/attachments", produces = "application/json")
     @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
     public ResponseEntity<Void> create(
-            @Parameter(name = "Application ID to add attachment for") @PathVariable Integer id,
-            @Parameter(name = "Attachment info in JSON", required = true) @Valid @RequestPart(value = "metadata")
+            @Parameter(description = "Application ID to add attachment for") @PathVariable Integer id,
+            @Parameter(description = "Attachment info in JSON", required = true) @Valid @RequestPart(value = "metadata")
             AttachmentInfoExt metadata,
-            @Parameter(name = "Attachment data", required = true) @RequestPart(value = "file")
+            @Parameter(description = "Attachment data", required = true) @RequestPart(value = "file")
             MultipartFile file) throws IOException {
         Integer applicationId = applicationService.getApplicationIdForExternalId(id);
         applicationService.validateOwnedByExternalUser(applicationId);
@@ -62,7 +62,7 @@ public class ApplicationAttachmentController {
     @GetMapping(value = "/applications/{id}/attachments", produces = "application/json")
     @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
     public ResponseEntity<List<AttachmentInfoExt>> getAttachments(
-            @Parameter(name = "Application ID to get attachments for") @PathVariable Integer id) {
+            @Parameter(description = "Application ID to get attachments for") @PathVariable Integer id) {
 
         Integer applicationId = applicationService.getApplicationIdForExternalId(id);
         applicationService.validateOwnedByExternalUser(applicationId);

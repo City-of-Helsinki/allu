@@ -5,17 +5,16 @@ import java.util.List;
 import javax.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Reported application changes")
+@Schema(description = "Reported application changes")
 public class InformationRequestResponseExt<T extends BaseApplicationExt> {
 
   private T applicationData;
   @NotEmpty(message = "{informationRequest.fields}")
   private List<InformationRequestFieldKey> updatedFields;
 
-  @ApiModelProperty(value = "Application data. Can be empty (e.g. if only attachment update requested)")
+  @Schema(description = "Application data. Can be empty (e.g. if only attachment update requested)")
   public T getApplicationData() {
     return applicationData;
   }
@@ -24,7 +23,7 @@ public class InformationRequestResponseExt<T extends BaseApplicationExt> {
     this.applicationData = applicationData;
   }
 
-  @ApiModelProperty(value = "Keys of updated application fields", required = true)
+  @Schema(description = "Keys of updated application fields", required = true)
   public List<InformationRequestFieldKey> getUpdatedFields() {
     return updatedFields;
   }

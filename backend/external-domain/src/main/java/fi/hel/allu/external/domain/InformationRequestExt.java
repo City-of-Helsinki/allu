@@ -2,10 +2,9 @@ package fi.hel.allu.external.domain;
 
 import java.util.List;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Information request data.")
+@Schema(description = "Information request data.")
 public class InformationRequestExt {
 
   private Integer id;
@@ -22,7 +21,7 @@ public class InformationRequestExt {
     this.fields = fields;
   }
 
-  @ApiModelProperty(value = "Id of the information request.")
+  @Schema(description = "Id of the information request.")
   public Integer getInformationRequestId() {
     return id;
   }
@@ -31,7 +30,7 @@ public class InformationRequestExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the application information is requested for.")
+  @Schema(description = "Id of the application information is requested for.")
   public Integer getApplicationId() {
     return applicationId;
   }
@@ -40,7 +39,7 @@ public class InformationRequestExt {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Requested fields")
+  @Schema(description = "Requested fields")
   public List<InformationRequestFieldExt> getFields() {
     return fields;
   }

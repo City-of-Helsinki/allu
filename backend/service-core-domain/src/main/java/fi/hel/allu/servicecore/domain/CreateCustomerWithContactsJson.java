@@ -1,20 +1,19 @@
 package fi.hel.allu.servicecore.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApiModel(value = "Application customer id and related contacts' ids")
+@Schema(description = "Application customer id and related contacts' ids")
 public class CreateCustomerWithContactsJson {
 
   @NotNull
   private Integer customerId;
   private List<Integer> contactIds = new ArrayList<>();
 
-  @ApiModelProperty(value = "Customer id")
+  @Schema(description = "Customer id")
   public Integer getCustomerId() {
     return customerId;
   }
@@ -23,7 +22,7 @@ public class CreateCustomerWithContactsJson {
     this.customerId = customerId;
   }
 
-  @ApiModelProperty(value = "Contact ids of the customer for the application")
+  @Schema(description = "Contact ids of the customer for the application")
   public List<Integer> getContactIds() {
     return contactIds;
   }

@@ -5,17 +5,16 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @NotFalse(rules = {"validityPeriodStart, periodStartBeforePeriodEnd, {validityperiod.start}"})
-@ApiModel(value = "Application validity period (voimassaolo)")
+@Schema(description = "Application validity period (voimassaolo)")
 public class ValidityPeriodExt {
 
   private ZonedDateTime validityPeriodStart;
   private ZonedDateTime validityPeriodEnd;
 
-  @ApiModelProperty(value = "Start date of the validity period")
+  @Schema(description = "Start date of the validity period")
   public ZonedDateTime getValidityPeriodStart() {
     return validityPeriodStart;
   }
@@ -24,7 +23,7 @@ public class ValidityPeriodExt {
     this.validityPeriodStart = validityPeriodStart;
   }
 
-  @ApiModelProperty(value = "End date of the validity period")
+  @Schema(description = "End date of the validity period")
   public ZonedDateTime getValidityPeriodEnd() {
     return validityPeriodEnd;
   }

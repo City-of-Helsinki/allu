@@ -8,10 +8,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Excavation announcement (kaivuilmoitus) input model")
+@Schema(description ="Excavation announcement (kaivuilmoitus) input model")
 public class ExcavationAnnouncementExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
@@ -36,7 +35,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
   private List<String> placementContracts;
   private List<String> cableReports;
 
-  @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
+  @Schema(description = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {
     return clientApplicationKind;
   }
@@ -45,7 +44,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.clientApplicationKind = clientApplicationKind;
   }
 
-  @ApiModelProperty(value = "Contractor (työn suorittaja)", required = true)
+  @Schema(description = "Contractor (työn suorittaja)", required = true)
   public CustomerWithContactsExt getContractorWithContacts() {
     return contractorWithContacts;
   }
@@ -54,7 +53,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.contractorWithContacts = contractorWithContacts;
   }
 
-  @ApiModelProperty(value = "Property developer (rakennuttaja)")
+  @Schema(description = "Property developer (rakennuttaja)")
   public CustomerWithContactsExt getPropertyDeveloperWithContacts() {
     return propertyDeveloperWithContacts;
   }
@@ -63,7 +62,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.propertyDeveloperWithContacts = propertyDeveloperWithContacts;
   }
 
-  @ApiModelProperty(value = "PKS card (PKS kortti)")
+  @Schema(description = "PKS card (PKS kortti)")
   public Boolean getPksCard() {
     return pksCard;
   }
@@ -72,7 +71,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.pksCard = pksCard;
   }
 
-  @ApiModelProperty(value = "Construction work (rakentaminen)")
+  @Schema(description = "Construction work (rakentaminen)")
   public Boolean getConstructionWork() {
     return constructionWork;
   }
@@ -81,7 +80,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.constructionWork = constructionWork;
   }
 
-  @ApiModelProperty(value = "Maintenance work (kunnossapito)")
+  @Schema(description = "Maintenance work (kunnossapito)")
   public Boolean getMaintenanceWork() {
     return maintenanceWork;
   }
@@ -90,7 +89,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.maintenanceWork = maintenanceWork;
   }
 
-  @ApiModelProperty(value = "Emergency work (hätätyö)")
+  @Schema(description = "Emergency work (hätätyö)")
   public Boolean getEmergencyWork() {
     return emergencyWork;
   }
@@ -99,7 +98,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.emergencyWork = emergencyWork;
   }
 
-  @ApiModelProperty(value = "Property connectivity (kiinteistöliitos)")
+  @Schema(description = "Property connectivity (kiinteistöliitos)")
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;
   }
@@ -108,7 +107,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.propertyConnectivity = propertyConnectivity;
   }
 
-  @ApiModelProperty(value = "Self supervision (omavalvonta)")
+  @Schema(description = "Self supervision (omavalvonta)")
   public Boolean getSelfSupervision() {
     return selfSupervision;
   }
@@ -117,7 +116,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.selfSupervision = selfSupervision;
   }
 
-  @ApiModelProperty(value = "Work purpose (työn tarkoitus)", required = true)
+  @Schema(description = "Work purpose (työn tarkoitus)", required = true)
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -126,7 +125,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.workPurpose = workPurpose;
   }
 
-  @ApiModelProperty(value = "Additional information (lisätiedot)")
+  @Schema(description = "Additional information (lisätiedot)")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -135,7 +134,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value = "Traffic arrangementes (suoritettavat liikennejärjestelyt)")
+  @Schema(description = "Traffic arrangementes (suoritettavat liikennejärjestelyt)")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -144,7 +143,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment (liikennejärjestelyn haitta)")
+  @Schema(description = "Traffic arrangement impediment (liikennejärjestelyn haitta)")
   public TrafficArrangementImpedimentType getTrafficArrangementImpediment() {
     return trafficArrangementImpediment;
   }
@@ -153,7 +152,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.trafficArrangementImpediment = trafficArrangementImpediment;
   }
 
-  @ApiModelProperty(value = "Application identifiers of related placement contracts")
+  @Schema(description = "Application identifiers of related placement contracts")
   public List<String> getPlacementContracts() {
     return placementContracts;
   }
@@ -162,7 +161,7 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.placementContracts = placementContracts;
   }
 
-  @ApiModelProperty(value = "Application identifiers of related cable reports")
+  @Schema(description = "Application identifiers of related cable reports")
   public List<String> getCableReports() {
     return cableReports;
   }

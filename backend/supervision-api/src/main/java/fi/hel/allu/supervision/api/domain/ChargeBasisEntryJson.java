@@ -12,10 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Charge basis entry (maksuperuste)",
+@Schema(name = "Charge basis entry (maksuperuste)",
 description = "Examples</br> "
     + "<h3>Add new area usage fee (100 m\u00B2, 10 EUR/m\u00B2):</h3>"
     + "<ul>"
@@ -73,7 +72,7 @@ public class ChargeBasisEntryJson {
   private Boolean invoicable;
 
 
-  @ApiModelProperty(value = "Id of the entry.", readOnly = true)
+  @Schema(description = "Id of the entry.", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getId() {
     return id;
   }
@@ -82,7 +81,7 @@ public class ChargeBasisEntryJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Charge type", allowableValues = "AREA_USAGE_FEE,NEGLIGENCE_FEE,ADDITIONAL_FEE,DISCOUNT",
+  @Schema(description = "Charge type", allowableValues = "AREA_USAGE_FEE,NEGLIGENCE_FEE,ADDITIONAL_FEE,DISCOUNT",
       required = true)
   public ChargeBasisType getType() {
     return type;
@@ -92,7 +91,7 @@ public class ChargeBasisEntryJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Charge unit. For discounts only PERCENT and PIECE (discount in euro cents) "
+  @Schema(description = "Charge unit. For discounts only PERCENT and PIECE (discount in euro cents) "
       + "are allowed and PERCENT is allowed only if type is DISCOUNT", required = true)
   public ChargeBasisUnit getUnit() {
     return unit;
@@ -102,7 +101,7 @@ public class ChargeBasisEntryJson {
     this.unit = unit;
   }
 
-  @ApiModelProperty(value = "Quantity. Ignored for discounts in euro cents. Quantity for percent discount is given "
+  @Schema(description = "Quantity. Ignored for discounts in euro cents. Quantity for percent discount is given "
       + "as negative value.", required = true)
   public Double getQuantity() {
     return quantity;
@@ -113,7 +112,7 @@ public class ChargeBasisEntryJson {
   }
 
 
-  @ApiModelProperty(value = "Charge basis text (to invoice)", required = true)
+  @Schema(description = "Charge basis text (to invoice)", required = true)
   public String getText() {
     return text;
   }
@@ -122,7 +121,7 @@ public class ChargeBasisEntryJson {
     this.text = text;
   }
 
-  @ApiModelProperty(value = "Explanation rows (to invoice). Max 5 rows, max row length 70")
+  @Schema(description = "Explanation rows (to invoice). Max 5 rows, max row length 70")
   public List<String> getExplanation() {
     return explanation;
   }
@@ -131,7 +130,7 @@ public class ChargeBasisEntryJson {
     this.explanation = explanation;
   }
 
-  @ApiModelProperty(value = "Unit price in cents. Required if unit is not percent. Discount is given as negative price")
+  @Schema(description = "Unit price in cents. Required if unit is not percent. Discount is given as negative price")
   public Integer getUnitPrice() {
     return unitPrice;
   }
@@ -140,7 +139,7 @@ public class ChargeBasisEntryJson {
     this.unitPrice = unitPrice;
   }
 
-  @ApiModelProperty(value = "Invoicing period ID of the entry. Null if application does not have periods",
+  @Schema(description = "Invoicing period ID of the entry. Null if application does not have periods",
       readOnly = true)
   public Integer getInvoicingPeriodId() {
     return invoicingPeriodId;
@@ -150,7 +149,7 @@ public class ChargeBasisEntryJson {
     this.invoicingPeriodId = invoicingPeriodId;
   }
 
-  @ApiModelProperty(value = "Tag that can be used to refer single entry within application. Generated in Allu.",
+  @Schema(description = "Tag that can be used to refer single entry within application. Generated in Allu.",
       readOnly = true)
   public String getTag() {
     return tag;
@@ -160,7 +159,7 @@ public class ChargeBasisEntryJson {
     this.tag = tag;
   }
 
-  @ApiModelProperty(value = "Tag that this entry refers to. Applies only to disount entries, otherwise ignored."
+  @Schema(description = "Tag that this entry refers to. Applies only to disount entries, otherwise ignored."
       + "<ul>"
       + "<li>If referred tag is given, discount is applied only to entry with referred tag</li>"
       + "<li>If referred tag is not given, discount is applied to invoice total</li>"
@@ -173,7 +172,7 @@ public class ChargeBasisEntryJson {
     this.referredTag = referredTag;
   }
 
-  @ApiModelProperty(value = "Value indicating whether another entry can refer to this entry", readOnly = true)
+  @Schema(description = "Value indicating whether another entry can refer to this entry", accessMode = Schema.AccessMode.READ_ONLY)
   public Boolean getReferrable() {
     return referrable;
   }
@@ -182,7 +181,7 @@ public class ChargeBasisEntryJson {
     this.referrable = referrable;
   }
 
-  @ApiModelProperty(value = "Value indicating whether this entry can be modified by user", readOnly = true)
+  @Schema(description = "Value indicating whether this entry can be modified by user", accessMode = Schema.AccessMode.READ_ONLY)
   public Boolean getEditable() {
     return editable;
   }
@@ -191,7 +190,7 @@ public class ChargeBasisEntryJson {
     this.editable = editable;
   }
 
-  @ApiModelProperty(value = "Value indicating whether this entry can be modified or not", readOnly = true)
+  @Schema(description = "Value indicating whether this entry can be modified or not", accessMode = Schema.AccessMode.READ_ONLY)
   public Boolean getLocked() {
     return locked;
   }
@@ -200,7 +199,7 @@ public class ChargeBasisEntryJson {
     this.locked = locked;
   }
 
-  @ApiModelProperty(value = "Net price in cents. Required if unit is not percent. Discount is given as negative price", required = true)
+  @Schema(description = "Net price in cents. Required if unit is not percent. Discount is given as negative price", required = true)
   public Integer getNetPrice() {
     return netPrice;
   }
@@ -209,7 +208,7 @@ public class ChargeBasisEntryJson {
     this.netPrice = netPrice;
   }
 
-  @ApiModelProperty(value = "Value indicating whether this entry should be invoiced. Can be changed through separate API", readOnly = true)
+  @Schema(description = "Value indicating whether this entry should be invoiced. Can be changed through separate API", accessMode = Schema.AccessMode.READ_ONLY)
   public Boolean getInvoicable() {
     return invoicable;
   }

@@ -1,9 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Metadata for type codes")
+@Schema(description = "Metadata for type codes")
 public class CodeMetadata {
 
   private String description;
@@ -20,7 +19,7 @@ public class CodeMetadata {
     this(description, CodeType.USER);
   }
 
-  @ApiModelProperty(value = "Code description")
+  @Schema(description = "Code description")
   public String getDescription() {
     return description;
   }
@@ -29,7 +28,7 @@ public class CodeMetadata {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Code type. SYSTEM: code is controlled by system and can not be set by user. USER: code can be set by user")
+  @Schema(description = "Code type. SYSTEM: code is controlled by system and can not be set by user. USER: code can be set by user")
   public CodeType getType() {
     return type;
   }

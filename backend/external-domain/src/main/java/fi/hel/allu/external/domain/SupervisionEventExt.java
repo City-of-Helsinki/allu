@@ -4,10 +4,9 @@ import java.time.ZonedDateTime;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Supervision task approval or rejection event")
+@Schema(description = "Supervision task approval or rejection event")
 public class SupervisionEventExt  implements Comparable<SupervisionEventExt> {
 
   private ZonedDateTime eventTime;
@@ -32,12 +31,12 @@ public class SupervisionEventExt  implements Comparable<SupervisionEventExt> {
     return type;
   }
 
-  @ApiModelProperty(value = "Supervision task type")
+  @Schema(description = "Supervision task type")
   public void setType(SupervisionTaskType type) {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Supervision task status")
+  @Schema(description = "Supervision task status")
   public SupervisionTaskStatusType getStatus() {
     return status;
   }
@@ -46,7 +45,7 @@ public class SupervisionEventExt  implements Comparable<SupervisionEventExt> {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Supervisor's comment")
+  @Schema(description = "Supervisor's comment")
   public String getComment() {
     return comment;
   }

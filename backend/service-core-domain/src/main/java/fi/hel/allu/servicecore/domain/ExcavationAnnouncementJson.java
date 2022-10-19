@@ -8,13 +8,12 @@ import javax.validation.constraints.NotNull;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Excavation announcement (Kaivuilmoitus) specific data.
  */
-@ApiModel("Excavation announcement specific fields")
+@Schema(description ="Excavation announcement specific fields")
 public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private Boolean pksCard;
   private Boolean constructionWork;
@@ -45,13 +44,13 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private List<String> placementContracts;
   private List<String> cableReports;
 
-  @ApiModelProperty(value = "Application type (always EXCAVATION_ANNOUNCEMENT).", allowableValues="EXCAVATION_ANNOUNCEMENT", required = true)
+  @Schema(description = "Application type (always EXCAVATION_ANNOUNCEMENT).", allowableValues="EXCAVATION_ANNOUNCEMENT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.EXCAVATION_ANNOUNCEMENT;
   }
 
-  @ApiModelProperty(value = "True, if the contractor doing the actual work has PKS-card")
+  @Schema(description = "True, if the contractor doing the actual work has PKS-card")
   public Boolean getPksCard() {
     return pksCard;
   }
@@ -61,7 +60,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.pksCard = pksCard;
   }
 
-  @ApiModelProperty(value = "Construction work")
+  @Schema(description = "Construction work")
   public Boolean getConstructionWork() {
     return constructionWork;
   }
@@ -71,7 +70,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.constructionWork = constructionWork;
   }
 
-  @ApiModelProperty(value = "Maintenance work")
+  @Schema(description = "Maintenance work")
   public Boolean getMaintenanceWork() {
     return maintenanceWork;
   }
@@ -81,7 +80,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.maintenanceWork = maintenanceWork;
   }
 
-  @ApiModelProperty(value = "Emergency work")
+  @Schema(description = "Emergency work")
   public Boolean getEmergencyWork() {
     return emergencyWork;
   }
@@ -91,7 +90,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.emergencyWork = emergencyWork;
   }
 
-  @ApiModelProperty(value = "Property connectivity (tontti-/kiinteistöliitos)")
+  @Schema(description = "Property connectivity (tontti-/kiinteistöliitos)")
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;
   }
@@ -101,7 +100,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.propertyConnectivity = propertyConnectivity;
   }
 
-  @ApiModelProperty(value = "Self supervision (omavalvonta)")
+  @Schema(description = "Self supervision (omavalvonta)")
   public Boolean getSelfSupervision() {
     return selfSupervision;
   }
@@ -111,7 +110,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.selfSupervision = selfSupervision;
   }
 
-  @ApiModelProperty(value = "Compaction and bearing capacity measurement (tiiveys- ja kantavuusmittaus)")
+  @Schema(description = "Compaction and bearing capacity measurement (tiiveys- ja kantavuusmittaus)")
   public Boolean getCompactionAndBearingCapacityMeasurement() {
     return compactionAndBearingCapacityMeasurement;
   }
@@ -121,7 +120,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
   }
 
-  @ApiModelProperty(value = "Quality assurance test (päällysteen laadunvarmistus)")
+  @Schema(description = "Quality assurance test (päällysteen laadunvarmistus)")
   public Boolean getQualityAssuranceTest() {
     return qualityAssuranceTest;
   }
@@ -131,7 +130,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.qualityAssuranceTest = qualityAssuranceTest;
   }
 
-  @ApiModelProperty(value = "Operational condition date for winter time work (toiminnallinen kunto)")
+  @Schema(description = "Operational condition date for winter time work (toiminnallinen kunto)")
   public ZonedDateTime getWinterTimeOperation() {
     return winterTimeOperation;
   }
@@ -141,7 +140,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.winterTimeOperation = winterTimeOperation;
   }
 
-  @ApiModelProperty(value = "Work finished date", readOnly = true)
+  @Schema(description = "Work finished date", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
@@ -150,7 +149,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workFinished = workFinished;
   }
 
-  @ApiModelProperty(value = "Unauthorized work start time")
+  @Schema(description = "Unauthorized work start time")
   public ZonedDateTime getUnauthorizedWorkStartTime() {
     return unauthorizedWorkStartTime;
   }
@@ -160,7 +159,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.unauthorizedWorkStartTime = unauthorizedWorkStartTime;
   }
 
-  @ApiModelProperty(value = "Unauthorized work end time")
+  @Schema(description = "Unauthorized work end time")
   public ZonedDateTime getUnauthorizedWorkEndTime() {
     return unauthorizedWorkEndTime;
   }
@@ -170,7 +169,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.unauthorizedWorkEndTime = unauthorizedWorkEndTime;
   }
 
-  @ApiModelProperty(value = "Guarantee end time", readOnly = true)
+  @Schema(description = "Guarantee end time", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getGuaranteeEndTime() {
     return guaranteeEndTime;
   }
@@ -179,7 +178,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.guaranteeEndTime = guaranteeEndTime;
   }
 
-  @ApiModelProperty(value = "Start time reported by customer", readOnly = true)
+  @Schema(description = "Start time reported by customer", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCustomerStartTime() {
     return customerStartTime;
   }
@@ -188,7 +187,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerStartTime = customerStartTime;
   }
 
-  @ApiModelProperty(value = "End time reported by customer", readOnly = true)
+  @Schema(description = "End time reported by customer", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCustomerEndTime() {
     return customerEndTime;
   }
@@ -197,7 +196,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerEndTime = customerEndTime;
   }
 
-  @ApiModelProperty(value = "Operational condition date reported by customer", readOnly = true)
+  @Schema(description = "Operational condition date reported by customer", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCustomerWinterTimeOperation() {
     return customerWinterTimeOperation;
   }
@@ -206,7 +205,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerWinterTimeOperation = customerWinterTimeOperation;
   }
 
-  @ApiModelProperty(value = "Work finished date reported by customer", readOnly = true)
+  @Schema(description = "Work finished date reported by customer", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
@@ -215,7 +214,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerWorkFinished = customerWorkFinished;
   }
 
-  @ApiModelProperty(value = "Purpose of the work", required = true)
+  @Schema(description = "Purpose of the work", required = true)
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -225,7 +224,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workPurpose = workPurpose;
   }
 
-  @ApiModelProperty(value = "Additional information")
+  @Schema(description = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -235,7 +234,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.additionalInfo = additionalInfo;
   }
 
-  @ApiModelProperty(value = "Traffic arrangements")
+  @Schema(description = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -245,7 +244,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment", required = true)
+  @Schema(description = "Traffic arrangement impediment", required = true)
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }
@@ -255,7 +254,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }
 
-  @ApiModelProperty(value = "Date when customer reported operational condition date", readOnly = true)
+  @Schema(description = "Date when customer reported operational condition date", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getOperationalConditionReported() {
     return operationalConditionReported;
   }
@@ -264,7 +263,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.operationalConditionReported = operationalConditionReported;
   }
 
-  @ApiModelProperty(value = "Date when customer reported work finished date", readOnly = true)
+  @Schema(description = "Date when customer reported work finished date", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
@@ -273,7 +272,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workFinishedReported = workFinishedReported;
   }
 
-  @ApiModelProperty(value = "Date when customer reported application validity dates", readOnly = true)
+  @Schema(description = "Date when customer reported application validity dates", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getValidityReported() {
     return validityReported;
   }
@@ -282,7 +281,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.validityReported = validityReported;
   }
 
-  @ApiModelProperty(value = "Identifiers of related placement contracts")
+  @Schema(description = "Identifiers of related placement contracts")
   public List<String> getPlacementContracts() {
     return placementContracts;
   }
@@ -292,7 +291,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.placementContracts = placementContracts;
   }
 
-  @ApiModelProperty(value = "Identifiers of related cable reports")
+  @Schema(description = "Identifiers of related cable reports")
   public List<String> getCableReports() {
     return cableReports;
   }

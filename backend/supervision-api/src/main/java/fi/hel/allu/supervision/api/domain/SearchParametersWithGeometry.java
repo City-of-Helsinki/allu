@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.geolatte.geom.Geometry;
 
 public class SearchParametersWithGeometry<T extends SearchField> extends SearchParameters<T> {
@@ -12,7 +12,7 @@ public class SearchParametersWithGeometry<T extends SearchField> extends SearchP
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry intersectingGeometry;
 
-  @ApiModelProperty(value =
+  @Schema(description =
     "Geometry intersecting application geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
       + "<ul>"
       + "<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"

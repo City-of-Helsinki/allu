@@ -10,10 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.domain.types.ApplicationKind;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Fixed location")
+@Schema(description ="Fixed location")
 public class FixedLocationExt {
 
   @NotNull
@@ -36,7 +35,7 @@ public class FixedLocationExt {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Id of the fixed location")
+  @Schema(description = "Id of the fixed location")
   public Integer getId() {
     return id;
   }
@@ -45,7 +44,7 @@ public class FixedLocationExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Area of the fixed location (e.g. \"Rautatientori\")")
+  @Schema(description = "Area of the fixed location (e.g. \"Rautatientori\")")
   public String getArea() {
     return area;
   }
@@ -54,7 +53,7 @@ public class FixedLocationExt {
     this.area = area;
   }
 
-  @ApiModelProperty(value = "Section of the fixed location (e.g. \"lohko A\")")
+  @Schema(description = "Section of the fixed location (e.g. \"lohko A\")")
   public String getSection() {
     return section;
   }
@@ -63,7 +62,7 @@ public class FixedLocationExt {
     this.section = section;
   }
 
-  @ApiModelProperty(value = "Application kind fixed location is used for")
+  @Schema(description = "Application kind fixed location is used for")
   public ApplicationKind getApplicationKind() {
     return applicationKind;
   }
@@ -72,7 +71,7 @@ public class FixedLocationExt {
     this.applicationKind = applicationKind;
   }
 
-  @ApiModelProperty(value = "Geometry of the fixed location")
+  @Schema(description = "Geometry of the fixed location")
   public Geometry getGeometry() {
     return geometry;
   }

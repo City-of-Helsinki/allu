@@ -9,13 +9,12 @@ import javax.validation.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @NotFalse(rules = {
     "customerWithContacts, hasOneOrderer, {cablereport.orderer}"
 })
-@ApiModel("Cable report (johtoselvitys) input model.")
+@Schema(description ="Cable report (johtoselvitys) input model.")
 public class CableReportExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
@@ -36,7 +35,7 @@ public class CableReportExt extends BaseApplicationExt {
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
 
-  @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
+  @Schema(description = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {
     return clientApplicationKind;
   }
@@ -45,7 +44,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.clientApplicationKind = clientApplicationKind;
   }
 
-  @ApiModelProperty(value = "Work description", required = true)
+  @Schema(description = "Work description", required = true)
   public String getWorkDescription() {
     return workDescription;
   }
@@ -54,7 +53,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.workDescription = workDescription;
   }
 
-  @ApiModelProperty(value = "Property developer (rakennuttaja)")
+  @Schema(description = "Property developer (rakennuttaja)")
   public CustomerWithContactsExt getPropertyDeveloperWithContacts() {
     return propertyDeveloperWithContacts;
   }
@@ -63,7 +62,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.propertyDeveloperWithContacts = propertyDeveloperWithContacts;
   }
 
-  @ApiModelProperty(value = "Contractor (työn suorittaja)", required = true)
+  @Schema(description = "Contractor (työn suorittaja)", required = true)
   public CustomerWithContactsExt getContractorWithContacts() {
     return contractorWithContacts;
   }
@@ -72,7 +71,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.contractorWithContacts = contractorWithContacts;
   }
 
-  @ApiModelProperty(value = "Construction work")
+  @Schema(description = "Construction work")
   public Boolean getConstructionWork() {
     return constructionWork;
   }
@@ -81,7 +80,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.constructionWork = constructionWork;
   }
 
-  @ApiModelProperty(value = "Maintenance work")
+  @Schema(description = "Maintenance work")
   public Boolean getMaintenanceWork() {
     return maintenanceWork;
   }
@@ -90,7 +89,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.maintenanceWork = maintenanceWork;
   }
 
-  @ApiModelProperty(value = "Emergency work")
+  @Schema(description = "Emergency work")
   public Boolean getEmergencyWork() {
     return emergencyWork;
   }
@@ -99,7 +98,7 @@ public class CableReportExt extends BaseApplicationExt {
     this.emergencyWork = emergencyWork;
   }
 
-  @ApiModelProperty(value = "Property connectivity (tontti-/kiinteistöliitos)")
+  @Schema(description = "Property connectivity (tontti-/kiinteistöliitos)")
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;
   }

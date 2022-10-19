@@ -4,10 +4,9 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Sort.Direction;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Sort field and direction")
+@Schema(description = "Sort field and direction")
 public class SortOrder<T> {
 
   @NotNull(message = "{sort.field}")
@@ -15,7 +14,7 @@ public class SortOrder<T> {
   @NotNull(message = "{sort.direction}")
   Direction direction;
 
-  @ApiModelProperty(value = "Field to order for", required = true)
+  @Schema(description = "Field to order for", required = true)
   public T getField() {
     return field;
   }
@@ -24,7 +23,7 @@ public class SortOrder<T> {
     this.field = field;
   }
 
-  @ApiModelProperty(value = "Direction", required = true)
+  @Schema(description = "Direction", required = true)
   public Direction getDirection() {
     return direction;
   }

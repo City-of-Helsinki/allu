@@ -4,16 +4,15 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application history search parameters")
+@Schema(description = "Application history search parameters")
 public class ApplicationHistorySearchExt {
 
   private List<Integer> applicationIds = new ArrayList<>();
   private ZonedDateTime eventsAfter;
 
-  @ApiModelProperty(value = "IDs of the applications included in search. If empty, all applications created by calling client system are included.")
+  @Schema(description = "IDs of the applications included in search. If empty, all applications created by calling client system are included.")
   public List<Integer> getApplicationIds() {
     return applicationIds;
   }
@@ -22,7 +21,7 @@ public class ApplicationHistorySearchExt {
     this.applicationIds = applicationIds;
   }
 
-  @ApiModelProperty(value = "Time limit for events - only events after given time are returned. If null, complete history is returned.")
+  @Schema(description = "Time limit for events - only events after given time are returned. If null, complete history is returned.")
   public ZonedDateTime getEventsAfter() {
     return eventsAfter;
   }

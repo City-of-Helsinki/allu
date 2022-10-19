@@ -2,11 +2,9 @@ package fi.hel.allu.external.domain;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-
-@ApiModel(value = "Contact of application customer")
+@Schema(description = "Contact of application customer")
 public class ContactExt {
   private Integer id;
   @NotBlank(message = "{contact.name.notblank}")
@@ -24,7 +22,7 @@ public class ContactExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Name of the contact", required = true)
+  @Schema(description = "Name of the contact", required = true)
   public String getName() {
     return name;
   }
@@ -33,7 +31,7 @@ public class ContactExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Postal address of the contact")
+  @Schema(description = "Postal address of the contact")
   public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
@@ -42,7 +40,7 @@ public class ContactExt {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value = "Email of the contact")
+  @Schema(description = "Email of the contact")
   public String getEmail() {
     return email;
   }
@@ -51,7 +49,7 @@ public class ContactExt {
     this.email = email;
   }
 
-  @ApiModelProperty(value = "Phone number of the contact")
+  @Schema(description = "Phone number of the contact")
   public String getPhone() {
     return phone;
   }
@@ -60,7 +58,7 @@ public class ContactExt {
     this.phone = phone;
   }
 
-  @ApiModelProperty(value = "Value indicating whether contact is orderer of the application")
+  @Schema(description = "Value indicating whether contact is orderer of the application")
   public Boolean getOrderer() {
     return orderer;
   }

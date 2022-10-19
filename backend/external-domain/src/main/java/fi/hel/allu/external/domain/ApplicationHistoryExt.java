@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Application history. Contains events (status changes) of one application sorted on event time.")
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Application history. Contains events (status changes) of one application sorted on event time.")
 public class ApplicationHistoryExt {
 
   private Integer applicationId;
@@ -25,7 +25,7 @@ public class ApplicationHistoryExt {
     this.supervisionEvents = new TreeSet<>(supervisionEvents);
   }
 
-  @ApiModelProperty(value = "ID of the application")
+  @Schema(description = "ID of the application")
   public Integer getApplicationId() {
     return applicationId;
   }
@@ -34,7 +34,7 @@ public class ApplicationHistoryExt {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Status change events of the application sorted on event time.")
+  @Schema(description = "Status change events of the application sorted on event time.")
   public Set<ApplicationStatusEventExt> getEvents() {
     return events;
   }

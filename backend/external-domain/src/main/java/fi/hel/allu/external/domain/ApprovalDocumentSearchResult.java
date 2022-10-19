@@ -3,10 +3,9 @@ package fi.hel.allu.external.domain;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Approval document search result")
+@Schema(description = "Approval document search result")
 public class ApprovalDocumentSearchResult extends AbstractDocumentSearchResult {
 
   private ApprovalDocumentType type;
@@ -22,7 +21,7 @@ public class ApprovalDocumentSearchResult extends AbstractDocumentSearchResult {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Approval document type")
+  @Schema(description = "Approval document type")
   public ApprovalDocumentType getType() {
     return type;
   }
@@ -31,7 +30,7 @@ public class ApprovalDocumentSearchResult extends AbstractDocumentSearchResult {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Approval date")
+  @Schema(description = "Approval date")
   public ZonedDateTime getApprovalDate() {
     return approvalDate;
   }

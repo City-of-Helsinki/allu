@@ -1,11 +1,9 @@
 package fi.hel.allu.external.domain;
 
 import javax.validation.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel(value = "Application comments")
+@Schema(description = "Application comments")
 public class CommentExt {
 
   private String commentator;
@@ -20,7 +18,7 @@ public class CommentExt {
     this.commentContent = commentContent;
   }
 
-  @ApiModelProperty(value = "Commentator name")
+  @Schema(description = "Commentator name")
   public String getCommentator() {
     return commentator;
   }
@@ -29,7 +27,7 @@ public class CommentExt {
     this.commentator = commentator;
   }
 
-  @ApiModelProperty(value = "Comment content")
+  @Schema(description = "Comment content")
   public String getCommentContent() {
     return commentContent;
   }

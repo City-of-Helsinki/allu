@@ -2,10 +2,9 @@ package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Decision search result")
+@Schema(description = "Decision search result")
 public class DecisionSearchResult extends AbstractDocumentSearchResult {
 
   private String decisionMakerName;
@@ -20,7 +19,7 @@ public class DecisionSearchResult extends AbstractDocumentSearchResult {
     this.decisionDate = decisionDate;
   }
 
-  @ApiModelProperty(value = "Decision maker name")
+  @Schema(description = "Decision maker name")
   public String getDecisionMakerName() {
     return decisionMakerName;
   }
@@ -29,7 +28,7 @@ public class DecisionSearchResult extends AbstractDocumentSearchResult {
     this.decisionMakerName = decisionMakerName;
   }
 
-  @ApiModelProperty(value = "Decision date")
+  @Schema(description = "Decision date")
   public ZonedDateTime getDecisionDate() {
     return decisionDate;
   }

@@ -1,9 +1,8 @@
 package fi.hel.allu.external.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Traffic arrangement image (liikennejärjestelyn tyyppikuva) metadata")
+@Schema(description ="Traffic arrangement image (liikennejärjestelyn tyyppikuva) metadata")
 public class TrafficArrangementImageExt {
 
   private Integer id;
@@ -17,7 +16,7 @@ public class TrafficArrangementImageExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Id of the image")
+  @Schema(description = "Id of the image")
   public Integer getId() {
     return id;
   }
@@ -26,7 +25,7 @@ public class TrafficArrangementImageExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Name of the image")
+  @Schema(description = "Name of the image")
   public String getName() {
     return name;
   }

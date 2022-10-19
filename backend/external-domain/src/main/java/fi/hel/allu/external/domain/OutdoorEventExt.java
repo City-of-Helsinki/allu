@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@ApiModel("Outdoor event (Ulkoilmatapahtuma) input model.")
+@Schema(description ="Outdoor event (Ulkoilmatapahtuma) input model.")
 @NotFalse(rules = {
   "nature, validNature, {event.outdoorevent.invalidNature}",
 })
@@ -22,7 +21,7 @@ public class OutdoorEventExt extends EventExt {
   @NotNull(message = "{event.nature}")
   private EventNature nature;
 
-  @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
+  @Schema(description = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
   public List<Integer> getFixedLocationIds() {
     return fixedLocationIds;
   }
@@ -39,7 +38,7 @@ public class OutdoorEventExt extends EventExt {
     this.additionalDetails = additionalDetails;
   }
 
-  @ApiModelProperty(value = "Nature of the event.", notes = "Valid natures are: "
+  @Schema(name = "Nature of the event.", description = "Valid natures are: "
     + "<ul>"
     + "<li>PUBLIC_FREE (Avoin)</li>"
     + "<li>PUBLIC_NONFREE (Maksullinen)</li>"

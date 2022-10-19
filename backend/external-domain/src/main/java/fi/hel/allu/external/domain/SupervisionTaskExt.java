@@ -4,10 +4,9 @@ import java.time.ZonedDateTime;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Supervision task (valvontatehtävä)")
+@Schema(description = "Supervision task (valvontatehtävä)")
 public class SupervisionTaskExt {
 
   private ZonedDateTime taskDate;
@@ -23,7 +22,7 @@ public class SupervisionTaskExt {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Supervision task date ")
+  @Schema(description = "Supervision task date ")
   public ZonedDateTime getTaskDate() {
     return taskDate;
   }
@@ -32,7 +31,7 @@ public class SupervisionTaskExt {
     this.taskDate = taskDate;
   }
 
-  @ApiModelProperty(value = "Supervision task type")
+  @Schema(description = "Supervision task type")
   public SupervisionTaskType getType() {
     return type;
   }
@@ -41,7 +40,7 @@ public class SupervisionTaskExt {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Supervision task status")
+  @Schema(description = "Supervision task status")
   public SupervisionTaskStatusType getStatus() {
     return status;
   }

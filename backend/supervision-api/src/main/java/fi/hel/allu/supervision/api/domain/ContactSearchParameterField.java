@@ -1,8 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Contact search parameter fields")
+@Schema(description = "Contact search parameter fields")
 public enum ContactSearchParameterField implements SearchField {
 
   NAME("name", "name", SearchParameterType.STRING);

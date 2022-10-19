@@ -3,10 +3,9 @@ package fi.hel.allu.external.domain;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.common.domain.types.ContractStatusType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Contract metadata")
+@Schema(description = "Contract metadata")
 public class ContractExt extends DecisionExt {
 
   private ZonedDateTime creationTime;
@@ -21,7 +20,7 @@ public class ContractExt extends DecisionExt {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Gets creation time of the contract proposal")
+  @Schema(description = "Gets creation time of the contract proposal")
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -30,7 +29,7 @@ public class ContractExt extends DecisionExt {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Contract status")
+  @Schema(description = "Contract status")
   public ContractStatusType getStatus() {
     return status;
   }

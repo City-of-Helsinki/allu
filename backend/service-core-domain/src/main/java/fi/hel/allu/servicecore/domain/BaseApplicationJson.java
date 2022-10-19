@@ -9,7 +9,7 @@ import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import fi.hel.allu.servicecore.domain.validator.ValidApplication;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.Valid;
@@ -105,7 +105,7 @@ public abstract class BaseApplicationJson {
     this.version = application.getVersion();
  }
 
-  @ApiModelProperty(value = "ID of the application", readOnly = true)
+  @Schema(description = "ID of the application", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getId() {
     return id;
   }
@@ -114,8 +114,8 @@ public abstract class BaseApplicationJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Human readable application identifier (hakemustunniste). The format is XXYYZZZZZ where XX is application type abbreviation, " +
-    "YY is year and ZZZZZ is serial number for the given year. For example TP1600001", readOnly = true)
+  @Schema(description = "Human readable application identifier (hakemustunniste). The format is XXYYZZZZZ where XX is application type abbreviation, " +
+    "YY is year and ZZZZZ is serial number for the given year. For example TP1600001", accessMode = Schema.AccessMode.READ_ONLY)
   public String getApplicationId() {
     return applicationId;
   }
@@ -124,7 +124,7 @@ public abstract class BaseApplicationJson {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Status of the application", readOnly = true)
+  @Schema(description = "Status of the application", accessMode = Schema.AccessMode.READ_ONLY)
   public StatusType getStatus() {
     return status;
   }
@@ -133,7 +133,7 @@ public abstract class BaseApplicationJson {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Application type. Cannot be changed after creation", readOnly = true)
+  @Schema(description = "Application type. Cannot be changed after creation", accessMode = Schema.AccessMode.READ_ONLY)
   public ApplicationType getType() {
     return type;
   }
@@ -142,7 +142,7 @@ public abstract class BaseApplicationJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Application tags", readOnly = true)
+  @Schema(description = "Application tags", accessMode = Schema.AccessMode.READ_ONLY)
   public List<ApplicationTagJson> getApplicationTags() {
     return applicationTags;
   }
@@ -154,7 +154,7 @@ public abstract class BaseApplicationJson {
   /**
    * @return Metadata version related to the application.
    */
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   public Integer getMetadataVersion() {
     return metadataVersion;
   }
@@ -163,7 +163,7 @@ public abstract class BaseApplicationJson {
     this.metadataVersion = metadataVersion;
   }
 
-  @ApiModelProperty(value = "Name of the application", required = true)
+  @Schema(description = "Name of the application", required = true)
   public String getName() {
     return name;
   }
@@ -173,7 +173,7 @@ public abstract class BaseApplicationJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "The starting time the application is active i.e. the starting time certain land area is reserved by the application")
+  @Schema(description = "The starting time the application is active i.e. the starting time certain land area is reserved by the application")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -183,7 +183,7 @@ public abstract class BaseApplicationJson {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "The ending time the application is active i.e. the time certain land area stops being reserved by the application.")
+  @Schema(description = "The ending time the application is active i.e. the time certain land area stops being reserved by the application.")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -193,7 +193,7 @@ public abstract class BaseApplicationJson {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "The last moment the recurring application is active. Application may recur for certain time every year. For example, an area might " +
+  @Schema(description = "The last moment the recurring application is active. Application may recur for certain time every year. For example, an area might " +
     "be used for storing snow every year and such application should be created as a recurring application instead of creating " +
     "application for each year separately.")
   public ZonedDateTime getRecurringEndTime() {
@@ -205,7 +205,7 @@ public abstract class BaseApplicationJson {
     this.recurringEndTime = recurringEndTime;
   }
 
-  @ApiModelProperty(value = "Application locations", readOnly = true)
+  @Schema(description = "Application locations", accessMode = Schema.AccessMode.READ_ONLY)
   public List<LocationJson> getLocations() {
     return locations;
   }
@@ -222,7 +222,7 @@ public abstract class BaseApplicationJson {
     this.extension = event;
   }
 
-  @ApiModelProperty(value = "Decision publicity type")
+  @Schema(description = "Decision publicity type")
   public PublicityType getDecisionPublicityType() {
     return decisionPublicityType;
   }
@@ -232,7 +232,7 @@ public abstract class BaseApplicationJson {
     this.decisionPublicityType = decisionPublicityType;
   }
 
-  @ApiModelProperty(value = "The time the decision was made", readOnly = true)
+  @Schema(description = "The time the decision was made", accessMode = Schema.AccessMode.READ_ONLY)
   public ZonedDateTime getDecisionTime() {
     return decisionTime;
   }
@@ -241,7 +241,7 @@ public abstract class BaseApplicationJson {
     this.decisionTime = decisionTime;
   }
 
-  @ApiModelProperty(value = "True if application is not billed")
+  @Schema(description = "True if application is not billed")
   public Boolean getNotBillable() {
     return notBillable;
   }
@@ -251,7 +251,7 @@ public abstract class BaseApplicationJson {
     this.notBillable = notBillable;
   }
 
-  @ApiModelProperty(value = "Explanation for not billing")
+  @Schema(description = "Explanation for not billing")
   public String getNotBillableReason() {
     return notBillableReason;
   }
@@ -261,7 +261,7 @@ public abstract class BaseApplicationJson {
     this.notBillableReason = notBillableReason;
   }
 
-  @ApiModelProperty(value = "Application kinds with their specifiers")
+  @Schema(description = "Application kinds with their specifiers")
   public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
     return kindsWithSpecifiers;
   }
@@ -271,7 +271,7 @@ public abstract class BaseApplicationJson {
     this.kindsWithSpecifiers = kindsWithSpecifiers;
   }
 
-  @ApiModelProperty(value = "Id of the customer who is invoiced for this application")
+  @Schema(description = "Id of the customer who is invoiced for this application")
   public Integer getInvoiceRecipientId() {
     return invoiceRecipientId;
   }
@@ -332,7 +332,7 @@ public abstract class BaseApplicationJson {
     return true;
   }
 
-  @ApiModelProperty(value = "Customer reference (to invoice)")
+  @Schema(description = "Customer reference (to invoice)")
   public String getCustomerReference() {
     return customerReference;
   }
@@ -342,7 +342,7 @@ public abstract class BaseApplicationJson {
     this.customerReference = customerReference;
   }
 
-  @ApiModelProperty(value = "True if the automatic price calculation should not be done for this application")
+  @Schema(description = "True if the automatic price calculation should not be done for this application")
   public boolean getSkipPriceCalculation() {
     return skipPriceCalculation;
   }
@@ -353,7 +353,7 @@ public abstract class BaseApplicationJson {
   }
 
 
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   public Boolean getInvoicingChanged() {
     return invoicingChanged;
   }
@@ -362,7 +362,7 @@ public abstract class BaseApplicationJson {
     this.invoicingChanged = invoicingChanged;
   }
 
-  @ApiModelProperty(value = "Time when application was received")
+  @Schema(description = "Time when application was received")
   public ZonedDateTime getReceivedTime() {
     return receivedTime;
   }
@@ -372,7 +372,7 @@ public abstract class BaseApplicationJson {
     this.receivedTime= receivedTime;
   }
 
-  @ApiModelProperty(value = "Invoicing period length for this application", readOnly = true)
+  @Schema(description = "Invoicing period length for this application", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getInvoicingPeriodLength() {
     return invoicingPeriodLength;
   }
@@ -381,7 +381,7 @@ public abstract class BaseApplicationJson {
     this.invoicingPeriodLength = invoicingPeriodLength;
   }
 
-  @ApiModelProperty(value = "Application version number. Used for optimistic locking, required when updating application", readOnly = true)
+  @Schema(description = "Application version number. Used for optimistic locking, required when updating application", accessMode = Schema.AccessMode.READ_ONLY)
   public Integer getVersion() {
     return version;
   }

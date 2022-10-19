@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Abstract base class for application input data in external API
@@ -52,7 +52,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
   private Double area;
   private List<Integer> trafficArrangementImages = new ArrayList<>();
 
-  @ApiModelProperty(value = "Postal address")
+  @Schema(description = "Postal address")
   public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
@@ -61,7 +61,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value="Name for the application", required = true)
+  @Schema(description="Name for the application", required = true)
   public String getName() {
     return name;
   }
@@ -70,7 +70,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.name = name;
   }
 
-  @ApiModelProperty(value="Applicant (hakija) of the application", required = true)
+  @Schema(description="Applicant (hakija) of the application", required = true)
   public CustomerWithContactsExt getCustomerWithContacts() {
     return customerWithContacts;
   }
@@ -79,7 +79,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.customerWithContacts = customerWithContacts;
   }
 
-  @ApiModelProperty(value = "Representative (asiamies) of the customer")
+  @Schema(description = "Representative (asiamies) of the customer")
   public CustomerWithContactsExt getRepresentativeWithContacts() {
     return representativeWithContacts;
   }
@@ -89,7 +89,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
   }
 
 
-  @ApiModelProperty(value="Recipient of the invoice")
+  @Schema(description="Recipient of the invoice")
   public CustomerExt getInvoicingCustomer() {
     return invoicingCustomer;
   }
@@ -98,7 +98,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.invoicingCustomer = invoicingCustomer;
   }
 
-  @ApiModelProperty(value =
+  @Schema(description =
       "Application geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
       +"<ul>"
       +"<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"
@@ -114,7 +114,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Start time of the application i.e. the starting time certain land area is reserved by application.", required = true)
+  @Schema(description = "Start time of the application i.e. the starting time certain land area is reserved by application.", required = true)
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -123,7 +123,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "End time of the application i.e. the time certain land area stops being reserved by the application", required = true)
+  @Schema(description = "End time of the application i.e. the time certain land area stops being reserved by the application", required = true)
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -132,7 +132,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Value indicating whether application is still pending on client side (and not yet ready to be handled in Allu)", required = true)
+  @Schema(description = "Value indicating whether application is still pending on client side (and not yet ready to be handled in Allu)", required = true)
   public boolean isPendingOnClient() {
     return pendingOnClient;
   }
@@ -141,7 +141,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.pendingOnClient = pendingOnClient;
   }
 
-  @ApiModelProperty(value = "Identification number (in Finnish: asiointunnus)", required = true)
+  @Schema(description = "Identification number (in Finnish: asiointunnus)", required = true)
   public String getIdentificationNumber() {
     return identificationNumber;
   }
@@ -150,7 +150,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.identificationNumber = identificationNumber;
   }
 
-  @ApiModelProperty(value = "Customer reference to the invoice")
+  @Schema(description = "Customer reference to the invoice")
   public String getCustomerReference() {
     return customerReference;
   }
@@ -159,7 +159,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.customerReference = customerReference;
   }
 
-  @ApiModelProperty(value = "Area in square meters")
+  @Schema(description = "Area in square meters")
   public Double getArea() {
     return area;
   }
@@ -168,7 +168,7 @@ public abstract class BaseApplicationExt implements HasGeometry {
     this.area = area;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement image (tyyppikuva) IDs selected for application")
+  @Schema(description = "Traffic arrangement image (tyyppikuva) IDs selected for application")
   public List<Integer> getTrafficArrangementImages() {
     return trafficArrangementImages;
   }

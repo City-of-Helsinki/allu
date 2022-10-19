@@ -2,10 +2,9 @@ package fi.hel.allu.external.domain;
 
 import javax.validation.constraints.NotEmpty;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("Placement contract (sijoitussopimus) input model")
+@Schema(description ="Placement contract (sijoitussopimus) input model")
 public class PlacementContractExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
@@ -13,7 +12,7 @@ public class PlacementContractExt extends BaseApplicationExt {
   private String workDescription;
   private String propertyIdentificationNumber;
 
-  @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
+  @Schema(description = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {
     return clientApplicationKind;
   }
@@ -22,7 +21,7 @@ public class PlacementContractExt extends BaseApplicationExt {
     this.clientApplicationKind = clientApplicationKind;
   }
 
-  @ApiModelProperty(value = "Work description")
+  @Schema(description = "Work description")
   public String getWorkDescription() {
     return workDescription;
   }
@@ -31,7 +30,7 @@ public class PlacementContractExt extends BaseApplicationExt {
     this.workDescription = workDescription;
   }
 
-  @ApiModelProperty(value = "Property identification number (in Finnish: kiinteistötunnus)")
+  @Schema(description = "Property identification number (in Finnish: kiinteistötunnus)")
   public String getPropertyIdentificationNumber() {
     return propertyIdentificationNumber;
   }

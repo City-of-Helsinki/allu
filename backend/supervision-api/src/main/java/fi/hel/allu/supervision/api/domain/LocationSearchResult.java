@@ -7,10 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Location search result")
+@Schema(description = "Location search result")
 public class LocationSearchResult {
 
   private String address;
@@ -27,7 +26,7 @@ public class LocationSearchResult {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Address of the location")
+  @Schema(description = "Address of the location")
   public String getAddress() {
     return address;
   }
@@ -36,7 +35,7 @@ public class LocationSearchResult {
     this.address = address;
   }
 
-  @ApiModelProperty(value = "City district ID of the location")
+  @Schema(description = "City district ID of the location")
   public Integer getCityDistrictId() {
     return cityDistrictId;
   }
@@ -45,7 +44,7 @@ public class LocationSearchResult {
     this.cityDistrictId = cityDistrictId;
   }
 
-  @ApiModelProperty(value =
+  @Schema(description =
       "Location geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a>")
   public Geometry getGeometry() {
     return geometry;
@@ -55,7 +54,7 @@ public class LocationSearchResult {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Location additional information (tarkennettu sijainti)")
+  @Schema(description = "Location additional information (tarkennettu sijainti)")
   public String getAdditionalInfo() {
     return additionalInfo;
   }

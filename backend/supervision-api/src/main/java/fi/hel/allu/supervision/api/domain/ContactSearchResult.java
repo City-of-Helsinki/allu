@@ -1,9 +1,8 @@
 package fi.hel.allu.supervision.api.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Contact search result")
+@Schema(description = "Contact search result")
 public class ContactSearchResult {
 
   private Integer id;
@@ -12,7 +11,7 @@ public class ContactSearchResult {
   private String customerName;
   private Integer customerId;
 
-  @ApiModelProperty(value = "Id of the contact")
+  @Schema(description = "Id of the contact")
   public Integer getId() {
     return id;
   }
@@ -21,7 +20,7 @@ public class ContactSearchResult {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Name of the contact")
+  @Schema(description = "Name of the contact")
   public String getName() {
     return name;
   }
@@ -30,7 +29,7 @@ public class ContactSearchResult {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Email address of the contact")
+  @Schema(description = "Email address of the contact")
   public String getEmail() {
     return email;
   }
@@ -39,7 +38,7 @@ public class ContactSearchResult {
     this.email = email;
   }
 
-  @ApiModelProperty(value = "Name of the customer whose contact this is")
+  @Schema(description = "Name of the customer whose contact this is")
   public String getCustomerName() {
     return customerName;
   }
@@ -48,7 +47,7 @@ public class ContactSearchResult {
     this.customerName = customerName;
   }
 
-  @ApiModelProperty(value = "Id of the customer whose contact this is")
+  @Schema(description = "Id of the customer whose contact this is")
   public Integer getCustomerId() {
     return customerId;
   }

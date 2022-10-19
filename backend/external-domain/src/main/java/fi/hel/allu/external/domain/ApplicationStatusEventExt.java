@@ -2,11 +2,9 @@ package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
 
-import fi.hel.allu.common.domain.types.StatusType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application status change event")
+@Schema(description = "Application status change event")
 public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEventExt> {
 
   private ZonedDateTime eventTime;
@@ -24,7 +22,7 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     this.targetStatus = targetStatus;
   }
 
-  @ApiModelProperty(value = "Time of the application event")
+  @Schema(description = "Time of the application event")
   public ZonedDateTime getEventTime() {
     return eventTime;
   }
@@ -33,7 +31,7 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     this.eventTime = eventTime;
   }
 
-  @ApiModelProperty(value = "Status of the application after the event", allowableValues =
+  @Schema(description = "Status of the application after the event", allowableValues =
         "PENDING: Application received," +
         "WAITING_INFORMATION: Application waiting response to information request," +
         "INFORMATION_RECEIVED: Response to information request received," +
@@ -57,7 +55,7 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     this.newStatus = newStatus;
   }
 
-  @ApiModelProperty(value = "Application identifier (hakemustunniste)")
+  @Schema(description = "Application identifier (hakemustunniste)")
   public String getApplicationIdentifier() {
     return applicationIdentifier;
   }
@@ -72,7 +70,7 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     return result == 0 ? this.newStatus.compareTo(o.newStatus) : result;
   }
 
-  @ApiModelProperty(value = "Target status. Tells next status (DECISION, OPERATIONAL_CONDITION or FINISHED) if current status is DECISIONMAKING.")
+  @Schema(description = "Target status. Tells next status (DECISION, OPERATIONAL_CONDITION or FINISHED) if current status is DECISIONMAKING.")
   public String getTargetStatus() {
     return targetStatus;
   }

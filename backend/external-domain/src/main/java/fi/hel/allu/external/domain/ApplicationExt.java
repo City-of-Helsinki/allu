@@ -7,14 +7,13 @@ import java.util.Map;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.StatusType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * External API application output data
  *
  */
-@ApiModel(value = "Application output data")
+@Schema(description = "Application output data")
 public class ApplicationExt {
 
   private Integer id;
@@ -29,7 +28,7 @@ public class ApplicationExt {
   private String customerReference;
   private boolean surveyRequired;
 
-  @ApiModelProperty(value = "Id of the application")
+  @Schema(description = "Id of the application")
   public Integer getId() {
     return id;
   }
@@ -38,7 +37,7 @@ public class ApplicationExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Name of the application")
+  @Schema(description = "Name of the application")
   public String getName() {
     return name;
   }
@@ -47,7 +46,7 @@ public class ApplicationExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Application identifier (hakemustunniste)")
+  @Schema(description = "Application identifier (hakemustunniste)")
   public String getApplicationId() {
     return applicationId;
   }
@@ -56,7 +55,7 @@ public class ApplicationExt {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Status of the application")
+  @Schema(description = "Status of the application")
   public StatusType getStatus() {
     return status;
   }
@@ -65,7 +64,7 @@ public class ApplicationExt {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "End time of the application" )
+  @Schema(description = "End time of the application" )
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -74,7 +73,7 @@ public class ApplicationExt {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Owner of the application")
+  @Schema(description = "Owner of the application")
   public UserExt getOwner() {
     return owner;
   }
@@ -83,7 +82,7 @@ public class ApplicationExt {
     this.owner = owner;
   }
 
-  @ApiModelProperty(value = "Start time of the application" )
+  @Schema(description = "Start time of the application" )
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -92,7 +91,7 @@ public class ApplicationExt {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "Application kinds with specifiers.")
+  @Schema(description = "Application kinds with specifiers.")
   public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
     return kindsWithSpecifiers;
   }
@@ -101,7 +100,7 @@ public class ApplicationExt {
     this.kindsWithSpecifiers = kindsWithSpecifiers;
   }
 
-  @ApiModelProperty(value = "Application terms")
+  @Schema(description = "Application terms")
   public String getTerms() {
     return terms;
   }
@@ -110,7 +109,7 @@ public class ApplicationExt {
     this.terms = terms;
   }
 
-  @ApiModelProperty(value = "Customer reference to the invoice")
+  @Schema(description = "Customer reference to the invoice")
   public String getCustomerReference() {
     return customerReference;
   }

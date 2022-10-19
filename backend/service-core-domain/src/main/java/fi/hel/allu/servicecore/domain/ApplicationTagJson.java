@@ -8,10 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "Application tag")
+@Schema(description = "Application tag")
 public class ApplicationTagJson {
   private Integer addedBy;
   @NotNull
@@ -23,7 +22,7 @@ public class ApplicationTagJson {
    * Add a fake "id" field during serialization so that comparison of tag lists
    * in allu-ui-service's ObjectComparer compares by ID.
    */
-  @ApiModelProperty(hidden = true)
+  @Schema(hidden = true)
   @JsonProperty(access = Access.READ_ONLY)
   public int getId() {
     return type.ordinal();
@@ -39,7 +38,7 @@ public class ApplicationTagJson {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Id of the user who added the tag")
+  @Schema(description = "Id of the user who added the tag")
   public Integer getAddedBy() {
     return addedBy;
   }
@@ -48,7 +47,7 @@ public class ApplicationTagJson {
     this.addedBy = addedBy;
   }
 
-  @ApiModelProperty(value = "Type of the tag")
+  @Schema(description = "Type of the tag")
   public ApplicationTagType getType() {
     return type;
   }
@@ -57,7 +56,7 @@ public class ApplicationTagJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Time the tag was added.")
+  @Schema(description = "Time the tag was added.")
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }

@@ -6,13 +6,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.validator.NotFalse;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Items stored in distribution list. Each item describes a single distribution target, which will receive application decision.
  */
-@ApiModel(value = "Distribution entry describing a single distribution target, which will receive application decision")
+@Schema(description = "Distribution entry describing a single distribution target, which will receive application decision")
 @NotFalse(rules = {"email, hasRecipientValidation, Either email or postal address must have values"})
 public class DistributionEntryJson {
   private Integer id;
@@ -22,7 +21,7 @@ public class DistributionEntryJson {
   private String email;
   private PostalAddressJson postalAddress;
 
-  @ApiModelProperty(value = "Id of the distribution entry")
+  @Schema(description = "Id of the distribution entry")
   public Integer getId() {
     return id;
   }
@@ -31,7 +30,7 @@ public class DistributionEntryJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "The media type used to distribute the decision.")
+  @Schema(description = "The media type used to distribute the decision.")
   public DistributionType getDistributionType() {
     return distributionType;
   }
@@ -40,7 +39,7 @@ public class DistributionEntryJson {
     this.distributionType = distributionType;
   }
 
-  @ApiModelProperty(value = "Name of the distribution recipient")
+  @Schema(description = "Name of the distribution recipient")
   public String getName() {
     return name;
   }
@@ -49,7 +48,7 @@ public class DistributionEntryJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Email address of the distribution recipient")
+  @Schema(description = "Email address of the distribution recipient")
   public String getEmail() {
     return email;
   }
@@ -58,7 +57,7 @@ public class DistributionEntryJson {
     this.email = email;
   }
 
-  @ApiModelProperty(value = "Postal address of the distribution recipient")
+  @Schema(description = "Postal address of the distribution recipient")
   public PostalAddressJson getPostalAddress() {
     return postalAddress;
   }
