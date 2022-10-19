@@ -5,17 +5,17 @@
     update_cache: yes
   become: yes
 
-- include: hosts.yml
+- include_tasks: hosts.yml
 
-- include: firewall.yml
+- include_tasks: firewall.yml
 
 - name: add Finnish locale to system
   locale_gen: name=fi_FI.UTF-8 state=present
 
-- include: usersetup.yml
+- include_tasks: usersetup.yml
 
-- include: sshsetup.yml
+- include_tasks: sshsetup.yml
 
-- include: apt_install.yml
+- include_tasks: apt_install.yml
 
-- include: configure_systemd.yml
+- include_tasks: configure_systemd.yml

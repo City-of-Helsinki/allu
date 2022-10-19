@@ -1,4 +1,4 @@
-- include: firewall.yml
-- include: create_directories.yml
-- include: copy_files.yml
-- include: docker.yml
+- include_tasks: firewall.yml
+- include_tasks: create_directories.yml
+- include_tasks: copy_files.yml
+- include_tasks: docker.yml
