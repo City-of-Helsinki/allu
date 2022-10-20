@@ -1,10 +1,10 @@
-FROM eclipse-temurin:8-jre-alpine
+FROM eclipse-temurin:8u345-b01-jre-focal
 
 ARG CUSTOM_UID=1214
 ARG CUSTOM_GID=7898
 
-RUN apk  update \
-    && apk add wget tzdata \
+RUN apt-get -y update \
+    && apt-get -y install wget tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
@@ -30,7 +30,6 @@ RUN mkdir -p /home/allu/.ssh
 
 # project setup
 RUN mkdir -p /home/allu/allu-ui-service
-
 ######################################################################################
 # Expose ports
 ######################################################################################
