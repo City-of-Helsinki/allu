@@ -2,7 +2,5 @@
   hosts: backendservers
   remote_user: allu
   become: no
-  vars:
-    default_branch: "master"
   roles:
-    - { role: backend, var_branch: "{{ branch | default(default_branch) }}" }
+    - { role: backend, branch: "{{ var_branch | default('master')}}" }
