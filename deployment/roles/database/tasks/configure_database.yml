@@ -92,3 +92,14 @@
     name: "{{ database_container_name }}"
     state: started
     restart: true
+
+- name: wait for Postgresql complete restart
+  postgresql_ping:
+    login_host: localhost
+    port: 5432
+    login_user: postgres
+    login_password: "{{ database_password_postgres }}"
+  register: result
+  until: result.is_available
+  retries: 30
+  delay: 4
