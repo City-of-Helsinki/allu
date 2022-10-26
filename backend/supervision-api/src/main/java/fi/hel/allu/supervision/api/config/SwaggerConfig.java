@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
-import fi.hel.allu.servicecore.domain.ClientApplicationDataJson;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -13,14 +11,13 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,14 +27,8 @@ import java.util.Optional;
  */
 @Configuration
 @EnableWebMvc
-public class SwaggerConfig implements WebMvcConfigurer {
+public class SwaggerConfig extends WebMvcConfigurationSupport {
 
-    private static final Class<?>[] IGNORED_CLASSES = {
-            ApplicationExtensionJson.class,
-            Page.class,
-            ClientApplicationDataJson.class,
-            Sort.class
-    };
 
     private static final String[] FILTERED_APPLICATION_FIELDS = {"extension", "metadataVersion",
             "clientApplicationData", "externalOwnerId", "externalApplicationId", "invoicingChanged", "targetState"};
@@ -59,7 +50,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                                                             .bearerFormat("JWT")
                                 )
                 )
-                .info(new Info().title(apiTitle).version("1"));
+                .info(new Info().title(apiTitle).version("3"));
     }
 
 
@@ -83,6 +74,15 @@ public class SwaggerConfig implements WebMvcConfigurer {
         }
 
 
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
 
