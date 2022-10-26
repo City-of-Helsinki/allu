@@ -2,7 +2,7 @@
   apt:
     name:
       - libpq5
-      - libpq-dev=
+      - libpq-dev
       - python3-dev
     state: present
   become: yes
