@@ -10,12 +10,13 @@
     force_absent: true
     force_source: true
 
-
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_database.tar state=absent
+  when: "dev_var is undefined"
 
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_database.tar.gz state=absent
+  when: "dev_var is undefined"
 
 # This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
@@ -25,18 +26,22 @@
                 name=allu_database
                 archive_path=/tmp/allu_database.tar
                 state=present
+  when: "dev_var is undefined"
 
 - name: gzip Docker image on local host
   local_action: command pigz /tmp/allu_database.tar
+  when: "dev_var is undefined"
 
 - name: copy Docker image to target host
   copy: src=/tmp/allu_database.tar.gz dest=/tmp
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"
+  when: "dev_var is undefined"
 
 - name: extract tar from Docker gzipped image
   command: gunzip -f /tmp/allu_database.tar.gz
+  when: "dev_var is undefined"
 
 - name: start Docker services on remote host
   service: name=docker state=started
@@ -55,14 +60,16 @@
     force_absent=true
     force_source=true
   become: yes
+  when: "dev_var is undefined"
 
-- name: add container to Docker
+- name: add image to Docker
   docker_image:
     source=load
     name=allu_database
     state=present
     load_path=/tmp/allu_database.tar
   become: yes
+  when: "dev_var is undefined"
 
 - name: Start Docker bridge network if not already running
   docker_network:
@@ -83,17 +90,19 @@
     env:
       POSTGRES_PASSWORD: "{{ database_password_postgres }}"
     volumes:
-      - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
+      - /home/allu/database/data:/var/lib/postgresql/data:rw
     published_ports:
       - "5432:5432"
     networks:
       - name: "{{ network_name }}"
         aliases:
           - databasecontainer
+  register: container_results
   become: yes
 
 - name: remove Docker image tar file
   file: path=/tmp/allu_database.tar state=absent
+  when: "dev_var is undefined"
 
 - name: wait for Postgresql to initialize
   postgresql_ping:

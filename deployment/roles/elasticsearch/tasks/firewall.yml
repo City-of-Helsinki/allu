@@ -1,6 +1,6 @@
 - name: allow Docker container access to local services in test environment
   ufw: rule=allow port={{ item }} src=172.18.0.1/24
-  when: "'test' in group_names or 'staging' in group_names or 'production' in group_names"
+  when: "dev_var is undefined"
   become: yes
   with_items:
     - 9200 # ElasticSearch
@@ -8,6 +8,7 @@
 
 - name: allow local network access to backend processes
   ufw: rule=allow port={{ item }} src=10.0.0.0/8
+  when: "dev_var is undefined"
   become: yes
   with_items:
     - 9200 # elasticsearch http
@@ -15,7 +16,7 @@
 
 - name: allow developer connections to test environment
   ufw: rule=allow port={{ item }} src=62.183.130.66
-  when: "'test' in group_names"
+  when: "dev_var is undefined and 'test' in group_names"
   become: yes
   with_items:
       - 9200 # elasticsearch http
@@ -23,7 +24,7 @@
 
 - name: allow developer connections to test environment from VPN
   ufw: rule=allow port={{ item }} src=83.102.45.242
-  when: "'test' in group_names"
+  when: "dev_var is undefined and 'test' in group_names"
   become: yes
   with_items:
       - 9200 # elasticsearch http

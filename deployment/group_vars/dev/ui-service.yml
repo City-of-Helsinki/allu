@@ -1,0 +1,3 @@
+profile_environment: DEV
+
+oauth2_redirect_uri: http://185.26.49.172/oauth2/

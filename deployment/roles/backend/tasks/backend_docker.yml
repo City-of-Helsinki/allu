@@ -5,6 +5,7 @@
     registry: "{{ gitlab_registry_url }}"
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
+  when: "dev_var is undefined"
 
 - name: Build backend Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
@@ -20,6 +21,14 @@
     force_absent: true
     force_source: true
 
+- name: tag allu_backend Docker image with repository. Run when developing locally.
+  local_action:
+    module: docker_image
+    source: local
+    name: "allu_ui_service:{{ branch }}"
+    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
+  when: "dev_var is defined and dev_var"
+
 - name: Push built allu_backend Docker image to GitLab repository
   local_action:
     module: docker_image
@@ -28,6 +37,7 @@
     force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
     name: "allu_backend:{{ branch }}"
     repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+  when: "dev_var is undefined"
 
 - name: Start Docker services on remote host
   service: name=docker state=started
@@ -46,7 +56,7 @@
     force_absent: true
     force_source: true
   become: yes
-  when: branch  == "master"
+  when: "branch  == 'master' and dev_var is undefined"
 
 - name: Login to GitLab repository at the remote
   docker_login:
@@ -54,12 +64,14 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
   become: yes
+  when: "dev_var is undefined"
 
 - name: Pull allu_backend Docker image from GitLab repository
   docker_image:
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
   become: yes
+  when: "dev_var is undefined"
 
 - name: Start allu_backend container
   docker_container:
@@ -67,7 +79,7 @@
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
     restart_policy: always
     volumes:
-      - /srv/data/allu:/servicehome:rw
+      - /home/allu:/servicehome:rw
     published_ports:
       - "9040:9040"
       - "9050:9050"

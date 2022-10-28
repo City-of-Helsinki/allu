@@ -1,5 +1,5 @@
 - name: create data directory
-  file: path=/srv/data/allu
+  file: path=/home/allu
         state=directory
         owner=allu
         group=allu
@@ -7,45 +7,51 @@
   become: yes
 
 - name: create backend service directories
-  file: path=/srv/data/allu/services/{{ item }}
+  file: path=/home/allu/services/{{ item }}
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
   with_items: "{{ allu_service_list }}"
+  become: yes
 
 - name: create logging directories for different services
-  file: path=/srv/data/allu/logs/{{ item }}
+  file: path=/home/allu/logs/{{ item }}
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
   with_items: "{{ allu_service_list }}"
+  become: yes
 
 - name: create process directory for SAP customer files
-  file: path=/srv/data/allu/services/scheduler-service/sap/customer-process
+  file: path=/home/allu/services/scheduler-service/sap/customer-process
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create archive directory for SAP customer files
-  file: path=/srv/data/allu/services/scheduler-service/sap/customer-archive
+  file: path=/home/allu/services/scheduler-service/sap/customer-archive
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create archive  directory for failed SAP customer files
-  file: path=/srv/data/allu/services/scheduler-service/sap/customer-failed
+  file: path=/home/allu/services/scheduler-service/sap/customer-failed
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create archive directory for SAP invoices
-  file: path=/srv/data/allu/services/scheduler-service/sap/invoice-archive
+  file: path=/home/allu/services/scheduler-service/sap/invoice-archive
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes

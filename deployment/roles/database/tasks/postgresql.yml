@@ -5,33 +5,40 @@
       - libpq-dev
       - python3-dev
     state: present
+  when: "dev_var is undefined"
   become: yes
 
 - name: Install psycopg2 with pip
   pip: name=psycopg2
+  when: "dev_var is undefined"
   become: yes
 
 - name: Add Postgres official GPG key
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
+  when: "dev_var is undefined"
   become: yes
 
 - name: register ubuntu version
   shell: lsb_release -cs
   register: ubuntu_version
+  when: "dev_var is undefined"
   ignore_errors: true
 
 - name: Add Postgres Repository
   apt_repository:
     repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ubuntu_version.stdout}}-pgdg main"
     state: present
+  when: "dev_var is undefined"
   become: yes
 
 - name: install support for psql command
   apt: name=postgresql-client-14 state=present
+  when: "dev_var is undefined"
   become: yes
 
 - name: allow postgresql connections from local network
   ufw: rule=allow src=10.0.0.0/8 port=5432
+  when: "dev_var is undefined"
   become: yes

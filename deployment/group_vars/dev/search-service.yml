@@ -1,0 +1,2 @@
+elasticsearch_host: "{{ elasticsearch_name }}"
+elasticsearch_port: 9200

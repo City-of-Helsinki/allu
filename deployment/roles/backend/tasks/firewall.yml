@@ -10,10 +10,12 @@
 
 - name: allow Docker container access to other Docker containers
   ufw: rule=allow src=172.18.0.0/16 dest=172.18.0.0/16
+  when: "dev_var is undefined"
   become: yes
 
 - name: allow local network access to backend processes
   ufw: rule=allow port={{ item }} src=10.0.0.0/8
+  when: "dev_var is undefined"
   become: yes
   with_items:
     - 9000 # allu-ui-service

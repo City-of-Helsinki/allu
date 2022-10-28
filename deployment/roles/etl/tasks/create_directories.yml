@@ -4,6 +4,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create logging directory for Allu ETL service
   file: path=/home/allu/logs/etl
@@ -11,4 +12,5 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 

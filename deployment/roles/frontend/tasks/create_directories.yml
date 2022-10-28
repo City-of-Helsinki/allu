@@ -4,6 +4,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
+  become: yes
 
 - name: create apache sites directory under allu home
   file: path=/home/allu/apache/sites-available
@@ -11,6 +12,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
+  become: yes
 
 - name: create apache www directory under allu home
   file: path=/home/allu/apache/www
@@ -18,6 +20,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
+  become: yes
 
 - name: create ssl root dir for allu
   file: path=/home/allu/ssl
@@ -25,9 +28,10 @@
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
+  become: yes
 
 - name: create data directory
-  file: path=/srv/data/allu
+  file: path=/home/allu
     state=directory
     owner=allu
     group=allu
@@ -35,37 +39,40 @@
   become: yes
 
 - name: create mapproxy directory under srv
-  file: path=/srv/data/allu/mapproxy
+  file: path=/home/allu/mapproxy
     state=directory
     owner=allu
     group=allu
     mode="u=rwx,g=rx,o=rx"
+  become: yes
 
 - name: create mapproxy configuration directory
-  file: path=/srv/data/allu/mapproxy/configuration
+  file: path=/home/allu/mapproxy/configuration
     state=directory
     owner=allu
     group=allu
     mode="u=rwx,g=rx,o=rx"
 
 - name: create mapproxy python directory
-  file: path=/srv/data/allu/mapproxy/python
+  file: path=/home/allu/mapproxy/python
     state=directory
     owner=allu
     group=allu
     mode="u=rwx,g=rx,o=rx"
+  become: yes
 
 - name: create mapproxy logging directory
-  file: path=/srv/data/allu/mapproxy/logs
+  file: path=/home/allu/mapproxy/logs
     state=directory
     owner=allu
     group=allu
     mode="u=rwx,g=rx,o=rx"
-
+  become: yes
 
 - name: create mapproxy cache directory
-  file: path=/srv/data/allu/mapproxy/cache_data
+  file: path=/home/allu/mapproxy/cache_data
     state=directory
     owner=allu
     group=allu
     mode="u=rwx,g=rx,o=rx"
+  become: yes

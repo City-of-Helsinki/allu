@@ -11,12 +11,13 @@
     force_absent: true
     force_source: true
 
-
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_elasticsearch.tar state=absent
+  when: "dev_var is undefined"
 
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_elasticsearch.tar.gz state=absent
+  when: "dev_var is undefined"
 
 # This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
@@ -26,18 +27,22 @@
                 name=allu_elasticsearch
                 archive_path=/tmp/allu_elasticsearch.tar
                 state=present
+  when: "dev_var is undefined"
 
 - name: gzip Docker image on local host
   local_action: command pigz /tmp/allu_elasticsearch.tar
+  when: "dev_var is undefined"
 
 - name: copy Docker image to target host
   copy: src=/tmp/allu_elasticsearch.tar.gz dest=/tmp
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"
+  when: "dev_var is undefined"
 
 - name: extract tar from Docker gzipped image
   command: gunzip -f /tmp/allu_elasticsearch.tar.gz
+  when: "dev_var is undefined"
 
 - name: start Docker services on remote host
   service: name=docker state=started
@@ -49,21 +54,23 @@
     state: absent
   become: yes
 
-- name: remove existing container from Docker
+- name: remove existing image from Docker
   docker_image:
     name=allu_elasticsearch
     state=absent
     force_absent=true
     force_source=true
   become: yes
+  when: "dev_var is undefined"
 
-- name: add container to Docker
+- name: add image to Docker
   docker_image:
     source=load
     name=allu_elasticsearch
     state=present
     load_path=/tmp/allu_elasticsearch.tar
   become: yes
+  when: "dev_var is undefined"
 
 - name: Start Docker bridge network if not already running
   docker_network:
@@ -82,7 +89,7 @@
     image: allu_elasticsearch
     restart_policy: always
     volumes:
-      - /srv/data/allu/elasticsearch:/usr/share/elasticsearch/data:rw
+      - /home/allu/elasticsearch:/usr/share/elasticsearch/data:rw
     published_ports:
       - "9200:9200"
       - "9300:9300"
@@ -102,3 +109,4 @@
 
 - name: remove Docker image tar file
   file: path=/tmp/allu_elasticsearch.tar state=absent
+  when: "dev_var is undefined"

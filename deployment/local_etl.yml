@@ -1,0 +1,6 @@
+- name: install Allu ETL application
+  hosts: reporting_dbserver
+  connection: local
+  remote_user: allu
+  roles:
+    - etl

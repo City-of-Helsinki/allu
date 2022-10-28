@@ -4,18 +4,17 @@ services:
   allu_database:
     build: ./
     image: allu_database
-    container_name: allu_database_container
+    container_name: allu_database
     volumes:
       - ./local_development_conf/dev-add-report.sql:/docker-entrypoint-initdb.d/dev-add-report.sql
     environment:
       POSTGRES_PASSWORD: postgres
     ports:
-      # <Port exposed> : < PostgreSQL Port running inside container>
       - "5432:5432"
   allu-node:
     build: ./elasticsearch/
     image: allu_elasticsearch
-    container_name: allu_elasticsearch_container
+    container_name: allu_elasticsearch
     environment:
       node.name: allu-node
       cluster.name: allu-cluster

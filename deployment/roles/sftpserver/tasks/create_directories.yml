@@ -4,6 +4,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create target directory for SAP invoices
   file: path=/home/allu/sftpserver/invoice
@@ -11,6 +12,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create source directory for SAP customers
   file: path=/home/allu/sftpserver/customer
@@ -18,6 +20,7 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+  become: yes
 
 - name: create archive directory for SAP customers
   file: path=/home/allu/sftpserver/customer/arch
@@ -25,4 +28,4 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
-
+  become: yes

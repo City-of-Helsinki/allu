@@ -15,9 +15,11 @@
 
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_etl.tar state=absent
+  when: "dev_var is undefined"
 
 - name: remove existing zipped docker image
   local_action: file path=/tmp/allu_etl.tar.gz state=absent
+  when: "dev_var is undefined"
 
 # This task requires docker to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
@@ -27,18 +29,22 @@
                 name=allu_etl
                 archive_path=/tmp/allu_etl.tar
                 state=present
+  when: "dev_var is undefined"
 
 - name: gzip Docker image on local host
   local_action: command pigz /tmp/allu_etl.tar
+  when: "dev_var is undefined"
 
 - name: copy Docker image to target host
   copy: src=/tmp/allu_etl.tar.gz dest=/tmp
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"
+  when: "dev_var is undefined"
 
 - name: extract tar from Docker gzipped image
   command: gunzip -f /tmp/allu_etl.tar.gz
+  when: "dev_var is undefined"
 
 - name: start Docker services on remote host
   service: name=docker state=started
@@ -46,25 +52,27 @@
 
 - name: stop and remove existing container from Docker
   docker_container:
-    name: allu_etl_container
+    name: allu_etl
     state: absent
   become: yes
 
-- name: remove existing container from Docker
+- name: remove existing image from Docker
   docker_image:
     name=allu_etl
     state=absent
     force_absent=true
     force_source=true
   become: yes
+  when: "dev_var is undefined"
 
-- name: add container to Docker
+- name: add image to Docker
   docker_image:
     source=load
     name=allu_etl
     state=present
     load_path=/tmp/allu_etl.tar
   become: yes
+  when: "dev_var is undefined"
 
 - name: Start Docker bridge network if not already running
   docker_network:
@@ -79,7 +87,7 @@
 
 - name: start container
   docker_container:
-    name: allu_etl_container
+    name: allu_etl
     image: allu_etl
     restart_policy: always
     volumes:
@@ -92,3 +100,4 @@
 
 - name: remove Docker image tar file
   file: path=/tmp/allu_etl.tar state=absent
+  when: "dev_var is undefined"

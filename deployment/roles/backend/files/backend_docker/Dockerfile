@@ -112,5 +112,12 @@ RUN chmod 777 /home/allu/.ssh/known_hosts
 ARG CACHEBUST=1
 
 # JAR files
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' -exec basename \{} \;`; \
-  do wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/${service}/1.0-SNAPSHOT/${service}-1.0-SNAPSHOT.jar --output-document /home/allu/${service}/${service}.jar; done
+#RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' -exec basename \{} \;`; \
+#  do wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/${service}/1.0-SNAPSHOT/${service}-1.0-SNAPSHOT.jar --output-document /home/allu/${service}/${service}.jar; done
+
+COPY model-service-1.0-SNAPSHOT.jar /home/allu/model-service/model-service.jar
+COPY search-service-1.0-SNAPSHOT.jar /home/allu/search-service/search-service.jar
+COPY pdf-service-1.0-SNAPSHOT.jar /home/allu/pdf-service/pdf-service.jar
+COPY scheduler-service-1.0-SNAPSHOT.jar /home/allu/scheduler-service/scheduler-service.jar
+COPY external-service-1.0-SNAPSHOT.jar /home/allu/external-service/external-service.jar
+COPY supervision-api-1.0-SNAPSHOT.jar /home/allu/supervision-api/supervision-api.jar

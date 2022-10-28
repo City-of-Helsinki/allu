@@ -1,5 +1,6 @@
 - name: allow http(s) to docker container
   ufw: route=true rule=allow proto=tcp port={{ item }}
+  when: "dev_var is undefined"
   become: yes
   with_items:
     - 80

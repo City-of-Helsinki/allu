@@ -1,0 +1,7 @@
+- name: Install Allu sftp test server
+  hosts: sftpserver
+  connection: local
+  remote_user: allu
+  become: no
+  roles:
+    - sftpserver
