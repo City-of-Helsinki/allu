@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public class ESFlatValue {
   private String fieldName;
   private Double decValue;
+  private Integer integerValue;
   private Long longValue;
   private String strValue;
   private Boolean boolValue;
@@ -40,6 +41,11 @@ public class ESFlatValue {
     this.boolValue = fieldValue;
   }
 
+  public ESFlatValue(String prefix, String fieldName, Integer fieldValue) {
+    this.fieldName = createFieldName(prefix, fieldName);
+    this.integerValue = fieldValue;
+  }
+
   public static ESFlatValue mapValue(String prefix, String name, Object value) {
     if (value instanceof BigDecimal) {
       BigDecimal numValue = (BigDecimal) value;
@@ -52,6 +58,8 @@ public class ESFlatValue {
       return new ESFlatValue(prefix, name, (String) value);
     } else if (value instanceof Boolean) {
       return  new ESFlatValue(prefix, name, (Boolean) value);
+    } else if (value instanceof Integer) {
+      return  new ESFlatValue(prefix, name,  (Integer)value);
     } else if (value == null) {
       return new ESFlatValue(prefix, name, (String) null);
     } else if (value instanceof JsonifyArrayList) {
@@ -112,6 +120,14 @@ public class ESFlatValue {
 
   public void setStrValue(String strValue) {
     this.strValue = strValue;
+  }
+
+  public Integer getIntegerValue() {
+    return integerValue;
+  }
+
+  public void setIntegerValue(Integer integerValue) {
+    this.integerValue = integerValue;
   }
 
   private static  boolean hasFraction(BigDecimal number) {
