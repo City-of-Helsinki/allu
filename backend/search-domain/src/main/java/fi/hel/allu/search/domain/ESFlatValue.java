@@ -54,6 +54,10 @@ public class ESFlatValue {
       } else {
         return new ESFlatValue(prefix, name, numValue.longValue());
       }
+    } else if (value instanceof Double) {
+      return new ESFlatValue(prefix, name, (Double) value);
+    } else if (value instanceof Long) {
+      return new ESFlatValue(prefix, name, (Long) value);
     } else if (value instanceof String) {
       return new ESFlatValue(prefix, name, (String) value);
     } else if (value instanceof Boolean) {
