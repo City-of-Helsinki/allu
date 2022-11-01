@@ -5,4 +5,25 @@ services:
     build: ./allu-ui-service/
     image: allu_ui_service
     container_name: allu-ui-service
-    network_mode: host
+    ports:
+      - "9000:9000"
+  allu-backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    image: allu_backend
+    container_name: allu-backend
+    expose:
+      - "9010"
+      - "9020"
+      - "9030"
+    ports:
+      - "9040:9040"
+      - "9050:9050"
+    volumes:
+      - /home/allu/allu-backend:/servicehome:rw
+
+networks:
+  default:
+    name: allu-network
+    external: true
