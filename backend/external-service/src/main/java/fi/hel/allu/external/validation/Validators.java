@@ -24,4 +24,16 @@ public class Validators {
     public Validator[] getAllValidators() {
         return new Validator[]{applicationExtGeometryValidator, defaultImageValidator, shortTermRentalExtValidator};
     }
+
+    public ShortTermRentalExtValidator getShortTermRentalExtValidator() {
+        return shortTermRentalExtValidator;
+    }
+
+    public ApplicationExtGeometryValidator getApplicationExtGeometryValidator() {
+        return applicationExtGeometryValidator;
+    }
+
+    public DefaultImageValidator getDefaultImageValidator() {
+        return defaultImageValidator;
+    }
 }

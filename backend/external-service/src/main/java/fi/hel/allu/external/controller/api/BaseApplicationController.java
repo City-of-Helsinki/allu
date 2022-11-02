@@ -55,7 +55,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         if (binder.getTarget() != null && BaseApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
-            binder.addValidators(validators.getAllValidators());
+            binder.addValidators(validators.getApplicationExtGeometryValidator(), validators.getDefaultImageValidator());
             addApplicationTypeSpecificValidators(binder);
         }
     }

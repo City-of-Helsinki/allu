@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,13 +31,19 @@ public class ShortTermRentalController extends BaseApplicationController<ShortTe
     private final ShortTermRentalExtMapper shortTermRentalMapper;
 
     public ShortTermRentalController(ApplicationServiceExt applicationService,
-                                     Validators validators,
                                      DecisionService decisionService,
                                      TerminationService terminationService,
+                                     Validators validators,
                                      ShortTermRentalExtMapper shortTermRentalMapper) {
         super(applicationService, decisionService, validators, terminationService);
         this.shortTermRentalMapper = shortTermRentalMapper;
     }
+
+    @Override
+    protected void addApplicationTypeSpecificValidators(WebDataBinder binder) {
+        binder.addValidators(validators.getShortTermRentalExtValidator());
+    }
+
 
     @Override
     protected ShortTermRentalExtMapper getMapper() {
