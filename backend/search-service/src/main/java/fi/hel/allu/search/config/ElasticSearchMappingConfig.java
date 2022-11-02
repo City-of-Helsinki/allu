@@ -150,8 +150,6 @@ public class ElasticSearchMappingConfig {
                   .endObject()
                   .startObject("searchGeometry")
                     .field("type", "geo_shape")
-                    .field("tree", "quadtree")
-                    .field("precision", "1m")
                   .endObject()
                 .endObject()
               .endObject()
