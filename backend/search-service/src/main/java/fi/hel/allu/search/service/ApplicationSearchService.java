@@ -98,10 +98,11 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     for (int i = 0; i < points.size(); i++) {
       coordinates.add(new Coordinate(points.getX(i), points.getY(i)));
     }
-    ShapeBuilder pointBuilder = new PointBuilder();
-    pointBuilder.coordinates(coordinates);
+    CoordinatesBuilder coordinateBuilder = new CoordinatesBuilder();
+    coordinateBuilder.coordinates(coordinates);
+    PolygonBuilder polygonBuilder = new PolygonBuilder(coordinateBuilder);
     try {
-      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", pointBuilder).relation(ShapeRelation.INTERSECTS);
+      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", polygonBuilder).relation(ShapeRelation.INTERSECTS);
       qb.must(geomQb);
     } catch (IOException ex) {
       throw new SearchException(ex);
