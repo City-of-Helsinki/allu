@@ -82,7 +82,7 @@ class CustomerSearchIT extends BaseIntegrationTest {
         CustomerES customerES = createCustomer(TEST_NAME, 1);
         customerSearchService.insert(customerES);
         customerSearchService.refreshIndex();
-        Optional<CustomerES> insertedCustomerES = customerSearchService.findObjectById("1");
+        Optional<CustomerES> insertedCustomerES = customerSearchService.findObjectById("1", "customers");
         assertTrue(insertedCustomerES.isPresent());
         assertEquals(customerES.getName(), insertedCustomerES.get().getName());
         assertEquals(customerES.getRegistryKey(), insertedCustomerES.get().getRegistryKey());

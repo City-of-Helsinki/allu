@@ -585,14 +585,14 @@ public class GenericSearchService<T, Q extends QueryParameters> {
      * @param id Id of the searched object.
      * @return Found value.
      */
-    public Optional<T> findObjectById(String id) {
+    public Optional<T> findObjectById(String id, String alias) {
         QueryBuilder qb = QueryBuilders.matchQuery("id", id);
         SearchSourceBuilder srBuilder = new SearchSourceBuilder();
         srBuilder.query(qb);
         if (logger.isDebugEnabled()) {
             logger.debug("Finding object with the following query:\n {}", srBuilder);
         }
-        SearchRequest searchRequest = new SearchRequest();
+        SearchRequest searchRequest = new SearchRequest(alias);
         SearchResponse response;
         try {
             searchRequest.source(srBuilder);

@@ -57,7 +57,7 @@ public class CustomerController {
   public ResponseEntity<Void> updateCustomerOfApplications(
       @PathVariable String id,
       @RequestBody Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleTypes) {
-    CustomerES customerES = customerSearchService.findObjectById(id)
+    CustomerES customerES = customerSearchService.findObjectById(id, "customers")
         .orElseThrow(() -> new NoSuchEntityException("No such customer in ElasticSearch", id));
     Map<Integer, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
         Map.Entry::getKey,
