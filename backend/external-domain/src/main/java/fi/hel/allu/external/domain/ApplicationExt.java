@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -21,11 +20,7 @@ public class ApplicationExt {
   private String name;
   private String applicationId;
   private StatusType status;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
   private ZonedDateTime startTime;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
   private ZonedDateTime endTime;
   private UserExt owner;
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;

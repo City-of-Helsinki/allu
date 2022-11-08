@@ -13,9 +13,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import java.util.List;
 
 
@@ -23,8 +23,7 @@ import java.util.List;
  * Configuration of Swagger i.e. the REST documentation tool.
  */
 @Configuration
-@EnableWebMvc
-public class SwaggerConfig extends WebMvcConfigurationSupport {
+public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -49,22 +48,18 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     }
 
     @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
         builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        MappingJackson2HttpMessageConverter jacksonConverter =
-                new MappingJackson2HttpMessageConverter(builder.build());
-        converters.replaceAll(converter -> converter.getClass()
-                .isAssignableFrom(MappingJackson2HttpMessageConverter.class) ? jacksonConverter : converter);
-
+        converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
     }
 
-      @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-      registry.addResourceHandler("/swagger-ui.html")
-              .addResourceLocations("classpath:/META-INF/resources/");
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
 
-      registry.addResourceHandler("/webjars/**")
-              .addResourceLocations("classpath:/META-INF/resources/webjars/");
-  }
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
 }

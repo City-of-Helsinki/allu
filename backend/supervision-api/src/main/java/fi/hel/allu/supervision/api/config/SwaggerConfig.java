@@ -15,19 +15,16 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Configuration of Swagger i.e. the REST documentation tool.
  */
 @Configuration
-@EnableWebMvc
-public class SwaggerConfig extends WebMvcConfigurationSupport {
+public class SwaggerConfig implements WebMvcConfigurer {
 
 
     private static final String[] FILTERED_APPLICATION_FIELDS = {"extension", "metadataVersion",
@@ -55,7 +52,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
 
     @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         // Find jackson message converter and add custom object mapper
         SimpleBeanPropertyFilter applicationFilter = SimpleBeanPropertyFilter
                 .serializeAllExcept(FILTERED_APPLICATION_FIELDS);
@@ -64,16 +61,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                                    SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
                 .filters(new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter))
                 .build();
-
-        Optional<HttpMessageConverter<?>> converter = converters.stream()
-                .filter(m -> m.getClass().isAssignableFrom(MappingJackson2HttpMessageConverter.class))
-                .findFirst();
-        if (converter.isPresent()) {
-            MappingJackson2HttpMessageConverter jacksonConverter = (MappingJackson2HttpMessageConverter) converter.get();
-            jacksonConverter.setObjectMapper(mapper);
-        }
-
-
+        converters.add(new MappingJackson2HttpMessageConverter(mapper));
     }
 
     @Override
