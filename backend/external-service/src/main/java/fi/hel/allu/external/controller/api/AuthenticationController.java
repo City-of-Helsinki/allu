@@ -50,6 +50,9 @@ public class AuthenticationController {
         String token = new TokenUtil(applicationProperties.getJwtSecret()).createToken(
                 ZonedDateTime.now().plusMinutes(applicationProperties.getJwtExpirationTime()), user.getUsername(),
                 roleMap);
-        return ResponseEntity.ok(token);
+        // Added quotation marks to surround token.
+        // Customer code has been accepting token surrounded by quotation marks.
+        // Without them, customer code might break.
+        return ResponseEntity.ok(String.format("\"%s\"", token));
     }
 }
