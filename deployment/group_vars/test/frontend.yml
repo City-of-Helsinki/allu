@@ -1,7 +1,7 @@
 # add environment specific frontend variables here
 http_port: 80
 https_port: 443
-proxy_domain: 185.26.49.172
+proxy_domain: testi.allu.kaupunkiymparisto.fi
 proxypass_api_context: /api/
 proxypass_api_target: http://10.1.2.157:9000/
 proxypass_external_context: /external/
@@ -9,6 +9,7 @@ proxypass_external_target: http://10.1.2.157:9040/
 proxypass_supervision_context: /supervision-api/
 proxypass_supervision_target: http://10.1.2.157:9050/
 server_admin: alluprojekti@gmail.com
-ssl_certificate_file: apache-selfsigned.crt
-ssl_certificate_key_file: apache-selfsigned.key
+ssl_certificate_file: cert.crt
+ssl_certificate_key_file: privkey.pem
+ssl_certificate_chain_file: chain.pem
 mapproxy_block_by_referer: false
