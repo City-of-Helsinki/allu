@@ -80,7 +80,7 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Applications retrieved successfully"),
     })
-    @GetMapping(consumes = "application/json", produces = "application/json")
+    @GetMapping(produces = "application/json")
     @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
     public ResponseEntity<List<A>> getApplicationsWithIds(@RequestParam("ids") final List<Integer> ids) {
         List<ApplicationJson> applications = applicationServiceComposer.findApplicationsByIds(ids);
