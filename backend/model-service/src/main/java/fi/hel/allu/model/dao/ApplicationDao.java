@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -70,6 +71,7 @@ public class ApplicationDao {
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
+
   final QBean<ApplicationIdentifier> applicationIdentifierBean = bean(ApplicationIdentifier.class,
       application.id, application.applicationId, application.identificationNumber);
 
@@ -504,6 +506,14 @@ public class ApplicationDao {
         .fetch();
   }
 
+  @Transactional(readOnly = true)
+  public Map<Integer, List<ApplicationTag>> findTagsForMultipleApplicationId(Integer[] applicationIds) {
+    return queryFactory.select(applicationTagBean)
+            .from(applicationTag)
+            .where(applicationTag.applicationId.in(applicationIds)).
+            transform(groupBy(applicationTag.applicationId).as(list(applicationTagBean)));
+  }
+
   /**
    * Removes all tags of given type from application
    * @param applicationId Application's database ID
@@ -534,30 +544,97 @@ public class ApplicationDao {
   }
 
   private List<Application> populateDependencies(List<Application> applications) {
-    applications.forEach(a -> a.setDecisionDistributionList(distributionEntryDao.findByApplicationId(a.getId())));
-    applications.forEach(a -> populateTags(a));
-    applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
-    applications.forEach(a -> a.setKindsWithSpecifiers(findKindsAndSpecifiers(a.getId())));
-    applications.forEach(a -> a.setLocations(findApplicationLocations(a.getId())));
+    Integer[] ids = applications.stream().map(Application::getId).toArray(Integer[]::new);
+    mapDecisionDistributionsToApplications(applications, ids);
+    mapTagsToApplications(applications, ids);
+    mapCustomerWithContactsToApplication(applications, ids);
+    mapKindWithSpecificiersToApplication(applications, ids);
+    mapLocationsToApplications(applications, ids);
     return applications;
   }
 
-  private List<Location> findApplicationLocations(Integer applicationId) {
-    return locationDao.findByApplication(applicationId);
+  private void mapDecisionDistributionsToApplications(List<Application> applicationList, Integer[] ids){
+    List<DistributionEntry> unMappedDistributionEntries = distributionEntryDao.findByApplicationIds(ids);
+    if (!unMappedDistributionEntries.isEmpty()){
+      Map<Integer, List<DistributionEntry>> mappedDistributionEntries =
+              unMappedDistributionEntries.stream().collect(Collectors.groupingBy(DistributionEntry::getApplicationId));
+      for (Application application : applicationList){
+        if(mappedDistributionEntries.containsKey(application.getId())){
+          application.setDecisionDistributionList(mappedDistributionEntries.get(application.getId()));
+        }else{
+          application.setDecisionDistributionList(new ArrayList<>());
+        }
+      }
+    }
+  }
+
+  private void mapTagsToApplications(List<Application> applicationList, Integer[] ids){
+    Map<Integer, List<ApplicationTag>> mappedApplicationTags = findTagsForMultipleApplicationId(ids);
+    for (Application application : applicationList){
+      if(mappedApplicationTags.containsKey(application.getId())){
+        application.setApplicationTags(mappedApplicationTags.get(application.getId()));
+      }else{
+        application.setApplicationTags(new ArrayList<>());
+      }
+    }
   }
 
   private Application populateTags(Application application) {
     application.setApplicationTags(findTagsByApplicationId(application.getId()));
     return application;
   }
+  
+  private void mapCustomerWithContactsToApplication(List<Application> applications, Integer[] ids) {
+    Map<Integer, List<CustomerWithContacts>> mappedCustomerContacts = customerDao.findByApplicationsWithContacts(ids);
+    for (Application application : applications) {
+      if (mappedCustomerContacts.containsKey(application.getId())) {
+        application.setCustomersWithContacts(mappedCustomerContacts.get(application.getId()));
+      } else {
+        application.setCustomersWithContacts(new ArrayList<>());
+      }
+    }
+  }
 
-  private Map<ApplicationKind, List<ApplicationSpecifier>> findKindsAndSpecifiers(Integer applicationId) {
-    Map<ApplicationKind, List<ApplicationSpecifier>> m = queryFactory
-        .select(applicationKind.kind, kindSpecifier.specifier).from(applicationKind)
-        .leftJoin(kindSpecifier)
-        .on(applicationKind.id.eq(kindSpecifier.kindId)).where(applicationKind.applicationId.eq(applicationId))
-        .transform(groupBy(applicationKind.kind).as(list(kindSpecifier.specifier)));
-    return m;
+  private void mapKindWithSpecificiersToApplication(List<Application> applications, Integer[] ids){
+    Map<Integer, Map<ApplicationKind, List<ApplicationSpecifier>>> mappedToApplication =  findKindsAndSpecifiers(ids);
+    for (Application application : applications) {
+      if (mappedToApplication.containsKey(application.getId())) {
+        application.setKindsWithSpecifiers(mappedToApplication.get(application.getId()));
+      } else {
+        application.setKindsWithSpecifiers(new HashMap<>());
+      }
+    }
+  }
+
+  private Map<Integer, Map<ApplicationKind, List<ApplicationSpecifier>>> findKindsAndSpecifiers(Integer... applicationIds) {
+    List<Tuple> tuples = queryFactory
+            .select(applicationKind.kind, kindSpecifier.specifier, applicationKind.applicationId).from(applicationKind)
+            .leftJoin(kindSpecifier)
+            .on(applicationKind.id.eq(kindSpecifier.kindId)).where(applicationKind.applicationId.in(applicationIds)).fetch();
+    Map<Integer, Map<ApplicationKind, List<ApplicationSpecifier>>> mappedResult = new HashMap<>();
+    for (Tuple tuple : tuples){
+      ApplicationKind applicationKind = tuple.get(0, ApplicationKind.class);
+      ApplicationSpecifier applicationSpecifier = tuple.get(1, ApplicationSpecifier.class);
+      Integer applicationId = tuple.get(2, Integer.class);
+      if(!mappedResult.containsKey(applicationId)){
+        mappedResult.put(applicationId, new HashMap<>());
+      }
+      if (!mappedResult.get(applicationId).containsKey(applicationKind)){
+        mappedResult.get(applicationId).put(applicationKind, new ArrayList<>());
+      }
+      mappedResult.get(applicationId).get(applicationKind).add(applicationSpecifier);
+    }
+
+    return mappedResult;
+  }
+
+  private void mapLocationsToApplications(List<Application> applicationsList, Integer[] ids) {
+    List<Location> unmappedLocations = locationDao.findByApplications(ids);
+    if(!unmappedLocations.isEmpty()){
+      Map<Integer, List<Location>> mappeLocations = unmappedLocations.stream().collect(Collectors.groupingBy(Location::getApplicationId));
+      applicationsList.forEach(e -> e.setLocations(mappeLocations.get(e.getId())));
+    }
+
   }
 
   private void replaceApplicationTags(Integer applicationId, List<ApplicationTag> tags) {

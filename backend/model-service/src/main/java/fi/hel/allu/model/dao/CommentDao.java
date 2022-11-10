@@ -46,6 +46,12 @@ public class CommentDao {
   }
 
   @Transactional(readOnly = true)
+  public List<Comment> findByApplicationIds(List<Integer> applicationIds) {
+    return queryFactory.select(commentBean).from(comment)
+            .where(comment.applicationId.in(applicationIds)).fetch();
+  }
+
+  @Transactional(readOnly = true)
   public List<Comment> findByProjectId(int projectId) {
     return queryFactory.select(commentBean)
         .from(comment)

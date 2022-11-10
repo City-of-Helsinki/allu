@@ -1,17 +1,5 @@
 package fi.hel.allu.servicecore.mapper;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
-import fi.hel.allu.servicecore.util.GeometrySimplifier;
-import org.geolatte.geom.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
-
+import com.google.common.collect.Lists;
 import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -36,6 +24,16 @@ import fi.hel.allu.servicecore.domain.history.ApplicationTagForHistory;
 import fi.hel.allu.servicecore.mapper.extension.*;
 import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
+import fi.hel.allu.servicecore.util.GeometrySimplifier;
+import org.geolatte.geom.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -186,7 +184,6 @@ public class ApplicationMapper {
     applicationJson.setRecurringEndTime(application.getRecurringEndTime());
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
-    applicationJson.setDecisionMaker(createUserJson(application.getDecisionMaker()));
     if (application.getExtension() != null) {
       applicationJson.setExtension(createExtensionJson(application));
     }
@@ -195,7 +192,6 @@ public class ApplicationMapper {
       applicationJson.setDecisionDistributionList(application.getDecisionDistributionList().stream()
           .map(dEntry -> createDistributionEntryJson(dEntry)).collect(Collectors.toList()));
     }
-    applicationJson.setOwner(createUserJson(application.getOwner()));
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setNotBillable(application.getNotBillable());
     applicationJson.setNotBillableReason(application.getNotBillableReason());
@@ -531,13 +527,6 @@ public class ApplicationMapper {
     distributionEntryJson.setEmail(distributionEntry.getEmail());
     distributionEntryJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
-  }
-
-  private UserJson createUserJson(Integer userId) {
-    if (userId == null) {
-      return null;
-    }
-    return userService.findUserById(userId);
   }
 
   private ClientApplicationData createClientApplicationDataModel(ClientApplicationDataJson clientApplicationDataJson) {

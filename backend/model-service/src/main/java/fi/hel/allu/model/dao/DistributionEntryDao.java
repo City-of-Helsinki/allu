@@ -44,6 +44,11 @@ public class DistributionEntryDao {
     return findByPredicate(distributionEntry.applicationId.eq(applicationId));
   }
 
+  @Transactional(readOnly = true)
+  public List<DistributionEntry> findByApplicationIds(Integer[] applicationIds) {
+    return findByPredicate(distributionEntry.applicationId.in(applicationIds));
+  }
+
   @Transactional
   public List<DistributionEntry> insert(List<DistributionEntry> dEntries) {
     List<Integer> dEntryIds = new ArrayList<>();

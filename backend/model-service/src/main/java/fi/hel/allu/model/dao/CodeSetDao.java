@@ -29,6 +29,11 @@ public class CodeSetDao {
   }
 
   @Transactional(readOnly = true)
+  public List<CodeSet> findByIds(List<Integer> codeSetIds) {
+    return queryFactory.select(codeSetBean).from(codeset).where(codeset.id.in(codeSetIds)).fetch();
+  }
+
+  @Transactional(readOnly = true)
   public List<CodeSet> findByType(CodeSetType type) {
     return queryFactory.select(codeSetBean).from(codeset).where(codeset.type.eq(type)).fetch();
   }

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Project (hanke)")
-public class ProjectJson extends BaseProjectJson {
+public class ProjectJson extends BaseProjectJson implements BaseJsonInterface {
   private Integer id;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;

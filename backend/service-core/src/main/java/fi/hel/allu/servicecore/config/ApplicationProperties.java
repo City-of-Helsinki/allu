@@ -172,6 +172,10 @@ public class ApplicationProperties {
     return getTerminationUrl() + "/info";
   }
 
+  public String getTerminationInfoUrlList() {
+    return getTerminatedApplicationsUrl() + "/find";
+  }
+
   public String getTerminatedApplicationsUrl() {
     return getModelServiceUrl("/applications/terminated");
   }
@@ -460,6 +464,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/users/{id}");
   }
 
+  public String getUsersByIdUrl() {
+    return getModelServiceUrl("/users/find");
+  }
+
   /**
    * @return url for updating last login time of given user to model service.
    */
@@ -484,7 +492,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{applicationId}/comments");
   }
 
-
+  public String getCommentsFindByApplicationsUrl() {
+    return getModelServiceUrl("/applications/comments/find");
+  }
+  
   public String getCommentsFindByProjectUrl() {
     return getModelServiceUrl("/projects/{projectId}/comments");
   }
@@ -1399,6 +1410,10 @@ public class ApplicationProperties {
 
   public String getCodeSetFindByIdUrl() {
     return getModelServiceUrl("/codesets/{id}");
+  }
+
+  public String getCodeSetFindByIdsUrl() {
+    return getModelServiceUrl("/codesets/find");
   }
 
   public String getCodeSetFindByTypeUrl() {

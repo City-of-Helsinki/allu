@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import fi.hel.allu.model.util.ApplicationCustomer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -122,7 +123,7 @@ public class CustomerDao {
     return queryFactory
         .select(applicationCustomer.customerRoleType, customerBean,
             bean(PostalAddress.class, customerPostalAddress.all()), contactBean,
-            bean(PostalAddress.class, contactPostalAddress.all()), applicationCustomer.id)
+            bean(PostalAddress.class, contactPostalAddress.all()), applicationCustomer.id, applicationCustomer.applicationId)
         .from(applicationCustomer)
         .join(customer).on(applicationCustomer.customerId.eq(customer.id))
         .leftJoin(customerPostalAddress).on(customer.postalAddressId.eq(customerPostalAddress.id))
@@ -142,6 +143,15 @@ public class CustomerDao {
   }
 
   @Transactional(readOnly = true)
+  public Map<Integer, List<CustomerWithContacts>> findByApplicationsWithContacts(Integer... applicationIds) {
+    List<Tuple> tuples = getCustomersWithContactsTuples(applicationCustomer.applicationId.in(applicationIds));
+
+    Map<Integer, CustomerWithContacts> customerIdToCwc = new HashMap<>();
+    tuples.forEach(t -> mapCustomerWithContactTuple(customerIdToCwc, t));
+    return customerIdToCwc.values().stream().collect(Collectors.groupingBy(CustomerWithContacts::getApplicatonId));
+  }
+
+  @Transactional(readOnly = true)
   public CustomerWithContacts findByApplicationAndCustomerTypeWithContacts(int applicationId, CustomerRoleType customerRoleType) {
     BooleanExpression idCondition = applicationCustomer.applicationId.eq(applicationId);
     BooleanExpression whereCondition = idCondition.and(applicationCustomer.customerRoleType.eq(customerRoleType));
@@ -158,6 +168,7 @@ public class CustomerDao {
   private void mapCustomerWithContactTuple(Map<Integer, CustomerWithContacts> customerIdToCwc, Tuple tuple) {
     Customer customer = tuple.get(1, Customer.class);
     Integer applicationCustomerId = tuple.get(5, Integer.class);
+    Integer applicationId = tuple.get(6, Integer.class);
     CustomerWithContacts cwc = customerIdToCwc.get(applicationCustomerId);
     if (cwc == null) {
       PostalAddress customerPostalAddress = tuple.get(2, PostalAddress.class);
@@ -165,6 +176,7 @@ public class CustomerDao {
         customer.setPostalAddress(customerPostalAddress);
       }
       cwc = new CustomerWithContacts(tuple.get(0, CustomerRoleType.class), customer, new ArrayList<>());
+      cwc.setApplicatonId(applicationId);
       customerIdToCwc.put(applicationCustomerId, cwc);
     }
     Contact contact = tuple.get(3, Contact.class);

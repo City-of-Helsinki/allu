@@ -1,15 +1,5 @@
 package fi.hel.allu.servicecore.service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.CommentType;
@@ -20,6 +10,15 @@ import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -50,6 +49,10 @@ public class CommentService {
 
   public List<CommentJson> findByApplicationId(int applicationId) {
     return findBy(applicationProperties.getCommentsFindByApplicationUrl(), applicationId);
+  }
+
+  public List<Comment> findByApplicationIds(List<Integer> applicationIds) {
+    return findByList(applicationProperties.getCommentsFindByApplicationsUrl(), applicationIds);
   }
 
   public List<CommentJson> findByProjectId(int projectId) {
@@ -119,7 +122,12 @@ public class CommentService {
 
   private List<CommentJson> findBy(String url, int targetId) {
     ResponseEntity<Comment[]> result = restTemplate.getForEntity(url, Comment[].class, targetId);
-    return Arrays.stream(result.getBody()).map(c -> mapToJson(c)).collect(Collectors.toList());
+    return Arrays.stream(result.getBody()).map(this::mapToJson).collect(Collectors.toList());
+  }
+
+  private List<Comment> findByList(String url, List<Integer> applicationIds) {
+    Comment[] result = restTemplate.postForObject(url, applicationIds, Comment[].class);
+    return Arrays.asList(result);
   }
 
   /*
@@ -133,6 +141,18 @@ public class CommentService {
     commentJson.setCreateTime(comment.getCreateTime());
     commentJson.setUpdateTime(comment.getUpdateTime());
     commentJson.setUser(Optional.ofNullable(comment.getUserId()).map(id -> userService.findUserById(id)).orElse(null));
+    commentJson.setCommentator(comment.getCommentator());
+    return commentJson;
+  }
+
+  public CommentJson mapToJsonWithUserId(Comment comment) {
+    CommentJson commentJson = new CommentJson();
+    commentJson.setId(comment.getId());
+    commentJson.setType(comment.getType());
+    commentJson.setText(comment.getText());
+    commentJson.setCreateTime(comment.getCreateTime());
+    commentJson.setUpdateTime(comment.getUpdateTime());
+    commentJson.setUser(new UserJson(comment.getUserId()));
     commentJson.setCommentator(comment.getCommentator());
     return commentJson;
   }

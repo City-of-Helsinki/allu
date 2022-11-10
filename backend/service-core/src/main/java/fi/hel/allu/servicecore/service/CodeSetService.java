@@ -31,6 +31,12 @@ public class CodeSetService {
   }
 
   @Cacheable("codesets")
+  public List<CodeSet> findByIds( List<Integer> countryIds) {
+    CodeSet[] result = restTemplate.postForObject(applicationProperties.getCodeSetFindByIdsUrl(), countryIds, CodeSet[].class);
+    return Arrays.asList(result);
+  }
+
+  @Cacheable("codesets")
   public List<CodeSet> findByType(CodeSetType type) {
     final ResponseEntity<CodeSet[]> result = restTemplate
         .getForEntity(applicationProperties.getCodeSetFindByTypeUrl(), CodeSet[].class, type);

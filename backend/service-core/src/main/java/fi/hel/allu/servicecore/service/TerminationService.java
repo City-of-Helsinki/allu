@@ -38,6 +38,12 @@ public class TerminationService {
         TerminationInfo.class, applicationId);
   }
 
+  public List<TerminationInfo> getTerminationInfoList(List<Integer> ids) {
+    TerminationInfo[] results = restTemplate.postForObject(applicationProperties.getTerminationInfoUrlList(), ids,
+                                                           TerminationInfo[].class);
+    return Arrays.asList(results);
+  }
+
   public TerminationInfo insertTerminationInfo(int applicationId, TerminationInfo terminationInfo) {
     return restTemplate.postForObject(applicationProperties.getTerminationInfoUrl(),
         terminationInfo, TerminationInfo.class, applicationId);

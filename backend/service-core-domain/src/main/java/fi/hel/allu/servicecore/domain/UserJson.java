@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * JSON mapping for Allu user data.
  */
 @Schema(description = "Allu user")
-public class UserJson {
+public class UserJson implements BaseJsonInterface {
   private Integer id;
   @NotBlank(message = "{user.userName}")
   private String userName;

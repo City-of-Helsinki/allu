@@ -74,4 +74,10 @@ public class UserController {
   public void setLastLogin(@PathVariable int id, @RequestBody ZonedDateTime loginTime) {
     userDao.setLastLogin(id, loginTime);
   }
+
+  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  public ResponseEntity<List<User>> findByIds(@RequestBody List<Integer> ids) {
+    List<User> users = userDao.findByIds(ids);
+    return new ResponseEntity<>(users, HttpStatus.OK);
+  }
 }

@@ -91,8 +91,9 @@ public class ApplicationServiceComposer {
    * @param application Application which is used to populate the json
    * @return Compact populated json representation of application
    */
-  public ApplicationJson getCompactPopulatedApplication(Application application) {
-    return applicationJsonService.getCompactPopulatedApplication(application);
+
+  public List<ApplicationJson> getCompactPopulatedApplicationList(List<Application> applicationList) {
+    return applicationJsonService.getCompactPopulatedApplicationList(applicationList);
   }
 
   public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {

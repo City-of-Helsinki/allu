@@ -60,6 +60,23 @@ public class UserDao {
   }
 
   @Transactional(readOnly = true)
+  public List<User> findByIds(List<Integer> ids) {
+    List<User> users = queryFactory.select(userBean).from(user).where(user.id.in(ids)).fetch();
+    users.forEach(e -> mapDefaultUsersRolesTypes(e));
+    return users;
+  }
+
+   private void mapDefaultUsersRolesTypes(User user){
+    if (user != null) {
+      mapUsersRolesTypes(
+              Collections.singletonList(user),
+              getRoles(Collections.singletonList(user.getId())),
+              getApplicationTypes(Collections.singletonList(user.getId())),
+              getCityDistricts(Collections.singletonList(user.getId())));
+    }
+   }
+
+  @Transactional(readOnly = true)
   public Optional<User> findByUserName(String userName) {
     User user = queryFactory.select(userBean).from(QUser.user).where(QUser.user.userName.eq(userName)).fetchOne();
     if (user != null) {

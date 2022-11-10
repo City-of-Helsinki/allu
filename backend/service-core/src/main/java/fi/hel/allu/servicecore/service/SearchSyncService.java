@@ -26,8 +26,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -42,7 +40,7 @@ import java.util.stream.Collectors;
 @Service
 public class SearchSyncService {
   private static final Logger logger = LoggerFactory.getLogger(SearchSyncService.class);
-  private static final int PAGE_SIZE = 100;
+  private static final int PAGE_SIZE = 1000;
 
   private final RestTemplate restTemplate;
   private final ApplicationProperties applicationProperties;
@@ -137,27 +135,41 @@ public class SearchSyncService {
     } while (!fromModel.isLast());
   }
 
+  private <T, U> void syncDataList(IntFunction<Page<T>> fetcher, Consumer<List<U>> sender, Function<List<T>, List<U>> mapper) {
+    int page = 0;
+    Page<T> fromModel;
+    do {
+      fromModel = fetcher.apply(page);
+      logger.info("Page {} / {}", page + 1, fromModel.getTotalPages());
+      if (fromModel.getNumberOfElements() > 0) {
+        List<U> toSearch = mapper.apply(fromModel.getContent());
+        sender.accept(toSearch);
+      }
+      page++;
+    } while (!fromModel.isLast());
+  }
+
   private void syncApplications() {
     logger.info("Application sync started");
-    syncData(p -> fetchApplications(p), l -> sendApplications(l), a -> mapToES(a));
+    syncDataList(this::fetchApplications, this::sendApplications, this::mapListToES);
     logger.info("Application sync finished");
   }
 
   private void syncProjects() {
     logger.info("Project sync started");
-    syncData(p -> fetchProjects(p), l -> sendProjects(l), p -> mapToES(p));
+    syncData(this::fetchProjects, this::sendProjects, this::mapToES);
     logger.info("Project sync finished");
   }
 
   private void syncCustomers() {
     logger.info("Customer sync started");
-    syncData(p -> fetchCustomers(p), l -> sendCustomers(l), c -> mapToES(c));
+    syncData(this::fetchCustomers, this::sendCustomers, this::mapToES);
     logger.info("Customer sync finished");
   }
 
   private void syncContacts() {
     logger.info("Contact sync started");
-    syncData(p -> fetchContacts(p), l -> sendContacts(l), c -> mapToES(c));
+    syncData(this::fetchContacts, this::sendContacts, this::mapToES);
     logger.info("Contact sync finished");
   }
 
@@ -222,9 +234,9 @@ public class SearchSyncService {
     }
   }
 
-  private ApplicationES mapToES(Application application) {
-    ApplicationJson applicationJson = applicationServiceComposer.getCompactPopulatedApplication(application);
-    return applicationMapper.createApplicationESModel(applicationJson);
+  private List<ApplicationES> mapListToES(List<Application> application) {
+    List<ApplicationJson> applicationJsonList = applicationServiceComposer.getCompactPopulatedApplicationList(application);
+    return  applicationJsonList.stream().map(applicationMapper::createApplicationESModel).collect(Collectors.toList());
   }
 
   private ProjectES mapToES(Project project) {

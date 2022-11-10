@@ -195,6 +195,58 @@ public class ApplicationDaoTest {
   }
 
   @Test
+  public void testRetriveApplicationTags() {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
+    Application secondApplication = testCommon.dummyOutdoorApplication("Test Application 2", "Test Owner 2");
+    List<ApplicationTag> applicationTags =  new ArrayList<>();
+    applicationTags.add(createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED));
+    applicationTags.add(createApplicationTag(ApplicationTagType.SAP_ID_MISSING));
+    newApplication.setApplicationTags(applicationTags);
+    secondApplication.setApplicationTags(Collections.singletonList(createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
+    Application firstApplication = applicationDao.insert(newApplication);
+    Application secondReturnedApplication = applicationDao.insert(secondApplication);
+    List<Integer> applicationIds = new ArrayList<>();
+    applicationIds.add(firstApplication.getId());
+    applicationIds.add(secondReturnedApplication.getId());
+    List<Application> resultApplication = applicationDao.findByIds(applicationIds);
+    assertEquals(2, resultApplication.size());
+    assertEquals(1, resultApplication.stream().filter(e -> e.getApplicationTags().size() == 2).count());
+    assertEquals(1, resultApplication.stream().filter(e -> e.getApplicationTags().size() == 1).count());
+  }
+
+  @Test
+  public void testRetrivalOfMultipleApplicationsCustomersList() {
+    Application application1 = testCommon.dummyOutdoorApplication("Test Application 1", "Test Owner 1");
+    Application application2 = testCommon.dummyOutdoorApplication("Test Application 2", "Test Owner 2");
+    application1.setCustomersWithContacts(new ArrayList<>());
+    application1.getCustomersWithContacts().add(testCommon.dummyCustomerWithContacts(CustomerRoleType.APPLICANT));
+    application1.getCustomersWithContacts().add(testCommon.dummyCustomerWithContacts(CustomerRoleType.CONTRACTOR));
+    Application returnedApplication = applicationDao.insert(application1);
+    Application returnerApplication2 = applicationDao.insert(application2);
+    List<Integer> applicationIds = new ArrayList<>();
+    applicationIds.add(returnedApplication.getId());
+    applicationIds.add(returnerApplication2.getId());
+    List<Application> applications = applicationDao.findByIds(applicationIds);
+    assertEquals(2, applications.size());
+    assertEquals(1, applications.stream().filter(e -> e.getCustomersWithContacts().size() == 2 ).count());
+    assertEquals(1, applications.stream().filter(e -> e.getCustomersWithContacts().size() == 1 ).count());
+  }
+
+  @Test
+  public void testRetrivalOfMultipleApplicationsList() {
+    Customer customer = testCommon.insertPerson();
+    Application application1 = testCommon.dummyOutdoorApplication("Test Application 1", "Test Owner 1", customer);
+    Application application2 = testCommon.dummyOutdoorApplication("Test Application 2", "Test Owner 2", customer);
+    Application returnedApplication = applicationDao.insert(application1);
+    Application returnerApplication2 = applicationDao.insert(application2);
+    List<Integer> applicationIds = new ArrayList<>();
+    applicationIds.add(returnedApplication.getId());
+    applicationIds.add(returnerApplication2.getId());
+    List<Application> applications = applicationDao.findByIds(applicationIds);
+    assertEquals(2, applications.size());
+  }
+
+  @Test
   public void testfindByEndTimeNoSpecifiers() {
     // Insert three applications that end in different times in future, remember
     // their ids:

@@ -26,6 +26,12 @@ public class TerminationController {
     return ResponseEntity.ok(terminationDao.getTerminationDocument(id));
   }
 
+  @RequestMapping(value = "/terminated/find", method = RequestMethod.POST)
+  public ResponseEntity<List<TerminationInfo>> findByApplicationIds(@RequestBody List<Integer> applicationIds) {
+    List<TerminationInfo> users = terminationDao.findByApplicationIds(applicationIds);
+    return new ResponseEntity<>(users, HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/termination", method = RequestMethod.POST)
   public ResponseEntity<Void> storeTerminationDocument(@PathVariable Integer id, @RequestParam("file") MultipartFile file)
       throws IOException {

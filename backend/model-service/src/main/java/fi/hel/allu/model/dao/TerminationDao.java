@@ -41,6 +41,11 @@ public class TerminationDao {
   }
 
   @Transactional(readOnly = true)
+  public List<TerminationInfo> findByApplicationIds(List<Integer> applicationIds) {
+    return queryFactory.select(terminationInfo).from(termination).where(termination.applicationId.in(applicationIds)).fetch();
+  }
+
+  @Transactional(readOnly = true)
   public boolean isMarkedForTermination(Integer applicationId) {
     return getTerminationInfo(applicationId) != null;
   }

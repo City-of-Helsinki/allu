@@ -7,11 +7,7 @@ import fi.hel.allu.model.domain.CodeSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +29,12 @@ public class CodeSetController {
     return codeSet
         .map(cs -> new ResponseEntity<>(cs, HttpStatus.OK))
         .orElseThrow(() -> new NoSuchEntityException("CodeSet not found", id));
+  }
+
+  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  public ResponseEntity<List<CodeSet>> findByIds(@RequestBody List<Integer> ids) {
+    final List<CodeSet> codeSet = codeSetDao.findByIds(ids);
+    return new ResponseEntity<>(codeSet, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.GET)

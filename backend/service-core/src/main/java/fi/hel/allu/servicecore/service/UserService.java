@@ -1,19 +1,5 @@
 package fi.hel.allu.servicecore.service;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import fi.hel.allu.common.domain.UserSearchCriteria;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.user.Constants;
@@ -21,6 +7,17 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.UserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -79,6 +76,11 @@ public class UserService {
     ResponseEntity<User> userResults = restTemplate.getForEntity(
         applicationProperties.getUserByIdUrl(), User.class, id);
     return UserMapper.mapToUserJson(userResults.getBody());
+  }
+
+  public List<UserJson> findByIds(List<Integer> ids) {
+    User[] result = restTemplate.postForObject(applicationProperties.getUsersByIdUrl(), ids, User[].class);
+    return Arrays.stream(result).map(p -> UserMapper.mapToUserJson(p)).collect(Collectors.toList());
   }
 
   public UserJson addUser(UserJson userJson) {

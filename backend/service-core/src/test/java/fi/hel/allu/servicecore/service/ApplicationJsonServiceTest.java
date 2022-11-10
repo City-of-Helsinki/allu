@@ -30,6 +30,8 @@ public class ApplicationJsonServiceTest {
   private CommentService commentService;
   private TerminationService terminationService;
 
+  private CodeSetService codeSetService;
+
   private static final int applicationId = 1;
   private static final int customerId = 12;
   private static final int userId = 123;
@@ -50,6 +52,7 @@ public class ApplicationJsonServiceTest {
     attachmentService = Mockito.mock(AttachmentService.class);
     commentService = Mockito.mock(CommentService.class);
     terminationService = Mockito.mock(TerminationService.class);
+    codeSetService = Mockito.mock(CodeSetService.class);
 
     Mockito.when(application.getId()).thenReturn(applicationId);
     Customer customer = new Customer();
@@ -84,7 +87,8 @@ public class ApplicationJsonServiceTest {
         locationService,
         attachmentService,
         commentService,
-        terminationService);
+        terminationService,
+        codeSetService);
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     Assert.assertEquals(projectJson, applicationJson.getProject());
     Assert.assertEquals(userJson, applicationJson.getOwner());

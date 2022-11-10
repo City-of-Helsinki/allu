@@ -70,6 +70,33 @@ public class TestCommon {
     return app;
   }
 
+  private Application dummyBasicApplication(String name, String owner, Customer customer) {
+    Integer projectId = insertProject("dummyProject" + (projectNbr++));
+    User user = insertUser(owner);
+    Application app = new Application();
+    app.setCustomersWithContacts(
+            Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
+    app.setProjectId(projectId);
+    app.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
+    app.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
+    app.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
+    app.setInvoicingDate(ZonedDateTime.parse("2015-01-18T10:15:30+02:00"));
+    app.setRecurringEndTime(app.getEndTime());
+    app.setMetadataVersion(1);
+    app.setDecisionTime(ZonedDateTime.now());
+    app.setName(name);
+    app.setOwner(user.getId());
+    app.setNotBillable(false);
+    addLocation(app);
+    return app;
+  }
+
+  public CustomerWithContacts dummyCustomerWithContacts( CustomerRoleType type){
+    Customer person = insertPerson();
+     CustomerWithContacts customerWithContacts = new CustomerWithContacts(type, person, Collections.emptyList());
+    return customerWithContacts;
+  }
+
   public void addLocation(Application app) {
     Location location = new Location();
     location.setUnderpass(false);
@@ -93,6 +120,14 @@ public class TestCommon {
    */
   public Application dummyOutdoorApplication(String name, String owner) {
     Application app = dummyBasicApplication(name, owner);
+    app.setType(ApplicationType.EVENT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
+    app.setExtension(dummyOutdoorEvent());
+    return app;
+  }
+
+  public Application dummyOutdoorApplication(String name, String owner, Customer customer) {
+    Application app = dummyBasicApplication(name, owner, customer);
     app.setType(ApplicationType.EVENT);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     app.setExtension(dummyOutdoorEvent());

@@ -108,6 +108,21 @@ public class LocationDao {
   }
 
   @Transactional(readOnly = true)
+  public List<Location> findByApplications(Integer[] applicationIds) {
+    return findByApplications(Constants.ALLU_DEFAULT_SRID, applicationIds);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Location> findByApplications(Integer srId, Integer[] applicationIds) {
+    List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.in(applicationIds)).fetch();
+    List<Location> locations = locationIds.stream()
+            .map(id -> findById(id).get())
+            .collect(Collectors.toList());
+    locations.forEach(l -> transformAndCleanupCoordinates(l, srId));
+    return locations;
+  }
+
+  @Transactional(readOnly = true)
   public List<Location> findByApplication(int applicationId, Integer srId) {
     List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
     List<Location> locations = locationIds.stream()
