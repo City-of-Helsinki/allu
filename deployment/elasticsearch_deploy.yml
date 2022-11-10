@@ -1,0 +1,5 @@
+- name: Deploy elasticsearch
+  hosts: searchservers
+  remote_user: allu
+  roles:
+    - { role: elasticsearch_deploy, branch: "{{ var_branch | default('master') }}" }

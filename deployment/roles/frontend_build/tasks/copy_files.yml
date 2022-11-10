@@ -1,0 +1,3 @@
+- name: copy frontend files under web server for Dockerfile
+  command: cp -r ../frontend/dist/ roles/frontend_build/files/frontend_docker/www
+  connection: local

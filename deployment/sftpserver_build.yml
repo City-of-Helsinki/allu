@@ -1,0 +1,6 @@
+- name: Build Allu sftp test image
+  hosts: sftpserver
+  remote_user: allu
+  become: no
+  roles:
+    - { role: sftpserver_build, branch: "{{ var_branch | default('master') }}" }

@@ -1,0 +1,5 @@
+- name: Build Allu ETL application image
+  hosts: reporting_dbserver
+  remote_user: allu
+  roles:
+    - { role: etl_build, branch: "{{ var_branch | default('master') }}" }

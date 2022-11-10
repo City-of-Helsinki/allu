@@ -1,0 +1,6 @@
+- name: Deploy Allu backend services
+  hosts: backendservers
+  remote_user: allu
+  become: no
+  roles:
+    - { role: backend_deploy, branch: "{{ var_branch | default('master')}}" }

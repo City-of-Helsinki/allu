@@ -1,0 +1,5 @@
+- name: Build elasticsearch image
+  hosts: searchservers
+  remote_user: allu
+  roles:
+    - { role: elasticsearch_build, branch: "{{ var_branch | default('master') }}" }

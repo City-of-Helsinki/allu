@@ -1,0 +1,5 @@
+- name: Build Allu database image
+  hosts: dbservers
+  remote_user: allu
+  roles:
+    - { role: database_build, branch: "{{ var_branch | default('master') }}" }

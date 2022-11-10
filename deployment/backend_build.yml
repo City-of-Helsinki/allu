@@ -1,0 +1,6 @@
+- name: Build Allu backend images
+  hosts: backendservers
+  remote_user: allu
+  become: no
+  roles:
+    - { role: backend_build, branch: "{{ var_branch | default('master')}}" }
