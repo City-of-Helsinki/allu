@@ -3,7 +3,7 @@ FROM openjdk:8-jre-slim-bullseye
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-RUN apt-get -y  update \
+RUN apt-get -y update \
     && apt-get -y install wget xz-utils git python3-pip tzdata autossh libxrender1 libfontconfig libxtst6 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,7 +29,6 @@ RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /home/allu/.ssh
 
 # project setup
-RUN mkdir -p /home/allu/model-service
 RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
@@ -42,8 +41,6 @@ RUN mkdir -p /home/allu/supervision-api
 # Expose ports
 ######################################################################################
 
-# model-service
-EXPOSE 9010
 # search-service
 EXPOSE 9020
 # pdf-service
