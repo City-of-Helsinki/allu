@@ -2,6 +2,7 @@ package fi.hel.allu.supervision.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.swagger.v3.oas.models.Components;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Configuration of Swagger i.e. the REST documentation tool.
@@ -56,12 +58,20 @@ public class SwaggerConfig implements WebMvcConfigurer {
         // Find jackson message converter and add custom object mapper
         SimpleBeanPropertyFilter applicationFilter = SimpleBeanPropertyFilter
                 .serializeAllExcept(FILTERED_APPLICATION_FIELDS);
+        final FilterProvider filters = new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter);
+
         ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
                                    SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
-                .filters(new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter))
+                .filters(filters)
                 .build();
-        converters.add(new MappingJackson2HttpMessageConverter(mapper));
+        Optional<HttpMessageConverter<?>> converter = converters.stream()
+                .filter(m -> m.getClass().isAssignableFrom(MappingJackson2HttpMessageConverter.class))
+                .findFirst();
+        if (converter.isPresent()) {
+            MappingJackson2HttpMessageConverter jacksonConverter = (MappingJackson2HttpMessageConverter) converter.get();
+            jacksonConverter.setObjectMapper(mapper);
+        }
     }
 
     @Override
