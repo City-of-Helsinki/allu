@@ -1,7 +1,7 @@
 model_service_host: "{{ model_service_name }}"
 model_service_port: 9010
 
-search_service_host: "{{ backend_container_name }}"
+search_service_host: "{{ search_service_name }}"
 search_service_port: 9020
 
 pdf_service_host: "{{ backend_container_name }}"

@@ -30,7 +30,6 @@ RUN mkdir -p /home/allu/.ssh
 
 # project setup
 RUN mkdir -p /home/allu/pdf-service
-RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
 RUN mkdir -p /home/allu/external-service
 RUN mkdir -p /home/allu/scheduler-service/sap
@@ -41,8 +40,6 @@ RUN mkdir -p /home/allu/supervision-api
 # Expose ports
 ######################################################################################
 
-# search-service
-EXPOSE 9020
 # pdf-service
 EXPOSE 9030
 # external-service
