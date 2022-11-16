@@ -18,7 +18,6 @@
         SERVICE_MEMORY: "{{ allu_service_memory_limit['allu-ui-service'] }}"
       path: "{{ role_path }}/files/allu_ui_docker"
     name: "allu_ui_service:{{ branch }}"
-    force_absent: true
     force_source: true
 
 - name: Push built allu_ui_service Docker image to GitLab repository
@@ -45,9 +44,8 @@
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
     state: absent
     force_absent: true
-    force_source: true
   become: yes
-  when: branch == "master"
+  when: "'test' in group_names or 'staging' in group_names"
 
 - name: Login to GitLab repository at the remote
   docker_login:

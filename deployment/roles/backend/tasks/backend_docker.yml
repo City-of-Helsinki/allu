@@ -17,7 +17,6 @@
         CACHEBUST: "{{ 9999999 |random }}"
       path: "{{ role_path }}/files/backend_docker"
     name: "allu_backend:{{ branch }}"
-    force_absent: true
     force_source: true
 
 - name: Push built allu_backend Docker image to GitLab repository
@@ -44,9 +43,8 @@
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
     state: absent
     force_absent: true
-    force_source: true
   become: yes
-  when: branch  == "master"
+  when: "'test' in group_names or 'staging' in group_names"
 
 - name: Login to GitLab repository at the remote
   docker_login:
