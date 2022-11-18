@@ -6,4 +6,5 @@
 - include_tasks: allu_ui_service_docker.yml
 - include_tasks: model_service_docker.yml
 - include_tasks: search_service_docker.yml
+- include_tasks: pdf_service_docker.yml
 - include_tasks: backend_docker.yml

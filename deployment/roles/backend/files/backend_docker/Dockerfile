@@ -4,7 +4,7 @@ ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apt-get -y update \
-    && apt-get -y install wget xz-utils git python3-pip tzdata autossh libxrender1 libfontconfig libxtst6 \
+    && apt-get -y install wget git python3-pip tzdata autossh \
     && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
@@ -29,7 +29,6 @@ RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /home/allu/.ssh
 
 # project setup
-RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/scheduler-service
 RUN mkdir -p /home/allu/external-service
 RUN mkdir -p /home/allu/scheduler-service/sap
@@ -40,8 +39,6 @@ RUN mkdir -p /home/allu/supervision-api
 # Expose ports
 ######################################################################################
 
-# pdf-service
-EXPOSE 9030
 # external-service
 EXPOSE 9040
 # supervision-api
@@ -78,9 +75,6 @@ RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basena
 RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/services/"${service}/included-logback.xml" "/home/allu/${service}"/included-logback.xml; done
 RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -exec basename \{} \;`; do ln -s /servicehome/services/"${service}/${service}.properties" "/home/allu/${service}"/${service}.properties; done
 
-# Stylesheets for pdf-service
-RUN ln -s /servicehome/services/pdf-service/stylesheets /home/allu/pdf-service/stylesheets
-
 # Directories for SAP customer files
 RUN ln -s /servicehome/services/scheduler-service/sap/customer-archive /home/allu/scheduler-service/sap/customer-archive
 RUN ln -s /servicehome/services/scheduler-service/sap/customer-failed /home/allu/scheduler-service/sap/customer-failed
@@ -91,10 +85,6 @@ RUN ln -s /servicehome/services/scheduler-service/sap/invoice-archive /home/allu
 ######################################################################################
 # Copy files to image
 ######################################################################################
-
-# wkhtmltopdf
-COPY wkhtmltox-0.12.3_linux-generic-amd64.tar.xz /tmp/wkhtmltox.tar.xz
-RUN tar xf /tmp/wkhtmltox.tar.xz -C /usr/local && rm /tmp/wkhtmltox.tar.xz
 
 COPY known_hosts /home/allu/.ssh/known_hosts
 RUN chmod 777 /home/allu/.ssh/known_hosts
