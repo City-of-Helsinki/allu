@@ -145,7 +145,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         } else {
             logger.debug("Reindexing {} to {} ({})", currentIndexName, indexConductor.getNewIndexName(), this);
             reIndexing(currentIndexName, indexConductor.getNewIndexName());
-            indexConductor.setCurrentIndexName(currentIndexName);
+            indexConductor.commitNewIndex();
         }
     }
 
