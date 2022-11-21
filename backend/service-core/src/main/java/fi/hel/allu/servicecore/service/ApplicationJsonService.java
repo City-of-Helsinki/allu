@@ -198,31 +198,35 @@ public class ApplicationJsonService {
     mappedApplications.forEach((k, v) -> v.setComments(mapCommentToCommentJson(mappedComments.get(k))));
   }
 
-  private List<CommentJson>  mapCommentToCommentJson(List<Comment> commentList){
-   return commentList.stream().map(commentService::mapToJsonWithUserId).collect(Collectors.toList());
+  private List<CommentJson> mapCommentToCommentJson(List<Comment> commentList) {
+    if (commentList == null || commentList.isEmpty()) {
+      return null;
+    } else {
+      return commentList.stream().map(commentService::mapToJsonWithUserId).collect(Collectors.toList());
+    }
   }
 
-  private void populateTerminationTimes(Map<Integer, ApplicationJson> mappedApplications){
+  private void populateTerminationTimes(Map<Integer, ApplicationJson> mappedApplications) {
     List<ApplicationJson> tempList = new ArrayList<>(mappedApplications.values());
     List<TerminationInfo> terminationInfoList = terminationTimeList(tempList);
-    Map<Integer, List<TerminationInfo>> mapperTermination = terminationInfoList.stream().collect(Collectors.groupingBy(
-            TerminationInfo::getApplicationId));
+    Map<Integer, TerminationInfo> mapperTermination = terminationInfoList.stream().collect(Collectors.toMap(
+            TerminationInfo::getApplicationId, Function.identity()));
     mappedApplications.forEach((k, v) -> addTerminationTimes(mapperTermination, v));
   }
 
-  private void addTerminationTimes(Map<Integer, List<TerminationInfo>> terminationTimes, ApplicationJson json){
-      if(terminationTimes.containsKey(json.getId())){
-        Integer koa = json.getId();
-        json.setTerminationTime(terminationTimes.get(koa).get(0).getExpirationTime());
-      }
+  private void addTerminationTimes(Map<Integer, TerminationInfo> terminationTimes, ApplicationJson json) {
+    Integer id = json.getId();
+    if (terminationTimes.containsKey(id) && terminationTimes.get(id) != null) {
+      json.setTerminationTime(terminationTimes.get(id).getExpirationTime());
+    }
   }
 
   public ApplicationJson populateCommon(Application model) {
     ApplicationJson json = applicationMapper.mapApplicationToJson(model);
 
     Optional.ofNullable(model.getProjectId())
-        .map(projectService::findById)
-        .ifPresent(json::setProject);
+            .map(projectService::findById)
+            .ifPresent(json::setProject);
 
     Optional.ofNullable(model.getOwner())
         .map(userService::findUserById)
