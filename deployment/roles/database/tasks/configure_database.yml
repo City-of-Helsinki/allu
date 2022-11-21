@@ -92,6 +92,7 @@
     name: "{{ database_container_name }}"
     state: started
     restart: true
+  become: yes
 
 - name: wait for Postgresql complete restart
   postgresql_ping:
@@ -103,3 +104,4 @@
   until: result.is_available
   retries: 30
   delay: 4
+  become: yes
