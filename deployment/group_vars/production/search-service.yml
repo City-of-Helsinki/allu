@@ -1,2 +1,2 @@
 elasticsearch_host: "{{ hostvars['searchEndpoint'].ansible_host }}"
-elasticsearch_port: 9300
+elasticsearch_port: 9200
