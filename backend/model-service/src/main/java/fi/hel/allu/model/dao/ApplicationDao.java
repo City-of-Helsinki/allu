@@ -1,27 +1,14 @@
 package fi.hel.allu.model.dao;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.querydsl.core.Tuple;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import com.querydsl.core.QueryException;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
-
 import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
@@ -32,6 +19,17 @@ import fi.hel.allu.common.exception.OptimisticLockException;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -583,7 +581,7 @@ public class ApplicationDao {
     application.setApplicationTags(findTagsByApplicationId(application.getId()));
     return application;
   }
-  
+
   private void mapCustomerWithContactsToApplication(List<Application> applications, Integer[] ids) {
     Map<Integer, List<CustomerWithContacts>> mappedCustomerContacts = customerDao.findByApplicationsWithContacts(ids);
     for (Application application : applications) {
@@ -598,10 +596,11 @@ public class ApplicationDao {
   private void mapKindWithSpecificiersToApplication(List<Application> applications, Integer[] ids){
     Map<Integer, Map<ApplicationKind, List<ApplicationSpecifier>>> mappedToApplication =  findKindsAndSpecifiers(ids);
     for (Application application : applications) {
-      if (mappedToApplication.containsKey(application.getId())) {
-        application.setKindsWithSpecifiers(mappedToApplication.get(application.getId()));
+      Integer id = application.getId();
+      if (mappedToApplication.containsKey(id) && mappedToApplication.get(id) != null) {
+        application.setKindsWithSpecifiers(mappedToApplication.get(id));
       } else {
-        application.setKindsWithSpecifiers(new HashMap<>());
+        application.setKindsWithSpecifiers(new LinkedHashMap<>());
       }
     }
   }
@@ -610,19 +609,22 @@ public class ApplicationDao {
     List<Tuple> tuples = queryFactory
             .select(applicationKind.kind, kindSpecifier.specifier, applicationKind.applicationId).from(applicationKind)
             .leftJoin(kindSpecifier)
-            .on(applicationKind.id.eq(kindSpecifier.kindId)).where(applicationKind.applicationId.in(applicationIds)).fetch();
-    Map<Integer, Map<ApplicationKind, List<ApplicationSpecifier>>> mappedResult = new HashMap<>();
-    for (Tuple tuple : tuples){
+            .on(applicationKind.id.eq(kindSpecifier.kindId)).where(applicationKind.applicationId.in(applicationIds))
+            .fetch();
+    Map<Integer, Map<ApplicationKind, List<ApplicationSpecifier>>> mappedResult = new LinkedHashMap<>();
+    for (Tuple tuple : tuples) {
       ApplicationKind applicationKind = tuple.get(0, ApplicationKind.class);
       ApplicationSpecifier applicationSpecifier = tuple.get(1, ApplicationSpecifier.class);
       Integer applicationId = tuple.get(2, Integer.class);
-      if(!mappedResult.containsKey(applicationId)){
-        mappedResult.put(applicationId, new HashMap<>());
+      if (!mappedResult.containsKey(applicationId)) {
+        mappedResult.put(applicationId, new LinkedHashMap<>());
       }
-      if (!mappedResult.get(applicationId).containsKey(applicationKind)){
+      if (!mappedResult.get(applicationId).containsKey(applicationKind)) {
         mappedResult.get(applicationId).put(applicationKind, new ArrayList<>());
       }
-      mappedResult.get(applicationId).get(applicationKind).add(applicationSpecifier);
+      if (applicationSpecifier != null) {
+        mappedResult.get(applicationId).get(applicationKind).add(applicationSpecifier);
+      }
     }
 
     return mappedResult;
