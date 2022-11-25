@@ -632,11 +632,20 @@ public class ApplicationDao {
 
   private void mapLocationsToApplications(List<Application> applicationsList, Integer[] ids) {
     List<Location> unmappedLocations = locationDao.findByApplications(ids);
-    if(!unmappedLocations.isEmpty()){
-      Map<Integer, List<Location>> mappeLocations = unmappedLocations.stream().collect(Collectors.groupingBy(Location::getApplicationId));
-      applicationsList.forEach(e -> e.setLocations(mappeLocations.get(e.getId())));
+    if (!unmappedLocations.isEmpty()) {
+      Map<Integer, List<Location>> mappedLocations = unmappedLocations.stream()
+              .collect(Collectors.groupingBy(Location::getApplicationId));
+      applicationsList.forEach(e -> e.setLocations(sortLocationByLocationKey(mappedLocations.get(e.getId()))));
     }
 
+  }
+
+  public List<Location> sortLocationByLocationKey(List<Location> locations) {
+    if (locations == null || locations.isEmpty()) {
+      return locations;
+    } else {
+      return locations.stream().sorted(Comparator.comparing(Location::getLocationKey)).collect(Collectors.toList());
+    }
   }
 
   private void replaceApplicationTags(Integer applicationId, List<ApplicationTag> tags) {
