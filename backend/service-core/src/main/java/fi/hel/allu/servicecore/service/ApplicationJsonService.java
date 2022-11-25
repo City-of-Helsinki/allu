@@ -233,8 +233,8 @@ public class ApplicationJsonService {
         .ifPresent(json::setOwner);
 
     Optional.ofNullable(model.getDecisionMaker())
-        .map(userService::findUserById)
-        .ifPresent(json::setOwner);
+            .map(userService::findUserById)
+            .ifPresent(json::setDecisionMaker);
 
     setAddress(json);
 
