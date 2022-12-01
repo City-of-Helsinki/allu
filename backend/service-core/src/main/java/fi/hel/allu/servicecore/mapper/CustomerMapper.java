@@ -1,25 +1,20 @@
 package fi.hel.allu.servicecore.mapper;
 
 import fi.hel.allu.common.domain.types.CodeSetType;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.servicecore.domain.CreateCustomerWithContactsJson;
-import org.springframework.stereotype.Component;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.CodeSetService;
 import fi.hel.allu.servicecore.service.UserService;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomerMapper {
@@ -41,6 +36,25 @@ public class CustomerMapper {
     if (customer == null) {
       return null;
     }
+    CustomerJson customerJson = defaultCustomerJson(customer);
+    if (customer.getCountryId() != null) {
+      customerJson.setCountry(codeSetService.findById(customer.getCountryId()).getCode());
+    }
+    return customerJson;
+  }
+
+  public CustomerJson createCustomerJson(Customer customer, Map<Integer, CodeSet> codeSetMap) {
+    if (customer == null) {
+      return null;
+    }
+    CustomerJson customerJson = defaultCustomerJson(customer);
+    if (customer.getCountryId() != null && codeSetMap.containsKey(customer.getCountryId())) {
+      customerJson.setCountry(codeSetMap.get(customer.getCountryId()).getCode());
+    }
+    return customerJson;
+  }
+
+  public CustomerJson defaultCustomerJson(Customer customer) {
     CustomerJson customerJson = new CustomerJson();
     customerJson.setId(customer.getId());
     customerJson.setType(customer.getType());
@@ -55,13 +69,6 @@ public class CustomerMapper {
     customerJson.setInvoicingProhibited(customer.isInvoicingProhibited());
     customerJson.setInvoicingOperator(customer.getInvoicingOperator());
     customerJson.setInvoicingOnly(customer.isInvoicingOnly());
-    if (customer.getCountryId() != null) {
-      if (customer.getCodeSet() == null) {
-        customerJson.setCountry(codeSetService.findById(customer.getCountryId()).getCode());
-      } else {
-        customerJson.setCountry(customer.getCodeSet().getCode());
-      }
-    }
     customerJson.setProjectIdentifierPrefix(customer.getProjectIdentifierPrefix());
     return customerJson;
   }
@@ -175,15 +182,41 @@ public class CustomerMapper {
     return customerWithContactsJsons;
   }
 
+  public List<CustomerWithContactsJson> createWithContactsJson(Application application,
+                                                               Map<Integer, CodeSet> codesets) {
+    List<CustomerWithContacts> customersWithContacts = application.getCustomersWithContacts();
+    List<CustomerWithContactsJson> customerWithContactsJsons = new ArrayList<>();
+
+    customersWithContacts.forEach(cwc -> {
+      CustomerWithContactsJson customerWithContactsJson = createWithContactsJson(cwc, codesets);
+      customerWithContactsJsons.add(customerWithContactsJson);
+    });
+    return customerWithContactsJsons;
+  }
+
   public CustomerWithContactsJson createWithContactsJson(CustomerWithContacts cwc) {
     if (cwc == null) {
       return null;
     }
     CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
     customerWithContactsJson.setContacts(cwc.getContacts().stream()
-        .map(c -> createContactJson(c))
-        .collect(Collectors.toList()));
+                                                 .map(c -> createContactJson(c))
+                                                 .collect(Collectors.toList()));
     customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
+    customerWithContactsJson.setRoleType(cwc.getRoleType());
+    return customerWithContactsJson;
+  }
+
+
+  public CustomerWithContactsJson createWithContactsJson(CustomerWithContacts cwc, Map<Integer, CodeSet> codesets) {
+    if (cwc == null) {
+      return null;
+    }
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
+    customerWithContactsJson.setContacts(cwc.getContacts().stream()
+                                                 .map(c -> createContactJson(c))
+                                                 .collect(Collectors.toList()));
+    customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer(), codesets));
     customerWithContactsJson.setRoleType(cwc.getRoleType());
     return customerWithContactsJson;
   }

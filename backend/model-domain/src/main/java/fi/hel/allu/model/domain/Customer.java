@@ -1,8 +1,8 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.CustomerType;
-import javax.validation.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -28,8 +28,6 @@ public class Customer implements PostalAddressItem {
   private boolean invoicingOnly;
   @NotNull
   private Integer countryId;
-
-  private CodeSet codeSet;
   private String projectIdentifierPrefix;
 
   public Integer getId() {
@@ -38,14 +36,6 @@ public class Customer implements PostalAddressItem {
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  public CodeSet getCodeSet() {
-    return codeSet;
-  }
-
-  public void setCodeSet(CodeSet codeSet) {
-    this.codeSet = codeSet;
   }
 
   /**

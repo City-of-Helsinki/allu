@@ -163,12 +163,28 @@ public class ApplicationMapper {
   }
 
   /**
-   * Transfer the information from the given model-domain object to given ui-domain object. Does not handle references to other objects like
+   * Transfer the information from the given model-domain object to given ui-domain object. Does not handle
+   * references to other objects like
    * customer.
    *
    * @param application
    */
   public ApplicationJson mapApplicationToJson(Application application) {
+    ApplicationJson applicationJson = defaultApplicationToJsonMapping(application);
+    applicationJson.setCustomersWithContacts(customerMapper.createWithContactsJson(application));
+    applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData()));
+    return applicationJson;
+  }
+
+  public ApplicationJson mapApplicationToJson(Application application, Map<Integer, CodeSet> codeSetMap) {
+    ApplicationJson applicationJson = defaultApplicationToJsonMapping(application);
+    applicationJson.setCustomersWithContacts(customerMapper.createWithContactsJson(application, codeSetMap));
+    applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData(), codeSetMap));
+    return applicationJson;
+  }
+
+
+  private ApplicationJson defaultApplicationToJsonMapping(Application application) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(application.getId());
     applicationJson.setApplicationId(application.getApplicationId());
@@ -190,12 +206,12 @@ public class ApplicationMapper {
     applicationJson.setDecisionPublicityType(application.getDecisionPublicityType());
     if (application.getDecisionDistributionList() != null) {
       applicationJson.setDecisionDistributionList(application.getDecisionDistributionList().stream()
-          .map(dEntry -> createDistributionEntryJson(dEntry)).collect(Collectors.toList()));
+                                                          .map(dEntry -> createDistributionEntryJson(dEntry)).collect(
+                      Collectors.toList()));
     }
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setNotBillable(application.getNotBillable());
     applicationJson.setNotBillableReason(application.getNotBillableReason());
-    applicationJson.setCustomersWithContacts(customerMapper.createWithContactsJson(application));
     applicationJson.setInvoiceRecipientId(application.getInvoiceRecipientId());
     applicationJson.setReplacedByApplicationId(application.getReplacedByApplicationId());
     applicationJson.setReplacesApplicationId(application.getReplacesApplicationId());
@@ -209,7 +225,6 @@ public class ApplicationMapper {
       applicationJson.setProject(project);
     }
     applicationJson.setExternalOwnerId(application.getExternalOwnerId());
-    applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData()));
     applicationJson.setIdentificationNumber(application.getIdentificationNumber());
     applicationJson.setLocations(LocationMapper.mapToLocationJsons(application.getLocations()));
     applicationJson.setInvoicingChanged(application.isInvoicingChanged());
@@ -541,6 +556,21 @@ public class ApplicationMapper {
           clientApplicationDataJson.getClientApplicationKind());
     }
     return data;
+  }
+
+  private ClientApplicationDataJson createClientApplicationDataJson(ClientApplicationData clientApplicationData, Map<Integer, CodeSet> codesets) {
+    ClientApplicationDataJson result = null;
+    if (clientApplicationData != null) {
+      CustomerWithContactsJson customer = customerMapper.createWithContactsJson(clientApplicationData.getCustomer(), codesets);
+      CustomerJson invoicingCustomer = customerMapper.createCustomerJson(clientApplicationData.getInvoicingCustomer(), codesets);
+      CustomerWithContactsJson representative = customerMapper.createWithContactsJson(clientApplicationData.getRepresentative(), codesets);
+      CustomerWithContactsJson contractor = customerMapper.createWithContactsJson(clientApplicationData.getContractor(), codesets);
+      CustomerWithContactsJson propertyDeveloper = customerMapper.createWithContactsJson(clientApplicationData.getPropertyDeveloper(), codesets);
+      result = new ClientApplicationDataJson(customer, invoicingCustomer, representative, clientApplicationData.getClientApplicationKind());
+      result.setContractor(contractor);
+      result.setPropertyDeveloper(propertyDeveloper);
+    }
+    return result;
   }
 
   private ClientApplicationDataJson createClientApplicationDataJson(ClientApplicationData clientApplicationData) {

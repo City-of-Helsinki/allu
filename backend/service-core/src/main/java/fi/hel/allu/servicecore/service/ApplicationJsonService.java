@@ -73,8 +73,9 @@ public class ApplicationJsonService {
   }
 
   public List<ApplicationJson> populateCommonList(List<Application> modelList) {
-    updateCustomersWithCodeSet(modelList);
-    List<ApplicationJson> applicationJsons = modelList.stream().map(applicationMapper::mapApplicationToJson)
+    Map<Integer, CodeSet> codeSetMap = updateCustomersWithCodeSet(modelList);
+    List<ApplicationJson> applicationJsons = modelList.stream()
+            .map(application->applicationMapper.mapApplicationToJson(application, codeSetMap))
             .collect(Collectors.toList());
 
     applicationJsons = populateProjects(applicationJsons);
@@ -91,38 +92,13 @@ public class ApplicationJsonService {
     return new ArrayList<>(mappedApplications.values());
   }
 
-  private void updateCustomersWithCodeSet(List<Application> modelList) {
+  private Map<Integer, CodeSet> updateCustomersWithCodeSet(List<Application> modelList) {
     List<Integer> countryIds = collectCountryId(modelList);
-    Map<Integer, CodeSet> codeSets = codeSetService.findByIds(countryIds).stream()
+    return codeSetService.findByIds(countryIds).stream()
             .collect(Collectors.toMap(CodeSet::getId, Function.identity()));
 
-    for (Application application : modelList) {
-      updateCodeSet(application.getClientApplicationData(), codeSets);
-      application.getCustomersWithContacts().parallelStream()
-              .forEach(e -> updateCustomerWithCodeSet(e.getCustomer(), codeSets));
-    }
   }
 
-  private void updateCodeSet(ClientApplicationData clientApplicationData, Map<Integer, CodeSet> codeSets) {
-    if (clientApplicationData == null) return;
-
-    updateCustomerWithCodeSet(clientApplicationData.getRepresentative(), codeSets);
-    updateCustomerWithCodeSet(clientApplicationData.getContractor(), codeSets);
-    updateCustomerWithCodeSet(clientApplicationData.getCustomer(), codeSets);
-    updateCustomerWithCodeSet(clientApplicationData.getInvoicingCustomer(), codeSets);
-  }
-
-  private void updateCustomerWithCodeSet(CustomerWithContacts customer, Map<Integer, CodeSet> codeSets) {
-    if (customer != null) {
-      updateCustomerWithCodeSet(customer.getCustomer(), codeSets);
-    }
-  }
-
-  private void updateCustomerWithCodeSet(Customer customer, Map<Integer, CodeSet> codeSets) {
-    if (customer != null && customer.getCountryId() != null && codeSets.containsKey(customer.getCountryId())) {
-      customer.setCodeSet(codeSets.get(customer.getCountryId()));
-    }
-  }
 
   private void nullSafeAdd(Set<Integer> result, CustomerWithContacts customerWithContacts) {
     if (customerWithContacts != null && customerWithContacts.getCustomer() != null && customerWithContacts.getCustomer()
