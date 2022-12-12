@@ -6,7 +6,7 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
 
-- name: Build allu_supervision_api Docker image. Uses random numbers to force Docker to build certain parts of image every time
+- name: Build allu_supervision_api Docker image
   local_action:
     module: docker_image
     source: build
@@ -18,7 +18,6 @@
         SERVICE_MEMORY: "{{ allu_service_memory_limit['supervision-api'] }}"
       path: "{{ role_path }}/files/supervision_api_docker"
     name: "allu_supervision_api:{{ branch }}"
-    force_absent: true
     force_source: true
 
 - name: Push built allu_supervision_api Docker image to GitLab repository
@@ -45,9 +44,8 @@
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_supervision_api:{{ branch }}"
     state: absent
     force_absent: true
-    force_source: true
   become: yes
-  when: branch  == "master"
+  when: "'test' in group_names or 'staging' in group_names"
 
 - name: Login to GitLab repository at the remote
   docker_login:
