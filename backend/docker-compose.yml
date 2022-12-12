@@ -47,14 +47,12 @@ services:
       - "9050:9050"
     volumes:
       - /home/allu/supervision-api:/servicehome:rw
-  allu-backend:
-    build:
-      context: .
-      dockerfile: backend.Dockerfile
-    image: allu_backend
-    container_name: allu-backend
+  scheduler-service:
+    build: ./scheduler-service/
+    image: allu_scheduler_service
+    container_name: allu-scheduler-service
     volumes:
-      - /home/allu/allu-backend:/servicehome:rw
+      - /home/allu/scheduler-service:/servicehome:rw
 
 networks:
   default:
