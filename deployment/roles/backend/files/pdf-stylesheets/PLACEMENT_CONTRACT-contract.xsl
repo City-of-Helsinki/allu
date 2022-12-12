@@ -134,7 +134,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </xsl:otherwise>
           </xsl:choose>
           <p class="space-above">
-            Maksut perustuvat kaupunkiympäristölautakunnan päätökseen 11.12.2018 §639.
+            Maksut perustuvat kaupunkiympäristölautakunnan päätökseen 4.10.2022 §547.
           </p>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <p class="space-above">
@@ -150,43 +150,45 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section>
           <h2>Yleiset sopimusehdot</h2>
           <ol class="children-avoid-pb">
-            <li>Sijoittamissuostumuksesta tehdään sopimus ja se on voimassa toistaiseksi, ellei määräaikaisuudesta ole
-            erikseen sovittu. Sopimus raukeaa ilman erillistä ilmoitusta myöntämispäivästä lukien yhden (1) vuoden
-            kuluttua, ellei toteutusta ole tuona aikana aloitettu. Sopimus on uusittava, mikäli toteutussuunnitelma
-            muuttuu merkittävästi, tai kohteeseen sisältyy muita kuin hakemuksessa esitettyjä rakenteita tai laitteita.</li>
+            <li>Sijoittamissuostumuksesta tehdään sopimus ja se on voimassa toistaiseksi, ellei
+              määräaikaisuudesta ole erikseen sovittu. Sopimus raukeaa ilman erillistä ilmoitusta
+              myöntämispäivästä lukien yhden (1) vuoden kuluttua, ellei toteutusta ole tuona aikana aloitettu.
+              Sopimus on uusittava, mikäli toteutussuunnitelma muuttuu merkittävästi, tai kohteeseen
+              sisältyy muita kuin hakemuksessa esitettyjä rakenteita tai laitteita.</li>
 
-            <li>Ennen kaivutyöhön ryhtymistä on haettava johtoselvitys sekä tehtävä kaivuilmoitus. Kaivuilmoituksessa
-            on mainittava sopimuksen tunnus ja myöntämisajankohta. Kaivuilmoituksen yhteydessä kaupunki antaa
-            ohjeita ja ehtoja mm. työn suorittamisesta, liikennejärjestelyiden toteuttamisesta sekä aloitus- ja
-            loppukatselmuksista. Liikennealueella tai liikenteeseen vaikuttavalla alueella työskenneltäessä on aina
-            esitettävä työsuunnitelma sekä hyväksytettävä päätös tilapäisistä liikennejärjestelyistä. Työn aikana on
-            tarkastajalle sallittava pääsy alueelle valvomaan työn toteutusta.</li>
+            <li>Ennen kaivutyöhön ryhtymistä on haettava johtoselvitys sekä tehtävä ilmoitus yleisellä alueella
+              tehtävästä työstä. Ilmoituksessa on mainittava sijoitussopimuksen tunnus ja
+              myöntämisajankohta. Ilmoituksen yhteydessä kaupunki antaa ohjeita ja ehtoja mm. työn
+              suorittamisesta, liikennejärjestelyiden toteuttamisesta sekä aloitus- ja loppukatselmuksista.
+              Liikennealueella tai liikenteeseen vaikuttavalla alueella työskenneltäessä on aina esitettävä
+              työsuunnitelma sekä hyväksytettävä päätös tilapäisistä liikennejärjestelyistä. Työn aikana on
+              tarkastajalle sallittava pääsy alueelle valvomaan työn toteutusta.</li>
 
-            <li>Sijoittava sopimusosapuoli on velvollinen kartoittamaan sopimuksen mukaiset johdot, rakenteet ja
-            laitteet. Sijaintitietojen rekisteröimisen osalta on noudatettava kaupunkiympäristön
-            kaupunkimittauspalveluiden ohjeita, sovittava kohteen kartoittamisesta ja sijaintitietojen toimittamisesta
-            rekisteröintiä varten. Edellä mainittu koskee myös valmistumisen jälkeen tehtäviä pysyviä siirtoja ja
-            rakenteiden poistamista.</li>
+            <li>Sijoittava sopimusosapuoli on velvollinen kartoittamaan sopimuksen mukaiset johdot, rakenteet
+              ja laitteet. Sijaintitietojen rekisteröimisen osalta on noudatettava kaupunkiympäristön
+              kaupunkimittauspalveluiden ohjeita, sovittava kohteen kartoittamisesta ja sijaintitietojen
+              toimittamisesta rekisteröintiä varten. Edellä mainittu koskee myös valmistumisen jälkeen
+              tehtäviä pysyviä siirtoja ja rakenteiden poistamista.</li>
 
             <li>Sijoittava sopimusosapuoli vastaa rakenteiden, laitteiden ja johtojen kunnostamisesta ja
-            kunnossapidosta.</li>
+              kunnossapidosta.</li>
 
             <li>Sijoittava sopimusosapuoli vastaa kaikista luvan tarkoittamien rakenteiden, laitteiden ja johtojen
             rakentamisen ja käytön kustannuksista, sekä kaupungille tai kolmannelle osapuolelle mahdollisesti edellä
             mainituista toimenpiteistä aiheutuvasta vahingosta tai haitasta. Kaupungin suorittama työn valvonta ei
             poista sijoittavan vastuuta.</li>
 
-            <li>Mikäli rakenteet, laitteet tai johdot on tarpeellista poistaa tai siirtää välttämättömän syyn johdosta
-            väliaikaisesti tai pysyvästi, sijoittavan sopimusosapuolen on tehtävä työ kustannuksellaan. Työalue tulee
-            palauttaa kaupungin hyväksymään tilaan. Sopimuksen irtisanomisaika on kuusi (6) kuukautta. Käytöstä
-            poistetuista rakenteista, laitteista ja johdoista on ilmoitettava kaupunkiympäristön
-            kaupunkimittauspalveluille.</li>
+            <li>Sijoittava sopimusosapuoli vastaa kaikista luvan tarkoittamien rakenteiden, laitteiden ja johtojen
+              rakentamisen ja käytön kustannuksista, sekä kaupungille tai kolmannelle osapuolelle
+              mahdollisesti edellä mainituista toimenpiteistä aiheutuvasta vahingosta tai haitasta. Kaupungin
+              suorittama työn valvonta ei poista sijoittavan vastuuta.</li>
 
-            <li>Mikäli alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikön päätös kumoutuu
-              tai muuttuu oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka jos
-            oikaisuvaatimuksen käsittelevä toimielin tai viranomainen kieltää täytäntöönpanon, katsotaan
-            sopimus purkautuneeksi. Kaupunki ei vastaa sopimusosapuolille aiheutuneista kustannuksista,
-            mikäli sopimus edellä mainitun mukaisesti katsotaan purkautuneeksi.</li>
+            <li>Mikäli rakenteet, laitteet tai johdot on tarpeellista poistaa tai siirtää välttämättömän syyn
+              johdosta väliaikaisesti tai pysyvästi, sijoittavan sopimusosapuolen on tehtävä työ
+              kustannuksellaan. Työalue tulee palauttaa kaupungin hyväksymään tilaan. Sopimuksen
+              irtisanomisaika on kuusi (6) kuukautta pois lukien maalämpöporakaivot varusteineen, joiden
+              irtisanomisaika on kaksi (2) vuotta. Käytöstä poistetuista rakenteista, laitteista ja johdoista on
+              ilmoitettava kaupunkiympäristön kaupunkimittauspalveluille.</li>
           </ol>
         </section>
       </div>
