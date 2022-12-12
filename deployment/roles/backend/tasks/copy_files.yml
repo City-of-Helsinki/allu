@@ -18,7 +18,7 @@
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"
-  with_items: "{{ allu_service_list }}"
+  with_items: "{{ allu_supervisord_service_list }}"
 
 - name: copy autossh start script
   template: src=autossh-run.sh dest=/srv/data/allu/autossh-run.sh

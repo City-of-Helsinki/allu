@@ -6,3 +6,6 @@ allu_service_list:
   - scheduler-service
   - external-service
   - supervision-api
+
+allu_supervisord_service_list:
+  - scheduler-service
