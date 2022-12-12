@@ -5,7 +5,7 @@ search_service_name: allu-search-service
 pdf_service_name: allu-pdf-service
 external_service_name: allu-external-service
 supervision_api_name: allu-supervision-api
-backend_container_name: allu-backend
+scheduler_service_name: allu-scheduler-service
 database_name: allu-database
 network_name: allu-network
 elasticsearch_name: allu-elasticsearch

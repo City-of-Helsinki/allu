@@ -9,4 +9,4 @@
 - include_tasks: pdf_service_docker.yml
 - include_tasks: external_service_docker.yml
 - include_tasks: supervision_api_docker.yml
-- include_tasks: backend_docker.yml
+- include_tasks: scheduler_service_docker.yml

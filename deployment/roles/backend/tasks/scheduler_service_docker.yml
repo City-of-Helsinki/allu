@@ -6,7 +6,7 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
 
-- name: Build backend Docker image. Uses random numbers to force Docker to build certain parts of image every time
+- name: Build allu_scheduler_service Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
     module: docker_image
     source: build
@@ -15,32 +15,32 @@
         CUSTOM_UID: "{{ system_user_id_allu }}"
         CUSTOM_GID: "{{ system_group_id_allu }}"
         CACHEBUST: "{{ 9999999 |random }}"
-      path: "{{ role_path }}/files/backend_docker"
-    name: "allu_backend:{{ branch }}"
+      path: "{{ role_path }}/files/scheduler_service_docker"
+    name: "allu_scheduler_service:{{ branch }}"
     force_source: true
 
-- name: Push built allu_backend Docker image to GitLab repository
+- name: Push built allu_scheduler_service Docker image to GitLab repository
   local_action:
     module: docker_image
     push: true
     source: local
     force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
-    name: "allu_backend:{{ branch }}"
-    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+    name: "allu_scheduler_service:{{ branch }}"
+    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
 
 - name: Start Docker services on remote host
   service: name=docker state=started
   become: yes
 
-- name: Stop and remove existing allu_backend container from Docker
+- name: Stop and remove existing allu_scheduler_service container from Docker
   docker_container:
-    name: "{{ backend_container_name }}"
+    name: "{{ scheduler_service_name }}"
     state: absent
   become: yes
 
-- name: Remove existing allu_backend image from Docker
+- name: Remove existing allu_scheduler_service image from Docker
   docker_image:
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
     state: absent
     force_absent: true
   become: yes
@@ -53,21 +53,21 @@
     password: "{{ gitlab_deploy_token }}"
   become: yes
 
-- name: Pull allu_backend Docker image from GitLab repository
+- name: Pull allu_scheduler_service Docker image from GitLab repository
   docker_image:
     source: pull
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
   become: yes
 
-- name: Start allu_backend container
+- name: Start allu_scheduler_service container
   docker_container:
-    name: "{{ backend_container_name }}"
-    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_backend:{{ branch }}"
+    name: "{{ scheduler_service_name }}"
+    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
     restart_policy: always
     volumes:
       - /srv/data/allu:/servicehome:rw
     networks:
       - name: "{{ network_name }}"
         aliases:
-          - backendcontainer
+          - schedulerservicecontainer
   become: yes
