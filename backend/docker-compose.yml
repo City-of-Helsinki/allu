@@ -39,14 +39,20 @@ services:
       - "9040:9040"
     volumes:
       - /home/allu/external-service:/servicehome:rw
+  supervision-api:
+    build: ./supervision-api/
+    image: allu_supervision_api
+    container_name: allu-supervision-api
+    ports:
+      - "9050:9050"
+    volumes:
+      - /home/allu/supervision-api:/servicehome:rw
   allu-backend:
     build:
       context: .
       dockerfile: backend.Dockerfile
     image: allu_backend
     container_name: allu-backend
-    ports:
-      - "9050:9050"
     volumes:
       - /home/allu/allu-backend:/servicehome:rw
 
