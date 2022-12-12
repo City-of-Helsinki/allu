@@ -34,7 +34,7 @@
 
 - name: Stop and remove existing allu_backend container from Docker
   docker_container:
-    name: allu_backend
+    name: "{{ backend_container_name }}"
     state: absent
   become: yes
 
