@@ -4,6 +4,7 @@ model_service_name: allu-model-service
 search_service_name: allu-search-service
 pdf_service_name: allu-pdf-service
 external_service_name: allu-external-service
+supervision_api_name: allu-supervision-api
 backend_container_name: allu-backend
 database_name: allu-database
 network_name: allu-network
