@@ -174,11 +174,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               kunnossapidosta.</li>
 
             <li>Sijoittava sopimusosapuoli vastaa kaikista luvan tarkoittamien rakenteiden, laitteiden ja johtojen
-            rakentamisen ja käytön kustannuksista, sekä kaupungille tai kolmannelle osapuolelle mahdollisesti edellä
-            mainituista toimenpiteistä aiheutuvasta vahingosta tai haitasta. Kaupungin suorittama työn valvonta ei
-            poista sijoittavan vastuuta.</li>
-
-            <li>Sijoittava sopimusosapuoli vastaa kaikista luvan tarkoittamien rakenteiden, laitteiden ja johtojen
               rakentamisen ja käytön kustannuksista, sekä kaupungille tai kolmannelle osapuolelle
               mahdollisesti edellä mainituista toimenpiteistä aiheutuvasta vahingosta tai haitasta. Kaupungin
               suorittama työn valvonta ei poista sijoittavan vastuuta.</li>
@@ -189,6 +184,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               irtisanomisaika on kuusi (6) kuukautta pois lukien maalämpöporakaivot varusteineen, joiden
               irtisanomisaika on kaksi (2) vuotta. Käytöstä poistetuista rakenteista, laitteista ja johdoista on
               ilmoitettava kaupunkiympäristön kaupunkimittauspalveluille.</li>
+
+            <li>Mikäli alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikön päätös kumoutuu
+              tai muuttuu oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka jos
+              oikaisuvaatimuksen käsittelevä toimielin tai viranomainen kieltää täytäntöönpanon, katsotaan
+              sopimus purkautuneeksi. Kaupunki ei vastaa sopimusosapuolille aiheutuneista kustannuksista,
+              mikäli sopimus edellä mainitun mukaisesti katsotaan purkautuneeksi.</li>
           </ol>
         </section>
       </div>
@@ -255,7 +256,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed avoid-pb">
         <h2>Sijoitussopimukset:</h2>
-        <p>Kaupunkiympäristö/Alueidenkäyttö ja -valvonta</p>
+        <p>Kaupunkiympäristö/Asukas- ja yrityspalvelut/Palvelut ja luvat/Alueiden käyttö ja valvonta</p>
         <p>Työpajankatu 8</p>
         <p>PL 58231, 00099 Helsingin kaupunki</p>
         <p>asiakaspalvelu puh. (09) 310 22111</p>
@@ -263,7 +264,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </div>
       <div class="unboxed avoid-pb">
         <h2>Kaivuilmoitukset:</h2>
-        <p>Kaupunkiympäristö/Alueidenkäyttö ja -valvonta</p>
+        <p>Kaupunkiympäristö/Asukas- ja yrityspalvelut/Palvelut ja luvat/Alueiden käyttö ja valvonta</p>
         <p>Työpajankatu 8</p>
         <p>PL 58231, 00099 Helsingin kaupunki</p>
         <p>asiakaspalvelu puh. (09) 310 22111</p>
