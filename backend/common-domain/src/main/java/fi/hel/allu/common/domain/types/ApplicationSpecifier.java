@@ -36,6 +36,7 @@ public enum ApplicationSpecifier {
   // Lämmitys/viilennys
   STREET_HEATING(ApplicationKind.HEATING_COOLING), // Katulämmitys
   DISTRICT_HEATING(ApplicationKind.HEATING_COOLING), // Kaukolämpö
+  GEO_HEATING(ApplicationKind.HEATING_COOLING), // Maalämmitys
   DISTRICT_COOLING(ApplicationKind.HEATING_COOLING), // Kaukokylmä
   // Rakennus
   GROUND_ROCK_ANCHOR(ApplicationKind.CONSTRUCTION), // Maa- / kallioankkuri
@@ -69,7 +70,7 @@ public enum ApplicationSpecifier {
 
   private final ApplicationKind kind;
 
-  private ApplicationSpecifier(ApplicationKind kind) {
+  ApplicationSpecifier(ApplicationKind kind) {
     this.kind = kind;
   }
 

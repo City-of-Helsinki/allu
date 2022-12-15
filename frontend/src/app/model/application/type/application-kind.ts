@@ -94,7 +94,8 @@ export const commonKinds: KindsWithSpecifiers = {
   HEATING_COOLING: [
     'STREET_HEATING',
     'DISTRICT_HEATING',
-    'DISTRICT_COOLING'
+    'DISTRICT_COOLING',
+    'GEO_HEATING'
   ],
   CONSTRUCTION: [
     'GROUND_ROCK_ANCHOR',

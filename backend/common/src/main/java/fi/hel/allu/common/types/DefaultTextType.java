@@ -10,6 +10,7 @@ public enum DefaultTextType {
   UNDERGROUND_STRUCTURE, // Maanalainen rakenne/tila
   TRAMWAY, // Raitiotie
   STREET_HEATING, // Katulämmitys
+  GEO_HEATING,  //Maalämpö
   SEWAGE_PIPE, // Jäteputki
   GEOTHERMAL_WELL, // Maalämpökaivo
   GEOTECHNICAL_OBSERVATION_POST, // Geotekninen tarkkailupiste
@@ -28,6 +29,7 @@ public enum DefaultTextType {
         UNDERGROUND_STRUCTURE,
         TRAMWAY,
         STREET_HEATING,
+        GEO_HEATING,
         SEWAGE_PIPE,
         GEOTHERMAL_WELL,
         GEOTECHNICAL_OBSERVATION_POST,

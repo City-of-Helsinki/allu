@@ -1,29 +1,12 @@
 package fi.hel.allu.servicecore.mapper;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import fi.hel.allu.model.domain.AbstractLocation;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.domain.AbstractLocation;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.util.EventDayUtil;
@@ -32,6 +15,22 @@ import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.pdf.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.*;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static fi.hel.allu.common.util.TimeUtil.HelsinkiZoneId;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
@@ -57,6 +56,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     tempMap.put(DefaultTextType.UNDERGROUND_STRUCTURE, "Maanalainen rakenne/tila");
     tempMap.put(DefaultTextType.TRAMWAY, "Raitiotie");
     tempMap.put(DefaultTextType.STREET_HEATING, "Katulämmitys");
+    tempMap.put(DefaultTextType.GEO_HEATING, "Maalämpö");
     tempMap.put(DefaultTextType.SEWAGE_PIPE, "Jäteputki");
     tempMap.put(DefaultTextType.GEOTHERMAL_WELL, "Maalämpökaivo");
     tempMap.put(DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, "Geotekninen tarkkailupiste");

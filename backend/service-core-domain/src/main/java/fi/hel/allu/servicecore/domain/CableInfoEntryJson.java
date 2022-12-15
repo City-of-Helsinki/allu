@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
 import fi.hel.allu.common.types.DefaultTextType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -23,7 +22,7 @@ public class CableInfoEntryJson {
   }
 
   @Schema(description = "Cable type", allowableValues = "TELECOMMUNICATION, ELECTRICITY, WATER_AND_SEWAGE, "
-      + "DISTRICT_HEATING_COOLING, GAS, UNDERGROUND_STRUCTURE, TRAMWAY, STREET_HEATING, SEWAGE_PIPE, "
+      + "DISTRICT_HEATING_COOLING, GAS, UNDERGROUND_STRUCTURE, TRAMWAY, STREET_HEATING, GEO_HEATING, SEWAGE_PIPE, "
       + "GEOTHERMAL_WELL, GEOTECHNICAL_OBSERVATION_POST, OTHER")
   public DefaultTextType getType() {
     return type;

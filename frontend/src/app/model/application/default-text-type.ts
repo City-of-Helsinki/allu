@@ -7,6 +7,7 @@ export enum DefaultTextType {
   UNDERGROUND_STRUCTURE = 'UNDERGROUND_STRUCTURE', // Maanalainen rakenne/tila
   TRAMWAY = 'TRAMWAY', // Raitiotie
   STREET_HEATING = 'STREET_HEATING', // Katulämmitys
+  GEO_HEATING = 'GEO_HEATING', // Maalämpö
   SEWAGE_PIPE = 'SEWAGE_PIPE', // Jäteputki
   GEOTHERMAL_WELL = 'GEOTHERMAL_WELL', // Maalämpökaivo
   GEOTECHNICAL_OBSERVATION_POST = 'GEOTECHNICAL_OBSERVATION_POST', // Geotekninen tarkkailupiste

@@ -33,7 +33,7 @@ export class CableInfoComponent implements OnInit {
   cableInfoTypes = [
     DefaultTextType.TELECOMMUNICATION, DefaultTextType.ELECTRICITY, DefaultTextType.WATER_AND_SEWAGE,
     DefaultTextType.DISTRICT_HEATING_COOLING, DefaultTextType.GAS, DefaultTextType.UNDERGROUND_STRUCTURE,
-    DefaultTextType.TRAMWAY, DefaultTextType.STREET_HEATING, DefaultTextType.SEWAGE_PIPE,
+    DefaultTextType.TRAMWAY, DefaultTextType.STREET_HEATING, DefaultTextType.GEO_HEATING, DefaultTextType.SEWAGE_PIPE,
     DefaultTextType.GEOTHERMAL_WELL, DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, DefaultTextType.OTHER];
   defaultTexts: DefaultTextMap = {};
   dialogRef: MatDialogRef<DefaultTextModalComponent>;

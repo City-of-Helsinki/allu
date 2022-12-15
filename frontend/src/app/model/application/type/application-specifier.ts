@@ -1,4 +1,4 @@
-import {ObjectUtil} from '../../../util/object.util';
+import {ObjectUtil} from '@util/object.util';
 
 export enum ApplicationSpecifier {
   // Katu- ja vihertyöt
@@ -28,6 +28,7 @@ export enum ApplicationSpecifier {
   DATA_WELL, // Kaivo
   // Lämmitys/viilennys
   STREET_HEATING, // Katulämmitys
+  GEO_HEATING, // Maalämpö
   DISTRICT_HEATING, // Kaukolämpö
   DISTRICT_COOLING, // Kaukokylmä
   // Rakennus

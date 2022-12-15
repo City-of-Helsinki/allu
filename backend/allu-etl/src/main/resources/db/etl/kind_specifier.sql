@@ -22,6 +22,7 @@ WITH tarkenteet (en, fi) AS (
         ('DATA_CABLE', 'Kaapeli'),
         ('DATA_WELL', 'Kaivo'),
         ('STREET_HEATING', 'Katulämmitys'),
+        ('GEO_HEATING', 'Maalämpö')
         ('DISTRICT_HEATING', 'Kaukolämpö'),
         ('DISTRICT_COOLING', 'Kaukokylmä'),
         ('GROUND_ROCK_ANCHOR', 'Maa- / kallioankkuri'),
@@ -61,4 +62,3 @@ ON CONFLICT (id) DO UPDATE SET
     hakemuslaji_id = EXCLUDED.hakemuslaji_id,
     tarkenne = EXCLUDED.tarkenne
 ;
-
