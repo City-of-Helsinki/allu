@@ -208,7 +208,7 @@
           <xsl:value-of select="data/deciderName"/>
         </p>
         <p class="space-above">
-          Päätös perustuu tieliikennelain (267/1981) ja tieliikenneasetuksen (182/1982) mukaisiin oikeuksiin asettaa liikennemerkki.
+          Päätös perustuu tieliikennelain (729/2018) ja tieliikenneasetuksen (379/2020) mukaisiin oikeuksiin asettaa liikennemerkki.
         </p>
       </section>
 
