@@ -12,11 +12,11 @@
     "build-test": "npm run ng-high-mem build  -- --configuration=test",
     "test": " ng lint && ng test --watch=false",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "engines": {
-      "node": "12.x",
-      "npm": "6.x"
-    }
+    "e2e": "ng e2e"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
   },
   "private": true,
   "dependencies": {
