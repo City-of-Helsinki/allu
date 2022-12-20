@@ -23,7 +23,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping({"/v2/notes"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Notes")
+@Tag(name = "Notes", description = "API to add notes. Allowed only for Allu internal users.")
 public class NoteController {
 
     private final ApplicationServiceComposer applicationServiceComposer;

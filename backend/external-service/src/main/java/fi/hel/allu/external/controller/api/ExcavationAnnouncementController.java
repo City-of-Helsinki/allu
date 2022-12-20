@@ -33,7 +33,7 @@ import java.time.ZonedDateTime;
 @RestController
 @RequestMapping({"/v1/excavationannouncements", "/v2/excavationannouncements"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Excavation announcements")
+@Tag(name = "Excavation announcements", description = "Excavation announcement application API")
 public class ExcavationAnnouncementController
         extends BaseApplicationController<ExcavationAnnouncementExt, ExcavationAnnouncementExtMapper> {
     private final ExcavationAnnouncementExtMapper mapper;

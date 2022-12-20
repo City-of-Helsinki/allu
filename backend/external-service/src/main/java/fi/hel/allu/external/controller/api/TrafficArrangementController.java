@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/v1/trafficarrangements", "/v2/trafficarrangements"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Traffic arrangements")
+@Tag(name = "Traffic arrangements", description = "Traffic arrangements application API")
 public class TrafficArrangementController extends BaseApplicationController<TrafficArrangementExt,
         TrafficArrangementExtMapper> {
 

@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Application kinds")
+@Tag(name = "Application kinds", description = "API to list application kinds")
 public class ApplicationKindController {
 
 

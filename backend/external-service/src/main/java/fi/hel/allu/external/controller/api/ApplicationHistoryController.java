@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1/applicationhistory", "/v2/applicationhistory"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Application history")
+@Tag(name = "Application history", description = "API to list application events (status changes and supervision events)")
 public class ApplicationHistoryController {
 
     private final ApplicationServiceExt applicationService;

@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1/applications", "/v2/applications"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Comments")
+@Tag(name = "Comments", description = "API to manage application comments")
 public class CommentController {
 
     private final CommentServiceExt commentService;

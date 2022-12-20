@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping({"/v1/trafficarrangementimages", "/v2/trafficarrangementimages"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Traffic arrangement images")
+@Tag(name = "Traffic arrangement images", description = "API to list and download Allu traffic arrangement images")
 public class TrafficArrangementImageController {
 
     private final AttachmentService attachmentService;

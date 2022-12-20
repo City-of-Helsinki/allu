@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping({"/v1/applications", "/v2/applications"})
-@Tag(name = "Applications")
+@Tag(name = "Applications", description = "API to read and update data common to all application types")
 @SecurityRequirement(name = "bearerAuth")
 public class ApplicationController {
 

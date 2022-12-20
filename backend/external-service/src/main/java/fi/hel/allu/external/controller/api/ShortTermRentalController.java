@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/v1/shorttermrentals", "/v2/shorttermrentals"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Short term rentals")
+@Tag(name = "Short term rentals", description = "Short term rental application API")
 public class ShortTermRentalController extends BaseApplicationController<ShortTermRentalExt, ShortTermRentalExtMapper> {
 
     private final ShortTermRentalExtMapper shortTermRentalMapper;

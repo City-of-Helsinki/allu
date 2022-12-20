@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping({"/v1/cablereports", "/v2/cablereports"})
-@Tag(name = "Cable reports")
+@Tag(name = "Cable reports", description = "Cable report application API")
 public class CableReportController extends BaseApplicationController<CableReportExt, CableReportExtMapper> {
 
     private final CableReportExtMapper mapper;

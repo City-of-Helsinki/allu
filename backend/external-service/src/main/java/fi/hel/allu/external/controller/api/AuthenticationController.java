@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping({"/v1/login", "/v2/login"})
-@Tag(name = "Authentication")
+@Tag(name = "Authentication", description = "Authentication API")
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;

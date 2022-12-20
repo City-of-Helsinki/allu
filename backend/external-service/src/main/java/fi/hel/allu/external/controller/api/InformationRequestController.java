@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping({"/v1", "/v2"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Information requests")
+@Tag(name = "Information requests", description = "API to read application information requests")
 public class InformationRequestController {
 
     private final InformationRequestService informationRequestService;

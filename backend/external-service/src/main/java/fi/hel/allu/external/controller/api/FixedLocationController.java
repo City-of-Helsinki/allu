@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1/fixedlocations", "/v2/fixedlocations"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Fixed locations")
+@Tag(name = "Fixed locations", description = "API to list Allu fixed locations")
 public class FixedLocationController {
 
     private final LocationService locationService;

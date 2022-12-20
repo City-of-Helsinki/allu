@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1/documents/applications", "/v2/documents/applications"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Application documents")
+@Tag(name = "Application documents", description = "API to list application decisions and approval documents and download them with private person data anonymized. Allowed only for Allu internal users.")
 public class ApplicationDocumentController {
 
     private final DecisionService decisionService;

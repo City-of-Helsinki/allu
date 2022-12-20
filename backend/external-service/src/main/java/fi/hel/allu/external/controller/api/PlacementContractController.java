@@ -40,7 +40,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1/placementcontracts", "/v2/placementcontracts"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Placement contracts")
+@Tag(name = "Placement contracts", description = "Placement contracts application API")
 public class PlacementContractController extends BaseApplicationController<PlacementContractExt,
         PlacementContractExtMapper> {
 

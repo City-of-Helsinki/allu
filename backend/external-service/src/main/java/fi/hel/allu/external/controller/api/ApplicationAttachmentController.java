@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1", "/v2"})
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Application attachments")
+@Tag(name = "Application attachments", description = "API to list, dowload and add application attachments")
 public class ApplicationAttachmentController {
 
     private final ApplicationServiceExt applicationService;
