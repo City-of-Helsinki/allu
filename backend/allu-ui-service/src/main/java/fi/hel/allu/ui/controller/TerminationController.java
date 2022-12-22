@@ -2,8 +2,8 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.service.TerminationService;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.TerminationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,34 +27,34 @@ public class TerminationController {
     this.applicationServiceComposer = applicationServiceComposer;
   }
 
-  @RequestMapping(value = "/{applicationId}/termination/info", method = RequestMethod.GET)
+  @GetMapping(value = "/{applicationId}/termination/info")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<TerminationInfo> getTerminationInfo(@PathVariable int applicationId) {
     return ResponseEntity.ok(terminationService.getTerminationInfo(applicationId));
   }
 
-  @RequestMapping(value = "/{applicationId}/termination/info", method = RequestMethod.POST)
+  @PostMapping(value = "/{applicationId}/termination/info")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<TerminationInfo> insertTerminationInfo(@PathVariable int applicationId,
        @Valid @RequestBody TerminationInfo terminationInfo) {
     return ResponseEntity.ok(terminationService.insertTerminationInfo(applicationId, terminationInfo));
   }
 
-  @RequestMapping(value = "/{applicationId}/termination/info", method = RequestMethod.PUT)
+  @PutMapping(value = "/{applicationId}/termination/info")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<TerminationInfo> updateTerminationInfo(@PathVariable int applicationId,
        @Valid @RequestBody TerminationInfo terminationInfo) {
     return ResponseEntity.ok(terminationService.updateTerminationInfo(applicationId, terminationInfo));
   }
 
-  @RequestMapping(value = "/{applicationId}/termination/info", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{applicationId}/termination/info")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Boolean> removeTerminationInfo(@PathVariable int applicationId) {
     terminationService.removeTerminationInfo(applicationId);
     return ResponseEntity.ok(true);
   }
 
-  @RequestMapping(value = "/{applicationId}/termination", method = RequestMethod.GET)
+  @GetMapping(value = "/{applicationId}/termination")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getTermination(@PathVariable Integer applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);

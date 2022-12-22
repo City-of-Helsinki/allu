@@ -1,21 +1,19 @@
 package fi.hel.allu.ui.controller;
 
-import java.io.IOException;
-
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 import fi.hel.allu.servicecore.service.*;
+import fi.hel.allu.ui.security.DecisionSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
-import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
-import fi.hel.allu.ui.security.DecisionSecurityService;
-
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -53,38 +51,38 @@ public class ApplicationStatusController {
     this.terminationService = terminationService;
   }
 
-  @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/cancelled")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToCancelled(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(
       id, StatusType.CANCELLED, new StatusChangeInfoJson()));
   }
 
-  @RequestMapping(value = "/{id}/status/pending", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/pending")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToPending(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.PENDING));
   }
 
-  @RequestMapping(value = "/{id}/status/waiting_information", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/waiting_information")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToWaitingInformation(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.WAITING_INFORMATION));
   }
 
-  @RequestMapping(value = "/{id}/status/waiting_contract_approval", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/waiting_contract_approval")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToWaitingContract(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.WAITING_CONTRACT_APPROVAL));
   }
 
-  @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/handling")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToHandling(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.HANDLING));
   }
 
-  @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/decisionmaking")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToDecisionMaking(
       @PathVariable int id, @RequestBody(required = false) StatusChangeInfoJson info) {
@@ -94,7 +92,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.DECISIONMAKING, info));
   }
 
-  @RequestMapping(value = "/{id}/status/decision", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/decision")
   @PreAuthorize("@decisionSecurityService.canMakeDecision(#id)")
   public ResponseEntity<ApplicationJson> changeStatusToDecision(
       @PathVariable int id, @RequestBody StatusChangeInfoJson info) throws IOException {
@@ -104,7 +102,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationJson);
   }
 
-  @RequestMapping(value = "/{id}/status/rejected", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/rejected")
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToRejected(
       @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
@@ -113,7 +111,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.REJECTED, info));
   }
 
-  @RequestMapping(value = "/{id}/status/operational_condition", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/operational_condition")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToOperationalCondition(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
@@ -123,7 +121,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationJson);
   }
 
-  @RequestMapping(value = "/{id}/status/toPreparation", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/toPreparation")
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(
       @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
@@ -131,7 +129,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.RETURNED_TO_PREPARATION, info));
   }
 
-  @RequestMapping(value = "/{id}/status/finished", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/finished")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToFinished(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
@@ -142,7 +140,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationJson);
   }
 
-  @RequestMapping(value = "/{id}/status/returnToEditing", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/returnToEditing")
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> returnToEditing(@PathVariable int id, @RequestBody StatusChangeInfoJson info) {
     commentService.addReturnComment(id, info.getComment());
@@ -150,7 +148,7 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.returnToEditing(id, info));
   }
 
-  @RequestMapping(value = "/{id}/status/terminated", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/status/terminated")
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToTerminated(@PathVariable int id) {
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.TERMINATED);

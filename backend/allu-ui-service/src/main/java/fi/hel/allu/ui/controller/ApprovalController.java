@@ -34,7 +34,7 @@ public class ApprovalController {
     this.bulkApprovalService = bulkApprovalService;
   }
 
-  @RequestMapping(value = "/{applicationId}/approvalDocument/{type}", method = RequestMethod.GET)
+  @GetMapping(value = "/{applicationId}/approvalDocument/{type}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getApprovalDocument(@PathVariable Integer applicationId, @PathVariable ApprovalDocumentType type) {
     return pdfResult(approvalDocumentService.getApprovalDocument(applicationId, type, chargeBasisService.getUnlockedAndInvoicableChargeBasis(applicationId)));
@@ -53,7 +53,7 @@ public class ApprovalController {
    *          the application's Id
    * @return The PDF data
    */
-  @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.GET)
+  @GetMapping(value = "/{applicationId}/decision")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getDecision(@PathVariable int applicationId) {
     byte[] bytes = decisionService.getDecision(applicationId);
@@ -68,7 +68,7 @@ public class ApprovalController {
    * @param applicationId       the application's Id.
    * @param decisionDetailsJson Details of the decision.
    */
-  @RequestMapping(value = "/{applicationId}/decision/send", method = RequestMethod.POST)
+  @PostMapping(value = "/{applicationId}/decision/send")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Void> sendDecision(
     @PathVariable int applicationId,
@@ -77,7 +77,7 @@ public class ApprovalController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{applicationId}/operational_condition/send", method = RequestMethod.POST)
+  @PostMapping(value = "/{applicationId}/operational_condition/send")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Void> sendOperationalCondition(
     @PathVariable int applicationId,
@@ -86,7 +86,7 @@ public class ApprovalController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{applicationId}/work_finished/send", method = RequestMethod.POST)
+  @PostMapping(value = "/{applicationId}/work_finished/send")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Void> sendWorkFinished(
     @PathVariable int applicationId,
@@ -95,7 +95,7 @@ public class ApprovalController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{applicationId}/termination/send", method = RequestMethod.POST)
+  @PostMapping(value = "/{applicationId}/termination/send")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<Void> sendTermination(
     @PathVariable int applicationId,
@@ -104,7 +104,7 @@ public class ApprovalController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/distribution", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/distribution")
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<List<DistributionEntryJson>> updateDistribution(
     @PathVariable int id,
@@ -113,13 +113,13 @@ public class ApprovalController {
     return ResponseEntity.ok(applicationJson.getDecisionDistributionList());
   }
 
-  @RequestMapping(value = "/{id}/distribution", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/distribution")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DistributionEntryJson>> getDistribution(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.getDistributionList(id));
   }
 
-  @RequestMapping(value = "/bulkApprovalEntries", method = RequestMethod.POST)
+  @PostMapping(value = "/bulkApprovalEntries")
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<List<BulkApprovalEntryJson>> getBulkApprovalEntries(@RequestBody List<Integer> ids) {
     return ResponseEntity.ok(bulkApprovalService.getBulkApprovalEntries(ids));

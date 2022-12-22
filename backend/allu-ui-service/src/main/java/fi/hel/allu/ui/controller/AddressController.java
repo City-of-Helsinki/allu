@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,10 +21,8 @@ public class AddressController {
   @Autowired
   private AddressService addressService;
 
-  @RequestMapping(value = {
-          "/geocode/{city}/{street}",
-          "/geocode/{city}/{street}/{specifier}"
-  }, method = RequestMethod.GET)
+  @GetMapping(value = {"/geocode/{city}/{street}",
+          "/geocode/{city}/{street}/{specifier}"})
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city,
                                                 @PathVariable final String street,
@@ -34,7 +32,7 @@ public class AddressController {
 
 
 
-  @RequestMapping(value = "/search/{partialStreetName}", method = RequestMethod.GET)
+  @GetMapping(value = "/search/{partialStreetName}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<PostalAddressJson>> findMatchingStreet(@PathVariable final String partialStreetName) {
     return new ResponseEntity<>(addressService.findMatchingStreet(partialStreetName), HttpStatus.OK);

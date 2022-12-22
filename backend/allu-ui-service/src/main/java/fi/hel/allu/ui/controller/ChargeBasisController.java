@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 @RestController
@@ -26,7 +25,7 @@ public class ChargeBasisController {
    * @param id the application ID
    * @return the charge basis entries for the application
    */
-  @RequestMapping(value = "/charge-basis", method = RequestMethod.GET)
+  @GetMapping(value = "/charge-basis")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ChargeBasisEntry>> getChargeBasis(@PathVariable int id) {
     return new ResponseEntity<>(chargeBasisService.getChargeBasis(id), HttpStatus.OK);
@@ -40,7 +39,7 @@ public class ChargeBasisController {
    *          that are marked as manually set will be used
    * @return the new charge basis entries for the application
    */
-  @RequestMapping(value = "/charge-basis", method = RequestMethod.PUT)
+  @PutMapping(value = "/charge-basis")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ChargeBasisEntry>> setChargeBasis(@PathVariable int id,
                                                                @Valid @RequestBody ValidList<ChargeBasisEntry> chargeBasisEntries) {
@@ -56,7 +55,7 @@ public class ChargeBasisController {
    *
    * @return updated charge basis entry
    */
-  @RequestMapping(value = "/charge-basis/{entryId}/invoicable", method = RequestMethod.PUT)
+  @PutMapping(value = "/charge-basis/{entryId}/invoicable")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ChargeBasisEntry> setInvoicable(@PathVariable int id, @PathVariable int entryId,
                                                         @RequestParam("invoicable") boolean invoicable) {

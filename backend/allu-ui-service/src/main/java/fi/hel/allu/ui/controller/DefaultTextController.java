@@ -26,7 +26,7 @@ public class DefaultTextController {
    *
    * @return Default texts for given application type. Never <code>null</code>.
    */
-  @RequestMapping(value = "/applicationtype/{applicationType}", method = RequestMethod.GET)
+  @GetMapping(value = "/applicationtype/{applicationType}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DefaultText>> getDefaultTexts(@PathVariable ApplicationType applicationType) {
     return new ResponseEntity<>(defaultTextService.getDefaultTexts(applicationType), HttpStatus.OK);
@@ -38,7 +38,7 @@ public class DefaultTextController {
    * @param defaultText   the new default text to add -- the ID field will be ignored.
    * @return the new default text with database generated ID.
    */
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<DefaultText> create(@RequestBody DefaultText defaultText) {
     return new ResponseEntity<>(defaultTextService.create(defaultText), HttpStatus.OK);
@@ -51,7 +51,7 @@ public class DefaultTextController {
    * @param defaultText     the new contents for the info
    * @return the updated default text.
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<DefaultText> update(
       @PathVariable int id,
@@ -66,7 +66,7 @@ public class DefaultTextController {
    *
    * @param id    the ID of the default text to be removed.
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     defaultTextService.delete(id);

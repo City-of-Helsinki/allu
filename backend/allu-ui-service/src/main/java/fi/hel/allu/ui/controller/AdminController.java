@@ -32,7 +32,7 @@ public class AdminController {
    * @param id          attachment ID
    * @return attachment info for the ID.
    */
-  @RequestMapping(value = "/attachments/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/attachments/{id}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<DefaultAttachmentInfoJson> readAttachmentInfo(@PathVariable int id) {
     return new ResponseEntity<>(attachmentService.getDefaultAttachment(id), HttpStatus.OK);
@@ -43,7 +43,7 @@ public class AdminController {
    *
    * @return attachment info of all default attachments.
    */
-  @RequestMapping(value = "/attachments", method = RequestMethod.GET)
+  @GetMapping(value = "/attachments")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> readAttachmentInfos() {
     return new ResponseEntity<>(attachmentService.getDefaultAttachments(), HttpStatus.OK);
@@ -54,7 +54,7 @@ public class AdminController {
    *
    * @return attachment info of all default attachments.
    */
-  @RequestMapping(value = "/attachments/applicationType/{applicationType}", method = RequestMethod.GET)
+  @GetMapping(value = "/attachments/applicationType/{applicationType}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> readAttachmentInfos(@PathVariable ApplicationType applicationType) {
     return new ResponseEntity<>(attachmentService.getDefaultAttachmentsByApplicationType(applicationType), HttpStatus.OK);
@@ -70,7 +70,7 @@ public class AdminController {
    * @throws IOException
    * @throws IllegalArgumentException
    */
-  @RequestMapping(value = "/attachments", method = RequestMethod.POST)
+  @PostMapping(value = "/attachments")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> addAttachments(
       @RequestPart("meta") @Valid DefaultAttachmentInfoJson[] infos, @RequestPart("file") MultipartFile[] files)
@@ -84,7 +84,7 @@ public class AdminController {
    * @param id  attachment ID
    * @return Nothing
    */
-  @RequestMapping(value = "/attachments/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/attachments/{id}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<Void> deleteAttachment(@PathVariable int id) {
     attachmentService.deleteDefaultAttachment(id);
@@ -98,7 +98,7 @@ public class AdminController {
    * @param attachmentInfoJson
    * @return  updated default attachment.
    */
-  @RequestMapping(value = "/attachments/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/attachments/{id}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<DefaultAttachmentInfoJson> updateAttachmentInfo(
       @PathVariable int id,

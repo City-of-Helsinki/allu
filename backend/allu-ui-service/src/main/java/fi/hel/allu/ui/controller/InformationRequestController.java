@@ -1,21 +1,18 @@
 package fi.hel.allu.ui.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import fi.hel.allu.servicecore.domain.InformationRequestJson;
+import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestResponseJson;
 import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestSummaryJson;
+import fi.hel.allu.servicecore.service.InformationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.model.domain.InformationRequest;
-import fi.hel.allu.servicecore.domain.InformationRequestJson;
-import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestResponseJson;
-import fi.hel.allu.servicecore.service.InformationRequestService;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class InformationRequestController {
@@ -23,14 +20,14 @@ public class InformationRequestController {
   @Autowired
   private InformationRequestService informationRequestService;
 
-  @RequestMapping(value = "/applications/{id}/informationrequests", method = RequestMethod.POST)
+  @PostMapping(value = "/applications/{id}/informationrequests")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<InformationRequestJson> create(@PathVariable int id, @Valid @RequestBody(required = true) InformationRequestJson
       informationRequest) {
     return new ResponseEntity<>(informationRequestService.createForApplication(id, informationRequest), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/informationrequests/{requestid}", method = RequestMethod.PUT)
+  @PutMapping(value = "/informationrequests/{requestid}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<InformationRequestJson> update(@PathVariable("requestid") int id,
       @PathVariable("requestid") int informationRequestId, @Valid @RequestBody(required = true) InformationRequestJson informationRequest) {
@@ -38,43 +35,43 @@ public class InformationRequestController {
   }
 
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  @RequestMapping(value = "/informationrequests/{id}/close", method = RequestMethod.PUT)
+  @PutMapping(value = "/informationrequests/{id}/close")
   public ResponseEntity<InformationRequestJson> closeInformationRequest(@PathVariable Integer id) {
     return new ResponseEntity<>(informationRequestService.closeInformationRequest(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/informationrequests/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/informationrequests/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> delete(@PathVariable("id") int id) {
     informationRequestService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/informationrequests/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/informationrequests/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<InformationRequestJson> findById(@PathVariable("id") int id) {
     return ResponseEntity.ok(informationRequestService.findRequestById(id));
   }
 
-  @RequestMapping(value = "/informationrequests/{id}/response", method = RequestMethod.GET)
+  @GetMapping(value = "/informationrequests/{id}/response")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<InformationRequestResponseJson> findResponseForRequest(@PathVariable("id") int id) throws IOException {
     return ResponseEntity.ok(informationRequestService.findResponseForRequest(id));
   }
 
-  @RequestMapping(value = "/applications/{id}/informationrequests", method = RequestMethod.GET)
+  @GetMapping(value = "/applications/{id}/informationrequests")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<InformationRequestJson> findByApplicationId(@PathVariable("id") int id) {
     return new ResponseEntity<>(informationRequestService.findByApplicationId(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/{id}/informationrequests/response", method = RequestMethod.GET)
+  @GetMapping(value = "/applications/{id}/informationrequests/response")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<InformationRequestResponseJson> findResponseForApplication(@PathVariable Integer id) throws IOException {
     return new ResponseEntity<>(informationRequestService.findResponseForApplication(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/{id}/informationrequests/summaries", method = RequestMethod.GET)
+  @GetMapping(value = "/applications/{id}/informationrequests/summaries")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<InformationRequestSummaryJson>> findSummariesForApplication(@PathVariable Integer id) throws IOException {
     return new ResponseEntity<>(informationRequestService.findSummariesByApplicationId(id), HttpStatus.OK);

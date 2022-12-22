@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.UserSearchCriteria;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,63 +32,63 @@ public class UserController {
    *
    * @return  Nothing.
    */
-  @RequestMapping(value = "/isauthenticated", method = RequestMethod.GET)
+  @GetMapping(value = "/isauthenticated")
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION','ROLE_PROCESS_APPLICATION','ROLE_DECISION','ROLE_SUPERVISE','ROLE_INVOICING','ROLE_DECLARANT', 'ROLE_VIEW','ROLE_ADMIN', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<Void> checkToken() {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<List<UserJson>> getUsers() {
     return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/active", method = RequestMethod.GET)
+  @GetMapping(value = "/active")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<UserJson>> getActiveUsers() {
     return new ResponseEntity<>(userService.findAllActiveUsers(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)
+  @GetMapping(value = "/userName/{userName}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<UserJson> findByUserName(@PathVariable String userName) {
     UserJson user = userService.findUserByUserName(userName);
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<UserJson> getUser(@PathVariable Integer id) {
     return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/role/{roleType}", method = RequestMethod.GET)
+  @GetMapping(value = "/role/{roleType}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<UserJson>> findByRole(@PathVariable RoleType roleType) {
     return new ResponseEntity<>(userService.findUserByRole(roleType), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/current", method = RequestMethod.GET)
+  @GetMapping(value = "/current")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<UserJson> getCurrentUser() {
     UserJson user = userService.getCurrentUser();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<UserJson>> search(@RequestBody UserSearchCriteria usc) {
     return new ResponseEntity<>(userService.search(usc), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<UserJson> addUser(@RequestBody UserJson user) {
     return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.PUT)
+  @PutMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity updateUser(@RequestBody UserJson user) {
     userService.updateUser(user);

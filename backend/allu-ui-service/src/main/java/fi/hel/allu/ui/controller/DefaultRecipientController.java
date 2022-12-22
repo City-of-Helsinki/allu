@@ -6,11 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -25,7 +21,7 @@ public class DefaultRecipientController {
   @Autowired
   private DefaultRecipientService service;
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN, ROLE_CREATE_APPLICATION, ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<DefaultRecipientJson>> getDefaultRecipients() {
     return new ResponseEntity<>(service.getDefaultRecipients(), HttpStatus.OK);
@@ -38,7 +34,7 @@ public class DefaultRecipientController {
    *
    * @return The created default recipient
    */
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<DefaultRecipientJson> insert(@Valid @RequestBody(required = true) DefaultRecipientJson recipientJson) {
     return new ResponseEntity<>(service.create(recipientJson), HttpStatus.OK);
@@ -52,7 +48,7 @@ public class DefaultRecipientController {
    *
    * @return the updated recipient
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<DefaultRecipientJson> update(@PathVariable int id,
                                             @Valid @RequestBody(required = true) DefaultRecipientJson recipientJson) {
@@ -64,7 +60,7 @@ public class DefaultRecipientController {
    *
    * @param id recipient's ID
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     service.delete(id);

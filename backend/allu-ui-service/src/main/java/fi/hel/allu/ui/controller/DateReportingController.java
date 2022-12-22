@@ -6,16 +6,11 @@ import fi.hel.allu.servicecore.service.DateReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.time.ZonedDateTime;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("/applications")
@@ -28,14 +23,14 @@ public class DateReportingController {
     this.dateReportingService = dateReportingService;
   }
 
-  @RequestMapping(value = "/{id}/customeroperationalcondition", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/customeroperationalcondition")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportCustomerOperationalCondition(@PathVariable Integer id,
       @RequestBody @Valid ApplicationDateReport dateReport) {
     return ResponseEntity.ok(dateReportingService.reportCustomerOperationalCondition(id, dateReport));
   }
 
-  @RequestMapping(value = "/{id}/customerworkfinished", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/customerworkfinished")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportCustomerWorkFinished(@PathVariable Integer id,
       @RequestBody @Valid ApplicationDateReport dateReport) {
@@ -49,21 +44,21 @@ public class DateReportingController {
     return ResponseEntity.ok(dateReportingService.reportCustomerValidity(id, dateReport));
   }
 
-  @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/operationalcondition")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportOperationalCondition(@PathVariable Integer id,
       @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
     return ResponseEntity.ok(dateReportingService.reportOperationalCondition(id, operationalConditionDate));
   }
 
-  @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/workfinished")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportWorkFinished(@PathVariable Integer id,
       @RequestBody @NotNull ZonedDateTime workFinishedDate) {
     return ResponseEntity.ok(dateReportingService.reportWorkFinished(id, workFinishedDate));
   }
 
-  @RequestMapping(value = "/{id}/locations/{locationId}/customervalidity", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/locations/{locationId}/customervalidity")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportCustomerLocationValidity(@PathVariable Integer id,
       @PathVariable Integer locationId, @RequestBody @Valid ApplicationDateReport dateReport) {

@@ -7,9 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/configurations")
@@ -23,13 +22,13 @@ public class ConfigurationController {
   }
 
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<Configuration>> getConfigurations() {
     return ResponseEntity.ok(configurationService.getAllConfigurations());
   }
 
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   public ResponseEntity<Configuration> updateConfiguration(@PathVariable int id, @RequestBody @Valid Configuration configuration) {
     return ResponseEntity.ok(configurationService.updateConfiguration(id, configuration));
   }

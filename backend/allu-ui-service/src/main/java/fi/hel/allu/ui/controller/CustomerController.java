@@ -1,13 +1,14 @@
 package fi.hel.allu.ui.controller;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.ui.service.CustomerExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,15 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.service.ContactService;
-import fi.hel.allu.servicecore.service.CustomerService;
-import fi.hel.allu.ui.service.CustomerExportService;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Controller for managing customer information.
@@ -44,19 +42,19 @@ public class CustomerController {
   @Autowired
   CustomerExportService customerExportService;
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<CustomerJson> findById(@PathVariable int id) {
     return new ResponseEntity<>(customerService.findCustomerById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/findByIds", method = RequestMethod.POST)
+  @PostMapping(value = "/findByIds")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<CustomerJson>> findByIds(@RequestBody List<Integer> ids) {
     return new ResponseEntity<>(customerService.getCustomersById(ids), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/contacts", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/contacts")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ContactJson>> findByCustomer(@PathVariable int id) {
     return new ResponseEntity<>(contactService.findByCustomer(id), HttpStatus.OK);
@@ -68,20 +66,20 @@ public class CustomerController {
    * @param id Customer's database id
    * @return list of changes ordered from oldest to newest
    */
-  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/history")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(customerService.getChanges(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<CustomerJson>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort="name", direction=Direction.ASC) Pageable pageRequest) {
     return new ResponseEntity<>(customerService.search(queryParameters, pageRequest), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search/{type}", method = RequestMethod.POST)
+  @PostMapping(value = "/search/{type}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<CustomerJson>> searchByType(
       @PathVariable CustomerType type,
@@ -92,25 +90,25 @@ public class CustomerController {
   }
 
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<CustomerJson> create(@Valid @RequestBody(required = true) CustomerJson customer) {
     return new ResponseEntity<>(customerService.createCustomer(customer), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<CustomerJson> update(@PathVariable int id, @Valid @RequestBody(required = true) CustomerJson customer) {
     return new ResponseEntity<>(customerService.updateCustomer(id, customer), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/withcontacts", method = RequestMethod.POST)
+  @PostMapping(value = "/withcontacts")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<CustomerWithContactsJson> createWithContacts(@Valid @RequestBody CustomerWithContactsJson customerWithContactsJson) {
     return new ResponseEntity<>(customerService.createCustomerWithContacts(customerWithContactsJson), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/withcontacts", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/withcontacts")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<CustomerWithContactsJson> updateWithContacts(
       @PathVariable int id,
@@ -121,7 +119,7 @@ public class CustomerController {
   /**
    * Creates CSV containing invoice recipients without SAP customer number.
    */
-  @RequestMapping(value = "/saporder/csv", method = RequestMethod.GET)
+  @GetMapping(value = "/saporder/csv")
   @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
   public ResponseEntity<Void> getSapCustomerOrderCSV(HttpServletResponse response) throws IOException {
     response.setContentType("text/csv; charset=utf-8");
@@ -134,7 +132,7 @@ public class CustomerController {
   /**
    * Creates CSV containing invoice recipients without SAP customer number.
    */
-  @RequestMapping(value = "/saporder/xlsx", method = RequestMethod.GET)
+  @GetMapping(value = "/saporder/xlsx")
   @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
   public ResponseEntity<Void> getSapCustomerOrderExcel(HttpServletResponse response) throws IOException {
     response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

@@ -1,12 +1,17 @@
 package fi.hel.allu.ui.controller;
 
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.AttachmentService;
+import fi.hel.allu.servicecore.service.InvoiceService;
+import fi.hel.allu.servicecore.validation.ApplicationGeometryValidator;
+import fi.hel.allu.ui.security.ApplicationSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +23,9 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ApplicationQueryParameters;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.AttachmentService;
-import fi.hel.allu.servicecore.service.InvoiceService;
-import fi.hel.allu.servicecore.validation.ApplicationGeometryValidator;
-import fi.hel.allu.ui.security.ApplicationSecurityService;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -53,20 +51,20 @@ public class ApplicationController {
     binder.addValidators(geometryValidator);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   @PreAuthorize("@applicationSecurityService.canCreate(#applicationJson.getType())")
   public ResponseEntity<ApplicationJson> create(@Valid @RequestBody ApplicationJson applicationJson) {
     return new ResponseEntity<>(applicationServiceComposer.createApplication(applicationJson), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
       applicationJson) {
     return new ResponseEntity<>(applicationServiceComposer.updateApplication(id, applicationJson), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationJson>> fetch(@RequestParam("ids") final List<Integer> ids) {
     return new ResponseEntity<>(applicationServiceComposer.findApplicationsByIds(ids), HttpStatus.OK);
@@ -77,34 +75,34 @@ public class ApplicationController {
    *
    * @param id note application's database ID
    */
-  @RequestMapping(value = "/note/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/note/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> deleteNote(@PathVariable int id) {
     applicationServiceComposer.deleteNote(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/owner/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/owner/{id}")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> updateApplicationOwner(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {
     applicationServiceComposer.updateApplicationOwner(id, applicationsIds, true);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
+  @PutMapping(value = "/owner/remove")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> removeApplicationOwner(@RequestBody(required = true) List<Integer> applicationsIds) {
     applicationServiceComposer.removeApplicationOwner(applicationsIds, true);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<ApplicationJson> findByIdentifier(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.findApplicationById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody ApplicationQueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
@@ -120,7 +118,7 @@ public class ApplicationController {
    *          application ID
    * @return list of changes ordered from oldest to newest
    */
-  @RequestMapping(value = "/{applicationId}/history", method = RequestMethod.GET)
+  @GetMapping(value = "/{applicationId}/history")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable Integer applicationId) {
     return new ResponseEntity<>(applicationServiceComposer.getChanges(applicationId), HttpStatus.OK);
@@ -132,7 +130,7 @@ public class ApplicationController {
    * @param applicationId application ID
    * @return list of status application has been
    */
-  @RequestMapping(value = "/{applicationId}/statushistory", method = RequestMethod.GET)
+  @GetMapping(value = "/{applicationId}/statushistory")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<StatusType>> getStatusHistory(@PathVariable int applicationId) {
     return ResponseEntity.ok(applicationServiceComposer.getStatusChanges(applicationId));
