@@ -5,11 +5,7 @@ import fi.hel.allu.model.domain.DefaultRecipient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +19,7 @@ public class DefaultRecipientController {
   @Autowired
   private DefaultRecipientDao dao;
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<DefaultRecipient>> getDefaultRecipients() {
     return new ResponseEntity<>(dao.findAll(), HttpStatus.OK);
   }
@@ -35,7 +31,7 @@ public class DefaultRecipientController {
    *
    * @return The created default recipient
    */
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<DefaultRecipient> insert(@RequestBody DefaultRecipient recipient) {
     return new ResponseEntity<>(dao.create(recipient), HttpStatus.OK);
   }
@@ -48,7 +44,7 @@ public class DefaultRecipientController {
    *
    * @return the updated recipient
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   public ResponseEntity<DefaultRecipient> update(@PathVariable int id, @RequestBody DefaultRecipient recipient) {
     return new ResponseEntity<>(dao.update(id, recipient), HttpStatus.OK);
   }
@@ -58,7 +54,7 @@ public class DefaultRecipientController {
    *
    * @param id recipient's ID
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     dao.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);

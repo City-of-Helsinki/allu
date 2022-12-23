@@ -28,7 +28,7 @@ public class LocationController {
   @Autowired
   private LocationService locationService;
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<Location> find(@PathVariable int id) {
     Optional<Location> location = locationDao.findById(id);
     Location locationValue = location
@@ -36,7 +36,7 @@ public class LocationController {
     return new ResponseEntity<>(locationValue, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/multi", method = RequestMethod.POST)
+  @PostMapping(value = "/multi")
   public ResponseEntity<List<Location>> findMultiple(@RequestBody List<Integer> ids) {
     List<Location> locations = locationDao.findByIds(ids);
     return ResponseEntity.ok(locations);
@@ -49,7 +49,7 @@ public class LocationController {
    * @param   srid  SRID of geometry (spatial reference system)
    * @return  List of locations of application. Never <code>null</code>.
    */
-  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
+  @GetMapping(value = "/application/{applicationId}")
   public ResponseEntity<List<Location>> findByApplication(@PathVariable int applicationId, @RequestParam(value="srid", required=false) Integer srid) {
     List<Location> locations;
     if (srid != null) {
@@ -68,7 +68,7 @@ public class LocationController {
    * @param locations Locations to be updated.
    * @return Updated locations.
    */
-  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/application/{applicationId}")
   public ResponseEntity<List<Location>> updateApplicationLocations(@PathVariable int applicationId,
       @RequestParam(required = true) int userId, @Valid @RequestBody List<Location> locations) {
     return new ResponseEntity<>(locationService.updateApplicationLocations(applicationId, locations, userId), HttpStatus.OK);
@@ -80,7 +80,7 @@ public class LocationController {
    * @param   locations   Locations to be added.
    * @return  Added locations.
    */
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<List<Location>> insert(@RequestParam(required = true) int userId,
       @Valid @RequestBody List<Location> locations) {
     return new ResponseEntity<>(locationService.insert(locations, userId), HttpStatus.OK);
@@ -91,7 +91,7 @@ public class LocationController {
    *
    * @param   locationId   Location id to be deleted.
    */
-  @RequestMapping(value = "/{locationId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{locationId}")
   public ResponseEntity<Void> delete(@RequestParam int userId,
                                      @PathVariable int locationId) {
     locationService.delete(Collections.singletonList(locationId), userId);
@@ -104,7 +104,7 @@ public class LocationController {
    * @param   location Location to update.
    * @return  Updated location.
    */
-  @RequestMapping(value = "/{locationId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{locationId}")
   public ResponseEntity<Location> update(@RequestParam int userId,
                                          @PathVariable int locationId,
                                          @Valid @RequestBody Location location) {
@@ -113,24 +113,24 @@ public class LocationController {
     return ResponseEntity.ok(updated.stream().findFirst().orElse(null));
   }
 
-  @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
+  @GetMapping(value = "/fixed-location")
   public ResponseEntity<List<FixedLocation>> getActiveLocations(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind,
                                                                 @RequestParam(value="srid", required=false) Integer srId) {
     return new ResponseEntity<>(locationDao.getActiveFixedLocations(applicationKind, srId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/fixed-location/all", method = RequestMethod.GET)
+  @GetMapping(value = "/fixed-location/all")
   public ResponseEntity<List<FixedLocation>> getAllFixedLocations(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind,
                                                                   @RequestParam(value="srid", required=false) Integer srId) {
     return new ResponseEntity<>(locationDao.getAllFixedLocation(applicationKind, srId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/fixed-location/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/fixed-location/{id}")
   public ResponseEntity<FixedLocation> getFixedLocationById(@PathVariable Integer id, @RequestParam(value="srid", required=false) Integer srId) {
     return ResponseEntity.ok(locationDao.findFixedLocation(id, srId));
   }
 
-  @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
+  @GetMapping(value = "/fixed-location-areas")
   public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas() {
     return ResponseEntity.ok(locationDao.getFixedLocationAreas());
   }
@@ -140,20 +140,20 @@ public class LocationController {
    *
    * @return city district list
    */
-  @RequestMapping(value = "/city-districts", method = RequestMethod.GET)
+  @GetMapping(value = "/city-districts")
   public ResponseEntity<List<CityDistrictInfo>> getCityDistrictList() {
     List<CityDistrictInfo> result = locationDao.getCityDistrictList().stream().map(LocationController::mapToInfo)
         .collect(Collectors.toList());
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/city-districts/{id}/name", method = RequestMethod.GET)
+  @GetMapping(value = "/city-districts/{id}/name")
   public ResponseEntity<String> getCityDistrictNameId(@PathVariable Integer id) {
     String name = locationDao.getCityDistrictNameById(id);
     return ResponseEntity.ok(name);
   }
 
-  @RequestMapping(value = "/city-districts/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/city-districts/{id}")
   public ResponseEntity<CityDistrictInfo> getCityDistrictById(@PathVariable Integer id) {
     CityDistrictInfo cityDistrict = locationDao.getCityDistrictById(id)
         .map(c -> mapToInfo(c))
@@ -161,7 +161,7 @@ public class LocationController {
     return ResponseEntity.ok(cityDistrict);
   }
 
-  @RequestMapping(value = "/city-districts/{cityDistrictId}/supervisor/{type}", method = RequestMethod.GET)
+  @GetMapping(value = "/city-districts/{cityDistrictId}/supervisor/{type}")
   public ResponseEntity<User> findSupervisionTaskOwner(@PathVariable int cityDistrictId, @PathVariable ApplicationType type) {
     if (!type.equals(ApplicationType.CABLE_REPORT)){
     final Optional<User> optUser = locationService.findSupervisionTaskOwner(type, cityDistrictId);
@@ -175,17 +175,17 @@ public class LocationController {
     }
   }
 
-  @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)
+  @PostMapping(value = "/geometry/isvalid")
   public ResponseEntity<Boolean> hasValidGeometry(@RequestBody GeometryWrapper geometryWrapper) {
     return new ResponseEntity<>(locationDao.isValidGeometry(geometryWrapper.getGeometry()), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/geometry/transform", method = RequestMethod.POST)
+  @PostMapping(value = "/geometry/transform")
   public ResponseEntity<GeometryWrapper> transformGeometry(@RequestBody GeometryWrapper geometryWrapper, @RequestParam(value="srid") Integer srId) {
     return ResponseEntity.ok(new GeometryWrapper(locationDao.transformCoordinates(geometryWrapper.getGeometry(), srId)));
   }
 
-  @RequestMapping(value = "/geometry/simplify", method = RequestMethod.POST)
+  @PostMapping(value = "/geometry/simplify")
   public ResponseEntity<GeometryWrapper> simplifyGeometry(@RequestBody GeometryWrapper geometryWrapper, @RequestParam(value="zoom") Integer zoomLevel) {
     return ResponseEntity.ok(new GeometryWrapper(locationService.simplifyGeometry(geometryWrapper.getGeometry(), zoomLevel)));
   }

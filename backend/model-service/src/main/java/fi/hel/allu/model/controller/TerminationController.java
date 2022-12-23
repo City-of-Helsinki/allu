@@ -21,18 +21,18 @@ public class TerminationController {
   private TerminationDao terminationDao;
 
 
-  @RequestMapping(value = "/{id}/termination", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/termination")
   public ResponseEntity<byte[]> getTerminationDocument(@PathVariable Integer id) {
     return ResponseEntity.ok(terminationDao.getTerminationDocument(id));
   }
 
-  @RequestMapping(value = "/terminated/find", method = RequestMethod.POST)
+  @PostMapping(value = "/terminated/find")
   public ResponseEntity<List<TerminationInfo>> findByApplicationIds(@RequestBody List<Integer> applicationIds) {
     List<TerminationInfo> users = terminationDao.findByApplicationIds(applicationIds);
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/termination", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/termination")
   public ResponseEntity<Void> storeTerminationDocument(@PathVariable Integer id, @RequestParam("file") MultipartFile file)
       throws IOException {
     terminationDao.storeTerminationDocument(id, file.getBytes());
@@ -41,27 +41,27 @@ public class TerminationController {
     return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
   }
 
-  @RequestMapping(value = "/{id}/termination/info", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/termination/info")
   public ResponseEntity<TerminationInfo> getTerminationInfo(@PathVariable Integer id) {
     return ResponseEntity.ok(terminationDao.getTerminationInfo(id));
   }
 
-  @RequestMapping(value = "/{id}/termination/info", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/termination/info")
   public ResponseEntity<TerminationInfo> insertTerminationInfo(@PathVariable Integer id, @RequestBody TerminationInfo terminationInfo) {
     return ResponseEntity.ok(terminationDao.insertTerminationInfo(id, terminationInfo));
   }
 
-  @RequestMapping(value = "/{id}/termination/info", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/termination/info")
   public ResponseEntity<TerminationInfo> updateTerminationInfo(@PathVariable Integer id, @RequestBody TerminationInfo terminationInfo) {
     return ResponseEntity.ok(terminationDao.updateTerminationInfo(id, terminationInfo));
   }
 
-  @RequestMapping(value = "/terminated", method = RequestMethod.GET)
+  @GetMapping(value = "/terminated")
   public ResponseEntity<List<Integer>> getTerminatedApplications() {
     return ResponseEntity.ok(terminationDao.getTerminatedApplications());
   }
 
-  @RequestMapping(value = "/{id}/termination/info", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}/termination/info")
   public ResponseEntity<Boolean> removeTerminationInfo(@PathVariable Integer id) {
     terminationDao.removeTerminationInfo(id);
     return ResponseEntity.ok(true);

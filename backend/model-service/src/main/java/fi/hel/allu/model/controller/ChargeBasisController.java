@@ -1,16 +1,15 @@
 package fi.hel.allu.model.controller;
 
-import java.util.List;
-
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications/{id}")
@@ -33,7 +32,7 @@ public class ChargeBasisController {
    * @param id the application ID
    * @return the charge basis entries for the application
    */
-  @RequestMapping(value = "/charge-basis", method = RequestMethod.GET)
+  @GetMapping(value = "/charge-basis")
   public ResponseEntity<List<ChargeBasisEntry>> findByApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(chargeBasisService.getChargeBasis(id), HttpStatus.OK);
   }
@@ -42,12 +41,12 @@ public class ChargeBasisController {
    * Get the charge basis entries for an application without using invoicing periods defined
    * for the application, i.e. everything on a single invoice.
    */
-  @RequestMapping(value = "/single-invoice-charge-basis", method = RequestMethod.GET)
+  @GetMapping(value = "/single-invoice-charge-basis")
   public ResponseEntity<List<ChargeBasisEntry>> findSingleInvoiceByApplicationId(@PathVariable int id) {
    return ResponseEntity.ok(chargeBasisService.findSingleInvoiceByApplicationId(id));
   }
 
-  @RequestMapping(value = "/location/{locationid}/invoicable/sum", method = RequestMethod.GET)
+  @GetMapping(value = "/location/{locationid}/invoicable/sum")
   public ResponseEntity<Integer> getInvoicableSumForLocation(@PathVariable(value = "id") int id, @PathVariable(value = "locationid") Integer locationId) {
     return ResponseEntity.ok(chargeBasisService.getInvoicableSumForLocation(id, locationId));
   }
@@ -61,7 +60,7 @@ public class ChargeBasisController {
    * @return the charge basis (calculated and manual) entries for the application
    */
   @Transactional
-  @RequestMapping(value = "/charge-basis", method = RequestMethod.PUT)
+  @PutMapping(value = "/charge-basis")
   public ResponseEntity<List<ChargeBasisEntry>> setManualChargeBasis(@PathVariable int id,
                                                                      @RequestBody List<ChargeBasisEntry> chargeBasisEntries) {
     chargeBasisService.setManualChargeBasis(id, chargeBasisEntries);
@@ -70,7 +69,7 @@ public class ChargeBasisController {
   }
 
   @Transactional
-  @RequestMapping(value = "/charge-basis/{entryId}/invoicable", method = RequestMethod.PUT)
+  @PutMapping(value = "/charge-basis/{entryId}/invoicable")
   public ResponseEntity<ChargeBasisEntry> setInvoicable(@PathVariable int id, @PathVariable int entryId,
                                                         @RequestParam boolean invoicable) {
     ResponseEntity<ChargeBasisEntry> response = new ResponseEntity<>(chargeBasisService.setInvoicable(id, entryId, invoicable), HttpStatus.OK);
@@ -78,7 +77,7 @@ public class ChargeBasisController {
     return response;
   }
 
-  @RequestMapping(value = "/charge-basis", method = RequestMethod.POST)
+  @PostMapping(value = "/charge-basis")
   public ResponseEntity<ChargeBasisEntry> insertEntry(@PathVariable int id,
                                                       @RequestBody ChargeBasisEntry entry) {
     ChargeBasisEntry inserted = chargeBasisService.insert(id, entry);
@@ -86,12 +85,12 @@ public class ChargeBasisController {
     return ResponseEntity.ok(inserted);
   }
 
-  @RequestMapping(value = "/charge-basis/{entryId}", method = RequestMethod.GET)
+  @GetMapping(value = "/charge-basis/{entryId}")
   public ResponseEntity<ChargeBasisEntry> getEntry(@PathVariable int id, @PathVariable int entryId) {
     return ResponseEntity.ok(chargeBasisService.getEntry(id, entryId));
   }
 
-  @RequestMapping(value = "/charge-basis/{entryId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/charge-basis/{entryId}")
   public ResponseEntity<ChargeBasisEntry> updateEntry(@PathVariable int id, @PathVariable int entryId,
                                                         @RequestBody ChargeBasisEntry entry) {
     ChargeBasisEntry updated = chargeBasisService.updateEntry(id, entryId, entry);
@@ -99,14 +98,14 @@ public class ChargeBasisController {
     return ResponseEntity.ok(updated);
   }
 
-  @RequestMapping(value = "/charge-basis/{entryId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/charge-basis/{entryId}")
   public ResponseEntity<Void> deleteEntry(@PathVariable int id, @PathVariable int entryId) {
     chargeBasisService.deleteEntry(id, entryId);
     applicationService.updateApplicationPricing(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/charge-basis/recalculate", method = RequestMethod.PUT)
+  @PutMapping(value = "/charge-basis/recalculate")
   public ResponseEntity<List<ChargeBasisEntry>> recalculateEntries(@PathVariable int id) {
     applicationService.updateChargeBasis(id);
     applicationService.updateApplicationPricing(id);

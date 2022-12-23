@@ -22,7 +22,7 @@ public class CommentController {
     this.commentDao = commentDao;
   }
 
-  @RequestMapping(value = "/comments/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/comments/{id}")
   public ResponseEntity<Comment> findById(@PathVariable int id) {
     return new ResponseEntity<>(
         commentDao.findById(id).orElseThrow(() -> new NoSuchEntityException("Comment not found with id " + id)),
@@ -35,34 +35,34 @@ public class CommentController {
    * @param applicationId the application ID
    * @return list of comments for the application
    */
-  @RequestMapping(value = "/applications/{applicationId}/comments", method = RequestMethod.GET)
+  @GetMapping(value = "/applications/{applicationId}/comments")
   public ResponseEntity<List<Comment>> findByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(commentDao.findByApplicationId(applicationId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/comments/find", method = RequestMethod.POST)
+  @PostMapping(value = "/applications/comments/find")
   public ResponseEntity<List<Comment>> findByApplicationIds(@RequestBody List<Integer> applicationIds) {
     List<Comment> comments = commentDao.findByApplicationIds(applicationIds);
     return new ResponseEntity<>(comments, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/comments/find/mapping", method = RequestMethod.POST)
+  @PostMapping(value = "/applications/comments/find/mapping")
   public ResponseEntity<Map<Integer, List<Comment>>> findByApplicationIdsGrouping(@RequestBody List<Integer> applicationIds) {
     Map<Integer, List<Comment>> commentListMap = commentDao.findByApplicationIdsGrouping(applicationIds);
     return new ResponseEntity<>(commentListMap, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/{applicationId}/comments/count", method = RequestMethod.GET)
+  @GetMapping(value = "/applications/{applicationId}/comments/count")
   public ResponseEntity<Integer> getCountByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(commentDao.getCountByApplicationId(applicationId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/{applicationId}/comments/latest", method = RequestMethod.GET)
+  @GetMapping(value = "/applications/{applicationId}/comments/latest")
   public ResponseEntity<Comment> getLatestCommentByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(commentDao.getLatestCommentByApplicationId(applicationId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.GET)
+  @GetMapping(value = "/projects/{projectId}/comments")
   public ResponseEntity<List<Comment>> findByProjectId(@PathVariable int projectId) {
     return new ResponseEntity<>(commentDao.findByProjectId(projectId), HttpStatus.OK);
   }
@@ -74,14 +74,14 @@ public class CommentController {
    * @param comment The comment data
    * @return The created comment
    */
-  @RequestMapping(value = "/applications/{applicationId}/comments", method = RequestMethod.POST)
+  @PostMapping(value = "/applications/{applicationId}/comments")
   public ResponseEntity<Comment> insertForApplication(@PathVariable int applicationId,
       @Valid @RequestBody(required = true) Comment comment) {
     Comment created = commentDao.insertForApplication(comment, applicationId);
     return new ResponseEntity<>(created, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.POST)
+  @PostMapping(value = "/projects/{projectId}/comments")
   public ResponseEntity<Comment> insertForProject(@PathVariable int projectId,
       @Valid @RequestBody(required = true) Comment comment) {
     return new ResponseEntity<>(commentDao.insertForProject(comment, projectId), HttpStatus.OK);
@@ -94,7 +94,7 @@ public class CommentController {
    * @param comment comment's data
    * @return the updated comment
    */
-  @RequestMapping(value = "/comments/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/comments/{id}")
   public ResponseEntity<Comment> update(@PathVariable int id, @Valid @RequestBody(required = true) Comment comment) {
     return new ResponseEntity<>(commentDao.update(id, comment), HttpStatus.OK);
   }
@@ -104,7 +104,7 @@ public class CommentController {
    *
    * @param id comment's ID
    */
-  @RequestMapping(value = "/comments/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/comments/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     commentDao.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);

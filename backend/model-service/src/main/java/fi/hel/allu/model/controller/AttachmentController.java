@@ -1,22 +1,20 @@
 package fi.hel.allu.model.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.AttachmentDao;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/attachments")
@@ -36,7 +34,7 @@ public class AttachmentController {
    *
    * @throws IOException
    */
-  @RequestMapping(value = "/applications/{applicationId}", method = RequestMethod.POST)
+  @PostMapping(value = "/applications/{applicationId}")
   public ResponseEntity<AttachmentInfo> addAttachment(
       @PathVariable int applicationId,
       @Valid @RequestPart("info") AttachmentInfo attachmentInfo, @RequestPart("data") MultipartFile data)
@@ -61,13 +59,13 @@ public class AttachmentController {
 
   }
 
-  @RequestMapping(value = "/applications/{applicationId}/default", method = RequestMethod.PUT)
+  @PutMapping(value = "/applications/{applicationId}/default")
   public ResponseEntity<Void> addDefaultAttachments(@PathVariable Integer applicationId, @RequestBody List<Integer> defaultAttachmentIds) {
     defaultAttachmentIds.forEach(id -> attachmentDao.linkApplicationToAttachment(applicationId, id));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/{applicationId}/default", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/applications/{applicationId}/default")
   public ResponseEntity<Void> removeDefaultAttachments(@PathVariable Integer applicationId,  @RequestBody List<Integer> defaultAttachmentIds) {
     defaultAttachmentIds.forEach(id -> attachmentDao.removeLinkApplicationToAttachment(applicationId, id));
     return new ResponseEntity<>(HttpStatus.OK);
@@ -79,7 +77,7 @@ public class AttachmentController {
    * @param attachmentId
    *          The attachment's ID.
    */
-  @RequestMapping(value = "/{attachmentId}/size", method = RequestMethod.GET)
+  @GetMapping(value = "/{attachmentId}/size")
   public ResponseEntity<Long> getAttachmentSize(@PathVariable int attachmentId) {
     Long size = attachmentDao.getSizeByAttachmentId(attachmentId)
         .orElseThrow(() -> new NoSuchEntityException("Attachment data not found for attachment.", Integer.toString(attachmentId)));
@@ -92,7 +90,7 @@ public class AttachmentController {
    * @param attachmentId
    *          The attachment's ID.
    */
-  @RequestMapping(value = "/{attachmentId}", method = RequestMethod.GET)
+  @GetMapping(value = "/{attachmentId}")
   public ResponseEntity<AttachmentInfo> findAttachmentById(
       @PathVariable int attachmentId) {
     AttachmentInfo attachmentInfo = attachmentDao.findById(attachmentId)
@@ -109,7 +107,7 @@ public class AttachmentController {
    * @param attachmentInfo
    *          The new attachment info.
    */
-  @RequestMapping(value = "/{attachmentId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{attachmentId}")
   public ResponseEntity<AttachmentInfo> updateAttachmentInfo(
       @PathVariable int attachmentId,
       @Valid @RequestBody(required = true) AttachmentInfo attachmentInfo) {
@@ -127,7 +125,7 @@ public class AttachmentController {
    * @param attachmentId
    *          The attachment's ID.
    */
-  @RequestMapping(value = "/applications/{applicationId}/{attachmentId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/applications/{applicationId}/{attachmentId}")
   public ResponseEntity<?> deleteAttachmentInfo(
       @PathVariable int applicationId,
       @PathVariable int attachmentId) {
@@ -148,7 +146,7 @@ public class AttachmentController {
    *          attachment's ID
    * @return The attachment's data
    */
-  @RequestMapping(value = "/{attachmentId}/data", method = RequestMethod.GET)
+  @GetMapping(value = "/{attachmentId}/data")
   public ResponseEntity<byte[]> getAttachmentData(@PathVariable int attachmentId) {
     byte[] bytes = attachmentDao.getData(attachmentId)
         .orElseThrow(() -> new NoSuchEntityException("Attachment not found", Integer.toString(attachmentId)));
@@ -167,7 +165,7 @@ public class AttachmentController {
    * @return  Added default attachment.
    * @throws IOException
    */
-  @RequestMapping(value = "/default", method = RequestMethod.POST)
+  @PostMapping(value = "/default")
   public ResponseEntity<DefaultAttachmentInfo> addDefaultAttachment(
       @Valid @RequestPart("info") DefaultAttachmentInfo attachmentInfo, @RequestPart("data") MultipartFile data)
       throws IOException {
@@ -187,7 +185,7 @@ public class AttachmentController {
    * @param attachmentInfo
    *          The new attachment info.
    */
-  @RequestMapping(value = "/default/{attachmentId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/default/{attachmentId}")
   public ResponseEntity<AttachmentInfo> updateDefaultAttachmentInfo(
       @PathVariable int attachmentId,
       @Valid @RequestBody(required = true) DefaultAttachmentInfo attachmentInfo) {
@@ -200,7 +198,7 @@ public class AttachmentController {
    * @param attachmentId
    *          The attachment's ID.
    */
-  @RequestMapping(value = "/default/{attachmentId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/default/{attachmentId}")
   public ResponseEntity<?> deleteDefaultAttachmentInfo(@PathVariable int attachmentId) {
     attachmentDao.deleteDefault(attachmentId);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -211,7 +209,7 @@ public class AttachmentController {
    *
    * @return  List of default attachments.
    */
-  @RequestMapping(value = "/default/{attachmentId}", method = RequestMethod.GET)
+  @GetMapping(value = "/default/{attachmentId}")
   public ResponseEntity<DefaultAttachmentInfo> findAllDefaultAttachmentInfo(
       @PathVariable int attachmentId) {
     DefaultAttachmentInfo attachmentInfo = attachmentDao.findDefaultById(attachmentId)
@@ -224,7 +222,7 @@ public class AttachmentController {
    *
    * @return  List of default attachments.
    */
-  @RequestMapping(value = "/default", method = RequestMethod.GET)
+  @GetMapping(value = "/default")
   public ResponseEntity<List<DefaultAttachmentInfo>> findAllDefaultAttachmentInfo() {
     return new ResponseEntity<>(attachmentDao.findDefault(), HttpStatus.OK);
   }
@@ -235,7 +233,7 @@ public class AttachmentController {
    * @param   applicationType   Application type whose default attachments should be fetched.
    * @return  List of default attachments for the given application type.
    */
-  @RequestMapping(value = "/default/applicationType/{applicationType}", method = RequestMethod.GET)
+  @GetMapping(value = "/default/applicationType/{applicationType}")
   public ResponseEntity<List<DefaultAttachmentInfo>> searchDefaultAttachmentInfo(
       @PathVariable String applicationType) {
     return new ResponseEntity<>(attachmentDao.searchDefault(ApplicationType.valueOf(applicationType)), HttpStatus.OK);

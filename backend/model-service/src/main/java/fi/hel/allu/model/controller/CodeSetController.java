@@ -23,7 +23,7 @@ public class CodeSetController {
     this.codeSetDao = codeSetDao;
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<CodeSet> findById(@PathVariable Integer id) {
     final Optional<CodeSet> codeSet = codeSetDao.findById(id);
     return codeSet
@@ -31,19 +31,19 @@ public class CodeSetController {
         .orElseThrow(() -> new NoSuchEntityException("CodeSet not found", id));
   }
 
-  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  @PostMapping(value = "/find")
   public ResponseEntity<List<CodeSet>> findByIds(@RequestBody List<Integer> ids) {
     final List<CodeSet> codeSet = codeSetDao.findByIds(ids);
     return new ResponseEntity<>(codeSet, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.GET)
+  @GetMapping(value = "/search")
   public ResponseEntity<List<CodeSet>> searchByType(@RequestParam("type") CodeSetType type) {
     final List<CodeSet> codeSets = codeSetDao.findByType(type);
     return new ResponseEntity<>(codeSets, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/find", method = RequestMethod.GET)
+  @GetMapping(value = "/find")
   public ResponseEntity<CodeSet> findByTypeAndCode(
       @RequestParam("type") CodeSetType type,
       @RequestParam("code") String code) {

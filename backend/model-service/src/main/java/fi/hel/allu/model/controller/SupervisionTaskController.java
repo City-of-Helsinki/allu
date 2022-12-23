@@ -1,11 +1,10 @@
 package fi.hel.allu.model.controller;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.service.SupervisionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.model.domain.SupervisionWorkItem;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import javax.validation.Valid;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
@@ -33,22 +31,22 @@ public class SupervisionTaskController {
     this.supervisionTaskService = supervisionTaskService;
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<SupervisionTask> findById(@PathVariable int id) {
     return new ResponseEntity<>(supervisionTaskService.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
+  @GetMapping(value = "/application/{applicationId}")
   public ResponseEntity<List<SupervisionTask>> findByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(supervisionTaskService.findByApplicationId(applicationId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/location/{locationId}", method = RequestMethod.GET)
+  @GetMapping(value = "/location/{locationId}")
   public ResponseEntity<List<SupervisionTask>> findByLocationId(@PathVariable int locationId) {
     return new ResponseEntity<>(supervisionTaskService.findByLocationId(locationId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/application/{applicationId}/type/{type}", method = RequestMethod.GET)
+  @GetMapping(value = "/application/{applicationId}/type/{type}")
   public ResponseEntity<List<SupervisionTask>> findByApplicationIdAndType(
       @PathVariable(value = "applicationId") int applicationId,
       @PathVariable(value = "type") SupervisionTaskType type,
@@ -61,48 +59,48 @@ public class SupervisionTaskController {
   }
 
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<SupervisionTask> insert(@Valid @RequestBody SupervisionTask supervisionTask) {
     return new ResponseEntity<>(supervisionTaskService.insert(supervisionTask), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   public ResponseEntity<SupervisionTask> update(@PathVariable int id, @Valid @RequestBody SupervisionTask supervisionTask) {
     supervisionTask.setId(id);
     return new ResponseEntity<>(supervisionTaskService.update(id, supervisionTask), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     supervisionTaskService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   public ResponseEntity<Page<SupervisionWorkItem>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria,
       Pageable pageRequest) {
     return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/owner/{ownerId}")
   public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestBody List<Integer> tasks) {
     supervisionTaskService.updateOwner(ownerId, tasks);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
+  @PutMapping(value = "/owner/remove")
   public ResponseEntity<Void> removeOwner(@RequestBody List<Integer> tasks) {
     supervisionTaskService.removeOwner(tasks);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/approve", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/approve")
   public ResponseEntity<SupervisionTask> approve(@PathVariable int id, @Valid @RequestBody SupervisionTask supervisionTask) {
     supervisionTask.setId(id);
     return new ResponseEntity<>(supervisionTaskService.approve(supervisionTask), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/reject", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/reject")
   public ResponseEntity<SupervisionTask> reject(
       @PathVariable int id,
       @Valid @RequestBody SupervisionTask supervisionTask,
@@ -111,14 +109,14 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(supervisionTaskService.reject(supervisionTask, newDate), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/externalowner/{externalownerid}/history", method = RequestMethod.POST)
+  @PostMapping(value = "/externalowner/{externalownerid}/history")
   public ResponseEntity<Map<Integer, List<SupervisionTask>>> getSupervisionTaskHistoryForExternalOwner(
       @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestParam(value = "eventsafter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime eventsAfter, @RequestBody List<Integer> includedExternalApplicationIds) {
     Map<Integer, List<SupervisionTask>> result = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedExternalApplicationIds);
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/address", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/address")
   public ResponseEntity<String[]> findAddressById(@PathVariable int id) {
     return ResponseEntity.ok(supervisionTaskService.findAddressById(id));
   }

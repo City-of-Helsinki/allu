@@ -1,21 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import fi.hel.allu.common.domain.DocumentSearchCriteria;
 import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -30,6 +14,20 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.ApplicationReplacementService;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -304,21 +302,21 @@ public class ApplicationController {
    * @return Decision PDF data
    *
    */
-  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/decision")
   public ResponseEntity<byte[]> getDecision(@PathVariable int id) {
     byte[] bytes = decisionDao.getDecision(id)
         .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
     return new ResponseEntity<>(bytes, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/decision/anonymized", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/decision/anonymized")
   public ResponseEntity<byte[]> getAnonymizedDecision(@PathVariable int id) {
     byte[] bytes = decisionDao.getAnonymizedDecision(id)
         .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
     return new ResponseEntity<>(bytes, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/decision-distribution-list", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/decision-distribution-list")
   public ResponseEntity<Void> replaceDecisionDistributionList(
       @PathVariable int id,
       @RequestBody List<DistributionEntry> distributionEntries) {
@@ -326,7 +324,7 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/decision-distribution-list", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/decision-distribution-list")
   public ResponseEntity<List<DistributionEntry>> getDecisionDistributionList(@PathVariable int id) {
     return ResponseEntity.ok(distributionEntryDao.findByApplicationId(id));
   }
@@ -337,7 +335,7 @@ public class ApplicationController {
    *
    * @param specifiers List of application specifiers
    */
-  @RequestMapping(value = "/deadline-check", method = RequestMethod.POST)
+  @PostMapping(value = "/deadline-check")
   public ResponseEntity<List<Application>> deadlineCheck(@RequestBody @Valid DeadlineCheckParams checkParams) {
     return new ResponseEntity<>(applicationService.deadLineCheck(checkParams), HttpStatus.OK);
   }
@@ -347,7 +345,7 @@ public class ApplicationController {
    *
    * @param applicationIds list of application IDs
    */
-  @RequestMapping(value = "/reminder-sent", method = RequestMethod.POST)
+  @PostMapping(value = "/reminder-sent")
   public ResponseEntity<Void> markReminderSent(@RequestBody List<Integer> applicationIds) {
     applicationService.markReminderSent(applicationIds);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -359,17 +357,17 @@ public class ApplicationController {
    * @param id The appication's database ID
    * @return all invoices for given application ID
    */
-  @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/invoices")
   public ResponseEntity<List<Invoice>> getInvoices(@PathVariable int id) {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/targetstate",  method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/targetstate")
   public ResponseEntity<Application> setTargetState(@PathVariable Integer id, @RequestBody StatusType targetState) {
     return ResponseEntity.ok(applicationService.setTargetState(id, targetState));
   }
 
-  @RequestMapping(value = "/{id}/targetstate/clear", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/targetstate/clear")
   public ResponseEntity<Application> clearTargetState(@PathVariable Integer id) {
     return ResponseEntity.ok(applicationService.setTargetState(id, null));
   }
@@ -379,7 +377,7 @@ public class ApplicationController {
    *
    * @return list of invoices
    */
-  @RequestMapping(value = "/invoices/ready-to-send", method = RequestMethod.GET)
+  @GetMapping(value = "/invoices/ready-to-send")
   public ResponseEntity<List<Invoice>> getPendingInvoices() {
     return new ResponseEntity<>(invoiceService.findPending(), HttpStatus.OK);
   }
@@ -389,13 +387,13 @@ public class ApplicationController {
    *
    * @param invoiceIds list of invoice IDs
    */
-  @RequestMapping(value = "/invoices/mark-as-sent", method = RequestMethod.POST)
+  @PostMapping(value = "/invoices/mark-as-sent")
   public ResponseEntity<Void> markInvoicesSent(@RequestBody List<Integer> invoiceIds) {
     invoiceService.markSent(invoiceIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/invoices/{id}/release-pending",  method = RequestMethod.PUT)
+  @PutMapping(value = "/invoices/{id}/release-pending")
   public ResponseEntity<Void> releasePendingInvoice(@PathVariable Integer id) {
     invoiceService.releasePending(id);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -404,7 +402,7 @@ public class ApplicationController {
   /**
    * Finds finished applications having one of the given statuses.
    */
-  @RequestMapping(value = "/finished", method = RequestMethod.POST)
+  @PostMapping(value = "/finished")
   public ResponseEntity<List<Integer>> findFinishedApplications(@RequestBody DeadlineCheckParams params) {
     return new ResponseEntity<>(applicationService.findFinishedApplications(params), HttpStatus.OK);
   }
@@ -412,7 +410,7 @@ public class ApplicationController {
   /**
    * Finds finished notes
    */
-  @RequestMapping(value = "/notes/finished", method = RequestMethod.GET)
+  @GetMapping(value = "/notes/finished")
   public ResponseEntity<List<Integer>> findFinishedNotes() {
     return new ResponseEntity<>(applicationService.findFinishedNotes(), HttpStatus.OK);
   }
@@ -420,7 +418,7 @@ public class ApplicationController {
   /**
    * Finds id of the owner (user) of the application.
    */
-  @RequestMapping(value = "/{id}/owner", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/owner")
   public ResponseEntity<Integer> getApplicationOwner(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationOwner(id), HttpStatus.OK);
   }
@@ -428,67 +426,67 @@ public class ApplicationController {
   /**
    * Finds id of the external owner (user) of the application.
    */
-  @RequestMapping(value = "/{id}/externalowner", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/externalowner")
   public ResponseEntity<Integer> getApplicationExternalOwner(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationExternalOwner(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/external/{externalid}/applicationid", method = RequestMethod.GET)
+  @GetMapping(value = "/external/{externalid}/applicationid")
   public ResponseEntity<Integer> getApplicationIdForExternalId(@PathVariable(value = "externalid") Integer externalId) {
     return new ResponseEntity<>(applicationService.getApplicationIdForExternalId(externalId), HttpStatus.OK);
   }
 
 
-  @RequestMapping(value = "/{id}/handler", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/handler")
   public ResponseEntity<User> getApplicationHandler(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationHandler(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/decisionmaker", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/decisionmaker")
   public ResponseEntity<User> getApplicationDecisionMaker(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationDecisionMaker(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/invoicerecipient")
   public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam(value = "invoicerecipientid", required = false) final Integer invoiceRecipientId,
       @RequestParam("userid") final Integer userId) {
     applicationService.setInvoiceRecipient(id, invoiceRecipientId, userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/invoicerecipient")
   public ResponseEntity<Customer> getInvoiceRecipient(@PathVariable int id) {
     return ResponseEntity.ok(applicationService.getInvoiceRecipient(id));
   }
 
-  @RequestMapping(value = "/{id}/replacing", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/replacing")
   public ResponseEntity<Integer> getReplacingApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.getReplacingApplicationId(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/clientapplicationdata", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}/clientapplicationdata")
   public ResponseEntity<Void> removeClientApplicationData(@PathVariable Integer id) {
     applicationService.removeClientApplicationData(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/customers", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/customers")
   public ResponseEntity<List<CustomerWithContacts>> getApplicationCustomers(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationCustomers(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/version", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/version")
   public ResponseEntity<Integer> getVersion(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.getVersion(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/ownernotification")
   public ResponseEntity<Void> addOwnerNotification(@PathVariable Integer id) {
     applicationService.addOwnerNotification(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}/ownernotification")
   public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
     applicationService.removeOwnerNotification(id);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -497,7 +495,7 @@ public class ApplicationController {
   /**
    * Search decisions
    */
-  @RequestMapping(value = "/decisions/search", method = RequestMethod.POST)
+  @PostMapping(value = "/decisions/search")
   public ResponseEntity<List<DocumentSearchResult>> searchDecisions(@RequestBody DocumentSearchCriteria searchCriteria) {
     return ResponseEntity.ok(decisionDao.searchDecisions(searchCriteria));
   }

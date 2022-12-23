@@ -5,7 +5,6 @@ import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.model.domain.ProjectChange;
 import fi.hel.allu.model.service.ProjectService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +24,7 @@ public class ProjectController {
   @Autowired
   private ProjectService projectService;
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<Project> find(@PathVariable int id) {
     return new ResponseEntity<>(projectService.find(id), HttpStatus.OK);
   }
@@ -37,7 +35,7 @@ public class ProjectController {
    * @param   ids to be searched.
    * @return  found applications
    */
-  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  @PostMapping(value = "/find")
   public ResponseEntity<List<Project>> findByIds(@RequestBody List<Integer> ids) {
     List<Project> projects = projectService.findByIds(ids);
     return new ResponseEntity<>(projects, HttpStatus.OK);
@@ -61,7 +59,7 @@ public class ProjectController {
    * @param id Project whose children should be fetched.
    * @return List of children. Never <code>null</code>.
    */
-  @RequestMapping(value = "/{id}/children", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/children")
   public ResponseEntity<List<Project>> findChildren(@PathVariable int id) {
     return new ResponseEntity<>(projectService.findProjectChildren(id), HttpStatus.OK);
   }
@@ -73,7 +71,7 @@ public class ProjectController {
    * @return  List of parents. Never <code>null</code>. The requested project itself is the first item and most grand parent project
    *          is the last item.
    */
-  @RequestMapping(value = "/{id}/parents", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/parents")
   public ResponseEntity<List<Project>> findParents(@PathVariable int id) {
     return new ResponseEntity<>(projectService.findProjectParents(id), HttpStatus.OK);
   }
@@ -85,7 +83,7 @@ public class ProjectController {
    * @param project Project to be inserted.
    * @return Inserted project.
    */
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<Project> insert(@Valid @RequestBody(required = true) ProjectChange projectChange) {
     return new ResponseEntity<>(projectService.insert(
         projectChange.getProject(), projectChange.getUserId()), HttpStatus.OK);
@@ -97,19 +95,19 @@ public class ProjectController {
    * @param project Project to be updated.
    * @return Updated project.
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   public ResponseEntity<Project> update(@PathVariable int id, @Valid @RequestBody(required = true) ProjectChange projectChange) {
     return new ResponseEntity<>(projectService.update(
         id, projectChange.getProject(), projectChange.getUserId()), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     projectService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/history")
   public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(projectService.getProjectChanges(id), HttpStatus.OK);
   }
@@ -120,19 +118,19 @@ public class ProjectController {
    * @param id
    * @return list of applications
    */
-  @RequestMapping(value = "/{id}/applications", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/applications")
   public ResponseEntity<List<Application>> findApplicationsByProject(@PathVariable int id) {
     return new ResponseEntity<>(projectService.findApplicationsByProject(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/applications")
   public ResponseEntity<List<Integer>> addApplications(
       @PathVariable int id, @RequestParam(required = true) int userId,
       @Valid @RequestBody(required = true) List<Integer> applicationIds) {
     return new ResponseEntity<>(projectService.addApplications(id, applicationIds, userId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applications/{appId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/applications/{appId}")
   public ResponseEntity<Void> removeApplication(@PathVariable int appId, @RequestParam(required = true) int userId) {
     projectService.removeApplication(appId, userId);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -145,7 +143,7 @@ public class ProjectController {
    * @param parentProject New parent project.
    * @return Updated project with new parent.
    */
-  @RequestMapping(value = {"/{id}/parentProject/{parentProject}", "/{id}/parentProject"}, method = RequestMethod.PUT)
+  @PutMapping(value = {"/{id}/parentProject/{parentProject}", "/{id}/parentProject"})
   public ResponseEntity<Project> updateProjectParent(
       @PathVariable int id, @PathVariable Optional<Integer> parentProject, @RequestParam(required = true) int userId) {
     return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject.orElse(null), userId), HttpStatus.OK);
@@ -158,12 +156,12 @@ public class ProjectController {
    * @param projectIds List of projects to be updated.
    * @return Projects that have been updated. May contain more projects than in the list provided as a parameter.
    */
-  @RequestMapping(value = "/update", method = RequestMethod.PUT)
+  @PutMapping(value = "/update")
   public ResponseEntity<List<Project>> updateProjectInformation(@RequestParam(required = true) int userId, @Valid @RequestBody(required = true) List<Integer> projectIds) {
     return new ResponseEntity<>(projectService.updateProjectInformation(projectIds, userId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/nextProjectNumber", method = RequestMethod.POST)
+  @PostMapping(value = "/nextProjectNumber")
   public ResponseEntity<Integer> getNextProjectNumber() {
     return new ResponseEntity<>(projectService.getNextProjectNumber(), HttpStatus.OK);
   }

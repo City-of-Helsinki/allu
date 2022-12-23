@@ -5,9 +5,9 @@ import fi.hel.allu.model.domain.PersonAuditLogLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -23,7 +23,7 @@ public class PersonAuditLogController {
     this.personAuditLogDao = personAuditLogDao;
   }
 
-  @RequestMapping(value = "/log", method = RequestMethod.POST)
+  @PostMapping(value = "/log")
   public ResponseEntity<Void> log(@Valid @RequestBody PersonAuditLogLog logEntry) {
     personAuditLogDao.insert(logEntry);
     return new ResponseEntity<>(HttpStatus.OK);

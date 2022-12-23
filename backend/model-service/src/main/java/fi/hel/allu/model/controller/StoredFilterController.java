@@ -1,13 +1,14 @@
 package fi.hel.allu.model.controller;
 
-import java.util.List;
-import javax.validation.Valid;
+import fi.hel.allu.model.domain.StoredFilter;
+import fi.hel.allu.model.service.StoredFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import fi.hel.allu.model.domain.StoredFilter;
-import fi.hel.allu.model.service.StoredFilterService;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class StoredFilterController {
@@ -15,34 +16,34 @@ public class StoredFilterController {
   @Autowired
   private StoredFilterService service;
 
-  @RequestMapping(value = "/stored-filter/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/stored-filter/{id}")
   public ResponseEntity<StoredFilter> findById(@PathVariable int id) {
     return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/user/{userId}/stored-filter", method = RequestMethod.GET)
+  @GetMapping(value = "/user/{userId}/stored-filter")
   public ResponseEntity<List<StoredFilter>> findByUser(@PathVariable int userId) {
     return new ResponseEntity<>(service.findByUser(userId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/stored-filter", method = RequestMethod.POST)
+  @PostMapping(value = "/stored-filter")
   public ResponseEntity<StoredFilter> insert(@Valid @RequestBody StoredFilter filter) {
     return new ResponseEntity<>(service.insert(filter), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/stored-filter/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/stored-filter/{id}")
   public ResponseEntity<StoredFilter> update(@PathVariable int id, @Valid @RequestBody StoredFilter filter) {
     filter.setId(id);
     return new ResponseEntity<>(service.update(filter), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/stored-filter/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/stored-filter/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     service.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/stored-filter/{id}/set-default", method = RequestMethod.PUT)
+  @PutMapping(value = "/stored-filter/{id}/set-default")
   public ResponseEntity<Void> setAsDefault(@PathVariable int id) {
     service.setAsDefault(id);
     return new ResponseEntity<>(HttpStatus.OK);

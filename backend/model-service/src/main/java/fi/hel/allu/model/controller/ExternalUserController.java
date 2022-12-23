@@ -25,42 +25,42 @@ public class ExternalUserController {
     this.externalUserDao = userDao;
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<ExternalUser>> getUsers() {
     return new ResponseEntity<>(externalUserDao.findAll(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<ExternalUser> findById(@PathVariable int id) {
     ExternalUser user = externalUserDao.findById(id).orElseThrow(() -> new NoSuchEntityException("No such external user", Integer.toString(id)));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/username/{username}", method = RequestMethod.GET)
+  @GetMapping(value = "/username/{username}")
   public ResponseEntity<ExternalUser> getUser(@PathVariable String username) {
     ExternalUser user = externalUserDao.findByUsername(username).orElseThrow(() -> new NoSuchEntityException("No such external user", username));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<ExternalUser> addUser(@RequestBody ExternalUser user) {
     return new ResponseEntity<>(externalUserDao.insert(user), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.PUT)
+  @PutMapping
   public ResponseEntity<Void> updateUser(@RequestBody ExternalUser user) throws NoSuchEntityException {
     externalUserDao.update(user);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/password", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/password")
   public ResponseEntity<Void> setPassword(@PathVariable Integer id, @RequestBody String password) throws NoSuchEntityException {
     externalUserDao.setPassword(id, password);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
 
-  @RequestMapping(value = "/{id}/lastLogin", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/lastLogin")
   public void setLastLogin(@PathVariable int id, @RequestBody ZonedDateTime loginTime) {
     externalUserDao.setLastLogin(id, loginTime);
   }

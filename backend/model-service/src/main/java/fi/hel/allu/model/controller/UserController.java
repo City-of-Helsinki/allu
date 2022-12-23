@@ -29,25 +29,25 @@ public class UserController {
     this.userDao = userDao;
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public ResponseEntity<List<User>> getUsers() {
     return new ResponseEntity<>(userDao.findAll(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<User> findById(@PathVariable int id) {
     User user = userDao.findById(id).orElseThrow(() -> new NoSuchEntityException("user.notFound", Integer.toString(id)));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PostMapping(value = "/search")
   public ResponseEntity<List<User>> search(@Valid @RequestBody UserSearchCriteria usc) {
     return new ResponseEntity<>(
             userDao.findMatching(usc.getRoleType(), usc.getApplicationType(), usc.getCityDistrictId()),
             HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/owners", method = RequestMethod.POST)
+  @PostMapping(value = "/owners")
   public ResponseEntity<Map<Integer, User>> findApplicationOwners(@RequestBody List<Integer> applicationIds) {
     Map<Integer, User> users = userDao.findByApplicationIds(applicationIds);
     return new ResponseEntity<>(users, HttpStatus.OK);
@@ -58,29 +58,29 @@ public class UserController {
     return new ResponseEntity<>(userDao.findByRole(roleType), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/userName", method = RequestMethod.GET)
+  @GetMapping(value = "/userName")
   public ResponseEntity<User> getUser(@RequestParam String userName) {
     User user = userDao.findByUserName(userName).orElseThrow(() -> new NoSuchEntityException("user.notFound", userName));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<User> addUser(@RequestBody User user) {
     return new ResponseEntity<>(userDao.insert(user), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.PUT)
+  @PutMapping
   public ResponseEntity updateUser(@RequestBody User user) throws NoSuchEntityException {
     userDao.update(user);
     return new ResponseEntity(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/lastLogin", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/lastLogin")
   public void setLastLogin(@PathVariable int id, @RequestBody ZonedDateTime loginTime) {
     userDao.setLastLogin(id, loginTime);
   }
 
-  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  @PostMapping(value = "/find")
   public ResponseEntity<List<User>> findByIds(@RequestBody List<Integer> ids) {
     List<User> users = userDao.findByIds(ids);
     return new ResponseEntity<>(users, HttpStatus.OK);
