@@ -1,8 +1,8 @@
 package fi.hel.allu.model.dao;
 
-import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -17,6 +17,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -163,7 +164,7 @@ public class UserDaoTest {
 
     Assert.assertNull(insertedUser.getLastLogin());
 
-    ZonedDateTime loginTime = ZonedDateTime.now();
+    ZonedDateTime loginTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MICROS);
     userDao.setLastLogin(insertedUser.getId(), loginTime);
 
     userDao.findById(insertedUser.getId())

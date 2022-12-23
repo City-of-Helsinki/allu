@@ -1,23 +1,20 @@
 package fi.hel.allu.servicecore.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-
-import java.time.ZonedDateTime;
-import java.util.Arrays;
 
 
 public class ApplicationServiceComposerTest {
@@ -119,6 +116,11 @@ public class ApplicationServiceComposerTest {
 
   @Test
   public void testChangeStatus() {
+    List<Integer> applicationIds = new ArrayList<>();
+    applicationIds.add(applicationId);
+    List<Application> applications = new ArrayList<>();
+    applications.add(applicationWithOwner);
+    Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
     Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISIONMAKING)).thenReturn(updatedApplication);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
@@ -128,7 +130,7 @@ public class ApplicationServiceComposerTest {
     Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
     List<ApplicationJson> expected = new ArrayList<>();
     expected.add(updatedApplicationJson);
-    Mockito.verify(searchService).updateApplications(Mockito.refEq(expected));
+    Mockito.verify(searchService).updateApplications(expected, false);
   }
 
   @Test

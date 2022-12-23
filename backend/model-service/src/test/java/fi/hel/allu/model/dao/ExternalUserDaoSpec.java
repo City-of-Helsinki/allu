@@ -8,19 +8,20 @@ import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import fi.hel.allu.model.testUtils.TestCommon;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -149,7 +150,7 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
           assertThrows(NonUniqueException.class).when(() -> externalUserDao.update(insertedUser));
         });
         it("should update last login", () -> {
-          ZonedDateTime now = ZonedDateTime.now();
+          ZonedDateTime now = ZonedDateTime.now().truncatedTo(ChronoUnit.MICROS);
           ExternalUser notUpdatedLastLogin = externalUserDao.findById(insertedUser.getId()).get();
           assertNull(notUpdatedLastLogin.getLastLogin());
           externalUserDao.setLastLogin(insertedUser.getId(), now);

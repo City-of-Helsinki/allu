@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -134,7 +135,7 @@ public class TerminationDaoTest {
     app1.setStatus(StatusType.TERMINATED);
     Integer id1 = testCommon.insertApplication(app1);
     terminationDao.insertTerminationInfo(id1, createInfo(ZonedDateTime.now(), "Reasons"));
-    assertTrue(terminationDao.getTerminatedApplications().size() == 0);
+    assertEquals(0, terminationDao.getTerminatedApplications().size());
   }
 
   @Test
@@ -143,12 +144,12 @@ public class TerminationDaoTest {
     app1.setStatus(StatusType.TERMINATED);
     Integer id1 = testCommon.insertApplication(app1);
     terminationDao.insertTerminationInfo(id1, createInfo(ZonedDateTime.now().minusDays(1), "Reasons"));
-    assertTrue(terminationDao.getTerminatedApplications().size() == 1);
+    assertEquals(1, terminationDao.getTerminatedApplications().size());
   }
 
   private TerminationInfo createInfo(ZonedDateTime expirationTime, String reason) {
     TerminationInfo terminationInfo = new TerminationInfo();
-    terminationInfo.setExpirationTime(expirationTime);
+    terminationInfo.setExpirationTime(expirationTime.truncatedTo(ChronoUnit.MICROS));
     terminationInfo.setReason(reason);
     terminationInfo.setTerminator(userId);
     return terminationInfo;

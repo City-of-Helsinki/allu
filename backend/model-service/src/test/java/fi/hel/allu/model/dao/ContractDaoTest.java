@@ -1,8 +1,10 @@
 package fi.hel.allu.model.dao;
 
-import java.sql.SQLException;
-import java.time.ZonedDateTime;
-
+import fi.hel.allu.common.domain.ContractInfo;
+import fi.hel.allu.common.domain.types.ContractStatusType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,11 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.common.domain.ContractInfo;
-import fi.hel.allu.common.domain.types.ContractStatusType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.testUtils.TestCommon;
+import java.sql.SQLException;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.*;
 
@@ -60,7 +60,7 @@ public class ContractDaoTest {
     assertArrayEquals(DATA_1, contractDao.getContract(applicationId));
     ContractInfo insertedInfo = contractDao.getContractInfo(applicationId);
     assertEquals(ContractStatusType.APPROVED, insertedInfo.getStatus());
-    assertEquals(true, insertedInfo.isContractAsAttachment());
+    assertTrue(insertedInfo.isContractAsAttachment());
   }
 
 
@@ -81,7 +81,7 @@ public class ContractDaoTest {
   public void shouldUpdateContractInfo() {
     ContractInfo contractInfo = new ContractInfo();
     contractInfo.setSigner("signer");
-    contractInfo.setResponseTime(ZonedDateTime.now());
+    contractInfo.setResponseTime(ZonedDateTime.now().truncatedTo(ChronoUnit.MICROS));
     contractInfo.setStatus(ContractStatusType.APPROVED);
     contractDao.insertContractProposal(applicationId, DATA_1);
     contractDao.updateContractInfo(applicationId, contractInfo);
@@ -98,7 +98,7 @@ public class ContractDaoTest {
   }
 
   @Test
-  public void shouldReturnInfo() throws Exception {
+  public void shouldReturnInfo() {
     ContractInfo contractInfo = new ContractInfo();
 
     // If proposal and rejected exists, should return proposal
