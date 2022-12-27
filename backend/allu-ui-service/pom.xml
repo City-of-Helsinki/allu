@@ -66,7 +66,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>20.0</version>
+            <version>31.1-jre</version>
         </dependency>
         <!--  support for Java 8 Date & Time API types -->
         <dependency>
