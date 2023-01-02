@@ -56,3 +56,52 @@
     login_password={{ database_password_postgres }}
   become: yes
   become_user: postgres
+
+- name: Set shared buffer
+  postgresql_set:
+    login_host=localhost
+    login_password={{ database_password_postgres }}
+    name=shared_buffers
+    value={{ shared_buffers_memory }}
+  register: set
+  become: yes
+  become_user: postgres
+
+- name: Enable login collector
+  postgresql_set:
+    login_host=localhost
+    login_password={{ database_password_postgres }}
+    name=logging_collector
+    value=on
+  register: set
+  become: yes
+  become_user: postgres
+
+- name: Log only queries that takes 500ms or longer
+  postgresql_set:
+    login_host=localhost
+    login_password={{ database_password_postgres }}
+    name=log_min_duration_statement
+    value=500
+  register: set
+  become: yes
+  become_user: postgres
+
+- name: Restart a container
+  docker_container:
+    name: "{{ database_container_name }}"
+    state: started
+    restart: true
+  become: yes
+
+- name: wait for Postgresql complete restart
+  postgresql_ping:
+    login_host: localhost
+    port: 5432
+    login_user: postgres
+    login_password: "{{ database_password_postgres }}"
+  register: result
+  until: result.is_available
+  retries: 30
+  delay: 4
+  become: yes
