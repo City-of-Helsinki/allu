@@ -1,0 +1,2 @@
+shared_buffers_memory: 128mb
+container_shm_size: 128M

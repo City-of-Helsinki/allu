@@ -79,6 +79,7 @@
   docker_container:
     name: "{{ database_container_name }}"
     image: allu_database
+    shm_size: "{{ container_shm_size }}"
     restart_policy: always
     env:
       POSTGRES_PASSWORD: "{{ database_password_postgres }}"
@@ -105,4 +106,3 @@
   until: result.is_available
   retries: 30
   delay: 4
-

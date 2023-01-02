@@ -62,7 +62,7 @@
     login_host=localhost
     login_password={{ database_password_postgres }}
     name=shared_buffers
-    value=1024mb
+    value={{ shared_buffers_memory }}
   register: set
   become: yes
   become_user: postgres
