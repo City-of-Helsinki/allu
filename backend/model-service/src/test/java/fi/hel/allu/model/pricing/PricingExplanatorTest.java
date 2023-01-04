@@ -44,7 +44,7 @@ class PricingExplanatorTest {
   public void test_formatExplanation_excavation() {
     Application application = createExcavationApplication();
     Location location = createLocation(application);
-    when(locationDao.findByApplication(anyInt())).thenReturn(Collections.singletonList(location));
+    when(locationDao.findByApplicationId(anyInt())).thenReturn(Collections.singletonList(location));
     List<String> explanations = pricingExplanator.getExplanationWithCustomPeriod(application, "periodId");
     assertEquals(1, explanations.size());
     assertEquals(getExpectedLocationExplanation(location),
@@ -55,7 +55,7 @@ class PricingExplanatorTest {
   public void test_formatExplanation_summerTerrace() {
     Application application = createSummerTerraceApplication();
     Location location = createLocation(application);
-    when(locationDao.findByApplication(anyInt())).thenReturn(Collections.singletonList(location));
+    when(locationDao.findByApplicationId(anyInt())).thenReturn(Collections.singletonList(location));
     List<String> explanations = pricingExplanator.getExplanationWithCustomPeriod(application, "periodId");
     assertEquals(1, explanations.size());
     assertEquals(getExpectedLocationExplanation(location),
@@ -66,7 +66,7 @@ class PricingExplanatorTest {
   public void test_formatExplanation_parklet() {
     Application application = createParkletApplication();
     Location location = createLocation(application);
-    when(locationDao.findByApplication(anyInt())).thenReturn(Collections.singletonList(location));
+    when(locationDao.findByApplicationId(anyInt())).thenReturn(Collections.singletonList(location));
     List<String> explanations = pricingExplanator.getExplanationWithCustomPeriod(application, "periodId");
     assertEquals(1, explanations.size());
     assertEquals(getExpectedLocationExplanationForParklet(location),

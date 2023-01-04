@@ -1,17 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -20,6 +8,16 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.LocationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/locations")
@@ -55,9 +53,9 @@ public class LocationController {
   public ResponseEntity<List<Location>> findByApplication(@PathVariable int applicationId, @RequestParam(value="srid", required=false) Integer srid) {
     List<Location> locations;
     if (srid != null) {
-      locations = locationDao.findByApplication(applicationId, srid);
+      locations = locationDao.findByApplicationId(applicationId, srid);
     } else {
-      locations = locationDao.findByApplication(applicationId);
+      locations = locationDao.findByApplicationId(applicationId);
     }
     return new ResponseEntity<>(locations, HttpStatus.OK);
   }

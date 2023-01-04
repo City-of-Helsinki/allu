@@ -4,7 +4,9 @@ import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.Printable;
 import org.junit.Before;
@@ -15,7 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static org.mockito.Mockito.*;
@@ -64,7 +68,7 @@ public class ShortTermRentalPricingTest {
     str.setBillableSalesArea(false);
     parkletApplication.setExtension(str);
     setShortTermRentalPricingWithLocationAndProperPricingExplanator();
-    when(locationDao.findByApplication(anyInt())).thenReturn(Collections.singletonList(location));
+    when(locationDao.findByApplicationId(anyInt())).thenReturn(Collections.singletonList(location));
     shortTermRentalPricing.calculatePrice();
     Assertions.assertEquals(1, shortTermRentalPricing.getChargeBasisEntries().size(), "No chargeBasis objects created");
     String[] actualExplanation = shortTermRentalPricing.getChargeBasisEntries().get(0).getExplanation();

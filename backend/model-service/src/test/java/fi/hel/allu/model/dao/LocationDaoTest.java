@@ -3,32 +3,32 @@ package fi.hel.allu.model.dao;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
-import org.geolatte.geom.builder.DSL.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocationArea.locationArea;
 import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 @Transactional
@@ -51,7 +51,7 @@ public class LocationDaoTest {
   @Autowired
   private SQLQueryFactory queryFactory;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     testCommon.deleteAllData();
     application = testCommon.dummyOutdoorApplication("test application", "käsittelijä");
@@ -91,6 +91,44 @@ public class LocationDaoTest {
     // expecting location key to not to increase, because the greatest number in database is still 3
     Location locOut5 = locationDao.insert(locIn);
     assertEquals(4, (int) locOut5.getLocationKey());
+  }
+
+  @Test
+  public void testQueringByMultipleApplication() {
+    Application application2 = testCommon.dummyOutdoorApplication("test application2", "pasi");
+    application2 = applicationDao.insert(application2);
+    Location locIn = newLocationWithDefaults();
+    locIn.setApplicationId(application.getId());
+    Location locOut1 = locationDao.insert(locIn);
+    Location locOut2 = locationDao.insert(locIn);
+    Location locOut3 = locationDao.insert(locIn);
+    locIn.setApplicationId(application2.getId());
+    Location locOut4 = locationDao.insert(locIn);
+    Location locOut5 = locationDao.insert(locIn);
+    // insert 3 locations so that the greatest location key in database is 3
+    List<Integer> applicationIds = Arrays.asList(application.getId(), application2.getId());
+    List<Location> locations = locationDao.findByApplicationIds(applicationIds);
+    assertEquals(5, locations.size());
+  }
+
+  @Test
+  public void testMultipleLocationGeometriQuery(){
+    Geometry geoIn = geometrycollection(3879, Sq_0_0);
+    Geometry geoIn2 = geometrycollection(3879, Sq_5_5);
+    Location locIn = newLocationWithDefaults();
+    locIn.setGeometry(geoIn);
+    locIn.setApplicationId(application.getId());
+    Location locOut = locationDao.insert(locIn);
+    Location location2 = newLocationWithDefaults();
+    location2.setApplicationId(application.getId());
+    location2.setGeometry(geoIn2);
+    Location locOut2 = locationDao.insert(location2);
+    List<Integer> applicationIds = Arrays.asList(application.getId());
+    List<Location> locations = locationDao.findByApplicationIds(applicationIds);
+    locations = locations.stream().sorted(Comparator.comparing(Location::getId)).collect(Collectors.toList());
+    assertEquals(2, locations.size());
+    assertEquals(geoIn.asText(), locations.get(0).getGeometry().asText());
+    assertNotNull(locations.get(1).getGeometry().asText(), geoIn2.asText());
   }
 
   @Test
@@ -383,57 +421,46 @@ public class LocationDaoTest {
   public void testSimplifyTolerance3() {
     Geometry geometry = geometrycollection(3879, Pol_0_0);
     Geometry result = locationDao.simplifyGeometry(geometry, 3);
-    assertEquals("Should not simplify",
-      geometry.getNumPoints(), result.getNumPoints());
-    assertNotEquals("Simplify should always give at least 1 point, " +
-        "given that it should not remove lines, only replace",
-      0, result.getNumPoints());
+    assertEquals(geometry.getNumPoints(), result.getNumPoints(), "Should not simplify");
+    assertNotEquals(0, result.getNumPoints(), "Simplify should always give at least 1 point, " +
+            "given that it should not remove lines, only replace");
 
     geometry = geometrycollection(3879, Pol_0_100);
     result = locationDao.simplifyGeometry(geometry, 3);
-    assertEquals("Should simplify 2 lines to 1 line",
-      geometry.getNumPoints() - 1, result.getNumPoints());
-    assertNotEquals("Simplify should always give at least 1 point, " +
-        "given that it should not remove lines, only replace",
-      0, result.getNumPoints());
-  }
+    assertEquals(
+      geometry.getNumPoints() - 1, result.getNumPoints(), "Should simplify 2 lines to 1 line");
+    assertNotEquals(0, result.getNumPoints(),
+                    "Simplify should always give at least 1 point, " +
+                            "given that it should not remove lines, only replace");}
 
   @Test
   public void testSimplifyTolerance10() {
     Geometry geometry = geometrycollection(3879, Pol_0_0);
     Geometry result = locationDao.simplifyGeometry(geometry, 10);
-    assertEquals("Should simplify 4 lines to 2 lines",
-      geometry.getNumPoints() - 2, result.getNumPoints());
-    assertNotEquals("Simplify should always give at least 1 point, " +
-        "given that it should not remove lines, only replace",
-      0, result.getNumPoints());
+    assertEquals(geometry.getNumPoints() - 2, result.getNumPoints(), "Should simplify 4 lines to 2 lines");
+    assertNotEquals(0, result.getNumPoints(), "Simplify should always give at least 1 point, " +
+            "given that it should not remove lines, only replace");
 
     geometry = geometrycollection(3879, Pol_0_100);
     result = locationDao.simplifyGeometry(geometry, 10);
-    assertEquals("Should simplify 2 lines to 1 line",
-      geometry.getNumPoints() - 1, result.getNumPoints());
-    assertNotEquals("Simplify should always give at least 1 point, " +
-        "given that it should not remove lines, only replace",
-      0, result.getNumPoints());
+    assertEquals(geometry.getNumPoints() - 1, result.getNumPoints(), "Should simplify 2 lines to 1 line");
+    assertNotEquals(0, result.getNumPoints(), "Simplify should always give at least 1 point, " +
+            "given that it should not remove lines, only replace");
   }
 
   @Test
   public void testSimplifyTolerance100() {
     Geometry geometry = geometrycollection(3879, Pol_0_0);
     Geometry result = locationDao.simplifyGeometry(geometry, 100);
-    assertEquals("Should simplify 5 lines to 2 lines",
-      geometry.getNumPoints() - 4, result.getNumPoints());
-    assertNotEquals("Simplify should always give at least 1 point, " +
-        "given that it should not remove lines, only replace",
-      0, result.getNumPoints());
+    assertEquals(geometry.getNumPoints() - 4, result.getNumPoints(), "Should simplify 5 lines to 2 lines");
+    assertNotEquals(0, result.getNumPoints(), "Simplify should always give at least 1 point, " +
+            "given that it should not remove lines, only replace");
 
     geometry = geometrycollection(3879, Pol_0_100);
     result = locationDao.simplifyGeometry(geometry, 100);
-    assertEquals("Should simplify 4 lines to 2 lines",
-      geometry.getNumPoints() - 2, result.getNumPoints());
-    assertNotEquals("Simplify should always give at least 1 point, " +
-        "given that it should not remove lines, only replace",
-      0, result.getNumPoints());
+    assertEquals(geometry.getNumPoints() - 2, result.getNumPoints(), "Should simplify 4 lines to 2 lines");
+    assertNotEquals(0, result.getNumPoints(), "Simplify should always give at least 1 point, " +
+            "given that it should not remove lines, only replace");
   }
 
   private Location newLocationWithDefaults() {

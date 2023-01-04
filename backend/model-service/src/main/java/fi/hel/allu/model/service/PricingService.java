@@ -1,19 +1,5 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import fi.hel.allu.model.dao.TerminationDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -22,11 +8,24 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.model.domain.util.PriceUtil;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.pricing.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -146,7 +145,7 @@ public class PricingService {
   private List<ChargeBasisEntry> updateShortTermRentalPrice(Application application) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
-      locations = locationDao.findByApplication(application.getId());
+      locations = locationDao.findByApplicationId(application.getId());
     }
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, pricingExplanator, pricingDao, terminationDao,
@@ -178,7 +177,7 @@ public class PricingService {
   private  List<ChargeBasisEntry> calculateChargeBasis(Application application, Pricing pricing) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
-      locations = locationDao.findByApplication(application.getId());
+      locations = locationDao.findByApplicationId(application.getId());
     }
     for (Location l : locations) {
       pricing.addLocationPrice(l);
@@ -190,7 +189,7 @@ public class PricingService {
    * EventPricing calculation for Event applications
    */
   private int calculateEventPrice(Application application, Event event, EventPricing pricing) {
-    List<Location> locations = locationDao.findByApplication(application.getId());
+    List<Location> locations = locationDao.findByApplicationId(application.getId());
     if (locations.size() > 1) {
       throw new RuntimeException("Event application has more than one location, which is the maximum");
     } else if (locations.isEmpty()) {

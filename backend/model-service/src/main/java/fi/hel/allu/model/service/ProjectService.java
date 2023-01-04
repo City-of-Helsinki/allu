@@ -1,15 +1,5 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
@@ -18,6 +8,15 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.changehistory.ApplicationChange;
 import fi.hel.allu.model.domain.changehistory.ContactChange;
 import fi.hel.allu.model.domain.changehistory.CustomerChange;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Business logic for project (hanke) related functionality.
@@ -320,7 +319,7 @@ public class ProjectService {
     ProjectSummary ps = new ProjectSummary();
     ps.minStartTime = application.getStartTime();
     ps.maxEndTime = application.getEndTime();
-    List<Location> locations = locationDao.findByApplication(application.getId());
+    List<Location> locations = locationDao.findByApplicationId(application.getId());
     List<Integer> cityDistrictIds = locations.stream()
         .map(l -> l.getEffectiveCityDistrictId())
         .filter(id -> id != null)

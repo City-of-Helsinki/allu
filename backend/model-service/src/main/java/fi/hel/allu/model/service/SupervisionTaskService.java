@@ -1,17 +1,5 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -21,6 +9,17 @@ import fi.hel.allu.common.util.SupervisionTaskToTag;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
 
@@ -198,7 +197,7 @@ public class SupervisionTaskService {
    */
   private void saveSupervisedLocations(SupervisionTask task) {
     supervisionTaskDao.deleteSupervisedLocations(task.getId());
-    List<Location> locations = locationDao.findByApplication(task.getApplicationId());
+    List<Location> locations = locationDao.findByApplicationId(task.getApplicationId());
       locations.forEach(l -> saveSupervisedLocation(task.getId(), l));
     task.setSupervisedLocations(supervisionTaskDao.getSupervisedLocations(task.getId()));
   }

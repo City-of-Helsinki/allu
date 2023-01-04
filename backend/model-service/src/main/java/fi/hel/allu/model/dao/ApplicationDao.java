@@ -631,7 +631,7 @@ public class ApplicationDao {
   }
 
   private void mapLocationsToApplications(List<Application> applicationsList, Integer[] ids) {
-    List<Location> unmappedLocations = locationDao.findByApplications(ids);
+    List<Location> unmappedLocations = locationDao.findByApplicationIds(Arrays.asList(ids));
     if (!unmappedLocations.isEmpty()) {
       Map<Integer, List<Location>> mappedLocations = unmappedLocations.stream()
               .collect(Collectors.groupingBy(Location::getApplicationId));

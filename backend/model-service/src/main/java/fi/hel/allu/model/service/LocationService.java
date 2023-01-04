@@ -1,16 +1,6 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import fi.hel.allu.model.util.ZoomTolerance;
-import org.geolatte.geom.Geometry;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -20,6 +10,14 @@ import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.util.ZoomTolerance;
+import org.geolatte.geom.Geometry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service for handling location changes.
@@ -56,7 +54,7 @@ public class LocationService {
     return newLocations;
   }
 
-  @Transactional
+
   public List<Location> update(List<Location> locations, int userId) {
     List<Location> updatedLocations = locations.stream().map(locationDao::update).collect(Collectors.toList());
     updateApplicationAndProject(getApplicationId(updatedLocations), userId);
@@ -97,7 +95,7 @@ public class LocationService {
 
   @Transactional(readOnly = true)
   public List<Location> findByApplicationId(Integer applicationId) {
-    return this.locationDao.findByApplication(applicationId);
+    return this.locationDao.findByApplicationId(applicationId);
   }
 
   /**

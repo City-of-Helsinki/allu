@@ -56,7 +56,7 @@ public class PricingExplanator {
       return Collections.emptyList();
     }
 
-    List<Location> locations = locationDao.findByApplication(application.getId());
+    List<Location> locations = locationDao.findByApplicationId(application.getId());
     if (locations.size() > 1) {
       throw new RuntimeException("Only one location is supported in PricingExplanationService");
     } else if (locations.isEmpty()) {
