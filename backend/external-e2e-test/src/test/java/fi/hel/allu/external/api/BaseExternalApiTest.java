@@ -75,7 +75,7 @@ public class BaseExternalApiTest {
         HttpMethod.POST,
         new HttpEntity<>(new LoginExt(getUserName(), getPassword())),
         String.class);
-    this.bearerToken = response.getBody();
+    this.bearerToken = response.getBody().replace("\"", "");
   }
 
   protected String getUserName() {
