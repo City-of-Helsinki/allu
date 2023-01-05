@@ -1,19 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import fi.hel.allu.model.coordinates.GeometrySimplification;
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.GeometryCollection;
-import org.geolatte.geom.GeometryType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
@@ -24,7 +10,6 @@ import com.querydsl.core.types.dsl.SimpleTemplate;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
-
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.domain.ApplicationDateReport;
@@ -33,8 +18,21 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.coordinates.CoordinateTransformation;
+import fi.hel.allu.model.coordinates.GeometrySimplification;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
+import org.geolatte.geom.GeometryType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
@@ -124,7 +122,8 @@ public class LocationDao {
 
   @Transactional(readOnly = true)
   public List<Location> findByApplication(int applicationId, Integer srId) {
-    List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
+    List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId))
+            .orderBy(location.locationKey.asc()).fetch();
     List<Location> locations = locationIds.stream()
         .map(id -> findById(id).get())
         .collect(Collectors.toList());
