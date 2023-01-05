@@ -11,7 +11,7 @@ describe('Create external user', () => {
       'name': 'Ext User',
       'password': '#alk#%355245lAAA_z24',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserRkj = {
@@ -20,7 +20,7 @@ describe('Create external user', () => {
       'name': 'RKJ Ext User',
       'password': 'Alk354_3#085pU_24YpA',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserHsy = {
@@ -29,7 +29,7 @@ describe('Create external user', () => {
       'name': 'HSY Ext User',
       'password': 'as#33_24DFgh_AEfott3',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserInternal  = {
@@ -38,7 +38,7 @@ describe('Create external user', () => {
       'name': 'Internal Ext User',
       'password': 'asdk#AER5320_23GtuOi',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_INTERNAL']
     }
     const extUserIbmE  = {
@@ -47,7 +47,7 @@ describe('Create external user', () => {
       'name': 'IBM e-asiointi',
       'password': 'Edk#60$YpP74qrPKvXAe',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserHelen  = {
@@ -56,7 +56,7 @@ describe('Create external user', () => {
       'name': 'Helen Oy',
       'password': 'v859Bw9$MAugtwsqV8$u',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
     const extUserHaitaton = {
@@ -65,7 +65,7 @@ describe('Create external user', () => {
       'name': 'Haitaton Ext User',
       'password': 'h5Q492A*iJVSpUufSFO6',
       'active': 'true',
-      'expirationTime': '2022-12-31T00:00:00.000Z',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
 
