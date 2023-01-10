@@ -207,7 +207,6 @@ public class LocationDao {
         }
     }
 
-
     @Transactional(readOnly = true)
     public int findApplicationId(List<Integer> locationIds) {
         return queryFactory.selectDistinct(location.applicationId).from(location).where(location.id.in(locationIds))
@@ -225,7 +224,6 @@ public class LocationDao {
         return queryFactory.select(locationFlidsBean).from(locationFlids).where(locationFlids.locationId.in(locationId))
                 .fetch();
     }
-
 
     @Transactional
     public Location insert(Location locationData) {
@@ -284,8 +282,9 @@ public class LocationDao {
                 .orElse(null);
 
         queryFactory.update(location).populate(locationData, new ExcludingMapper(WITH_NULL_BINDINGS,
-                                                                                 Arrays.asList(location.locationKey,
-                                                                                               location.locationVersion)))
+                                                                                            Arrays.asList(
+                                                                                                    location.locationKey,
+                                                                                                    location.locationVersion)))
                 .set(location.postalAddressId, postalAddressId)
                 .where(location.id.eq(id).and(location.applicationId.eq(locationData.getApplicationId()))).execute();
 
@@ -301,18 +300,36 @@ public class LocationDao {
 
     @Transactional
     public void deleteById(int locationId) {
-        Location deletedLocation = queryFactory.query().select(locationBean).from(location)
-                .where(location.id.eq(locationId)).fetchOne();
-        if (deletedLocation == null) {
-            throw new NoSuchEntityException("Attempted to delete non-existent location", Integer.toString(locationId));
-        }
-        queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(locationId)).execute();
-        queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
-        queryFactory.delete(location).where(location.id.eq(locationId)).execute();
-        if (deletedLocation.getPostalAddress() != null) {
-            postalAddressDao.delete(Collections.singletonList(deletedLocation.getPostalAddress().getId()));
-        }
-        updateApplicationDate(deletedLocation.getApplicationId());
+        deleteByIds(Collections.singletonList(locationId));
+    }
+
+    @Transactional
+    public void deleteByIds(List<Integer> locationIds) {
+        Integer applicationId = findApplicationId(locationIds);
+        deleteByIds(locationIds, applicationId);
+    }
+
+    @Transactional
+    public void deleteByIds(List<Integer> locationIds, Integer applicationId) {
+        if(locationIds == null || locationIds.isEmpty()) return;
+
+            List<Location> deletedLocation = queryFactory.query().select(locationBean).from(location)
+                    .where(location.id.in(locationIds)).fetch();
+            if (deletedLocation.size() != locationIds.size()) {
+                List<Integer> deletedIds = deletedLocation.stream().map(Location::getId).collect(Collectors.toList());
+                throw new NoSuchEntityException("Attempted to delete non-existent locations. " +
+                                                        "Expected: " + locationIds, deletedIds.toString());
+            }
+
+            queryFactory.delete(locationGeometry).where(locationGeometry.locationId.in(locationIds)).execute();
+            queryFactory.delete(locationFlids).where(locationFlids.locationId.in(locationIds)).execute();
+            queryFactory.delete(location).where(location.id.in(locationIds)).execute();
+
+            List<Integer> postalAddressIds = deletedLocation.stream().filter(e -> e.getPostalAddress() != null)
+                    .map(e -> e.getPostalAddress().getId()).collect(Collectors.toList());
+            postalAddressDao.delete(postalAddressIds);
+
+            updateApplicationDate(applicationId);
     }
 
     /**
@@ -339,7 +356,7 @@ public class LocationDao {
         Set<Integer> locationIdsToDelete = oldLocationIds.stream().filter(i -> !locationIdsToUpdate.contains(i))
                 .collect(Collectors.toSet());
 
-        locationIdsToDelete.forEach(this::deleteById);
+        deleteByIds(new ArrayList<>(locationIdsToDelete), applicationId);
         locationsToUpdate.forEach(this::update);
         locationsToAdd.forEach(this::insert);
 

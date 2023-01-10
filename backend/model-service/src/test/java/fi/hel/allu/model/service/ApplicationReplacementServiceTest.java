@@ -1,18 +1,5 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.common.util.ApplicationIdUtil;
@@ -21,6 +8,17 @@ import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.*;
 
 import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.*;
@@ -55,6 +53,8 @@ public class ApplicationReplacementServiceTest {
   private InvoicingPeriodService invoicingPeriodService;
   @Autowired
   private DistributionEntryDao distributionEntryDao;
+  @Autowired
+  private LocationDao locationDao;
 
   @Autowired
   private TestCommon testCommon;
@@ -143,8 +143,8 @@ public class ApplicationReplacementServiceTest {
   @Test
   public void shouldCopyLocations() {
     Application application = replaceApplication();
-    Location replacing = locationService.findByApplicationId(application.getId()).get(0);
-    Location original = locationService.findByApplicationId(originalApplication.getId()).get(0);
+    Location replacing = locationDao.findByApplicationId(application.getId()).get(0);
+    Location original = locationDao.findByApplicationId(originalApplication.getId()).get(0);
     assertEquals(original.getAdditionalInfo(), replacing.getAdditionalInfo());
     assertEquals(original.getArea(), replacing.getArea());
     assertEquals(original.getEndTime(), replacing.getEndTime());

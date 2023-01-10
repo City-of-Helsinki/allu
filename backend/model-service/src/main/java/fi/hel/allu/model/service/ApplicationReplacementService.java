@@ -1,22 +1,21 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.common.util.ApplicationIdUtil;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.common.util.ApplicationIdUtil;
-import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.domain.*;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static fi.hel.allu.common.domain.types.ApplicationTagType.*;
 import static fi.hel.allu.model.common.ApplicationUtil.isRecurringRental;
@@ -194,7 +193,7 @@ public class ApplicationReplacementService {
   }
 
   public void setApplicationLocations(Application applicationToReplace, Application application) {
-    List<Location> locations = locationService.findByApplicationId(applicationToReplace.getId());
+    List<Location> locations = locationDao.findByApplicationId(applicationToReplace.getId());
     // Sort locations by id to ensure locations are the same order as when previously created.
     // Ensures tags are same order.
     if (!locations.isEmpty() && locations.get(0).getId() != null)

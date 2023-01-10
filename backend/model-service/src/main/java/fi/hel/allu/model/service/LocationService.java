@@ -86,16 +86,10 @@ public class LocationService {
     return newLocations;
   }
 
-  @Transactional
   public void delete(List<Integer> locationIds, int userId) {
     int applicationId = locationDao.findApplicationId(locationIds);
-    locationIds.forEach(id -> locationDao.deleteById(id));
+    locationDao.deleteByIds(locationIds, applicationId);
     updateApplicationAndProject(applicationId, userId);
-  }
-
-  @Transactional(readOnly = true)
-  public List<Location> findByApplicationId(Integer applicationId) {
-    return this.locationDao.findByApplicationId(applicationId);
   }
 
   /**
@@ -104,7 +98,7 @@ public class LocationService {
    */
   @Transactional(readOnly = true)
   public Location findSingleByApplicationId(Integer applicationId) {
-    List<Location> locations = findByApplicationId(applicationId);
+    List<Location> locations = locationDao.findByApplicationId(applicationId);
     if (locations.size() == 1) {
       return locations.get(0);
     } else {
@@ -169,15 +163,6 @@ public class LocationService {
         .findFirst();
   }
 
-  /**
-   * Copy application locations from application to another application
-   */
-  @Transactional
-  public void copyApplicationLocations(Integer copyFromApplicationId, Integer copyToApplicationId, int userId) {
-    List<Location> locations = findByApplicationId(copyFromApplicationId);
-    locations.forEach(l -> l.setApplicationId(copyToApplicationId));
-    insert(locations, userId);
-  }
 
   public Geometry simplifyGeometry(Geometry geometry, Integer zoomLevel) {
     return locationDao.simplifyGeometry(geometry, ZoomTolerance.getTolerance(zoomLevel));

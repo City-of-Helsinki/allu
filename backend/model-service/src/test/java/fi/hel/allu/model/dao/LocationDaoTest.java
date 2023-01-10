@@ -105,7 +105,6 @@ public class LocationDaoTest {
     locIn.setApplicationId(application2.getId());
     Location locOut4 = locationDao.insert(locIn);
     Location locOut5 = locationDao.insert(locIn);
-    // insert 3 locations so that the greatest location key in database is 3
     List<Integer> applicationIds = Arrays.asList(application.getId(), application2.getId());
     List<Location> locations = locationDao.findByApplicationIds(applicationIds);
     assertEquals(5, locations.size());
@@ -128,7 +127,7 @@ public class LocationDaoTest {
     locations = locations.stream().sorted(Comparator.comparing(Location::getId)).collect(Collectors.toList());
     assertEquals(2, locations.size());
     assertEquals(geoIn.asText(), locations.get(0).getGeometry().asText());
-    assertNotNull(locations.get(1).getGeometry().asText(), geoIn2.asText());
+    assertEquals(locations.get(1).getGeometry().asText(), geoIn2.asText());
   }
 
   @Test
