@@ -1,15 +1,15 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.CommentType;
-import javax.validation.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**
  * Comment for an application
  */
-public class Comment {
+public class Comment implements CommentInterface {
   private Integer id;
   @NotNull
   private CommentType type;

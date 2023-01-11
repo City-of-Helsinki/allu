@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 /**
  * in Finnish: Yhteyshenkilö
  */
-public class Contact implements PostalAddressItem {
+public class Contact implements PostalAddressItem, ContactInterface {
 
   private Integer id;
   private Integer customerId;

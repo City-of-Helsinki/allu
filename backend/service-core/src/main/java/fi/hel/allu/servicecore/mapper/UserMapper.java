@@ -1,13 +1,19 @@
 package fi.hel.allu.servicecore.mapper;
 
-import org.apache.commons.lang3.StringUtils;
-
 import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.UserES;
 import fi.hel.allu.servicecore.domain.UserJson;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mapping between different user objects.
  */
+@Component
 public class UserMapper {
   public static UserJson mapToUserJson(User user) {
     return new UserJson(
@@ -37,5 +43,15 @@ public class UserMapper {
         userJson.getAllowedApplicationTypes(),
         userJson.getAssignedRoles(),
         userJson.getCityDistrictIds());
+  }
+
+  public List<ApplicationES> populateOwners(Map<Integer, User> applicationIdUserMap, List<ApplicationES> applicationESList){
+    for (ApplicationES es : applicationESList){
+      User user = applicationIdUserMap.get(es.getId());
+      if (user != null){
+        es.setOwner(new UserES(user.getUserName(), user.getRealName()));
+      }
+    }
+    return applicationESList;
   }
 }

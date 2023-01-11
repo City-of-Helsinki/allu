@@ -5,6 +5,8 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.model.domain.ProjectChange;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.CompactProjectES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
@@ -20,8 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,6 +69,11 @@ public class ProjectService {
   public List<ProjectJson> findByIds(List<Integer> ids) {
     Project[] projects = restTemplate.postForObject(applicationProperties.getProjectsByIdUrl(), ids, Project[].class);
     return Arrays.stream(projects).map(p -> projectMapper.mapProjectToJson(p)).collect(Collectors.toList());
+  }
+
+  public List<Project> findProjectsByIds(List<Integer> ids) {
+    Project[] projects = restTemplate.postForObject(applicationProperties.getProjectsByIdUrl(), ids, Project[].class);
+    return Arrays.stream(projects).collect(Collectors.toList());
   }
 
   /**
@@ -190,5 +200,19 @@ public class ProjectService {
 
   public Integer getNextProjectNumber() {
     return restTemplate.postForObject(applicationProperties.getProjectNextProjectNumberUrl(), null, Integer.class);
+  }
+
+  public BiConsumer<Project, ApplicationES> setIdentifier = (project, applicationES) -> {
+    CompactProjectES projectES = new CompactProjectES();
+    projectES.setId(project.getId());
+    projectES.setIdentifier(project.getIdentifier());
+    applicationES.setProject(projectES);
+  };
+
+  public List<ApplicationES> mapProjectToEs(List<ApplicationES> listToPopulated) {
+    Map<Integer, List<ApplicationES>> projectIds = listToPopulated.stream().filter(e -> e.getProject() != null)
+            .collect(Collectors.groupingBy(e -> e.getProject().getId()));
+    List<Project> projectList = findProjectsByIds(new ArrayList<>(projectIds.keySet()));
+    return projectMapper.populateValues(projectIds, setIdentifier, projectList);
   }
 }

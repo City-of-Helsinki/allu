@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  *
  * <p>A customer is either person, organization or a company.
  */
-public class Customer implements PostalAddressItem {
+public class Customer implements PostalAddressItem, CustomerInterface {
   private Integer id;
   @NotNull
   private CustomerType type;

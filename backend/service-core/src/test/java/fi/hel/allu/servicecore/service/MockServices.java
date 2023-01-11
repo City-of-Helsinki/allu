@@ -1,21 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.types.PublicityType;
@@ -27,9 +12,26 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.UserMapper;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.geolatte.geom.builder.DSL.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public abstract class MockServices {
   @Mock
   protected RestTemplate restTemplate;

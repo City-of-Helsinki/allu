@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
  * Tags add information to applications without affecting application state. For example, an application being processed could have a
  * waiting for extra data tag, which would tell that application is waiting for additional information before it can be processed further.
  */
-public class ApplicationTag {
+public class ApplicationTag implements ApplicationTagInterface {
 
   private Integer id;
   private Integer applicationId;

@@ -1,41 +1,42 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.CustomerWithContactsES;
+import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.search.domain.LocationES;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.LocationService;
+import fi.hel.allu.servicecore.util.AddressMaker;
+import fi.hel.allu.servicecore.util.GeometrySimplifier;
+import org.geolatte.geom.*;
+import org.geolatte.geom.crs.CrsId;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.search.domain.LocationES;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.util.GeometrySimplifier;
-import org.geolatte.geom.*;
-import org.geolatte.geom.crs.CrsId;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.CustomerWithContactsES;
-import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.servicecore.service.LocationService;
-import fi.hel.allu.servicecore.service.UserService;
-
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ApplicationMapperTest {
 
   @Mock
   private CustomerMapper customerMapper;
-  @Mock
-  private UserService userService;
   @Mock
   private LocationService locationService;
 
@@ -43,12 +44,11 @@ public class ApplicationMapperTest {
 
   private static String EXTENSION_TEXT = "foobar";
 
-  @Before
-  public void setup() {
-    applicationMapper = new ApplicationMapper(customerMapper, userService, locationService);
+  @BeforeEach
+  void setUp() {
+    applicationMapper = new ApplicationMapper(customerMapper, locationService, new AddressMaker(locationService), new CommentMapper());
     when(customerMapper.createWithContactsES(any(CustomerWithContactsJson.class))).thenReturn(new CustomerWithContactsES());
   }
-
 
   @Test
   public void testFlattening() {
@@ -57,8 +57,8 @@ public class ApplicationMapperTest {
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);
     List<ESFlatValue> applicationTypeData = applicationES.getApplicationTypeData();
     Map<String, ESFlatValue> valueMap = applicationTypeData.stream().collect(Collectors.toMap(ESFlatValue::getFieldName, esFlatValue -> esFlatValue));
-    Assert.assertEquals(1, valueMap.size());
-    Assert.assertEquals(EXTENSION_TEXT, valueMap.get("EVENT-testValue").getStrValue());
+    assertEquals(1, valueMap.size());
+    assertEquals(EXTENSION_TEXT, valueMap.get("EVENT-testValue").getStrValue());
   }
 
   @Test
@@ -88,26 +88,26 @@ public class ApplicationMapperTest {
     when(locationService.simplifyGeometry(any(Geometry.class), anyInt())).thenReturn(geometry);
 
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);
-    Assert.assertNotNull(applicationES);
-    Assert.assertEquals(3, applicationES.getLocations().size());
+    assertNotNull(applicationES);
+    assertEquals(3, applicationES.getLocations().size());
 
     // Full geometry
     LocationES locationES = applicationES.getLocations().get(0);
     int actualLocationESPointCount = locationES.getGeometry().split("],").length - 1; // Subtract 1, as it splits also at bbox
-    Assert.assertEquals(9, locationES.getZoom().intValue());
-    Assert.assertEquals("Geometry should have full geometry", geometry.getPoints().size(), actualLocationESPointCount);
+    assertEquals(9, locationES.getZoom().intValue());
+    assertEquals(geometry.getPoints().size(), actualLocationESPointCount, "Geometry should have full geometry");
 
     // Simplified geometry. Same number of points as in the full case because LocationService is mocked
     locationES = applicationES.getLocations().get(1);
     actualLocationESPointCount = locationES.getGeometry().split("],").length - 1; // Subtract 1, as it splits also at bbox
-    Assert.assertEquals(6, locationES.getZoom().intValue());
-    Assert.assertEquals("Geometry should have full geometry", geometry.getPoints().size(), actualLocationESPointCount);
+    assertEquals(6, locationES.getZoom().intValue());
+    assertEquals(geometry.getPoints().size(), actualLocationESPointCount, "Geometry should have full geometry");
 
     // Point geometry
     locationES = applicationES.getLocations().get(2);
     actualLocationESPointCount = locationES.getGeometry().split("],").length - 1; // Subtract 1, as it splits also at bbox
-    Assert.assertEquals(1, locationES.getZoom().intValue());
-    Assert.assertEquals("Geometry should be point", 1, actualLocationESPointCount);
+    assertEquals(1, locationES.getZoom().intValue());
+    assertEquals(1, actualLocationESPointCount, "Geometry should be point");
   }
 
   private ApplicationJson generateApplicationJson() {

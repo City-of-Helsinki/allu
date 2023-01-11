@@ -468,6 +468,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/users/find");
   }
 
+  public String getUsersByApplicationIdUrl() {
+    return getModelServiceUrl("/users/owners");
+  }
+
   /**
    * @return url for updating last login time of given user to model service.
    */
@@ -495,7 +499,11 @@ public class ApplicationProperties {
   public String getCommentsFindByApplicationsUrl() {
     return getModelServiceUrl("/applications/comments/find");
   }
-  
+
+  public String getCommentsFindByApplicationsGroupingUrl() {
+    return getModelServiceUrl("/applications/comments/find/mapping");
+  }
+
   public String getCommentsFindByProjectUrl() {
     return getModelServiceUrl("/projects/{projectId}/comments");
   }

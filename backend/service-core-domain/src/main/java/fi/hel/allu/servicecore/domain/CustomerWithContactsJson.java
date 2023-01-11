@@ -1,13 +1,14 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.model.domain.CustomerWithContactsI;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Schema(description = "Application customer and related contacts")
-public class CustomerWithContactsJson {
+public class CustomerWithContactsJson implements CustomerWithContactsI {
 
   private CustomerRoleType roleType;
   private CustomerJson customer;

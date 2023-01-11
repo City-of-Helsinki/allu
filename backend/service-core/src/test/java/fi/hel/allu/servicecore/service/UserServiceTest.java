@@ -25,7 +25,7 @@ public class UserServiceTest {
     Mockito.when(restTemplate.getForEntity(userByUserNameUrl, User.class, userName))
         .thenReturn(new ResponseEntity<User>(mockUser(), HttpStatus.OK));
 
-    UserService userService = new UserService(applicationProperties, restTemplate, null);
+    UserService userService = new UserService(applicationProperties, restTemplate, null, null);
     UserJson userJson = userService.findUserByUserName(userName);
     Assert.assertEquals(userName, userJson.getUserName());
   }

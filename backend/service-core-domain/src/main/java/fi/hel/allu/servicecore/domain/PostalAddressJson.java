@@ -1,12 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
+import fi.hel.allu.model.domain.PostalAddressInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * in Finnish: Osoitteen tiedot
  */
 @Schema(description = "Postal address")
-public class PostalAddressJson {
+public class PostalAddressJson implements PostalAddressInterface {
   private String streetAddress;
   private String postalCode;
   private String city;

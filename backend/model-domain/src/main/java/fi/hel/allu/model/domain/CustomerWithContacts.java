@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Customer with role and its related contacts in the context of an application.
  */
-public class CustomerWithContacts {
+public class CustomerWithContacts implements CustomerWithContactsI {
   CustomerRoleType roleType;
   Customer customer;
   List<Contact> contacts = new ArrayList<>();

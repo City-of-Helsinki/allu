@@ -12,16 +12,17 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+import fi.hel.allu.servicecore.mapper.CommentMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import fi.hel.allu.servicecore.util.AddressMaker;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
@@ -30,6 +31,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@ExtendWith(MockitoExtension.class)
 public class ApplicationHistoryServiceTest extends MockServices {
 
   @Mock
@@ -46,8 +51,9 @@ public class ApplicationHistoryServiceTest extends MockServices {
   private ChangeHistoryMapper changeHistoryMapper;
   @Mock
   private CustomerMapper customerMapper;
+  @Mock
+  private AddressMaker addressMaker;
   private ApplicationMapper applicationMapper;
-
   private ApplicationHistoryService applicationHistoryService;
 
   private static final String APPLICATION_HISTORY_URL = "ApplicationHistoryUrl";
@@ -61,10 +67,9 @@ public class ApplicationHistoryServiceTest extends MockServices {
     return capturedChange;
   }
 
-  @Before
+  @BeforeEach
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    applicationMapper = new ApplicationMapper(customerMapper, mockUserService, mockLocationService);
+    applicationMapper = new ApplicationMapper(customerMapper, mockLocationService, addressMaker, new CommentMapper());
     Mockito.when(mockApplicationProperties.getApplicationHistoryUrl()).thenReturn(APPLICATION_HISTORY_URL);
     Mockito.when(mockApplicationProperties.getAddApplicationHistoryUrl()).thenReturn(ADD_APPLICATION_HISTORY_URL);
     Mockito.when(mockUserService.getCurrentUser()).thenReturn(mockUserJson);
@@ -102,16 +107,16 @@ public class ApplicationHistoryServiceTest extends MockServices {
     newApplication.getProject().setAdditionalInfo("new.email@company.org");
     applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
 
-    Assert.assertNotNull(capturedChange);
-    Assert.assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
-    Assert.assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
+    assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
     List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
-    Assert.assertNotNull(fieldChanges);
-    Assert.assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name")).count());
-    Assert.assertEquals("Changed Name", fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name"))
+    assertNotNull(fieldChanges);
+    assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name")).count());
+    assertEquals("Changed Name", fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name"))
         .map(fc -> fc.getNewValue()).findFirst().orElse(null));
-    Assert.assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/project/additionalInfo")).count());
-    Assert.assertEquals("new.email@company.org",
+    assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/project/additionalInfo")).count());
+    assertEquals("new.email@company.org",
         fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/project/additionalInfo")).map(fc -> fc.getNewValue())
             .findFirst().orElse(null));
   }
@@ -126,9 +131,9 @@ public class ApplicationHistoryServiceTest extends MockServices {
 
     applicationHistoryService.addStatusChange(APPLICATION_ID, StatusType.PRE_RESERVED, null);
 
-    Assert.assertNotNull(capturedChange);
-    Assert.assertEquals(ChangeType.STATUS_CHANGED, capturedChange.getChangeType());
-    Assert.assertEquals(StatusType.PRE_RESERVED.name(), capturedChange.getChangeSpecifier());
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.STATUS_CHANGED, capturedChange.getChangeType());
+    assertEquals(StatusType.PRE_RESERVED.name(), capturedChange.getChangeSpecifier());
   }
 
   @Test
@@ -137,8 +142,8 @@ public class ApplicationHistoryServiceTest extends MockServices {
     setupChangeCapture(APPLICATION_ID);
 
     applicationHistoryService.addApplicationCreated(APPLICATION_ID);
-    Assert.assertNotNull(capturedChange);
-    Assert.assertEquals(ChangeType.CREATED, capturedChange.getChangeType());
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.CREATED, capturedChange.getChangeType());
   }
 
   /* Make sure that applicationTag id is skipped from changes */
@@ -154,14 +159,14 @@ public class ApplicationHistoryServiceTest extends MockServices {
         Arrays.asList(new ApplicationTagJson(12, ApplicationTagType.DATE_CHANGE, ZonedDateTime.now().plusDays(1))));
     applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
 
-    Assert.assertNotNull(capturedChange);
-    Assert.assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
-    Assert.assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
+    assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
     List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
     List<FieldChange> tagChanges = fieldChanges.stream()
         .filter(chg -> chg.getFieldName().startsWith("/applicationTags/")).collect(Collectors.toList());
-    Assert.assertEquals(2, tagChanges.size());
-    Assert.assertEquals(0, tagChanges.stream().filter(c -> c.getFieldName().endsWith("/id")).count());
+    assertEquals(2, tagChanges.size());
+    assertEquals(0, tagChanges.stream().filter(c -> c.getFieldName().endsWith("/id")).count());
   }
 
   /* Make sure that owner changes are not generated */
@@ -183,14 +188,14 @@ public class ApplicationHistoryServiceTest extends MockServices {
 
     applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
 
-    Assert.assertNotNull(capturedChange);
-    Assert.assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
-    Assert.assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
+    assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
     List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
     List<FieldChange> tagChanges = fieldChanges.stream()
         .filter(chg -> chg.getFieldName().startsWith("/handler/")).collect(Collectors.toList());
     fieldChanges.forEach(change -> System.out.println(change.toString()));
-    Assert.assertEquals(0, tagChanges.size());
+    assertEquals(0, tagChanges.size());
   }
 
   // TODO: add tests to verify that ApplicationJson contains fields

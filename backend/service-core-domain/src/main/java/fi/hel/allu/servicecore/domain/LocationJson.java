@@ -1,28 +1,26 @@
 package fi.hel.allu.servicecore.domain;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.geolatte.geom.Geometry;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.validator.NotFalse;
+import fi.hel.allu.model.domain.LocationInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.geolatte.geom.Geometry;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * in Finnish: Hakemuksen sijainti
  */
 @Schema(description = "Application location")
 @NotFalse(rules = {"startTime, startTimeNotAfterEndTimeValidation, start time must be before end time"})
-public class LocationJson implements StartTimeInterface {
+public class LocationJson implements StartTimeInterface, LocationInterface {
   private Integer id;
   private Integer locationKey;
   private Integer locationVersion;

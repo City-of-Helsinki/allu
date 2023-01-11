@@ -9,11 +9,9 @@ import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.RestResponsePage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,8 +233,7 @@ public class SearchSyncService {
   }
 
   private List<ApplicationES> mapListToES(List<Application> application) {
-    List<ApplicationJson> applicationJsonList = applicationServiceComposer.getCompactPopulatedApplicationList(application);
-    return  applicationJsonList.stream().map(applicationMapper::createApplicationESModel).collect(Collectors.toList());
+   return applicationServiceComposer.getCompactPopulatedApplicationEsList(application);
   }
 
   private ProjectES mapToES(Project project) {

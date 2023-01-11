@@ -1,21 +1,25 @@
 package fi.hel.allu.servicecore.mapper;
 
-import java.util.Arrays;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
-
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.domain.IdInterface;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.ModifyProjectJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.ModifyProjectJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * Mapper for projects in their different forms.
@@ -116,5 +120,16 @@ public class ProjectMapper {
     projectJson.setAdditionalInfo(modifyJson.getAdditionalInfo());
     projectJson.setCustomerReference(modifyJson.getCustomerReference());
     projectJson.setName(modifyJson.getName());
+  }
+
+  public <T extends IdInterface, U> List<U> populateValues(Map<Integer, List<U>> mappedApplications,
+                                                           BiConsumer<T, U> setValue, List<T> listToPopulate) {
+    List<U> result = new ArrayList<>();
+    for (T jsonValue : listToPopulate) {
+      List<U> applicationJsonList = mappedApplications.get(jsonValue.getId());
+      applicationJsonList.forEach(applicationJson -> setValue.accept(jsonValue, applicationJson));
+      result.addAll(applicationJsonList);
+    }
+    return result;
   }
 }

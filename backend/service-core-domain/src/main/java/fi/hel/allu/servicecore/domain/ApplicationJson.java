@@ -1,21 +1,21 @@
 package fi.hel.allu.servicecore.domain;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.ApplicationInterface;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * in Finnish: Hakemus
  */
 @Schema(description = "Application")
-public class ApplicationJson extends BaseApplicationJson implements StartTimeInterface {
+public class ApplicationJson extends BaseApplicationJson implements StartTimeInterface, ApplicationInterface {
 
   @Valid
   private ProjectJson project;
@@ -261,5 +261,17 @@ public class ApplicationJson extends BaseApplicationJson implements StartTimeInt
       return getType() != ApplicationType.AREA_RENTAL;
     }
     return true;
+  }
+
+  @Override
+  @Schema(description = "Application locations", accessMode = Schema.AccessMode.READ_ONLY)
+  public List<LocationJson> getLocations() {
+    return super.getLocations();
+  }
+
+  @Override
+  @Schema(description = "Application tags", accessMode = Schema.AccessMode.READ_ONLY)
+  public List<ApplicationTagJson> getApplicationTags() {
+    return super.getApplicationTags();
   }
 }

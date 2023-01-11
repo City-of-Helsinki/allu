@@ -1,34 +1,42 @@
 package fi.hel.allu.servicecore.service;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
+import fi.hel.allu.common.types.ApplicationNotificationType;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.model.domain.Comment;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
+import fi.hel.allu.servicecore.mapper.CommentMapper;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.types.ApplicationNotificationType;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.model.domain.Comment;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.CommentJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
-import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import java.time.ZonedDateTime;
+import java.util.*;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CommentServiceTest {
   @Mock
   private RestTemplate restTemplate;
@@ -41,7 +49,6 @@ public class CommentServiceTest {
   @Mock
   private ApplicationEventDispatcher eventDispatcher;
 
-  @InjectMocks
   private CommentService commentService;
 
   private static final String COMMENTS_FIND_BY_APP_URL = "CommentsFindByAppUrl";
@@ -54,21 +61,22 @@ public class CommentServiceTest {
   private static final int APPLICATION_ID = 11;
   private static final int USER_ID = 7;
 
-  @Before
+  @BeforeEach
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    Mockito.when(applicationProperties.getCommentsFindByApplicationUrl()).thenReturn(COMMENTS_FIND_BY_APP_URL);
-    Mockito.when(applicationProperties.getApplicationCommentsCreateUrl()).thenReturn(COMMENTS_CREATE_URL);
-    Mockito.when(applicationProperties.getCommentsUpdateUrl()).thenReturn(COMMENTS_UPDATE_URL);
-    Mockito.when(applicationProperties.getCommentsDeleteUrl()).thenReturn(COMMENTS_DELETE_URL);
-    Mockito.when(applicationProperties.getCommentsFindCountByApplicationUrl()).thenReturn(COMMENTS_COUNT_URL);
-    Mockito.when(applicationProperties.getCommentsFindByIdUrl()).thenReturn(COMMENTS_FIND_BY_ID_URL);
-    Mockito.when(applicationProperties.getLatestApplicationCommentUrl()).thenReturn(COMMENTS_LATEST_URL);
-    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_COUNT_URL), Mockito.eq(Integer.class), Mockito.any(Integer.class)))
+    commentService = new CommentService(applicationProperties, restTemplate, userService, applicationHistoryService, eventDispatcher, new CommentMapper());
+    when(applicationProperties.getCommentsFindByApplicationUrl()).thenReturn(COMMENTS_FIND_BY_APP_URL);
+    when(applicationProperties.getApplicationCommentsCreateUrl()).thenReturn(COMMENTS_CREATE_URL);
+    when(applicationProperties.getCommentsUpdateUrl()).thenReturn(COMMENTS_UPDATE_URL);
+    when(applicationProperties.getCommentsDeleteUrl()).thenReturn(COMMENTS_DELETE_URL);
+    when(applicationProperties.getCommentsFindCountByApplicationUrl()).thenReturn(COMMENTS_COUNT_URL);
+    when(applicationProperties.getCommentsFindByIdUrl()).thenReturn(COMMENTS_FIND_BY_ID_URL);
+    when(applicationProperties.getLatestApplicationCommentUrl()).thenReturn(COMMENTS_LATEST_URL);
+    when(applicationProperties.getCommentsFindByApplicationsGroupingUrl()).thenReturn("https://koe");
+    when(restTemplate.getForEntity(Mockito.eq(COMMENTS_COUNT_URL), Mockito.eq(Integer.class), Mockito.any(Integer.class)))
     .thenReturn(ResponseEntity.ok(Integer.valueOf(1)));
-    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_ID_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
+    when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_ID_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
     .thenReturn(ResponseEntity.ok(new Comment()));
-    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_LATEST_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
+    when(restTemplate.getForEntity(Mockito.eq(COMMENTS_LATEST_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
     .thenReturn(ResponseEntity.ok(null));
 
 
@@ -84,9 +92,9 @@ public class CommentServiceTest {
 
     List<CommentJson> comments = commentService.findByApplicationId(APPLICATION_ID);
 
-    Assert.assertEquals(1, comments.size());
-    Assert.assertEquals(comment.getText(), comments.get(0).getText());
-    Assert.assertEquals(USER_ID, comments.get(0).getUser().getId().intValue());
+    assertEquals(1, comments.size());
+    assertEquals(comment.getText(), comments.get(0).getText());
+   assertEquals(USER_ID, comments.get(0).getUser().getId().intValue());
   }
 
   @Test
@@ -101,8 +109,8 @@ public class CommentServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     CommentJson result = commentService.addApplicationComment(APPLICATION_ID, commentJson);
-    Assert.assertEquals(comment.getText(), result.getText());
-    Assert.assertEquals(USER_ID, result.getUser().getId().intValue());
+    assertEquals(comment.getText(), result.getText());
+    assertEquals(USER_ID, result.getUser().getId().intValue());
   }
 
   @Test
@@ -140,8 +148,8 @@ public class CommentServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     CommentJson result = commentService.updateComment(APPLICATION_ID, commentJson);
-    Assert.assertEquals(comment.getText(), result.getText());
-    Assert.assertEquals(USER_ID, result.getUser().getId().intValue());
+    assertEquals(comment.getText(), result.getText());
+    assertEquals(USER_ID, result.getUser().getId().intValue());
   }
 
   @Test
@@ -164,6 +172,42 @@ public class CommentServiceTest {
             .thenReturn(ResponseEntity.ok(comment));
     commentService.deleteComment(commentId);
     verify(applicationHistoryService, times(1)).addCommentRemoved(APPLICATION_ID);
+  }
+
+  @Test
+  public void populateComments(){
+    ApplicationES applicationES1 = new ApplicationES();
+    ApplicationES applicationES2 = new ApplicationES();
+    applicationES1.setId(1);
+    applicationES2.setId(2);
+    List<ApplicationES> applicationESList = new ArrayList<>();
+    applicationESList.add(applicationES1);
+    applicationESList.add(applicationES2);
+    when(restTemplate.postForObject(eq(applicationProperties.getCommentsFindByApplicationsGroupingUrl()), anyList(), eq(Map.class)))
+            .thenReturn(generateMappedComments(Arrays.asList(1, 2), 3));
+    List<ApplicationES> result = commentService.mapCommentsToEs(applicationESList);
+    assertEquals(2, result.size());
+    assertEquals(3, result.get(0).getNrOfComments());
+    assertEquals(3, result.get(1).getNrOfComments());
+    assertNotNull(result.get(0).getLatestComment());
+  }
+
+  @Test
+  public void testLatestComment(){
+    String expected = "Testing awesome code";
+    ApplicationES applicationES1 = new ApplicationES();
+    applicationES1.setId(1);
+    List<ApplicationES> applicationESList = new ArrayList<>();
+    applicationESList.add(applicationES1);
+    Map<Integer, List<Comment>> mappedComments = generateMappedComments(Arrays.asList(1), 3);
+    ZonedDateTime zonedDateTime = mappedComments.get(1).get(0).getCreateTime().plusYears(1);
+    mappedComments.get(1).get(0).setCreateTime(zonedDateTime);
+    mappedComments.get(1).get(0).setText(expected);
+    when(restTemplate.postForObject(eq(applicationProperties.getCommentsFindByApplicationsGroupingUrl()), anyList(), eq(Map.class))).thenReturn(mappedComments);
+    List<ApplicationES> result = commentService.mapCommentsToEs(applicationESList);
+    assertEquals(1, result.size());
+    assertEquals(3, result.get(0).getNrOfComments());
+    assertEquals(expected,  result.get(0).getLatestComment());
   }
 
   private CommentJson newCommentJson(CommentType type, String text, int userId) {
@@ -189,5 +233,23 @@ public class CommentServiceTest {
     result.setRealName(name);
     result.setId(id);
     return result;
+  }
+
+  private Map<Integer, List<Comment>> generateMappedComments(List<Integer> ids, int nrOfComments){
+    Map<Integer, List<Comment>> result = new HashMap<>();
+    ids.forEach(id -> result.put(id, createCommentList(id, nrOfComments)));
+    return result;
+  }
+
+  private List<Comment> createCommentList(Integer id, int nrOfComments){
+    List<Comment> listOfComments = new ArrayList<>();
+    for (int i = 0; i < nrOfComments; i++){
+      Comment comment = new Comment();
+      comment.setId(id);
+      comment.setCreateTime(ZonedDateTime.now());
+      comment.setText("Meaning of life is 42 if you understand the question");
+      listOfComments.add(comment);
+    }
+    return listOfComments;
   }
 }

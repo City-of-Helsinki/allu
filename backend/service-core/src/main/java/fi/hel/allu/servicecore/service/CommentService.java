@@ -4,11 +4,13 @@ import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
+import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
+import fi.hel.allu.servicecore.mapper.CommentMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -28,6 +30,7 @@ public class CommentService {
   private UserService userService;
   private ApplicationHistoryService applicationHistoryService;
   private ApplicationEventDispatcher applicationEventDispatcher;
+  private final CommentMapper commentMapper;
 
 
   private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -39,12 +42,14 @@ public class CommentService {
 
   @Autowired
   public CommentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
-      ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher) {
+      ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher,
+                        CommentMapper commentMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationHistoryService = applicationHistoryService;
     this.applicationEventDispatcher = applicationEventDispatcher;
+    this.commentMapper = commentMapper;
   }
 
   public List<CommentJson> findByApplicationId(int applicationId) {
@@ -53,6 +58,10 @@ public class CommentService {
 
   public List<Comment> findByApplicationIds(List<Integer> applicationIds) {
     return findByList(applicationProperties.getCommentsFindByApplicationsUrl(), applicationIds);
+  }
+
+  public Map<Integer, List<Comment>> findByApplicationIdsGrouping(List<Integer> applicationIds) {
+    return findByListGrouping(applicationProperties.getCommentsFindByApplicationsGroupingUrl(), applicationIds);
   }
 
   public List<CommentJson> findByProjectId(int projectId) {
@@ -128,6 +137,11 @@ public class CommentService {
   private List<Comment> findByList(String url, List<Integer> applicationIds) {
     Comment[] result = restTemplate.postForObject(url, applicationIds, Comment[].class);
     return Arrays.asList(result);
+  }
+
+  private Map<Integer, List<Comment>> findByListGrouping(String url, List<Integer> applicationIds) {
+    Map<Integer, List<Comment>> result = restTemplate.postForObject(url, applicationIds, Map.class);
+    return result;
   }
 
   /*
@@ -232,6 +246,12 @@ public class CommentService {
     validateCommentType(comment.getType());
     comment.setText(commentText);
     return updateComment(id, comment);
+  }
+
+  public List<ApplicationES> mapCommentsToEs(List<ApplicationES> applicationESList) {
+    Map<Integer, List<Comment>> mappedComments = findByApplicationIdsGrouping(
+            applicationESList.stream().map(ApplicationES::getId).collect(Collectors.toList()));
+    return commentMapper.populateComments(mappedComments, applicationESList);
   }
 
 }

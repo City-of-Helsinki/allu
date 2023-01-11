@@ -1,14 +1,14 @@
 package fi.hel.allu.servicecore.domain;
 
+import fi.hel.allu.model.domain.IdInterface;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
 @Schema(description = "Project (hanke)")
-public class ProjectJson extends BaseProjectJson implements BaseJsonInterface {
+public class ProjectJson extends BaseProjectJson implements IdInterface {
   private Integer id;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;

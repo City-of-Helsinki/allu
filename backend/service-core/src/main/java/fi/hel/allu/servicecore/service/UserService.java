@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.UserSearchCriteria;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.UserMapper;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,12 +28,15 @@ public class UserService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private IdentityServiceInterface identityService;
+  private final UserMapper userMapper;
 
   @Autowired
-  public UserService(ApplicationProperties applicationProperties, RestTemplate restTemplate, IdentityServiceInterface identityService) {
+  public UserService(ApplicationProperties applicationProperties, RestTemplate restTemplate, IdentityServiceInterface identityService,
+                     UserMapper userMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.identityService = identityService;
+    this.userMapper = userMapper;
   }
 
   public UserJson getCurrentUser() {
@@ -83,6 +88,11 @@ public class UserService {
     return Arrays.stream(result).map(p -> UserMapper.mapToUserJson(p)).collect(Collectors.toList());
   }
 
+  public Map<Integer, User> findByApplicationIds(List<Integer> ids) {
+    Map<Integer, User> result = restTemplate.postForObject(applicationProperties.getUsersByApplicationIdUrl(), ids, Map.class);
+    return result;
+  }
+
   public UserJson addUser(UserJson userJson) {
     if (userJson.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
@@ -104,6 +114,12 @@ public class UserService {
   }
 
   private List<UserJson> mapUsers(User[] users) {
-    return Arrays.stream(users).map(u -> UserMapper.mapToUserJson(u)).collect(Collectors.toList());
+    return Arrays.stream(users).map(UserMapper::mapToUserJson).collect(Collectors.toList());
+  }
+
+  public List<ApplicationES> mapOwnerToEs(List<ApplicationES> listToPopulate){
+    List<Integer> applicationIds = listToPopulate.stream().map(ApplicationES::getId).collect(Collectors.toList());
+    Map<Integer, User> applicationIdUserMap = findByApplicationIds(applicationIds);
+    return userMapper.populateOwners(applicationIdUserMap, listToPopulate);
   }
 }

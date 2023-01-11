@@ -1,24 +1,21 @@
 package fi.hel.allu.model.dao;
 
-import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.DefaultMapper;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.model.domain.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.model.domain.Comment;
-
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QComment.comment;
 
@@ -49,6 +46,12 @@ public class CommentDao {
   public List<Comment> findByApplicationIds(List<Integer> applicationIds) {
     return queryFactory.select(commentBean).from(comment)
             .where(comment.applicationId.in(applicationIds)).fetch();
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Integer, List<Comment>> findByApplicationIdsGrouping(List<Integer> applicationIds) {
+    return queryFactory.select(commentBean).from(comment)
+            .where(comment.applicationId.in(applicationIds)).transform(groupBy(comment.applicationId).as(list(commentBean)));
   }
 
   @Transactional(readOnly = true)

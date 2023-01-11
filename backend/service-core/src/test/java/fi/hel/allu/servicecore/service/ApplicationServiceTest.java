@@ -1,32 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ApplicationNotificationType;
@@ -39,20 +13,43 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import fi.hel.allu.servicecore.util.AddressMaker;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class ApplicationServiceTest extends MockServices {
   private static Validator validator;
   @Mock
   protected CustomerService customerService;
-  @Autowired
-  protected ApplicationMapper applicationMapper;
   @Mock
   protected ContactService contactService;
   @Mock
@@ -73,21 +70,31 @@ public class ApplicationServiceTest extends MockServices {
   private InvoiceService invoiceService;
   @Mock
   private ApplicationEventDispatcher eventDispatcher;
+  @Mock
+  private ProjectService projectService;
+  @Mock
+  private AddressMaker addressMaker;
+  @Mock
+  private CommentService commentService;
+  @Mock
+  private TerminationService terminationService;
+
+  @InjectMocks
+  protected ApplicationMapper applicationMapper;
 
   private ApplicationService applicationService;
 
   private UserJson userJson;
   private static final int USER_ID = 123;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUpBeforeClass() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     validator = factory.getValidator();
   }
 
-  @Before
+  @BeforeEach
   public void setUp() {
-    applicationMapper = new ApplicationMapper(customerMapper, userService, locationService);
 
     initSaveMocks();
     initSearchMocks();

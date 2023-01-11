@@ -1,11 +1,12 @@
 package fi.hel.allu.servicecore.domain;
 
-import javax.validation.constraints.NotBlank;
-
+import fi.hel.allu.model.domain.ContactInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotBlank;
+
 @Schema(description = "Contact person")
-public class ContactJson {
+public class ContactJson implements ContactInterface {
   private Integer id;
   private Integer customerId;
   @NotBlank(message = "{contact.name.notblank}")

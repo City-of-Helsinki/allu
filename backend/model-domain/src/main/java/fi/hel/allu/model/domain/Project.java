@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 /**
  * In Finnish: Hanke
  */
-public class Project {
+public class Project implements IdInterface {
 
   private Integer id;
   private Integer parentId;

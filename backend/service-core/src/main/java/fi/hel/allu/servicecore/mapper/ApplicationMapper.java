@@ -23,16 +23,18 @@ import fi.hel.allu.servicecore.domain.history.ApplicationForHistory;
 import fi.hel.allu.servicecore.domain.history.ApplicationTagForHistory;
 import fi.hel.allu.servicecore.mapper.extension.*;
 import fi.hel.allu.servicecore.service.LocationService;
-import fi.hel.allu.servicecore.service.UserService;
+import fi.hel.allu.servicecore.util.AddressMaker;
 import fi.hel.allu.servicecore.util.GeometrySimplifier;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 
@@ -41,22 +43,86 @@ public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
 
   private final CustomerMapper customerMapper;
-  private final UserService userService;
   private final LocationService locationService;
   private final ObjectWriter geometryWriter;
-  private List<ZoomLevelSizeBounds> zoomLevelSizeBoundsList;
+  private final List<ZoomLevelSizeBounds> zoomLevelSizeBoundsList;
+  private final CommentMapper commentMapper;
+  private final BiConsumer<LocationES, Location> setLocationAddress;
+  private final BiConsumer<LocationES, LocationJson> setLocationJsonAddress =
+          (locationES, locationJson) -> locationES.setAddress(locationJson.getAddress());
 
   @Autowired
-  public ApplicationMapper(CustomerMapper customerMapper, UserService userService, LocationService locationService) {
+  public ApplicationMapper(CustomerMapper customerMapper, LocationService locationService,
+                           AddressMaker addressMaker, CommentMapper commentMapper) {
     this.customerMapper = customerMapper;
-    this.userService = userService;
     this.locationService = locationService;
+    this.commentMapper = commentMapper;
     ObjectMapper mapper = new ObjectMapper();
     SimpleModule module = new SimpleModule("CustomGeometrySerializer", new Version(1, 0, 0, null, null, null));
     module.addSerializer(Geometry.class, new GeometrySerializerProxy());
     mapper.registerModule(module);
     geometryWriter = mapper.writerFor(Geometry.class);
     zoomLevelSizeBoundsList = GeometrySimplifier.generateZoomLevelSizeBoundsList();
+    setLocationAddress = (locationES, location) -> locationES.setAddress(addressMaker.getAddress(location));
+  }
+
+  public ApplicationForHistory mapJsonToHistory(ApplicationJson application) {
+    ApplicationForHistory history = new ApplicationForHistory();
+    history.setId(application.getId());
+    history.setApplicationId(application.getApplicationId());
+    history.setStatus(application.getStatus());
+    history.setType(application.getType());
+    history.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
+    if (application.getApplicationTags() != null) {
+      history.setApplicationTags(application.getApplicationTags()
+                                         .stream()
+                                         .map(t -> new ApplicationTagForHistory(t.getType()))
+                                         .collect(Collectors.toList()));
+    }
+    history.setMetadataVersion(application.getMetadataVersion());
+    history.setCreationTime(application.getCreationTime());
+    history.setReceivedTime(application.getReceivedTime());
+    history.setStartTime(application.getStartTime());
+    history.setEndTime(application.getEndTime());
+    history.setRecurringEndTime(application.getRecurringEndTime());
+    history.setName(application.getName());
+    history.setDecisionTime(application.getDecisionTime());
+    history.setDecisionMaker(getUserRealName(application.getDecisionMaker()));
+    history.setExtension(application.getExtension());
+    history.setDecisionPublicityType(application.getDecisionPublicityType());
+    history.setDecisionDistributionList(application.getDecisionDistributionList());
+    history.setOwner(getUserRealName(application.getOwner()));
+    history.setHandler(getUserRealName(application.getHandler()));
+    history.setNotBillable(application.getNotBillable());
+    history.setNotBillableReason(application.getNotBillableReason());
+    history.setCustomersWithContacts(customersToHistory(application.getCustomersWithContacts()));
+    history.setInvoiceRecipientId(application.getInvoiceRecipientId());
+    history.setReplacedByApplicationId(application.getReplacedByApplicationId());
+    history.setReplacesApplicationId(application.getReplacesApplicationId());
+    history.setCustomerReference(application.getCustomerReference());
+    history.setInvoicingDate(application.getInvoicingDate());
+    history.setInvoiced(application.getInvoiced());
+    history.setSkipPriceCalculation(application.getSkipPriceCalculation());
+    history.setProject(application.getProject());
+    history.setExternalOwnerId(application.getExternalOwnerId());
+    history.setIdentificationNumber(application.getIdentificationNumber());
+    history.setLocations(application.getLocations());
+    return history;
+  }
+
+  private Map<CustomerRoleType, CustomerWithContactsJson> customersToHistory(List<CustomerWithContactsJson> customers) {
+    Map<CustomerRoleType, CustomerWithContactsJson> customerMap = new HashMap<>();
+    if (customers != null) {
+      customers.forEach(c -> customerMap.put(c.getRoleType(), c));
+    }
+    return customerMap;
+  }
+
+  private String getUserRealName(UserJson user) {
+    if (user != null) {
+      return user.getRealName();
+    }
+    return null;
   }
 
   /**
@@ -114,33 +180,7 @@ public class ApplicationMapper {
    * @return created applicationES object
    */
   public ApplicationES createApplicationESModel(ApplicationJson applicationJson) {
-    ApplicationES applicationES = new ApplicationES();
-    applicationES.setId(applicationJson.getId());
-    applicationES.setApplicationId(applicationJson.getApplicationId());
-    applicationES.setName(applicationJson.getName());
-    applicationES.setCreationTime(TimeUtil.dateToMillis(applicationJson.getCreationTime()));
-    applicationES.setReceivedTime(TimeUtil.dateToMillis(applicationJson.getReceivedTime()));
-    applicationES.setStartTime(TimeUtil.dateToMillis(applicationJson.getStartTime()));
-    applicationES.setEndTime(TimeUtil.dateToMillis(applicationJson.getEndTime()));
-    if (applicationJson.getStartTime() != null && applicationJson.getEndTime() != null) {
-      ZonedDateTime recurringEndTime =
-          applicationJson.getRecurringEndTime() == null ? applicationJson.getEndTime() : applicationJson.getRecurringEndTime();
-      RecurringApplication recurringApplication =
-          new RecurringApplication(applicationJson.getStartTime(), applicationJson.getEndTime(), recurringEndTime);
-      applicationES.setRecurringApplication(recurringApplication);
-    }
-    applicationES.setOwner(
-        applicationJson.getOwner() != null ?
-            new UserES(applicationJson.getOwner().getUserName(), applicationJson.getOwner().getRealName()) : null);
-    applicationES.setType(new ApplicationTypeES(applicationJson.getType()));
-    applicationES.setApplicationTags(createTagES(applicationJson.getApplicationTags()));
-    applicationES.setStatus(new StatusTypeES(applicationJson.getStatus()));
-    applicationES.setDecisionTime(TimeUtil.dateToMillis(applicationJson.getDecisionTime()));
-    applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
-    applicationES.setLocations(createLocationES(applicationJson.getLocations()));
-    Map<CustomerRoleType, CustomerWithContactsES> roleToCwcES = applicationJson.getCustomersWithContacts().stream()
-        .collect(Collectors.toMap(cwc -> cwc.getRoleType(), cwc -> customerMapper.createWithContactsES(cwc)));
-    applicationES.setCustomers(new RoleTypedCustomerES(roleToCwcES));
+    ApplicationES applicationES = createApplicationESGeneric(applicationJson, setLocationJsonAddress);
     if (applicationJson.getProject() != null) {
       CompactProjectES project = new CompactProjectES();
       project.setIdentifier(applicationJson.getProject().getIdentifier());
@@ -148,18 +188,45 @@ public class ApplicationMapper {
       applicationES.setProject(project);
     }
     applicationES.setNrOfComments(applicationJson.getComments() != null ? applicationJson.getComments().size() : 0);
-    applicationES.setIdentificationNumber(applicationJson.getIdentificationNumber());
-    applicationES.setOwnerNotification(applicationJson.getOwnerNotification());
-    applicationES.setLatestComment(getLatestComment(applicationJson.getComments()));
+    applicationES.setLatestComment(commentMapper.getLatestComment(applicationJson.getComments()));
     applicationES.setTerminationTime(TimeUtil.dateToMillis(applicationJson.getTerminationTime()));
     return applicationES;
   }
 
-  private String getLatestComment(List<CommentJson> comments) {
-    return Optional.ofNullable(comments)
-        .flatMap(commentList -> commentList.stream().max(Comparator.comparing(CommentJson::getCreateTime))
-        .map(comment -> comment.getText()))
-        .orElse(null);
+  public ApplicationES createApplicationESModel(Application application) {
+    ApplicationES applicationES = createApplicationESGeneric(application, setLocationAddress);
+    return applicationES;
+  }
+
+  private <T extends ApplicationInterface, U extends LocationInterface> ApplicationES createApplicationESGeneric(
+          T application, BiConsumer<LocationES, U> setLocationAddress){
+    ApplicationES applicationES = new ApplicationES();
+    applicationES.setId(application.getId());
+    applicationES.setApplicationId(application.getApplicationId());
+    applicationES.setName(application.getName());
+    applicationES.setCreationTime(TimeUtil.dateToMillis(application.getCreationTime()));
+    applicationES.setReceivedTime(TimeUtil.dateToMillis(application.getReceivedTime()));
+    applicationES.setStartTime(TimeUtil.dateToMillis(application.getStartTime()));
+    applicationES.setEndTime(TimeUtil.dateToMillis(application.getEndTime()));
+    if (application.getStartTime() != null && application.getEndTime() != null) {
+      ZonedDateTime recurringEndTime =
+              application.getRecurringEndTime() == null ? application.getEndTime() : application.getRecurringEndTime();
+      RecurringApplication recurringApplication =
+              new RecurringApplication(application.getStartTime(), application.getEndTime(), recurringEndTime);
+      applicationES.setRecurringApplication(recurringApplication);
+    }
+    applicationES.setType(new ApplicationTypeES(application.getType()));
+    applicationES.setApplicationTags(createTagES(application.getApplicationTags()));
+    applicationES.setStatus(new StatusTypeES(application.getStatus()));
+    applicationES.setDecisionTime(TimeUtil.dateToMillis(application.getDecisionTime()));
+    applicationES.setApplicationTypeData(createApplicationTypeDataES(application));
+    applicationES.setLocations(createLocationES(application.getLocations(), setLocationAddress));
+    Map<CustomerRoleType, CustomerWithContactsES> roleToCwcES = application.getCustomersWithContacts().stream()
+            .collect(Collectors.toMap(CustomerWithContactsI::getRoleType, customerMapper::createWithContactsES));
+    applicationES.setCustomers(new RoleTypedCustomerES(roleToCwcES));
+    applicationES.setIdentificationNumber(application.getIdentificationNumber());
+    applicationES.setOwnerNotification(application.getOwnerNotification());
+    return applicationES;
   }
 
   /**
@@ -182,7 +249,6 @@ public class ApplicationMapper {
     applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData(), codeSetMap));
     return applicationJson;
   }
-
 
   private ApplicationJson defaultApplicationToJsonMapping(Application application) {
     ApplicationJson applicationJson = new ApplicationJson();
@@ -234,65 +300,6 @@ public class ApplicationMapper {
     applicationJson.setVersion(application.getVersion());
     applicationJson.setOwnerNotification(application.getOwnerNotification());
     return applicationJson;
-  }
-
-  public ApplicationForHistory mapJsonToHistory(ApplicationJson application) {
-    ApplicationForHistory history = new ApplicationForHistory();
-    history.setId(application.getId());
-    history.setApplicationId(application.getApplicationId());
-    history.setStatus(application.getStatus());
-    history.setType(application.getType());
-    history.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
-    if (application.getApplicationTags() != null) {
-      history.setApplicationTags(application.getApplicationTags()
-          .stream()
-          .map(t -> new ApplicationTagForHistory(t.getType()))
-          .collect(Collectors.toList()));
-    }
-    history.setMetadataVersion(application.getMetadataVersion());
-    history.setCreationTime(application.getCreationTime());
-    history.setReceivedTime(application.getReceivedTime());
-    history.setStartTime(application.getStartTime());
-    history.setEndTime(application.getEndTime());
-    history.setRecurringEndTime(application.getRecurringEndTime());
-    history.setName(application.getName());
-    history.setDecisionTime(application.getDecisionTime());
-    history.setDecisionMaker(getUserRealName(application.getDecisionMaker()));
-    history.setExtension(application.getExtension());
-    history.setDecisionPublicityType(application.getDecisionPublicityType());
-    history.setDecisionDistributionList(application.getDecisionDistributionList());
-    history.setOwner(getUserRealName(application.getOwner()));
-    history.setHandler(getUserRealName(application.getHandler()));
-    history.setNotBillable(application.getNotBillable());
-    history.setNotBillableReason(application.getNotBillableReason());
-    history.setCustomersWithContacts(customersToHistory(application.getCustomersWithContacts()));
-    history.setInvoiceRecipientId(application.getInvoiceRecipientId());
-    history.setReplacedByApplicationId(application.getReplacedByApplicationId());
-    history.setReplacesApplicationId(application.getReplacesApplicationId());
-    history.setCustomerReference(application.getCustomerReference());
-    history.setInvoicingDate(application.getInvoicingDate());
-    history.setInvoiced(application.getInvoiced());
-    history.setSkipPriceCalculation(application.getSkipPriceCalculation());
-    history.setProject(application.getProject());
-    history.setExternalOwnerId(application.getExternalOwnerId());
-    history.setIdentificationNumber(application.getIdentificationNumber());
-    history.setLocations(application.getLocations());
-    return history;
-  }
-
-  private Map<CustomerRoleType, CustomerWithContactsJson> customersToHistory(List<CustomerWithContactsJson> customers) {
-    Map<CustomerRoleType, CustomerWithContactsJson> customerMap = new HashMap<>();
-    if (customers != null) {
-      customers.forEach(c -> customerMap.put(c.getRoleType(), c));
-    }
-    return customerMap;
-  }
-
-  private String getUserRealName(UserJson user) {
-    if (user != null) {
-      return user.getRealName();
-    }
-    return null;
   }
 
   /**
@@ -360,29 +367,35 @@ public class ApplicationMapper {
 
   /**
    * Create a new <code>ApplicationTypeDataES</code> search-domain object from given ui-domain object.
-   * @param applicationJson Information that is mapped to search-domain object
+   * @param application Information that is mapped to search-domain object
    * @return created ApplicationTypeDataES object
    */
-  public List<ESFlatValue> createApplicationTypeDataES(ApplicationJson applicationJson) {
+  public <T extends ApplicationInterface> List<ESFlatValue> createApplicationTypeDataES(T application) {
+    return createApplicationTypeDataES(application.getExtension(),
+                                       "Unexpected error while mapping Application Type of " + application
+                                               + " as application type", application.getType().name());
+  }
+
+  public List<ESFlatValue> createApplicationTypeDataES(Object applicationExtension, String errorMessage, String typeName) {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     String json;
     try {
-      json = objectMapper.writeValueAsString(applicationJson.getExtension());
+      json = objectMapper.writeValueAsString(applicationExtension);
     } catch (JsonProcessingException e) {
-      logger.error("Unexpected error while mapping {} as JSON", applicationJson);
+      logger.error(errorMessage);
       throw new RuntimeException(e);
     }
 
     Map<String, Object> flattenedMap = new JsonFlattener(json).withSeparator('-').flattenAsMap();
     Map<String, Object> flattenedMapNoNulls = flattenedMap.entrySet().stream()
-        .filter(e -> e.getValue() != null)
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(e -> e.getValue() != null)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     List<ESFlatValue> flatList = flattenedMapNoNulls.entrySet().stream()
-        .map(e -> ESFlatValue.mapValue(applicationJson.getType().name(), e.getKey(), e.getValue()))
-        .collect(Collectors.toList());
+            .map(e -> ESFlatValue.mapValue(typeName, e.getKey(), e.getValue()))
+            .collect(Collectors.toList());
     return flatList;
   }
 
@@ -409,7 +422,7 @@ public class ApplicationMapper {
       return null;
     }
     return tags.stream()
-            .map(t -> createTagJson(t))
+            .map(this::createTagJson)
             .collect(Collectors.toList());
   }
 
@@ -417,7 +430,7 @@ public class ApplicationMapper {
     return new ApplicationTagJson(tag.getAddedBy(), tag.getType(), tag.getCreationTime());
   }
 
-  public List<String> createTagES(List<ApplicationTagJson> tagJsons) {
+  public <T extends ApplicationTagInterface> List<String> createTagES(List<T> tagJsons) {
     if (tagJsons == null) {
       return null;
     }
@@ -431,24 +444,24 @@ public class ApplicationMapper {
                                          applicationIdentifier.getIdentificationNumber());
   }
 
-  private List<LocationES> createLocationES(List<LocationJson> locationJsons) {
-    if (locationJsons != null) {
+  private <T extends LocationInterface> List<LocationES> createLocationES(List<T> locations, BiConsumer<LocationES, T> setLocationAddress) {
+    if (locations != null) {
       List<LocationES> locationESList = new ArrayList<>();
-      locationJsons.forEach(json -> locationESList.addAll(this.createLocationESSimplified(json)));
+      locations.forEach(location -> locationESList.addAll(this.createLocationESSimplified(location, setLocationAddress)));
       return locationESList;
     } else {
       return null;
     }
   }
 
-  private List<LocationES> createLocationESSimplified(LocationJson locationJson) {
-    if (locationJson.getGeometry().getNumPoints() == 1) {
-      return Lists.newArrayList(createLocationES(locationJson));
+  private <T extends LocationInterface> List<LocationES> createLocationESSimplified(T location, BiConsumer<LocationES, T> setLocationAddress) {
+    if (location.getGeometry().getNumPoints() == 1) {
+      return Lists.newArrayList(createLocationESFromLocation(location, setLocationAddress));
     }
     List<LocationES> locationsWithSimplifiedGeo = new ArrayList<>();
     // Go through all complexities
     for (int i = GeometryComplexity.FULL.ordinal(); i >= GeometryComplexity.POINT.ordinal(); i--) {
-      LocationES locationESWithZoom = createLocationES(locationJson, i);
+      LocationES locationESWithZoom = createLocationESFromLocation(location, setLocationAddress, i);
       if (locationESWithZoom == null) {
         logger.debug("No need to add complexity " + GeometryComplexity.values()[i]);
         continue;
@@ -458,26 +471,35 @@ public class ApplicationMapper {
     return locationsWithSimplifiedGeo;
   }
 
-  private LocationES createLocationES(LocationJson json) {
-    return createLocationES(json, null);
+  private <T extends LocationInterface> LocationES createLocationESFromLocation(T location, BiConsumer<LocationES, T> setLocationAddress) {
+    return createLocationES(location, setLocationAddress, null);
   }
 
-  private LocationES createLocationES(LocationJson json, Integer complexity) {
+  private <T extends LocationInterface> LocationES createLocationESFromLocation(T location, BiConsumer<LocationES, T> setLocationAddress, Integer complexity) {
+    return createLocationES(location, setLocationAddress, complexity);
+  }
+
+  private <T extends LocationInterface> LocationES createLocationES(T location, BiConsumer<LocationES, T> setLocationAddress, Integer complexity) {
     LocationES locationEs = new LocationES();
-    locationEs.setLocationKey(json.getLocationKey());
-    Optional.ofNullable(json.getPostalAddress()).ifPresent(address -> {
+    locationEs.setLocationKey(location.getLocationKey());
+    Optional.ofNullable(location.getPostalAddress()).ifPresent(address -> {
       locationEs.setStreetAddress(address.getStreetAddress());
       locationEs.setPostalCode(address.getPostalCode());
       locationEs.setCity(address.getCity());
     });
-    locationEs.setAddress(json.getAddress());
-    locationEs.setCityDistrictId(getCityDistrictId(json));
-    locationEs.setAdditionalInfo(json.getAdditionalInfo());
-    Geometry jsonGeometry = json.getGeometry();
-    if (!simplifyGeometry(locationEs, jsonGeometry, json.getGeometry(), complexity)) {
+    locationEs.setCityDistrictId(getCityDistrictId(location));
+    locationEs.setAdditionalInfo(location.getAdditionalInfo());
+    setLocationAddress.accept(locationEs, location);
+    Geometry jsonGeometry = location.getGeometry();
+    if (!simplifyGeometry(locationEs, jsonGeometry, location.getGeometry(), complexity)) {
       return null;
     }
-    Geometry searchGeometry = locationService.transformCoordinates(jsonGeometry, Constants.ELASTIC_SEARCH_SRID);
+    Geometry searchGeometry = null;
+    try { // needed to put on place because some geometry locations give on transformation POLYGON((∞ ∞,∞ ∞,∞ ∞,∞ ∞,∞ ∞)
+      searchGeometry = locationService.transformCoordinates(jsonGeometry, Constants.ELASTIC_SEARCH_SRID);
+    } catch (RestClientException e) {
+      logger.error("Location geometry transformation failed. location_id: {}, geometry: {}", location.getId(), jsonGeometry.asText());
+    }
     locationEs.setSearchGeometry(searchGeometry);
     return locationEs;
   }
@@ -523,8 +545,8 @@ public class ApplicationMapper {
     }
   }
 
-  private Integer getCityDistrictId(LocationJson locationJson) {
-    return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
+  private Integer getCityDistrictId(LocationInterface location) {
+    return Optional.ofNullable(location.getCityDistrictIdOverride()).orElse(location.getCityDistrictId());
   }
 
   public List<DistributionEntryJson> createDistributionEntryJsonList(List<DistributionEntry> entries) {

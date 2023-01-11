@@ -214,14 +214,14 @@ public class LocationDao {
     }
 
     @Transactional(readOnly = true)
-    public List<LocationGeometry> findGeometryByLocations(List<Integer> locationId) {
+    public List<LocationGeometry> findGeometryByLocations(List<Integer> locationIds) {
         return queryFactory.select(locationGeometryBean).from(locationGeometry)
-                .where(locationGeometry.locationId.in(locationId)).fetch();
+                .where(locationGeometry.locationId.in(locationIds)).fetch();
     }
 
     @Transactional(readOnly = true)
-    public List<LocationFlids> findFixedLocations(List<Integer> locationId) {
-        return queryFactory.select(locationFlidsBean).from(locationFlids).where(locationFlids.locationId.in(locationId))
+    public List<LocationFlids> findFixedLocations(List<Integer> locationIds) {
+        return queryFactory.select(locationFlidsBean).from(locationFlids).where(locationFlids.locationId.in(locationIds))
                 .fetch();
     }
 

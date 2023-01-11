@@ -1,20 +1,19 @@
 package fi.hel.allu.model.controller;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import fi.hel.allu.common.domain.UserSearchCriteria;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for managing Allu users.
@@ -44,8 +43,14 @@ public class UserController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<List<User>> search(@Valid @RequestBody UserSearchCriteria usc) {
     return new ResponseEntity<>(
-        userDao.findMatching(usc.getRoleType(), usc.getApplicationType(), usc.getCityDistrictId()),
-        HttpStatus.OK);
+            userDao.findMatching(usc.getRoleType(), usc.getApplicationType(), usc.getCityDistrictId()),
+            HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/owners", method = RequestMethod.POST)
+  public ResponseEntity<Map<Integer, User>> findApplicationOwners(@RequestBody List<Integer> applicationIds) {
+    Map<Integer, User> users = userDao.findByApplicationIds(applicationIds);
+    return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/role/{roleType}", method = RequestMethod.GET)

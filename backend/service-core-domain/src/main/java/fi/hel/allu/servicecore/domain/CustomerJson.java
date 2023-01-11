@@ -1,15 +1,15 @@
 package fi.hel.allu.servicecore.domain;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import javax.validation.constraints.NotBlank;
-
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.CustomerInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Schema(description = "Customer")
-public class CustomerJson {
+public class CustomerJson implements CustomerInterface {
 
   private Integer id;
   @NotNull(message = "{customer.type.notnull}")

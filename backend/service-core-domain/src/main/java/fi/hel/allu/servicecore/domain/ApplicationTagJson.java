@@ -1,17 +1,16 @@
 package fi.hel.allu.servicecore.domain;
 
-import java.time.ZonedDateTime;
-
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.model.domain.ApplicationTagInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
+
 @Schema(description = "Application tag")
-public class ApplicationTagJson {
+public class ApplicationTagJson implements ApplicationTagInterface {
   private Integer addedBy;
   @NotNull
   private ApplicationTagType type;

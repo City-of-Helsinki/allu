@@ -1,19 +1,5 @@
 package fi.hel.allu.servicecore.service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.mail.MailSendException;
-import org.springframework.stereotype.Service;
-
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
@@ -24,7 +10,24 @@ import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.mail.MailSendException;
+import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service for composing different application related services together. The main purpose of this class is to avoid circular references
@@ -46,6 +49,9 @@ public class ApplicationServiceComposer {
   private final CustomerService customerService;
   private final SupervisionTaskService supervisionTaskService;
   private final CustomerMapper customerMapper;
+  private final TerminationService terminationService;
+  private final ApplicationMapper applicationMapper;
+  private final CommentService commentService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -59,7 +65,10 @@ public class ApplicationServiceComposer {
       InvoiceService invoiceService,
       CustomerService customerService,
       @Lazy SupervisionTaskService supervisionTaskService,
-      CustomerMapper customerMapper) {
+      CustomerMapper customerMapper,
+      TerminationService terminationService,
+      ApplicationMapper applicationMapper,
+      CommentService commentService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
@@ -71,6 +80,9 @@ public class ApplicationServiceComposer {
     this.customerService = customerService;
     this.supervisionTaskService = supervisionTaskService;
     this.customerMapper = customerMapper;
+    this.terminationService = terminationService;
+    this.applicationMapper = applicationMapper;
+    this.commentService = commentService;
   }
 
   /**
@@ -83,17 +95,19 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
-  /**
-   * Get's compact populated application json based on
-   * given application. Json is populated with application data and some
-   * related data.
-   *
-   * @param application Application which is used to populate the json
-   * @return Compact populated json representation of application
-   */
 
   public List<ApplicationJson> getCompactPopulatedApplicationList(List<Application> applicationList) {
     return applicationJsonService.getCompactPopulatedApplicationList(applicationList);
+  }
+
+  public List<ApplicationES> getCompactPopulatedApplicationEsList(List<Application> applicationList){
+      List<ApplicationES> es =  applicationList.stream().map(
+              applicationMapper::createApplicationESModel).collect(Collectors.toList());
+      es = projectService.mapProjectToEs(es);
+      userService.mapOwnerToEs(es);
+      terminationService.mapTerminationToEs(es, applicationList);
+      es = commentService.mapCommentsToEs(es);
+      return es;
   }
 
   public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {
@@ -560,7 +574,6 @@ public class ApplicationServiceComposer {
 
   /**
    * Finds finished applications having one of the given statuses
-   * @param typesMovedToFinished
    */
   public List<Integer> findFinishedApplications(List<StatusType> statuses, List<ApplicationType> applicationTypes) {
     return applicationService.findFinishedApplications(statuses, applicationTypes);

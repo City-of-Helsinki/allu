@@ -2,8 +2,8 @@ package fi.hel.allu.search.domain;
 
 
 import fi.hel.allu.common.util.RecurringApplication;
-import javax.validation.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**

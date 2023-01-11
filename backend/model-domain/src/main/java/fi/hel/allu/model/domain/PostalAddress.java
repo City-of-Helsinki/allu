@@ -3,7 +3,7 @@ package fi.hel.allu.model.domain;
 /**
  * Postal address.
  */
-public class PostalAddress {
+public class PostalAddress implements PostalAddressInterface {
 
   private Integer id;
   private String streetAddress;

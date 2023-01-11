@@ -1,20 +1,20 @@
 package fi.hel.allu.servicecore.domain;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.model.domain.IdInterface;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.validation.constraints.NotBlank;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.RoleType;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * JSON mapping for Allu user data.
  */
 @Schema(description = "Allu user")
-public class UserJson implements BaseJsonInterface {
+public class UserJson implements IdInterface {
   private Integer id;
   @NotBlank(message = "{user.userName}")
   private String userName;

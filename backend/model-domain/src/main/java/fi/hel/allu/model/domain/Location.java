@@ -1,11 +1,11 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-public class Location extends AbstractLocation implements PostalAddressItem {
+public class Location extends AbstractLocation implements PostalAddressItem, LocationInterface {
   private Integer applicationId;
   private Integer locationVersion;
   private String additionalInfo;

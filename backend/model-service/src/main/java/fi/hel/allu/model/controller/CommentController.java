@@ -1,17 +1,16 @@
 package fi.hel.allu.model.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.CommentDao;
+import fi.hel.allu.model.domain.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.CommentDao;
-import fi.hel.allu.model.domain.Comment;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CommentController {
@@ -43,8 +42,14 @@ public class CommentController {
 
   @RequestMapping(value = "/applications/comments/find", method = RequestMethod.POST)
   public ResponseEntity<List<Comment>> findByApplicationIds(@RequestBody List<Integer> applicationIds) {
-    List<Comment> users = commentDao.findByApplicationIds(applicationIds);
-    return new ResponseEntity<>(users, HttpStatus.OK);
+    List<Comment> comments = commentDao.findByApplicationIds(applicationIds);
+    return new ResponseEntity<>(comments, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applications/comments/find/mapping", method = RequestMethod.POST)
+  public ResponseEntity<Map<Integer, List<Comment>>> findByApplicationIdsGrouping(@RequestBody List<Integer> applicationIds) {
+    Map<Integer, List<Comment>> commentListMap = commentDao.findByApplicationIdsGrouping(applicationIds);
+    return new ResponseEntity<>(commentListMap, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/applications/{applicationId}/comments/count", method = RequestMethod.GET)

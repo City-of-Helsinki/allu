@@ -138,7 +138,7 @@ public class CustomerMapper {
     return contact;
   }
 
-  public CustomerES createCustomerES(CustomerJson customerJson) {
+  public <T extends CustomerInterface> CustomerES createCustomerES(T customerJson) {
     if (customerJson != null) {
       return new CustomerES(
           customerJson.getId(),
@@ -154,7 +154,7 @@ public class CustomerMapper {
     }
   }
 
-  public List<ContactES> createContactES(List<ContactJson> contacts) {
+  public <T extends ContactInterface> List<ContactES> createContactES(List<T> contacts) {
     if (contacts != null) {
       return contacts.stream()
           .map(c -> new ContactES(c.getId(), c.getName(), c.isActive()))
@@ -164,10 +164,10 @@ public class CustomerMapper {
     }
   }
 
-  public CustomerWithContactsES createWithContactsES(CustomerWithContactsJson customerWithContactsJson) {
+  public <T extends CustomerWithContactsI> CustomerWithContactsES createWithContactsES(T customerWithContacts) {
     CustomerWithContactsES customerWithContactsES = new CustomerWithContactsES();
-    customerWithContactsES.setCustomer(createCustomerES(customerWithContactsJson.getCustomer()));
-    customerWithContactsES.setContacts(createContactES(customerWithContactsJson.getContacts()));
+    customerWithContactsES.setCustomer(createCustomerES(customerWithContacts.getCustomer()));
+    customerWithContactsES.setContacts(createContactES(customerWithContacts.getContacts()));
     return customerWithContactsES;
   }
 

@@ -1,7 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.TerminationInfo;
-import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.servicecore.domain.*;
@@ -9,7 +8,6 @@ import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -88,7 +86,6 @@ public class ApplicationJsonService {
 
     populateComments(mappedApplications);
     populateTerminationTimes(mappedApplications);
-
     return new ArrayList<>(mappedApplications.values());
   }
 
@@ -125,8 +122,8 @@ public class ApplicationJsonService {
     return new ArrayList<>(result);
   }
 
-  private <T extends BaseJsonInterface, U> List<U> populateValues(Map<Integer, List<U>> mappedApplications,
-                                                                  BiConsumer<U, T> setValue, List<T> listToPopulate) {
+  private <T extends IdInterface, U> List<U> populateValues(Map<Integer, List<U>> mappedApplications,
+                                                            BiConsumer<U, T> setValue, List<T> listToPopulate) {
     List<U> result = new ArrayList<>();
     for (T jsonValue : listToPopulate) {
       List<U> applicationJsonList = mappedApplications.get(jsonValue.getId());
@@ -184,7 +181,7 @@ public class ApplicationJsonService {
 
   private void populateTerminationTimes(Map<Integer, ApplicationJson> mappedApplications) {
     List<ApplicationJson> tempList = new ArrayList<>(mappedApplications.values());
-    List<TerminationInfo> terminationInfoList = terminationTimeList(tempList);
+    List<TerminationInfo> terminationInfoList = terminationService.getTerminationInfoList(tempList);
     Map<Integer, TerminationInfo> mapperTermination = terminationInfoList.stream().collect(Collectors.toMap(
             TerminationInfo::getApplicationId, Function.identity()));
     mappedApplications.forEach((k, v) -> addTerminationTimes(mapperTermination, v));
@@ -216,7 +213,7 @@ public class ApplicationJsonService {
 
     json.setComments(commentService.findByApplicationId(model.getId()));
 
-    json.setTerminationTime(terminationTime(model));
+    json.setTerminationTime(terminationService.getTerminationTime(model));
 
     return json;
   }
@@ -266,20 +263,5 @@ public class ApplicationJsonService {
       }
     }
     return localFixedLocations;
-  }
-
-  private ZonedDateTime terminationTime(Application application) {
-    if (application.getStatus() == StatusType.TERMINATED || application.getStatus() == StatusType.ARCHIVED) {
-      return Optional.ofNullable(terminationService.getTerminationInfo(application.getId()))
-              .map(TerminationInfo::getExpirationTime).orElse(null);
-    }
-    return null;
-  }
-
-  private List<TerminationInfo> terminationTimeList(List<ApplicationJson> applicationJsonList) {
-    List<Integer> applicationIds = applicationJsonList.stream()
-            .filter(e -> e.getStatus() == StatusType.TERMINATED || e.getStatus() == StatusType.ARCHIVED)
-            .map(ApplicationJson::getId).collect(Collectors.toList());
-    return terminationService.getTerminationInfoList(applicationIds);
   }
 }

@@ -1,35 +1,32 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
-
 import fi.hel.allu.QUser;
 import fi.hel.allu.QUserApplicationType;
 import fi.hel.allu.QUserRole;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.postgres.ExceptionResolver;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QUser.user;
 import static fi.hel.allu.QUserApplicationType.userApplicationType;
 import static fi.hel.allu.QUserCityDistrict.userCityDistrict;
@@ -64,6 +61,21 @@ public class UserDao {
     List<User> users = queryFactory.select(userBean).from(user).where(user.id.in(ids)).fetch();
     users.forEach(e -> mapDefaultUsersRolesTypes(e));
     return users;
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Integer, User> findByApplicationIds(List<Integer> ids) {
+    List<Tuple> users = queryFactory.select(userBean, application.id)
+            .from(user)
+            .leftJoin(application).on(user.id.eq(application.owner))
+            .where(application.id.in(ids)).fetch();
+    Map<Integer, User> mapUser = new HashMap<>();
+    for(Tuple tuple : users){
+      User user = tuple.get(0, User.class);
+      mapDefaultUsersRolesTypes(user);
+      mapUser.put(tuple.get(1, Integer.class), user);
+    }
+    return mapUser;
   }
 
    private void mapDefaultUsersRolesTypes(User user){
