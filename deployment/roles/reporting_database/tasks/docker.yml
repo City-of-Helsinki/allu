@@ -81,6 +81,7 @@
   docker_container:
     name: "{{ reporting_database_container_name }}"
     image: allu_reporting_database
+    shm_size: "{{ container_shm_size }}"
     restart_policy: always
     volumes:
       - /srv/data/allu/reporting_database/data:/var/lib/postgresql/data:rw
