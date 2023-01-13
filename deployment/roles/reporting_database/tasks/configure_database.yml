@@ -160,3 +160,32 @@
     name=allu_report_views
   become: yes
   become_user: postgres
+
+- name: Set shared buffer
+  postgresql_set:
+    login_host=localhost
+    login_password={{ database_password_allu_reporting_postgres }}
+    name=shared_buffers
+    value={{ shared_buffers_memory }}
+  register: set
+  become: yes
+  become_user: postgres
+
+- name: Restart a container
+  docker_container:
+    name: "{{ reporting_database_container_name }}"
+    state: started
+    restart: true
+  become: yes
+
+- name: wait for Postgresql complete restart
+  postgresql_ping:
+    login_host: localhost
+    port: 5433
+    login_user: postgres
+    login_password: "{{ reporting_database_container_name }}"
+  register: result
+  until: result.is_available
+  retries: 30
+  delay: 4
+  become: yes
