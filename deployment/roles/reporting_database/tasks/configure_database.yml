@@ -164,6 +164,7 @@
 - name: Set shared buffer
   postgresql_set:
     login_host=localhost
+    port=5433
     login_password={{ database_password_allu_reporting_postgres }}
     name=shared_buffers
     value={{ shared_buffers_memory }}
