@@ -184,7 +184,7 @@
     login_host: localhost
     port: 5433
     login_user: postgres
-    login_password: "{{ reporting_database_container_name }}"
+    login_password: "{{ database_password_allu_reporting_postgres }}"
   register: result
   until: result.is_available
   retries: 30
