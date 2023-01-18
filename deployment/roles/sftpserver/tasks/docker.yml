@@ -29,7 +29,7 @@
 
 - name: Stop and remove existing allu_sftpserver container from Docker
   docker_container:
-    name: allu_sftpserver
+    name: "{{ sftp_server_name }}"
     state: absent
   become: yes
 
