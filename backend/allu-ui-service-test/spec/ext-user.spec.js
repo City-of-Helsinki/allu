@@ -68,6 +68,15 @@ describe('Create external user', () => {
       'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
+    const extUserETapahtuma = {
+      'id': null,
+      'username': 'ext-user-etapahtuma',
+      'name': 'eTapahtuma Ext User',
+      'password': 'Ks2^2bwCUyAQ!otbhykF',
+      'active': 'true',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
+      'assignedRoles': ['ROLE_TRUSTED_PARTNER']
+    }
 
     let optionsTestUser = TestUtil.getPostOptions('/api/externalusers', extUser);
     let optionsTestUserRkj = TestUtil.getPostOptions('/api/externalusers', extUserRkj);
@@ -76,6 +85,7 @@ describe('Create external user', () => {
     let optionsTestUserIbmE = TestUtil.getPostOptions('/api/externalusers', extUserIbmE);
     let optionsTestUserHelen = TestUtil.getPostOptions('/api/externalusers', extUserHelen);
     let optionsTestUserHaitaton = TestUtil.getPostOptions('/api/externalusers', extUserHaitaton);
+    let optionsTestUserETapahtuma = TestUtil.getPostOptions('/api/externalusers', extUserETapahtuma);
     TestUtil.login('admin')
       .then(token => {
         TestUtil.addAuthorization(optionsTestUser, token);
@@ -85,6 +95,7 @@ describe('Create external user', () => {
         TestUtil.addAuthorization(optionsTestUserIbmE, token);
         TestUtil.addAuthorization(optionsTestUserHelen, token);
         TestUtil.addAuthorization(optionsTestUserHaitaton, token);
+        TestUtil.addAuthorization(optionsTestUserETapahtuma, token);
       })
       .then(() => rp(optionsTestUser))
       .then(() => rp(optionsTestUserRkj))
@@ -93,6 +104,7 @@ describe('Create external user', () => {
       .then(() => rp(optionsTestUserIbmE))
       .then(() => rp(optionsTestUserHelen))
       .then(() => rp(optionsTestUserHaitaton))
+      .then(() => rp(optionsTestUserETapahtuma))
       .then(done, done.fail);
   });
 
