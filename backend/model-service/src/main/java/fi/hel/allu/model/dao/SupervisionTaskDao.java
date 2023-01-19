@@ -17,9 +17,11 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.domain.SupervisionTaskLocation;
+import fi.hel.allu.model.domain.SupervisionTaskLocationGeometry;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+import fi.hel.allu.model.util.SupervisionLocationMap;
 import org.geolatte.geom.Geometry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -67,6 +69,7 @@ public class SupervisionTaskDao {
   final QBean<SupervisionTaskLocation> supervisionTaskLocationBean = bean(SupervisionTaskLocation.class, supervisionTaskLocation.all());
   private static final QBean<User> ownerBean = bean(User.class, owner.all());
   private static final QBean<User> creatorBean = bean(User.class, creator.all());
+  final QBean<SupervisionTaskLocationGeometry> supervisionTaskLocationGeometryBean = bean(SupervisionTaskLocationGeometry.class, supervisionTaskLocationGeometry.all());
 
 
   private final SQLQueryFactory queryFactory;
@@ -105,10 +108,51 @@ public class SupervisionTaskDao {
   }
 
   private List<SupervisionTask> querySupervisionTasks(Predicate... predicates) {
-    List<SupervisionTask> tasks = queryFactory.select(supervisionTaskBean).from(supervisionTask).where(predicates).fetch();
-    tasks.forEach(this::setSupervisedLocations);
-    return tasks;
+    Map<Integer, Map<Integer, SupervisionLocationMap>> resultMap = new HashMap<>();
+    List<SupervisionTask> result = new ArrayList<>();
+    List<Tuple> tasks = queryFactory.select(supervisionTaskBean, supervisionTaskLocationBean, supervisionTaskLocationGeometry.geometry).from(supervisionTask)
+            .leftJoin(supervisionTaskSupervisedLocation).on(supervisionTask.id.eq(supervisionTaskSupervisedLocation.supervisionTaskId))
+            .leftJoin(supervisionTaskLocation).on(supervisionTaskLocation.id.eq(supervisionTaskSupervisedLocation.supervisionTaskLocationId))
+            .leftJoin(supervisionTaskLocationGeometry).on(supervisionTaskLocation.id.eq(supervisionTaskLocationGeometry.supervisionLocationId))
+            .where(predicates).fetch();
+    for (Tuple tuple : tasks){
+      SupervisionTask supervisionTask = tuple.get(0, SupervisionTask.class);
+      if (supervisionTask != null){
+        Map<Integer, SupervisionLocationMap> locationMap = resultMap.putIfAbsent(supervisionTask.getId(), testi(result, supervisionTask));
+        SupervisionTaskLocation supervisionTaskLocation = tuple.get(1, SupervisionTaskLocation.class);
+        if(supervisionTaskLocation != null && supervisionTaskLocation.getId() != null){
+          Geometry geometry = tuple.get(2, Geometry.class);
+          if(locationMap.containsKey(supervisionTaskLocation.getId())){
+            locationMap.get(supervisionTask.getId()).getGeometyr().add(geometry);
+          } else {
+            List<Geometry> geometries = new ArrayList<>();
+            if(geometry != null){
+              geometries.add(geometry);
+            }
+           locationMap.put(supervisionTaskLocation.getId(), new SupervisionLocationMap(supervisionTaskLocation, geometries));
+          }
+        }
+      }
+    }
+    result.forEach(t -> {
+      Map<Integer, SupervisionLocationMap> map = resultMap.get(t.getId());
+      List<SupervisionTaskLocation> locations = map.values().stream().map(a -> nyt(a)).collect(Collectors.toList());
+      t.setSupervisedLocations(locations);
+    });
+    return result;
   }
+
+  private Map<Integer, SupervisionLocationMap> testi(List<SupervisionTask> result, SupervisionTask supervisionTask){
+    result.add(supervisionTask);
+    return new HashMap<>();
+  }
+
+  private SupervisionTaskLocation nyt(SupervisionLocationMap map3){
+    SupervisionTaskLocation supervisionTaskLocation = map3.getSupervisionTaskLocation();
+    supervisionTaskLocation.setGeometry(GeometryUtil.toGeometryCollection(map3.getGeometyr()));
+    return supervisionTaskLocation;
+  }
+
 
   private SupervisionTask setSupervisedLocations(SupervisionTask task) {
     if (task != null) {
@@ -116,7 +160,6 @@ public class SupervisionTaskDao {
     }
     return task;
   }
-
 
   @Transactional
   public SupervisionTask insert(SupervisionTask st) {
@@ -310,12 +353,13 @@ public class SupervisionTaskDao {
     return locations;
   }
 
-  private void setLocationGeometry(SupervisionTaskLocation location) {
+  private SupervisionTaskLocation setLocationGeometry(SupervisionTaskLocation location) {
     List<Geometry> geometries = queryFactory.select(supervisionTaskLocationGeometry.geometry)
       .from(supervisionTaskLocationGeometry)
       .where(supervisionTaskLocationGeometry.supervisionLocationId.eq(location.getId()))
       .fetch();
     location.setGeometry(GeometryUtil.toGeometryCollection(geometries));
+    return location;
   }
 
   @Transactional

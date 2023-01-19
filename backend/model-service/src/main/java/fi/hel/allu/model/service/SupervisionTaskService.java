@@ -45,7 +45,6 @@ public class SupervisionTaskService {
         .orElseThrow(() -> new NoSuchEntityException("Supervision task not found", Integer.toString(id)));
   }
 
-  @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationId(int applicationId) {
     return supervisionTaskDao.findByApplicationId(applicationId);
   }
