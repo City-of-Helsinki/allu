@@ -8,11 +8,11 @@ import java.util.List;
 public class SupervisionLocationMap {
 
     SupervisionTaskLocation supervisionTaskLocation;
-    List<Geometry> Geometyr;
+    List<Geometry> geometries;
 
     public SupervisionLocationMap(SupervisionTaskLocation supervisionTaskLocation, List<Geometry> geometyr) {
         this.supervisionTaskLocation = supervisionTaskLocation;
-        Geometyr = geometyr;
+        geometries = geometyr;
     }
 
     public SupervisionTaskLocation getSupervisionTaskLocation() {
@@ -23,11 +23,11 @@ public class SupervisionLocationMap {
         this.supervisionTaskLocation = supervisionTaskLocation;
     }
 
-    public List<Geometry> getGeometyr() {
-        return Geometyr;
+    public List<Geometry> getGeometries() {
+        return geometries;
     }
 
-    public void setGeometyr(List<Geometry> geometyr) {
-        Geometyr = geometyr;
+    public void setGeometries(List<Geometry> geometries) {
+        this.geometries = geometries;
     }
 }

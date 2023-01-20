@@ -108,51 +108,67 @@ public class SupervisionTaskDao {
   }
 
   private List<SupervisionTask> querySupervisionTasks(Predicate... predicates) {
-    Map<Integer, Map<Integer, SupervisionLocationMap>> resultMap = new HashMap<>();
-    List<SupervisionTask> result = new ArrayList<>();
-    List<Tuple> tasks = queryFactory.select(supervisionTaskBean, supervisionTaskLocationBean, supervisionTaskLocationGeometry.geometry).from(supervisionTask)
+    List<Tuple> tasks = queryFactory.select(supervisionTaskBean, supervisionTaskLocationBean, supervisionTaskLocationGeometryBean).from(supervisionTask)
             .leftJoin(supervisionTaskSupervisedLocation).on(supervisionTask.id.eq(supervisionTaskSupervisedLocation.supervisionTaskId))
             .leftJoin(supervisionTaskLocation).on(supervisionTaskLocation.id.eq(supervisionTaskSupervisedLocation.supervisionTaskLocationId))
             .leftJoin(supervisionTaskLocationGeometry).on(supervisionTaskLocation.id.eq(supervisionTaskLocationGeometry.supervisionLocationId))
             .where(predicates).fetch();
-    for (Tuple tuple : tasks){
+
+    return populateSupervisionTasks(tasks);
+  }
+
+  private List<SupervisionTask> populateSupervisionTasks(List<Tuple> tuples) {
+    Map<Integer, Map<Integer, SupervisionLocationMap>> resultMap = new HashMap<>();
+    List<SupervisionTask> result = new ArrayList<>();
+    for (Tuple tuple : tuples) {
       SupervisionTask supervisionTask = tuple.get(0, SupervisionTask.class);
-      if (supervisionTask != null){
-        Map<Integer, SupervisionLocationMap> locationMap = resultMap.putIfAbsent(supervisionTask.getId(), testi(result, supervisionTask));
+      if (supervisionTask != null) {
+        Map<Integer, SupervisionLocationMap> locationMap = resultMap.putIfAbsent(supervisionTask.getId(),
+                                                                                 initSupervisionTask(result,
+                                                                                                     supervisionTask));
         SupervisionTaskLocation supervisionTaskLocation = tuple.get(1, SupervisionTaskLocation.class);
-        if(supervisionTaskLocation != null && supervisionTaskLocation.getId() != null){
-          Geometry geometry = tuple.get(2, Geometry.class);
-          if(locationMap.containsKey(supervisionTaskLocation.getId())){
-            locationMap.get(supervisionTask.getId()).getGeometyr().add(geometry);
-          } else {
-            List<Geometry> geometries = new ArrayList<>();
-            if(geometry != null){
-              geometries.add(geometry);
-            }
-           locationMap.put(supervisionTaskLocation.getId(), new SupervisionLocationMap(supervisionTaskLocation, geometries));
-          }
+        if (supervisionTaskLocation != null && supervisionTaskLocation.getId() != null) {
+          mapTaskLocation(supervisionTaskLocation, locationMap);
+          mapGeometries(tuple, locationMap);
         }
       }
     }
-    result.forEach(t -> {
-      Map<Integer, SupervisionLocationMap> map = resultMap.get(t.getId());
-      List<SupervisionTaskLocation> locations = map.values().stream().map(a -> nyt(a)).collect(Collectors.toList());
-      t.setSupervisedLocations(locations);
-    });
+    result.forEach(t -> populateTaskLocations(resultMap.get(t.getId()), t));
     return result;
   }
 
-  private Map<Integer, SupervisionLocationMap> testi(List<SupervisionTask> result, SupervisionTask supervisionTask){
+  private Map<Integer, SupervisionLocationMap> initSupervisionTask(List<SupervisionTask> result,
+                                                                   SupervisionTask supervisionTask) {
     result.add(supervisionTask);
     return new HashMap<>();
   }
 
-  private SupervisionTaskLocation nyt(SupervisionLocationMap map3){
-    SupervisionTaskLocation supervisionTaskLocation = map3.getSupervisionTaskLocation();
-    supervisionTaskLocation.setGeometry(GeometryUtil.toGeometryCollection(map3.getGeometyr()));
-    return supervisionTaskLocation;
+  private void mapTaskLocation(SupervisionTaskLocation supervisionTaskLocation,
+                               Map<Integer, SupervisionLocationMap> locationMap) {
+    if (supervisionTaskLocation != null && supervisionTaskLocation.getId() != null) {
+      locationMap.putIfAbsent(supervisionTaskLocation.getId(), new SupervisionLocationMap(supervisionTaskLocation, new ArrayList<>()));
+    }
   }
 
+  private void mapGeometries(Tuple tuple, Map<Integer, SupervisionLocationMap> locationMap) {
+    SupervisionTaskLocationGeometry locationGeometry = tuple.get(2, SupervisionTaskLocationGeometry.class);
+    if (locationGeometry != null && locationMap.containsKey(locationGeometry.getSupervisionLocationId())) {
+        locationMap.get(locationGeometry.getSupervisionLocationId()).getGeometries()
+                .add(locationGeometry.getGeometry());
+    }
+  }
+
+  private void populateTaskLocations(Map<Integer, SupervisionLocationMap> locationMap, SupervisionTask task) {
+    List<SupervisionTaskLocation> locations = locationMap.values().stream().map(this::populateGeometry)
+            .collect(Collectors.toList());
+    task.setSupervisedLocations(locations);
+  }
+
+  private SupervisionTaskLocation populateGeometry(SupervisionLocationMap locationMap) {
+    SupervisionTaskLocation supervisionTaskLocation = locationMap.getSupervisionTaskLocation();
+    supervisionTaskLocation.setGeometry(GeometryUtil.toGeometryCollection(locationMap.getGeometries()));
+    return supervisionTaskLocation;
+  }
 
   private SupervisionTask setSupervisedLocations(SupervisionTask task) {
     if (task != null) {
@@ -353,13 +369,12 @@ public class SupervisionTaskDao {
     return locations;
   }
 
-  private SupervisionTaskLocation setLocationGeometry(SupervisionTaskLocation location) {
+  private void setLocationGeometry(SupervisionTaskLocation location) {
     List<Geometry> geometries = queryFactory.select(supervisionTaskLocationGeometry.geometry)
       .from(supervisionTaskLocationGeometry)
       .where(supervisionTaskLocationGeometry.supervisionLocationId.eq(location.getId()))
       .fetch();
     location.setGeometry(GeometryUtil.toGeometryCollection(geometries));
-    return location;
   }
 
   @Transactional
