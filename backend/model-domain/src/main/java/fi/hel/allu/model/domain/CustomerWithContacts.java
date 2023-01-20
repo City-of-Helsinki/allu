@@ -13,8 +13,6 @@ public class CustomerWithContacts {
   Customer customer;
   List<Contact> contacts = new ArrayList<>();
 
-  Integer applicatonId;
-
   public CustomerWithContacts() {
   }
 
@@ -27,14 +25,6 @@ public class CustomerWithContacts {
 
   public void setCustomer(Customer customer) {
     this.customer = customer;
-  }
-
-  public Integer getApplicatonId() {
-    return applicatonId;
-  }
-
-  public void setApplicatonId(Integer applicatonId) {
-    this.applicatonId = applicatonId;
   }
 
   /**

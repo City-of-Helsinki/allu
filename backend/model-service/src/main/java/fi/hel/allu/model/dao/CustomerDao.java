@@ -145,9 +145,17 @@ public class CustomerDao {
   public Map<Integer, List<CustomerWithContacts>> findByApplicationsWithContacts(Integer... applicationIds) {
     List<Tuple> tuples = getCustomersWithContactsTuples(applicationCustomer.applicationId.in(applicationIds));
 
-    Map<Integer, CustomerWithContacts> customerIdToCwc = new HashMap<>();
-    tuples.forEach(t -> mapCustomerWithContactTuple(customerIdToCwc, t));
-    return customerIdToCwc.values().stream().collect(Collectors.groupingBy(CustomerWithContacts::getApplicatonId));
+    /*
+    A more memory-heavy approach was needed, as adding applicationId to the client_application_data table
+    would have caused saving of redundant information. Hence, we have this algorithm.
+     */
+    Map<Integer, Map<Integer, CustomerWithContacts>> applicationIdToCustomerIdToCwcList = new HashMap<>();
+    tuples.forEach(t -> mapByApplicationCustomerWithContactTuple(applicationIdToCustomerIdToCwcList, t));
+    Map<Integer, List<CustomerWithContacts>> applicationIdToCwcList = new HashMap<>();
+    for (Integer applicationId : applicationIdToCustomerIdToCwcList.keySet()) {
+      applicationIdToCwcList.put(applicationId, new ArrayList<>(applicationIdToCustomerIdToCwcList.get(applicationId).values()));
+    }
+    return applicationIdToCwcList;
   }
 
   @Transactional(readOnly = true)
@@ -164,10 +172,19 @@ public class CustomerDao {
     return customerIdToCwc.values().stream().findFirst().orElseThrow(() -> new NoSuchEntityException("customer.update.failed"));
   }
 
+  private void mapByApplicationCustomerWithContactTuple(Map<Integer, Map<Integer, CustomerWithContacts>> applicationIdCustomerIdToCwcList, Tuple tuple) {
+    Integer applicationId = tuple.get(6, Integer.class);
+    Map<Integer, CustomerWithContacts> customerIdToCwc = applicationIdCustomerIdToCwcList.get(applicationId);
+    if (customerIdToCwc == null) {
+      customerIdToCwc = new HashMap<>();
+      applicationIdCustomerIdToCwcList.put(applicationId, customerIdToCwc);
+    }
+    mapCustomerWithContactTuple(customerIdToCwc, tuple);
+  }
+
   private void mapCustomerWithContactTuple(Map<Integer, CustomerWithContacts> customerIdToCwc, Tuple tuple) {
     Customer customer = tuple.get(1, Customer.class);
     Integer applicationCustomerId = tuple.get(5, Integer.class);
-    Integer applicationId = tuple.get(6, Integer.class);
     CustomerWithContacts cwc = customerIdToCwc.get(applicationCustomerId);
     if (cwc == null) {
       PostalAddress customerPostalAddress = tuple.get(2, PostalAddress.class);
@@ -175,7 +192,6 @@ public class CustomerDao {
         customer.setPostalAddress(customerPostalAddress);
       }
       cwc = new CustomerWithContacts(tuple.get(0, CustomerRoleType.class), customer, new ArrayList<>());
-      cwc.setApplicatonId(applicationId);
       customerIdToCwc.put(applicationCustomerId, cwc);
     }
     Contact contact = tuple.get(3, Contact.class);
