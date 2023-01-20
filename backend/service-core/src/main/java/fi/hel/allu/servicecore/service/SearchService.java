@@ -124,6 +124,15 @@ public class SearchService {
     put(uri.toString(), applicationFields, waitRefresh);
   }
 
+  public <T> void updateApplicationField(List<Integer> applicationIds, String fieldName, T fieldValue, boolean waitRefresh) {
+    HashMap<Integer, Map<String, T>> applicationFields = new HashMap<>();
+    applicationIds.forEach(id ->  applicationFields.put(id, Collections.singletonMap(fieldName, fieldValue)));
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdatePartialUrl())
+            .queryParam("waitRefresh", waitRefresh)
+            .buildAndExpand().toUri();
+    put(uri.toString(), applicationFields, waitRefresh);
+  }
+
   /**
    * Update the customer and related contacts for an application
    *

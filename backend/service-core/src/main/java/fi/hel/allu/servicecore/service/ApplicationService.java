@@ -1,20 +1,5 @@
 package fi.hel.allu.servicecore.service;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
@@ -30,6 +15,20 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -246,9 +245,9 @@ public class ApplicationService {
     restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
     Integer currentUserId = userService.getCurrentUser().getId();
     if (dispatchEvent) {
-      applicationIds.forEach(id -> applicationEventDispatcher.dispatchOwnerChangeEvent(id, currentUserId, updatedOwner));
+      applicationEventDispatcher.dispatchOwnerChangeEvent(applicationIds, currentUserId, updatedOwner);
     } else {
-      applicationIds.forEach(id -> applicationEventDispatcher.dispatchNotificationRemoval(id));
+      applicationEventDispatcher.dispatchNotificationRemoval(applicationIds);
     }
   }
 
@@ -613,12 +612,12 @@ public class ApplicationService {
     return BooleanUtils.isNotTrue(findApplicationById(id).getNotBillable());
   }
 
-  public void addOwnerNotification(Integer id) {
-    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, id);
+  public void addOwnerNotification(List<Integer> ids) {
+    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, ids);
   }
 
-  public void removeOwnerNotification(Integer id) {
-    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), id);
+  public void removeOwnerNotification(List<Integer> ids) {
+    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), ids);
   }
 
   public Integer getReplacingApplicationId(Integer applicationId) {

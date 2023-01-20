@@ -1,18 +1,5 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-
-import fi.hel.allu.common.util.OptionalUtil;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
-import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -22,11 +9,23 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.OptionalUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.*;
 
 /**
  *
@@ -175,7 +174,6 @@ public class ApplicationService {
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.
-   * @param   userId      Current user
    * @param   applications  Applications whose owner is updated.
    */
   @Transactional
@@ -598,13 +596,13 @@ public class ApplicationService {
   }
 
   @Transactional
-  public void addOwnerNotification(Integer id) {
-    applicationDao.addOwnerNotification(id);
+  public void addOwnerNotification(List<Integer> ids) {
+    applicationDao.addOwnerNotification(ids);
   }
 
   @Transactional
-  public void removeOwnerNotification(Integer id) {
-    applicationDao.removeOwnerNotification(id);
+  public void removeOwnerNotification(List<Integer> ids) {
+    applicationDao.removeOwnerNotification(ids);
   }
 
   @Transactional(readOnly = true)

@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -352,14 +353,14 @@ public class ApplicationController {
   @PostMapping(value = "/{id}/ownernotification")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> addOwnerNotification(@PathVariable Integer id) {
-    applicationServiceComposer.addOwnerNotification(id);
+    applicationServiceComposer.addOwnerNotification(Collections.singletonList(id));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @DeleteMapping(value = "/{id}/ownernotification")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
-    applicationServiceComposer.removeOwnerNotification(id);
+    applicationServiceComposer.removeOwnerNotification(Collections.singletonList(id));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

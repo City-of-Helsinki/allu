@@ -1055,18 +1055,18 @@ public class ApplicationDao {
     return queryFactory.select(application.version).from(application).where(application.id.eq(id)).fetchFirst();
   }
 
-  public void addOwnerNotification(Integer id) {
-    setOwnerNotification(id, true);
+  public void addOwnerNotification(List<Integer> ids) {
+    setOwnerNotification(ids, true);
   }
 
-  public void removeOwnerNotification(Integer id) {
-    setOwnerNotification(id, false);
+  public void removeOwnerNotification(List<Integer> ids) {
+    setOwnerNotification(ids, false);
   }
 
-  private void setOwnerNotification(Integer id, boolean hasNotification) {
+  private void setOwnerNotification(List<Integer> ids, boolean hasNotification) {
     queryFactory.update(application)
         .set(application.ownerNotification, hasNotification)
-        .where(application.id.eq(id))
+        .where(application.id.in(ids))
         .execute();
   }
 

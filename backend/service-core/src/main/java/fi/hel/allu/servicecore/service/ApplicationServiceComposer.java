@@ -656,13 +656,18 @@ public class ApplicationServiceComposer {
   }
 
   public void addOwnerNotification(Integer id) {
-    applicationService.addOwnerNotification(id);
+    applicationService.addOwnerNotification(Collections.singletonList(id));
     searchService.updateApplicationField(id, "ownerNotification", true, true);
   }
 
-  public void removeOwnerNotification(Integer id) {
-    applicationService.removeOwnerNotification(id);
-    searchService.updateApplicationField(id, "ownerNotification", false, true);
+  public void addOwnerNotification(List<Integer> ids) {
+    applicationService.addOwnerNotification(ids);
+    searchService.updateApplicationField(ids, "ownerNotification", true, true);
+  }
+
+  public void removeOwnerNotification(List<Integer> ids) {
+    applicationService.removeOwnerNotification(ids);
+    searchService.updateApplicationField(ids, "ownerNotification", true, true);
   }
 
   public Integer getApplicationOwnerId(int applicationId) {

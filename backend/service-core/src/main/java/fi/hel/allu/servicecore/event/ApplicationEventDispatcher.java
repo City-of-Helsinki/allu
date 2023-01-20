@@ -1,27 +1,29 @@
 package fi.hel.allu.servicecore.event;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.service.ApplicationService;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class ApplicationEventDispatcher {
 
-  @Autowired
   private ApplicationEventPublisher eventPublisher;
-
-  @Autowired
   private ApplicationProperties applicationProperties;
-
-  @Autowired
   private RestTemplate restTemplate;
+
+  public ApplicationEventDispatcher(ApplicationEventPublisher eventPublisher,
+                                    ApplicationProperties applicationProperties,
+                                    RestTemplate restTemplate) {
+    this.eventPublisher = eventPublisher;
+    this.applicationProperties = applicationProperties;
+    this.restTemplate = restTemplate;
+  }
 
   public void dispatchUpdateEvent(int applicationId, Integer updaterId, ApplicationNotificationType type, StatusType applicationStatus, String specifier) {
     eventPublisher.publishEvent(new  ApplicationUpdateEvent(applicationId, updaterId, type, applicationStatus, specifier));
@@ -39,13 +41,13 @@ public class ApplicationEventDispatcher {
     dispatchUpdateEvent(applicationId, updaterId, type, getApplicationStatus(applicationId), null);
   }
 
-  public void dispatchOwnerChangeEvent(int applicationId, Integer updaterId, Integer ownerId) {
-    eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationId, updaterId, ownerId));
+  public void dispatchOwnerChangeEvent(List<Integer> applicationIds, Integer updaterId, Integer ownerId) {
+    eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationIds, updaterId, ownerId));
   }
 
-  public void dispatchNotificationRemoval(Integer applicationId) {
+  public void dispatchNotificationRemoval(List<Integer> applicationIds) {
     // Publish owner change event without new owner to clear notifications
-    eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationId, null, null));
+    eventPublisher.publishEvent(new ApplicationOwnerChangeEvent(applicationIds, null, null));
   }
 
   private StatusType getApplicationStatus(int applicationId) {
