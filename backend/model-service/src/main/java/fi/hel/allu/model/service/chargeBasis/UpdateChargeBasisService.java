@@ -172,7 +172,7 @@ public class UpdateChargeBasisService {
     List<Integer> updatedEntries = new ArrayList<>();
     for (ChargeBasisEntry adding : newParentEntries) {
       Optional<ChargeBasisEntry> oldOptional = oldParentEntries.stream()
-        .filter(old -> adding.equalContent(old, locationMap) && !updatedEntries.contains(old.getId()) && koe(old, adding))
+        .filter(old -> adding.equalContent(old, locationMap) && !updatedEntries.contains(old.getId()) && equalObject(old, adding))
         .findAny();
       oldOptional.ifPresent(old -> adding.setInvoicable(old.isInvoicable()));
       oldOptional.ifPresent(old -> adding.setLocked(old.getLocked()));
@@ -189,7 +189,7 @@ public class UpdateChargeBasisService {
     }
   }
 
-  private boolean koe(ChargeBasisEntry old, ChargeBasisEntry adding){
+  private boolean equalObject(ChargeBasisEntry old, ChargeBasisEntry adding){
     if(old.getManuallySet()){
       return hasSameKey(old, adding);
     }
