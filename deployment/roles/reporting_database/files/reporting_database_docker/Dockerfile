@@ -24,9 +24,9 @@ ENV LANG=fi_FI.utf8 \
 ######################################################################################
 # Changes that should not be cached
 ######################################################################################
-# DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
+# DISABLE BUILD CACHING AFTER THESE TWO LINES (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
-
+RUN cat $CACHEBUST
 
 #initial config files
 COPY pg_hba.conf /pg_hba.conf
