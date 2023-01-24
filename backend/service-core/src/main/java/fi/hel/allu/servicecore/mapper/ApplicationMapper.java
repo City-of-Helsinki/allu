@@ -187,6 +187,9 @@ public class ApplicationMapper {
       project.setId(applicationJson.getProject().getId());
       applicationES.setProject(project);
     }
+    applicationES.setOwner(
+            applicationJson.getOwner() != null ?
+                    new UserES(applicationJson.getOwner().getUserName(), applicationJson.getOwner().getRealName()) : null);
     applicationES.setNrOfComments(applicationJson.getComments() != null ? applicationJson.getComments().size() : 0);
     applicationES.setLatestComment(commentMapper.getLatestComment(applicationJson.getComments()));
     applicationES.setTerminationTime(TimeUtil.dateToMillis(applicationJson.getTerminationTime()));
