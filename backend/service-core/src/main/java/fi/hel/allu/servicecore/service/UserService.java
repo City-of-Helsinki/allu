@@ -11,7 +11,8 @@ import fi.hel.allu.servicecore.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -89,8 +90,12 @@ public class UserService {
   }
 
   public Map<Integer, User> findByApplicationIds(List<Integer> ids) {
-    Map<Integer, User> result = restTemplate.postForObject(applicationProperties.getUsersByApplicationIdUrl(), ids, Map.class);
-    return result;
+    ParameterizedTypeReference<Map<Integer, User>> responseType =
+            new ParameterizedTypeReference<Map<Integer, User>>() {};
+    HttpEntity<List<Integer>> request = new HttpEntity<>(ids);
+    ResponseEntity<Map<Integer, User>> result = restTemplate.exchange(
+            applicationProperties.getUsersByApplicationIdUrl(), HttpMethod.POST, request, responseType);
+    return result.getBody();
   }
 
   public UserJson addUser(UserJson userJson) {

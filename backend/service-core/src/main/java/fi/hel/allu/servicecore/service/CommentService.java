@@ -4,6 +4,7 @@ import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
@@ -13,6 +14,7 @@ import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.CommentMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -140,8 +142,11 @@ public class CommentService {
   }
 
   private Map<Integer, List<Comment>> findByListGrouping(String url, List<Integer> applicationIds) {
-    Map<Integer, List<Comment>> result = restTemplate.postForObject(url, applicationIds, Map.class);
-    return result;
+    ParameterizedTypeReference<Map<Integer, List<Comment>>> responseType =
+            new ParameterizedTypeReference<Map<Integer, List<Comment>>>() {};
+    HttpEntity<List<Integer>> request = new HttpEntity<>(applicationIds);
+    ResponseEntity<Map<Integer, List<Comment>>> result = restTemplate.exchange(url, HttpMethod.POST, request, responseType);
+    return result.getBody();
   }
 
   /*
