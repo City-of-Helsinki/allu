@@ -104,8 +104,8 @@ public class ApplicationServiceComposer {
       List<ApplicationES> es =  applicationList.stream().map(
               applicationMapper::createApplicationESModel).collect(Collectors.toList());
       es = projectService.mapProjectToEs(es);
-      userService.mapOwnerToEs(es);
-      terminationService.mapTerminationToEs(es, applicationList);
+      es = userService.mapOwnerToEs(es);
+      es = terminationService.mapTerminationToEs(es, applicationList);
       es = commentService.mapCommentsToEs(es);
       return es;
   }
