@@ -212,7 +212,10 @@ public class ProjectService {
   public List<ApplicationES> mapProjectToEs(List<ApplicationES> listToPopulated) {
     Map<Integer, List<ApplicationES>> projectIds = listToPopulated.stream().filter(e -> e.getProject() != null)
             .collect(Collectors.groupingBy(e -> e.getProject().getId()));
+    List<ApplicationES> result = listToPopulated.stream().filter(e -> e.getProject() == null)
+            .collect(Collectors.toList());
     List<Project> projectList = findProjectsByIds(new ArrayList<>(projectIds.keySet()));
-    return projectMapper.populateValues(projectIds, setIdentifier, projectList);
+    result.addAll(projectMapper.populateValues(projectIds, setIdentifier, projectList));
+    return result;
   }
 }
