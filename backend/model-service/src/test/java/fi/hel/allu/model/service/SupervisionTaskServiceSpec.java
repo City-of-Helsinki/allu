@@ -18,8 +18,7 @@ import fi.hel.allu.model.domain.SupervisionTask;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -80,8 +79,8 @@ public class SupervisionTaskServiceSpec {
           ArgumentCaptor<ApplicationTag> addedTagsCaptor = ArgumentCaptor.forClass(ApplicationTag.class);
           Mockito.verify(applicationService).addTag(eq(task.getApplicationId()), addedTagsCaptor.capture());
           assertEquals(task.getCreatorId(), addedTagsCaptor.getValue().getAddedBy());
-          Mockito.verify(applicationService, Mockito.times(2))
-              .removeTag(eq(task.getApplicationId()), any(ApplicationTagType.class));
+          Mockito.verify(applicationService, Mockito.times(1))
+              .removeTagByTypes(eq(task.getApplicationId()), anyList());
         });
       });
 
@@ -119,7 +118,7 @@ public class SupervisionTaskServiceSpec {
           Mockito.verify(applicationService).addTag(eq(task.getApplicationId()), addedTagsCaptor.capture());
           assertEquals(task.getCreatorId(), addedTagsCaptor.getValue().getAddedBy());
           Mockito.verify(applicationService, Mockito.times(1))
-              .removeTag(eq(task.getApplicationId()), any(ApplicationTagType.class));
+              .removeTagByTypes(eq(task.getApplicationId()), anyList());
         });
       });
     });

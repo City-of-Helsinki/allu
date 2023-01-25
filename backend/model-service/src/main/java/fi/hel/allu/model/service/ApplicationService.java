@@ -68,7 +68,6 @@ public class ApplicationService {
    * @param id
    * @return the application
    */
-  @Transactional(readOnly = true)
   public Application findById(int id) {
     Application application = applicationDao.findById(id);
     if (application == null) {
@@ -325,9 +324,12 @@ public class ApplicationService {
     return applicationDao.addTag(applicationId, tag);
   }
 
-  @Transactional
   public void removeTag(int applicationId, ApplicationTagType type) {
-    applicationDao.removeTagByType(applicationId, type);
+    applicationDao.removeTagByTypes(applicationId, Collections.singletonList(type));
+  }
+
+  public void removeTagByTypes(int applicationId, List<ApplicationTagType> type) {
+    applicationDao.removeTagByTypes(applicationId, type);
   }
 
   @Transactional
@@ -409,7 +411,6 @@ public class ApplicationService {
    * Updates applications pricing for specified application
    * @param applicationId id of application to update
    */
-  @Transactional
   public void updateApplicationPricing(int applicationId) {
     applicationDao.updateCalculatedPrice(applicationId, pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
   }
@@ -494,7 +495,7 @@ public class ApplicationService {
       Application application = findById(id);
       boolean sapIdPending = isSapIdPending(application);
       if (!sapIdPending) {
-        applicationDao.removeTagByType(id, ApplicationTagType.SAP_ID_MISSING);
+        removeTag(id, ApplicationTagType.SAP_ID_MISSING);
       } else {
         applicationDao.addTag(id, new ApplicationTag(userId, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
       }
@@ -505,7 +506,6 @@ public class ApplicationService {
   /**
    * Sets excavation announcement operational condition date reported by customer
    */
-  @Transactional
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
     return applicationDao.setCustomerOperationalConditionDates(id, dateReport);
   }
@@ -515,15 +515,16 @@ public class ApplicationService {
    */
   @Transactional
   public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
-    return applicationDao.setCustomerWorkFinishedDates(id, dateReport);
+    applicationDao.setCustomerWorkFinishedDates(id, dateReport);
+    return findById(id);
   }
 
   /**
    * Sets excavation announcement validity dates reported by customer
    */
-  @Transactional
   public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
-    return applicationDao.setCustomerValidityDates(id, dateReport);
+    applicationDao.setCustomerValidityDates(id, dateReport);
+    return findById(id);
   }
 
   /**
@@ -531,18 +532,17 @@ public class ApplicationService {
    */
   @Transactional
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    Application application = applicationDao.setOperationalConditionDate(id, operationalConditionDate);
-    updateChargeBasis(id, application);
+    applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+    updateChargeBasis(id, findById(id));
     updateApplicationPricing(id);
   }
 
   /**
    * Sets excavation announcement work finished date and updates pricing of application
    */
-  @Transactional
   public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
-    updateChargeBasis(id, application);
+    applicationDao.setWorkFinishedDate(id, workFinishedDate);
+    updateChargeBasis(id, findById(id));
     updateApplicationPricing(id);
   }
 

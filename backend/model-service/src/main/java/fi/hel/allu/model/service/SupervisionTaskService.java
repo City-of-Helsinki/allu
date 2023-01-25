@@ -80,8 +80,8 @@ public class SupervisionTaskService {
   @Transactional
   public void delete(int id) {
     supervisionTaskDao.findById(id).ifPresent(task -> {
-      SupervisionTaskToTag.onTaskDeleteRemoveTags(task.getType())
-          .forEach(type -> applicationService.removeTag(task.getApplicationId(), type));
+      List<ApplicationTagType> types = SupervisionTaskToTag.onTaskDeleteRemoveTags(task.getType());
+      applicationService.removeTagByTypes(task.getApplicationId(), types);
       supervisionTaskDao.delete(id);
     });
   }
@@ -179,7 +179,7 @@ public class SupervisionTaskService {
   private void createTag(ApplicationTagType tagType, Integer applicationId, Integer creatorId) {
     ApplicationTag tag = new ApplicationTag(creatorId, tagType, ZonedDateTime.now());
     applicationService.addTag(applicationId, tag);
-    tag.getType().getReplaces().forEach(type -> applicationService.removeTag(applicationId, type));
+    applicationService.removeTagByTypes(applicationId, tag.getType().getReplaces());
   }
 
   @Transactional
