@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -175,7 +176,7 @@ public class CommentServiceTest {
   }
 
   @Test
-  public void populateComments(){
+  public void populateComments() {
     ApplicationES applicationES1 = new ApplicationES();
     ApplicationES applicationES2 = new ApplicationES();
     applicationES1.setId(1);
@@ -183,8 +184,12 @@ public class CommentServiceTest {
     List<ApplicationES> applicationESList = new ArrayList<>();
     applicationESList.add(applicationES1);
     applicationESList.add(applicationES2);
-    when(restTemplate.postForObject(eq(applicationProperties.getCommentsFindByApplicationsGroupingUrl()), anyList(), eq(Map.class)))
-            .thenReturn(generateMappedComments(Arrays.asList(1, 2), 3));
+    List<Integer> applicationIds = Arrays.asList(1, 2);
+    when(restTemplate.exchange(eq(applicationProperties.getCommentsFindByApplicationsGroupingUrl()),
+                               eq(HttpMethod.POST), eq(new HttpEntity<>(applicationIds)),
+                               eq(new ParameterizedTypeReference<Map<Integer, List<Comment>>>() {
+                               }))).thenReturn(
+            new ResponseEntity<>(generateMappedComments(applicationIds, 3), HttpStatus.OK));
     List<ApplicationES> result = commentService.mapCommentsToEs(applicationESList);
     assertEquals(2, result.size());
     assertEquals(3, result.get(0).getNrOfComments());
@@ -193,21 +198,24 @@ public class CommentServiceTest {
   }
 
   @Test
-  public void testLatestComment(){
+  public void testLatestComment() {
     String expected = "Testing awesome code";
     ApplicationES applicationES1 = new ApplicationES();
     applicationES1.setId(1);
     List<ApplicationES> applicationESList = new ArrayList<>();
     applicationESList.add(applicationES1);
-    Map<Integer, List<Comment>> mappedComments = generateMappedComments(Arrays.asList(1), 3);
+    Map<Integer, List<Comment>> mappedComments = generateMappedComments(Collections.singletonList(1), 3);
     ZonedDateTime zonedDateTime = mappedComments.get(1).get(0).getCreateTime().plusYears(1);
     mappedComments.get(1).get(0).setCreateTime(zonedDateTime);
     mappedComments.get(1).get(0).setText(expected);
-    when(restTemplate.postForObject(eq(applicationProperties.getCommentsFindByApplicationsGroupingUrl()), anyList(), eq(Map.class))).thenReturn(mappedComments);
+    when(restTemplate.exchange(eq(applicationProperties.getCommentsFindByApplicationsGroupingUrl()),
+                               eq(HttpMethod.POST), eq(new HttpEntity<>(Collections.singletonList(1))),
+                               eq(new ParameterizedTypeReference<Map<Integer, List<Comment>>>() {
+                               }))).thenReturn(new ResponseEntity<>(mappedComments, HttpStatus.OK));
     List<ApplicationES> result = commentService.mapCommentsToEs(applicationESList);
     assertEquals(1, result.size());
     assertEquals(3, result.get(0).getNrOfComments());
-    assertEquals(expected,  result.get(0).getLatestComment());
+    assertEquals(expected, result.get(0).getLatestComment());
   }
 
   private CommentJson newCommentJson(CommentType type, String text, int userId) {

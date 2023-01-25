@@ -17,7 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,22 +95,23 @@ public class ApplicationServiceComposerTest {
 
     assertEquals(updatedApplicationJson, applicationServiceComposer.updateApplication(applicationId, applicationJson));
 
-    Mockito.verify(projectService, Mockito.times(1)).updateProjectInformation(Collections.singletonList(projectId));
-    Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
+    verify(projectService, Mockito.times(1)).updateProjectInformation(Collections.singletonList(projectId));
+    verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
   }
 
   @Test
   public void testChangeStatus() {
+    when(applicationService.findApplicationsById(Collections.singletonList(applicationId))).thenReturn(Collections.singletonList(applicationWithOwner));
     when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
     when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISIONMAKING)).thenReturn(updatedApplication);
     when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
 
     assertEquals(updatedApplicationJson, applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, info));
 
-    Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
+    verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
     List<ApplicationJson> expected = new ArrayList<>();
     expected.add(updatedApplicationJson);
-    Mockito.verify(searchService).updateApplications(Mockito.refEq(expected));
+    verify(searchService).updateApplications(expected, false);
   }
 
   @Test
@@ -121,7 +123,7 @@ public class ApplicationServiceComposerTest {
     DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
 
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.DECISION);
-    Mockito.verify(mailComposerService).sendDecision(applicationJson, decisionDetailsJson, DecisionDocumentType.DECISION);
+    verify(mailComposerService).sendDecision(applicationJson, decisionDetailsJson, DecisionDocumentType.DECISION);
   }
 
   @Test
@@ -180,7 +182,7 @@ public class ApplicationServiceComposerTest {
     when(applicationJsonService.getFullyPopulatedApplication(updatedApplication)).thenReturn(updatedApplicationJson);
 
     applicationServiceComposer.returnToEditing(applicationId, info);
-    Mockito.verify(applicationService, Mockito.times(1)).returnToStatus(applicationId, StatusType.DECISION);
+    verify(applicationService, Mockito.times(1)).returnToStatus(applicationId, StatusType.DECISION);
   }
 
   @Test
@@ -195,6 +197,6 @@ public class ApplicationServiceComposerTest {
     when(applicationJsonService.getFullyPopulatedApplication(updatedApplication)).thenReturn(updatedApplicationJson);
 
     applicationServiceComposer.returnToEditing(applicationId, info);
-    Mockito.verify(applicationService, Mockito.times(1)).returnToStatus(applicationId, StatusType.FINISHED);
+    verify(applicationService, Mockito.times(1)).returnToStatus(applicationId, StatusType.FINISHED);
   }
 }
