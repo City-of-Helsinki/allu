@@ -26,7 +26,7 @@ ENV LANG=fi_FI.utf8 \
 ######################################################################################
 # DISABLE BUILD CACHING AFTER THESE TWO LINES (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
-RUN cat $CACHEBUST
+RUN echo $CACHEBUST
 
 #initial config files
 COPY pg_hba.conf /pg_hba.conf
