@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/attachments")
@@ -61,13 +62,13 @@ public class AttachmentController {
 
   @PutMapping(value = "/applications/{applicationId}/default")
   public ResponseEntity<Void> addDefaultAttachments(@PathVariable Integer applicationId, @RequestBody List<Integer> defaultAttachmentIds) {
-    defaultAttachmentIds.forEach(id -> attachmentDao.linkApplicationToAttachment(applicationId, id));
+    attachmentDao.linkApplicationToAttachment(applicationId, defaultAttachmentIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @DeleteMapping(value = "/applications/{applicationId}/default")
   public ResponseEntity<Void> removeDefaultAttachments(@PathVariable Integer applicationId,  @RequestBody List<Integer> defaultAttachmentIds) {
-    defaultAttachmentIds.forEach(id -> attachmentDao.removeLinkApplicationToAttachment(applicationId, id));
+     attachmentDao.removeLinkApplicationToAttachment(applicationId, defaultAttachmentIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -132,7 +133,7 @@ public class AttachmentController {
     Optional<DefaultAttachmentInfo> dai = attachmentDao.findDefaultById(attachmentId, false);
     if (dai.isPresent()) {
       AttachmentInfo ai = attachmentDao.findById(attachmentId).get();
-      attachmentDao.removeLinkApplicationToAttachment(applicationId, ai.getId());
+      attachmentDao.removeLinkApplicationToAttachment(applicationId, Collections.singletonList(ai.getId()));
     } else {
       attachmentDao.delete(applicationId, attachmentId);
     }

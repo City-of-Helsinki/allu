@@ -255,7 +255,7 @@ public class AttachmentDaoTest {
     attachmentDao.linkApplicationToAttachment(application2.getId(), inserted2.getId());
     Assert.assertEquals(2, attachmentDao.findByApplication(application1.getId()).size());
     Assert.assertEquals(2, attachmentDao.findByApplication(application2.getId()).size());
-    attachmentDao.removeLinkApplicationToAttachment(application1.getId(), inserted1.getId());
+    attachmentDao.removeLinkApplicationToAttachment(application1.getId(), Collections.singletonList(inserted1.getId()));
     Assert.assertEquals(1, attachmentDao.findByApplication(application1.getId()).size());
   }
 

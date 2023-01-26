@@ -7,6 +7,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.AttachmentInfo;
@@ -17,9 +18,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -217,7 +217,7 @@ public class AttachmentDao {
    */
   @Transactional
   public void delete(int applicationId, int id) {
-    removeLinkApplicationToAttachment(applicationId, id);
+    removeLinkApplicationToAttachment(applicationId, Collections.singletonList(id));
     Integer attachmentDataId = getAttachmentDataIdForAttachment(id);
     long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
     if (changed == 0) {
@@ -334,23 +334,38 @@ public class AttachmentDao {
    */
   @Transactional
   public void linkApplicationToAttachment(int applicationId, int attachmentId) {
-    queryFactory.insert(applicationAttachment)
-        .set(applicationAttachment.applicationId, applicationId)
-        .set(applicationAttachment.attachmentId, attachmentId)
-        .execute();
+    linkApplicationToAttachment(applicationId, Collections.singletonList(attachmentId));
+  }
+
+
+  /**
+   * Link default attachments to application.
+   *
+   * @param applicationId   Application to which attachment is linked to.
+   * @param attachmentIds    Attachments to be linked with the application.
+   */
+  @Transactional
+  public void linkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
+    SQLInsertClause insert = queryFactory.insert(applicationAttachment);
+    for (Integer attachmentId : attachmentIds) {
+      insert.set(applicationAttachment.applicationId, applicationId)
+              .set(applicationAttachment.attachmentId, attachmentId)
+              .addBatch();
+    }
+    insert.execute();
   }
 
   /**
    * Remove link from attachment to application.
    *
-   * @param applicationId   Application to which attachment is linked to.
-   * @param attachmentId    Attachment to be unlinked with the application.
+   * @param applicationId Application to which attachment is linked to.
+   * @param attachmentIds Attachment to be unlinked with the application.
    */
   @Transactional
-  public void removeLinkApplicationToAttachment(int applicationId, int attachmentId) {
+  public void removeLinkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
     long changed = queryFactory.delete(applicationAttachment)
-        .where(applicationAttachment.attachmentId.eq(attachmentId).and(applicationAttachment.applicationId.eq(applicationId)))
-        .execute();
+            .where(applicationAttachment.attachmentId.in(attachmentIds)
+                           .and(applicationAttachment.applicationId.eq(applicationId))).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("attachment.unlink.failed", applicationId);
     }
