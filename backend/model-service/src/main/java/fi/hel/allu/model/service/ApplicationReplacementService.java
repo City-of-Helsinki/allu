@@ -52,7 +52,6 @@ public class ApplicationReplacementService {
   private final ApplicationService applicationService;
   private final ApplicationDao applicationDao;
   private final CommentDao commentDao;
-  private final LocationService locationService;
   private final LocationDao locationDao;
   private final DepositDao depositDao;
   private final SupervisionTaskDao supervisionTaskDao;
@@ -63,16 +62,16 @@ public class ApplicationReplacementService {
   private final InformationRequestDao informationRequestDao;
   private final PricingService pricingService;
   private final ChargeBasisService chargeBasisService;
+  private final AttachmentDao attachmentDao;
 
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
-      LocationService locationService, LocationDao locationDao, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao,
+      LocationDao locationDao, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao,
       ChargeBasisDao chargeBasisDao, InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService,
       DistributionEntryDao distributionEntryDao, InformationRequestDao informationRequestDao,
-      PricingService pricingService, ChargeBasisService chargeBasisService) {
+      PricingService pricingService, ChargeBasisService chargeBasisService, AttachmentDao attachmentDao) {
     this.applicationService = applicationService;
-    this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.commentDao = commentDao;
     this.locationDao = locationDao;
@@ -85,6 +84,7 @@ public class ApplicationReplacementService {
     this.informationRequestDao = informationRequestDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
+    this.attachmentDao = attachmentDao;
   }
 
   /**
@@ -134,13 +134,18 @@ public class ApplicationReplacementService {
 
   private void copyApplicationRelatedData(int applicationId, Application replacingApplication) {
     commentDao.copyApplicationComments(applicationId, replacingApplication.getId(), COMMENT_TYPES_NOT_COPIED);
-    applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
+    copyApplicationAttachments(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
     supervisionTaskDao.copyApprovedSupervisionTasks(applicationId, replacingApplication.getId());
     chargeBasisDao.copyManualChargeBasisEntries(applicationId, replacingApplication.getId(), invoiceDao.getInvoicedChargeBasisIds(applicationId));
     distributionEntryDao.copy(applicationId, replacingApplication.getId());
     informationRequestDao.move(applicationId, replacingApplication.getId());
 
+  }
+
+  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    List<AttachmentInfo> infos = attachmentDao.findByApplication(copyFromApplicationId);
+    attachmentDao.copyForApplication(infos, copyToApplicationId);
   }
 
   private Application addReplacingApplication(Application applicationToReplace, int userId) {
