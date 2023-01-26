@@ -34,12 +34,15 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 @Repository
 public class AttachmentDao {
 
-  @Autowired
   private SQLQueryFactory queryFactory;
 
   final QBean<AttachmentInfo> attachmentInfoBean = bean(AttachmentInfo.class, attachment.all());
 
   protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Collections.singletonList(attachment.attachmentDataId);
+
+  public AttachmentDao(SQLQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
+  }
 
   /**
    * find all attachment infos for an application
@@ -399,16 +402,17 @@ public class AttachmentDao {
     return id;
   }
 
-
   private void updateDefaultAttachmentApplicationTypes(int defaultAttachmentId, List<ApplicationType> applicationTypes) {
     queryFactory.delete(defaultAttachmentApplicationType)
         .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).execute();
     if (applicationTypes != null) {
+      SQLInsertClause insert = queryFactory.insert(defaultAttachmentApplicationType);
       applicationTypes.forEach(at ->
-          queryFactory.insert(defaultAttachmentApplicationType)
+              insert
               .set(defaultAttachmentApplicationType.defaultAttachmentId, defaultAttachmentId)
               .set(defaultAttachmentApplicationType.applicationType, at)
-              .execute());
+              .addBatch());
+      insert.execute();
     }
   }
 
@@ -440,7 +444,6 @@ public class AttachmentDao {
         } else {
           info.setId(null);
           insert.populate(info).addBatch();
-
         }
       }
       List<Integer> inserted = insert.executeWithKeys(attachment.id);
