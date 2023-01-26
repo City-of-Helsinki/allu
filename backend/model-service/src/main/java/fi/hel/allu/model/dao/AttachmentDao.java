@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -40,7 +39,7 @@ public class AttachmentDao {
 
   final QBean<AttachmentInfo> attachmentInfoBean = bean(AttachmentInfo.class, attachment.all());
 
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(attachment.attachmentDataId);
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Collections.singletonList(attachment.attachmentDataId);
 
   /**
    * find all attachment infos for an application
@@ -51,13 +50,12 @@ public class AttachmentDao {
    */
   @Transactional(readOnly = true)
   public List<AttachmentInfo> findByApplication(int applicationId) {
-    List<AttachmentInfo> attachmentInfos = queryFactory
+    return queryFactory
         .select(attachmentInfoBean)
         .from(attachment)
         .join(applicationAttachment).on(attachment.id.eq(applicationAttachment.attachmentId))
         .where(applicationAttachment.applicationId.eq(applicationId))
         .fetch();
-    return attachmentInfos;
   }
 
   /**
@@ -346,13 +344,15 @@ public class AttachmentDao {
    */
   @Transactional
   public void linkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
-    SQLInsertClause insert = queryFactory.insert(applicationAttachment);
-    for (Integer attachmentId : attachmentIds) {
-      insert.set(applicationAttachment.applicationId, applicationId)
-              .set(applicationAttachment.attachmentId, attachmentId)
-              .addBatch();
+    if (attachmentIds != null && !attachmentIds.isEmpty()) {
+      SQLInsertClause insert = queryFactory.insert(applicationAttachment);
+      for (Integer attachmentId : attachmentIds) {
+        insert.set(applicationAttachment.applicationId, applicationId)
+                .set(applicationAttachment.attachmentId, attachmentId)
+                .addBatch();
+      }
+      insert.execute();
     }
-    insert.execute();
   }
 
   /**
@@ -389,7 +389,7 @@ public class AttachmentDao {
   }
 
   private Integer insertAttachmentData(byte[] data) {
-    Long size = Long.valueOf(data.length);
+    Long size = (long) data.length;
     Integer id = queryFactory.insert(attachmentData)
         .set(attachmentData.data, data)
         .set(attachmentData.size, size).executeWithKey(attachmentData.id);
@@ -429,21 +429,24 @@ public class AttachmentDao {
     .execute();
   }
 
-  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
-    List<AttachmentInfo> infos = findByApplication(copyFromApplicationId);
-    infos.forEach(i -> copyForApplication(i, copyToApplicationId));
-  }
+  @Transactional
+  public void copyForApplication(List<AttachmentInfo> infos, Integer copyToApplicationId) {
+    if (infos != null && !infos.isEmpty()) {
+      List<Integer> attachmentIds = new ArrayList<>();
+      SQLInsertClause insert = queryFactory.insert(attachment);
+      for (AttachmentInfo info : infos) {
+        if (isDefaultAttachment(info)) {
+          attachmentIds.add(info.getId());
+        } else {
+          info.setId(null);
+          insert.populate(info).addBatch();
 
-  private void copyForApplication(AttachmentInfo info, Integer copyToApplicationId) {
-    Integer attachmentId = null;
-    if (isDefaultAttachment(info)) {
-      attachmentId = info.getId();
-    } else {
-      info.setId(null);
-      attachmentId = queryFactory.insert(attachment).populate(info)
-          .executeWithKey(attachment.id);
+        }
+      }
+      List<Integer> inserted = insert.executeWithKeys(attachment.id);
+      attachmentIds.addAll(inserted);
+      linkApplicationToAttachment(copyToApplicationId, attachmentIds);
     }
-    linkApplicationToAttachment(copyToApplicationId, attachmentId);
   }
 
   private boolean isDefaultAttachment(AttachmentInfo info) {
