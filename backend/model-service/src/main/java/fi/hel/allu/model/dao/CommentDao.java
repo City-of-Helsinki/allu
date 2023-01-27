@@ -3,9 +3,11 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
+import fi.hel.allu.common.util.EmptyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,13 +136,19 @@ public class CommentDao {
         .stream()
         .filter(c -> !typesNotCopied.contains(c.getType()))
         .collect(Collectors.toList());
-    comments.forEach(c -> copyForApplication(c, copyToApplicationId));
+    copyForApplication(comments, copyToApplicationId);
   }
 
-  private void copyForApplication(Comment comment, Integer copyToApplicationId) {
-    comment.setId(null);
-    comment.setApplicationId(copyToApplicationId);
-    insertComment(comment);
+  private void copyForApplication(List<Comment> commentList, Integer copyToApplicationId) {
+    if (EmptyUtil.isNotEmpty(commentList)) {
+      SQLInsertClause insert = queryFactory.insert(comment);
+      for (Comment c : commentList) {
+        c.setId(null);
+        c.setApplicationId(copyToApplicationId);
+        insert.populate(c, DefaultMapper.WITH_NULL_BINDINGS).addBatch();
+      }
+      insert.execute();
+    }
   }
 
   @Transactional(readOnly = true)
