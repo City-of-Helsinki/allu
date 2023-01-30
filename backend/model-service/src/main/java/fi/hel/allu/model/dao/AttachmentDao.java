@@ -10,6 +10,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
@@ -338,7 +339,6 @@ public class AttachmentDao {
     linkApplicationToAttachment(applicationId, Collections.singletonList(attachmentId));
   }
 
-
   /**
    * Link default attachments to application.
    *
@@ -347,7 +347,7 @@ public class AttachmentDao {
    */
   @Transactional
   public void linkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
-    if (attachmentIds != null && !attachmentIds.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(attachmentIds)) {
       SQLInsertClause insert = queryFactory.insert(applicationAttachment);
       for (Integer attachmentId : attachmentIds) {
         insert.set(applicationAttachment.applicationId, applicationId)
@@ -435,7 +435,7 @@ public class AttachmentDao {
 
   @Transactional
   public void copyForApplication(List<AttachmentInfo> infos, Integer copyToApplicationId) {
-    if (infos != null && !infos.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(infos)) {
       List<Integer> attachmentIds = new ArrayList<>();
       SQLInsertClause insert = queryFactory.insert(attachment);
       for (AttachmentInfo info : infos) {

@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import com.querydsl.sql.dml.SQLUpdateClause;
+import fi.hel.allu.common.util.EmptyUtil;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +75,7 @@ public class ChargeBasisDao {
 
   @Transactional
   public void updateEntries(Map<Integer, ChargeBasisEntry> entriesToUpdate) {
-    if(entriesToUpdate != null && !entriesToUpdate.isEmpty()) {
+    if(EmptyUtil.isNotEmpty(entriesToUpdate)) {
       SQLUpdateClause update = queryFactory.update(chargeBasis);
       entriesToUpdate.forEach((k, v) -> addBatch(k, v, update));
       update.execute();

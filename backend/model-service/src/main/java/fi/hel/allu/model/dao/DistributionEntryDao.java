@@ -5,6 +5,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.PostalAddress;
@@ -53,7 +54,7 @@ public class DistributionEntryDao {
 
   @Transactional
   public List<DistributionEntry> insert(List<DistributionEntry> dEntries) {
-    if (dEntries != null && !dEntries.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(dEntries)) {
       SQLInsertClause insertClause = queryFactory.insert(distributionEntry);
       for (DistributionEntry dEntry : dEntries) {
         dEntry.setId(null);
