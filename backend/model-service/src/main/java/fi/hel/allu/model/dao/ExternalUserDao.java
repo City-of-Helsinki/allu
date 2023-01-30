@@ -8,25 +8,26 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.model.postgres.ExceptionResolver;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QExternalUser.externalUser;
 import static fi.hel.allu.QExternalUserCustomer.externalUserCustomer;
 import static fi.hel.allu.QExternalUserRole.externalUserRole;
@@ -36,21 +37,23 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 public class ExternalUserDao {
 
 
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
-      Arrays.asList(externalUser.password);
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
+          Collections.singletonList(externalUser.password);
 
-  @Autowired
-  private SQLQueryFactory queryFactory;
+  private final SQLQueryFactory queryFactory;
 
   final QBean<ExternalUser> externalUserBean = bean(ExternalUser.class, externalUser.all());
 
+  public ExternalUserDao(SQLQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
+  }
 
   @Transactional(readOnly = true)
   public Optional<ExternalUser> findById(int id) {
     Optional<ExternalUser> externalUserOpt = getSelectJoin()
         .where(externalUser.id.eq(id))
         .transform(getGroupBy()).values().stream().findFirst();
-    externalUserOpt.ifPresent(e -> addRoles(e));
+    externalUserOpt.ifPresent(this::addRoles);
     return externalUserOpt;
   }
 
@@ -60,15 +63,14 @@ public class ExternalUserDao {
     Optional<ExternalUser> externalUserOpt = getSelectJoin()
         .where(externalUser.username.eq(username))
         .transform(getGroupBy()).values().stream().findFirst();
-    externalUserOpt.ifPresent(e -> addRoles(e));
+    externalUserOpt.ifPresent(this::addRoles);
     return externalUserOpt;
   }
 
   @Transactional(readOnly = true)
   public List<ExternalUser> findAll() {
     Collection<ExternalUser> externalUsers = getSelectJoin().transform(getGroupBy()).values();
-    // This will be slow if there's many external users. This is not expected in the near future
-    externalUsers.forEach(e -> addRoles(e));
+    addRolesToUsers(externalUsers);
     return new ArrayList<>(externalUsers);
   }
 
@@ -120,21 +122,24 @@ public class ExternalUserDao {
     queryFactory.update(externalUser).set(externalUser.lastLogin, loginTime).where(externalUser.id.eq(id)).execute();
   }
 
-
   private void replaceConnectedCustomers(int externalUserId, List<Integer> connectedCustomers) {
     queryFactory.delete(externalUserCustomer).where(externalUserCustomer.externalUserId.eq(externalUserId)).execute();
-    connectedCustomers.forEach(customerId -> {
-      queryFactory.insert(
-          externalUserCustomer).set(externalUserCustomer.externalUserId, externalUserId).set(externalUserCustomer.customerId, customerId).execute();
-    });
+    if (EmptyUtil.isNotEmpty(connectedCustomers)) {
+      SQLInsertClause insertClause = queryFactory.insert(externalUserCustomer);
+      connectedCustomers.forEach(customerId -> insertClause.set(externalUserCustomer.externalUserId, externalUserId)
+              .set(externalUserCustomer.customerId, customerId).addBatch());
+      insertClause.execute();
+    }
   }
 
   private void replaceAssignedRoles(int externalUserId, List<ExternalRoleType> roles) {
     queryFactory.delete(externalUserRole).where(externalUserRole.externalUserId.eq(externalUserId)).execute();
-    roles.forEach(role -> {
-      queryFactory.insert(
-          externalUserRole).set(externalUserRole.externalUserId, externalUserId).set(externalUserRole.role, role).execute();
-    });
+    if(EmptyUtil.isNotEmpty(roles)) {
+      SQLInsertClause insertClause = queryFactory.insert(externalUserRole);
+      roles.forEach(role -> insertClause.set(externalUserRole.externalUserId, externalUserId)
+              .set(externalUserRole.role, role).addBatch());
+      insertClause.execute();
+    }
   }
 
   private ResultTransformer<Map<Integer,ExternalUser>> getGroupBy() {
@@ -166,5 +171,23 @@ public class ExternalUserDao {
             .from(externalUserRole)
             .where(externalUserRole.externalUserId.eq(externalUser.getId()))
             .fetch());
+  }
+
+  private void addRolesToUsers(Collection<ExternalUser> externalUsers) {
+    if(EmptyUtil.isNotEmpty(externalUsers)) {
+      Map<Integer, List<ExternalRoleType>> mappedRoles = queryFactory
+              .select(externalUserRole.role)
+              .from(externalUserRole)
+              .where(externalUserRole.externalUserId.in(
+                      externalUsers.stream().map(ExternalUser::getId).collect(Collectors.toList())))
+              .transform(groupBy(externalUserRole.externalUserId).as(list(externalUserRole.role)));
+      externalUsers.forEach(user -> mapRolesToUser(user, mappedRoles));
+    }
+  }
+
+  private void mapRolesToUser(ExternalUser user, Map<Integer, List<ExternalRoleType>> mappedRoles) {
+    if (mappedRoles.containsKey(user.getId())) {
+      user.setAssignedRoles(mappedRoles.get(user.getId()));
+    }
   }
 }
