@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.types.ChargeBasisType;
+import fi.hel.allu.common.util.EmptyUtil;
 import org.apache.commons.lang3.StringUtils;
 
 public class ChargeBasisEntry {
@@ -363,7 +364,7 @@ public class ChargeBasisEntry {
         return true;
       }
       else if (this.getLocationId() != null && other.getLocationId() != null) {
-        if (locationMap != null && !locationMap.isEmpty()) {
+        if (EmptyUtil.isNotEmpty(locationMap)) {
           try {
             return locationMap.get(this.getLocationId())
               .equalGeneralContentAndGeometry(locationMap.get(other.getLocationId()));

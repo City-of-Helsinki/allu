@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.util.EmptyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -225,7 +226,7 @@ public class InvoiceDao {
   }
 
   private void insertRows(int invoiceId, List<InvoiceRow> rows) {
-    if (rows != null && !rows.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(rows)) {
       SQLInsertClause inserter = queryFactory.insert(invoiceRow);
       for (int rowNum = 0; rowNum < rows.size(); ++rowNum) {
         inserter.populate(rows.get(rowNum))
