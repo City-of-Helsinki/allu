@@ -3,9 +3,11 @@ package fi.hel.allu.model.dao;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.EmptyUtil;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,6 @@ import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
-import org.springframework.util.StringUtils;
 
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
@@ -37,13 +38,12 @@ import static fi.hel.allu.QFieldChange.fieldChange;
 @Repository
 public class HistoryDao {
 
-  @Autowired
-  private SQLQueryFactory queryFactory;
-
-  private final QBean<FieldChange> fieldChangeBean = bean(FieldChange.class,
-      fieldChange.all());
+  private final SQLQueryFactory queryFactory;
   private final QBean<ChangeHistoryItem> changeHistoryBean = bean(ChangeHistoryItem.class, changeHistory.all());
 
+  public HistoryDao(SQLQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
+  }
 
   /**
    * Get application's change history
@@ -172,7 +172,7 @@ public class HistoryDao {
    */
   private List<FieldChange> getChangeLines(List<Tuple> fieldChanges) {
     return fieldChanges.stream()
-      .filter(f -> !StringUtils.isEmpty(f.get(fieldChange.fieldName)))
+      .filter(f -> StringUtils.isNotEmpty(f.get(fieldChange.fieldName)))
       .map(f ->
       new FieldChange(f.get(fieldChange.fieldName),
         f.get(fieldChange.oldValue), f.get(fieldChange.newValue))
@@ -232,13 +232,14 @@ public class HistoryDao {
       throw new QueryException("Failed to insert change");
     }
     List<FieldChange> fields = change.getFieldChanges();
-    if (fields != null) {
+    if (EmptyUtil.isNotEmpty(fields)) {
+      SQLInsertClause insertClause = queryFactory.insert(fieldChange);
       for (FieldChange field : fields) {
-        Integer fieldId = queryFactory.insert(fieldChange).populate(field).set(fieldChange.changeHistoryId, changeId)
-            .executeWithKey(fieldChange.id);
-        if (fieldId == null) {
-          throw new QueryException("Failed to insert change field");
-        }
+        insertClause.populate(field).set(fieldChange.changeHistoryId, changeId).addBatch();
+      }
+      List<Integer> fieldIds = insertClause.executeWithKeys(fieldChange.id);
+      if (fieldIds == null || fieldIds.size() != fields.size()) {
+        throw new QueryException("Failed to insert change field");
       }
     }
   }
@@ -266,8 +267,8 @@ public class HistoryDao {
         .where(builder)
         .fetch();
     return result.stream()
-        .collect(Collectors.groupingBy(t -> t.get(1, ExternalApplicationId.class).getExternalApplicationId(),
-                 Collectors.mapping(t -> toChangeHistoryWithApplicationId(t), Collectors.toList())));
+        .collect(Collectors.groupingBy(t -> t.get(1, ExternalApplicationId.class).getId(),
+                 Collectors.mapping(this::toChangeHistoryWithApplicationId, Collectors.toList())));
    }
 
   @Transactional(readOnly = true)
@@ -289,18 +290,15 @@ public class HistoryDao {
   }
 
   public static class ExternalApplicationId {
-    private Integer externalApplicationId;
+    private Integer id;
     private String applicationId;
 
-    public ExternalApplicationId() {
+    public Integer getId() {
+      return id;
     }
 
-    public Integer getExternalApplicationId() {
-      return externalApplicationId;
-    }
-
-    public void setExternalApplicationId(Integer externalApplicationId) {
-      this.externalApplicationId = externalApplicationId;
+    public void setId(Integer id) {
+      this.id = id;
     }
 
     public String getApplicationId() {
@@ -311,6 +309,4 @@ public class HistoryDao {
       this.applicationId = applicationId;
     }
   }
-
-
 }
