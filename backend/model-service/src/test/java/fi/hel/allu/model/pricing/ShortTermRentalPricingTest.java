@@ -166,7 +166,7 @@ public class ShortTermRentalPricingTest {
 
   private void createLocation() {
     location = new Location();
-    location.setArea(new Double("14.0"));
+    location.setArea(Double.valueOf("14.0"));
     location.setPaymentTariff("3");
     location.setPostalAddress(new PostalAddress("Testikatu 42", null, null));
     location.setStartTime(application.getStartTime());
