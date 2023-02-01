@@ -304,9 +304,9 @@ public class ChargeBasisService {
     // Get calculated entries without dividing to periods
     List<ChargeBasisEntry> calculatedEntries = pricingService.calculateChargeBasisWithoutInvoicingPeriods(applicationDao.findById(id));
     // Sets invoicable value for calculated entries not divided to periods (divided entries must be handled separately since period specific row has different tag)
-    Map<String, Boolean> mapInvoicables = chargeBasisDao.isInvoicable(id, calculatedEntries.stream().map(ChargeBasisEntry::getTag).collect(
-            Collectors.toList()),  false);
-    calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(mapInvoicables.get(e.getTag()))));
+    List<String> tags = calculatedEntries.stream().map(ChargeBasisEntry::getTag).collect(Collectors.toList());
+    Map<String, Boolean> mappedIsInvoicables = chargeBasisDao.isInvoicable(id, tags,  false);
+    calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(mappedIsInvoicables.get(e.getTag()))));
     // Fetch manual entries from db and add to result.
     return Stream.concat(calculatedEntries.stream(), getChargeBasis(id).stream().filter(ChargeBasisEntry::getManuallySet))
         .collect(Collectors.toList());
