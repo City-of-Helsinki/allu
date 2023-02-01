@@ -747,10 +747,6 @@ public class ApplicationDao {
         .fetch();
   }
 
-  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
-    attachmentDao.copyApplicationAttachments(copyFromApplicationId, copyToApplicationId);
-  }
-
   public void setApplicationReplaced(int replacedApplicationId, Integer replacingApplicationId) {
     queryFactory
         .update(application)
