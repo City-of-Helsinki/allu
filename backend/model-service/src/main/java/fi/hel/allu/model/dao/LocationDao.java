@@ -10,12 +10,14 @@ import com.querydsl.core.types.dsl.SimpleTemplate;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.coordinates.CoordinateTransformation;
 import fi.hel.allu.model.coordinates.GeometrySimplification;
@@ -404,6 +406,11 @@ public class LocationDao {
         return findFixedLocations(Collections.singletonList(id), null).stream().findFirst();
     }
 
+    @Transactional(readOnly = true)
+    public List<FixedLocation> getFixedLocations(List<Integer> ids) {
+        return findFixedLocations(ids, null);
+    }
+
     /*
      *  Find fixed locations: either by ids or all active
      */
@@ -466,9 +473,12 @@ public class LocationDao {
                 gc = removeOverlaps(gc);
                 List<Geometry> flat = new ArrayList<>();
                 GeometryUtil.flatten(gc, flat);
-                flat.stream().map(this::removeRepeatedPoints).forEach(geo -> queryFactory.insert(locationGeometry)
-                        .columns(locationGeometry.locationId, locationGeometry.geometry).values(locationId, geo)
-                        .execute());
+                SQLInsertClause insertClause = queryFactory.insert(locationGeometry);
+                flat.stream().map(this::removeRepeatedPoints)
+                        .forEach(geo -> insertClause.columns(locationGeometry.locationId, locationGeometry.geometry)
+                        .values(locationId, geo)
+                        .addBatch());
+                insertClause.execute();
             } else {
                 geometry = bufferLineString(geometry);
                 geometry = removeRepeatedPoints(geometry);
@@ -491,10 +501,13 @@ public class LocationDao {
     }
 
     private void setFixedLocationIds(int locationId, List<Integer> fixedLocationIds) {
-        if (fixedLocationIds != null) {
-            fixedLocationIds.forEach(flid -> queryFactory.insert(locationFlids)
-                    .columns(locationFlids.locationId, locationFlids.fixedLocationId).values(locationId, flid)
-                    .execute());
+        if (EmptyUtil.isNotEmpty(fixedLocationIds)) {
+            SQLInsertClause insertClause = queryFactory.insert(locationFlids);
+            for (Integer fixedLocationId : fixedLocationIds) {
+                insertClause.columns(locationFlids.locationId, locationFlids.fixedLocationId)
+                        .values(locationId, fixedLocationId).addBatch();
+            }
+            insertClause.execute();
         }
     }
 
