@@ -35,10 +35,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
@@ -707,8 +704,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                             queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND))
                     .boost(queryParameter.getBoost());
         } else if (queryParameter.getFieldValue() != null) {
-            return QueryBuilders.matchQuery(
-                    queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND);
+            return createSimpleQuery(queryParameter);
         } else if (queryParameter.getStartDateValue() != null || queryParameter.getEndDateValue() != null) {
             ZonedDateTime startDate = queryParameter.getStartDateValue() != null ?
                     queryParameter.getStartDateValue() : RecurringApplication.BEGINNING_1972_DATE;
@@ -793,6 +789,17 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         qbCombined.minimumShouldMatch(1);
 
         return qbCombined;
+    }
+
+    private QueryBuilder createSimpleQuery(QueryParameter queryParameter) {
+        QueryBuilder result;
+        if (queryParameter.getFieldName().equals("_all")) {
+            result = QueryBuilders.simpleQueryStringQuery(queryParameter.getFieldValue());
+        } else {
+            result = QueryBuilders.matchQuery(queryParameter.getFieldName(), queryParameter.getFieldValue())
+                    .operator(Operator.AND);
+        }
+        return result;
     }
 
     private long getRangeSearchCompliantPeriodLimit(long startOrEnd) {
