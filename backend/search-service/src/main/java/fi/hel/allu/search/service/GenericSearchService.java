@@ -794,7 +794,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     private QueryBuilder createSimpleQuery(QueryParameter queryParameter) {
         QueryBuilder result;
         if (queryParameter.getFieldName().equals("_all")) {
-            result = QueryBuilders.simpleQueryStringQuery(queryParameter.getFieldValue());
+            result = QueryBuilders.simpleQueryStringQuery(queryParameter.getFieldValue()).defaultOperator(Operator.AND);
         } else {
             result = QueryBuilders.matchQuery(queryParameter.getFieldName(), queryParameter.getFieldValue())
                     .operator(Operator.AND);
