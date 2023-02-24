@@ -1,5 +1,4 @@
-package fi.hel.allu.search.service;
-
+package fi.hel.allu.search.indexConductor;
 
 import fi.hel.allu.search.util.Constants;
 import org.springframework.stereotype.Component;

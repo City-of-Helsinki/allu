@@ -1,9 +1,6 @@
 package fi.hel.allu.search.config;
 
-import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.ContactSearchService;
-import fi.hel.allu.search.service.CustomerSearchService;
-import fi.hel.allu.search.service.ProjectSearchService;
+import fi.hel.allu.search.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -19,16 +16,19 @@ public class ElasticSearchConfigOnStartup implements ApplicationListener<Applica
     private final ContactSearchService contactSearchService;
     private final CustomerSearchService customerSearchService;
     private final ProjectSearchService projectSearchService;
+    private final SupervisionTaskSearchService superviosionTaskSearchService;
 
     @Autowired
     public ElasticSearchConfigOnStartup(ApplicationSearchService applicationSearchService,
                                         ContactSearchService contactSearchService,
                                         CustomerSearchService customerSearchService,
-                                        ProjectSearchService projectSearchService) {
+                                        ProjectSearchService projectSearchService,
+                                        SupervisionTaskSearchService superviosionTaskSearchService) {
         this.applicationSearchService = applicationSearchService;
         this.contactSearchService = contactSearchService;
         this.customerSearchService = customerSearchService;
         this.projectSearchService = projectSearchService;
+        this.superviosionTaskSearchService = superviosionTaskSearchService;
     }
 
     /**
@@ -40,5 +40,6 @@ public class ElasticSearchConfigOnStartup implements ApplicationListener<Applica
         customerSearchService.initIndex();
         contactSearchService.initIndex();
         projectSearchService.initIndex();
+        superviosionTaskSearchService.initIndex();
     }
 }

@@ -1,4 +1,4 @@
-package fi.hel.allu.search.service;
+package fi.hel.allu.search.indexConductor;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
