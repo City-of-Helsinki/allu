@@ -32,7 +32,7 @@
 
 - name: Stop and remove existing allu_reporting_database container from Docker
   docker_container:
-    name: "{{ reporting_database_name }}"
+    name: "{{ reporting_database_container_name }}"
     state: absent
   become: yes
 
@@ -59,7 +59,7 @@
 
 - name: Start allu_reporting_database container
   docker_container:
-    name: "{{ reporting_database_name }}"
+    name: "{{ reporting_database_container_name }}"
     image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_reporting_database:{{ branch }}"
     shm_size: "{{ container_shm_size }}"
     restart_policy: always

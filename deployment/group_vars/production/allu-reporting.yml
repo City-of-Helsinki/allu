@@ -1,4 +1,4 @@
-reporting_database_host: "{{ reporting_database_name }}"
+reporting_database_host: "{{ reporting_database_container_name }}"
 reporting_database_port: 5432
 etl_cronstring: "0 0 */1 * * *"
 etl_sql_files: "city_district.sql,customer.sql,project.sql,application.sql,application_kind.sql,kind_specifier.sql,application_customer.sql,application_tag.sql,deposit.sql,location_area.sql,fixed_location.sql,location.sql,location_flids.sql,location_geometry.sql,invoicing_period.sql,charge_basis.sql,comment.sql,change_history.sql,field_change.sql,invoice.sql,invoice_row.sql,supervision_task.sql,contract.sql,information_request.sql,cleanup.sql"

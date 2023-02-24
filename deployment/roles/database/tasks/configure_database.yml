@@ -1,4 +1,4 @@
-- name: Change database user {{ database_name }}'s password and user rights
+- name: Change database user {{ database_user }}'s password and user rights
   postgresql_user:
     login_host=localhost
     name={{ database_user }}
@@ -89,7 +89,7 @@
 
 - name: Restart a container
   docker_container:
-    name: "{{ database_name }}"
+    name: "{{ database_container_name }}"
     state: started
     restart: true
   become: yes
