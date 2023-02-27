@@ -88,9 +88,8 @@ public class SupervisionTaskService {
     });
   }
 
-  @Transactional(readOnly = true)
-  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    return supervisionTaskDao.search(searchCriteria, pageRequest);
+  public SupervisionWorkItem getWorkItem(Integer id) {
+    return supervisionTaskDao.findSupervisionWorkItem(id);
   }
 
   @Transactional

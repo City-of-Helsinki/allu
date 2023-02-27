@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -47,12 +48,13 @@ public class SupervisionTaskService {
   private final ApplicationEventPublisher archiveEventPublisher;
   private final ApplicationEventDispatcher applicationEventDispatcher;
   private final ApplicationHistoryService applicationHistoryService;
+  private final SearchService searchService;
 
   @Autowired
   public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
                                 UserService userService, ApplicationServiceComposer applicationServiceComposer,
                                 ApplicationEventPublisher archiveEventPublisher, ApplicationHistoryService applicationHistoryService,
-                                ApplicationEventDispatcher applicationEventDispatcher) {
+                                ApplicationEventDispatcher applicationEventDispatcher, SearchService searchService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
@@ -60,6 +62,7 @@ public class SupervisionTaskService {
     this.archiveEventPublisher = archiveEventPublisher;
     this.applicationEventDispatcher = applicationEventDispatcher;
     this.applicationHistoryService = applicationHistoryService;
+    this.searchService = searchService;
   }
 
 
@@ -115,7 +118,10 @@ public class SupervisionTaskService {
     applicationHistoryService.addSupervisionAdded(task.getApplicationId(), task.getType());
     applicationEventDispatcher.dispatchUpdateEvent(task.getApplicationId(), task.getCreatorId(),
         ApplicationNotificationType.SUPERVISION_ADDED, task.getType().name());
-
+    searchService.inserSupervisionTask(restTemplate.getForEntity(
+            applicationProperties.getSupervisionTaskGetWorkItemUrl(),
+            SupervisionWorkItem.class,
+            supervisionTasksResult.getBody().getId()).getBody());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -182,21 +188,16 @@ public class SupervisionTaskService {
         ApplicationNotificationType.SUPERVISION_REMOVED, taskJson.getType().name());
   }
 
-  public Page<SupervisionWorkItemJson> searchWorkItems(SupervisionTaskSearchCriteria searchCriteria,
-      Pageable pageRequest) {
-    Page<SupervisionWorkItem> result = search(searchCriteria, pageRequest);
+  public Page<SupervisionWorkItemJson> searchWorkItems(QueryParameters queryParameters,
+                                                       Pageable pageRequest) {
+    Page<SupervisionWorkItem> result = search(queryParameters, pageRequest);
     Page<SupervisionWorkItemJson> response = result.map(s -> toWorkItem(s));
     return response;
   }
 
-  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {
-    };
-    URI targetUri = PageRequestBuilder.fromUriString(applicationProperties.getSupervisionTaskSearchUrl(), pageRequest);
-    ResponseEntity<RestResponsePage<SupervisionWorkItem>> response =
-        restTemplate.exchange(targetUri, HttpMethod.POST, new HttpEntity<>(searchCriteria), typeref);
-    final Page<SupervisionWorkItem> responsePage = response.getBody();
-    return responsePage;
+  public Page<SupervisionWorkItem> search(QueryParameters queryParameters, Pageable pageRequest) {
+    return searchService.searchSupervisionTask(queryParameters, pageRequest, false);
+
   }
 
   /**

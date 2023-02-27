@@ -76,10 +76,9 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping(value = "/search")
-  public ResponseEntity<Page<SupervisionWorkItem>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria,
-      Pageable pageRequest) {
-    return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
+  @GetMapping(value = "/{id}/workitem")
+  public ResponseEntity<SupervisionWorkItem> getWorkItem(@PathVariable int id) {
+    return new ResponseEntity<>(supervisionTaskService.getWorkItem(id), HttpStatus.OK);
   }
 
   @PutMapping(value = "/owner/{ownerId}")

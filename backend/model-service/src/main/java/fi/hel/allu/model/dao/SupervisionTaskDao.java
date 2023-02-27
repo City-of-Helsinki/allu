@@ -179,13 +179,12 @@ public class SupervisionTaskDao {
       supervisionTask.type.eq(SupervisionTaskType.FINAL_SUPERVISION));
   }
 
-  @Transactional
-  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    BooleanExpression conditions = conditions(searchCriteria)
-      .reduce((left, right) -> left.and(right))
-      .orElse(Expressions.TRUE);
+  @Transactional(readOnly = true)
+  public Page<SupervisionWorkItem> search(Pageable pageRequest) {
+    long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
 
-    SQLQuery<SupervisionWorkItem> q = queryFactory.select(supervisionWorkItemBean)
+    QueryResults<SupervisionWorkItem> results = queryFactory.select(supervisionWorkItemBean)
       .from(supervisionTaskWithAddress)
       .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
       .leftJoin(project).on(application.projectId.eq(project.id))
@@ -200,66 +199,36 @@ public class SupervisionTaskDao {
       .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
       .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
         .and(applStatusAttribute.name.eq(application.status.stringValue())))
-      .where(conditions);
+            .orderBy(application.id.asc()).offset(offset).limit(count).fetchResults();;
 
-    q = handlePageRequest(q, pageRequest);
-
-    QueryResults<SupervisionWorkItem> results = q.fetchResults();
     return new PageImpl<>(results.getResults(), pageRequest, results.getTotal());
   }
 
-  /*
-   * Add sort and paging to query from the given pageRequest.
-   */
-  private SQLQuery<SupervisionWorkItem> handlePageRequest(SQLQuery<SupervisionWorkItem> query, Pageable pageRequest) {
-    if (pageRequest == null) {
-      return query;
-    }
-    query = query.orderBy(toOrder(pageRequest.getSort()));
-    if (pageRequest.getOffset() != 0) {
-      query = query.offset(pageRequest.getOffset());
-    }
-    if (pageRequest.getPageSize() != 0) {
-      query = query.limit(pageRequest.getPageSize());
-    }
-    return query;
-  }
-
   /**
-   * Convert given sort criteria to OrderSpecifiers
-   *
-   * @param sort
+   * Use SupervisionTask to find correct values but values are populated to class named SupervisionWorkItem
+   * @param id
    * @return
    */
-  public static OrderSpecifier<?>[] toOrder(Sort sort) {
-    List<OrderSpecifier<?>> order = new ArrayList<>();
-    sort.forEach(o -> {
-      ComparableExpressionBase<?> path = (ComparableExpressionBase<?>) Optional.ofNullable(COLUMNS.get(o.getProperty()))
-        .orElseThrow(() -> new NoSuchEntityException("Bad sort key: " + o.getProperty()));
-      order.add(o.isDescending() ? path.desc() : path.asc());
-    });
-    return order.toArray(new OrderSpecifier<?>[order.size()]);
-  }
+  @Transactional
+  public SupervisionWorkItem findSupervisionWorkItem(Integer id) {
 
-  private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
-    List<SupervisionTaskStatusType> statuses = searchCriteria.getStatuses() != null && !searchCriteria.getStatuses().isEmpty() ?
-      searchCriteria.getStatuses() : Collections.singletonList(SupervisionTaskStatusType.OPEN);
-
-
-    return Stream.of(
-        Optional.of(supervisionTaskWithAddress.status.in(statuses)),
-        values(searchCriteria.getTaskTypes()).map(supervisionTaskWithAddress.type::in),
-        Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTaskWithAddress.plannedFinishingTime::goe),
-        Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTaskWithAddress.plannedFinishingTime::lt),
-        Optional.ofNullable(searchCriteria.getApplicationId()).map(String::toUpperCase).map(application.applicationId::startsWith),
-        values(searchCriteria.getOwners()).map(supervisionTaskWithAddress.ownerId::in),
-        values(searchCriteria.getApplicationTypes()).map(application.type::in),
-        values(searchCriteria.getApplicationStatus()).map(application.status::in),
-        values(searchCriteria.getCityDistrictIds()).map(this::cityDistrictsIn),
-        // Include also empty application ID list in search conditions
-        Optional.ofNullable(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
-      ).filter(opt -> opt.isPresent())
-      .map(opt -> opt.get());
+    SQLQuery<SupervisionWorkItem> q = queryFactory.select(supervisionWorkItemBean)
+            .from(supervisionTaskWithAddress)
+            .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
+            .leftJoin(project).on(application.projectId.eq(project.id))
+            .leftJoin(creator).on(supervisionTaskWithAddress.creatorId.eq(creator.id))
+            .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id))
+            .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
+            .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
+                                                .and(typeAttribute.name.eq(supervisionTaskWithAddress.type.stringValue())))
+            .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
+            .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
+                                                    .and(applTypeAttribute.name.eq(application.type.stringValue())))
+            .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
+            .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
+                                                      .and(applStatusAttribute.name.eq(application.status.stringValue())))
+            .where(supervisionTaskWithAddress.id.eq(id));
+     return q.fetchOne();
   }
 
   private <T> Optional<List<T>> values(List<T> valueList) {

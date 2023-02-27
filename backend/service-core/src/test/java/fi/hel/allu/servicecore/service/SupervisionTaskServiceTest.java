@@ -6,16 +6,18 @@ import java.util.stream.Stream;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,9 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SupervisionTaskServiceTest {
 
+  private static final int ID = 99;
   private static final int APPLICATION_ID = 17;
   private static final int USER_ID = 18;
 
@@ -54,24 +57,26 @@ public class SupervisionTaskServiceTest {
   private ApplicationEventPublisher archiveEventPublisher;
   @Mock
   private ApplicationEventDispatcher eventDispatcher;
-
+  @Mock
+  private SearchService searchService;
   @InjectMocks
   private SupervisionTaskService supervisionTaskService;
 
-  @Before
+  @BeforeEach
   public void setup() {
-    when(applicationProperties.getSupervisionTaskByIdUrl()).thenReturn("http://task/id");
-    when(applicationProperties.getSupervisionTaskApproveUrl()).thenReturn("http://task/id/approve");
-    when(applicationProperties.getSupervisionTaskRejectUrl()).thenReturn("http://task/id/reject");
-    when(applicationProperties.getSupervisionTaskCreateUrl()).thenReturn("http://task");
-    when(applicationProperties.getSupervisionTaskUpdateUrl()).thenReturn("http://task/id/update");
-    when(userService.getCurrentUser()).thenReturn(new UserJson(USER_ID));
-    when(userService.findUserById(USER_ID)).thenReturn(new UserJson(USER_ID));
+    lenient().when(applicationProperties.getSupervisionTaskByIdUrl()).thenReturn("http://task/id");
+    lenient().when(applicationProperties.getSupervisionTaskApproveUrl()).thenReturn("http://task/id/approve");
+    lenient().when(applicationProperties.getSupervisionTaskRejectUrl()).thenReturn("http://task/id/reject");
+    lenient().when(applicationProperties.getSupervisionTaskCreateUrl()).thenReturn("http://task");
+    lenient().when(applicationProperties.getSupervisionTaskUpdateUrl()).thenReturn("http://task/id/update");
+    lenient().when(userService.getCurrentUser()).thenReturn(new UserJson(USER_ID));
+    lenient().when(userService.findUserById(USER_ID)).thenReturn(new UserJson(USER_ID));
   }
 
   @Test
   public void shouldAddHistoryWhenAdded() {
     setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    setTaskSearchInsert();
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     supervisionTaskService.insert(taskJson);
     verify(historyService, times(1)).addSupervisionAdded(APPLICATION_ID, taskJson.getType());
@@ -80,6 +85,7 @@ public class SupervisionTaskServiceTest {
   @Test
   public void shouldPublishApplicationEventWhenAdded() {
     setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    setTaskSearchInsert();
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     supervisionTaskService.insert(taskJson);
     verifyApplicationEventDispatched(ApplicationNotificationType.SUPERVISION_ADDED);
@@ -88,6 +94,7 @@ public class SupervisionTaskServiceTest {
   @Test
   public void shouldAddHistoryWhenUpdated() {
     setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    setTaskSearchInsert();
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     SupervisionTaskJson updatedTask = supervisionTaskService.insert(taskJson);
     onUpdate(SupervisionTaskMapper.mapToModel(updatedTask));
@@ -98,6 +105,7 @@ public class SupervisionTaskServiceTest {
   @Test
   public void shouldPublishApplicationEventWhenUpdated() {
     setTaskCreationResult(SupervisionTaskType.FINAL_SUPERVISION);
+    setTaskSearchInsert();
     SupervisionTaskJson taskJson = createTaskJson(SupervisionTaskType.FINAL_SUPERVISION);
     SupervisionTaskJson updatedTask = supervisionTaskService.insert(taskJson);
     onUpdate(SupervisionTaskMapper.mapToModel(updatedTask));
@@ -161,7 +169,7 @@ public class SupervisionTaskServiceTest {
     setTaskApprovedResult(SupervisionTaskType.FINAL_SUPERVISION);
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.HANDLING);
-    when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
+    lenient().when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
     try {
       supervisionTaskService.approve(createTaskJson(SupervisionTaskType.FINAL_SUPERVISION));
     } catch (IllegalOperationException exception) {
@@ -186,16 +194,24 @@ public class SupervisionTaskServiceTest {
 
   private SupervisionTaskJson createTaskJson(SupervisionTaskType type) {
     SupervisionTaskJson taskJson = new SupervisionTaskJson();
-    taskJson.setId(99);
+    taskJson.setId(ID);
     taskJson.setApplicationId(APPLICATION_ID);
     taskJson.setType(type);
     taskJson.setCreator(new UserJson(USER_ID));
     return taskJson;
   }
 
+  private void setTaskSearchInsert() {
+    lenient().when(restTemplate.getForEntity(
+            eq(applicationProperties.getSupervisionTaskGetWorkItemUrl()),
+            eq(SupervisionWorkItem.class),
+            any(Integer.class)
+    )).thenReturn(ResponseEntity.ok(new SupervisionWorkItem()));
+  }
+
   private void setTaskSearchResult(SupervisionTaskType type) {
     SupervisionTask task = createTask(type);
-    when(restTemplate.getForEntity(
+    lenient().when(restTemplate.getForEntity(
         eq(applicationProperties.getSupervisionTaskByIdUrl()),
         eq(SupervisionTask.class),
         any(Integer.class)
@@ -204,7 +220,7 @@ public class SupervisionTaskServiceTest {
 
   private void setTaskCreationResult(SupervisionTaskType type) {
     SupervisionTask task = createTask(type);
-    when(restTemplate.postForEntity(
+    lenient().when(restTemplate.postForEntity(
         eq(applicationProperties.getSupervisionTaskCreateUrl()),
         any(SupervisionTask.class),
         eq(SupervisionTask.class))).thenReturn(ResponseEntity.ok(task));
@@ -212,7 +228,7 @@ public class SupervisionTaskServiceTest {
 
   private void setTaskApprovedResult(SupervisionTaskType type) {
     SupervisionTask task = createTask(type);
-    when(restTemplate.exchange(
+    lenient().when(restTemplate.exchange(
         eq(applicationProperties.getSupervisionTaskApproveUrl()),
         eq(HttpMethod.PUT),
         any(HttpEntity.class),
@@ -223,7 +239,7 @@ public class SupervisionTaskServiceTest {
 
   private void setTaskRejectedResult(SupervisionTaskType type) {
     SupervisionTask task = createTask(type);
-    when(restTemplate.exchange(
+    lenient().when(restTemplate.exchange(
         any(URI.class),
         eq(HttpMethod.PUT),
         any(HttpEntity.class),
@@ -233,6 +249,7 @@ public class SupervisionTaskServiceTest {
 
   private SupervisionTask createTask(SupervisionTaskType type) {
     SupervisionTask task = new SupervisionTask();
+    task.setId(ID);
     task.setApplicationId(APPLICATION_ID);
     task.setType(type);
     task.setCreatorId(USER_ID);
@@ -245,7 +262,7 @@ public class SupervisionTaskServiceTest {
   }
 
   private void onUpdate(SupervisionTask task) {
-    when(restTemplate.exchange(
+    lenient().when(restTemplate.exchange(
       eq("http://task/id/update"),
       eq(HttpMethod.PUT),
       any(HttpEntity.class),

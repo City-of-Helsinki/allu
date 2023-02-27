@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -244,6 +247,11 @@ public class SearchService {
       new ParameterizedTypeReference<RestResponsePage<ApplicationES>>() {});
   }
 
+  public Page<SupervisionWorkItem> searchSupervisionTask(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+    return search(applicationProperties.getSupervisionTaskSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity(),
+                  new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {});
+  }
+
   /**
    * Find projects by given fields.
    *
@@ -304,6 +312,11 @@ public class SearchService {
     if (!applicationWithContactsESs.isEmpty()) {
       executePutWithRetry(applicationProperties.getContactApplicationsSearchUpdateUrl(), applicationWithContactsESs);
     }
+  }
+
+  public void inserSupervisionTask(SupervisionWorkItem supervisionWorkItem){
+    executePostWithRetry(applicationProperties.getSupervisionTaskSearchCreateUrl(),
+                         supervisionWorkItem);
   }
 
   /**

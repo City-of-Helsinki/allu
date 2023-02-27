@@ -283,6 +283,10 @@ public class ApplicationProperties {
     return getSearchServiceUrl("/applications");
   }
 
+  public String getSupervisionTaskSearchCreateUrl() {
+    return getSearchServiceUrl("/supervisiontask");
+  }
+
   /**
    * @return url to delete application from search index.,
    */
@@ -1156,6 +1160,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/supervisiontask");
   }
 
+  public String getSupervisionTaskGetWorkItemUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}/workitem");
+  }
+
   /**
    * @return url for updating existing supervision task-
    */
@@ -1181,7 +1189,7 @@ public class ApplicationProperties {
    * @return url for searching supervision tasks by given criteria
    */
   public String getSupervisionTaskSearchUrl() {
-    return getModelServiceUrl("/supervisiontask/search");
+    return getSearchServiceUrl("/supervisiontask/search");
   }
 
   /**
