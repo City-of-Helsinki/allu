@@ -3,9 +3,7 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerWithContacts;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
@@ -23,10 +21,7 @@ import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -312,6 +307,7 @@ public class ApplicationServiceComposer {
         .getFullyPopulatedApplication(applicationService.findApplicationById(application.getReplacesApplicationId())));
     }
     searchService.updateApplications(applicationsUpdated);
+    searchService.updateSupervisionTasksStatus(application.getId(), application.getStatus());
     return applicationJson;
   }
 

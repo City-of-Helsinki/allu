@@ -1,5 +1,6 @@
 package fi.hel.allu.search.controller;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.service.SupervisionTaskSearchService;
@@ -12,9 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
-@RequestMapping("/supervisiontask")
+@RequestMapping("/supervisiontasks")
 public class SupervisionTaskController {
 
     private final SupervisionTaskSearchService supervisionTaskSearchService;
@@ -35,5 +37,17 @@ public class SupervisionTaskController {
                                                       Pageable pageRequest,
                                                       @RequestParam(defaultValue = "false") Boolean matchAny) {
         return new ResponseEntity<>(supervisionTaskSearchService.findSupervisionTaskByField(queryParameters, pageRequest, matchAny), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/sync/data")
+    public ResponseEntity<Void> syncData(@Valid @RequestBody List<SupervisionWorkItem> supervisionWorkItems) {
+        supervisionTaskSearchService.syncData(supervisionWorkItems);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/update/status")
+    public ResponseEntity<Void> updateStatus(@RequestParam Integer applicationId, @Valid @RequestBody StatusType status) {
+        supervisionTaskSearchService.updateApplicationStatus(applicationId, status);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

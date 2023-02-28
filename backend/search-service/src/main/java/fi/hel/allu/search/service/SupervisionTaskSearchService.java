@@ -1,12 +1,11 @@
 package fi.hel.allu.search.service;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.domain.util.CustomerAnonymizer;
 import fi.hel.allu.search.indexConductor.SupervisionTaskIndexConductor;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -54,11 +53,11 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
 
     protected Page<SupervisionWorkItem> createResult(Pageable pageRequest, SearchResponse response, Integer zoom) throws IOException {
         long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
-        List<SupervisionWorkItem> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response, zoom);
+        List<SupervisionWorkItem> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response);
         return new PageImpl<>(results, pageRequest, totalHits);
     }
 
-    private List<SupervisionWorkItem> iterateSearchResponse(SearchResponse response, Integer zoom) throws IOException {
+    private List<SupervisionWorkItem> iterateSearchResponse(SearchResponse response) throws IOException {
         List<SupervisionWorkItem> appList = new ArrayList<>();
         if (response != null) {
             for (SearchHit hit : response.getHits()) {
@@ -67,5 +66,9 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
             }
         }
         return appList;
+    }
+
+    public void updateApplicationStatus(Integer applicationId, StatusType statusType){
+        updateByQuery(applicationId, statusType);
     }
 }

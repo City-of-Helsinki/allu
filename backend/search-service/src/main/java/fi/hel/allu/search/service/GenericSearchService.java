@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
@@ -37,8 +38,10 @@ import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
-import org.elasticsearch.index.reindex.ReindexRequest;
+import org.elasticsearch.index.reindex.*;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -47,10 +50,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -426,7 +426,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
 
         Optional.of(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
-            SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
+            SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty())).unmappedType("long");
             if (o.isAscending()) {
                 sb.order(SortOrder.ASC);
             } else {
@@ -824,6 +824,16 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         } catch (InterruptedException e) {
             throw new SearchException(e);
         }
+    }
+
+    public void updateByQuery(Integer applicationId, StatusType statusType){
+        UpdateByQueryRequest request =
+                new UpdateByQueryRequest(indexConductor.getIndexAliasName());
+        request.setScript(new Script(
+                ScriptType.INLINE, "painless",
+                "if (ctx._source.applicationId == '"+applicationId+"') {ctx._source.applicationStatus: "+ statusType +";}",
+                Collections.emptyMap()));
+
     }
 
     private static class BulkProcessorListener implements BulkProcessor.Listener {

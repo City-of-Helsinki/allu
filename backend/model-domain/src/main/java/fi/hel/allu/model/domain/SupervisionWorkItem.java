@@ -16,6 +16,15 @@ public class SupervisionWorkItem {
   private String[] address;
   private String projectName;
   private Integer ownerId;
+  private Integer cityDistrictId;
+
+  public Integer getCityDistrictId() {
+    return cityDistrictId;
+  }
+
+  public void setCityDistrictId(Integer cityDistrictId) {
+    this.cityDistrictId = cityDistrictId;
+  }
 
   public Integer getId() {
     return id;

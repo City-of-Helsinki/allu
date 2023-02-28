@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -250,6 +249,15 @@ public class SearchService {
   public Page<SupervisionWorkItem> searchSupervisionTask(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
     return search(applicationProperties.getSupervisionTaskSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity(),
                   new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {});
+  }
+
+  public void updateSupervisionTasksStatus(Integer applicationId, StatusType statusType) {
+
+    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(applicationProperties.postSupervisionStatusUpdate());
+
+    builder.queryParam("applicationId", applicationId);
+    String uri = builder.build().toUri().toString();
+    executePostWithRetry(uri, statusType);
   }
 
   /**

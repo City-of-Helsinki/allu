@@ -38,14 +38,6 @@ export class SupervisionSearchMapper {
   static mapSearchCriteria(searchCriteria: SupervisionTaskSearchCriteria): BackendQueryParameters {
     return searchCriteria ?
       {
-        // taskTypes: Some(searchCriteria.taskTypes).orElse([]),
-        // applicationId: searchCriteria.applicationId,
-        // after: TimeUtil.dateToBackend(searchCriteria.after),
-        // before: TimeUtil.dateToBackend(searchCriteria.before),
-        // applicationTypes: Some(searchCriteria.applicationTypes).orElse([]),
-        // applicationStatus: Some(searchCriteria.applicationStatus).orElse([]),
-        // owners: searchCriteria.owners,
-        // cityDistrictIds: Some(searchCriteria.cityDistrictIds).orElse([])
         queryParameters: SupervisionSearchMapper.mapSupervisionParameters(searchCriteria)
       } : undefined;
   }

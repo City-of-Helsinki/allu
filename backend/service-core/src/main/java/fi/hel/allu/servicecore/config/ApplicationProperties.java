@@ -284,7 +284,7 @@ public class ApplicationProperties {
   }
 
   public String getSupervisionTaskSearchCreateUrl() {
-    return getSearchServiceUrl("/supervisiontask");
+    return getSearchServiceUrl("/supervisiontasks");
   }
 
   /**
@@ -587,6 +587,10 @@ public class ApplicationProperties {
 
   public String getAllFixedLocationsUrl() {
     return getModelServiceUrl("/locations/fixed-location/all");
+  }
+
+  public String postSupervisionStatusUpdate() {
+    return getSearchServiceUrl("/supervisiontasks/update/status/");
   }
 
   public String getFixedLocationByIdUrl() {
@@ -1189,7 +1193,7 @@ public class ApplicationProperties {
    * @return url for searching supervision tasks by given criteria
    */
   public String getSupervisionTaskSearchUrl() {
-    return getSearchServiceUrl("/supervisiontask/search");
+    return getSearchServiceUrl("/supervisiontasks/search");
   }
 
   /**
@@ -1197,6 +1201,14 @@ public class ApplicationProperties {
    */
   public String getSupervisionTaskDeleteUrl() {
     return getModelServiceUrl("/supervisiontask/{id}");
+  }
+
+  /**
+   *
+   * @return
+   */
+  public String getAllSupervisionTasks() {
+    return getModelServiceUrl("/supervisiontask/all");
   }
 
   /**
@@ -1389,6 +1401,8 @@ public class ApplicationProperties {
   public String getSyncContactsUrl() {
     return getSearchServiceUrl("/contacts/sync/data");
   }
+
+  public String getSyncSupervisionTaskUrl() {return getSearchServiceUrl("/supervisiontasks/sync/data");}
 
   /**
    * @return url to fetch finished applications

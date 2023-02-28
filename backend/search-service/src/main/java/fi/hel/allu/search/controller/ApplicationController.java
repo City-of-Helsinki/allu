@@ -7,8 +7,7 @@ import javax.validation.Valid;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
-import fi.hel.allu.search.service.ContactSearchService;
-import fi.hel.allu.search.service.ProjectSearchService;
+import fi.hel.allu.search.service.*;
 import fi.hel.allu.search.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
-import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.CustomerSearchService;
 
 @RestController
 @RequestMapping("/applications")
@@ -31,16 +28,19 @@ public class ApplicationController {
   private final CustomerSearchService customerSearchService;
   private final ContactSearchService contactSearchService;
   private final ProjectSearchService projectSearchService;
+  private final SupervisionTaskSearchService supervisionTaskSearchService;
 
   @Autowired
   public ApplicationController(ApplicationSearchService applicationSearchService,
                                CustomerSearchService customerSearchService,
                                ContactSearchService contactSearchService,
-                               ProjectSearchService projectSearchService) {
+                               ProjectSearchService projectSearchService,
+                               SupervisionTaskSearchService supervisionTaskSearchService) {
     this.applicationSearchService = applicationSearchService;
     this.customerSearchService = customerSearchService;
     this.contactSearchService = contactSearchService;
     this.projectSearchService = projectSearchService;
+    this.supervisionTaskSearchService = supervisionTaskSearchService;
   }
 
   @PostMapping
@@ -106,6 +106,7 @@ public class ApplicationController {
     customerSearchService.prepareSync();
     contactSearchService.prepareSync();
     projectSearchService.prepareSync();
+    supervisionTaskSearchService.prepareSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -115,6 +116,7 @@ public class ApplicationController {
     customerSearchService.endSync();
     contactSearchService.endSync();
     projectSearchService.endSync();
+    supervisionTaskSearchService.endSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -124,6 +126,7 @@ public class ApplicationController {
     customerSearchService.cancelSync();
     contactSearchService.cancelSync();
     projectSearchService.cancelSync();
+    supervisionTaskSearchService.cancelSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

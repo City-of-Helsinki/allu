@@ -148,6 +148,10 @@ public class SupervisionTaskService {
     return supervisionTaskDao.removeOwner(tasks);
   }
 
+  public Page<SupervisionWorkItem> findAll(Pageable pageRequest) {
+    return supervisionTaskDao.findAll(pageRequest);
+  }
+
   private SupervisionTask rejectedToNewTask(SupervisionTask rejected, ZonedDateTime newDate) {
     return new SupervisionTask(
         null,

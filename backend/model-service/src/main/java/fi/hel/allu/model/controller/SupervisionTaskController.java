@@ -8,6 +8,7 @@ import fi.hel.allu.model.service.SupervisionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,17 @@ public class SupervisionTaskController {
     }
   }
 
+  /**
+   * Find all SupervisionTasks, with paging support
+   *
+   * @param pageRequest page request for the search
+   */
+  @GetMapping (value = "/all")
+  public ResponseEntity<Page<SupervisionWorkItem>> findAll(
+          @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+          Pageable pageRequest) {
+    return new ResponseEntity<>(supervisionTaskService.findAll(pageRequest), HttpStatus.OK);
+  }
 
   @PostMapping
   public ResponseEntity<SupervisionTask> insert(@Valid @RequestBody SupervisionTask supervisionTask) {
@@ -119,5 +131,4 @@ public class SupervisionTaskController {
   public ResponseEntity<String[]> findAddressById(@PathVariable int id) {
     return ResponseEntity.ok(supervisionTaskService.findAddressById(id));
   }
-
 }
