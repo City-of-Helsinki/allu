@@ -11,11 +11,3 @@
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
-
-- name: add service runner scripts
-  copy: src=etl/run_allu_etl.sh
-        dest=/home/allu/services/etl/run_allu_etl.sh
-        owner=allu
-        group=allu
-        mode="u=rwx,g=rx,o=rx"
-

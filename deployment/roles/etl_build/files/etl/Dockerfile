@@ -1,10 +1,10 @@
-FROM openjdk:8-jre-slim-bullseye
+FROM eclipse-temurin:8u345-b01-jre-focal
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apt-get -y update \
-    && apt-get -y install wget xz-utils git python3-pip tzdata autossh coreutils \
+    && apt-get -y install wget xz-utils tzdata coreutils \
     && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
@@ -25,17 +25,7 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 ######################################################################################
 
 # general setup
-RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /home/allu/etl
-
-######################################################################################
-# Supervisord
-######################################################################################
-
-RUN pip3 install supervisor
-RUN pip3 install git+https://github.com/coderanger/supervisor-stdout
-COPY supervisord.conf /etc/supervisord.conf
-CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 
 ######################################################################################
 # Symbolic links
@@ -43,7 +33,6 @@ CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 
 RUN ln -s /servicehome/logs/etl /home/allu/etl/logs
 
-RUN ln -s /servicehome/services/etl/run_allu_etl.sh /home/allu/etl/run_allu_etl.sh
 RUN ln -s /servicehome/services/etl/included-logback.xml /home/allu/etl/included-logback.xml
 RUN ln -s /servicehome/services/etl/allu-etl.properties /home/allu/etl/allu-etl.properties
 
@@ -56,3 +45,5 @@ RUN echo $CACHEBUST
 
 # JAR files
 RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/allu-etl/1.0-SNAPSHOT/allu-etl-1.0-SNAPSHOT.jar --output-document /home/allu/etl/allu-etl.jar
+ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/allu-etl \
+    -jar /home/allu/etl/allu-etl.jar --spring.config.additional-location=file:/home/allu/etl/allu-etl.properties
