@@ -1,6 +1,5 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -28,9 +27,9 @@ import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
  */
 @Service
 public class SupervisionTaskService {
-  private SupervisionTaskDao supervisionTaskDao;
-  private LocationDao locationDao;
-  private ApplicationService applicationService;
+  private final SupervisionTaskDao supervisionTaskDao;
+  private final LocationDao locationDao;
+  private final ApplicationService applicationService;
 
   @Autowired
   public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, LocationDao locationDao,
@@ -148,6 +147,10 @@ public class SupervisionTaskService {
     return supervisionTaskDao.removeOwner(tasks);
   }
 
+  public List<Integer> getSupervisionTaskCount(Integer applicationId){
+    return supervisionTaskDao.getCountOfSupervisionTask(applicationId);
+  }
+
   public Page<SupervisionWorkItem> findAll(Pageable pageRequest) {
     return supervisionTaskDao.findAll(pageRequest);
   }
@@ -210,6 +213,6 @@ public class SupervisionTaskService {
   }
 
   public List<Location> getLocationsOfSupervisionTasks(List<SupervisionTask> tasks) {
-    return locationDao.findByIds(tasks.stream().map(t -> t.getLocationId()).collect(Collectors.toList()));
+    return locationDao.findByIds(tasks.stream().map(SupervisionTask::getLocationId).collect(Collectors.toList()));
   }
 }

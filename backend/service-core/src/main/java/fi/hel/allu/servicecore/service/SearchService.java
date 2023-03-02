@@ -168,7 +168,7 @@ public class SearchService {
    * @param projectJson Project to be updated.
    */
   public void updateProject(ProjectJson projectJson) {
-    executePutWithRetry(applicationProperties.getProjectSearchUpdateUrl(), projectMapper.createProjectESModel(projectJson), projectJson.getId().intValue());
+    executePutWithRetry(applicationProperties.getProjectSearchUpdateUrl(), projectMapper.createProjectESModel(projectJson), projectJson.getId());
   }
 
   /**
@@ -233,8 +233,6 @@ public class SearchService {
    *
    * @param queryParameters list of query parameters
    * @pageRequest paging request for the search
-   * @param mapper function that maps a list of application ids to the matching
-   *          applications.
    * @return List of found applications.
    */
   public Page<ApplicationES> searchApplication(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
@@ -258,6 +256,12 @@ public class SearchService {
     builder.queryParam("applicationId", applicationId);
     String uri = builder.build().toUri().toString();
     executePostWithRetry(uri, statusType);
+  }
+
+  public void updateSupervisionTasks(SupervisionWorkItem supervisionWorkItem) {
+    List<SupervisionWorkItem> tasks = new ArrayList<>();
+    tasks.add(supervisionWorkItem);
+    executePutWithRetry(applicationProperties.getSupervisionTaksSearchUpdateUrl(), new ArrayList<>(tasks));
   }
 
   /**
@@ -339,7 +343,7 @@ public class SearchService {
     for (int i = 0; i < ids.size(); ++i) {
       idToOrder.put(ids.get(i), i);
     }
-    Collections.sort(unorderedList, Comparator.comparingInt(listItem -> idToOrder.get(objectToKey.applyAsInt(listItem))));
+    unorderedList.sort(Comparator.comparingInt(listItem -> idToOrder.get(objectToKey.applyAsInt(listItem))));
   }
 
 
@@ -357,9 +361,9 @@ public class SearchService {
     final PageRequest responsePageRequest = PageRequest.of(responsePage.getNumber(),
       Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
 
-    final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
+     return new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
       responsePage.getTotalElements());
-    return result;
+
   }
 
   private <T> void put(String url, T request, boolean waitRefresh, Object... uriVariables) {

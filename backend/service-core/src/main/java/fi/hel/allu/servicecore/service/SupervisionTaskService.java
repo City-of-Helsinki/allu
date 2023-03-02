@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.IllegalOperationException;
@@ -35,8 +34,6 @@ import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
-import fi.hel.allu.servicecore.util.PageRequestBuilder;
-import fi.hel.allu.servicecore.util.RestResponsePage;
 
 @Service
 public class SupervisionTaskService {
@@ -87,6 +84,7 @@ public class SupervisionTaskService {
 
   public SupervisionTaskJson update(SupervisionTaskJson supervisionTask) {
     ResponseEntity<SupervisionTask> supervisionTasksResult = update(supervisionTask.getId(), SupervisionTaskMapper.mapToModel(supervisionTask));
+    searchService.updateSupervisionTasks(getSupervisionWorkItem(supervisionTasksResult.getBody().getId()));
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -118,11 +116,15 @@ public class SupervisionTaskService {
     applicationHistoryService.addSupervisionAdded(task.getApplicationId(), task.getType());
     applicationEventDispatcher.dispatchUpdateEvent(task.getApplicationId(), task.getCreatorId(),
         ApplicationNotificationType.SUPERVISION_ADDED, task.getType().name());
-    searchService.inserSupervisionTask(restTemplate.getForEntity(
+    searchService.inserSupervisionTask(getSupervisionWorkItem(supervisionTasksResult.getBody().getId()));
+    return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+  }
+
+  public SupervisionWorkItem getSupervisionWorkItem(Integer supervisionTaskId){
+    return restTemplate.getForEntity(
             applicationProperties.getSupervisionTaskGetWorkItemUrl(),
             SupervisionWorkItem.class,
-            supervisionTasksResult.getBody().getId()).getBody());
-    return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+            supervisionTaskId).getBody();
   }
 
   public SupervisionTaskJson approve(SupervisionTaskJson taskJson) {
@@ -191,13 +193,15 @@ public class SupervisionTaskService {
   public Page<SupervisionWorkItemJson> searchWorkItems(QueryParameters queryParameters,
                                                        Pageable pageRequest) {
     Page<SupervisionWorkItem> result = search(queryParameters, pageRequest);
-    Page<SupervisionWorkItemJson> response = result.map(s -> toWorkItem(s));
-    return response;
+    return result.map(s -> toWorkItem(s));
   }
 
   public Page<SupervisionWorkItem> search(QueryParameters queryParameters, Pageable pageRequest) {
     return searchService.searchSupervisionTask(queryParameters, pageRequest, false);
+  }
 
+  public List<Integer> getTaskCount(Integer applicationId){
+   return Arrays.asList(restTemplate.getForEntity(applicationProperties.getSupervisionTaskCountUrl(), Integer[].class, applicationId).getBody());
   }
 
   /**
@@ -224,17 +228,17 @@ public class SupervisionTaskService {
   }
 
   private SupervisionWorkItemJson toWorkItem(SupervisionWorkItem task) {
-    UserJson owner = Optional.ofNullable(task.getOwnerId()).map(id -> userService.findUserById(id)).orElse(null);
-    UserJson creator = Optional.ofNullable(task.getCreatorId()).map(id -> userService.findUserById(id)).orElse(null);
+    UserJson owner = Optional.ofNullable(task.getOwnerId()).map(userService::findUserById).orElse(null);
+    UserJson creator = Optional.ofNullable(task.getCreatorId()).map(userService::findUserById).orElse(null);
     return SupervisionTaskMapper.mapToWorkItem(task, creator, owner);
   }
 
   private Map<Integer, UserJson> idToUser(List<SupervisionTask> supervisionTasks) {
     return supervisionTasks.stream()
         .flatMap(st -> Stream.of(st.getCreatorId(), st.getOwnerId()))
-        .filter(number -> number != null)
+        .filter(Objects::nonNull)
         .distinct()
-        .collect(Collectors.toMap(id -> id, id -> userService.findUserById(id)));
+        .collect(Collectors.toMap(id -> id, userService::findUserById));
   }
 
   public void updateSupervisionTaskDate(Integer applicationId, SupervisionTaskType taskType,

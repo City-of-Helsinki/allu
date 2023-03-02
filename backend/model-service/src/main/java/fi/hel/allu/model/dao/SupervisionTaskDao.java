@@ -49,17 +49,17 @@ public class SupervisionTaskDao {
   /**
    * Fields that won't be updated in regular updates
    */
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
     supervisionTask.id, supervisionTask.creationTime, supervisionTask.type);
 
-  final static QStructureMeta typeStructure = new QStructureMeta("typeStructure");
-  final static QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");
-  final static QStructureMeta applTypeStructure = new QStructureMeta("applTypeStructure");
-  final static QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
-  final static QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
-  final static QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
-  final static QUser creator = new QUser("creator");
-  final static QUser owner = new QUser("owner");
+  private static final QStructureMeta typeStructure = new QStructureMeta("typeStructure");
+  private static final QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");
+  private static final QStructureMeta applTypeStructure = new QStructureMeta("applTypeStructure");
+  private static final QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
+  private static final QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
+  private static final QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
+  private static final QUser creator = new QUser("creator");
+  private static final QUser owner = new QUser("owner");
 
   final QBean<SupervisionTask> supervisionTaskBean = bean(SupervisionTask.class, supervisionTask.all());
   final QBean<SupervisionWorkItem> supervisionWorkItemBean = bean(SupervisionWorkItem.class, supervisionWorkItemFields());
@@ -103,7 +103,7 @@ public class SupervisionTaskDao {
 
   private List<SupervisionTask> querySupervisionTasks(Predicate... predicates) {
     List<SupervisionTask> tasks = queryFactory.select(supervisionTaskBean).from(supervisionTask).where(predicates).fetch();
-    tasks.forEach(t -> setSupervisedLocations(t));
+    tasks.forEach(this::setSupervisedLocations);
     return tasks;
   }
 
@@ -175,8 +175,8 @@ public class SupervisionTaskDao {
 
   /**
    * Use SupervisionTask to find correct values but values are populated to class named SupervisionWorkItem
-   * @param id
-   * @return
+   * @param id SupervisionTask id
+   * @return returns SupervisionWorkItem object
    */
   @Transactional(readOnly = true)
   public SupervisionWorkItem findSupervisionWorkItem(Integer id) {
@@ -204,11 +204,21 @@ public class SupervisionTaskDao {
             .leftJoin(location).on(supervisionTaskWithAddress.locationId.eq(location.id));
   }
 
+  @Transactional(readOnly = true)
+  public List<Integer> getCountOfSupervisionTask(Integer applicationId){
+    return queryFactory.select(supervisionTask.id)
+            .from(supervisionTask)
+            .where(supervisionTask.applicationId.eq(applicationId)).fetch();
+
+  }
+
   private SupervisionWorkItem mapSupervisionWorkItemTuple(Tuple tuple) {
     SupervisionWorkItem result = tuple.get(0, SupervisionWorkItem.class);
-    Integer cityDistrictId = tuple.get(1, Integer.class);
-    Integer cityDistrictIdOverride = tuple.get(2, Integer.class);
-    result.setCityDistrictId(cityDistrictIdOverride != null ? cityDistrictIdOverride : cityDistrictId);
+    if(result != null) {
+      Integer cityDistrictId = tuple.get(1, Integer.class);
+      Integer cityDistrictIdOverride = tuple.get(2, Integer.class);
+      result.setCityDistrictId(cityDistrictIdOverride != null ? cityDistrictIdOverride : cityDistrictId);
+    }
     return result;
   }
 
@@ -270,13 +280,11 @@ public class SupervisionTaskDao {
     if (!includedExternalApplicationIds.isEmpty()) {
       builder.and(application.externalApplicationId.in(includedExternalApplicationIds));
     }
-    Map<Integer, List<SupervisionTask>> result = queryFactory.select(supervisionTask.all())
+    return queryFactory.select(supervisionTask.all())
       .from(supervisionTask)
       .join(application).on(application.id.eq(supervisionTask.applicationId))
       .where(builder)
       .transform(groupBy(application.externalApplicationId).as(list(supervisionTaskBean)));
-    return result;
-
   }
 
   @Transactional(readOnly = true)
@@ -295,7 +303,7 @@ public class SupervisionTaskDao {
       .on(supervisionTaskLocation.id.eq(supervisionTaskSupervisedLocation.supervisionTaskLocationId))
       .where(supervisionTaskSupervisedLocation.supervisionTaskId.eq(supervisionTaskId))
       .fetch();
-    locations.forEach(l -> setLocationGeometry(l));
+    locations.forEach(this::setLocationGeometry);
     return locations;
   }
 

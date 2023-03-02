@@ -3,6 +3,7 @@ package fi.hel.allu.search.controller;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
+import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.service.SupervisionTaskSearchService;
 import fi.hel.allu.search.util.Constants;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,12 @@ public class SupervisionTaskController {
     @PostMapping(value = "/update/status")
     public ResponseEntity<Void> updateStatus(@RequestParam Integer applicationId, @Valid @RequestBody StatusType status) {
         supervisionTaskSearchService.updateApplicationStatus(applicationId, status);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/update")
+    public ResponseEntity<Void> update(@RequestBody List<SupervisionWorkItem> supervisionWorkItems) {
+        supervisionTaskSearchService.bulkUpdate(supervisionWorkItems);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

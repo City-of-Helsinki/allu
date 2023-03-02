@@ -131,4 +131,9 @@ public class SupervisionTaskController {
   public ResponseEntity<String[]> findAddressById(@PathVariable int id) {
     return ResponseEntity.ok(supervisionTaskService.findAddressById(id));
   }
+
+  @GetMapping(value = "/{applicationId}/count")
+  public ResponseEntity<List<Integer>> getSupervisionTaskCount(@PathVariable int applicationId){
+    return ResponseEntity.ok(supervisionTaskService.getSupervisionTaskCount(applicationId));
+  }
 }

@@ -90,11 +90,6 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
-
-  public List<ApplicationJson> getCompactPopulatedApplicationList(List<Application> applicationList) {
-    return applicationJsonService.getCompactPopulatedApplicationList(applicationList);
-  }
-
   public List<ApplicationES> getCompactPopulatedApplicationEsList(List<Application> applicationList){
       List<ApplicationES> es =  applicationList.stream().map(
               applicationMapper::createApplicationESModel).collect(Collectors.toList());
@@ -107,7 +102,7 @@ public class ApplicationServiceComposer {
 
   public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {
     return applicationService.findApplicationsById(ids).stream()
-        .map(app -> applicationJsonService.getFullyPopulatedApplication(app))
+        .map(applicationJsonService::getFullyPopulatedApplication)
         .collect(Collectors.toList());
   }
 
@@ -175,7 +170,7 @@ public class ApplicationServiceComposer {
     CustomerWithContactsJson updatedCustomerWithContactsJson = customerMapper.createWithContactsJson(updatedCustomer);
 
     applicationHistoryService.addCustomerChange(applicationId,
-        existingCustomer.map(e -> customerMapper.createWithContactsJson(e)).orElse(null),
+        existingCustomer.map(customerMapper::createWithContactsJson).orElse(null),
         updatedCustomerWithContactsJson, roleType);
     searchService.updateApplicationCustomerWithContacts(applicationId, updatedCustomerWithContactsJson);
     return updatedCustomerWithContactsJson;
@@ -289,12 +284,13 @@ public class ApplicationServiceComposer {
    */
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus, StatusChangeInfoJson info) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
+    List<Integer> taskCount = supervisionTaskService.getTaskCount(applicationId);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
     changeOwnerOnStatusChange(application, info);
-    return updateSearchServiceOnStatusChange(application, newStatus);
+    return updateSearchServiceOnStatusChange(application, newStatus, taskCount);
   }
 
-  private ApplicationJson updateSearchServiceOnStatusChange(Application application, StatusType newStatus) {
+  private ApplicationJson updateSearchServiceOnStatusChange(Application application, StatusType newStatus, List<Integer> taskCount) {
     // Get application again so that updated owner is included
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(
         applicationService.findApplicationById(application.getId()));
@@ -308,7 +304,16 @@ public class ApplicationServiceComposer {
     }
     searchService.updateApplications(applicationsUpdated);
     searchService.updateSupervisionTasksStatus(application.getId(), application.getStatus());
+    if (taskCount != null ){
+      supervisionTaskService.getTaskCount(application.getId()).stream().filter(task -> !taskCount.contains(task))
+              .forEach(this::insertNewSupervisionTask);
+    }
     return applicationJson;
+  }
+
+  private void insertNewSupervisionTask(Integer supervisionTaskId){
+    SupervisionWorkItem supervisionWorkItem = supervisionTaskService.getSupervisionWorkItem(supervisionTaskId);
+    searchService.insertSupervisionTask(supervisionWorkItem);
   }
 
   public ApplicationJson returnToEditing(int applicationId, StatusChangeInfoJson info) {
@@ -317,7 +322,7 @@ public class ApplicationServiceComposer {
     reopenApprovedSupervisionTaskByTarget(applicationId, application.getTargetState(), info.getComment());
     application = applicationService.returnToStatus(applicationId, statusToReturn);
     changeOwnerOnStatusChange(application, info);
-    return updateSearchServiceOnStatusChange(application, statusToReturn);
+    return updateSearchServiceOnStatusChange(application, statusToReturn, null);
   }
 
   private StatusType getReturnStatus(int applicationId, StatusType target) {
@@ -382,12 +387,12 @@ public class ApplicationServiceComposer {
    */
   public List<ApplicationJson> findApplicationsByProject(int id) {
     return projectService.findApplicationsByProject(id).stream()
-        .map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
+        .map(applicationJsonService::getFullyPopulatedApplication).collect(Collectors.toList());
   }
 
   private List<ApplicationJson> getFullyPopulatedApplications(List<Integer> ids) {
     List<Application> foundApplications = applicationService.findApplicationsById(ids);
-    return foundApplications.stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
+    return foundApplications.stream().map(applicationJsonService::getFullyPopulatedApplication).collect(Collectors.toList());
   }
 
   /**
@@ -517,7 +522,7 @@ public class ApplicationServiceComposer {
   }
 
   private void changeOwnerOnStatusChange(Application application, StatusChangeInfoJson info) {
-    Integer newOwner = Optional.ofNullable(info).map(i -> i.getOwner()).orElse(null);
+    Integer newOwner = Optional.ofNullable(info).map(StatusChangeInfoJson::getOwner).orElse(null);
     if (newOwner != null) {
       updateApplicationOwner(newOwner, Collections.singletonList(application.getId()), false, false);
     } else if (StatusType.HANDLING.equals(application.getStatus())) {
@@ -531,17 +536,8 @@ public class ApplicationServiceComposer {
     return applicationService.findApplicationIdsByInvoiceRecipient(customerId);
   }
 
-  /**
-   * @deprecated use removeTag for its simpler implementation
-   */
-  public void removeTagFromApplication(int id, ApplicationTagType tagType) {
-    List<ApplicationTagJson> updatedTags = applicationService.findTagsByApplicationId(id).stream()
-        .filter(t -> !t.getType().equals(tagType)).collect(Collectors.toList());
-    updateTags(id, updatedTags);
-  }
-
   public ApplicationJson replaceApplication(int applicationId) {
-    Integer newApplicationId = applicationService.replaceApplication(applicationId);
+    int newApplicationId = applicationService.replaceApplication(applicationId);
     applicationHistoryService.addApplicationReplaced(applicationId);
     ApplicationJson replacingApplication = findApplicationById(newApplicationId);
     ApplicationJson replacedApplication = findApplicationById(applicationId);
@@ -594,13 +590,13 @@ public class ApplicationServiceComposer {
   public void releaseCustomersInvoices(Integer customerId) {
     List<Integer> applicationIds = findApplicationIdsByInvoiceRecipientId(customerId);
     applicationIds
-        .forEach(id -> removeTagFromApplication(id, ApplicationTagType.SAP_ID_MISSING));
-    applicationIds.forEach(id -> releaseInvoicesOfApplication(id));
+        .forEach(id -> removeTag(id, ApplicationTagType.SAP_ID_MISSING));
+    applicationIds.forEach(this::releaseInvoicesOfApplication);
   }
 
   private void releaseInvoicesOfApplication(Integer applicationId) {
     List<InvoiceJson> invoicesToRelease = invoiceService.findByApplication(applicationId);
-    invoicesToRelease.forEach(i -> releaseInvoice(i));
+    invoicesToRelease.forEach(this::releaseInvoice);
   }
 
   private void releaseInvoice(InvoiceJson invoice) {
@@ -647,7 +643,7 @@ public class ApplicationServiceComposer {
 
   public CustomerJson findInvoiceRecipientJson(Integer applicationId) {
     return Optional.ofNullable(applicationService.findInvoiceRecipient(applicationId))
-      .map(recipient -> customerMapper.createCustomerJson(recipient))
+      .map(customerMapper::createCustomerJson)
       .orElse(null);
   }
 

@@ -1136,6 +1136,14 @@ public class ApplicationProperties {
   }
 
   /**
+   *
+   * @return url for updating supervisionTask information on elasticsearch
+   */
+  public String getSupervisionTaksSearchUpdateUrl() {
+    return getSearchServiceUrl("/supervisiontasks/update");
+  }
+
+  /**
    * @return url for retrieving supervision tasks by application id.
    */
   public String getSupervisionTaskByApplicationIdUrl() {
@@ -1205,7 +1213,7 @@ public class ApplicationProperties {
 
   /**
    *
-   * @return
+   * @return url for retrieving all supervisionTaskWorkItems from model-service
    */
   public String getAllSupervisionTasks() {
     return getModelServiceUrl("/supervisiontask/all");
@@ -1216,6 +1224,10 @@ public class ApplicationProperties {
    */
   public String getSupervisionTaskOwnerUpdateUrl() {
     return getModelServiceUrl("/supervisiontask/owner/{ownerId}");
+  }
+
+  public String getSupervisionTaskCountUrl() {
+    return getModelServiceUrl("/supervisiontask/{applicationId}/count");
   }
 
   /**
