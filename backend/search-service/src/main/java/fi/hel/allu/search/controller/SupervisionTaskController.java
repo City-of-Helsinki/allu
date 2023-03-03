@@ -2,8 +2,7 @@ package fi.hel.allu.search.controller;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
-import fi.hel.allu.search.domain.ApplicationQueryParameters;
-import fi.hel.allu.search.domain.CustomerES;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.SupervisionTaskSearchService;
 import fi.hel.allu.search.util.Constants;
 import org.springframework.data.domain.Page;
@@ -33,7 +32,7 @@ public class SupervisionTaskController {
     }
 
     @PostMapping(value = "/search")
-    public ResponseEntity<Page<SupervisionWorkItem>> search(@Valid @RequestBody ApplicationQueryParameters queryParameters,
+    public ResponseEntity<Page<SupervisionWorkItem>> search(@Valid @RequestBody QueryParameters queryParameters,
                                                       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
                                                       Pageable pageRequest,
                                                       @RequestParam(defaultValue = "false") Boolean matchAny) {
@@ -55,6 +54,18 @@ public class SupervisionTaskController {
     @PutMapping(value = "/update")
     public ResponseEntity<Void> update(@RequestBody List<SupervisionWorkItem> supervisionWorkItems) {
         supervisionTaskSearchService.bulkUpdate(supervisionWorkItems);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        supervisionTaskSearchService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/owner/{ownerId}")
+    public ResponseEntity<Void> updateOwner(@PathVariable Integer ownerId, @RequestBody List<Integer> supervisionTaskIds) {
+        supervisionTaskSearchService.updateOwner(ownerId, supervisionTaskIds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

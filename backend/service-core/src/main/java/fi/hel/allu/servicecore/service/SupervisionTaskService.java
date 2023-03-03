@@ -188,20 +188,23 @@ public class SupervisionTaskService {
     archiveEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
     applicationEventDispatcher.dispatchUpdateEvent(taskJson.getApplicationId(), taskJson.getCreator().getId(),
         ApplicationNotificationType.SUPERVISION_REMOVED, taskJson.getType().name());
+    searchService.deleteSupervisionTask(id);
   }
 
-  public Page<SupervisionWorkItemJson> searchWorkItems(QueryParameters queryParameters,
-                                                       Pageable pageRequest) {
+  public Page<SupervisionWorkItemJson> searchWorkItems(QueryParameters queryParameters, Pageable pageRequest) {
     Page<SupervisionWorkItem> result = search(queryParameters, pageRequest);
-    return result.map(s -> toWorkItem(s));
+    return result.map(this::toWorkItem);
   }
 
   public Page<SupervisionWorkItem> search(QueryParameters queryParameters, Pageable pageRequest) {
     return searchService.searchSupervisionTask(queryParameters, pageRequest, false);
   }
 
-  public List<Integer> getTaskCount(Integer applicationId){
-   return Arrays.asList(restTemplate.getForEntity(applicationProperties.getSupervisionTaskCountUrl(), Integer[].class, applicationId).getBody());
+  public List<Integer> getTaskCount(Integer applicationId) {
+    ResponseEntity<Integer[]> response = restTemplate.getForEntity(applicationProperties.getSupervisionTaskCountUrl(),
+                                                                 Integer[].class, applicationId);
+    Integer[] result = response.getBody();
+    return result != null ? Arrays.asList(result) : new ArrayList<>();
   }
 
   /**
@@ -211,6 +214,7 @@ public class SupervisionTaskService {
    * @param taskIds Supervision tasks to be updated.
    */
   public void updateOwner(int updatedOwner, List<Integer> taskIds) {
+    restTemplate.put(applicationProperties.getSupervisionTaskOwnerUpdateSearchUrl(), taskIds, updatedOwner);
     restTemplate.put(applicationProperties.getSupervisionTaskOwnerUpdateUrl(), taskIds, updatedOwner);
   }
 
@@ -258,21 +262,17 @@ public class SupervisionTaskService {
     return Stream.of(supervisionTasksResult).filter(task -> task.getStatus() == SupervisionTaskStatusType.OPEN).findFirst();
   }
 
-  public void updateSupervisionTaskDate(int applicationId, SupervisionTaskType type, int locationId, ZonedDateTime date) {
-    Arrays.asList(
-        restTemplate.getForEntity(
-            applicationProperties.getSupervisionTaskByApplicationIdAndTypeAndLocationUrl(),
-            SupervisionTask[].class,
-            applicationId,
-            type,
-            locationId)
-        .getBody())
-        .stream()
-        .forEach(t -> {
-            t.setPlannedFinishingTime(date);
-            update(t.getId(), t);
-        }
-    );
+  public void updateSupervisionTaskDate(int applicationId, SupervisionTaskType type, int locationId,
+                                        ZonedDateTime date) {
+    ResponseEntity<SupervisionTask[]> taskResponseEntity = restTemplate.getForEntity(
+            applicationProperties.getSupervisionTaskByApplicationIdAndTypeAndLocationUrl(), SupervisionTask[].class,
+            applicationId, type, locationId);
+    if (taskResponseEntity.getBody() != null) {
+      Arrays.stream(taskResponseEntity.getBody()).forEach(t -> {
+        t.setPlannedFinishingTime(date);
+        update(t.getId(), t);
+      });
+    }
   }
 
   public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,

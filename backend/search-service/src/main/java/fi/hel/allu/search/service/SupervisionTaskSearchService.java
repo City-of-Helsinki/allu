@@ -4,11 +4,11 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.indexConductor.SupervisionTaskIndexConductor;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.data.domain.Page;
@@ -24,6 +24,7 @@ import java.util.Optional;
 
 @Service
 public class SupervisionTaskSearchService extends GenericSearchService<SupervisionWorkItem, QueryParameters>{
+
     /**
      * Instantiate a search service.
      *
@@ -38,20 +39,20 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
         super(elasticSearchMappingConfig, client, supervisionTaskIndexConductor, s -> s.getId().toString(), SupervisionWorkItem.class);
     }
 
-    public Page<SupervisionWorkItem> findSupervisionTaskByField(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+    public Page<SupervisionWorkItem> findSupervisionTaskByField(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
         if (pageRequest == null) {
             pageRequest = DEFAULT_PAGEREQUEST;
         }
         try {
             SearchSourceBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
             SearchResponse response = executeSearchRequest(srBuilder);
-            return createResult(pageRequest, response, queryParameters.getZoom());
+            return createResult(pageRequest, response);
         } catch (IOException e) {
             throw new SearchException(e);
         }
     }
 
-    protected Page<SupervisionWorkItem> createResult(Pageable pageRequest, SearchResponse response, Integer zoom) throws IOException {
+    protected Page<SupervisionWorkItem> createResult(Pageable pageRequest, SearchResponse response) throws IOException {
         long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
         List<SupervisionWorkItem> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response);
         return new PageImpl<>(results, pageRequest, totalHits);
@@ -70,5 +71,13 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
 
     public void updateApplicationStatus(Integer applicationId, StatusType statusType){
         updateByQuery(applicationId, statusType);
+    }
+
+    public void updateOwner(Integer ownerId, List<Integer> taskIds)  {
+        UpdateByQueryRequest request = getUpdateByQueryRequest();
+        request.setQuery(getQueryTerms("id", taskIds));
+        request.setScript(getUpdateScriptInteger("ownerId", ownerId));
+        request.setRefresh(true);
+        executeUpdateByQuery(request);
     }
 }

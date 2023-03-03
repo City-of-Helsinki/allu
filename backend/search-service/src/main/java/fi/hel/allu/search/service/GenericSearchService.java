@@ -13,6 +13,7 @@ import fi.hel.allu.search.domain.CustomerWithContactsES;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.indexConductor.IndexConductor;
+import fi.hel.allu.search.util.Constants;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.ActionListener;
@@ -328,6 +329,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
     }
 
+
     /**
      * Search index with the given query parameters.
      * <p>
@@ -341,6 +343,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
      * @return A page of matching application IDs. Results are ordered as
      * specified by the query parameters.
      */
+
     public Page<Integer> findByField(Q queryParameters, Pageable pageRequest, Boolean matchAny) {
         if (pageRequest == null) {
             pageRequest = DEFAULT_PAGEREQUEST;
@@ -696,6 +699,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         return appList;
     }
 
+
     private QueryBuilder createQueryBuilder(QueryParameter queryParameter) {
         if (QueryParameter.FIELD_NAME_RECURRING_APPLICATION.equals(queryParameter.getFieldName())) {
             // very special handling for recurring applications
@@ -826,15 +830,57 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
     }
 
-    public void updateByQuery(Integer applicationId, StatusType statusType){
-        UpdateByQueryRequest request =
-                new UpdateByQueryRequest(indexConductor.getIndexAliasName());
-        request.setScript(new Script(
-                ScriptType.INLINE, "painless",
-                "if (ctx._source.applicationId == '"+applicationId+"') {ctx._source.applicationStatus: "+ statusType +";}",
-                Collections.emptyMap()));
+    public void updateByQuery(Integer applicationId, StatusType statusType) {
+        UpdateByQueryRequest request = new UpdateByQueryRequest(indexConductor.getIndexAliasName());
+        request.setQuery(new TermQueryBuilder("applicationId", applicationId));
+        request.setScript(
+                new Script(ScriptType.INLINE, "painless", "ctx._source.put('applicationStatus', '" + statusType + "');",
+                           Collections.emptyMap()));
+        try {
+            client.updateByQuery(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
+
+    public UpdateByQueryRequest getUpdateByQueryRequest() {
+        return new UpdateByQueryRequest(indexConductor.getIndexAliasName());
+    }
+
+    public TermsQueryBuilder getQueryTerms(String fieldName, List<Integer> keys) {
+        return QueryBuilders.termsQuery(fieldName, keys);
+    }
+
+    public Script getUpdateScriptInteger(String fieldName, Integer fieldValue){
+        return createUpdateScript(fieldName, fieldValue.toString());
+    }
+
+    /**
+     * Script that is used to update field on document
+     * @param fieldName name of the field that is updated
+     * @param fieldValue new value that that will be put to given field
+     * @return
+     */
+    private Script createUpdateScript(String fieldName, String fieldValue) {
+        return new Script(ScriptType.INLINE, "painless", "ctx._source.put('" + fieldName + "', " + fieldValue + ");",
+                          Collections.emptyMap());
+    }
+
+
+    public void executeUpdateByQuery(UpdateByQueryRequest request) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Update index {} with the following query:\n {}", Constants.CUSTOMER_INDEX_ALIAS, request);
+        }
+        try {
+            BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
+            logger.debug(String.valueOf(bulkResponse.getStatus()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     private static class BulkProcessorListener implements BulkProcessor.Listener {
 

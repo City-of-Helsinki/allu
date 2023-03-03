@@ -593,6 +593,10 @@ public class ApplicationProperties {
     return getSearchServiceUrl("/supervisiontasks/update/status/");
   }
 
+  public String getSupervisionTaskSearchDeleteUrl() {
+    return getSearchServiceUrl("/supervisiontasks/{id}");
+  }
+
   public String getFixedLocationByIdUrl() {
     return getModelServiceUrl("/locations/fixed-location/{id}") ;
   }
@@ -1224,6 +1228,9 @@ public class ApplicationProperties {
    */
   public String getSupervisionTaskOwnerUpdateUrl() {
     return getModelServiceUrl("/supervisiontask/owner/{ownerId}");
+  }
+  public String getSupervisionTaskOwnerUpdateSearchUrl() {
+    return getSearchServiceUrl("/supervisiontasks/owner/{ownerId}");
   }
 
   public String getSupervisionTaskCountUrl() {

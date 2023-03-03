@@ -264,6 +264,11 @@ public class SearchService {
     executePutWithRetry(applicationProperties.getSupervisionTaksSearchUpdateUrl(), new ArrayList<>(tasks));
   }
 
+  public void deleteSupervisionTask(Integer id) {
+    executeDeleteWithRetry(applicationProperties.getSupervisionTaskSearchDeleteUrl(), id);
+  }
+
+
   /**
    * Find projects by given fields.
    *
