@@ -64,8 +64,15 @@ public class SupervisionTaskController {
     }
 
     @PutMapping(value = "/owner/{ownerId}")
-    public ResponseEntity<Void> updateOwner(@PathVariable Integer ownerId, @RequestBody List<Integer> supervisionTaskIds) {
-        supervisionTaskSearchService.updateOwner(ownerId, supervisionTaskIds);
+    public ResponseEntity<Void> updateOwner(@PathVariable Integer ownerId, @RequestBody List<Integer> supervisionTaskIds,
+                                            @RequestParam(required = false) Boolean waitRefresh) {
+        supervisionTaskSearchService.updateOwner(ownerId, supervisionTaskIds, waitRefresh);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/owner/remove")
+    public ResponseEntity<Void> deleteOwner(@RequestBody List<Integer> supervisionTaskIds, @RequestParam(required = false) Boolean waitRefresh) {
+        supervisionTaskSearchService.updateOwner(null, supervisionTaskIds, waitRefresh);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

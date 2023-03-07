@@ -224,6 +224,7 @@ public class SupervisionTaskService {
    * @param taskIds Supervision tasks to be updated.
    */
   public void removeOwner(List<Integer> taskIds) {
+    restTemplate.put(applicationProperties.getSupervisionTaskSearchOwnerRemoveUrl(), taskIds);
     restTemplate.put(applicationProperties.getSupervisionTaskOwnerRemoveUrl(), taskIds);
   }
 

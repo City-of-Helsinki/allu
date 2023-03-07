@@ -1233,6 +1233,10 @@ public class ApplicationProperties {
     return getSearchServiceUrl("/supervisiontasks/owner/{ownerId}");
   }
 
+  public String getSupervisionTaskSearchOwnerRemoveUrl() {
+    return getSearchServiceUrl("/supervisiontask/owner/remove");
+  }
+
   public String getSupervisionTaskCountUrl() {
     return getModelServiceUrl("/supervisiontask/{applicationId}/count");
   }

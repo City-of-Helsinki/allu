@@ -365,7 +365,6 @@ public class SearchService {
 
     final PageRequest responsePageRequest = PageRequest.of(responsePage.getNumber(),
       Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
-
      return new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
       responsePage.getTotalElements());
 

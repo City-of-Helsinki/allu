@@ -5,7 +5,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.Strings;
-
 import org.elasticsearch.common.xcontent.DeprecationHandler;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -65,7 +64,10 @@ public class ElasticSearchMappingConfig {
       } else if (indexName.startsWith(CONTACT_INDEX_ALIAS)) {
         indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Contact"));
         indexRequest.mapping(getMappingBuilderForContact());
-      } else if (indexName.startsWith(SUPERVISION_TASK_TYPE_NAME)) {
+      } else if (indexName.startsWith(SUPERVISION_TASK_INDEX)) {
+        // Supervision needs only default settings, but needs to be done so that
+        // supervision index creation does not go to else and throw error.
+          logger.debug("Supervision index was created succesfully");
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);

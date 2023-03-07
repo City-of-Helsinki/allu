@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 public class SupervisionTaskIndexConductor extends IndexConductor {
 
     public SupervisionTaskIndexConductor() {
-        super(Constants.SUPERVISION_TASK_TYPE_NAME);
+        super(Constants.SUPERVISION_TASK_INDEX);
     }
 }
