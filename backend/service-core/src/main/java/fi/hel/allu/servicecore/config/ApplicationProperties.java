@@ -1219,7 +1219,7 @@ public class ApplicationProperties {
    *
    * @return url for retrieving all supervisionTaskWorkItems from model-service
    */
-  public String getAllSupervisionTasks() {
+  public String getAllSupervisionTasksUrl() {
     return getModelServiceUrl("/supervisiontask/all");
   }
 
@@ -1230,11 +1230,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/supervisiontask/owner/{ownerId}");
   }
   public String getSupervisionTaskOwnerUpdateSearchUrl() {
-    return getSearchServiceUrl("/supervisiontasks/owner/{ownerId}");
+    return getSearchServiceUrl("/supervisiontasks/owner/update");
   }
 
   public String getSupervisionTaskSearchOwnerRemoveUrl() {
-    return getSearchServiceUrl("/supervisiontask/owner/remove");
+    return getSearchServiceUrl("/supervisiontasks/owner/remove");
   }
 
   public String getSupervisionTaskCountUrl() {

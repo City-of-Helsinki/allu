@@ -50,7 +50,7 @@ export class SupervisionSearchMapper {
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationType',  query.applicationTypes);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationStatus',  query.applicationStatus);
     const owners = query.owners || [];
-    QueryParametersMapper.mapArrayParameter(queryParameters, 'ownerId',  owners.map(id => id.toString()));
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'owner.id',  owners.map(id => id.toString()));
     const cityDistrictIds = query.cityDistrictIds || [];
     QueryParametersMapper.mapArrayParameter(queryParameters, 'cityDistrictId',  cityDistrictIds.map(id => id.toString()));
     return queryParameters;

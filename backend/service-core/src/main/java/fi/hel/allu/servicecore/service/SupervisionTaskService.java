@@ -6,8 +6,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fi.hel.allu.model.domain.UpdateTaskOwners;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
@@ -200,6 +202,12 @@ public class SupervisionTaskService {
     return searchService.searchSupervisionTask(queryParameters, pageRequest, false);
   }
 
+  private SupervisionWorkItemJson toWorkItem(SupervisionWorkItem task) {
+    UserJson creator = Optional.ofNullable(task.getCreator()).map(UserMapper::mapToUserJson).orElse(null);
+    UserJson owner = Optional.ofNullable(task.getOwner()).map(UserMapper::mapToUserJson).orElse(null);
+    return SupervisionTaskMapper.mapToWorkItem(task, creator, owner);
+  }
+
   public List<Integer> getTaskCount(Integer applicationId) {
     ResponseEntity<Integer[]> response = restTemplate.getForEntity(applicationProperties.getSupervisionTaskCountUrl(),
                                                                  Integer[].class, applicationId);
@@ -211,10 +219,14 @@ public class SupervisionTaskService {
    * Updates owner for given supervision tasks.
    *
    * @param updatedOwner owner to be set.
-   * @param taskIds Supervision tasks to be updated.
+   * @param taskIds      Supervision tasks to be updated.
    */
   public void updateOwner(int updatedOwner, List<Integer> taskIds) {
-    restTemplate.put(applicationProperties.getSupervisionTaskOwnerUpdateSearchUrl(), taskIds, updatedOwner);
+    UserJson owner = userService.findUserById(updatedOwner);
+    UpdateTaskOwners updateTaskOwners = new UpdateTaskOwners();
+    updateTaskOwners.setTaskIds(taskIds);
+    updateTaskOwners.setNewUser(UserMapper.mapToModelUser(owner));
+    searchService.updateSupervisionTaskOwner(updateTaskOwners);
     restTemplate.put(applicationProperties.getSupervisionTaskOwnerUpdateUrl(), taskIds, updatedOwner);
   }
 
@@ -224,18 +236,12 @@ public class SupervisionTaskService {
    * @param taskIds Supervision tasks to be updated.
    */
   public void removeOwner(List<Integer> taskIds) {
-    restTemplate.put(applicationProperties.getSupervisionTaskSearchOwnerRemoveUrl(), taskIds);
+    searchService.removeSupervisionTaskOwner(taskIds);
     restTemplate.put(applicationProperties.getSupervisionTaskOwnerRemoveUrl(), taskIds);
   }
 
   private List<SupervisionTaskJson> getFullyPopulatedJson(List<SupervisionTask> supervisionTasks) {
     return SupervisionTaskMapper.maptoJson(supervisionTasks, idToUser(supervisionTasks));
-  }
-
-  private SupervisionWorkItemJson toWorkItem(SupervisionWorkItem task) {
-    UserJson owner = Optional.ofNullable(task.getOwnerId()).map(userService::findUserById).orElse(null);
-    UserJson creator = Optional.ofNullable(task.getCreatorId()).map(userService::findUserById).orElse(null);
-    return SupervisionTaskMapper.mapToWorkItem(task, creator, owner);
   }
 
   private Map<Integer, UserJson> idToUser(List<SupervisionTask> supervisionTasks) {

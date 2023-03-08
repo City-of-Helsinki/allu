@@ -93,8 +93,8 @@ public class SupervisionTaskController {
     @PostMapping(value = "/supervisiontasks/search", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
     public ResponseEntity<Page<SupervisionTaskSearchResult>> search(
-            @RequestBody @Valid QueryParameters queryParameters, @PageableDefault(page = 0, size = 100, sort = "id", direction = Sort.Direction.DESC)
-    Pageable pageRequest) {
+            @RequestBody @Valid QueryParameters queryParameters,
+            @PageableDefault(page = 0, size = 100, sort = "id", direction = Sort.Direction.DESC) Pageable pageRequest) {
         return ResponseEntity.ok(supervisionTaskService.search(queryParameters, pageRequest).map(
                 supervisionTaskMapper::mapToSearchResult));
     }

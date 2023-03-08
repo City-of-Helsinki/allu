@@ -2,6 +2,7 @@ package fi.hel.allu.search.controller;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.UpdateTaskOwners;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.SupervisionTaskSearchService;
 import fi.hel.allu.search.util.Constants;
@@ -63,10 +64,10 @@ public class SupervisionTaskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(value = "/owner/{ownerId}")
-    public ResponseEntity<Void> updateOwner(@PathVariable Integer ownerId, @RequestBody List<Integer> supervisionTaskIds,
+    @PostMapping (value = "/owner/update")
+    public ResponseEntity<Void> updateOwner(@RequestBody UpdateTaskOwners updateTaskOwners,
                                             @RequestParam(required = false) Boolean waitRefresh) {
-        supervisionTaskSearchService.updateOwner(ownerId, supervisionTaskIds, waitRefresh);
+        supervisionTaskSearchService.updateOwner(updateTaskOwners.getNewUser(), updateTaskOwners.getTaskIds(), waitRefresh);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

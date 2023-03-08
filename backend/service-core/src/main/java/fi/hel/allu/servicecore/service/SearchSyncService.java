@@ -6,7 +6,6 @@ import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.slf4j.Logger;
@@ -228,7 +227,7 @@ public class SearchSyncService {
   private Page<SupervisionWorkItem> fetchSupervisionTasks(int pageNum) {
     ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {
     };
-    return talkToServer("Fetch supervisiontasks", () -> restTemplate.exchange(applicationProperties.getAllSupervisionTasks(),
+    return talkToServer("Fetch supervisiontasks", () -> restTemplate.exchange(applicationProperties.getAllSupervisionTasksUrl(),
                                                                       HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 

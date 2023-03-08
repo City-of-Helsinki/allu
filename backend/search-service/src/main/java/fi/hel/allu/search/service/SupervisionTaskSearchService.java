@@ -3,6 +3,7 @@ package fi.hel.allu.search.service;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.indexConductor.SupervisionTaskIndexConductor;
@@ -73,10 +74,10 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
         updateByQuery(applicationId, statusType);
     }
 
-    public void updateOwner(Integer ownerId, List<Integer> taskIds, boolean waitRefresh) {
+    public void updateOwner(User owner, List<Integer> taskIds, boolean waitRefresh) {
         Map<Integer, Object> idToTask = new HashMap<>();
         for (Integer id : taskIds) {
-            idToTask.put(id, Collections.singletonMap("ownerId", ownerId));
+            idToTask.put(id, Collections.singletonMap("owner", owner));
         }
         partialUpdate(idToTask, waitRefresh);
     }

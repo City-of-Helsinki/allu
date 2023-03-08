@@ -18,6 +18,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.domain.SupervisionTaskLocation;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.geolatte.geom.Geometry;
 import org.springframework.data.domain.Page;
@@ -64,6 +65,8 @@ public class SupervisionTaskDao {
   final QBean<SupervisionTask> supervisionTaskBean = bean(SupervisionTask.class, supervisionTask.all());
   final QBean<SupervisionWorkItem> supervisionWorkItemBean = bean(SupervisionWorkItem.class, supervisionWorkItemFields());
   final QBean<SupervisionTaskLocation> supervisionTaskLocationBean = bean(SupervisionTaskLocation.class, supervisionTaskLocation.all());
+  private static final QBean<User> ownerBean = bean(User.class, owner.all());
+  private static final QBean<User> creatorBean = bean(User.class, creator.all());
 
 
   private final SQLQueryFactory queryFactory;
@@ -186,7 +189,7 @@ public class SupervisionTaskDao {
   }
 
   private SQLQuery<Tuple> getSupervisionWorkItemQuery(){
-    return queryFactory.select(supervisionWorkItemBean, location.cityDistrictId, location.cityDistrictIdOverride)
+    return queryFactory.select(supervisionWorkItemBean, location.cityDistrictId, location.cityDistrictIdOverride, ownerBean, creatorBean)
             .from(supervisionTaskWithAddress)
             .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
             .leftJoin(project).on(application.projectId.eq(project.id))
@@ -218,6 +221,8 @@ public class SupervisionTaskDao {
       Integer cityDistrictId = tuple.get(1, Integer.class);
       Integer cityDistrictIdOverride = tuple.get(2, Integer.class);
       result.setCityDistrictId(cityDistrictIdOverride != null ? cityDistrictIdOverride : cityDistrictId);
+      result.setOwner(tuple.get(3, User.class));
+      result.setCreator(tuple.get(4, User.class));
     }
     return result;
   }
@@ -229,11 +234,9 @@ public class SupervisionTaskDao {
     map.put("applicationId", application.id);
     map.put("applicationIdText", application.applicationId);
     map.put("applicationStatus", application.status);
-    map.put("creatorId", supervisionTaskWithAddress.creatorId);
     map.put("plannedFinishingTime", supervisionTaskWithAddress.plannedFinishingTime);
     map.put("address", supervisionTaskWithAddress.address);
     map.put("projectName", project.name);
-    map.put("ownerId", supervisionTaskWithAddress.ownerId);
     map.put("cityDistrictId", location.cityDistrictId);
     return map;
   }

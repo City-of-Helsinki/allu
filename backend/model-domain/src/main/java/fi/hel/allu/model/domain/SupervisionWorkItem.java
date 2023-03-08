@@ -2,6 +2,7 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.user.User;
 
 import java.time.ZonedDateTime;
 
@@ -11,20 +12,12 @@ public class SupervisionWorkItem {
   private Integer applicationId;
   private String applicationIdText;
   private StatusType applicationStatus;
-  private Integer creatorId;
+  private User creator;
   private ZonedDateTime plannedFinishingTime;
   private String[] address;
   private String projectName;
-  private Integer ownerId;
+  private User owner;
   private Integer cityDistrictId;
-
-  public Integer getCityDistrictId() {
-    return cityDistrictId;
-  }
-
-  public void setCityDistrictId(Integer cityDistrictId) {
-    this.cityDistrictId = cityDistrictId;
-  }
 
   public Integer getId() {
     return id;
@@ -66,12 +59,12 @@ public class SupervisionWorkItem {
     this.applicationStatus = applicationStatus;
   }
 
-  public Integer getCreatorId() {
-    return creatorId;
+  public User getCreator() {
+    return creator;
   }
 
-  public void setCreatorId(Integer creatorId) {
-    this.creatorId = creatorId;
+  public void setCreator(User creator) {
+    this.creator = creator;
   }
 
   public ZonedDateTime getPlannedFinishingTime() {
@@ -98,11 +91,19 @@ public class SupervisionWorkItem {
     this.projectName = projectName;
   }
 
-  public Integer getOwnerId() {
-    return ownerId;
+  public User getOwner() {
+    return owner;
   }
 
-  public void setOwnerId(Integer ownerId) {
-    this.ownerId = ownerId;
+  public void setOwner(User owner) {
+    this.owner = owner;
+  }
+
+  public Integer getCityDistrictId() {
+    return cityDistrictId;
+  }
+
+  public void setCityDistrictId(Integer cityDistrictId) {
+    this.cityDistrictId = cityDistrictId;
   }
 }

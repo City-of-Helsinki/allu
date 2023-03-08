@@ -1,14 +1,19 @@
 package fi.hel.allu.servicecore.service;
 
-import java.net.URI;
-import java.time.Duration;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.common.domain.geometry.Constants;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.UpdateTaskOwners;
+import fi.hel.allu.search.domain.*;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +30,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import fi.hel.allu.common.domain.geometry.Constants;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.search.domain.*;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import fi.hel.allu.servicecore.mapper.ProjectMapper;
-import fi.hel.allu.servicecore.util.PageRequestBuilder;
-import fi.hel.allu.servicecore.util.RestResponsePage;
 import reactor.util.retry.Retry;
+
+import java.net.URI;
+import java.time.Duration;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 @Service
 public class SearchService {
@@ -268,7 +268,6 @@ public class SearchService {
     executeDeleteWithRetry(applicationProperties.getSupervisionTaskSearchDeleteUrl(), id);
   }
 
-
   /**
    * Find projects by given fields.
    *
@@ -318,7 +317,6 @@ public class SearchService {
                                          Function<List<Integer>, List<ContactJson>> mapper) {
     return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, false, mapper,
       new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
-
   }
 
   public void updateCustomerOfApplications(CustomerJson updatedCustomer, Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleType) {
@@ -331,9 +329,19 @@ public class SearchService {
     }
   }
 
-  public void inserSupervisionTask(SupervisionWorkItem supervisionWorkItem){
+  public void insertSupervisionTask(SupervisionWorkItem supervisionWorkItem){
     executePostWithRetry(applicationProperties.getSupervisionTaskSearchCreateUrl(),
                          supervisionWorkItem);
+  }
+
+  public void updateSupervisionTaskOwner(UpdateTaskOwners updateTaskOwners){
+    executePutWithRetry(applicationProperties.getSupervisionTaskOwnerUpdateSearchUrl(),
+                        updateTaskOwners);
+  }
+
+  public void removeSupervisionTaskOwner(List<Integer> taskIds){
+    executePutWithRetry(applicationProperties.getSupervisionTaskSearchOwnerRemoveUrl(),
+                        taskIds);
   }
 
   /**
@@ -367,7 +375,6 @@ public class SearchService {
       Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
      return new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
       responsePage.getTotalElements());
-
   }
 
   private <T> void put(String url, T request, boolean waitRefresh, Object... uriVariables) {

@@ -1,6 +1,5 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
