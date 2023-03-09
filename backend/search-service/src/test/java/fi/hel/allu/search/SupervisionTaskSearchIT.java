@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.jws.soap.SOAPBinding;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -34,8 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static fi.hel.allu.search.util.Constants.SUPERVISION_TASK_INDEX;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 class SupervisionTaskSearchIT extends BaseIntegrationTest {
@@ -91,20 +89,18 @@ class SupervisionTaskSearchIT extends BaseIntegrationTest {
 
         SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
         assertEquals(0, searchResponse.getHits().getTotalHits());
-
     }
 
     @Test
     void updateOwner() throws IOException {
         List<Integer> taskIds = IntStream.rangeClosed(1, 10).boxed().collect(Collectors.toList());
-        Integer updatedId = 69;
-        User user = createSupervisionUser(69);
+        User user = createSupervisionUser();
         List<SupervisionWorkItem> tasks = createMultipleTask(taskIds);
         tasks.forEach(supervisionTaskSearchService::insert);
         supervisionTaskSearchService.updateOwner(user, taskIds, false);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.termQuery("owner.id", updatedId));
+        searchSourceBuilder.query(QueryBuilders.termQuery("owner.id", user.getId()));
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.source(searchSourceBuilder);
         supervisionTaskSearchService.refreshIndex();
@@ -113,6 +109,16 @@ class SupervisionTaskSearchIT extends BaseIntegrationTest {
         assertEquals(10, searchResponse.getHits().getTotalHits());
     }
 
+    @Test
+    void deleteTask() throws IOException {
+        Integer id = 52;
+        SupervisionWorkItem task = createTask(id);
+        supervisionTaskSearchService.insert(task);
+        supervisionTaskSearchService.delete(task.getId().toString());
+        GetRequest getRequest = new GetRequest(SUPERVISION_TASK_INDEX, "_doc", id.toString());
+        GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+        assertFalse(getResponse.isExists());
+    }
 
     private List<SupervisionWorkItem> createMultipleTask(List<Integer> ids) {
         List<SupervisionWorkItem> result = new ArrayList<>();
@@ -140,9 +146,9 @@ class SupervisionTaskSearchIT extends BaseIntegrationTest {
         return task;
     }
 
-    private User createSupervisionUser(Integer id) {
+    private User createSupervisionUser() {
         User user = new User();
-        user.setId(id);
+        user.setId(66);
         user.setUserName("Pasi");
         user.setActive(true);
         user.setAssignedRoles(Collections.emptyList());

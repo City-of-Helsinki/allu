@@ -118,7 +118,7 @@ public class SupervisionTaskService {
     applicationHistoryService.addSupervisionAdded(task.getApplicationId(), task.getType());
     applicationEventDispatcher.dispatchUpdateEvent(task.getApplicationId(), task.getCreatorId(),
         ApplicationNotificationType.SUPERVISION_ADDED, task.getType().name());
-    searchService.inserSupervisionTask(getSupervisionWorkItem(supervisionTasksResult.getBody().getId()));
+    searchService.insertSupervisionTask(getSupervisionWorkItem(supervisionTasksResult.getBody().getId()));
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
