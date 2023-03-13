@@ -11,7 +11,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:attribute name="href">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
-    </xsl:element>  
+    </xsl:element>
     <link rel="stylesheet" href="style.css" />
     <xsl:if test="data/draft = 'true'">
       <link rel="stylesheet" href="watermark.css" />
@@ -20,9 +20,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <body>
     <div class="body">
       <div class="boxed">
-        <h1>TÄMÄ SELVITYS JA KARTAT ON ANNETTAVA KAIVUTYÖTÄ
+        <h1 style="margin-top: 5px;">TÄMÄ SELVITYS JA KARTAT ON ANNETTAVA KAIVUTYÖTÄ
           SUORITTAVALLE</h1>
-        <p>Johtoselvitys on voimassa 
+        <p>Johtoselvitys on voimassa
           <!-- [voimassa]  -->
           <xsl:value-of select="data/cableReportValidUntil"/> asti (1kk)</p>
       </div>
@@ -99,6 +99,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               puuttuvat pääosin johtokartalta.</li>
             <li>Kaivualueen rajauksen ylitys edellyttää aina uutta
               johtoselvitystä.</li>
+            <li>Yleisillä alueilla tehtävä työ edellyttää ilmoituksen
+              jättämistä kaupungille</li>
           </ul>
         </section>
       </div>
@@ -108,10 +110,15 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <h2>Kaivualueella olevat johdot</h2>
           <p><ul>
             <xsl:for-each select="data/cableInfoEntries">
-            <li>
-            <b><xsl:value-of select="type"/>:</b>
-            <xsl:value-of select="text"/>
-            </li>
+              <li>
+              <b><xsl:value-of select="type"/></b>
+                <br/>
+                <xsl:for-each select="text">
+                  <xsl:value-of select="."/>
+                  <br/>
+                </xsl:for-each>
+
+              </li>
             </xsl:for-each>
           </ul></p>
         </section>
@@ -132,20 +139,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               <p>Puhelin: (09) 310 31940</p>
             </div>
           </div>
-          <div>
-            <div class="threecols-left">
-              <p>Johtoselvityksen tilaajan allekirjoitus</p>
-            </div>
-            <div class="threecols-center">
-              <hr class="signature"/>
-              <p><!-- [Johtoselvityksen jättäjä] -->
-              <xsl:value-of select="data/cableReportOrderer"/></p>
-            </div>
-          </div>
         </section>
       </div>
-  
-    </div>    
+
+    </div>
   </body>
 </html>
 </xsl:template>

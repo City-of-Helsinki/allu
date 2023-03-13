@@ -11,22 +11,22 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:attribute name="href">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
-    </xsl:element>  
+    </xsl:element>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body style="height:30mm;padding:10mm 0 0 0;margin:0">
     <div class="footer">
-    
+
       <div class="visit">
-        <h1>Käyntiosoite</h1>
+        <h1>Käyntiosoite (ajanvarauksella)</h1>
         <p>
-          Asiakas- ja yrityspalvelut
+          Kaupunkiympäristö
         </p>
         <p>
           Johtotietopalvelu
         </p>
         <p>
-          Sörnäistenkatu 1, 00580
+          Työpajankatu 8, 00580
         </p>
         <p>
           Helsinki

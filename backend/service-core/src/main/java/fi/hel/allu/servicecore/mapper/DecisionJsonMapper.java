@@ -7,7 +7,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import fi.hel.allu.model.domain.AbstractLocation;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,7 +48,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   private static final Set<ApplicationKind> vat0Kinds;
 
   static {
-    Map<DefaultTextType, String> tempMap = new HashMap<>();
+    Map<DefaultTextType, String> tempMap = new EnumMap<>(DefaultTextType.class);
     tempMap.put(DefaultTextType.TELECOMMUNICATION, "Tietoliikenne");
     tempMap.put(DefaultTextType.ELECTRICITY, "Sähkö");
     tempMap.put(DefaultTextType.WATER_AND_SEWAGE, "Vesi ja viemäri");
@@ -69,7 +71,6 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
 
   private final NumberFormat currencyFormat;
   private final NumberFormat percentageFormat;
-  private final Locale locale;
 
   private final MetaService metaService;
   private final ChargeBasisService chargeBasisService;
@@ -85,7 +86,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     this.chargeBasisService = chargeBasisService;
     this.metaService = metaService;
     decimalFormat = new DecimalFormat("0.##");
-    locale = new Locale("fi", "FI");
+    Locale locale = new Locale("fi", "FI");
     currencyFormat = NumberFormat.getCurrencyInstance(locale);
     percentageFormat = NumberFormat.getNumberInstance(locale);
   }
@@ -105,7 +106,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
 
     final Map<ApplicationKind, List<ApplicationSpecifier>> applicationsKindsWithSpecifiers = application.getKindsWithSpecifiers();
     final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
-    applicationsKindsWithSpecifiers.keySet().forEach((kind) -> {
+    applicationsKindsWithSpecifiers.keySet().forEach(kind -> {
       final List<String> specifiers = new ArrayList<>();
       applicationsKindsWithSpecifiers.get(kind).forEach(s -> specifiers.add(translate(s)));
       KindWithSpecifiers k = new KindWithSpecifiers();
@@ -121,7 +122,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     decisionJson.setIdentificationNumber(application.getIdentificationNumber());
     decisionJson.setReplacingDecision(application.getReplacesApplicationId() != null);
 
-    getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
+    getSiteArea(application.getLocations()).ifPresent(decisionJson::setSiteArea);
     decisionJson.setCustomerReference(application.getCustomerReference());
     decisionJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
     decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
@@ -170,7 +171,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     }
     List<AttachmentInfoJson> attachments = application.getAttachmentList();
     if (attachments != null) {
-      decisionJson.setAttachmentNames(attachments.stream().filter(a -> a.isDecisionAttachment())
+      decisionJson.setAttachmentNames(attachments.stream().filter(AttachmentInfoJson::isDecisionAttachment)
           .map(a -> StringUtils.defaultIfEmpty(a.getDescription(), a.getName()))
           .collect(Collectors.toList()));
     }
@@ -179,14 +180,13 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     decisionJson.setNumReservationDays(daysBetween(application.getStartTime(), application.getEndTime()) + 1);
     decisionJson.setRecurringEndTime(application.getRecurringEndTime());
 
-    String additionalInfos = String.join("; ",
-        streamFor(application.getLocations()).map(LocationJson::getAdditionalInfo).filter(p -> p != null)
-            .map(p -> p.trim()).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
+    String additionalInfos = streamFor(application.getLocations()).map(LocationJson::getAdditionalInfo).filter(Objects::nonNull)
+        .map(String::trim).filter(p -> !p.isEmpty()).collect(Collectors.joining("; "));
     decisionJson.setSiteAdditionalInfo(additionalInfos);
     decisionJson.setDecisionDate(
         Optional.ofNullable(application.getDecisionTime()).map(dt -> formatDateWithDelta(dt, 0)).orElse("[Päätöspvm]"));
     decisionJson.setAdditionalConditions(
-        splitToList(Optional.ofNullable(application.getExtension()).map(e -> e.getTerms())));
+        splitToList(Optional.ofNullable(application.getExtension()).map(ApplicationExtensionJson::getTerms)));
     decisionJson.setDecisionTimestamp(TimeUtil.dateAsDateTimeString(ZonedDateTime.now()));
     UserJson decider = application.getDecisionMaker();
     if (decider != null) {
@@ -200,7 +200,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   private Optional<String> getSiteArea(List<LocationJson> locations) {
     return Optional.ofNullable(locations)
         .map(locs -> locs.stream().mapToDouble(this::getEffectiveArea).sum())
-        .map(totalArea -> Math.ceil(totalArea))
+        .map(Math::ceil)
         .map(totalArea -> String.format("%.0f", totalArea));
   }
 
@@ -390,7 +390,8 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       decisionJson.setCableReportValidUntil(formatDateWithDelta(cableReportJson.getValidityTime(), 0));
       decisionJson.setWorkDescription(cableReportJson.getWorkDescription());
       decisionJson.setCableInfoEntries(cableReportJson.getInfoEntries().stream()
-          .map(i -> new CableInfoTexts(defaultTextTypeTranslations.get(i.getType()), i.getAdditionalInfo()))
+          .map(i -> new CableInfoTexts(defaultTextTypeTranslations.get(i.getType()), Arrays.stream(i.getAdditionalInfo().split("\n")).collect(
+                  Collectors.toList())))
           .collect(Collectors.toList()));
       decisionJson.setMapExtractCount(Optional.ofNullable(cableReportJson.getMapExtractCount()).orElse(0));
     }
@@ -451,11 +452,11 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     decision.setCustomerWorkFinished(formatDateWithDelta(areaRental.getCustomerWorkFinished(), 0));
     decision.setTrafficArrangements(splitToList(Optional.ofNullable(areaRental.getTrafficArrangements())));
     Set<String> addresses = new HashSet<>();
-    application.getLocations().stream().forEach(l -> addresses.add(l.getAddress()));
+    application.getLocations().forEach(l -> addresses.add(l.getAddress()));
     decision.setAreaAddresses(new ArrayList<>(addresses));
 
     final Map<Integer, Location> locations = locationService.getLocationsByApplication(application.getId())
-        .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
+        .stream().collect(Collectors.toMap(AbstractLocation::getId, l -> l));
     final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getSingleInvoiceChargeBasis(application.getId());
     final List<ChargeBasisEntry> areaEntries = getAreaEntries(chargeBasisEntries, application.getId());
     final List<ChargeBasisEntry> otherEntries = BooleanUtils.isTrue(application.getNotBillable()) ? Collections.emptyList()
@@ -496,7 +497,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   private boolean isAreaEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> allEntries) {
     return entry.getLocationId() != null ||
         (entry.getReferredTag() != null && getReferredEntry(entry.getReferredTag(), allEntries)
-            .map(e -> e.getLocationId()).orElse(null) != null);
+            .map(ChargeBasisEntry::getLocationId).orElse(null) != null);
   }
 
   private Optional<ChargeBasisEntry> getReferredEntry(String tag, List<ChargeBasisEntry> allEntries) {
@@ -563,7 +564,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       ApplicationJson applicationJson) {
     CableReportJson cableReport = (CableReportJson)applicationJson.getExtension();
     return Optional.ofNullable(cableReport.getOrderer())
-        .map(id -> findContactById(id))
+        .map(this::findContactById)
         .map(contact -> Pair.of(findCustomerById(contact.getCustomerId()), contact));
   }
 
@@ -577,9 +578,10 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     }
     final CustomerJson customer = orderer.get().getKey();
     final ContactJson contact = orderer.get().getValue();
-    return Arrays.asList(
-        convertNonBreakingForwardSlashToBreaking(customer.getName()), convertNonBreakingForwardSlashToBreaking(contact.getName()), contact.getPhone(), contact.getEmail())
-        .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
+    return Stream.of(
+        convertNonBreakingForwardSlashToBreaking(customer.getName()),
+        convertNonBreakingForwardSlashToBreaking(contact.getName()), contact.getPhone(), contact.getEmail())
+            .filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
   }
 
   /*
@@ -592,10 +594,8 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       return Collections.singletonList("[Kaivajan tiedot puuttuvat]");
     }
     final CustomerJson customer = contractor.getCustomer();
-    return Arrays
-        .asList(convertNonBreakingForwardSlashToBreaking(customer.getName()), customer.getPostalAddress().getStreetAddress(),
-            customer.getPostalAddress().getCity(), customer.getPhone())
-        .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
+    return Stream.of(convertNonBreakingForwardSlashToBreaking(customer.getName()))
+            .filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
 
   }
   private String formatDateWithDelta(ZonedDateTime zonedDateTime, int deltaDays) {
@@ -660,7 +660,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   }
 
   private int countHeaderRows(DecisionJson decision, List<Function<DecisionJson, Object>> getters) {
-    return (int)getters.stream().map(f -> f.apply(decision)).filter(r -> r != null).count();
+    return (int)getters.stream().map(f -> f.apply(decision)).filter(Objects::nonNull).count();
   }
 
   private String translate(ApplicationKind kind) {

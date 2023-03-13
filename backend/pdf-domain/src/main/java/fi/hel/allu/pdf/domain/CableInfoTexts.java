@@ -1,17 +1,16 @@
 package fi.hel.allu.pdf.domain;
 
+import java.util.List;
+
 /**
  * Object for storing the printable contents of one cable info entry for
  * decisions:
  */
 public class CableInfoTexts {
   private String type;
-  private String text;
+  private List<String> text;
 
-  public CableInfoTexts() {
-  }
-
-  public CableInfoTexts(String type, String text) {
+  public CableInfoTexts(String type, List<String> text) {
     this.type = type;
     this.text = text;
   }
@@ -24,11 +23,11 @@ public class CableInfoTexts {
     this.type = type;
   }
 
-  public String getText() {
+  public List<String> getText() {
     return text;
   }
 
-  public void setText(String text) {
+  public void setText(List<String> text) {
     this.text = text;
   }
 }
