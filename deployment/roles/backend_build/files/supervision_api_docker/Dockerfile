@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8u345-b01-jre-focal
+FROM eclipse-temurin:17.0.5_8-jre-focal
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
@@ -66,6 +66,7 @@ RUN chmod 777 /home/allu/.ssh/known_hosts
 ######################################################################################
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
+RUN echo $CACHEBUST
 ARG SERVICE_MEMORY=256m
 ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
