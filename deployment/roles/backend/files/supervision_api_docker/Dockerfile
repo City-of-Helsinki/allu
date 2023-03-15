@@ -28,14 +28,14 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 RUN mkdir -p /home/allu/.ssh
 
 # project setup
-RUN mkdir -p /home/allu/external-service
+RUN mkdir -p /home/allu/supervision-api
 
 ######################################################################################
 # Expose ports
 ######################################################################################
 
 # external-service
-EXPOSE 9040
+EXPOSE 9050
 
 ######################################################################################
 # Host volumes
@@ -48,11 +48,11 @@ VOLUME /servicehome
 # Symbolic links
 ######################################################################################
 
-# Logging directories (assumes that /servicehome/external-service/logs directories exist)
-RUN ln -s /servicehome/logs/external-service /home/allu/external-service/logs
-# Service configuration files (assumes that /servicehome/external-service directories exist and contain expected configuration files)
-RUN ln -s /servicehome/services/external-service/included-logback.xml /home/allu/external-service/included-logback.xml
-RUN ln -s /servicehome/services/external-service/external-service.properties /home/allu/external-service/external-service.properties
+# Logging directories (assumes that /servicehome/supervision-api/logs directories exist)
+RUN ln -s /servicehome/logs/supervision-api /home/supervision-api/logs
+# Service configuration files (assumes that /servicehome/supervision-api directories exist and contain expected configuration files)
+RUN ln -s /servicehome/services/supervision-api/included-logback.xml /home/allu/supervision-api/included-logback.xml
+RUN ln -s /servicehome/services/supervision-api/supervision-api.properties /home/allu/external-service/supervision-api.properties
 
 ######################################################################################
 # Copy files to image
@@ -70,6 +70,6 @@ ARG SERVICE_MEMORY=256m
 ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
 # JAR files
-RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/external-service/1.0-SNAPSHOT/external-service-1.0-SNAPSHOT.jar --output-document /home/allu/external-service/external-service.jar
-ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/external-service \
-    -jar /home/allu/external-service/external-service.jar --spring.config.additional-location=file:/home/allu/external-service/external-service.properties
+RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/supervision-api/1.0-SNAPSHOT/supervision-api-1.0-SNAPSHOT.jar --output-document /home/allu/supervision-api/supervision-api.jar
+ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/supervision-api \
+    -jar /home/allu/supervision-api/supervision-api.jar --spring.config.additional-location=file:/home/allu/supervision-api/supervision-api.properties
