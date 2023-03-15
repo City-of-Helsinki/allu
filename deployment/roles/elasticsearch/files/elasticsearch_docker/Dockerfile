@@ -1,7 +1,7 @@
 ########################################################################################################
 # Modified ElasticSearch Docker image to support change of uid and gid running the ElasticSearch process
 ########################################################################################################
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.0.0
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 USER root

@@ -6,8 +6,6 @@ import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.util.Constants;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -65,6 +63,7 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
 
     SearchSourceBuilder srBuilder = prepareSearch(pageRequest, qb);
     addSearchOrder(pageRequest, srBuilder, isScoringQuery);
+    srBuilder.trackTotalHits(true);
     if (logger.isDebugEnabled()) {
       logger.debug("Searching index {} with the following query:\n {}", Constants.CUSTOMER_INDEX_ALIAS,
                    srBuilder);

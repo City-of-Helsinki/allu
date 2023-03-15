@@ -63,7 +63,7 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
   }
 
   protected Page<ApplicationES> createResult(Pageable pageRequest, SearchResponse response, Integer zoom) throws IOException {
-    long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
+    long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits().value).orElse(0L);
     List<ApplicationES> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response, zoom);
     anonymizeCustomers(results);
     return new PageImpl<>(results, pageRequest, totalHits);

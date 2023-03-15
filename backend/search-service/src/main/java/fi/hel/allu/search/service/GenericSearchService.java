@@ -94,7 +94,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     /* Fields that should be sorted ordinally */
     private static final String[] ordinalSortFields = {"status", "type"};
-    private static final String INDEX_TYPE = "_doc";
     protected final ObjectMapper objectMapper;
     private final ElasticSearchMappingConfig elasticSearchMappingConfig;
     private final RestHighLevelClient client;
@@ -197,7 +196,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                 logger.debug("Inserting new object to search index {}: {}", indexName,
                              objectMapper.writeValueAsString(indexedObject));
             }
-            IndexRequest indexRequest = new IndexRequest(indexName, "_doc", id);
+            IndexRequest indexRequest = new IndexRequest(indexName);
+            indexRequest.id(id);
             indexRequest.source(json, XContentType.JSON);
             IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
             if (response.status() != RestStatus.CREATED) {
@@ -317,7 +317,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     private void deleteFrom(String indexName, String id) {
         try {
-            DeleteRequest deleteRequest = new DeleteRequest(indexName, INDEX_TYPE, id);
+            DeleteRequest deleteRequest = new DeleteRequest(indexName);
+            deleteRequest.id(id);
             DeleteResponse response = client.delete(deleteRequest, RequestOptions.DEFAULT);
             if (response == null || response.status() != RestStatus.OK) {
                 throw new SearchException("Unable to delete record, id = " + id);
@@ -349,14 +350,10 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
 
     protected Page<Integer> fetchResponse(Pageable pageRequest, SearchSourceBuilder srBuilder) {
-        try {
             SearchResponse response = executeSearchRequest(srBuilder);
-            long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
+            long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits().value).orElse(0L);
             List<Integer> results = (totalHits == 0) ? Collections.emptyList() : iterateIntSearchResponse(response);
             return new PageImpl<>(results, pageRequest, totalHits);
-        } catch (IOException e) {
-            throw new SearchException(e);
-        }
     }
 
     protected SearchResponse executeSearchRequest(SearchSourceBuilder sourceBuilder) {
@@ -381,7 +378,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         BoolQueryBuilder withAdditionalParameters = addAdditionalQueryParameters(qb, queryParameters);
         SearchSourceBuilder srBuilder = prepareSearch(pageRequest, withAdditionalParameters);
         addSearchOrder(pageRequest, srBuilder, isScoringQuery);
-
+        srBuilder.trackTotalHits(true);
         logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
                      srBuilder);
 
@@ -599,7 +596,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
         if (response != null) {
             SearchHits hits = response.getHits();
-            if (hits.getTotalHits() != 1) {
+            if (hits.getTotalHits().value != 1) {
                 return Optional.empty();
             } else {
                 try {
@@ -658,7 +655,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             }
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.index(indexName);
-            updateRequest.type(INDEX_TYPE);
             updateRequest.id(id);
             updateRequest.doc(json, XContentType.JSON);
             return updateRequest;
@@ -676,7 +672,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             }
             IndexRequest indexRequest = new IndexRequest();
             indexRequest.index(indexName);
-            indexRequest.type(INDEX_TYPE);
             indexRequest.id(id);
             indexRequest.source(json, XContentType.JSON);
             return indexRequest;
@@ -685,7 +680,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
     }
 
-    private List<Integer> iterateIntSearchResponse(SearchResponse response) throws IOException {
+    private List<Integer> iterateIntSearchResponse(SearchResponse response) {
         List<Integer> appList = new ArrayList<>();
         if (response != null) {
             for (SearchHit hit : response.getHits()) {
