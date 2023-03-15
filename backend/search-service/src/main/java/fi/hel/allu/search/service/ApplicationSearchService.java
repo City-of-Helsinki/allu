@@ -9,14 +9,19 @@ import fi.hel.allu.search.domain.LocationES;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.geo.ShapeRelation;
-import org.elasticsearch.common.geo.builders.*;
+import org.elasticsearch.geometry.MultiPoint;
+import org.elasticsearch.geometry.Point;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
+import org.geolatte.geom.GeometryFactory;
 import org.geolatte.geom.PointCollection;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.spatial4j.shape.ShapeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -94,15 +99,12 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
 
   private void addGeometryParameter(Geometry intersectingGeometry, BoolQueryBuilder qb) {
     PointCollection points = intersectingGeometry.getPoints();
-    List<Coordinate> coordinates = new ArrayList<>();
+    List<Point> coordinates = new ArrayList<>();
     for (int i = 0; i < points.size(); i++) {
-      coordinates.add(new Coordinate(points.getX(i), points.getY(i)));
+      coordinates.add(new Point(points.getX(i), points.getY(i)));
     }
-    CoordinatesBuilder coordinateBuilder = new CoordinatesBuilder();
-    coordinateBuilder.coordinates(coordinates);
-    PolygonBuilder polygonBuilder = new PolygonBuilder(coordinateBuilder);
     try {
-      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", polygonBuilder).relation(ShapeRelation.INTERSECTS);
+      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", new MultiPoint(coordinates)).relation(ShapeRelation.INTERSECTS);
       qb.must(geomQb);
     } catch (IOException ex) {
       throw new SearchException(ex);

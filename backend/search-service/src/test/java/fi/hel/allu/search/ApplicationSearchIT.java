@@ -10,10 +10,10 @@ import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.main.MainResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.MainResponse;
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,8 +61,8 @@ class ApplicationSearchIT extends BaseIntegrationTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ClusterName clusterName = response.getClusterName();
-        assertEquals(CLUSTER_NAME, clusterName.value());
+        String clusterName = response.getClusterName();
+        assertEquals(CLUSTER_NAME, clusterName);
     }
 
     @Test

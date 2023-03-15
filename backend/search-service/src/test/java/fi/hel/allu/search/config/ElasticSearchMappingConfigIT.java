@@ -6,13 +6,12 @@ import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.main.MainResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.MainResponse;
 import org.elasticsearch.client.indices.GetMappingsRequest;
 import org.elasticsearch.client.indices.GetMappingsResponse;
-import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
     @BeforeEach
     void SetUp() {
         client = new RestHighLevelClient(
-                RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
+            RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
         ElasticSearchMappingConfig elasticSearchMappingConfig = new ElasticSearchMappingConfig(client);
         applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
                                                                 new ApplicationIndexConductor());
@@ -48,8 +47,8 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ClusterName clusterName = response.getClusterName();
-        assertEquals(CLUSTER_NAME, clusterName.value());
+        String clusterName = response.getClusterName();
+        assertEquals(CLUSTER_NAME, clusterName);
     }
 
     @Test
@@ -61,7 +60,6 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationSearchService.refreshIndex();
         GetRequest getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
-                "_doc",
                 id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
@@ -69,7 +67,6 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationSearchService.initIndex();
          getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
-                "_doc",
                 id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");

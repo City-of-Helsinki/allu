@@ -32,9 +32,8 @@ import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.cluster.metadata.AliasMetaData;
+import org.elasticsearch.cluster.metadata.AliasMetadata;
 import org.elasticsearch.common.unit.ByteSizeValue;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.rest.RestStatus;
@@ -44,6 +43,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -515,7 +515,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     private String getCurrentIndexName(String indexAliasName) {
         GetAliasesRequest aliasesRequest = new GetAliasesRequest();
         aliasesRequest.aliases(indexAliasName);
-        Map<String, Set<AliasMetaData>> aliases;
+        Map<String, Set<AliasMetadata>> aliases;
 
         try {
             aliases = client.indices()
