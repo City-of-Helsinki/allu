@@ -1,40 +1,42 @@
 package fi.hel.allu.search.config;
 
 import fi.hel.allu.search.BaseIntegrationTest;
+import fi.hel.allu.search.SearchTestUtil;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.client.core.MainResponse;
 import org.elasticsearch.client.indices.GetMappingsRequest;
 import org.elasticsearch.client.indices.GetMappingsResponse;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
 
-    private RestHighLevelClient client;
-
     private ApplicationSearchService applicationSearchService;
+    private final String REINDEX = APPLICATION_INDEX_ALIAS + "_xxfew3";
 
     @BeforeEach
     void SetUp() {
-        client = new RestHighLevelClient(
-            RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
-        ElasticSearchMappingConfig elasticSearchMappingConfig = new ElasticSearchMappingConfig(client);
-        applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
-                                                                new ApplicationIndexConductor());
-        applicationSearchService.initIndex();
+        createdHighRestClient();
+        ElasticSearchMappingConfig elasticSearchMappingConfig =  SearchTestUtil.searchIndexSetup(clientWrapper,
+                                                                                                 Arrays.asList(REINDEX));
+        ApplicationIndexConductor indexConductor = new ApplicationIndexConductor();
+        applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, clientWrapper,
+                                                                indexConductor);
+        applicationSearchService.addAlias(REINDEX, "logging only alias name");
     }
 
     @Test
@@ -42,7 +44,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         MainResponse response;
 
         try {
-            response = client.info(RequestOptions.DEFAULT);
+            response = restHighLevelClient.info(RequestOptions.DEFAULT);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -58,19 +60,24 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationES.setName("testi");
         applicationSearchService.insert(applicationES);
         applicationSearchService.refreshIndex();
+
         GetRequest getRequest = new GetRequest(
-                APPLICATION_INDEX_ALIAS,
-                id.toString());
+            REINDEX,
+            id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
-        assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
+
+        CountRequest countRequest = new CountRequest();
+        countRequest.indices(APPLICATION_INDEX_ALIAS);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        countRequest.source(searchSourceBuilder);
+
+        assertTrue(restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT));
+        assertEquals(1L, restHighLevelClient.count(countRequest, RequestOptions.DEFAULT).getCount());
         applicationSearchService.initIndex();
-         getRequest = new GetRequest(
-                APPLICATION_INDEX_ALIAS,
-                id.toString());
-        getRequest.fetchSourceContext(new FetchSourceContext(false));
-        getRequest.storedFields("_none_");
-        assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
+        assertFalse(restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT));
+        assertEquals(1L, restHighLevelClient.count(countRequest, RequestOptions.DEFAULT).getCount());
         applicationSearchService.delete(id.toString());
     }
 
@@ -79,7 +86,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         GetMappingsRequest request = new GetMappingsRequest();
         request.indices(APPLICATION_INDEX_ALIAS);
 
-        GetMappingsResponse getMappingResponse = client.indices().getMapping(request, RequestOptions.DEFAULT);
+        GetMappingsResponse getMappingResponse = restHighLevelClient.indices().getMapping(request, RequestOptions.DEFAULT);
         System.out.println(getMappingResponse.mappings());
     }
 

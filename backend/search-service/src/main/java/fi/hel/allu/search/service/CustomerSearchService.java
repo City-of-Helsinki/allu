@@ -5,8 +5,8 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.util.ClientWrapper;
 import fi.hel.allu.search.util.Constants;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -25,10 +25,10 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
   @Autowired
   public CustomerSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
-      RestHighLevelClient client,
+      ClientWrapper clientWrapper,
       CustomerIndexConductor customerIndexConductor) {
     super(elasticSearchMappingConfig,
-        client,
+        clientWrapper,
         customerIndexConductor,
         c -> c.getId().toString(),
         CustomerES.class);

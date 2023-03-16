@@ -1,5 +1,7 @@
 package fi.hel.allu.search.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import fi.hel.allu.search.util.ClientWrapper;
 import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -37,11 +39,13 @@ public class ElasticSearchMappingConfig {
   private static final String MAPPING_TYPE = "_default_";
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private static final String BUILDER_ERROR = "Unexpected exception while creating ElasticSearch mapping builder";
-  private final RestHighLevelClient client;
+  private final RestHighLevelClient hlrc;
+  private final ElasticsearchClient esClient;
 
   @Autowired
-  public ElasticSearchMappingConfig(RestHighLevelClient client) {
-    this.client = client;
+  public ElasticSearchMappingConfig(ClientWrapper clientWrapper) {
+    this.hlrc = clientWrapper.getHlrc();
+    this.esClient = clientWrapper.getEsClient();
   }
 
   /**
@@ -72,7 +76,7 @@ public class ElasticSearchMappingConfig {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
       }
-      client.indices().create(indexRequest, RequestOptions.DEFAULT);
+      hlrc.indices().create(indexRequest, RequestOptions.DEFAULT);
     } catch (ResourceAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index {} not created, because it exists already.", indexName);
     } catch (IOException e) {

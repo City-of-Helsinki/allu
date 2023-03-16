@@ -14,4 +14,7 @@ public class ApplicationIndexConductor extends IndexConductor {
     super(Constants.APPLICATION_INDEX_ALIAS);
   }
 
+  //Used for test
+  public ApplicationIndexConductor(String indexAliasName){super(indexAliasName);}
+
 }

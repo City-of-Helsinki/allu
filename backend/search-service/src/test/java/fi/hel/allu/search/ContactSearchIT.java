@@ -8,12 +8,9 @@ import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.ContactIndexConductor;
 import fi.hel.allu.search.service.ContactSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.util.*;
 
+import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
 import static fi.hel.allu.search.util.Constants.CONTACT_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,17 +34,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 public class ContactSearchIT extends BaseIntegrationTest {
 
-    private RestHighLevelClient client;
-
     private ContactSearchService contactSearchService;
 
     private ElasticSearchMappingConfig elasticSearchMappingConfig;
 
     @BeforeEach
     void setUp() {
-        client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
-        elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-        contactSearchService = new ContactSearchService(elasticSearchMappingConfig, client,
+        createdHighRestClient();
+        elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(clientWrapper, Arrays.asList(CONTACT_INDEX_ALIAS, APPLICATION_INDEX_ALIAS));
+        contactSearchService = new ContactSearchService(elasticSearchMappingConfig, clientWrapper,
                                                         new ContactIndexConductor());
     }
 
@@ -56,8 +52,8 @@ public class ContactSearchIT extends BaseIntegrationTest {
         ContactES contactES = createContact(id, "goku");
         contactSearchService.insert(contactES);
         contactSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(CONTACT_INDEX_ALIAS, "_doc", id.toString());
-        GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+        GetRequest getRequest = new GetRequest(CONTACT_INDEX_ALIAS, id.toString());
+        GetResponse getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
         assertTrue(getResponse.isExists());
         contactSearchService.delete(id.toString());
     }
@@ -65,13 +61,13 @@ public class ContactSearchIT extends BaseIntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = {"Schwarzenegger", "Schwarzen"})
     void testFindByFieldPartial(String queryParameter) {
-        Integer contactId = 42;
+        int contactId = 42;
         ContactES contactES = createContact(contactId, "Schwarzenegger");
         contactSearchService.insert(contactES);
 
         verifyResult("name", queryParameter, contactId, 1);
 
-        contactSearchService.delete(contactId.toString());
+        contactSearchService.delete(Integer.toString(contactId));
     }
 
     @Test
@@ -139,7 +135,7 @@ public class ContactSearchIT extends BaseIntegrationTest {
     @Test
     void testFindByQuery() {
         ApplicationSearchService applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig,
-                                                                                         client,
+                                                                                         clientWrapper,
                                                                                          new ApplicationIndexConductor());
         List<ContactES> contacts = ApplicationSearchIT.createContacts();
         ApplicationES applicationES = ApplicationSearchIT.createApplication(1);
@@ -161,7 +157,7 @@ public class ContactSearchIT extends BaseIntegrationTest {
     @Test
     void testUpdate() {
         ApplicationSearchService applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig,
-                                                                                         client,
+                                                                                         clientWrapper,
                                                                                          new ApplicationIndexConductor());
         List<ContactES> contacts = ApplicationSearchIT.createContacts();
         ApplicationES applicationES = ApplicationSearchIT.createApplication(1);

@@ -8,13 +8,9 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.MainResponse;
-import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,15 +35,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(SpringExtension.class)
 class ApplicationSearchIT extends BaseIntegrationTest {
-    private RestHighLevelClient client;
 
     private ApplicationSearchService applicationSearchService;
 
     @BeforeEach
     void SetUp() {
-        client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
-        ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-        applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
+        createdHighRestClient();
+        ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(clientWrapper, Arrays.asList(APPLICATION_INDEX_ALIAS));
+        applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, clientWrapper,
                                                                 new ApplicationIndexConductor());
     }
 
@@ -56,7 +51,7 @@ class ApplicationSearchIT extends BaseIntegrationTest {
         MainResponse response;
 
         try {
-            response = client.info(RequestOptions.DEFAULT);
+            response = restHighLevelClient.info(RequestOptions.DEFAULT);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -75,7 +70,7 @@ class ApplicationSearchIT extends BaseIntegrationTest {
         GetRequest getRequest = new GetRequest(APPLICATION_INDEX_ALIAS, "_doc", id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
-        assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
+        assertTrue(restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT));
         applicationSearchService.delete(id.toString());
     }
 

@@ -1,15 +1,17 @@
 package fi.hel.allu.search.service;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.SearchException;
+import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.domain.LocationES;
+import fi.hel.allu.search.domain.QueryParameter;
+import fi.hel.allu.search.domain.util.CustomerAnonymizer;
+import fi.hel.allu.search.util.ClientWrapper;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.geometry.MultiPoint;
 import org.elasticsearch.geometry.Point;
@@ -17,25 +19,16 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.geolatte.geom.Geometry;
-import org.geolatte.geom.GeometryCollection;
-import org.geolatte.geom.GeometryFactory;
 import org.geolatte.geom.PointCollection;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.spatial4j.shape.ShapeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.exception.SearchException;
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ApplicationQueryParameters;
-import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.util.CustomerAnonymizer;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationSearchService extends GenericSearchService<ApplicationES, ApplicationQueryParameters> {
@@ -44,11 +37,10 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
 
   @Autowired
   public ApplicationSearchService(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      RestHighLevelClient client,
+      ElasticSearchMappingConfig elasticSearchMappingConfig, ClientWrapper clientWrapper,
       ApplicationIndexConductor applicationIndexConductor) {
     super(elasticSearchMappingConfig,
-          client,
+          clientWrapper,
           applicationIndexConductor,
           a -> a.getId().toString(),
           ApplicationES.class);

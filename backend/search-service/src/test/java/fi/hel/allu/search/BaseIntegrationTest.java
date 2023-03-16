@@ -1,9 +1,18 @@
 package fi.hel.allu.search;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.search.domain.*;
+import fi.hel.allu.search.util.ClientWrapper;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
@@ -19,14 +28,29 @@ public abstract class BaseIntegrationTest {
     protected static final String CLUSTER_NAME = "allu-cluster";
     protected static final String NODE_NAME = "allu-node";
     protected static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:7.17.9";
-
     protected static final String USERNAME = "someusername";
 
+    protected RestHighLevelClient restHighLevelClient;
+    protected ElasticsearchClient esClient;
+    protected ClientWrapper clientWrapper;
+
     @Container
-    protected static ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9300, 9200)
-            .withEnv("xpack.security.enabled", "false").withEnv("network.host", "_site_")
-            .withEnv("network.publish_host", "_local_").withEnv("node.name", NODE_NAME)
-            .withEnv("cluster.name", CLUSTER_NAME);
+    protected static final ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9300, 9200)
+        .withEnv("xpack.security.enabled", "false").withEnv("network.host", "_site_")
+        .withEnv("network.publish_host", "_local_").withEnv("node.name", NODE_NAME)
+        .withEnv("cluster.name", CLUSTER_NAME);
+
+
+    public void createdHighRestClient(){
+        RestClient httpClient  = RestClient.builder(HttpHost.create(container.getHttpHostAddress())).build();
+        restHighLevelClient = new RestHighLevelClientBuilder(httpClient).setApiCompatibilityMode(true).build();
+        ElasticsearchTransport transport = new RestClientTransport(
+            httpClient,
+            new JacksonJsonpMapper()
+        );
+        esClient = new ElasticsearchClient(transport);
+        clientWrapper = new ClientWrapper(restHighLevelClient, esClient);
+    }
 
     public static ApplicationES createApplication(Integer id) {
         ApplicationES applicationES = new ApplicationES();

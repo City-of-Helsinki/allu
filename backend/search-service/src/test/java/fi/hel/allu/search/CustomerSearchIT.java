@@ -8,11 +8,8 @@ import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.CustomerIndexConductor;
 import fi.hel.allu.search.service.CustomerSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.util.*;
 
+import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
 import static fi.hel.allu.search.util.Constants.CUSTOMER_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,28 +38,26 @@ class CustomerSearchIT extends BaseIntegrationTest {
     private CustomerSearchService customerSearchService;
     private ApplicationSearchService applicationSearchService;
 
-    private RestHighLevelClient client;
-
     @BeforeEach
     void setUp() {
-        client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
-        ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-        customerSearchService = new CustomerSearchService(elasticSearchMappingConfig, client,
+        createdHighRestClient();
+        ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(clientWrapper, Arrays.asList(CUSTOMER_INDEX_ALIAS, APPLICATION_INDEX_ALIAS));
+        customerSearchService = new CustomerSearchService(elasticSearchMappingConfig, clientWrapper,
                                                           new CustomerIndexConductor());
-        applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
+        applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, clientWrapper,
                                                                 new ApplicationIndexConductor());
     }
 
     @Test
     void testTnsertCustomer() throws IOException {
-        Integer customerId = 1;
+        int customerId = 1;
         CustomerES customerES = createCustomer(TEST_NAME, customerId);
         customerSearchService.insert(customerES);
         customerSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(CUSTOMER_INDEX_ALIAS, "_doc", customerId.toString());
+        GetRequest getRequest = new GetRequest(CUSTOMER_INDEX_ALIAS, Integer.toString(customerId));
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
-        assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
+        assertTrue(restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT));
     }
 
     @Test

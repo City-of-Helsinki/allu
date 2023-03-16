@@ -1,5 +1,6 @@
 package fi.hel.allu.search.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,6 +12,7 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.util.ClientWrapper;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.ActionListener;
@@ -34,7 +36,10 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.AliasMetadata;
 import org.elasticsearch.common.unit.ByteSizeValue;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
@@ -96,7 +101,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     private static final String[] ordinalSortFields = {"status", "type"};
     protected final ObjectMapper objectMapper;
     private final ElasticSearchMappingConfig elasticSearchMappingConfig;
-    private final RestHighLevelClient client;
+    private final RestHighLevelClient hlrc;
+    private final ElasticsearchClient esClient;
     private final IndexConductor indexConductor;
     private final Function<T, String> keyMapper;
     private final Class<T> valueType;
@@ -106,7 +112,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
      * Instantiate a search service.
      *
      * @param elasticSearchMappingConfig {@link ElasticSearchMappingConfig} to use
-     * @param client                     The ElasticSearch client
+     * @param clientWrapper                     The ElasticSearch client
      * @param indexConductor             An index conductor for managing/tracking the index
      *                                   state
      * @param keyMapper                  Lambda from element to its key
@@ -114,12 +120,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
      */
     protected GenericSearchService(
             ElasticSearchMappingConfig elasticSearchMappingConfig,
-            RestHighLevelClient client,
+            ClientWrapper clientWrapper,
             IndexConductor indexConductor,
             Function<T, String> keyMapper,
             Class<T> valueType) {
         this.elasticSearchMappingConfig = elasticSearchMappingConfig;
-        this.client = client;
+        this.hlrc = clientWrapper.getHlrc();
+        this.esClient = clientWrapper.getEsClient();
         this.objectMapper = new ObjectMapper();
         this.indexConductor = indexConductor;
         this.keyMapper = keyMapper;
@@ -157,7 +164,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         request.setDestIndex(newIndex);
         request.setRefresh(true);
         try {
-            client.reindex(request, RequestOptions.DEFAULT);
+            hlrc.reindex(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -199,7 +206,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             IndexRequest indexRequest = new IndexRequest(indexName);
             indexRequest.id(id);
             indexRequest.source(json, XContentType.JSON);
-            IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+            IndexResponse response = hlrc.index(indexRequest, RequestOptions.DEFAULT);
             if (response.status() != RestStatus.CREATED) {
                 throw new SearchException("Unable to insert record to " + indexName + " with id " + id);
             }
@@ -319,7 +326,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         try {
             DeleteRequest deleteRequest = new DeleteRequest(indexName);
             deleteRequest.id(id);
-            DeleteResponse response = client.delete(deleteRequest, RequestOptions.DEFAULT);
+            DeleteResponse response = hlrc.delete(deleteRequest, RequestOptions.DEFAULT);
             if (response == null || response.status() != RestStatus.OK) {
                 throw new SearchException("Unable to delete record, id = " + id);
             }
@@ -362,7 +369,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             SearchRequest searchRequest = new SearchRequest();
             searchRequest.indices(indexConductor.getIndexAliasName());
             searchRequest.source(sourceBuilder);
-            response = client.search(searchRequest, RequestOptions.DEFAULT);
+            response = hlrc.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new SearchException(e);
         }
@@ -518,7 +525,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         Map<String, Set<AliasMetadata>> aliases;
 
         try {
-            aliases = client.indices()
+            aliases = hlrc.indices()
                     .getAlias(aliasesRequest, RequestOptions.DEFAULT).getAliases();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -530,7 +537,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         return aliases.keySet().iterator().next();
     }
 
-    private void addAlias(String indexName, String alias) {
+    public void addAlias(String indexName, String alias) {
         logger.debug("Add alias {} for index {}", alias, indexName);
         IndicesAliasesRequest request = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions aliasAction = creteAliasAction(indexName,
@@ -561,7 +568,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     private void executeAliasRequests(IndicesAliasesRequest indicesAliasesRequest) {
         try {
-            client.indices().updateAliases(indicesAliasesRequest, RequestOptions.DEFAULT);
+            hlrc.indices().updateAliases(indicesAliasesRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             logger.error("Updating Aliases failed {}", indicesAliasesRequest);
             throw new RuntimeException(e);
@@ -590,7 +597,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         SearchResponse response;
         try {
             searchRequest.source(srBuilder);
-            response = client.search(searchRequest, RequestOptions.DEFAULT);
+            response = hlrc.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -627,7 +634,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         logger.debug("deleteIndex {}", indexName);
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         try {
-            client.indices().delete(request, RequestOptions.DEFAULT);
+            hlrc.indices().delete(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -639,7 +646,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     public void refreshIndex() {
         try {
             RefreshRequest requestAll = new RefreshRequest();
-            client.indices().refresh(requestAll, RequestOptions.DEFAULT);
+            hlrc.indices().refresh(requestAll, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -803,7 +810,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     private void executeBulk(List<DocWriteRequest<?>> requests, RefreshPolicy refreshPolicy) {
         BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
-                (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
+                (request, bulkListener) -> hlrc.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
         BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, new BulkProcessorListener(refreshPolicy));
         builder.setBulkActions(1000);
         builder.setConcurrentRequests(1);

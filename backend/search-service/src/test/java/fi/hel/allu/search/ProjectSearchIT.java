@@ -8,12 +8,9 @@ import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.ProjectIndexConductor;
 import fi.hel.allu.search.service.ProjectSearchService;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
@@ -32,19 +30,19 @@ class ProjectSearchIT extends BaseIntegrationTest {
     private static final String projectName = "testiname";
     private ProjectSearchService projectSearchService;
     private ApplicationSearchService applicationSearchService;
-    private RestHighLevelClient client;
 
     @BeforeEach
     public void setUp() {
-        client = new RestHighLevelClient(RestClient.builder(HttpHost.create(container.getHttpHostAddress())));
-        ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
+        createdHighRestClient();
+        ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(clientWrapper,
+                                                                                                Arrays.asList(PROJECT_INDEX_ALIAS, APPLICATION_INDEX_ALIAS));
         projectSearchService = new ProjectSearchService(
                 elasticSearchMappingConfig,
-                client,
+                clientWrapper,
                 new ProjectIndexConductor());
         applicationSearchService = new ApplicationSearchService(
                 elasticSearchMappingConfig,
-                client,
+                clientWrapper,
                 new ApplicationIndexConductor());
     }
 
@@ -87,11 +85,10 @@ class ProjectSearchIT extends BaseIntegrationTest {
     private void assertInsertion(String index, String id) {
         GetRequest getRequest = new GetRequest(
                 index,
-                "_doc",
                 id);
         GetResponse getResponse = null;
         try {
-            getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+            getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

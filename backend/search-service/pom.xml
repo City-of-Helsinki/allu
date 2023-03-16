@@ -34,15 +34,25 @@
         </dependency>
         <dependency>
             <!--The version of Elasticsearch library should match the version of Elasticsearch. See Elasticsearch deployment -->
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <!--The version of Elasticsearch library should match the version of Elasticsearch. See Elasticsearch deployment -->
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
-            <!--The version of Elasticsearch library should match the version of Elasticsearch. See Elasticsearch deployment -->
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${elasticsearch.version}</version>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.3</version>
         </dependency>
         <dependency>
             <!--  support for Java 8 Date & Time API types -->
