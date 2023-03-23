@@ -49,10 +49,10 @@ VOLUME /servicehome
 ######################################################################################
 
 # Logging directories (assumes that /servicehome/supervision-api/logs directories exist)
-RUN ln -s /servicehome/logs/supervision-api /home/supervision-api/logs
+RUN ln -s /servicehome/logs/supervision-api /home/allu/supervision-api/logs
 # Service configuration files (assumes that /servicehome/supervision-api directories exist and contain expected configuration files)
 RUN ln -s /servicehome/services/supervision-api/included-logback.xml /home/allu/supervision-api/included-logback.xml
-RUN ln -s /servicehome/services/supervision-api/supervision-api.properties /home/allu/external-service/supervision-api.properties
+RUN ln -s /servicehome/services/supervision-api/supervision-api.properties /home/allu/supervision-api/supervision-api.properties
 
 ######################################################################################
 # Copy files to image
