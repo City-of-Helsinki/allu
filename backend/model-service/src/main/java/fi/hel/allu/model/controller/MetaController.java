@@ -3,7 +3,6 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.StructureMetaDao;
 import fi.hel.allu.model.domain.meta.StructureMeta;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,11 @@ import java.util.Optional;
 @RequestMapping("/meta")
 public class MetaController {
 
-  @Autowired
-  private StructureMetaDao structureMetaDao;
+  private final StructureMetaDao structureMetaDao;
+
+  public MetaController(StructureMetaDao structureMetaDao) {
+    this.structureMetaDao = structureMetaDao;
+  }
 
   @PostMapping(value = {"/{type}", "/{type}/{version}"})
   public ResponseEntity<StructureMeta> findByType(@PathVariable String type,
@@ -31,7 +33,7 @@ public class MetaController {
         .orElseThrow(() -> new NoSuchEntityException("Metadata not found for type", type));
   }
 
-  @RequestMapping(value = "/translation/{type}/{text}", method = RequestMethod.GET)
+  @GetMapping(value = "/translation/{type}/{text}")
   public ResponseEntity<String> findTranslation(@PathVariable String type, @PathVariable String text) {
     final String translation = structureMetaDao.findTranslation(type, text);
     if (translation == null) {

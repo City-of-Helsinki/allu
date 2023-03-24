@@ -27,7 +27,7 @@ public class ExternalApplicationController {
   /**
    * Finds original application with application ID.
    */
-  @RequestMapping(value = "applications/{id}/originalapplication", method = RequestMethod.GET)
+  @GetMapping(value = "applications/{id}/originalapplication")
   public ResponseEntity<ExternalApplication> findByApplicationId(@PathVariable Integer id) {
     return new ResponseEntity<>(externalApplicationService.findByApplicationId(id), HttpStatus.OK);
   }

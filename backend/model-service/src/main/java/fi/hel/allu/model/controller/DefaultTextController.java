@@ -3,7 +3,6 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.dao.DefaultTextDao;
 import fi.hel.allu.model.domain.DefaultText;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +16,11 @@ import java.util.List;
 @RequestMapping("/defaulttext")
 public class DefaultTextController {
 
-  @Autowired
   DefaultTextDao defaultTextDao;
+
+  public DefaultTextController(DefaultTextDao defaultTextDao) {
+    this.defaultTextDao = defaultTextDao;
+  }
 
   /**
    * Get default texts for given application type.
@@ -70,7 +72,7 @@ public class DefaultTextController {
    *
    * @param id    the ID of the default text to be removed.
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     defaultTextDao.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
