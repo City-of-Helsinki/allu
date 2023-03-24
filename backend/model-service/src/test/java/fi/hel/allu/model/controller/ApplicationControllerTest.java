@@ -1,20 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.GeometryCollection;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.EventNature;
@@ -24,13 +9,24 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.LocationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 @Transactional
@@ -47,7 +43,7 @@ public class ApplicationControllerTest {
   @Autowired
   LocationService locationService;
 
-  @Before
+  @BeforeEach
   public void setup() throws Exception {
     wtc.setupNoDelete();
     testUser = testCommon.insertUser("testUser");
