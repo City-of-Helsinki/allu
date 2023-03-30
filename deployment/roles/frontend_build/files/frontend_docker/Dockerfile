@@ -50,7 +50,6 @@ CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
 # Service home with runner scripts, configuration etc.
 VOLUME /mapproxy
 VOLUME /etc/apache2/sites-available
-VOLUME /var/www/html
 VOLUME /etc/ssl/allu
 
 ######################################################################################
