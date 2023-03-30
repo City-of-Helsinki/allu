@@ -121,4 +121,4 @@ COPY supervisord.conf /etc/supervisord.conf
 ARG CACHEBUST=1
 RUN echo $CACHEBUST
 
-COPY --chown=www-data:www-data www /var/www/html
+COPY --chown=www-data:www-data www/ /var/www/html/
