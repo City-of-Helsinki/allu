@@ -42,7 +42,7 @@ export class MapLayerSelectComponent implements OnDestroy {
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private store: Store<fromMapLayers.State>, private storedFilterStore: StoredFilterStore) {
+  constructor(private store: Store<fromMapLayers.LocalStateMap>, private storedFilterStore: StoredFilterStore) {
     this.treeFlattener = new MatTreeFlattener(transformer, getLevel, isExpandable, getChildren);
     this.treeControl = new FlatTreeControl<MapLayerFlatNode>(getLevel, isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);

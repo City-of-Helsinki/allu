@@ -11,14 +11,13 @@ import 'leaflet.markercluster.layersupport';
 import '../../js/leaflet/tilelayer-auth';
 import '../../js/leaflet/wfs-geojson';
 import 'leaflet-wfst';
-import TimeoutOptions = L.TimeoutOptions;
 import {MapLayer} from '@service/map/map-layer';
 import {ArrayUtil} from '@util/array-util';
 import {FeatureGroup} from 'leaflet';
 import {Some} from '@util/option';
 import {ZoomLevel} from '@feature/map/zoom-level';
 
-const timeout: TimeoutOptions = {
+const timeout: L.TimeoutOptions = {
   response: 60000, // Wait max x seconds for the server to start sending,
   deadline: 60000 // but allow y seconds for the file to finish loading.
 };
@@ -42,7 +41,8 @@ export class MapLayerService {
   public readonly markerSupport = L.markerClusterGroup.layerSupport({
     spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
-    zoomToBoundsOnClick: true
+    zoomToBoundsOnClick: true,
+    singleAddRemoveBufferDuration: 10
   });
 
   constructor(private authService: AuthService, private projection: Projection) {
@@ -155,7 +155,6 @@ export class MapLayerService {
   private createAuthenticatedOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer {
     const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
     return L.tileLayer.auth(url, {
-      format: 'image/png',
       minZoom,
       token,
       timeout: timeout
@@ -165,7 +164,6 @@ export class MapLayerService {
   private createOverlayLayer(layerName: string, minZoom?: number): L.TileLayer {
     const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
     return L.tileLayer(url, {
-      format: 'image/png',
       minZoom
     });
   }

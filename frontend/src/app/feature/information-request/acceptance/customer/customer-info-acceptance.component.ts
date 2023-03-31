@@ -5,7 +5,7 @@ import {findTranslation} from '@util/translations';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {Some} from '@util/option';
 import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
@@ -30,6 +30,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
   }
 
   @Input() countryCodes: CodeSetCodeMap;
+  @Input() form: FormGroup;
 
   @Output() customerChanges: EventEmitter<Customer> = new EventEmitter<Customer>();
 

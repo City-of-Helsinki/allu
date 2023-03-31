@@ -36,7 +36,7 @@ export class StoredFilterStore {
 
   constructor(private storedFilterService: StoredFilterService,
               private notification: NotificationService,
-              private store: Store<fromMap.State>) {
+              private store: Store<fromMap.LocalStateMap>) {
     this.loadAvailable().pipe(
       map(filters => this.createState(filters))
     ).subscribe(state => this.state$.next(state));

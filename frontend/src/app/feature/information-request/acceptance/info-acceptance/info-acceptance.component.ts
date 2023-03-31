@@ -1,4 +1,4 @@
-import {HostBinding, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {HostBinding, Injectable, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {takeUntil} from 'rxjs/internal/operators';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
@@ -7,6 +7,8 @@ import {FieldDescription} from '@feature/information-request/acceptance/field-se
 import {StructureMeta} from '@model/application/meta/structure-meta';
 import { Some } from '@app/util/option';
 
+
+@Injectable()
 export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() id: string;

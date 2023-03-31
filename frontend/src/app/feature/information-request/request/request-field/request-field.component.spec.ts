@@ -2,7 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RequestFieldComponent } from './request-field.component';
 
-describe('RequestFieldComponent', () => {
+
+describe('RequestFieldComponent', function ()  {
   let component: RequestFieldComponent;
   let fixture: ComponentFixture<RequestFieldComponent>;
 

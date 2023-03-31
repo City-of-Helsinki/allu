@@ -45,7 +45,7 @@ import {UserAreasComponent} from '@feature/application/location/user-areas/user-
   ]
 })
 export class LocationModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<LocationModule> {
     return {
       ngModule: LocationModule
     };

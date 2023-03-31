@@ -14,7 +14,7 @@ export interface LocationState {
   userAreas: fromUserAreas.State;
 }
 
-export interface State extends fromRoot.State {
+export interface LocalState extends fromRoot.State {
   location: LocationState;
 }
 
@@ -24,7 +24,7 @@ export const reducers: ActionReducerMap<LocationState> = {
   userAreas: fromUserAreas.reducer
 };
 
-export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Location reducers');
+export const reducersToken = new InjectionToken<ActionReducerMap<LocalState>>('Location reducers');
 
 export const reducersProvider = [
   { provide: reducersToken, useValue: reducers }

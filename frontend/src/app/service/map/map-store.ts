@@ -57,7 +57,7 @@ export class MapStore {
 
   constructor(private locationService: LocationService,
               private storedFilterStore: StoredFilterStore,
-              private store: Store<fromMap.State>) {
+              private store: Store<fromMap.LocalStateMap>) {
     this.store.pipe(
       select(fromAuth.getLoggedIn),
       filter(loggedIn => loggedIn),

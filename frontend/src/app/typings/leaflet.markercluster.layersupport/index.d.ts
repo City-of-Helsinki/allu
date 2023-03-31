@@ -1,7 +1,8 @@
-import * as LMC from 'leaflet.markercluster';
+import * as L from 'leaflet';
+import 'leaflet.markercluster';
 
 declare module 'leaflet' {
   namespace markerClusterGroup {
-    function layerSupport(options?: LMC.MarkerClusterGroupOptions): LMC.MarkerClusterGroup;
+    export function layerSupport(options?: L.MarkerClusterGroupOptions): L.MarkerClusterGroup;
   }
 }

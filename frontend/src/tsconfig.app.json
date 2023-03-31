@@ -3,16 +3,13 @@
   "compilerOptions": {
     "outDir": "../out-tsc/app",
     "baseUrl": "./",
-    "types": []
+    "types": [],
   },
   "angularCompilerOptions": {
     "preserveWhitespaces": false
   },
-  "files": [
-    "main.ts",
-    "polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.d.ts"
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
   ]
 }

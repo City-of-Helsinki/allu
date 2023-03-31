@@ -17,7 +17,7 @@ export interface MapState {
   applications: fromApplication.State;
 }
 
-export interface State extends fromRoot.State {
+export interface LocalStateMap extends fromRoot.State {
   map: MapState;
 }
 
@@ -27,7 +27,7 @@ export const reducers: ActionReducerMap<MapState> = {
   applications: fromApplication.reducer
 };
 
-export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Map reducers');
+export const reducersToken = new InjectionToken<ActionReducerMap<LocalStateMap>>('Map reducers');
 
 export const reducersProvider = [
   { provide: reducersToken, useValue: reducers }
