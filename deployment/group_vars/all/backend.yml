@@ -6,3 +6,6 @@ search_service_port: 9020
 
 pdf_service_host: "{{ pdf_service_name }}"
 pdf_service_port: 9030
+
+ext_service_host: "{{ external_service_name }}"
+ext_service_port: 9040
