@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SftpService {
 
-  private static final Integer SFTP_TIMEOUT = Integer.valueOf(10000);
+  private static final Duration SFTP_TIMEOUT = Duration.ofSeconds(10);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
@@ -156,6 +157,6 @@ public class SftpService {
     SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
     configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setUserDirIsRoot(sftpOptions, true);
-    configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
   }
 }
