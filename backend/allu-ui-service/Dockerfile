@@ -50,7 +50,7 @@ COPY ./src/main/resources/application.properties /home/allu/allu-ui-service/allu
 COPY ./src/main/resources/application-docker.properties /home/allu/allu-ui-service/application-docker.properties
 COPY ./src/main/resources/logback.xml /home/allu/allu-ui-service/logback.xml
 # JAR files
-COPY ./target/allu-ui-service-1.0-SNAPSHOT.jar /home/allu/allu-ui-service/allu-ui-service.jar
+COPY ./target/allu-ui-service-1.2-SNAPSHOT.jar /home/allu/allu-ui-service/allu-ui-service.jar
 ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/allu-ui-service", \
  "-jar","/home/allu/allu-ui-service/allu-ui-service.jar", \
  "--spring.profiles.active=DEV,docker", \

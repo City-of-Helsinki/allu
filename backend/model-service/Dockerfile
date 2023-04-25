@@ -54,7 +54,7 @@ COPY ./src/main/resources/application.properties /home/allu/model-service/model-
 COPY ./src/main/resources/application-docker.properties /home/allu/model-service/application-docker.properties
 COPY ./src/main/resources/logback.xml /home/allu/model-service/logback.xml
 # JAR files
-COPY ./target/model-service-1.0-SNAPSHOT.jar /home/allu/model-service/model-service.jar
+COPY ./target/model-service-1.2-SNAPSHOT.jar /home/allu/model-service/model-service.jar
 ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/model-service", \
  "-jar","/home/allu/model-service/model-service.jar", \
  "--spring.profiles.active=DEV,docker", \

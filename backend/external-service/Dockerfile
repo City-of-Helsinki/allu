@@ -50,7 +50,7 @@ COPY ./src/main/resources/application.properties /home/allu/external-service/ext
 COPY ./src/main/resources/application-docker.properties /home/allu/external-service/application-docker.properties
 COPY ./src/main/resources/logback.xml /home/allu/external-service/logback.xml
 # JAR files
-COPY ./target/external-service-1.0-SNAPSHOT.jar /home/allu/external-service/external-service.jar
+COPY ./target/external-service-1.2-SNAPSHOT.jar /home/allu/external-service/external-service.jar
 ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/external-service", \
  "-jar","/home/allu/external-service/external-service.jar", \
  "--spring.profiles.active=DEV,docker", \

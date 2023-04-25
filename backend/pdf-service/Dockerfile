@@ -63,7 +63,7 @@ COPY ./src/main/resources/application-docker.properties /home/allu/pdf-service/a
 COPY ./src/main/resources/logback.xml /home/allu/pdf-service/logback.xml
 COPY ./stylesheets/ /home/allu/pdf-service/stylesheets/
 # JAR files
-COPY ./target/pdf-service-1.0-SNAPSHOT.jar /home/allu/pdf-service/pdf-service.jar
+COPY ./target/pdf-service-1.2-SNAPSHOT.jar /home/allu/pdf-service/pdf-service.jar
 ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/pdf-service", \
  "-jar", "/home/allu/pdf-service/pdf-service.jar", \
  "--spring.profiles.active=DEV,docker", \

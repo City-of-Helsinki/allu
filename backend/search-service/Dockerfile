@@ -54,7 +54,7 @@ COPY ./src/main/resources/application.properties /home/allu/search-service/searc
 COPY ./src/main/resources/application-docker.properties /home/allu/search-service/application-docker.properties
 COPY ./src/main/resources/logback.xml /home/allu/search-service/logback.xml
 # JAR files
-COPY ./target/search-service-1.0-SNAPSHOT.jar /home/allu/search-service/search-service.jar
+COPY ./target/search-service-1.2-SNAPSHOT.jar /home/allu/search-service/search-service.jar
 ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/search-service", \
  "-jar","/home/allu/search-service/search-service.jar", \
  "--spring.profiles.active=DEV,docker", \

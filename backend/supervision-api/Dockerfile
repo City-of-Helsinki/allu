@@ -50,7 +50,7 @@ COPY ./src/main/resources/application.properties /home/allu/supervision-api/supe
 COPY ./src/main/resources/application-docker.properties /home/allu/supervision-api/application-docker.properties
 COPY ./src/main/resources/logback.xml /home/allu/supervision-api/logback.xml
 # JAR files
-COPY ./target/supervision-api-1.0-SNAPSHOT.jar /home/allu/supervision-api/supervision-api.jar
+COPY ./target/supervision-api-1.2-SNAPSHOT.jar /home/allu/supervision-api/supervision-api.jar
 ENTRYPOINT ["java", "-Xmx256m", "-Dservice.home=/home/allu/supervision-api", \
  "-jar","/home/allu/supervision-api/supervision-api.jar", \
  "--spring.profiles.active=DEV,docker", \

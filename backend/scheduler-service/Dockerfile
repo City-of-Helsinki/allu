@@ -57,7 +57,7 @@ COPY run_scheduler-service.sh /home/allu/scheduler-service/run_scheduler-service
 COPY src/main/resources/logback.xml /home/allu/scheduler-service/logback.xml
 COPY src/main/resources/application.properties /home/allu/scheduler-service/scheduler-service.properties
 COPY src/main/resources/application-docker.properties /home/allu/scheduler-service/application-docker.properties
-COPY target/scheduler-service-1.0-SNAPSHOT.jar /home/allu/scheduler-service/scheduler-service.jar
+COPY target/scheduler-service-1.2-SNAPSHOT.jar /home/allu/scheduler-service/scheduler-service.jar
 
 RUN chmod -R 755 /home/allu
 
