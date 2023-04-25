@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-slim-bullseye
+FROM eclipse-temurin:17.0.5_8-jre-focal
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
