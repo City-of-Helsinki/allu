@@ -83,4 +83,4 @@ RUN chmod 777 /home/allu/.ssh/known_hosts
 ARG CACHEBUST=1
 
 # JAR files
-RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/scheduler-service/1.0-SNAPSHOT/scheduler-service-1.0-SNAPSHOT.jar --output-document /home/allu/scheduler-service/scheduler-service.jar
+RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/scheduler-service/1.2-SNAPSHOT/scheduler-service-1.2-SNAPSHOT.jar --output-document /home/allu/scheduler-service/scheduler-service.jar

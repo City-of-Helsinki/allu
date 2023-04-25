@@ -1,7 +1,7 @@
 <!--
      To start application with this file configured into use, you can use for example the following command line (under project directory,
      assuming that this file is located under target/classes):
-     java -Dservice.home=target/classes -jar target/allu-ui-service-1.0-SNAPSHOT.jar
+     java -Dservice.home=target/classes -jar target/allu-ui-service-1.2-SNAPSHOT.jar
 -->
 <included scan="true">
     <!-- This file is scanned so you can update it while application is running -->

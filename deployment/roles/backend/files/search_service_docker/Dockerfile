@@ -70,6 +70,6 @@ ARG SERVICE_MEMORY=256m
 ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
 # JAR files
-RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/search-service/1.0-SNAPSHOT/search-service-1.0-SNAPSHOT.jar --output-document /home/allu/search-service/search-service.jar
+RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/search-service/1.2-SNAPSHOT/search-service-1.2-SNAPSHOT.jar --output-document /home/allu/search-service/search-service.jar
 ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/search-service \
     -jar /home/allu/search-service/search-service.jar --spring.config.additional-location=file:/home/allu/search-service/search-service.properties
