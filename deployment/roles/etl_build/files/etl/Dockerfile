@@ -42,6 +42,8 @@ RUN ln -s /servicehome/services/etl/allu-etl.properties /home/allu/etl/allu-etl.
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
 RUN echo $CACHEBUST
+ARG SERVICE_MEMORY=256m
+ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
 # JAR files
 RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/allu-etl/1.2-SNAPSHOT/allu-etl-1.2-SNAPSHOT.jar --output-document /home/allu/etl/allu-etl.jar
