@@ -80,3 +80,10 @@
       - "nofile:65536:65536"
       - "memlock:-1:-1"
   become: yes
+- name: Set elastic setting template
+  # Remove replicas of every shard. They are unnecessary because allu only have one node.
+  uri:
+    method: PUT
+    url: "http://localhost:9200/_template/template_1"
+    body_format: json
+    body: '{"index_patterns": ["*"], "order": 0, "settings": {"number_of_shards": 5,"number_of_replicas": 0}}'
