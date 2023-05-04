@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8u345-b01-jre-focal
+FROM eclipse-temurin:17.0.5_8-jre-focal
 
 ARG CUSTOM_UID=1214
 ARG CUSTOM_GID=7898
