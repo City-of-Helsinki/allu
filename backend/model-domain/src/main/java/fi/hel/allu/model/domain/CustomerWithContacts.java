@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * Customer with role and its related contacts in the context of an application.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerWithContacts implements CustomerWithContactsI {
   CustomerRoleType roleType;
   Customer customer;
