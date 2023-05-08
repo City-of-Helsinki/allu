@@ -66,7 +66,7 @@ RUN chmod 777 /home/allu/.ssh/known_hosts
 ######################################################################################
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
 ARG CACHEBUST=1
-ARG SERVICE_MEMORY=256m
+ARG SERVICE_MEMORY=384m
 ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
 # JAR files
