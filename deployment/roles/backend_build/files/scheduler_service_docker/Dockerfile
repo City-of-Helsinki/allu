@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.5_8-jre-focal
+FROM eclipse-temurin:17.0.5_8-jdk-focal
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
@@ -53,7 +53,7 @@ VOLUME /servicehome
 ######################################################################################
 # Symbolic links
 ######################################################################################
-
+EXPOSE 5005
 # Logging directories (assumes that /servicehome/scheduler-service/logs directories exist)
 RUN ln -s /servicehome/logs/scheduler-service /home/allu/scheduler-service/logs
 # Service runner scripts (assumes that /servicehome/scheduler-service directories exist and contain expected scripts)

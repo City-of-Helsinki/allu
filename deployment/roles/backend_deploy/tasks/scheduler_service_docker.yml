@@ -38,4 +38,6 @@
       - /srv/data/allu:/servicehome:rw
     networks:
       - name: "{{ network_name }}"
+    published_ports:
+      - "5005:5005"
   become: yes
