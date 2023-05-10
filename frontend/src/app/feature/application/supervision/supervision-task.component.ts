@@ -20,7 +20,7 @@ import {
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {filter, map, take} from 'rxjs/internal/operators';
-import {Store} from '@ngrx/store';
+import {Store, select} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Approve, ChangeOwner, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
@@ -46,6 +46,9 @@ import {
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
 import {NumberUtil} from '@util/number.util';
+import { LoadingIndicatorComponent } from '@app/feature/common/loading-indicator/loading-indicator.component';
+import * as fromSupervisionTask from './reducers';
+
 
 @Component({
   selector: 'supervision-task',
@@ -72,6 +75,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
+  private saving$: Observable<boolean>;
+  private loadingDialog: MatDialogRef<LoadingIndicatorComponent, any>;
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
@@ -116,6 +121,13 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.userCanRemove(formValue.status);
     this.locations = this.getLocations();
     this.location = this.getLocation(this.locations, formValue.locationId);
+
+    this.saving$ = this.store.pipe(
+      select(fromSupervisionTask.getSaving),
+    );
+
+    this.createModalListener();
+
   }
 
   ngOnDestroy(): void {
@@ -172,6 +184,25 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     if (this.originalEntry.automatic || this.originalEntry.id) {
       this.form.controls['type'].disable();
     }
+  }
+
+  private createModalListener(): void {
+    const closeGlassDialog = (): void => {
+      if (this.loadingDialog) {
+        this.loadingDialog.close();
+      }
+    };
+    this.saving$.subscribe(value => {
+      value ? this.openGlassDialog() : closeGlassDialog();
+    });
+  }
+
+  private openGlassDialog(): void {
+    this.loadingDialog = this.dialog.open(LoadingIndicatorComponent, {
+      disableClose: true,
+      hasBackdrop: true,
+      backdropClass: 'custom-backdrop'
+     });
   }
 
   approve(): void {

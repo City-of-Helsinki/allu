@@ -44,13 +44,15 @@ import {ValidityStartTimeComponent} from '@feature/common/validity-time/validity
 import {LocalLoaderService} from '@feature/common/local-loader/local-loader.service';
 import {ErrorPageComponent} from '@feature/common/error-page/error-page.component';
 import {FileSizePipe} from '@app/pipe/file-size.pipe';
+import { LoadingIndicatorComponent } from './loading-indicator/loading-indicator.component';
 
 @NgModule({
   imports: [
     CommonModule,
     MatButtonModule,
     MatDialogModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressSpinnerModule
   ],
   declarations: [
     FieldErrorComponent,
@@ -73,7 +75,8 @@ import {FileSizePipe} from '@app/pipe/file-size.pipe';
     ValidityStartTimeComponent,
     ValidityEndTimeComponent,
     ErrorPageComponent,
-    FileSizePipe
+    FileSizePipe,
+    LoadingIndicatorComponent
   ],
   providers: [
     LocalLoaderService
@@ -122,7 +125,8 @@ import {FileSizePipe} from '@app/pipe/file-size.pipe';
     ValidityStartTimeComponent,
     ValidityEndTimeComponent,
     ErrorPageComponent,
-    FileSizePipe
+    FileSizePipe,
+    LoadingIndicatorComponent
   ],
   entryComponents: [
     ConfirmDialogComponent
