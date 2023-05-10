@@ -123,7 +123,7 @@ public class SftpService {
   }
 
   private FileObject createLocalDirectoryObject(String localDirectory) throws IOException {
-    FileObject localDirectoryObject = manager.resolveFile(localDirectory);
+    FileObject localDirectoryObject = manager.resolveFile(localDirectory, sftpOptions);
     if (!directoryExists(localDirectoryObject)) {
       throw new FileNotFoundException("Local directory not found");
     }
