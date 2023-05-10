@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SftpService {
 
-  private static final Duration SFTP_TIMEOUT = Duration.ofSeconds(10);
+  private static final Duration SFTP_TIMEOUT = Duration.ofSeconds(10L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
