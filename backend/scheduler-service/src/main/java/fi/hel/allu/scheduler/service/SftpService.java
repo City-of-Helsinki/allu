@@ -158,5 +158,6 @@ public class SftpService {
     configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setUserDirIsRoot(sftpOptions, true);
     configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setDisableDetectExecChannel(sftpOptions, true);
   }
 }
