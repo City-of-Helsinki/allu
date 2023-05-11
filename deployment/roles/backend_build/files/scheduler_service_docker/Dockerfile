@@ -23,7 +23,7 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 ######################################################################################
 # Create directories
 ######################################################################################
-
+EXPOSE 5005
 # general setup
 RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /home/allu/.ssh
