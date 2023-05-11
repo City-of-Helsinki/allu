@@ -133,7 +133,14 @@ public class SftpService {
   private FileObject createRemoteDirectoryObject(String host, int port, String user, String password,
       String directory) throws IOException, URISyntaxException {
     String connectionString = buildConnectionString(host, port, user, password, directory);
-    FileObject remoteDirectoryObject = manager.resolveFile(connectionString, sftpOptions);
+    FileObject remoteDirectoryObject = null;
+    try{
+      remoteDirectoryObject = manager.resolveFile(connectionString, sftpOptions);
+    }
+    catch (FileSystemException e){
+     e.printStackTrace();
+    }
+
     if (!directoryExists(remoteDirectoryObject)) {
       throw new FileNotFoundException("Remote directory not found");
     }
