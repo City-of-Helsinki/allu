@@ -30,7 +30,7 @@ invoice_archivedir: /home/allu/scheduler-service/sap/invoice-archive
 
 # Customer update SFTP configuration
 sap_ftp_customer_host: 137.163.136.62
-sap_ftp_customer_port: 23
+sap_ftp_customer_port: 22
 sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
