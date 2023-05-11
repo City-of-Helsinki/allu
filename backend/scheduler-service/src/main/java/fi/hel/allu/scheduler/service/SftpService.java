@@ -108,7 +108,7 @@ public class SftpService {
   }
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
-    FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName());
+    FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), sftpOptions);
     targetFile.copyFrom(file, new AllFileSelector());
     file.delete();
   }
