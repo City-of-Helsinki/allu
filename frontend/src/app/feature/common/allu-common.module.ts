@@ -129,7 +129,8 @@ import { LoadingIndicatorComponent } from './loading-indicator/loading-indicator
     LoadingIndicatorComponent
   ],
   entryComponents: [
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    LoadingIndicatorComponent
   ]
 })
 export class AlluCommonModule {}
