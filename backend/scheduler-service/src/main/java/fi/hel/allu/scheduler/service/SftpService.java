@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class SftpService {
 
-  private static final Duration SFTP_TIMEOUT = Duration.ofSeconds(10L);
+  private static final Integer SFTP_TIMEOUT = Integer.valueOf(10000);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
@@ -156,17 +155,11 @@ public class SftpService {
   private String buildConnectionString(String host, int port, String user, String password, String remoteDirectory) throws URISyntaxException {
     return new URI("sftp", user + ":" + password, host, port, remoteDirectory, null, null).toString();
   }
-
   private void initializeSftpOptions() throws FileSystemException {
     sftpOptions = new FileSystemOptions();
-    timeOutOption = new FileSystemOptions();
     SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
     configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setUserDirIsRoot(sftpOptions, true);
-    configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
-    configBuilder.setDisableDetectExecChannel(sftpOptions, true);
-
-    configBuilder.setSessionTimeout(timeOutOption, SFTP_TIMEOUT);
-    configBuilder.setDisableDetectExecChannel(timeOutOption, true);
+    configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
   }
 }
