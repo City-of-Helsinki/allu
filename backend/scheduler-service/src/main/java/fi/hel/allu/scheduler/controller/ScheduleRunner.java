@@ -2,7 +2,6 @@ package fi.hel.allu.scheduler.controller;
 
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,7 @@ public class ScheduleRunner {
     scheduledExecutorService.schedule(
       () -> {
         try {
-          syncSearchData();
+         // syncSearchData();
         } catch (Exception e) {
           logger.error("Initial search data sync failed!", e);
         }

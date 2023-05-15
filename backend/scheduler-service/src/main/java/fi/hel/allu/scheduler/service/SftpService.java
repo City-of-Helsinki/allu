@@ -1,32 +1,30 @@
 package fi.hel.allu.scheduler.service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.vfs2.AllFileSelector;
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileSystemOptions;
-import org.apache.commons.vfs2.Selectors;
+import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class SftpService {
 
-  private static final Integer SFTP_TIMEOUT = Integer.valueOf(10000);
+  private static final Duration SFTP_TIMEOUT = Duration.ofSeconds(10L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
   private StandardFileSystemManager manager;
+  private FileSystemOptions timeOutOption;
 
   /**
    * Uploads all files from given local directory to SFTP server directory. Moves
@@ -55,6 +53,7 @@ public class SftpService {
       return false;
     }
     finally {
+      logger.info("Close SFTP Upload Manager");
       manager.close();
     }
     return true;
@@ -86,6 +85,7 @@ public class SftpService {
       logger.warn("Failed to download files.", ex);
     }
     finally {
+      logger.info("Close SFTP Download Manager");
       manager.close();
     }
     return true;
@@ -104,16 +104,22 @@ public class SftpService {
   private void moveFiles(FileObject sourceDirectory, FileObject targetDirectory, FileObject archiveDirectory) throws IOException {
     List<FileObject> files = Arrays.asList(sourceDirectory.getChildren()).stream().filter(f -> isFile(f)).collect(Collectors.toList());
     for (FileObject file : files) {
-      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName());
+      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName(), timeOutOption);
       targetFile.copyFrom(file, Selectors.SELECT_SELF);
       archiveFile(file, archiveDirectory);
     }
   }
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
-    FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName());
-    targetFile.copyFrom(file, new AllFileSelector());
-    file.delete();
+    try {
+      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), sftpOptions);
+      targetFile.copyFrom(file, new AllFileSelector());
+      file.delete();
+    }
+    catch ( FileSystemException e) {
+      logger.warn("Archiving file failed");
+      throw e;
+    }
   }
 
   private boolean isFile(FileObject file) {
@@ -126,7 +132,7 @@ public class SftpService {
   }
 
   private FileObject createLocalDirectoryObject(String localDirectory) throws IOException {
-    FileObject localDirectoryObject = manager.resolveFile(localDirectory);
+    FileObject localDirectoryObject = manager.resolveFile(localDirectory, timeOutOption);
     if (!directoryExists(localDirectoryObject)) {
       throw new FileNotFoundException("Local directory not found");
     }
@@ -153,9 +159,14 @@ public class SftpService {
 
   private void initializeSftpOptions() throws FileSystemException {
     sftpOptions = new FileSystemOptions();
+    timeOutOption = new FileSystemOptions();
     SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
     configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setUserDirIsRoot(sftpOptions, true);
-    configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setDisableDetectExecChannel(sftpOptions, true);
+
+    configBuilder.setSessionTimeout(timeOutOption, SFTP_TIMEOUT);
+    configBuilder.setDisableDetectExecChannel(timeOutOption, true);
   }
 }
