@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-slim-bullseye
+FROM openjdk:8-jdk-slim-bullseye
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
@@ -50,6 +50,7 @@ CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 # Service home with runner scripts, configuration etc.
 VOLUME /servicehome
 
+EXPOSE 5005
 ######################################################################################
 # Symbolic links
 ######################################################################################
