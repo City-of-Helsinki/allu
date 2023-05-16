@@ -23,7 +23,6 @@ public class SftpService {
 
   private  FileSystemOptions sftpOptions;
   private StandardFileSystemManager manager;
-  private FileSystemOptions timeOutOption;
 
   /**
    * Uploads all files from given local directory to SFTP server directory. Moves
@@ -103,7 +102,7 @@ public class SftpService {
   private void moveFiles(FileObject sourceDirectory, FileObject targetDirectory, FileObject archiveDirectory) throws IOException {
     List<FileObject> files = Arrays.asList(sourceDirectory.getChildren()).stream().filter(f -> isFile(f)).collect(Collectors.toList());
     for (FileObject file : files) {
-      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName(), timeOutOption);
+      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName());
       targetFile.copyFrom(file, Selectors.SELECT_SELF);
       archiveFile(file, archiveDirectory);
     }
@@ -131,7 +130,7 @@ public class SftpService {
   }
 
   private FileObject createLocalDirectoryObject(String localDirectory) throws IOException {
-    FileObject localDirectoryObject = manager.resolveFile(localDirectory, timeOutOption);
+    FileObject localDirectoryObject = manager.resolveFile(localDirectory);
     if (!directoryExists(localDirectoryObject)) {
       throw new FileNotFoundException("Local directory not found");
     }
