@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.5_8-jre-focal
+FROM eclipse-temurin:17.0.5_8-jdk-focal
 
 ARG CUSTOM_UID
 ARG CUSTOM_GID
