@@ -1,12 +1,12 @@
 package fi.hel.allu.common.util;
 
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-
-import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 public class PdfMerger {
 
@@ -16,7 +16,7 @@ public class PdfMerger {
     sources.forEach(s -> pdfMerger.addSource(new ByteArrayInputStream(s)));
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     pdfMerger.setDestinationStream(output);
-    pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+    pdfMerger.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
     return output.toByteArray();
   }
 }
