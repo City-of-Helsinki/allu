@@ -16,6 +16,7 @@ public class PdfMerger {
     sources.forEach(s -> pdfMerger.addSource(new ByteArrayInputStream(s)));
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     pdfMerger.setDestinationStream(output);
+    pdfMerger.setDocumentMergeMode(PDFMergerUtility.DocumentMergeMode.OPTIMIZE_RESOURCES_MODE);
     pdfMerger.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
     return output.toByteArray();
   }
