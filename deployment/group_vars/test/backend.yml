@@ -8,7 +8,7 @@ allu_service_memory_limit:
   scheduler-service: 128m
   allu-ui-service: 128m
   model-service: 128m
-  external-service: 128m
+  external-service: 384m
   supervision-api: 128m
 
 database_host: "{{ database_container_name }}"
