@@ -55,7 +55,7 @@ public class ScheduleRunner {
     scheduledExecutorService.schedule(
       () -> {
         try {
-         // syncSearchData();
+         syncSearchData();
         } catch (Exception e) {
           logger.error("Initial search data sync failed!", e);
         }
