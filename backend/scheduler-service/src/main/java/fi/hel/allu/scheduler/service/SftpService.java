@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class SftpService {
 
-  private static final Integer SFTP_TIMEOUT = Integer.valueOf(10000);
+  private static final Integer SFTP_TIMEOUT = Integer.valueOf(100000);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;

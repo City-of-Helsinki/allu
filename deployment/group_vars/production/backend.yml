@@ -39,7 +39,7 @@ sap_ftp_customer_arch_directory: /arch
 
 # Customer update configuration
 customer_update_enabled: true
-customer_update_cronstring: "0 0/30 * * * ?"
+customer_update_cronstring: "0 0/5 * * * ?"
 customer_update_sourcedir: /home/allu/scheduler-service/sap/customer-process
 customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
 customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
