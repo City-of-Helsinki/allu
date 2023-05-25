@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class SftpService {
 
-  private static final Integer SFTP_TIMEOUT = Integer.valueOf(100000);
+  private static final Duration SFTP_TIMEOUT = Duration.ofMinutes(5L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
@@ -160,9 +161,11 @@ public class SftpService {
     SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
     configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setUserDirIsRoot(sftpOptions, true);
-    configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setDisableDetectExecChannel(sftpOptions, true);
     smallOptions = new FileSystemOptions();
-    configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
-    configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
+    configBuilder.setStrictHostKeyChecking(smallOptions, "no");
+    configBuilder.setSessionTimeout(smallOptions, SFTP_TIMEOUT);
+    configBuilder.setDisableDetectExecChannel(smallOptions, true);
   }
 }
