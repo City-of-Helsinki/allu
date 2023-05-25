@@ -22,6 +22,7 @@ public class SftpService {
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
+  private FileSystemOptions smallOptions;
   private StandardFileSystemManager manager;
 
   /**
@@ -110,7 +111,7 @@ public class SftpService {
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
     try {
-      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), sftpOptions);
+      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions);
       targetFile.copyFrom(file, new AllFileSelector());
       file.delete();
     }
@@ -159,6 +160,9 @@ public class SftpService {
     SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
     configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setUserDirIsRoot(sftpOptions, true);
+    configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
+    smallOptions = new FileSystemOptions();
+    configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
     configBuilder.setTimeout(sftpOptions, SFTP_TIMEOUT);
   }
 }
