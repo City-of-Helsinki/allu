@@ -26,7 +26,6 @@ public class SftpService {
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
-  private FileSystemOptions smallOptions;
   private StandardFileSystemManager manager;
 
   /**
@@ -114,14 +113,8 @@ public class SftpService {
   }
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
-    FileSystemOptions smallOptions1 = new FileSystemOptions();
-    SftpFileSystemConfigBuilder configBuilder2 = SftpFileSystemConfigBuilder.getInstance();
-    configBuilder2.setStrictHostKeyChecking(smallOptions1, "no");
-    configBuilder2.setSessionTimeout(smallOptions1, SFTP_TIMEOUT);
-    configBuilder2.setDisableDetectExecChannel(smallOptions1, true);
-    configBuilder2.setKeyExchangeAlgorithm(smallOptions1, "diffie-hellman-group1-sha1");
     try {
-      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions1);
+      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), sftpOptions);
       file.moveTo(targetFile);
     }
     catch ( FileSystemException e) {
@@ -172,11 +165,5 @@ public class SftpService {
     configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
     configBuilder.setDisableDetectExecChannel(sftpOptions, true);
     configBuilder.setKeyExchangeAlgorithm(sftpOptions, "diffie-hellman-group1-sha1");
-    smallOptions = new FileSystemOptions();
-    SftpFileSystemConfigBuilder configBuilder2 = SftpFileSystemConfigBuilder.getInstance();
-    configBuilder2.setStrictHostKeyChecking(smallOptions, "no");
-    configBuilder2.setSessionTimeout(smallOptions, SFTP_TIMEOUT);
-    configBuilder2.setDisableDetectExecChannel(smallOptions, true);
-    configBuilder2.setKeyExchangeAlgorithm(smallOptions, "diffie-hellman-group1-sha1");
   }
 }
