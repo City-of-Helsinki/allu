@@ -116,7 +116,8 @@ public class SftpService {
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
     try {
       FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions);
-      file.moveTo(targetFile);
+      targetFile.copyFrom(file, Selectors.SELECT_ALL);
+      file.delete();
     }
     catch ( FileSystemException e) {
       logger.warn("Archiving file failed");
