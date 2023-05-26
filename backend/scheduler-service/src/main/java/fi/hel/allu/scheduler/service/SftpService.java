@@ -163,9 +163,11 @@ public class SftpService {
     configBuilder.setUserDirIsRoot(sftpOptions, true);
     configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
     configBuilder.setDisableDetectExecChannel(sftpOptions, true);
+    configBuilder.setKeyExchangeAlgorithm(sftpOptions, "diffie-hellman-group1-sha1");
     smallOptions = new FileSystemOptions();
     configBuilder.setStrictHostKeyChecking(smallOptions, "no");
     configBuilder.setSessionTimeout(smallOptions, SFTP_TIMEOUT);
     configBuilder.setDisableDetectExecChannel(smallOptions, true);
+    configBuilder.setKeyExchangeAlgorithm(smallOptions, "diffie-hellman-group1-sha1");
   }
 }
