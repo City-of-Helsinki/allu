@@ -1,6 +1,9 @@
 package fi.hel.allu.scheduler.service;
 
-import org.apache.commons.vfs2.*;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.Selectors;
 import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.slf4j.Logger;
@@ -113,8 +116,7 @@ public class SftpService {
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
     try {
       FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions);
-      targetFile.copyFrom(file, new AllFileSelector());
-      file.delete();
+      file.moveTo(targetFile);
     }
     catch ( FileSystemException e) {
       logger.warn("Archiving file failed");
