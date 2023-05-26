@@ -121,7 +121,7 @@ public class SftpService {
     configBuilder2.setDisableDetectExecChannel(smallOptions1, true);
     configBuilder2.setKeyExchangeAlgorithm(smallOptions1, "diffie-hellman-group1-sha1");
     try {
-      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions);
+      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions1);
       file.moveTo(targetFile);
     }
     catch ( FileSystemException e) {
