@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class SftpService {
 
-  private static final Duration SFTP_TIMEOUT = Duration.ofMinutes(5L);
+  private static final Duration SFTP_TIMEOUT = Duration.ofMinutes(50L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
