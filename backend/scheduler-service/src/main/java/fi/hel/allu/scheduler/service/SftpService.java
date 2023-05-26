@@ -167,9 +167,10 @@ public class SftpService {
     configBuilder.setDisableDetectExecChannel(sftpOptions, true);
     configBuilder.setKeyExchangeAlgorithm(sftpOptions, "diffie-hellman-group1-sha1");
     smallOptions = new FileSystemOptions();
-    configBuilder.setStrictHostKeyChecking(smallOptions, "no");
-    configBuilder.setSessionTimeout(smallOptions, SFTP_TIMEOUT);
-    configBuilder.setDisableDetectExecChannel(smallOptions, true);
-    configBuilder.setKeyExchangeAlgorithm(smallOptions, "diffie-hellman-group1-sha1");
+    SftpFileSystemConfigBuilder configBuilder2 = SftpFileSystemConfigBuilder.getInstance();
+    configBuilder2.setStrictHostKeyChecking(smallOptions, "no");
+    configBuilder2.setSessionTimeout(smallOptions, SFTP_TIMEOUT);
+    configBuilder2.setDisableDetectExecChannel(smallOptions, true);
+    configBuilder2.setKeyExchangeAlgorithm(smallOptions, "diffie-hellman-group1-sha1");
   }
 }
