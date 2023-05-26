@@ -114,6 +114,12 @@ public class SftpService {
   }
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
+    FileSystemOptions smallOptions1 = new FileSystemOptions();
+    SftpFileSystemConfigBuilder configBuilder2 = SftpFileSystemConfigBuilder.getInstance();
+    configBuilder2.setStrictHostKeyChecking(smallOptions1, "no");
+    configBuilder2.setSessionTimeout(smallOptions1, SFTP_TIMEOUT);
+    configBuilder2.setDisableDetectExecChannel(smallOptions1, true);
+    configBuilder2.setKeyExchangeAlgorithm(smallOptions1, "diffie-hellman-group1-sha1");
     try {
       FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), smallOptions);
       file.moveTo(targetFile);
