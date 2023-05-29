@@ -76,26 +76,10 @@ public class SftpService {
    * @param localDirectory Local target directory
    * @return true if files downloaded successfully; otherwise, false
    */
-//  public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
-//      String localDirectory) {
-//    try {
-//      initialize();
-//      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
-//      FileObject remoteArchiveDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteArchiveDirectory);
-//      FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
-//      moveFiles(remoteDirectoryObject, localDirectoryObject, remoteArchiveDirectoryObject);
-//    } catch (IOException | URISyntaxException ex) {
-//      logger.warn("Failed to download files.", ex);
-//    }
-//    finally {
-//      logger.info("Close SFTP Download Manager");
-//      manager.close();
-//    }
-//    return true;
-//  }
 
   public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
                                String localDirectory) {
+    logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
       jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
@@ -110,7 +94,7 @@ public class SftpService {
           .map(ChannelSftp.LsEntry::getFilename)
           .collect(Collectors.toList());
       for (String file : list){
-        channelSftp.get(remoteDirectory+file, file);
+        channelSftp.get(remoteDirectory+file, localDirectory+file);
         channelSftp.rename(file, remoteArchiveDirectory+file);
         channelSftp.rm(file);
       }
