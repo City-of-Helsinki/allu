@@ -116,10 +116,12 @@ public class SftpService {
       }
       channelSftp.exit();
     }  catch (JSchException e) {
+      logger.error("Failed jsch", e);
       throw new RuntimeException(e);
     } catch (SftpException e) {
+      logger.error("Failed connection", e);
       throw new RuntimeException(e);
-    } finally {
+    } finally {;
       logger.info("Close SFTP Download Manager");
     }
     return true;
