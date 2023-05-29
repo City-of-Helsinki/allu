@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,10 +82,13 @@ public class SftpService {
                                String localDirectory) {
     logger.info("start downloading sftp");
     try {
+      Properties config = new Properties();
+      config.put("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1");
       JSch jsch = new JSch();
       jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
       Session jschSession = jsch.getSession(user, host);
       jschSession.setPort(port);
+      jschSession.setConfig(config);
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
       jschSession.connect();
