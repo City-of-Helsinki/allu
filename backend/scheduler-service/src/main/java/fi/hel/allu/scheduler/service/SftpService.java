@@ -110,7 +110,7 @@ public class SftpService {
           .map(ChannelSftp.LsEntry::getFilename)
           .collect(Collectors.toList());
       for (String file : list){
-        channelSftp.get(file, remoteDirectory+file);
+        channelSftp.get(remoteDirectory+file, file);
         channelSftp.rename(file, remoteArchiveDirectory+file);
         channelSftp.rm(file);
       }
