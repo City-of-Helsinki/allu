@@ -1,5 +1,6 @@
 package fi.hel.allu.scheduler.service;
 
+import com.jcraft.jsch.*;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemOptions;
@@ -75,23 +76,57 @@ public class SftpService {
    * @param localDirectory Local target directory
    * @return true if files downloaded successfully; otherwise, false
    */
+//  public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
+//      String localDirectory) {
+//    try {
+//      initialize();
+//      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
+//      FileObject remoteArchiveDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteArchiveDirectory);
+//      FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
+//      moveFiles(remoteDirectoryObject, localDirectoryObject, remoteArchiveDirectoryObject);
+//    } catch (IOException | URISyntaxException ex) {
+//      logger.warn("Failed to download files.", ex);
+//    }
+//    finally {
+//      logger.info("Close SFTP Download Manager");
+//      manager.close();
+//    }
+//    return true;
+//  }
+
   public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
-      String localDirectory) {
+                               String localDirectory) {
     try {
-      initialize();
-      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
-      FileObject remoteArchiveDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteArchiveDirectory);
-      FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
-      moveFiles(remoteDirectoryObject, localDirectoryObject, remoteArchiveDirectoryObject);
-    } catch (IOException | URISyntaxException ex) {
-      logger.warn("Failed to download files.", ex);
-    }
-    finally {
+      JSch jsch = new JSch();
+      jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
+      Session jschSession = jsch.getSession(user, host);
+      jschSession.setPort(port);
+      jschSession.setPassword(password);
+      jschSession.setTimeout(100000);
+      jschSession.connect();
+      ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
+      List<String> list = channelSftp.ls(".").stream()
+          .filter(e -> !e.getAttrs().isDir())
+          .map(ChannelSftp.LsEntry::getFilename)
+          .collect(Collectors.toList());
+      for (String file : list){
+        channelSftp.get(file, remoteDirectory+file);
+        channelSftp.rename(file, remoteArchiveDirectory+file);
+        channelSftp.rm(file);
+      }
+      channelSftp.exit();
+    }  catch (JSchException e) {
+      throw new RuntimeException(e);
+    } catch (SftpException e) {
+      throw new RuntimeException(e);
+    } finally {
       logger.info("Close SFTP Download Manager");
-      manager.close();
     }
     return true;
   }
+
+
+
 
   private void initialize() throws FileSystemException {
     manager = new StandardFileSystemManager();
