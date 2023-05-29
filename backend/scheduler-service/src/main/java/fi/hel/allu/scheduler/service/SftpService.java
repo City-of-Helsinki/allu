@@ -83,11 +83,12 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       Properties config = new Properties();
-      config.put("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1");
       JSch jsch = new JSch();
       jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
       Session jschSession = jsch.getSession(user, host);
       jschSession.setPort(port);
+      jschSession.setConfig("StrictHostKeyChecking", "no");
+      config.put("kex","diffie-hellman-group1-sha1");
       jschSession.setConfig(config);
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
