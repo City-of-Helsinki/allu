@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -82,7 +83,7 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
-      jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
+      jsch.setKnownHosts(new ByteArrayInputStream("|1|aui3Wbii69a5skRey4TRBfswaTA=|u/fxhoNmNKQCwfCKzqrerjO0FtY= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=".getBytes()));
       Session jschSession = jsch.getSession(user, host, port);
       jschSession.setConfig("StrictHostKeyChecking", "no");
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
