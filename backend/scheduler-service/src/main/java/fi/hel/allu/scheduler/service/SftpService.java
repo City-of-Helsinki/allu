@@ -84,6 +84,8 @@ public class SftpService {
       JSch jsch = new JSch();
       Session jschSession = jsch.getSession(user, host, port);
       jschSession.setConfig("StrictHostKeyChecking", "no");
+      jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
+      jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
       jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
