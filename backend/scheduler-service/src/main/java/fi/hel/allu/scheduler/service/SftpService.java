@@ -85,10 +85,10 @@ public class SftpService {
       jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
       Session jschSession = jsch.getSession(user, host);
       jschSession.setPort(port);
-      jschSession.setConfig("StrictHostKeyChecking", "no");
-      jschSession.setConfig("kex","diffie-hellman-group1-sha1");
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
+      jschSession.setConfig("StrictHostKeyChecking", "no");
+      jschSession.setConfig("kex","diffie-hellman-group1-sha1");
       jschSession.connect();
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
       List<String> list = channelSftp.ls(".").stream()
