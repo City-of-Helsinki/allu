@@ -1,23 +1,12 @@
 package fi.hel.allu.scheduler.service;
 
 import com.jcraft.jsch.*;
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileSystemOptions;
-import org.apache.commons.vfs2.Selectors;
-import org.apache.commons.vfs2.impl.StandardFileSystemManager;
-import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.File;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +16,6 @@ public class SftpService {
   private static final Duration SFTP_TIMEOUT = Duration.ofMinutes(50L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
-  private  FileSystemOptions sftpOptions;
-  private StandardFileSystemManager manager;
 
   /**
    * Uploads all files from given local directory to SFTP server directory. Moves
@@ -46,20 +33,20 @@ public class SftpService {
    */
   public boolean uploadFiles(String host, int port, String user, String password, String localDirectory, String localArchiveDirectory,
       String remoteDirectory) {
-    try {
-      initialize();
-      FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
-      FileObject localArchiveDirectoryObject = createLocalDirectoryObject(localArchiveDirectory);
-      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
-      moveFiles(localDirectoryObject, remoteDirectoryObject, localArchiveDirectoryObject);
-    } catch (IOException | URISyntaxException ex) {
-      logger.warn("Failed to upload files.", ex);
-      return false;
-    }
-    finally {
-      logger.info("Close SFTP Upload Manager");
-      manager.close();
-    }
+//    try {
+//      initialize();
+//      FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
+//      FileObject localArchiveDirectoryObject = createLocalDirectoryObject(localArchiveDirectory);
+//      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
+//      moveFiles(localDirectoryObject, remoteDirectoryObject, localArchiveDirectoryObject);
+//    } catch (IOException | URISyntaxException ex) {
+//      logger.warn("Failed to upload files.", ex);
+//      return false;
+//    }
+//    finally {
+//      logger.info("Close SFTP Upload Manager");
+//      manager.close();
+//    }
     return true;
   }
 
@@ -83,7 +70,10 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
-      jsch.setKnownHosts(new ByteArrayInputStream("|1|aui3Wbii69a5skRey4TRBfswaTA=|u/fxhoNmNKQCwfCKzqrerjO0FtY= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=".getBytes()));
+      final String knownHostsFile= System.getProperty("user.home") + File.separator + ".ssh" + File.separator + "known_hosts";
+      if(new File(knownHostsFile).exists()) {
+        jsch.setKnownHosts(knownHostsFile);
+      }
       Session jschSession = jsch.getSession(user, host, port);
       jschSession.setConfig("StrictHostKeyChecking", "no");
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
@@ -119,77 +109,77 @@ public class SftpService {
 
 
 
-  private void initialize() throws FileSystemException {
-    manager = new StandardFileSystemManager();
-    manager.init();
-    initializeSftpOptions();
-  }
-
-  /**
-   * Copy files from given source directory to target directory. After file is copied
-   * moves file from source directory to given archive directory.
-   */
-  private void moveFiles(FileObject sourceDirectory, FileObject targetDirectory, FileObject archiveDirectory) throws IOException {
-    List<FileObject> files = Arrays.asList(sourceDirectory.getChildren()).stream().filter(f -> isFile(f)).collect(Collectors.toList());
-    for (FileObject file : files) {
-      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName());
-      targetFile.copyFrom(file, Selectors.SELECT_SELF);
-      archiveFile(file, archiveDirectory);
-    }
-  }
-
-  private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
-    try {
-      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), sftpOptions);
-      file.moveTo(targetFile);
-    }
-    catch ( FileSystemException e) {
-      logger.warn("Archiving file failed");
-      throw e;
-    }
-  }
-
-  private boolean isFile(FileObject file) {
-    try {
-      return file.isFile();
-    } catch (FileSystemException ex) {
-      logger.warn("Error occurred when processing file {}.", file.getName().getBaseName(), ex);
-      return false;
-    }
-  }
-
-  private FileObject createLocalDirectoryObject(String localDirectory) throws IOException {
-    FileObject localDirectoryObject = manager.resolveFile(localDirectory);
-    if (!directoryExists(localDirectoryObject)) {
-      throw new FileNotFoundException("Local directory not found");
-    }
-    return localDirectoryObject;
-  }
-
-  private FileObject createRemoteDirectoryObject(String host, int port, String user, String password,
-      String directory) throws IOException, URISyntaxException {
-    String connectionString = buildConnectionString(host, port, user, password, directory);
-    FileObject remoteDirectoryObject = manager.resolveFile(connectionString, sftpOptions);
-    if (!directoryExists(remoteDirectoryObject)) {
-      throw new FileNotFoundException("Remote directory not found");
-    }
-    return remoteDirectoryObject;
-  }
-
-  private boolean directoryExists(FileObject remoteDirectoryObject) throws FileSystemException {
-    return remoteDirectoryObject.exists() && remoteDirectoryObject.isFolder();
-  }
-
-  private String buildConnectionString(String host, int port, String user, String password, String remoteDirectory) throws URISyntaxException {
-    return new URI("sftp", user + ":" + password, host, port, remoteDirectory, null, null).toString();
-  }
-  private void initializeSftpOptions() throws FileSystemException {
-    sftpOptions = new FileSystemOptions();
-    SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
-    configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
-    configBuilder.setUserDirIsRoot(sftpOptions, true);
-    configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
-    configBuilder.setDisableDetectExecChannel(sftpOptions, true);
-    configBuilder.setKeyExchangeAlgorithm(sftpOptions, "diffie-hellman-group1-sha1");
-  }
+//  private void initialize() throws FileSystemException {
+//    manager = new StandardFileSystemManager();
+//    manager.init();
+//    initializeSftpOptions();
+//  }
+//
+//  /**
+//   * Copy files from given source directory to target directory. After file is copied
+//   * moves file from source directory to given archive directory.
+//   */
+//  private void moveFiles(FileObject sourceDirectory, FileObject targetDirectory, FileObject archiveDirectory) throws IOException {
+//    List<FileObject> files = Arrays.asList(sourceDirectory.getChildren()).stream().filter(f -> isFile(f)).collect(Collectors.toList());
+//    for (FileObject file : files) {
+//      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName());
+//      targetFile.copyFrom(file, Selectors.SELECT_SELF);
+//      archiveFile(file, archiveDirectory);
+//    }
+//  }
+//
+//  private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
+//    try {
+//      FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName(), sftpOptions);
+//      file.moveTo(targetFile);
+//    }
+//    catch ( FileSystemException e) {
+//      logger.warn("Archiving file failed");
+//      throw e;
+//    }
+//  }
+//
+//  private boolean isFile(FileObject file) {
+//    try {
+//      return file.isFile();
+//    } catch (FileSystemException ex) {
+//      logger.warn("Error occurred when processing file {}.", file.getName().getBaseName(), ex);
+//      return false;
+//    }
+//  }
+//
+//  private FileObject createLocalDirectoryObject(String localDirectory) throws IOException {
+//    FileObject localDirectoryObject = manager.resolveFile(localDirectory);
+//    if (!directoryExists(localDirectoryObject)) {
+//      throw new FileNotFoundException("Local directory not found");
+//    }
+//    return localDirectoryObject;
+//  }
+//
+//  private FileObject createRemoteDirectoryObject(String host, int port, String user, String password,
+//      String directory) throws IOException, URISyntaxException {
+//    String connectionString = buildConnectionString(host, port, user, password, directory);
+//    FileObject remoteDirectoryObject = manager.resolveFile(connectionString, sftpOptions);
+//    if (!directoryExists(remoteDirectoryObject)) {
+//      throw new FileNotFoundException("Remote directory not found");
+//    }
+//    return remoteDirectoryObject;
+//  }
+//
+//  private boolean directoryExists(FileObject remoteDirectoryObject) throws FileSystemException {
+//    return remoteDirectoryObject.exists() && remoteDirectoryObject.isFolder();
+//  }
+//
+//  private String buildConnectionString(String host, int port, String user, String password, String remoteDirectory) throws URISyntaxException {
+//    return new URI("sftp", user + ":" + password, host, port, remoteDirectory, null, null).toString();
+//  }
+//  private void initializeSftpOptions() throws FileSystemException {
+//    sftpOptions = new FileSystemOptions();
+//    SftpFileSystemConfigBuilder configBuilder = SftpFileSystemConfigBuilder.getInstance();
+//    configBuilder.setStrictHostKeyChecking(sftpOptions, "no");
+//    configBuilder.setUserDirIsRoot(sftpOptions, true);
+//    configBuilder.setSessionTimeout(sftpOptions, SFTP_TIMEOUT);
+//    configBuilder.setDisableDetectExecChannel(sftpOptions, true);
+//    configBuilder.setKeyExchangeAlgorithm(sftpOptions, "diffie-hellman-group1-sha1");
+//  }
 }
