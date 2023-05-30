@@ -82,6 +82,7 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
+      jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
       Session jschSession = jsch.getSession(user, host, port);
       jschSession.setConfig("StrictHostKeyChecking", "no");
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
@@ -98,8 +99,8 @@ public class SftpService {
           .collect(Collectors.toList());
       for (String file : list){
         channelSftp.get(remoteDirectory+file, localDirectory+file);
-        channelSftp.rename(file, remoteArchiveDirectory+file);
-        channelSftp.rm(file);
+        channelSftp.rename(remoteDirectory+file, remoteArchiveDirectory+file);
+        channelSftp.rm(remoteDirectory+file);
       }
       channelSftp.exit();
     }  catch (JSchException e) {
