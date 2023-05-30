@@ -67,7 +67,7 @@ public class SftpService {
       ConfigRepository configRepository = com.jcraft.jsch.OpenSSHConfig.parse(config);
 
       jsch.setConfigRepository(configRepository);
-      Session jschSession = jsch.getSession(host);
+      Session jschSession = jsch.getSession("localhost");
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
       jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
       jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
