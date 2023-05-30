@@ -46,11 +46,6 @@
       <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
     </dependency>
-    <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>3.9.0</version>
-    </dependency>
     <!--  VFS dependency  -->
     <!-- https://mvnrepository.com/artifact/com.github.mwiede/jsch -->
     <dependency>
@@ -58,11 +53,6 @@
       <artifactId>jsch</artifactId>
       <version>0.2.9</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-  </dependency>
   </dependencies>
   <build>
     <plugins>
