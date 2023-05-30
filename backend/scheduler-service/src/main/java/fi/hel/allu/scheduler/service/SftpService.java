@@ -83,13 +83,13 @@ public class SftpService {
     try {
       JSch jsch = new JSch();
       jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
-      Session jschSession = jsch.getSession(user, host);
-      jschSession.setPort(port);
+      Session jschSession = jsch.getSession(user, host, port);
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
       jschSession.setConfig("StrictHostKeyChecking", "no");
-      jschSession.setConfig("kex","diffie-hellman-group1-sha1");
+      jschSession.setConfig("kex","diffie-hellman-group14-sha1");
       jschSession.connect();
+      logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
       List<String> list = channelSftp.ls(".").stream()
           .filter(e -> !e.getAttrs().isDir())
@@ -107,7 +107,7 @@ public class SftpService {
     } catch (SftpException e) {
       logger.error("Failed connection", e);
       throw new RuntimeException(e);
-    } finally {;
+    } finally {
       logger.info("Close SFTP Download Manager");
     }
     return true;
