@@ -23,6 +23,7 @@
   local_action:
     module: docker_image
     push: true
+    force_source: true
     source: local
     force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
     name: "allu_scheduler_service:{{ branch }}"
