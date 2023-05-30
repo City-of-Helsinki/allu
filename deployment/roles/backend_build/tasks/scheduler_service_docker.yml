@@ -9,6 +9,7 @@
   local_action:
     module: docker_image
     source: build
+    nocache: true
     build:
       args:
         CUSTOM_UID: "{{ system_user_id_allu }}"
