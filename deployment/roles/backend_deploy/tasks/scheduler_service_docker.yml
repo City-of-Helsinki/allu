@@ -25,6 +25,7 @@
 
 - name: Pull allu_scheduler_service Docker image from GitLab repository
   docker_image:
+    nocache: true
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
   become: yes
