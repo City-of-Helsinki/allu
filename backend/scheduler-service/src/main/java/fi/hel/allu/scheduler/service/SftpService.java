@@ -86,8 +86,8 @@ public class SftpService {
       Session jschSession = jsch.getSession(user, host, port);
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
+      jschSession.setConfig("kex","diffie-hellman-group1-sha1");
       jschSession.setConfig("StrictHostKeyChecking", "no");
-      jschSession.setConfig("kex","diffie-hellman-group14-sha1");
       jschSession.connect();
       logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
