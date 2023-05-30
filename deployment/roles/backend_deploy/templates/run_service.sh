@@ -1,3 +1,2 @@
 #!/bin/bash
-java -Xmx{{ allu_service_memory_limit[item] | default('256m') }} -Dservice.home=/home/allu/{{ item }} -jar
- -Djsch.kex=ssh-ed25519,diffie-hellman-group14-sha1 -Djsch.server_host_key=ssh-rsa -Djsch.client_pubkey=ssh-rsa -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 /home/allu/{{ item }}/{{ item }}.jar --spring.config.additional-location=file:/home/allu/{{ item }}/{{ item }}.properties
+java -Xmx{{ allu_service_memory_limit[item] | default('256m') }} -Dservice.home=/home/allu/{{ item }} -jar -Djsch.kex=ssh-ed25519,diffie-hellman-group14-sha1 -Djsch.server_host_key=ssh-rsa -Djsch.client_pubkey=ssh-rsa -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 /home/allu/{{ item }}/{{ item }}.jar --spring.config.additional-location=file:/home/allu/{{ item }}/{{ item }}.properties
