@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,10 +56,7 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
-      final String knownHostsFile= System.getProperty("user.home") + File.separator + ".ssh" + File.separator + "known_hosts";
-      if(new File(knownHostsFile).exists()) {
-        jsch.setKnownHosts(knownHostsFile);
-      }
+      jsch.setKnownHosts(new ByteArrayInputStream("SjjPL+R4AJgSD+InDgtpS4DBxdI=|YX5IJdxFnm04B1rVQf7VlZLJ3Eg= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=".getBytes()));
       Session jschSession = jsch.getSession(user, host, port);
       jschSession.setConfig("StrictHostKeyChecking", "no");
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
