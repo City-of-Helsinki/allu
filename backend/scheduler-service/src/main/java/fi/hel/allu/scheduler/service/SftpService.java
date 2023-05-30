@@ -59,7 +59,7 @@ public class SftpService {
           + "  PreferredAuthentications password,publickey\n"
           + "  #ForwardAgent yes\n" + "  StrictHostKeyChecking no\n"
           + "  KexAlgorithms +diffie-hellman-group1-sha1\n"
-          + "  #IdentityFile ~/.ssh/id_rsa\n" + "  #UserKnownHostsFile ~/.ssh/known_hosts";
+          + "  #IdentityFile ~/.ssh/id_rsa\n" + "  UserKnownHostsFile ~/.ssh/known_hosts";
 
      logger.info("Generated configurations:");
       logger.info(config);
