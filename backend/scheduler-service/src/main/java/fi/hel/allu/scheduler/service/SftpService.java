@@ -16,7 +16,6 @@ public class SftpService {
   private static final Duration SFTP_TIMEOUT = Duration.ofMinutes(50L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
-
   /**
    * Uploads all files from given local directory to SFTP server directory. Moves
    * uploaded files to local archive directory.
@@ -50,7 +49,6 @@ public class SftpService {
    * @param localDirectory Local target directory
    * @return true if files downloaded successfully; otherwise, false
    */
-
   public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
                                String localDirectory) {
     logger.info("start downloading sftp");
