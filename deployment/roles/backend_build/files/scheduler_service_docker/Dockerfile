@@ -78,11 +78,13 @@ RUN ln -s /servicehome/services/scheduler-service/sap/invoice-archive /home/allu
 # Changes that should not be cached
 ######################################################################################
 # DISABLE BUILD CACHING AFTER THIS LINE (use with command "docker build -t your-image --build-arg CACHEBUST=$(date +%s)")
+RUN echo Hello, World!
 ARG CACHEBUST=1
 RUN echo $CACHEBUST
 
 COPY known_hosts /home/allu/.ssh/known_hosts
 RUN chmod 777 /home/allu/.ssh/known_hosts
+
 
 # JAR files
 RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/scheduler-service/1.0-SNAPSHOT/scheduler-service-1.0-SNAPSHOT.jar --output-document /home/allu/scheduler-service/scheduler-service.jar
