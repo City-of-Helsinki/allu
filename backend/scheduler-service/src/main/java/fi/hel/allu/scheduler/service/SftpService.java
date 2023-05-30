@@ -84,10 +84,11 @@ public class SftpService {
       JSch jsch = new JSch();
       jsch.setKnownHosts("/home/allu/.ssh/known_hosts");
       Session jschSession = jsch.getSession(user, host, port);
+
+      jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
+      jschSession.setConfig("StrictHostKeyChecking", "no");
       jschSession.setPassword(password);
       jschSession.setTimeout(100000);
-      jschSession.setConfig("kex","diffie-hellman-group1-sha1");
-      jschSession.setConfig("StrictHostKeyChecking", "no");
       jschSession.connect();
       logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
