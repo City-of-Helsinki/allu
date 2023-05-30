@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,9 +54,20 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
-      jsch.setKnownHosts(new ByteArrayInputStream("SjjPL+R4AJgSD+InDgtpS4DBxdI=|YX5IJdxFnm04B1rVQf7VlZLJ3Eg= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=".getBytes()));
-      Session jschSession = jsch.getSession(user, host, port);
-      jschSession.setConfig("StrictHostKeyChecking", "no");
+      String config = "Port 8022\n" + "\n" + "Host localhost\n" + "  User " + user + "\n" + "  Hostname "
+          + "127.0.0.1" + "\n" + "Host *\n" + "  ConnectTime 30000\n"
+          + "  PreferredAuthentications password,publickey\n"
+          + "  #ForwardAgent yes\n" + "  StrictHostKeyChecking no\n"
+          + "  KexAlgorithms +diffie-hellman-group1-sha1\n"
+          + "  #IdentityFile ~/.ssh/id_rsa\n" + "  #UserKnownHostsFile ~/.ssh/known_hosts";
+
+     logger.info("Generated configurations:");
+      logger.info(config);
+
+      ConfigRepository configRepository = com.jcraft.jsch.OpenSSHConfig.parse(config);
+
+      jsch.setConfigRepository(configRepository);
+      Session jschSession = jsch.getSession(host);
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
       jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
       jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
@@ -80,6 +91,8 @@ public class SftpService {
       throw new RuntimeException(e);
     } catch (SftpException e) {
       logger.error("Failed connection", e);
+      throw new RuntimeException(e);
+    } catch (IOException e) {
       throw new RuntimeException(e);
     } finally {
       logger.info("Close SFTP Download Manager");
