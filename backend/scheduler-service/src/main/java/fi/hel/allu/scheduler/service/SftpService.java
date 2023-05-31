@@ -76,7 +76,7 @@ public class SftpService {
       jschSession.connect();
       logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
-      List<String> list = channelSftp.ls(".").stream()
+      List<String> list = channelSftp.ls(remoteDirectory).stream()
           .filter(e -> !e.getAttrs().isDir())
           .map(ChannelSftp.LsEntry::getFilename)
           .collect(Collectors.toList());
