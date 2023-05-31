@@ -76,6 +76,12 @@ public class SftpService {
       jschSession.connect();
       logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
+        try {
+            SftpATTRS   attrs = channelSftp.stat(remoteDirectory);
+            logger.info("is directory: {}", attrs.isDir());
+        } catch (Exception e) {
+            logger.error("directory not found,", e);
+        }
       List<String> list = channelSftp.ls(remoteDirectory).stream()
           .filter(e -> !e.getAttrs().isDir())
           .map(ChannelSftp.LsEntry::getFilename)
