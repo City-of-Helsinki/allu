@@ -79,7 +79,6 @@ public class SftpService {
       for (String file : list){
         channelSftp.get(remoteDirectory+file, localDirectory+"/"+file);
         channelSftp.rename(channelSftp.getHome()+file, channelSftp.getHome()+"arch/"+file);
-        channelSftp.rm(remoteDirectory+file);
       }
       channelSftp.exit();
     }  catch (JSchException e) {
