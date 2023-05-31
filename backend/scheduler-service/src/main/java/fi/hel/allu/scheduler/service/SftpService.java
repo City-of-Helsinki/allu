@@ -77,8 +77,8 @@ public class SftpService {
           .map(ChannelSftp.LsEntry::getFilename)
           .collect(Collectors.toList());
       for (String file : list){
-        channelSftp.get(remoteDirectory+file, localDirectory+file);
-        channelSftp.rename(remoteDirectory+file, remoteArchiveDirectory+file);
+        channelSftp.get(remoteDirectory+file, localDirectory+"/"+file);
+        channelSftp.rename(remoteDirectory+file, remoteArchiveDirectory+"/"+file);
         channelSftp.rm(remoteDirectory+file);
       }
       channelSftp.exit();
