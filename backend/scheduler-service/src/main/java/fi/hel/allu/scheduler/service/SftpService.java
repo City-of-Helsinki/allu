@@ -64,7 +64,8 @@ public class SftpService {
       jschSession.connect();
       logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
-        try {
+      logger.info("is channel connected: {}", channelSftp.isConnected());
+      try {
             SftpATTRS attrs = channelSftp.stat(remoteDirectory);
             logger.info("is directory: {}", attrs.isDir());
         } catch (Exception e) {
