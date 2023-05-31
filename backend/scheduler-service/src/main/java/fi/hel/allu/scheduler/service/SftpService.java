@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,20 +54,8 @@ public class SftpService {
     logger.info("start downloading sftp");
     try {
       JSch jsch = new JSch();
-      String config = "Port 8022\n" + "\n" + "Host localhost\n" + "  User " + user + "\n" + "  Hostname "
-          + "127.0.0.1" + "\n" + "Host *\n" + "  ConnectTime 30000\n"
-          + "  PreferredAuthentications password,publickey\n"
-          + "  #ForwardAgent yes\n" + "  StrictHostKeyChecking no\n"
-          + "  KexAlgorithms +diffie-hellman-group1-sha1\n"
-          + "  #IdentityFile ~/.ssh/id_rsa\n" + "  UserKnownHostsFile ~/.ssh/known_hosts";
-
-     logger.info("Generated configurations:");
-      logger.info(config);
-
-      ConfigRepository configRepository = com.jcraft.jsch.OpenSSHConfig.parse(config);
-
-      jsch.setConfigRepository(configRepository);
-      Session jschSession = jsch.getSession("localhost");
+      jsch.setKnownHosts(new ByteArrayInputStream("|1|3Qd7vSu3BVHj3ImF6o+iNNE4BQM=|d9gEVFytZuiexP+2VuNXCn+0Oxc= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=\n".getBytes()));
+      Session jschSession = jsch.getSession(user,host,port);
       jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
       jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
       jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
@@ -77,7 +65,7 @@ public class SftpService {
       logger.info("Is connected: {}", jschSession.isConnected());
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
         try {
-            SftpATTRS   attrs = channelSftp.stat(remoteDirectory);
+            SftpATTRS attrs = channelSftp.stat(remoteDirectory);
             logger.info("is directory: {}", attrs.isDir());
         } catch (Exception e) {
             logger.error("directory not found,", e);
@@ -96,11 +84,9 @@ public class SftpService {
       logger.error("Failed jsch", e);
       throw new RuntimeException(e);
     } catch (SftpException e) {
-      logger.error("Failed connection", e);
-      throw new RuntimeException(e);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } finally {
+        logger.error("Failed connection", e);
+        throw new RuntimeException(e);
+    }finally {
       logger.info("Close SFTP Download Manager");
     }
     return true;
