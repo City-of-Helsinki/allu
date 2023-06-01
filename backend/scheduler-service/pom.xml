@@ -47,20 +47,9 @@
       <artifactId>janino</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>3.9.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs2</artifactId>
-      <version>2.2</version>
-    </dependency>
-    <!--  VFS dependency  -->
-    <dependency>
-      <groupId>com.jcraft</groupId>
+      <groupId>com.github.mwiede</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.54</version>
+      <version>0.2.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

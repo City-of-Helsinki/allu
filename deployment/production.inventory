@@ -1,33 +1,10 @@
-[webservers]
-frontendEndpoint inventory_host=10.138.10.92 ansible_host=94.199.118.40
-
-[dbservers]
-# databaseEndpoint is used to configure the location of database server in backend.yml. Just leave it when changing IP address
-databaseEndpoint ansible_host=10.138.10.91
-
 [backendservers]
 # backendEndpoint is used to configure the proxypass target of front server in frontend.yml. Just leave it when changing IP address
 backendEndpoint ansible_host=10.138.10.93
 
-[searchservers]
-# searchEndpoint is used to configure the location of ElasticSearch server in search-service.yml. Just leave it when changing IP address
-searchEndpoint ansible_host=10.138.10.93
-
-[reporting_dbserver]
-reportingDbEndpoint ansible_host=10.138.10.94
 
 [production:children]
-webservers
-dbservers
 backendservers
-searchservers
-reporting_dbserver
-
-[jumphosts:children]
-dbservers
-backendservers
-searchservers
-reporting_dbserver
 
 [production:vars]
 ansible_python_interpreter=/usr/bin/python3

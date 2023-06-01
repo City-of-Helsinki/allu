@@ -1,24 +1,14 @@
 package fi.hel.allu.scheduler.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.xml.bind.JAXBException;
-
+import fi.hel.allu.external.domain.CustomerExt;
+import fi.hel.allu.external.domain.InvoicingCustomerExt;
+import fi.hel.allu.external.domain.PostalAddressExt;
+import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
+import fi.hel.allu.sap.model.DEBMAS06;
+import fi.hel.allu.sap.model.E1KNA1M;
+import fi.hel.allu.sap.model.E1KNVVM;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
+import fi.hel.allu.scheduler.domain.SFTPSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +19,19 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.external.domain.CustomerExt;
-import fi.hel.allu.external.domain.InvoicingCustomerExt;
-import fi.hel.allu.external.domain.PostalAddressExt;
-import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
-import fi.hel.allu.sap.model.DEBMAS06;
-import fi.hel.allu.sap.model.E1KNA1M;
-import fi.hel.allu.sap.model.E1KNVVM;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for updating customer with data from SAP.
@@ -46,15 +41,15 @@ public class SapCustomerService {
 
   private static final Logger logger = LoggerFactory.getLogger(SapCustomerService.class);
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private SftpService ftpService;
-  private AuthenticationService authenticationService;
+  private final RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final SftpService ftpService;
+  private final AuthenticationService authenticationService;
 
 
   @Autowired
   public SapCustomerService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      SftpService ftpService, AuthenticationService authenticationService) {
+                            SftpService ftpService, AuthenticationService authenticationService) {
     this.restTemplate = restTemplate;
     // Needed for PATCH support
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -78,9 +73,8 @@ public class SapCustomerService {
   }
 
   private boolean downloadFilesFromFtp() {
-    return ftpService.downloadFiles(applicationProperties.getSapFtpCustomerHost(), applicationProperties.getSapFtpCustomerPort(),
-        applicationProperties.getSapFtpCustomerUser(), applicationProperties.getSapFtpCustomerPassword(),
-        applicationProperties.getSapFtpCustomerDirectory(), applicationProperties.getSapFtpCustomerArchive(), getCustomerSourceDirectory().toString());
+    return ftpService.downloadFiles(createSFTPSettings(),
+                                    applicationProperties.getSapFtpCustomerDirectory(), applicationProperties.getSapFtpCustomerArchive(), getCustomerSourceDirectory().toString());
   }
 
   private List<File> listCustomerFiles() {
@@ -104,7 +98,7 @@ public class SapCustomerService {
 
   private DEBMAS06 readCustomerDataFromFile(AlluUnmarshaller unmarshaller, File customerFile) {
     DEBMAS06 customer = null;
-    try (InputStream inputStream = new FileInputStream(customerFile)) {
+    try (InputStream inputStream = Files.newInputStream(customerFile.toPath())) {
       customer = unmarshaller.unmarshal(inputStream);
     } catch (JAXBException | IOException e) {
       logger.warn("Failed to read customer from file {}", customerFile.getName(), e);
@@ -177,7 +171,7 @@ public class SapCustomerService {
 
   /**
    * Returns value indicating whether SAP customer update is enabled
-   * @return
+   * @return boolean
    */
   public boolean isUpdateEnabled() {
     return applicationProperties.isCustomerUpdateEnabled();
@@ -222,5 +216,14 @@ public class SapCustomerService {
     return Stream.of(customerData.getName1(), customerData.getName2(), customerData.getName3())
         .filter(StringUtils::isNotBlank).collect(Collectors.joining("; "));
   }
-
+  private SFTPSettings createSFTPSettings() {
+    return new SFTPSettings(applicationProperties.getSapFtpCustomerHost(),
+                            applicationProperties.getSapFtpCustomerUser(),
+                            applicationProperties.getSapFtpCustomerPort(),
+                            applicationProperties.getSapFtpCustomerPassword(),
+                            applicationProperties.getKnownHosts(),
+                            applicationProperties.getSignatureAlgorithm(),
+                            applicationProperties.getKeyAlgorithm(),
+                            applicationProperties.getSftpTimeout());
+  }
 }

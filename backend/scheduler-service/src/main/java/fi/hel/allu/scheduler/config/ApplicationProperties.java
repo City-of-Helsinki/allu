@@ -1,13 +1,12 @@
 package fi.hel.allu.scheduler.config;
 
-import java.util.List;
-
-import javax.validation.constraints.NotEmpty;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.hel.allu.model.domain.ConfigurationKey;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Component
 public class ApplicationProperties {
@@ -40,6 +39,10 @@ public class ApplicationProperties {
   private final String invoiceNotificationSubject;
   private final int searchSyncStartupDelay;
   private final boolean invoiceSendingEnabled;
+  private final String knownHosts;
+  private final String signatureAlgorithm;
+  private final String keyAlgorithm;
+  private final int sftpTimeout;
 
   @Autowired
   public ApplicationProperties(
@@ -70,7 +73,11 @@ public class ApplicationProperties {
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
       @Value("${search.sync.startup.delay}") int searchSyncStartupDelay,
-      @Value("${invoice.sending.enabled}") boolean invoiceSendingEnabled) {
+      @Value("${invoice.sending.enabled}") boolean invoiceSendingEnabled,
+      @Value("${sftp.settings.knownHosts}") String knownHosts,
+      @Value("${sftp.settings.signatureAlgorithm}") String signatureAlgorithm,
+      @Value("${sftp.settings.keyAlgorithm}") String keyAlgorithm,
+      @Value("${sftp.settings.timeout}") int sftpTimeout) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.extServiceHost = extServiceHost;
@@ -99,6 +106,10 @@ public class ApplicationProperties {
     this.uiBaseUrl = uiBaseUrl;
     this.searchSyncStartupDelay = searchSyncStartupDelay;
     this.invoiceSendingEnabled = invoiceSendingEnabled;
+    this.knownHosts = knownHosts;
+    this.signatureAlgorithm = signatureAlgorithm;
+    this.keyAlgorithm = keyAlgorithm;
+    this.sftpTimeout = sftpTimeout;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -343,8 +354,8 @@ public class ApplicationProperties {
   }
 
   /**
-  * @return url for receiver email for SAP invoice notifications
-  */
+   * @return url for receiver email for SAP invoice notifications
+   */
   public String getInvoiceNotificationReceiverEmailsUrl() {
     return getModelServiceUrl("/configurations/" + ConfigurationKey.INVOICE_NOTIFICATION_RECEIVER_EMAIL);
   }
@@ -382,5 +393,21 @@ public class ApplicationProperties {
 
   public String getUpdateTerminatedApplicationsUrl() {
     return getExtServiceUrl("/v1/applications/terminated/status");
+  }
+
+  public String getKnownHosts() {
+    return knownHosts;
+  }
+
+  public String getSignatureAlgorithm() {
+    return signatureAlgorithm;
+  }
+
+  public String getKeyAlgorithm() {
+    return keyAlgorithm;
+  }
+
+  public int getSftpTimeout() {
+    return sftpTimeout;
   }
 }
