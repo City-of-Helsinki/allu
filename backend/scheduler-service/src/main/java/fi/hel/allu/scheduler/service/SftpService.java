@@ -6,14 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.time.Duration;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class SftpService {
 
-  private static final Duration SFTP_TIMEOUT = Duration.ofMinutes(50L);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   /**
@@ -32,6 +31,39 @@ public class SftpService {
    */
   public boolean uploadFiles(String host, int port, String user, String password, String localDirectory, String localArchiveDirectory,
       String remoteDirectory) {
+    logger.info("Start uploading sftp");
+
+
+    try {
+      JSch jsch = new JSch();
+      jsch.setKnownHosts(new ByteArrayInputStream("|1|3Qd7vSu3BVHj3ImF6o+iNNE4BQM=|d9gEVFytZuiexP+2VuNXCn+0Oxc= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=\n".getBytes()));
+      Session jschSession = jsch.getSession(user,host,port);
+      jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
+      jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
+      jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
+      jschSession.setPassword(password);
+      jschSession.setTimeout(100000);
+      jschSession.connect();
+      logger.info("Is connected: {}", jschSession.isConnected());
+      ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
+      channelSftp.connect();
+      logger.info("is channel connected: {}", channelSftp.isConnected());
+      File sourceDir = new File(localDirectory);
+      for (File file : sourceDir.listFiles()){
+        channelSftp.put( file.getAbsolutePath(), remoteDirectory+"/"+file.getName());
+        file.renameTo(new File(localArchiveDirectory+"/"+file.getName()));
+      }
+      channelSftp.exit();
+      jschSession.disconnect();
+    }  catch (JSchException e) {
+      logger.error("Failed jsch", e);
+      return false;
+    } catch (SftpException e) {
+      logger.error("Failed connection", e);
+      return false;
+    }finally {
+      logger.info("Uploading file through SFTP ended");
+    }
     return true;
   }
 
@@ -66,12 +98,6 @@ public class SftpService {
       ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
       channelSftp.connect();
       logger.info("is channel connected: {}", channelSftp.isConnected());
-      try {
-            SftpATTRS attrs = channelSftp.stat(remoteDirectory);
-            logger.info("is directory: {}", attrs.isDir());
-        } catch (Exception e) {
-            logger.error("directory not found,", e);
-        }
       List<String> list = channelSftp.ls(remoteDirectory).stream()
           .filter(e -> !e.getAttrs().isDir())
           .map(ChannelSftp.LsEntry::getFilename)
@@ -81,14 +107,15 @@ public class SftpService {
         channelSftp.rename(channelSftp.getHome()+file, channelSftp.getHome()+"arch/"+file);
       }
       channelSftp.exit();
+      jschSession.disconnect();
     }  catch (JSchException e) {
       logger.error("Failed jsch", e);
-      throw new RuntimeException(e);
+      return false;
     } catch (SftpException e) {
         logger.error("Failed connection", e);
-        throw new RuntimeException(e);
+      return false;
     }finally {
-      logger.info("Close SFTP Download Manager");
+      logger.info("Downloading file through SFTP ended");
     }
     return true;
   }
