@@ -27,6 +27,7 @@
   docker_image:
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_search_service:{{ branch }}"
+    force_source: yes
   become: yes
 
 - name: Start allu_search_service container
