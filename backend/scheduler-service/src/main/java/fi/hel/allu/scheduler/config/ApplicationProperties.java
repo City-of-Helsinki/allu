@@ -1,13 +1,12 @@
 package fi.hel.allu.scheduler.config;
 
-import java.util.List;
-
-import javax.validation.constraints.NotEmpty;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.hel.allu.model.domain.ConfigurationKey;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Component
 public class ApplicationProperties {
@@ -40,6 +39,7 @@ public class ApplicationProperties {
   private final String invoiceNotificationSubject;
   private final int searchSyncStartupDelay;
   private final boolean invoiceSendingEnabled;
+  private final String knownHosts;
 
   @Autowired
   public ApplicationProperties(
@@ -70,7 +70,8 @@ public class ApplicationProperties {
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
       @Value("${search.sync.startup.delay}") int searchSyncStartupDelay,
-      @Value("${invoice.sending.enabled}") boolean invoiceSendingEnabled) {
+      @Value("${invoice.sending.enabled}") boolean invoiceSendingEnabled,
+      @Value("sftp.settings.knownHosts") String knownHosts) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.extServiceHost = extServiceHost;
@@ -99,6 +100,7 @@ public class ApplicationProperties {
     this.uiBaseUrl = uiBaseUrl;
     this.searchSyncStartupDelay = searchSyncStartupDelay;
     this.invoiceSendingEnabled = invoiceSendingEnabled;
+    this.knownHosts = knownHosts;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -382,5 +384,9 @@ public class ApplicationProperties {
 
   public String getUpdateTerminatedApplicationsUrl() {
     return getExtServiceUrl("/v1/applications/terminated/status");
+  }
+
+  public String getKnownHosts() {
+    return knownHosts;
   }
 }

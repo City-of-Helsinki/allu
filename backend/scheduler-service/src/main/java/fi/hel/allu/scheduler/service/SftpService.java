@@ -1,6 +1,7 @@
 package fi.hel.allu.scheduler.service;
 
 import com.jcraft.jsch.*;
+import fi.hel.allu.scheduler.domain.SFTPSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,42 +21,29 @@ public class SftpService {
    * Uploads all files from given local directory to SFTP server directory. Moves
    * uploaded files to local archive directory.
    *
-   * @param host SFTP server host
-   * @param port SFTP port
-   * @param user SFTP username
-   * @param password SFTP password
+   * @param sftpSettings needed settings to create sftp connection
    * @param localDirectory Local source directory
    * @param localArchiveDirectory directory where to move files on local machine
    *        after successful upload
    * @param remoteDirectory Target directory on remote server
    * @return true if files uploaded successfully; otherwise, false
    */
-  public boolean uploadFiles(String host, int port, String user, String password, String localDirectory, String localArchiveDirectory,
-      String remoteDirectory) {
+  public boolean uploadFiles(SFTPSettings sftpSettings, String localDirectory, String localArchiveDirectory,
+                             String remoteDirectory) {
     logger.info("Start uploading sftp");
-
-
     try {
-      JSch jsch = new JSch();
-      jsch.setKnownHosts(new ByteArrayInputStream("|1|3Qd7vSu3BVHj3ImF6o+iNNE4BQM=|d9gEVFytZuiexP+2VuNXCn+0Oxc= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=\n".getBytes()));
-      Session jschSession = jsch.getSession(user,host,port);
-      jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
-      jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
-      jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
-      jschSession.setPassword(password);
-      jschSession.setTimeout(100000);
-      jschSession.connect();
-      logger.info("Is connected: {}", jschSession.isConnected());
-      ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
-      channelSftp.connect();
-      logger.info("is channel connected: {}", channelSftp.isConnected());
+      ChannelSftp channelSftp = createSession(sftpSettings);
       File sourceDir = new File(localDirectory);
-      for (File file : sourceDir.listFiles()){
-        channelSftp.put( file.getAbsolutePath(), remoteDirectory+"/"+file.getName());
-        file.renameTo(new File(localArchiveDirectory+"/"+file.getName()));
+      for (File file : Objects.requireNonNull(sourceDir.listFiles())){
+        if(file.isFile()) {
+          channelSftp.put(file.getAbsolutePath(), remoteDirectory + "/" + file.getName());
+          boolean renaming = file.renameTo(new File(localArchiveDirectory + "/" + file.getName()));
+          if (!renaming) {
+            logger.warn("renaming local file failed");
+          }
+        }
       }
       channelSftp.exit();
-      jschSession.disconnect();
     }  catch (JSchException e) {
       logger.error("Failed jsch", e);
       return false;
@@ -71,43 +60,28 @@ public class SftpService {
    * Downloads all files from given SFTP server directory. Moves downloaded files
    * to SFTP server's archive directory
    *
-   * @param host SFTP server host
-   * @param port SFTP port
-   * @param user SFTP username
-   * @param password SFTP password
+   * @param sftpSettings needed settings to create sftp connection
    * @param remoteDirectory Directory in SFTP server where to download from
    * @param remoteArchiveDirectory Archive directory where to move files on
    *        server after successful download
    * @param localDirectory Local target directory
    * @return true if files downloaded successfully; otherwise, false
    */
-  public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
+  public boolean downloadFiles(SFTPSettings sftpSettings, String remoteDirectory, String remoteArchiveDirectory,
                                String localDirectory) {
-    logger.info("start downloading sftp");
+    logger.info("Start downloading sftp");
     try {
-      JSch jsch = new JSch();
-      jsch.setKnownHosts(new ByteArrayInputStream("|1|3Qd7vSu3BVHj3ImF6o+iNNE4BQM=|d9gEVFytZuiexP+2VuNXCn+0Oxc= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk=\n".getBytes()));
-      Session jschSession = jsch.getSession(user,host,port);
-      jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + ",ssh-rsa");
-      jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
-      jschSession.setConfig("kex", jschSession.getConfig("kex") + ",diffie-hellman-group14-sha1");
-      jschSession.setPassword(password);
-      jschSession.setTimeout(100000);
-      jschSession.connect();
-      logger.info("Is connected: {}", jschSession.isConnected());
-      ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
-      channelSftp.connect();
-      logger.info("is channel connected: {}", channelSftp.isConnected());
+      ChannelSftp channelSftp = createSession(sftpSettings);
       List<String> list = channelSftp.ls(remoteDirectory).stream()
           .filter(e -> !e.getAttrs().isDir())
           .map(ChannelSftp.LsEntry::getFilename)
           .collect(Collectors.toList());
       for (String file : list){
         channelSftp.get(remoteDirectory+file, localDirectory+"/"+file);
-        channelSftp.rename(channelSftp.getHome()+file, channelSftp.getHome()+"arch/"+file);
+        channelSftp.rename(channelSftp.getHome()+file, channelSftp.getHome() + remoteArchiveDirectory
+            + "/" + file);
       }
       channelSftp.exit();
-      jschSession.disconnect();
     }  catch (JSchException e) {
       logger.error("Failed jsch", e);
       return false;
@@ -118,5 +92,21 @@ public class SftpService {
       logger.info("Downloading file through SFTP ended");
     }
     return true;
+  }
+
+  private ChannelSftp createSession(SFTPSettings sftpSettings) throws JSchException {
+    JSch jsch = new JSch();
+    jsch.setKnownHosts(new ByteArrayInputStream(sftpSettings.getKnownHosts().getBytes()));
+    Session jschSession = jsch.getSession(sftpSettings.getHost(), sftpSettings.getUser(), sftpSettings.getPort());
+    jschSession.setConfig("server_host_key", jschSession.getConfig("server_host_key") + sftpSettings.getSignatureAlgorithm());
+    jschSession.setConfig("PubkeyAcceptedAlgorithms", jschSession.getConfig("PubkeyAcceptedAlgorithms") + sftpSettings.getSignatureAlgorithm());
+    jschSession.setConfig("kex", jschSession.getConfig("kex") + sftpSettings.getKeyAlgorithm());
+    jschSession.setPassword(sftpSettings.getPassword());
+    jschSession.setTimeout(sftpSettings.getTimeout());
+    jschSession.connect();
+    logger.info("Is connected: {}", jschSession.isConnected());
+    ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
+    channelSftp.connect();
+    return channelSftp;
   }
 }

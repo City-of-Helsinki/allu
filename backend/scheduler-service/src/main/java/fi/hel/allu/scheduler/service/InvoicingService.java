@@ -10,7 +10,7 @@ import fi.hel.allu.sap.marshaller.AlluMarshaller;
 import fi.hel.allu.sap.model.SalesOrder;
 import fi.hel.allu.sap.model.SalesOrderContainer;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
-
+import fi.hel.allu.scheduler.domain.SFTPSettings;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -31,14 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -136,10 +128,7 @@ public class InvoicingService {
   public boolean sendToSap(SalesOrderContainer salesOrderContainer) {
     return writeToTempFile(salesOrderContainer).map(dir -> {
       boolean sentOk = sftpService.uploadFiles(
-          applicationProperties.getSapFtpInvoiceHost(),
-          applicationProperties.getSapFtpInvoicePort(),
-          applicationProperties.getSapFtpInvoiceUser(),
-          applicationProperties.getSapFtpInvoicePassword(),
+          createSFTPSettings(),
           dir.toString(),
           applicationProperties.getInvoiceArchiveDir(),
           applicationProperties.getSapFtpInvoiceDirectory());
@@ -214,5 +203,16 @@ public class InvoicingService {
         null,
         new ParameterizedTypeReference<List<Configuration>>() {}).getBody();
     return emails.stream().map(c -> c.getValue()).collect(Collectors.toList());
+  }
+
+  private SFTPSettings createSFTPSettings(){
+    return new SFTPSettings(applicationProperties.getSapFtpInvoiceHost(),
+                            applicationProperties.getSapFtpInvoiceUser(),
+                            applicationProperties.getSapFtpInvoicePort(),
+                            applicationProperties.getSapFtpInvoicePassword(),
+                            applicationProperties.getKnownHosts(),
+                            ",ssh-rsa",
+                            ",diffie-hellman-group14-sha1",
+                            100000);
   }
 }

@@ -35,7 +35,7 @@ invoice_archivedir: /home/allu/scheduler-service/sap/invoice-archive
 sap_ftp_customer_host: 127.0.0.1
 sap_ftp_customer_port: 8022
 sap_ftp_customer_directory: /
-sap_ftp_customer_arch_directory: /arch
+sap_ftp_customer_arch_directory: arch
 
 # Customer update configuration
 customer_update_enabled: true

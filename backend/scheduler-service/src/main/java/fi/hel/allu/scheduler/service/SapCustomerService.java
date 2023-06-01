@@ -1,24 +1,14 @@
 package fi.hel.allu.scheduler.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.xml.bind.JAXBException;
-
+import fi.hel.allu.external.domain.CustomerExt;
+import fi.hel.allu.external.domain.InvoicingCustomerExt;
+import fi.hel.allu.external.domain.PostalAddressExt;
+import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
+import fi.hel.allu.sap.model.DEBMAS06;
+import fi.hel.allu.sap.model.E1KNA1M;
+import fi.hel.allu.sap.model.E1KNVVM;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
+import fi.hel.allu.scheduler.domain.SFTPSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +19,19 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.external.domain.CustomerExt;
-import fi.hel.allu.external.domain.InvoicingCustomerExt;
-import fi.hel.allu.external.domain.PostalAddressExt;
-import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
-import fi.hel.allu.sap.model.DEBMAS06;
-import fi.hel.allu.sap.model.E1KNA1M;
-import fi.hel.allu.sap.model.E1KNVVM;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for updating customer with data from SAP.
@@ -78,8 +73,7 @@ public class SapCustomerService {
   }
 
   private boolean downloadFilesFromFtp() {
-    return ftpService.downloadFiles(applicationProperties.getSapFtpCustomerHost(), applicationProperties.getSapFtpCustomerPort(),
-        applicationProperties.getSapFtpCustomerUser(), applicationProperties.getSapFtpCustomerPassword(),
+    return ftpService.downloadFiles(createSFTPSettings(),
         applicationProperties.getSapFtpCustomerDirectory(), applicationProperties.getSapFtpCustomerArchive(), getCustomerSourceDirectory().toString());
   }
 
@@ -222,5 +216,14 @@ public class SapCustomerService {
     return Stream.of(customerData.getName1(), customerData.getName2(), customerData.getName3())
         .filter(StringUtils::isNotBlank).collect(Collectors.joining("; "));
   }
-
+  private SFTPSettings createSFTPSettings() {
+    return new SFTPSettings(applicationProperties.getSapFtpInvoiceHost(),
+                            applicationProperties.getSapFtpInvoiceUser(),
+                            applicationProperties.getSapFtpInvoicePort(),
+                            applicationProperties.getSapFtpInvoicePassword(),
+                            applicationProperties.getKnownHosts(),
+                            ",ssh-rsa",
+                            ",diffie-hellman-group14-sha1",
+                            100000);
+  }
 }
