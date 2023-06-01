@@ -33,6 +33,8 @@ sap_ftp_customer_port: 22
 sap_ftp_customer_directory: /customer/
 sap_ftp_customer_arch_directory: /customer/arch/
 
+sftp_known_host: "|1|kRJ8Ifv8RCzT2mzkIw7fbpgnt6s=|Th6eeVrqXARbGP9P92T8vaC0SSk= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAD1sjUdha8Y/vuGZnvkrgZCr2rY6mHgQpIHOZobA5CV"
+
 # Customer update configuration
 customer_update_enabled: true
 customer_update_cronstring: "*/30 * * * * MON-FRI"
