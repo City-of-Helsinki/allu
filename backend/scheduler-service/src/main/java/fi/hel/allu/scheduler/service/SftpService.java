@@ -35,8 +35,10 @@ public class SftpService {
       ChannelSftp channelSftp = createSession(sftpSettings);
       File sourceDir = new File(localDirectory);
       for (File file : Objects.requireNonNull(sourceDir.listFiles())){
+        logger.info("does file exist 1: {}", file.exists());
         if(file.isFile()) {
           channelSftp.put(file.getAbsolutePath(), remoteDirectory + file.getName());
+          logger.info("does file exist 2:{}", file.exists());
           boolean renaming = file.renameTo(new File(localArchiveDirectory + "/" + file.getName()));
           if (!renaming) {
             logger.warn("renaming local file failed");
