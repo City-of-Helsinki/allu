@@ -46,7 +46,7 @@ CMD /usr/local/bin/supervisord --configuration=/etc/supervisord.conf
 ######################################################################################
 # Host volumes
 ######################################################################################
-
+EXPOSE 5005
 # Service home with runner scripts, configuration etc.
 VOLUME /servicehome
 
