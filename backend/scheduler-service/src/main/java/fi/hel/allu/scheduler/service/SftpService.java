@@ -1,5 +1,6 @@
 package fi.hel.allu.scheduler.service;
 
+import com.google.common.io.Files;
 import com.jcraft.jsch.*;
 import fi.hel.allu.scheduler.domain.SFTPSettings;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,13 +38,11 @@ public class SftpService {
       File sourceDir = new File(localDirectory);
       for (File file : Objects.requireNonNull(sourceDir.listFiles())){
         logger.info("does file exist 1: {}", file.exists());
-        if(file.isFile()) {
+        if(file.exists() && file.isFile() ) {
           channelSftp.put(file.getAbsolutePath(), remoteDirectory + file.getName());
           logger.info("does file exist 2:{}", file.exists());
-          boolean renaming = file.renameTo(new File(localArchiveDirectory, file.getName()));
-          if (!renaming) {
-            logger.warn("renaming local file failed");
-          }
+          File targetFile = new File(localArchiveDirectory, file.getName());
+          Files.move(file, targetFile);
         }
       }
       channelSftp.exit();
@@ -52,7 +52,10 @@ public class SftpService {
     } catch (SftpException e) {
       logger.error("Failed connection", e);
       return false;
-    }finally {
+    } catch (IOException e) {
+      logger.error("Failed to move to archive", e);
+      return false;
+    } finally {
       logger.info("Uploading file through SFTP ended");
     }
     return true;
