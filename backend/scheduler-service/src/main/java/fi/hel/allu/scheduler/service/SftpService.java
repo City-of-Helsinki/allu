@@ -39,7 +39,7 @@ public class SftpService {
         if(file.isFile()) {
           channelSftp.put(file.getAbsolutePath(), remoteDirectory + file.getName());
           logger.info("does file exist 2:{}", file.exists());
-          boolean renaming = file.renameTo(new File(localArchiveDirectory + "/" + file.getName()));
+          boolean renaming = file.renameTo(new File(localArchiveDirectory, file.getName()));
           if (!renaming) {
             logger.warn("renaming local file failed");
           }
