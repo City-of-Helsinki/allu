@@ -10,6 +10,7 @@
     module: docker_image
     source: build
     build:
+      nocache: true
       args:
         CUSTOM_UID: "{{ system_user_id_allu }}"
         CUSTOM_GID: "{{ system_group_id_allu }}"
