@@ -38,7 +38,8 @@ import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
-import org.elasticsearch.index.reindex.*;
+import org.elasticsearch.index.reindex.ReindexRequest;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
@@ -50,7 +51,10 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -98,7 +102,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     private static final String INDEX_TYPE = "_doc";
     protected final ObjectMapper objectMapper;
     private final ElasticSearchMappingConfig elasticSearchMappingConfig;
-    private final RestHighLevelClient client;
+    protected final RestHighLevelClient client;
     private final IndexConductor indexConductor;
     private final Function<T, String> keyMapper;
     private final Class<T> valueType;
@@ -807,31 +811,26 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         return (startOrEnd == 0) ? 1 : startOrEnd;
     }
 
-    private void executeBulk(List<DocWriteRequest<?>> requests, RefreshPolicy refreshPolicy) {
-        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
-                (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
-        BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, new BulkProcessorListener(refreshPolicy));
-        builder.setBulkActions(1000);
-        builder.setConcurrentRequests(1);
-        builder.setBulkSize(new ByteSizeValue(-1));
-        BulkRequest bulkRequest = new BulkRequest();
-        bulkRequest.setRefreshPolicy(refreshPolicy);
-        bulkRequest.add(requests);
-        BulkProcessor bulkProcessor = builder.build();
-        requests.forEach(bulkProcessor::add);
-        try {
-            bulkProcessor.awaitClose(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            throw new SearchException(e);
-        }
+  protected void executeBulk(List<DocWriteRequest<?>> requests, RefreshPolicy refreshPolicy) {
+    BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
+      (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
+    BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, new BulkProcessorListener(refreshPolicy));
+    builder.setBulkActions(500);
+    builder.setConcurrentRequests(1);
+    builder.setBulkSize(new ByteSizeValue(-1));
+    BulkProcessor bulkProcessor = builder.build();
+    requests.forEach(bulkProcessor::add);
+    try {
+      bulkProcessor.awaitClose(1L, TimeUnit.MINUTES);
+    } catch (InterruptedException e) {
+      throw new SearchException(e);
     }
+  }
 
     public void updateByQuery(Integer applicationId, StatusType statusType) {
         UpdateByQueryRequest request = new UpdateByQueryRequest(indexConductor.getIndexAliasName());
         request.setQuery(new TermQueryBuilder("applicationId", applicationId));
-        request.setScript(
-                new Script(ScriptType.INLINE, "painless", "ctx._source.put('applicationStatus', '" + statusType + "');",
-                           Collections.emptyMap()));
+        request.setScript(createUpdateScript("applicationStatus", statusType.toString()));
         try {
             client.updateByQuery(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -850,31 +849,25 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                           Collections.emptyMap());
     }
 
-    private static class BulkProcessorListener implements BulkProcessor.Listener {
+  private record BulkProcessorListener(RefreshPolicy refreshPolicy) implements BulkProcessor.Listener {
 
-        private final RefreshPolicy refreshPolicy;
-
-        private BulkProcessorListener(RefreshPolicy refreshPolicy) {
-            this.refreshPolicy = refreshPolicy;
-        }
-
-        @Override
-        public void beforeBulk(long executionId, BulkRequest request) {
-            if (refreshPolicy != null) {
-                request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
-            }
-        }
-
-        @Override
-        public void afterBulk(long executionId, BulkRequest request, Throwable t) {
-            logger.error("Bulk operation failed", t);
-        }
-
-        @Override
-        public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-            logger.debug("Bulk execution completed [ {} ]. Took (ms): {}. Failures: {}. Count: {}",
-                         executionId, response.getIngestTookInMillis(), response.hasFailures(),
-                         response.getItems().length);
-        }
+    @Override
+    public void beforeBulk(long executionId, BulkRequest request) {
+      if (refreshPolicy != null) {
+        request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
+      }
     }
+
+    @Override
+    public void afterBulk(long executionId, BulkRequest request, Throwable t) {
+      logger.error("Bulk operation failed", t);
+    }
+
+    @Override
+    public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+      logger.debug("Bulk execution completed [ {} ]. Took (ms): {}. Failures: {}. Count: {}",
+        executionId, response.getIngestTookInMillis(), response.hasFailures(),
+        response.getItems().length);
+    }
+  }
 }

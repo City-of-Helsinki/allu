@@ -64,16 +64,15 @@ public class SupervisionTaskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping (value = "/owner/update")
-    public ResponseEntity<Void> updateOwner(@RequestBody UpdateTaskOwners updateTaskOwners,
-                                            @RequestParam(required = false) Boolean waitRefresh) {
-        supervisionTaskSearchService.updateOwner(updateTaskOwners.getNewUser(), updateTaskOwners.getTaskIds(), waitRefresh);
+    @PutMapping (value = "/owner/update")
+    public ResponseEntity<Void> updateOwner(@RequestBody UpdateTaskOwners updateTaskOwners) {
+        supervisionTaskSearchService.updateOwner(updateTaskOwners.getNewUser(), updateTaskOwners.getTaskIds(), false);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(value = "/owner/remove")
-    public ResponseEntity<Void> deleteOwner(@RequestBody List<Integer> supervisionTaskIds, @RequestParam(required = false) Boolean waitRefresh) {
-        supervisionTaskSearchService.updateOwner(null, supervisionTaskIds, waitRefresh);
+    public ResponseEntity<Void> deleteOwner(@RequestBody List<Integer> supervisionTaskIds) {
+        supervisionTaskSearchService.updateOwner(null, supervisionTaskIds, false);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

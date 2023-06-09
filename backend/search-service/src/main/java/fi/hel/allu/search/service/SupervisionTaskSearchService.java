@@ -7,8 +7,13 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.indexConductor.SupervisionTaskIndexConductor;
+import org.elasticsearch.action.DocWriteRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.data.domain.Page;
@@ -80,5 +85,25 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
             idToTask.put(id, Collections.singletonMap("owner", owner));
         }
         partialUpdate(idToTask, waitRefresh);
+    }
+
+    /**
+     * normal bulk that is executed in async was not optimal for ownerupdate because then change don't show on frontend
+     * used for owner update calls.
+     * Overrides GenericSearch executeBulk that is implemented on async.
+     * @param requests
+     * @param refreshPolicy
+     */
+    @Override
+    protected void executeBulk(List<DocWriteRequest<?>> requests, WriteRequest.RefreshPolicy refreshPolicy) {
+        BulkRequest requesta = new BulkRequest();
+        requesta.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
+        requesta.add(requests);
+        requesta.timeout(TimeValue.MINUS_ONE);
+        try {
+            client.bulk(requesta, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
