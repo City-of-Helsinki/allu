@@ -99,7 +99,7 @@ public class SupervisionTaskSearchService extends GenericSearchService<Supervisi
         BulkRequest requesta = new BulkRequest();
         requesta.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         requesta.add(requests);
-        requesta.timeout(TimeValue.MINUS_ONE);
+        requesta.timeout(TimeValue.timeValueSeconds(30L));
         try {
             client.bulk(requesta, RequestOptions.DEFAULT);
         } catch (IOException e) {
