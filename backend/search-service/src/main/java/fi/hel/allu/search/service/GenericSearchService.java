@@ -815,7 +815,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
       (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
     BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, new BulkProcessorListener(refreshPolicy));
-    builder.setBulkActions(500);
+    builder.setBulkActions(1000);
     builder.setConcurrentRequests(1);
     builder.setBulkSize(new ByteSizeValue(-1));
     BulkProcessor bulkProcessor = builder.build();
