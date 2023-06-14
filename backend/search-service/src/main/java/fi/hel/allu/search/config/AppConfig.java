@@ -2,7 +2,9 @@ package fi.hel.allu.search.config;
 
 import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
 import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -26,7 +28,15 @@ public class AppConfig {
     @Bean
     public RestHighLevelClient client() throws UnknownHostException {
         return new RestHighLevelClient(
-                RestClient.builder(new HttpHost(elasticsearchHost, elasticsearchPort, "http")));
+                RestClient.builder(new HttpHost(elasticsearchHost, elasticsearchPort, "http"))
+                        .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
+                            @Override
+                            public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder builder) {
+                                return builder
+                                        .setConnectTimeout(5000)
+                                        .setSocketTimeout(80000);
+                            }
+                        }));
     }
 
     @Bean
