@@ -1,10 +1,6 @@
 package fi.hel.allu.common.controller.handler;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import fi.hel.allu.common.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +18,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import fi.hel.allu.common.exception.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @ControllerAdvice
@@ -44,48 +43,56 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler({IllegalArgumentException.class,  SearchException.class})
   protected ResponseEntity<Object> handleBadRequests(RuntimeException e, WebRequest request) {
+    logger.warn("Request is bad: {}", HttpStatus.BAD_REQUEST);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
   }
 
   @ExceptionHandler(value = { NoSuchEntityException.class })
   protected ResponseEntity<Object> handleNotFound(RuntimeException e, WebRequest request) {
+    logger.warn("Not Found: {}", HttpStatus.NOT_FOUND);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
   }
 
   @ExceptionHandler({NonUniqueException.class})
   protected ResponseEntity<Object> handleNonUnique(RuntimeException e, WebRequest request) {
+    logger.warn("Conflict: {}", HttpStatus.CONFLICT);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.CONFLICT, request);
   }
 
   @ExceptionHandler({NotImplementedException.class})
   protected ResponseEntity<Object> handleNotImplemented(RuntimeException e, WebRequest request) {
+    logger.warn("Not implemented: {}", HttpStatus.NOT_IMPLEMENTED);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.NOT_IMPLEMENTED, request);
   }
 
   @ExceptionHandler({IOException.class})
   protected ResponseEntity<Object> handleServerErrorException(Exception e, WebRequest request) {
+    logger.warn("Server Error: {}", HttpStatus.INTERNAL_SERVER_ERROR);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
   @ExceptionHandler({IllegalOperationException.class})
   protected ResponseEntity<Object> handleIllegalOperation(RuntimeException e, WebRequest request) {
+    logger.warn("Forbidden: {}", HttpStatus.FORBIDDEN);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
   }
 
   @ExceptionHandler({MailSendException.class})
   protected ResponseEntity<Object> handleMailSendException(RuntimeException e, WebRequest request) {
+    logger.warn("Mail send: {}",  HttpStatus.INTERNAL_SERVER_ERROR);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
   @ExceptionHandler({OptimisticLockException.class})
   protected ResponseEntity<Object> handleOptimisticLockException(RuntimeException e, WebRequest request) {
+    logger.warn("Conflict: {}",  HttpStatus.CONFLICT);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.CONFLICT, request);
   }
@@ -97,7 +104,8 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                                WebRequest request) {
     BindingResult bindingResult = e.getBindingResult();
     List<ErrorInfo> errorInfoList = new ArrayList<>();
-
+    logger.warn("MethodArgument not valid: {}, {}", HttpStatus.BAD_REQUEST, status);
+    logger.error("MethodArgument: {}", e);
     bindingResult.getGlobalErrors().stream().map((error) -> {
       ErrorInfo errorInfo = new ErrorInfo();
       errorInfo.setErrorMessage(error.getDefaultMessage());

@@ -1,29 +1,9 @@
 package fi.hel.allu.servicecore.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.AttachmentType;
-import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
@@ -33,6 +13,21 @@ import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AttachmentService {
@@ -214,10 +209,25 @@ public class AttachmentService {
     // ...then execute the request
     ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
         applicationProperties.getAddAttachmentUrl(), HttpMethod.POST, requestEntity, AttachmentInfo.class, applicationId);
+    logResponseCode(response);
     applicationHistoryService.addAttachmentAdded(applicationId, info.getName());
     ApplicationNotificationType notificationType = userService.isExternalUser() ? ApplicationNotificationType.EXTERNAL_ATTACHMENT : ApplicationNotificationType.ATTACHMENT_ADDED;
     applicationEventDispatcher.dispatchUpdateEvent(applicationId, currentUserId, notificationType, info.getType().name());
     return toAttachmentInfoJson(response.getBody());
+  }
+
+  private void logResponseCode(ResponseEntity response){
+    if (response == null){
+      logger.warn("response is null");
+      return;
+    }
+    HttpStatus statusCode = response.getStatusCode();
+    if (statusCode.isError()){
+      logger.error("Add attachment error status code: {}", statusCode);
+    }
+    else {
+      logger.warn("add attachment status code: {}", statusCode);
+    }
   }
 
   /**
