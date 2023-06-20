@@ -123,9 +123,8 @@ public class SupervisionTaskDao {
     for (Tuple tuple : tuples) {
       SupervisionTask supervisionTask = tuple.get(0, SupervisionTask.class);
       if (supervisionTask != null) {
-        Map<Integer, SupervisionLocationMap> locationMap = resultMap.putIfAbsent(supervisionTask.getId(),
-                                                                                 initSupervisionTask(result,
-                                                                                                     supervisionTask));
+        resultMap.putIfAbsent(supervisionTask.getId(), initSupervisionTask(result, supervisionTask));
+        Map<Integer, SupervisionLocationMap> locationMap = resultMap.get(supervisionTask.getId());
         SupervisionTaskLocation supervisionTaskLocation = tuple.get(1, SupervisionTaskLocation.class);
         if (supervisionTaskLocation != null && supervisionTaskLocation.getId() != null) {
           mapTaskLocation(supervisionTaskLocation, locationMap);
