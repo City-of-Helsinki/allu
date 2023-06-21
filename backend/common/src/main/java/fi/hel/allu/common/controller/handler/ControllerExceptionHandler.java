@@ -57,7 +57,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler({NonUniqueException.class})
   protected ResponseEntity<Object> handleNonUnique(RuntimeException e, WebRequest request) {
-    logger.warn("Conflict: {}", HttpStatus.CONFLICT);
+    logger.warn("NonUnique: {}", HttpStatus.CONFLICT);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.CONFLICT, request);
   }
@@ -92,7 +92,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler({OptimisticLockException.class})
   protected ResponseEntity<Object> handleOptimisticLockException(RuntimeException e, WebRequest request) {
-    logger.warn("Conflict: {}",  HttpStatus.CONFLICT);
+    logger.warn("OptimisticLock: {}",  HttpStatus.CONFLICT);
     logger.error(e.getMessage(), e);
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.CONFLICT, request);
   }
