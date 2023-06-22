@@ -477,13 +477,13 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.getVersion(id), HttpStatus.OK);
   }
 
-  @PostMapping(value = "/ownernotification")
+  @PostMapping(value = "/{id}/ownernotification")
   public ResponseEntity<Void> addOwnerNotification(@RequestBody List<Integer> ids) {
     applicationService.addOwnerNotification(ids);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/ownernotification")
+  @DeleteMapping(value = "/{id}/ownernotification")
   public ResponseEntity<Void> removeOwnerNotification(@RequestBody List<Integer> ids) {
     applicationService.removeOwnerNotification(ids);
     return new ResponseEntity<>(HttpStatus.OK);
