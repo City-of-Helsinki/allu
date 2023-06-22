@@ -613,11 +613,11 @@ public class ApplicationService {
   }
 
   public void addOwnerNotification(List<Integer> ids) {
-    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, ids);
+    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, ids.toArray());
   }
 
   public void removeOwnerNotification(List<Integer> ids) {
-    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), ids);
+    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), ids.toArray());
   }
 
   public Integer getReplacingApplicationId(Integer applicationId) {

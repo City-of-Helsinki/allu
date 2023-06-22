@@ -1635,7 +1635,7 @@ public class ApplicationProperties {
   }
 
   public String getOwnerNotificationUrl() {
-    return getModelServiceUrl("/applications/{id}/ownernotification");
+    return getModelServiceUrl("/applications/{ids}/ownernotification");
   }
 
   public String getReplacingApplicationIdUrl() {
