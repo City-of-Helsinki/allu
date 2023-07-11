@@ -1,29 +1,9 @@
 package fi.hel.allu.servicecore.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.common.types.AttachmentType;
-import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
@@ -33,6 +13,29 @@ import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AttachmentService {
@@ -45,28 +48,31 @@ public class AttachmentService {
   private final UserService userService;
   private final ApplicationHistoryService applicationHistoryService;
   private final ApplicationEventDispatcher applicationEventDispatcher;
+  private final WebClient webClient;
 
 
   @Autowired
   public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
-      ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher) {
+      ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher,
+                           WebClient webClient) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationHistoryService = applicationHistoryService;
     this.applicationEventDispatcher = applicationEventDispatcher;
+    this.webClient = webClient;
   }
 
-  public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
+  public Flux<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
       throws IOException, IllegalArgumentException {
     if (infos.length != files.length) {
       throw new IllegalArgumentException("Argument length mismatch: Different amount of infos and files.");
     }
-    List<AttachmentInfoJson> result = new ArrayList<>();
+    List<Mono<AttachmentInfoJson>> result = new ArrayList<>();
     for (int i = 0; i < infos.length; ++i) {
       result.add(addAttachment(id, infos[i], files[i]));
     }
-    return result;
+    return Flux.concat(result);
   }
 
   /**
@@ -204,20 +210,29 @@ public class AttachmentService {
    * @throws IOException
    * @throws RestClientException
    */
-  public AttachmentInfoJson addAttachment(int applicationId, AttachmentInfoJson info, MultipartFile data)
+  public Mono<AttachmentInfoJson> addAttachment(int applicationId, AttachmentInfoJson info, MultipartFile data)
       throws IOException {
     // Create the attachment info for model-service:
     AttachmentInfo toModel = toAttachmentInfo(info);
     Integer currentUserId = userService.getCurrentUser().getId();
     toModel.setUserId(currentUserId);
-    HttpEntity<?> requestEntity = createMultipartRequest(toModel, data);
-    // ...then execute the request
-    ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
-        applicationProperties.getAddAttachmentUrl(), HttpMethod.POST, requestEntity, AttachmentInfo.class, applicationId);
-    applicationHistoryService.addAttachmentAdded(applicationId, info.getName());
-    ApplicationNotificationType notificationType = userService.isExternalUser() ? ApplicationNotificationType.EXTERNAL_ATTACHMENT : ApplicationNotificationType.ATTACHMENT_ADDED;
-    applicationEventDispatcher.dispatchUpdateEvent(applicationId, currentUserId, notificationType, info.getType().name());
-    return toAttachmentInfoJson(response.getBody());
+
+    MultipartBodyBuilder builder = new MultipartBodyBuilder();
+    builder.part("data", data);
+    builder.part("info", toModel);
+    Mono<AttachmentInfo>  monoResponse = webClient.post().uri(uriBuilder -> uriBuilder
+                    .path(applicationProperties.getAddAttachmentUrl())
+                    .build(applicationId))
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(builder.build())).retrieve()
+                    .bodyToMono(AttachmentInfo.class);
+    return monoResponse.map(value -> (AttachmentInfoJson) toAttachmentInfoJson(value))
+            .doFinally(signalType ->{
+              applicationHistoryService.addAttachmentAdded(applicationId, info.getName());
+              ApplicationNotificationType notificationType = userService.isExternalUser() ? ApplicationNotificationType.EXTERNAL_ATTACHMENT : ApplicationNotificationType.ATTACHMENT_ADDED;
+              applicationEventDispatcher.dispatchUpdateEvent(applicationId, currentUserId, notificationType, info.getType().name());
+            });
+
   }
 
   /**

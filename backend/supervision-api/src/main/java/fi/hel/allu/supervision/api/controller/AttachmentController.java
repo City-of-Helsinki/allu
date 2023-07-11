@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -44,13 +45,15 @@ public class AttachmentController {
     @PostMapping(value = "/applications/{id}/attachments", produces = "application/json",
             consumes = "multipart/form-data")
     @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-    public ResponseEntity<AttachmentInfoJson> create(
+    public Mono<ResponseEntity<AttachmentInfoJson>> create(
             @Parameter(description = "Application ID to add attachment for") @PathVariable Integer id,
             @Parameter(description = "Attachment info in JSON", required = true) @Valid @RequestPart(value = "metadata"
             ) AttachmentInfoJson metadata,
             @Parameter(description = "Attachment data", required = true) @RequestPart(value = "file")
             MultipartFile file) throws IOException {
-        return ResponseEntity.ok(attachmentService.addAttachment(id, metadata, file));
+        return attachmentService.addAttachment(id, metadata, file)
+                .map(attachmentInfoJson -> ResponseEntity.status(HttpStatus.OK).body(attachmentInfoJson))
+                .switchIfEmpty(Mono.error(new RuntimeException("AttachmentInfo is empty")));
     }
 
     @Operation(summary = "Add default attachments for application.")

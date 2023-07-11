@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -156,11 +157,11 @@ public class ApplicationController {
    */
   @PostMapping(value = "/{id}/attachments")
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
-  public ResponseEntity<List<AttachmentInfoJson>> addAttachments(
+  public Flux<AttachmentInfoJson> addAttachments(
       @PathVariable int id,
       @RequestPart("meta") @Valid AttachmentInfoJson[] infos, @RequestPart("file") MultipartFile[] files)
       throws IllegalArgumentException, IOException {
-    return new ResponseEntity<>(attachmentService.addAttachments(id, infos, files), HttpStatus.CREATED);
+    return attachmentService.addAttachments(id, infos, files);
   }
 
   /**
