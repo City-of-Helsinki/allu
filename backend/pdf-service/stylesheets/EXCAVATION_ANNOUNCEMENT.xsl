@@ -323,7 +323,7 @@
                 </div>
               </div>
               <p class="space-above">
-                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätöksen 17.2.2022 § 28.
               </p>
             </div>
             <p class="space-above">
