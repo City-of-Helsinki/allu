@@ -25,12 +25,7 @@ public class AlluMapper {
    * Bill text lines for area rentals and excavation announcements
    */
   private static final String[] BILL_TEXT_LINES = {
-      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja",
-      "puhtaanapidosta. MUUTOKSENHAKU: Maksuvelvollisella on oikeus 14 vrk",
-      "kuluessa tämän maksulipun saamisesta tehdä kirjallinen muistutus",
-      "maksun perimisestä alueidenkäytön yksikön päällikölle.",
-      "OSOITE: Helsingin kaupungin kirjaamo, Kaupunkiympäristön toimiala,",
-      "PL 10, 00099 HELSINGIN KAUPUNKI; helsinki.kirjaamo@hel.fi."
+      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta."
    };
 
   /*
