@@ -28,7 +28,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -106,7 +105,7 @@ public class ApplicationService {
    */
   public void replaceDistributionList(int id, List<DistributionEntryJson> distributionEntryJsons) {
     List<DistributionEntry> distributionEntries =
-        distributionEntryJsons.stream().map(entry -> applicationMapper.createDistributionEntryModel(entry)).collect(Collectors.toList());
+        distributionEntryJsons.stream().map(applicationMapper::createDistributionEntryModel).toList();
     restTemplate.postForEntity(
         applicationProperties.getApplicationDistributionListUrl(),
         distributionEntries,
@@ -127,8 +126,8 @@ public class ApplicationService {
       id
     );
     return Arrays.stream(result)
-      .map(entry -> applicationMapper.createDistributionEntryJson(entry))
-      .collect(Collectors.toList());
+      .map(applicationMapper::createDistributionEntryJson)
+            .toList();
   }
 
   /**
@@ -160,7 +159,7 @@ public class ApplicationService {
   public List<ApplicationTagJson> updateTags(int id, List<ApplicationTagJson> tags) {
     List<ApplicationTag> tagsWithUserInfo = tagsWithUserInfo(tags).stream()
             .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime()))
-            .collect(Collectors.toList());
+            .toList();
 
     ResponseEntity<ApplicationTag[]> response = restTemplate.exchange(
             applicationProperties.getTagsUrl(),
@@ -210,8 +209,9 @@ public class ApplicationService {
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicationJson.setId(applicationId);
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
+    if(applicationJson.getStatus() != StatusType.DECISION){
     setPaymentClasses(applicationJson);
-
+    }
     Integer currentUserId = userService.getCurrentUser().getId();
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     Application application = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
@@ -331,8 +331,7 @@ public class ApplicationService {
     if (tags != null) {
       UserJson currentUser = userService.getCurrentUser();
       return tags.stream()
-              .map(t -> tagWithUserInfo(currentUser, t))
-              .collect(Collectors.toList());
+              .map(t -> tagWithUserInfo(currentUser, t)).toList();
     }
     return tags;
   }
@@ -372,8 +371,7 @@ public class ApplicationService {
     HttpEntity<ApplicationIdentifier[]> result = restTemplate.getForEntity(uri, ApplicationIdentifier[].class);
 
     return Arrays.stream(result.getBody())
-        .map(applicationMapper::mapApplicationIdentifierToJson)
-        .collect(Collectors.toList());
+        .map(applicationMapper::mapApplicationIdentifierToJson).toList();
   }
 
 
@@ -453,8 +451,8 @@ public class ApplicationService {
 
   private ZonedDateTime getFirstInvoicingDateForApplication(Integer id) {
     return invoiceService.findByApplication(id).stream()
-      .filter(i -> i.getInvoicableTime() != null)
       .map(InvoiceJson::getInvoicableTime)
+      .filter(Objects::nonNull)
       .sorted()
       .findFirst()
       .orElse(null);
