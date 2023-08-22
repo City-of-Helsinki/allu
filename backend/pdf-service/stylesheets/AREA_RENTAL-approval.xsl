@@ -225,7 +225,7 @@
         <xsl:choose>
         <xsl:when test="data/notBillable = 'false'">
           <p class="space-above">
-            Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätöksen 17.2.2022 § 28.
+            Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 17.2.2022 § 28.
           </p>
         </xsl:when>
         <xsl:otherwise>
