@@ -199,7 +199,7 @@ public class InvoiceDao {
   private List<Invoice> filterIndirectReplacement(List<Invoice> invoices) {
     List<Integer> applicationIds = invoices.stream().map(Invoice::getApplicationId).collect(Collectors.toList());
     // Checks whether theres application which replaces application with given application id and which is not cancelled
-    List<Integer> previousCancels = queryFactory.select(application.id).from(application)
+    List<Integer> previousCancels = queryFactory.select(application.replacesApplicationId).from(application)
             .where(application.replacesApplicationId.in(applicationIds).and(application.status.ne(StatusType.CANCELLED)))
             .fetch();
     return invoices.stream().filter(i -> !previousCancels.contains(i.getApplicationId())).collect(Collectors.toList());
