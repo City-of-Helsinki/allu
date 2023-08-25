@@ -8,18 +8,20 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -366,11 +368,12 @@ public class AttachmentDao {
    */
   @Transactional
   public void removeLinkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
-    long changed = queryFactory.delete(applicationAttachment)
-            .where(applicationAttachment.attachmentId.in(attachmentIds)
-                           .and(applicationAttachment.applicationId.eq(applicationId))).execute();
-    if (changed == 0) {
-      throw new NoSuchEntityException("attachment.unlink.failed", applicationId);
+    if (EmptyUtil.isNotEmpty(attachmentIds)) {
+      long changed = queryFactory.delete(applicationAttachment).where(applicationAttachment.attachmentId.in(
+              attachmentIds).and(applicationAttachment.applicationId.eq(applicationId))).execute();
+      if (changed == 0) {
+        throw new NoSuchEntityException("attachment.unlink.failed", applicationId);
+      }
     }
   }
 
