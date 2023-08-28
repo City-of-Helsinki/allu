@@ -12,13 +12,11 @@ import fi.hel.allu.QApplication;
 import fi.hel.allu.QAttributeMeta;
 import fi.hel.allu.QStructureMeta;
 import fi.hel.allu.QUser;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.model.domain.SupervisionTaskLocation;
-import fi.hel.allu.model.domain.SupervisionTaskLocationGeometry;
-import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import fi.hel.allu.model.util.SupervisionLocationMap;
@@ -71,11 +69,14 @@ public class SupervisionTaskDao {
   private static final QBean<User> creatorBean = bean(User.class, creator.all());
   final QBean<SupervisionTaskLocationGeometry> supervisionTaskLocationGeometryBean = bean(SupervisionTaskLocationGeometry.class, supervisionTaskLocationGeometry.all());
 
+  private final LocationDao locationDao;
 
   private final SQLQueryFactory queryFactory;
 
-  public SupervisionTaskDao(SQLQueryFactory queryFactory) {
+  public SupervisionTaskDao(SQLQueryFactory queryFactory,
+                            LocationDao locationDao) {
     this.queryFactory = queryFactory;
+    this.locationDao = locationDao;
   }
 
   @Transactional(readOnly = true)
@@ -249,7 +250,8 @@ public class SupervisionTaskDao {
   }
 
   private SQLQuery<Tuple> getSupervisionWorkItemQuery(){
-    return queryFactory.select(supervisionWorkItemBean, location.cityDistrictId, location.cityDistrictIdOverride, ownerBean, creatorBean)
+    return queryFactory.select(supervisionWorkItemBean, location.cityDistrictId, location.cityDistrictIdOverride,
+                               ownerBean, creatorBean, supervisionTaskWithAddress.type, application.type)
             .from(supervisionTaskWithAddress)
             .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
             .leftJoin(project).on(application.projectId.eq(project.id))
@@ -277,20 +279,34 @@ public class SupervisionTaskDao {
 
   private SupervisionWorkItem mapSupervisionWorkItemTuple(Tuple tuple) {
     SupervisionWorkItem result = tuple.get(0, SupervisionWorkItem.class);
-    if(result != null) {
+    if (result != null) {
       Integer cityDistrictId = tuple.get(1, Integer.class);
       Integer cityDistrictIdOverride = tuple.get(2, Integer.class);
       result.setCityDistrictId(cityDistrictIdOverride != null ? cityDistrictIdOverride : cityDistrictId);
       result.setOwner(tuple.get(3, User.class));
       result.setCreator(tuple.get(4, User.class));
+      result.setType(new SupervisionTypeES(tuple.get(5, SupervisionTaskType.class)));
+      result.setApplicationType(tuple.get(6, ApplicationType.class));
+      if (result.getCityDistrictId() == null) {
+        List<Location> locations = locationDao.findByApplicationId(result.getApplicationId());
+        Optional<Location> firstLocation = locations.stream().findFirst();
+        firstLocation.ifPresent(e -> updateCityDictrict(e, result));
+      }
     }
     return result;
+  }
+
+  private void updateCityDictrict(Location location, SupervisionWorkItem result) {
+    if (location.getCityDistrictIdOverride() == null) {
+      result.setCityDistrictId(location.getCityDistrictId());
+    } else {
+      result.setCityDistrictId(location.getCityDistrictIdOverride());
+    }
   }
 
   private static Map<String, Path<?>> supervisionWorkItemFields() {
     Map<String, Path<?>> map = new HashMap<>();
     map.put("id", supervisionTaskWithAddress.id);
-    map.put("type", supervisionTaskWithAddress.type);
     map.put("applicationId", application.id);
     map.put("applicationIdText", application.applicationId);
     map.put("applicationStatus", application.status);

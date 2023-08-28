@@ -45,7 +45,7 @@ export class SupervisionSearchMapper {
   private static mapSupervisionParameters(query: SupervisionTaskSearchCriteria): Array<BackendQueryParameter> {
     const queryParameters: Array<BackendQueryParameter> = [];
     QueryParametersMapper.mapArrayParameter(queryParameters, 'type',  query.taskTypes);
-    QueryParametersMapper.mapParameter(queryParameters, 'applicationId',  query.applicationId);
+    QueryParametersMapper.mapParameter(queryParameters, 'applicationIdText',  query.applicationId);
     QueryParametersMapper.mapDateParameter(queryParameters, 'plannedFinishingTime',  query.after, query.before, true);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationType',  query.applicationTypes);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationStatus',  query.applicationStatus);

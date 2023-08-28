@@ -1,14 +1,14 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.model.domain.user.User;
 
 import java.time.ZonedDateTime;
 
 public class SupervisionWorkItem {
   private Integer id;
-  private SupervisionTaskType type;
+  private SupervisionTypeES type;
   private Integer applicationId;
   private String applicationIdText;
   private StatusType applicationStatus;
@@ -18,6 +18,7 @@ public class SupervisionWorkItem {
   private String projectName;
   private User owner;
   private Integer cityDistrictId;
+  private ApplicationType applicationType;
 
   public Integer getId() {
     return id;
@@ -27,11 +28,11 @@ public class SupervisionWorkItem {
     this.id = id;
   }
 
-  public SupervisionTaskType getType() {
+  public SupervisionTypeES getType() {
     return type;
   }
 
-  public void setType(SupervisionTaskType type) {
+  public void setType(SupervisionTypeES type) {
     this.type = type;
   }
 
@@ -105,5 +106,13 @@ public class SupervisionWorkItem {
 
   public void setCityDistrictId(Integer cityDistrictId) {
     this.cityDistrictId = cityDistrictId;
+  }
+
+  public ApplicationType getApplicationType() {
+    return applicationType;
+  }
+
+  public void setApplicationType(ApplicationType applicationType) {
+    this.applicationType = applicationType;
   }
 }
