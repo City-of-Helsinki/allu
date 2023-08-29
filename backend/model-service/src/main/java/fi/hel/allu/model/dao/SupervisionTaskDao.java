@@ -138,7 +138,9 @@ public class SupervisionTaskDao {
 
   private Map<Integer, SupervisionLocationMap> initSupervisionTask(List<SupervisionTask> result,
                                                                    SupervisionTask supervisionTask) {
-    result.add(supervisionTask);
+    if(result.stream().noneMatch(task -> Objects.equals(task.getId(), supervisionTask.getId()))) {
+      result.add(supervisionTask);
+    }
     return new HashMap<>();
   }
 
