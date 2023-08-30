@@ -1,16 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.querydsl.sql.dml.SQLInsertClause;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.util.EmptyUtil;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
@@ -18,13 +7,25 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
-
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.QApplication;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
@@ -267,8 +268,8 @@ public class HistoryDao {
         .where(builder)
         .fetch();
     return result.stream()
-        .collect(Collectors.groupingBy(t -> t.get(1, ExternalApplicationId.class).getId(),
-                 Collectors.mapping(this::toChangeHistoryWithApplicationId, Collectors.toList())));
+            .collect(Collectors.groupingBy(t -> t.get(1, ExternalApplicationId.class).getExternalApplicationId(),
+                                             Collectors.mapping(this::toChangeHistoryWithApplicationId, Collectors.toList())));
    }
 
   @Transactional(readOnly = true)
@@ -290,15 +291,15 @@ public class HistoryDao {
   }
 
   public static class ExternalApplicationId {
-    private Integer id;
+    private Integer externalApplicationId;
     private String applicationId;
 
-    public Integer getId() {
-      return id;
+    public Integer getExternalApplicationId() {
+      return externalApplicationId;
     }
 
-    public void setId(Integer id) {
-      this.id = id;
+    public void setExternalApplicationId(Integer externalApplicationId) {
+      this.externalApplicationId = externalApplicationId;
     }
 
     public String getApplicationId() {
