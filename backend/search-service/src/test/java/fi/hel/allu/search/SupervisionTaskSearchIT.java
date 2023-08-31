@@ -2,6 +2,7 @@ package fi.hel.allu.search;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.SupervisionTypeES;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
@@ -134,7 +135,7 @@ class SupervisionTaskSearchIT extends BaseIntegrationTest {
         SupervisionWorkItem task = new SupervisionWorkItem();
         task.setId(id);
         task.setApplicationId(1000 + id);
-        task.setType(SupervisionTaskType.FINAL_SUPERVISION);
+        task.setType(new SupervisionTypeES(SupervisionTaskType.FINAL_SUPERVISION));
         task.setApplicationIdText("AL0000" + id);
         task.setApplicationStatus(StatusType.DECISION);
         task.setCreator(user);
