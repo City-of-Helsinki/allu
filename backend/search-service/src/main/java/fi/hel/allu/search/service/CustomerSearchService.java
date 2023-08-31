@@ -57,6 +57,8 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
     qb.filter(QueryBuilders.matchQuery("type", type.name()));
     QueryParameter active = queryParameters.remove("active");
     handleActive(qb, active);
+    QueryParameter invoicingOnly = queryParameters.remove("invoicingOnly");
+    handleInvoicingOnly(qb, invoicingOnly);
 
     BoolQueryBuilder fieldQb = QueryBuilders.boolQuery();
     addQueryParameters(queryParameters, matchAny, fieldQb);

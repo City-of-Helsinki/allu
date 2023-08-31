@@ -457,6 +457,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                 .ifPresent(qb::filter);
     }
 
+    protected void handleInvoicingOnly(BoolQueryBuilder qb, QueryParameter invoicingOnly) {
+        // Convert `invoicingOnly is false` to `invoicingOnly is not true` due to how it is saved in ES.
+        Optional.ofNullable(invoicingOnly)
+                .map(a -> QueryBuilders.matchQuery(a.getFieldName(), !Boolean.parseBoolean(a.getFieldValue())))
+                .ifPresent(qb::mustNot);
+    }
+
     public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
         return findByField(queryParameters, pageRequest, false);
     }

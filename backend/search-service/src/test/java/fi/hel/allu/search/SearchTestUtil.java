@@ -67,6 +67,14 @@ public class SearchTestUtil {
         return params;
     }
 
+    public static QueryParameters addQueryParameters(QueryParameters params, String fieldName, String queryParameter) {
+        QueryParameter parameter = new QueryParameter(fieldName, queryParameter);
+        List<QueryParameter> parameterList = params.getQueryParameters();
+        parameterList.add(parameter);
+        params.setQueryParameters(parameterList);
+        return params;
+    }
+
     public static ApplicationQueryParameters createApplicationQueryParameters(String fieldName, String queryParameter) {
         ApplicationQueryParameters params = new ApplicationQueryParameters();
         QueryParameter parameter = new QueryParameter(fieldName, queryParameter);
