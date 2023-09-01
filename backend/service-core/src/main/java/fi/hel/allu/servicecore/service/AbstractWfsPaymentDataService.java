@@ -77,16 +77,18 @@ public abstract class AbstractWfsPaymentDataService {
     final List<String> coordinateArray = getCoordinates(location);
     final List<String> requests = coordinateArray.stream()
       .map(c -> getRequest(applicationJson).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
-    try {
-      final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
-      logger.info("collect response");
-      final List<String> responses = collectResponses(responseFutures);
-      logger.info("parse wfs response");
-      return parseResult(responses, applicationJson);
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      return UNDEFINED;
+    int connectionTries = 2;
+    while (connectionTries > 0) {
+      try {
+        final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
+        final List<String> responses = collectResponses(responseFutures);
+        return parseResult(responses, applicationJson);
+      } catch (Exception e) {
+        logger.error(e.getMessage(), e);
+        connectionTries--;
+      }
     }
+    return UNDEFINED;
   }
 
   private String getRequest(StartTimeInterface startTime) {
@@ -109,7 +111,6 @@ public abstract class AbstractWfsPaymentDataService {
     final HttpHeaders headers = WfsUtil.createAuthHeaders(
       applicationProperties.getPaymentClassUsername(),
       applicationProperties.getPaymentClassPassword());
-    logger.info("make calls to wfs");
     final List<ListenableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
     requests.stream().map(request -> new HttpEntity<>(request, headers))
       .map(requestEntity -> restTemplate.exchange(
@@ -117,7 +118,6 @@ public abstract class AbstractWfsPaymentDataService {
         HttpMethod.POST,
         requestEntity,
         String.class)).forEachOrdered(responseFutures::add);
-    logger.info("calls to wfs was succesfull");
     return responseFutures;
   }
 
