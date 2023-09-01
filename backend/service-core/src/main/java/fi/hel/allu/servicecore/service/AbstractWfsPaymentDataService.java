@@ -79,6 +79,7 @@ public abstract class AbstractWfsPaymentDataService {
       .map(c -> getRequest(applicationJson).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
+      logger.info("collect response");
       final List<String> responses = collectResponses(responseFutures);
       logger.info("parse wfs response");
       return parseResult(responses, applicationJson);
