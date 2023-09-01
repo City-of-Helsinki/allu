@@ -80,6 +80,7 @@ public abstract class AbstractWfsPaymentDataService {
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
       final List<String> responses = collectResponses(responseFutures);
+      logger.info("parse wfs response");
       return parseResult(responses, applicationJson);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -107,6 +108,7 @@ public abstract class AbstractWfsPaymentDataService {
     final HttpHeaders headers = WfsUtil.createAuthHeaders(
       applicationProperties.getPaymentClassUsername(),
       applicationProperties.getPaymentClassPassword());
+    logger.info("make calls to wfs");
     final List<ListenableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
     requests.stream().map(request -> new HttpEntity<>(request, headers))
       .map(requestEntity -> restTemplate.exchange(
@@ -114,6 +116,7 @@ public abstract class AbstractWfsPaymentDataService {
         HttpMethod.POST,
         requestEntity,
         String.class)).forEachOrdered(responseFutures::add);
+    logger.info("calls to wfs was succesfull");
     return responseFutures;
   }
 
