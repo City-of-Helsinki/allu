@@ -852,7 +852,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
      * @return
      */
     private Script createUpdateScript(String fieldName, String fieldValue) {
-        return new Script(ScriptType.INLINE, "painless", "ctx._source.put('" + fieldName + "', " + fieldValue + ");",
+        return new Script(ScriptType.INLINE, "painless",
+                          String.format("ctx._source.%s='%s';", fieldName, fieldValue),
                           Collections.emptyMap());
     }
 

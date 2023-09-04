@@ -65,9 +65,8 @@ public class ElasticSearchMappingConfig {
         indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Contact"));
         indexRequest.mapping(getMappingBuilderForContact());
       } else if (indexName.startsWith(SUPERVISION_TASK_INDEX)) {
-        // Supervision needs only default settings, but needs to be done so that
-        // supervision index creation does not go to else and throw error.
-          logger.debug("Supervision index was created succesfully");
+        indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
+        indexRequest.mapping(getMappingBuilderForSupervision());
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
@@ -253,6 +252,29 @@ public class ElasticSearchMappingConfig {
           .endObject();
       if (logger.isDebugEnabled()) {
         logger.debug("Customers mapping: {}", mappingBuilder);
+      }
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException(BUILDER_ERROR, e);
+    }
+  }
+
+  /**
+   * @return  Supervision specific type mappings for supervision index.
+   */
+  public XContentBuilder getMappingBuilderForSupervision() {
+    try {
+      XContentBuilder mappingBuilder = jsonBuilder()
+              .startObject()
+              .startObject(PROPERTIES_INDEX_ALIAS)
+              .startObject("applicationStatus")
+              .field("type", "text")
+              .field(FIELDS).copyCurrentStructure(parser(alphasort()))
+              .endObject()
+              .endObject()
+              .endObject();
+      if (logger.isDebugEnabled()) {
+        logger.debug("Supervision mapping: {}", mappingBuilder);
       }
       return mappingBuilder;
     } catch (IOException e) {
