@@ -37,9 +37,15 @@
     volumes:
       - /home/allu/sftpserver/invoice:/home/allu/invoice
       - /home/allu/sftpserver/customer:/home/allu/customer
+      - /home/allu/sftpserver/ssh:/etc/ssh/:rw
     ports:
       - "2222:22"
     networks:
       - name: "{{ network_name }}"
     command: "{{ sap_ftp_invoice_user }}:{{ sap_ftp_invoice_password }}:{{ system_user_id_allu}}:{{ system_group_id_allu }}:/customer/arch"
+  become: yes
+
+- name: copy sshd_config
+  copy: src=./../../sftpserver_build/files/sftpserver_docker/sshd_config dest=/home/allu/sftpserver/ssh/sshd_config
+    directory_mode=0755 mode=0644 owner=allu group=allu
   become: yes

@@ -10,6 +10,9 @@
     module: docker_image
     source: build
     build:
+      args:
+        SFTP_CUSTOMER_PASS: "{{ sap_ftp_customer_password }}"
+        SFTP_INVOICE_PASS: "{{ sap_ftp_invoice_password }}"
       path: "{{ role_path }}/files/sftpserver_docker"
     name: "allu_sftpserver:{{ branch }}"
     force_source: true
