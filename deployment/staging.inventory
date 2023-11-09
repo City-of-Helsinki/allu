@@ -1,14 +1,14 @@
 [webservers]
-94.199.118.86
+10.235.144.141
 
 [dbservers]
-94.199.118.86
+10.235.144.141
 
 [backendservers]
-94.199.118.86
+10.235.144.141
 
 [searchservers]
-94.199.118.86
+10.235.144.141
 
 [staging:children]
 webservers
