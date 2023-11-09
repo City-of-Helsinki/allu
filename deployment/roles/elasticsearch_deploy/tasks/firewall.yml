@@ -12,19 +12,3 @@
   with_items:
     - 9200 # elasticsearch http
     - 9300 # elasticsearch tcp
-
-- name: allow developer connections to test environment
-  ufw: rule=allow port={{ item }} src=62.183.130.66
-  when: "'test' in group_names"
-  become: yes
-  with_items:
-      - 9200 # elasticsearch http
-      - 9300 # elasticsearch tcp
-
-- name: allow developer connections to test environment from VPN
-  ufw: rule=allow port={{ item }} src=83.102.45.242
-  when: "'test' in group_names"
-  become: yes
-  with_items:
-      - 9200 # elasticsearch http
-      - 9300 # elasticsearch tcp
