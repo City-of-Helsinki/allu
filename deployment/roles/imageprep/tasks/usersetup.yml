@@ -8,5 +8,5 @@
         password={{ system_password_allu }}
         shell=/bin/bash
 
-- name: allow all sudo users to sudo without password
+- name: allow allu user to sudo without password
   lineinfile: "dest=/etc/sudoers state=present regexp='^%allu' line='%allu ALL=(ALL:ALL) NOPASSWD: ALL'"
