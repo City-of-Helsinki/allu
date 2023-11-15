@@ -12,10 +12,10 @@
 - name: add Finnish locale to system
   locale_gen: name=fi_FI.UTF-8 state=present
 
-- include_tasks: usersetup.yml
-
-- include_tasks: sshsetup.yml
-
 - include_tasks: apt_install.yml
 
 - include_tasks: configure_systemd.yml
+
+- include_tasks: usersetup.yml
+
+- include_tasks: sshsetup.yml
