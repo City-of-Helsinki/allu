@@ -11,12 +11,7 @@
       - software-properties-common
       - virtualenv
       - python3-setuptools
-    state: present
-
-- name: install docker dependency for managing Docker with Ansible
-  pip:
-    name:
-      - docker
+      - python3-docker
     state: present
 
 - name: check does Docker daemon already exist
