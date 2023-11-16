@@ -1,5 +1,0 @@
-- name: install Allu database
-  hosts: dbservers
-  remote_user: allu
-  roles:
-    - { role: database, branch: "{{ var_branch | default('master') }}" }
