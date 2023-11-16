@@ -1,6 +1,0 @@
-- name: Install Allu sftp test server
-  hosts: sftpserver
-  remote_user: allu
-  become: no
-  roles:
-    - { role: sftpserver, branch: "{{ var_branch | default('master') }}" }

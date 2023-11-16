@@ -1,5 +1,0 @@
-- name: install elasticsearch
-  hosts: searchservers
-  remote_user: allu
-  roles:
-    - { role: elasticsearch, branch: "{{ var_branch | default('master') }}" }

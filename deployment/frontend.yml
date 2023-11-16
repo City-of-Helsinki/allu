@@ -1,6 +1,0 @@
-- name: install Allu frontend
-  hosts: webservers
-  remote_user: allu
-  become: no
-  roles:
-    - { role: frontend, branch: "{{ var_branch | default('master') }}" }

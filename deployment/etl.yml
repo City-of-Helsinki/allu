@@ -1,5 +1,0 @@
-- name: install Allu ETL application
-  hosts: reporting_dbserver
-  remote_user: allu
-  roles:
-    - { role: etl, branch: "{{ var_branch | default('master') }}" }

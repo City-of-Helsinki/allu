@@ -1,3 +1,0 @@
-
-- name: remove existing service configuration folder to make sure no previous deployments mess up things
-  local_action: file path=/allu/home/services state=absent
