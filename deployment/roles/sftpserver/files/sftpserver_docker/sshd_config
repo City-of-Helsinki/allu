@@ -1,7 +1,0 @@
-HostKey /etc/ssh/ssh_host_ed25519_key
-HostKey /etc/ssh/ssh_host_rsa_key
-
-PermitRootLogin no
-AllowTcpForwarding no
-
-Subsystem sftp internal-sftp

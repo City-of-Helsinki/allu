@@ -1,3 +1,0 @@
-- include_tasks: firewall.yml
-- include_tasks: create_directories.yml
-- include_tasks: docker.yml

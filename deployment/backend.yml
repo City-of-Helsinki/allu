@@ -1,6 +1,0 @@
-- name: install Allu backend services
-  hosts: backendservers
-  remote_user: allu
-  become: no
-  roles:
-    - { role: backend, branch: "{{ var_branch | default('master')}}" }
