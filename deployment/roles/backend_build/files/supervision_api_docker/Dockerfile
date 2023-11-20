@@ -71,6 +71,6 @@ ARG SERVICE_MEMORY=256m
 ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
 # JAR files
-RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/supervision-api/1.2-SNAPSHOT/supervision-api-1.2-SNAPSHOT.jar --output-document /home/allu/supervision-api/supervision-api.jar
+RUN wget http://10.235.144.143/artifactory/libs-snapshot-local/fi/hel/allu/supervision-api/1.2-SNAPSHOT/supervision-api-1.2-SNAPSHOT.jar --output-document /home/allu/supervision-api/supervision-api.jar
 ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/supervision-api \
     -jar /home/allu/supervision-api/supervision-api.jar --spring.config.additional-location=file:/home/allu/supervision-api/supervision-api.properties
