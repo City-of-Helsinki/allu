@@ -1,7 +1,7 @@
 FROM postgis/postgis:14-3.1-alpine
 #uses alpine version 3.14
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.14/main" >> /etc/apk/repositories
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.14/community" >> /etc/apk/repositories
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.14/main" >> /etc/apk/repositories
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.14/community" >> /etc/apk/repositories
 RUN apk update \
     && rm -rf /var/lib/apt/lists/*
 
