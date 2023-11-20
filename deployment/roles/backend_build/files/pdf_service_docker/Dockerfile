@@ -78,6 +78,6 @@ ARG SERVICE_MEMORY=256m
 ENV SERVICE_MEMORY=$SERVICE_MEMORY
 
 # JAR files
-RUN wget https://allu.jenkins.vincit.io/artifactory/libs-snapshot-local/fi/hel/allu/pdf-service/1.2-SNAPSHOT/pdf-service-1.2-SNAPSHOT.jar --output-document /home/allu/pdf-service/pdf-service.jar
+RUN wget http://10.235.144.143/artifactory/libs-snapshot-local/fi/hel/allu/pdf-service/1.2-SNAPSHOT/pdf-service-1.2-SNAPSHOT.jar --output-document /home/allu/pdf-service/pdf-service.jar
 ENTRYPOINT exec java -Xmx$SERVICE_MEMORY -Dservice.home=/home/allu/pdf-service \
     -jar /home/allu/pdf-service/pdf-service.jar --spring.config.additional-location=file:/home/allu/pdf-service/pdf-service.properties
