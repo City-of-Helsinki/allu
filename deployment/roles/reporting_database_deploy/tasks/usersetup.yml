@@ -3,7 +3,7 @@
   become: yes
 
 - name: add postgres user to system
-  user: name=postgres uid=999 group=postgres shell=/bin/bash
+  user: name=postgres uid=1009 group=postgres shell=/bin/bash
   become: yes
 
 - name: add .pgpass file for postgres
