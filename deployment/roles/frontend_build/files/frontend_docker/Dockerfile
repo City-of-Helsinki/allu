@@ -3,6 +3,12 @@ FROM debian:bullseye-20220711-slim
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
+# Use fi.archive.ubuntu.com as our CI has restricted outgoing HTTP (:80) access
+# (http://archive.ubuntu.com and http://security.ubuntu.com (has no https alt) were blocked at the time of writing this)
+RUN echo 'deb http://fi.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse' > /etc/apt/sources.list \
+ && echo 'deb http://fi.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse' >> /etc/apt/sources.list \
+ && echo 'deb http://fi.archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse' >> /etc/apt/sources.list
+
 RUN apt-get update \
     && apt-get install -y tzdata systemctl python3-dev cron apache2 libapache2-mod-wsgi-py3 python3-pip supervisor \
     python3-yaml python3-pyproj build-essential libjpeg-dev python3-dev zlib1g-dev libfreetype6-dev\
