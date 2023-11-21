@@ -3,7 +3,7 @@ FROM eclipse-temurin:17.0.5_8-jre-focal
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
-# Use fi.archive.ubuntu.com as our CI has restricted outgoing HTTP (:80) access \
+# Use fi.archive.ubuntu.com as our CI has restricted outgoing HTTP (:80) access
 # (http://archive.ubuntu.com and http://security.ubuntu.com (has no https alt) were blocked at the time of writing this)
 RUN echo 'deb http://fi.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse' > /etc/apt/sources.list \
  && echo 'deb http://fi.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse' >> /etc/apt/sources.list \
