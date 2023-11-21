@@ -4,6 +4,7 @@
       - libpq5
       - libpq-dev
       - python3-dev
+      - acl
     state: present
   become: yes
 
