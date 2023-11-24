@@ -3,9 +3,21 @@ FROM debian:bullseye-20220711-slim
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 
+# A bit hacky: install openssl & ca-certificate from committed .deb packages
+# Because http was blocked and no time to wait for firewall rules to change...
+COPY ./deb/*.deb /tmp/
+RUN dpkg -i /tmp/openssl*.deb \
+    && dpkg -i /tmp/ca-certificates*.deb \
+    && rm /tmp/*.deb
+
+# Use https instead of http (as outgoing http was blocked in CI)
+RUN echo 'deb https://deb.debian.org/debian bullseye main contrib non-free' > /etc/apt/sources.list \
+ && echo 'deb https://deb.debian.org/debian bullseye-updates main contrib non-free' >> /etc/apt/sources.list \
+ && echo 'deb https://security.debian.org/debian-security bullseye-security main contrib non-free' >> /etc/apt/sources.list
+
 RUN apt-get update \
     && apt-get install -y tzdata systemctl python3-dev cron apache2 libapache2-mod-wsgi-py3 python3-pip supervisor \
-    python3-yaml python3-pyproj build-essential libjpeg-dev python3-dev zlib1g-dev libfreetype6-dev\
+    python3-yaml python3-pyproj build-essential libjpeg-dev python3-dev zlib1g-dev libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 
