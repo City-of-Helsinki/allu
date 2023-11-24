@@ -1,7 +1,10 @@
 # add environment specific frontend variables here
 http_port: 80
 https_port: 443
-proxy_domain: staging.allu.kaupunkiymparisto.fi
+# We proxy requests through test frontend to the staging server (10.235.144.141)
+# We ProxyPreserveHost so that staging sees the original Host (test server IP or the domain)
+proxy_domain: 137.163.56.136
+# proxy_domain: staging.allu.kaupunkiymparisto.fi
 proxypass_api_context: /api/
 proxypass_api_target: "http://{{ allu_ui_service_name }}:9000/"
 proxypass_external_context: /external/
