@@ -37,6 +37,11 @@ COMMIT
 :DOCKER-USER - [0:0]
 -A DOCKER-USER -j ufw-user-forward
 
+# Allow incoming requests into docker containers from allu test frontend
+-I DOCKER-USER -j RETURN -s 137.163.56.136
+# Allow incoming requests into docker containers from allu prod frontend
+-I DOCKER-USER -j RETURN -s 137.163.56.135
+
 -A DOCKER-USER -j RETURN -s 10.0.0.0/8
 -A DOCKER-USER -j RETURN -s 172.16.0.0/12
 -A DOCKER-USER -j RETURN -s 192.168.0.0/16

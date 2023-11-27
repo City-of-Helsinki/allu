@@ -1,4 +1,3 @@
-
 - name: allow Docker container access to local services in test environment
   ufw: rule=allow port={{ item }} src=172.18.0.1/24
   when: "'test' in group_names or 'staging' in group_names"
@@ -14,6 +13,28 @@
 
 - name: allow local network access to backend processes
   ufw: rule=allow port={{ item }} src=10.0.0.0/8
+  become: yes
+  with_items:
+    - 9000 # allu-ui-service
+    - 9010 # model-service
+    - 9020 # search-service
+    - 9030 # pdf-service
+    - 9040 # external-service
+    - 9050 # supervision-api
+
+- name: allow test frontend access to backend processes
+  ufw: rule=allow port={{ item }} src=137.163.56.136
+  become: yes
+  with_items:
+    - 9000 # allu-ui-service
+    - 9010 # model-service
+    - 9020 # search-service
+    - 9030 # pdf-service
+    - 9040 # external-service
+    - 9050 # supervision-api
+
+- name: allow prod frontend access to backend processes
+  ufw: rule=allow port={{ item }} src=137.163.56.135
   become: yes
   with_items:
     - 9000 # allu-ui-service
