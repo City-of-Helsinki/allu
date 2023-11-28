@@ -86,3 +86,9 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 # PAM authentication, then enable this but set PasswordAuthentication
 # and ChallengeResponseAuthentication to 'no'.
 UsePAM no
+
+# Allow Jenkins SSH with only ssh-key
+Match User jenkins
+AuthorizedKeysFile	%h/.ssh/authorized_keys
+AuthenticationMethods "publickey"
+PubkeyAuthentication yes
