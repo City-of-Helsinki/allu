@@ -1,9 +1,21 @@
-- cron:
+- name: Create cron job for staging database backup
+  cron:
+    name: Backup database
+    minute: 10
+    user: root
+    job: "echo \"Start backup: $(date)\" >> /etc/cron.d/allu_database-backup.log; cd /srv/backup/allu/database/dumps/; pg_basebackup -h localhost -U postgres -D /srv/backup/allu/database/dumps/latest -X stream; tar --remove-files -zcf db_backup-latest.tar.gz latest/ && chmod 0400 db_backup-latest.tar.gz; echo \"End backup: $(date)\" >> /etc/cron.d/allu_database-backup.log;"
+    cron_file: allu_database-backup
+  when: "'staging' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for production database backup
+  cron:
     name: Backup database
     hour: 21
     minute: 30
-    user: postgres
-    job: "chmod 0600 /srv/backup/allu/database/dumps/db-dump.sql.gz; pg_dump -h localhost -Z0 -p 5432 -d model_service | gzip > /srv/backup/allu/database/dumps/db-dump.sql.gz && chmod 0400 /srv/backup/allu/database/dumps/db-dump.sql.gz"
+    user: root
+    job: "echo \"Start backup: $(date)\" >> /etc/cron.d/allu_database-backup.log; cd /srv/backup/allu/database/dumps/; pg_basebackup -h localhost -U postgres -D /srv/backup/allu/database/dumps/latest -X stream; tar --remove-files -zcf db_backup-latest.tar.gz latest/ && chmod 0400 db_backup-latest.tar.gz; echo \"End backup: $(date)\" >> /etc/cron.d/allu_database-backup.log;"
     cron_file: allu_database-backup
   when: "'production' in group_names"
   become: yes
