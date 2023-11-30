@@ -1,0 +1,5 @@
+- name: Recover Allu database from backup
+  hosts: dbservers
+  remote_user: allu
+  roles:
+    - { role: database_recover }

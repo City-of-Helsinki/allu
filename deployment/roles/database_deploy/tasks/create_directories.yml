@@ -18,7 +18,7 @@
         owner=postgres
         group=postgres
         mode="u=rwx,g=r,o=r"
-  when: "'production' in group_names"
+  when: "'staging' in group_names or 'production' in group_names"
   become: yes
 
 - name: create directory for Postgresql databases WAL archive
