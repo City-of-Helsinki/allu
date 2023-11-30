@@ -20,3 +20,13 @@
         mode="u=rwx,g=r,o=r"
   when: "'production' in group_names"
   become: yes
+
+- name: create directory for Postgresql databases WAL archive
+  # UID & GID inside the database container "postgres:postgres"
+  file: path=/srv/backup/allu/database/wal_archive
+        state=directory
+        owner=70
+        group=70
+        mode="u=rwx,g=r,o=r"
+  when: "'staging' in group_names or 'production' in group_names"
+  become: yes
