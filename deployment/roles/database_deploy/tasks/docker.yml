@@ -39,6 +39,7 @@
       POSTGRES_PASSWORD: "{{ database_password_postgres }}"
     volumes:
       - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
+      - /srv/backup/allu/database/wal_archive:/srv/backup/allu/database/wal_archive:rw
     published_ports:
       - "5432:5432"
     networks:
