@@ -1,0 +1,63 @@
+- name: Stop existing allu_database container
+  docker_container:
+    name: "{{ database_container_name }}"
+    state: stopped
+  become: yes
+
+- name: Copy WAL files that have not yet been archived
+  command: cp -rPp /srv/data/allu/database/data/pg_wal /srv/backup/allu/database/recovery/
+  ignore_errors: true
+  become: yes
+
+- name: Clean the database tablespace slate for the backup
+  command: sudo rm -r /srv/data/allu/database/data/*
+  ignore_errors: true
+  become: yes
+
+- name: Unpack compressed backup
+  command: tar -xzf db_backup-latest.tar.gz
+  args:
+    chdir: /srv/backup/allu/database/dumps/
+  ignore_errors: true
+  become: yes
+  become_user: postgres
+
+- name: Move base backup content into database tablespace
+  command: mv /srv/backup/allu/database/dumps/latest /srv/data/allu/database/data
+  ignore_errors: true
+  become: yes
+  become_user: postgres
+
+- name: Remove WAL files that was stored with the base backup
+  command: rm -r /srv/data/allu/database/data/pg_wal
+  ignore_errors: true
+  become: yes
+
+- name: Copy back not yet archived WAL files
+  command: cp -rPp /srv/backup/allu/database/recovery/pg_wal /srv/data/allu/database/data/
+  ignore_errors: true
+  become: yes
+  become_user: postgres
+
+- name: Push restore command to PostgreSQL config
+  command: echo "restore_command = 'cp /srv/backup/allu/database/wal_archive/%f %p'" >> /srv/data/allu/database/data/postgresql.conf
+  ignore_errors: true
+  become: yes
+
+- name: Push recovery target time to PostgreSQL config
+  command: echo "recovery_target_time = {{recovery_target_time}}" >> /srv/data/allu/database/data/postgresql.conf
+  ignore_errors: true
+  when: recovery_target_time is defined
+  become: yes
+
+- name: Create a flag file for PostgreSQL to see that a recovery needs to be executed
+  command: touch /srv/data/allu/database/data/recovery.signal
+  ignore_errors: true
+  become: yes
+  become_user: postgres
+
+- name: Start existing allu_database container
+  docker_container:
+    name: "{{ database_container_name }}"
+    state: started
+  become: yes

@@ -139,6 +139,29 @@
     - "'staging' in group_names or 'production' in group_names"
   become: yes
 
+- name: Client authentication for psql command - Check if client auth is set. Grep return code is 0 if matches were found and 1 if not.
+  shell: grep -c "^host    all              postgres        172.18.0.1/32           md5" /srv/data/allu/database/data/pg_hba.conf
+  ignore_errors: true
+  register: client_auth_check
+  when: "'staging' in group_names or 'production' in group_names"
+  become: yes
+
+- name: Client authentication for psql command - Skip adding of a client auth
+  debug:
+    msg: Client auth was already set
+  when:
+    - client_auth_check.rc == 0
+    - "'staging' in group_names or 'production' in group_names"
+
+- name: Client authentication for psql command - Add client auth
+  shell: echo -e "local   all              all                                     md5\nhost    all              postgres        172.18.0.1/32           md5" >> /srv/data/allu/database/data/pg_hba.conf
+  args:
+    executable: /bin/bash
+  when:
+    - client_auth_check.rc > 0
+    - "'staging' in group_names or 'production' in group_names"
+  become: yes
+
 - name: Restart a container
   docker_container:
     name: "{{ database_container_name }}"
