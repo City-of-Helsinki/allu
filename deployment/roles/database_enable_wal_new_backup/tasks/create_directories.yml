@@ -1,0 +1,32 @@
+- name: delete database data directory in test environment
+  file: path=/srv/data/allu/database/data
+        state=absent
+  when: "'test' in group_names"
+  become: yes
+
+- name: create database directory for Postgresql databases
+  file: path=/srv/data/allu/database/data
+        state=directory
+        owner=postgres
+        group=postgres
+        mode="u=rwx,g=r,o=r"
+  become: yes
+
+- name: create directory for Postgresql databases backups
+  file: path=/srv/backup/allu/database/dumps
+        state=directory
+        owner=postgres
+        group=postgres
+        mode="u=rwx,g=r,o=r"
+  when: "'staging' in group_names or 'production' in group_names"
+  become: yes
+
+- name: create directory for Postgresql databases WAL archive
+  # UID & GID inside the database container "postgres:postgres"
+  file: path=/srv/backup/allu/database/wal_archive
+        state=directory
+        owner=70
+        group=70
+        mode="u=rwx,g=r,o=r"
+  when: "'staging' in group_names or 'production' in group_names"
+  become: yes

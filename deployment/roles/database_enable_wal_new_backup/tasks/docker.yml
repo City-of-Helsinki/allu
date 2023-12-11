@@ -1,0 +1,37 @@
+- name: Start Docker services on remote host
+  service: name=docker state=started
+  become: yes
+
+- name: Stop and remove existing allu_database container from Docker
+  docker_container:
+    name: "{{ database_container_name }}"
+    state: absent
+  become: yes
+
+- name: Start allu_database container
+  docker_container:
+    name: "{{ database_container_name }}"
+    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_database:{{ branch }}"
+    shm_size: "{{ container_shm_size }}"
+    restart_policy: always
+    env:
+      POSTGRES_PASSWORD: "{{ database_password_postgres }}"
+    volumes:
+      - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
+      - /srv/backup/allu/database/wal_archive:/srv/backup/allu/database/wal_archive:rw
+    published_ports:
+      - "5432:5432"
+    networks:
+      - name: "{{ network_name }}"
+  become: yes
+
+- name: wait for Postgresql to initialize
+  postgresql_ping:
+    login_host: localhost
+    port: 5432
+    login_user: postgres
+    login_password: "{{ database_password_postgres }}"
+  register: result
+  until: result.is_available
+  retries: 30
+  delay: 4

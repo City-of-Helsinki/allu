@@ -1,0 +1,5 @@
+- name: Enable WAL and new backup method for database
+  hosts: dbservers
+  remote_user: allu
+  roles:
+    - { role: database_enable_wal_new_backup, branch: "{{ var_branch | default('master') }}" }
