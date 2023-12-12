@@ -9,7 +9,8 @@ proxypass_external_target: http://10.235.144.145:9040/
 proxypass_supervision_context: /supervision-api/
 proxypass_supervision_target: http://10.235.144.145:9050/
 server_admin: alluprojekti@gmail.com
-ssl_certificate_file: apache-selfsigned.crt
-ssl_certificate_key_file: apache-selfsigned.key
+ssl_certificate_file: cert.pem
+ssl_certificate_key_file: privkey.pem
+ssl_certificate_chain_file: chain.pem
 mapproxy_block_by_referer: false
 test_proxy_staging_ip: 10.235.144.141
