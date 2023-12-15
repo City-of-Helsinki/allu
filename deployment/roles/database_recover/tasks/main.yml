@@ -15,15 +15,15 @@
   become: yes
 
 - name: Unpack compressed backup
-  command: tar -xzf db_backup-latest.tar.gz
+  command: tar -xzf /srv/backup/allu/database/dumps/db_backup-latest.tar.gz
   args:
-    chdir: /srv/backup/allu/database/dumps/
+    chdir: /srv/data/allu/database/data
   ignore_errors: true
   become: yes
   become_user: postgres
 
 - name: Move base backup content into database tablespace
-  command: mv /srv/backup/allu/database/dumps/latest /srv/data/allu/database/data
+  command: mv /srv/data/allu/database/data/latest /srv/data/allu/database/data
   ignore_errors: true
   become: yes
   become_user: postgres
