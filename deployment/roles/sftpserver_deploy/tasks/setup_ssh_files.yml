@@ -1,0 +1,10 @@
+- name: copy sshd_config
+  copy: src=./sshd_config dest=/home/allu/sftpserver/ssh/sshd_config
+    directory_mode=0755 mode=0644 owner=allu group=allu
+  become: yes
+
+- name: set sftp users.conf
+  command: "echo 'allu:{{ sap_ftp_invoice_password }}:1001:100' > /etc/sftp/users.conf"
+  ignore_errors: true
+  become: yes
+  become_user: allu

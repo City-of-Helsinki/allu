@@ -22,12 +22,14 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
   become: yes
+  when: "'dev' not in group_names"
 
 - name: Pull allu_sftpserver Docker image from GitLab repository
   docker_image:
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_sftpserver:{{ branch }}"
   become: yes
+  when: "'dev' not in group_names"
 
 - name: Start allu_sftpserver container
   docker_container:
@@ -43,9 +45,4 @@
     networks:
       - name: "{{ network_name }}"
     command: "{{ sap_ftp_invoice_user }}:{{ sap_ftp_invoice_password }}:{{ system_user_id_allu}}:{{ system_group_id_allu }}:/customer/arch"
-  become: yes
-
-- name: copy sshd_config
-  copy: src=./../../sftpserver_build/files/sftpserver_docker/sshd_config dest=/home/allu/sftpserver/ssh/sshd_config
-    directory_mode=0755 mode=0644 owner=allu group=allu
   become: yes
