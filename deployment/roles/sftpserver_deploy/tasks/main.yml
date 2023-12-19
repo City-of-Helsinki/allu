@@ -1,6 +1,4 @@
 - include_tasks: firewall.yml
-  when: "'dev' not in group_names"
 - include_tasks: create_directories.yml
-  when: "'dev' not in group_names"
 - include_tasks: setup_ssh_files.yml
 - include_tasks: docker.yml

@@ -4,7 +4,6 @@
     registry: "{{ gitlab_registry_url }}"
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
-  when: "'dev' not in group_names"
 
 - name: Build Test SFTP Server Docker image
   local_action:
@@ -14,17 +13,6 @@
       path: "{{ role_path }}/files/sftpserver_docker"
     name: "allu_sftpserver:{{ branch }}"
     force_source: true
-  when: "'dev' not in group_names"
-
-- name: Build Test SFTP Server Docker image
-  local_action:
-    module: docker_image
-    source: build
-    build:
-      path: "{{ role_path }}/files/sftpserver_docker"
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_sftpserver:{{ branch }}"
-    force_source: true
-  when: "'dev' in group_names"
 
 - name: Push built allu_sftpserver Docker image to GitLab repository
   local_action:
@@ -34,4 +22,3 @@
     force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
     name: "allu_sftpserver:{{ branch }}"
     repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_sftpserver:{{ branch }}"
-  when: "'dev' not in group_names"

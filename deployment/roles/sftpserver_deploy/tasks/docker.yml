@@ -22,14 +22,12 @@
     username: "{{ gitlab_deploy_user }}"
     password: "{{ gitlab_deploy_token }}"
   become: yes
-  when: "'dev' not in group_names"
 
 - name: Pull allu_sftpserver Docker image from GitLab repository
   docker_image:
     source: pull
     name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_sftpserver:{{ branch }}"
   become: yes
-  when: "'dev' not in group_names"
 
 - name: Start allu_sftpserver container
   docker_container:
