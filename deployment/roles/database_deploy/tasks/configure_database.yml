@@ -108,14 +108,14 @@
   debug:
     msg: archive_command was already set
   when:
-    - archive_command_check.rc == 0
     - "'staging' in group_names or 'production' in group_names"
+    - archive_command_check.rc == 0
 
 - name: WAL archive for backups - Set WAL archive command
   shell: echo "archive_command = 'test ! -f /srv/backup/allu/database/wal_archive/%f && cp %p /srv/backup/allu/database/wal_archive/%f'" >> /srv/data/allu/database/data/postgresql.conf
   when:
-    - archive_command_check.rc > 0
     - "'staging' in group_names or 'production' in group_names"
+    - archive_command_check.rc > 0
   become: yes
 
 - name: WAL archive for backups - Check if archive timeout is set. Grep return code is 0 if matches were found and 1 if not.
@@ -129,14 +129,14 @@
   debug:
     msg: archive_timeout was already set
   when:
-    - archive_timeout_check.rc == 0
     - "'staging' in group_names or 'production' in group_names"
+    - archive_timeout_check.rc == 0
 
 - name: WAL archive for backups - Set WAL archive timeout
   shell: echo "archive_timeout = 600" >> /srv/data/allu/database/data/postgresql.conf
   when:
-    - archive_timeout_check.rc > 0
     - "'staging' in group_names or 'production' in group_names"
+    - archive_timeout_check.rc > 0
   become: yes
 
 - name: Client authentication for psql command - Check if client auth is set. Grep return code is 0 if matches were found and 1 if not.
@@ -150,16 +150,16 @@
   debug:
     msg: Client auth was already set
   when:
-    - client_auth_check.rc == 0
     - "'staging' in group_names or 'production' in group_names"
+    - client_auth_check.rc == 0
 
 - name: Client authentication for psql command - Add client auth
   shell: echo -e "local   all              all                                     md5\nhost    all              postgres        172.18.0.1/32           md5" >> /srv/data/allu/database/data/pg_hba.conf
   args:
     executable: /bin/bash
   when:
-    - client_auth_check.rc > 0
     - "'staging' in group_names or 'production' in group_names"
+    - client_auth_check.rc > 0
   become: yes
 
 - name: Restart a container
