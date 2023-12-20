@@ -53,7 +53,7 @@ customer_notification_cronstring: "0 0 7 * * *"
 invoice_notification_email: talpa.kympmyyntikp@hel.fi
 ui_baseurl: https://allu.kaupunkiymparisto.fi
 
-ssh_tunnel_server_address: 10.138.10.86
+ssh_tunnel_server_address: 10.235.144.141
 ssh_tunnel_destination_address: 137.163.136.62
 allu_ssh_key_file: /servicehome/allu_keys/allu_id_rsa
 
