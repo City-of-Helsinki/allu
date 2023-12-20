@@ -20,7 +20,7 @@ mail_server_starttls_required: true
 email_allowed_addresses: "*@vincit.fi,*@hel.fi,*@geometrix.fi"
 email_sender_address: Alueidenkaytto ja -valvonta Staging <noreply@kaupunkiymparisto.fi>
 
-invoice_cronstring: "0 0 * * * MON-FRI"
+invoice_cronstring: "0 0/15 * * * MON-FRI"
 invoice_sending_enabled: true
 sap_ftp_invoice_host: 137.163.136.62
 sap_ftp_invoice_port: 22
