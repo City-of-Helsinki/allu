@@ -209,7 +209,7 @@ public class ApplicationService {
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicationJson.setId(applicationId);
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
-    if(applicationJson.getStatus() != StatusType.DECISION){
+    if(applicationJson.getStatus() != StatusType.DECISION || applicationJson.getStatus() != StatusType.OPERATIONAL_CONDITION){
         setPaymentClasses(applicationJson);
     }
     Integer currentUserId = userService.getCurrentUser().getId();
