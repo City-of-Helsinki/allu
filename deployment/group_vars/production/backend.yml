@@ -25,15 +25,15 @@ applicantreminder_cronstring: "0 0 1 * * MON-FRI"
 invoice_cronstring: "0 0 7 * * *"
 invoice_sending_enabled: true
 
-sap_ftp_invoice_host: 127.0.0.1
-sap_ftp_invoice_port: 8022
+sap_ftp_invoice_host: 137.163.136.62
+sap_ftp_invoice_port: 22
 sap_ftp_invoice_directory: /
 
 invoice_archivedir: /home/allu/scheduler-service/sap/invoice-archive
 
 # Customer update SFTP configuration
-sap_ftp_customer_host: 127.0.0.1
-sap_ftp_customer_port: 8022
+sap_ftp_customer_host: 137.163.136.62
+sap_ftp_customer_port: 22
 sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
@@ -52,10 +52,6 @@ customer_notification_cronstring: "0 0 7 * * *"
 # Customer notification email (empty email -> no mails sent)
 invoice_notification_email: talpa.kympmyyntikp@hel.fi
 ui_baseurl: https://allu.kaupunkiymparisto.fi
-
-ssh_tunnel_server_address: 10.235.144.141
-ssh_tunnel_destination_address: 137.163.136.62
-allu_ssh_key_file: /servicehome/allu_keys/allu_id_rsa
 
 supervision_api_basepath: /supervision-api
 
