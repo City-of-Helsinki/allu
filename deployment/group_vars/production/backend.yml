@@ -46,11 +46,7 @@ customer_update_sourcedir: /home/allu/scheduler-service/sap/customer-process
 customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
 customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 
-# Customer notification email (empty email -> no mails sent)
-customer_notification_email: talpa.asiakasrekisteri@hel.fi
 customer_notification_cronstring: "0 0 7 * * *"
-# Customer notification email (empty email -> no mails sent)
-invoice_notification_email: talpa.kympmyyntikp@hel.fi
 ui_baseurl: https://allu.kaupunkiymparisto.fi
 
 supervision_api_basepath: /supervision-api
