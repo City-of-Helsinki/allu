@@ -86,7 +86,7 @@ describe('Create external user', () => {
     let optionsTestUserHelen = TestUtil.getPostOptions('/api/externalusers', extUserHelen);
     let optionsTestUserHaitaton = TestUtil.getPostOptions('/api/externalusers', extUserHaitaton);
     let optionsTestUserETapahtuma = TestUtil.getPostOptions('/api/externalusers', extUserETapahtuma);
-    TestUtil.login('admin')
+    TestUtil.login('allute')
       .then(token => {
         TestUtil.addAuthorization(optionsTestUser, token);
         TestUtil.addAuthorization(optionsTestUserRkj, token);
