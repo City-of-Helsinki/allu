@@ -77,6 +77,15 @@ describe('Create external user', () => {
       'expirationTime': '2100-12-31T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
+    const extUserHelenSahkoverkko = {
+      'id': null,
+      'username': 'ext-user-helen-sahkoverkko',
+      'name': 'Helen Sahkoverkko Ext User',
+      'password': '#J7%jsmNhJA6nLVDyFRV',
+      'active': 'true',
+      'expirationTime': '2100-12-31T00:00:00.000Z',
+      'assignedRoles': ['ROLE_TRUSTED_PARTNER']
+    }
 
     let optionsTestUser = TestUtil.getPostOptions('/api/externalusers', extUser);
     let optionsTestUserRkj = TestUtil.getPostOptions('/api/externalusers', extUserRkj);
@@ -86,7 +95,8 @@ describe('Create external user', () => {
     let optionsTestUserHelen = TestUtil.getPostOptions('/api/externalusers', extUserHelen);
     let optionsTestUserHaitaton = TestUtil.getPostOptions('/api/externalusers', extUserHaitaton);
     let optionsTestUserETapahtuma = TestUtil.getPostOptions('/api/externalusers', extUserETapahtuma);
-    TestUtil.login('allute')
+    let optionsTestUserHelenSahkoverkko = TestUtil.getPostOptions('/api/externalusers', extUserHelenSahkoverkko);
+    TestUtil.login('admin')
       .then(token => {
         TestUtil.addAuthorization(optionsTestUser, token);
         TestUtil.addAuthorization(optionsTestUserRkj, token);
@@ -96,6 +106,7 @@ describe('Create external user', () => {
         TestUtil.addAuthorization(optionsTestUserHelen, token);
         TestUtil.addAuthorization(optionsTestUserHaitaton, token);
         TestUtil.addAuthorization(optionsTestUserETapahtuma, token);
+        TestUtil.addAuthorization(optionsTestUserHelenSahkoverkko, token);
       })
       .then(() => rp(optionsTestUser))
       .then(() => rp(optionsTestUserRkj))
@@ -105,6 +116,7 @@ describe('Create external user', () => {
       .then(() => rp(optionsTestUserHelen))
       .then(() => rp(optionsTestUserHaitaton))
       .then(() => rp(optionsTestUserETapahtuma))
+      .then(() => rp(optionsTestUserHelenSahkoverkko))
       .then(done, done.fail);
   });
 
