@@ -65,7 +65,7 @@ function tryToCreateUsers() {
   let createUserOptions = getPostOptions('/api/users', kasittelija);
 
   let loginToken;
-  return login('allute')
+  return login('admin')
     .then(token => loginToken = token)
     .then(() => request(findUserOptions, loginToken))
     .catch(() => request(createUserOptions, loginToken));
