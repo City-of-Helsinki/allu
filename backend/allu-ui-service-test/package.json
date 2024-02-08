@@ -20,7 +20,7 @@
     "url": "https://bitbucket.org/vincit/allu.git"
   },
   "publishConfig": {
-    "registry": "http://185.26.51.92:8082"
+    "registry": "https://registry.npmjs.org/"
   },
   "engines": {
     "node": ">= 4.2.1",
