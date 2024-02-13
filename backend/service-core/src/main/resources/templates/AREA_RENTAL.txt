@@ -2,7 +2,7 @@ Hei
 Viestin liitteenä on aluevuokraukseen liittyvä päätös ${attachmentName} liitteineen.
 Tutustukaa päätöksen sisältöön huolellisesti ja ottakaa yhteyttä, mikäli teillä on kysyttävää tai huomautettavaa siihen liittyen.
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/mkqgmxkxxv
+Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
 
 Terveisin
 
@@ -10,7 +10,7 @@ Terveisin
 
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut
-Alueidenkäyttö
+Alueiden käyttö ja valvonta
 Puh. 09 310 22111
 luvat@hel.fi
-www.hel.fi/luvat/yleisetalueet
+https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/kaduilla-ja-puistoissa-tehtavat-tyot

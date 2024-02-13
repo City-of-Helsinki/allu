@@ -3,12 +3,14 @@ Viestin liitteenä on sijoitussopimus ${applicationId} liitteineen. Mikäli teil
 
 ${accompanyingMessage}
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/gjnnyxrb0q
+Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
 
 Ystävällisin terveisin
+
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut
-Alueidenkäyttö
+Alueiden käyttö ja valvonta
 Puh. 09 310 22111
 alueidenkaytto@hel.fi
-www.hel.fi/luvat/yleisetalueet
+https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/sijoitussopimus
+
