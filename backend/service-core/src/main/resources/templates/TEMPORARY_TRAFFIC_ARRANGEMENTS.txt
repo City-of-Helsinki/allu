@@ -4,14 +4,14 @@ Viestin liitteenä on ${decisionType} ${applicationId} liitteineen. Tutustukaa p
 
 ${accompanyingMessage}
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/mkqgmxkxxv
+Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
 Ystävällisin terveisin
 
 <#if handlerName??>${handlerName}</#if>
 
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut
-Alueidenkäyttö
+Alueiden käyttö ja valvonta
 Puh. 09 310 22111
 luvat@hel.fi
-www.hel.fi/luvat/yleisetalueet
+https://www.hel.fi/fi/yritykset-ja-tyo/yritykset-ja-yrittajat/tapahtuman-jarjestaminen/tapahtumailmoitukset-ja-luvat#liikenteen-poikkeusjarjestelyt

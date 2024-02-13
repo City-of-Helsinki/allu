@@ -6,13 +6,14 @@ Mikäli teillä on kysyttävää johtoselvitykseen liittyen ottakaa yhteyttä.
 
 ${accompanyingMessage}
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/57nvokthf6
+Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
 
 Ystävällisin terveisin,
 
-Helsingin kaupunkiympäristön asukas- ja yrityspalvelut
-Alueidenkäyttö ja -valvonta
+Helsingin kaupunki
+Kaupunkiympäristön asukas- ja yrityspalvelut
+Alueiden käyttö ja valvonta
 Johtotietopalvelu
 Puh. 09 310 31940
 johtotietopalvelu@hel.fi
-www.hel.fi/katuluvat
+https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/johtotiedot

@@ -4,7 +4,7 @@ Viestin liitteenä on irtisanomispäätös liittyen vuokrauspäätökseenne ${ap
 
 ${accompanyingMessage}
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/i2ridc3ydx
+Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
 
 Ystävällisin terveisin
 
@@ -12,7 +12,7 @@ Ystävällisin terveisin
 
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut
-Alueidenkäyttö
+Alueiden käyttö ja valvonta
 Puh. 09 310 22111
 ulkoilma@hel.fi
-www.hel.fi/luvat/yleisetalueet
+https://www.hel.fi/fi/yritykset-ja-tyo/yritykset-ja-yrittajat/yritysten-luvat-ja-tilat
