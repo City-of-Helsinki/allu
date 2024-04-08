@@ -39,7 +39,7 @@ import {DistributionComponent} from '@feature/application/distribution/distribut
 export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
   @Input() applicationForm: FormGroup;
 
-  @ViewChild(DistributionComponent, {static: false}) distributionComponent: DistributionComponent;
+  @ViewChild(DistributionComponent) distributionComponent: DistributionComponent;
 
   readonly: boolean;
   submitPending = false;

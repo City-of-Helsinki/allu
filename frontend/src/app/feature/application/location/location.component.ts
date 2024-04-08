@@ -94,9 +94,9 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   @ViewChild(TypeComponent, { static: true })
   private typeComponent: TypeComponent;
-  @ViewChild(SearchbarComponent, { static: false })
+  @ViewChild(SearchbarComponent)
   private searchbarComponent: SearchbarComponent;
-  @ViewChild(MapComponent, { static: false })
+  @ViewChild(MapComponent)
   private mapComponent: MapComponent;
 
   constructor(

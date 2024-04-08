@@ -23,7 +23,7 @@ export class DistributionComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
-  @ViewChild(DistributionListComponent, {static: false}) distributionListComponent: DistributionListComponent;
+  @ViewChild(DistributionListComponent) distributionListComponent: DistributionListComponent;
 
   communicationForm: FormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);

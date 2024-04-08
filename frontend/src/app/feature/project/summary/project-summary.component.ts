@@ -36,7 +36,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   layerTree$: Observable<TreeStructureNode<void>>;
 
   private destroy$ = new Subject<boolean>();
-  @ViewChild(MapComponent, { static: false }) private map: MapComponent;
+  @ViewChild(MapComponent) private map: MapComponent;
 
   constructor(private store: Store<fromRoot.State>) {}
 

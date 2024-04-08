@@ -1,4 +1,4 @@
-import {Component, Directive, TemplateRef} from '@angular/core';
+import { Component, Directive, TemplateRef, Injectable } from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
 import {Application} from '../src/app/model/application/application';
 import {Location} from '../src/app/model/common/location';
@@ -93,6 +93,7 @@ export class ApplicationStoreMock {
 }
 
 
+@Injectable()
 export class CustomerServiceMock {
   public orderer$ = new Subject<Contact>();
 
@@ -226,6 +227,7 @@ export class CityDistrictServiceMock {
   }
 }
 
+@Injectable()
 export class NotificationServiceMock {
   translateSuccess(key: string): void {}
 

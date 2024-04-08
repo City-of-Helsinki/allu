@@ -1,5 +1,6 @@
 import {NativeDateAdapter} from '@angular/material/core';
 import {TimeUtil} from './time.util';
+import { Injectable } from "@angular/core";
 
 const DEFAULT_MONTH_NAMES = {
   'long': [
@@ -18,6 +19,7 @@ const DEFAULT_DAY_OF_WEEK_NAMES = {
 
 const MONDAY_INDEX = 1;
 
+@Injectable()
 export class AlluDateAdapter extends NativeDateAdapter {
 
   getMonthNames(style): string[] {

@@ -17,7 +17,7 @@ class MockParentComponent {
   loading$: Subject<boolean> = new Subject<boolean>();
   userAreas$: Subject<Feature<GeometryObject>[]> = new Subject<Feature<GeometryObject>[]>();
 
-  @ViewChild(UserAreasComponent, {static: false}) userAreasComponent: UserAreasComponent;
+  @ViewChild(UserAreasComponent) userAreasComponent: UserAreasComponent;
 
   areasSelected(selected: Feature<GeometryObject>[]): void {}
 }
