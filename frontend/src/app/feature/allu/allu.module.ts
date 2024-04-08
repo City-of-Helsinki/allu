@@ -60,9 +60,11 @@ import {ConfigurationHelperService} from '@service/config/configuration-helper.s
 import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
 import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects';
-import {storeLogger} from 'ngrx-store-logger';
+// import {storeLogger} from 'ngrx-store-logger';
 import {BulkApprovalModule} from '@feature/decision/bulk/bulk-approval.module';
 
+/*
+todo-upgrade solve the deprecated logger issue
 export function logger(reducer: ActionReducer<any>): any {
   return storeLogger({
     collapsed: true
@@ -70,7 +72,9 @@ export function logger(reducer: ActionReducer<any>): any {
 }
 
 export const metaReducers = environment.production ? [] : [logger];
+*/
 
+export const metaReducers = [];
 
 @NgModule({
   imports: [
