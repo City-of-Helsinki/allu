@@ -1,5 +1,5 @@
 import {BulkApprovalEntry, EntryStatus} from '@app/model/decision/bulk-approval-entry';
-import {MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {Component, Inject, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {Approve} from '@feature/decision/actions/bulk-approval-actions';
