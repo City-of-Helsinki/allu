@@ -5,7 +5,11 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "typeRoots": [
+      "../src/app/typings",
+      "../node_modules/@types",
+    ],
   },
   "files": [
     "test.ts",

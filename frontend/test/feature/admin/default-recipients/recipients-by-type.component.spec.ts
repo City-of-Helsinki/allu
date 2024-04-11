@@ -11,7 +11,7 @@ import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-
 import {NotificationService} from '../../../../src/app/feature/notification/notification.service';
 import {NotificationServiceMock} from '../../../mocks';
 import {share} from 'rxjs/internal/operators';
-import {BehaviorSubject, of} from 'rxjs/index';
+import {BehaviorSubject, Observable, of} from 'rxjs/index';
 
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);
@@ -19,8 +19,12 @@ class DefaultRecipientHubMock {
   defaultRecipientsByApplicationType(type: string) {
     return this.recipients$.asObservable().pipe(share());
   }
-  removeDefaultRecipient(id: number) {}
-  saveDefaultRecipient(recipient: DefaultRecipient) {}
+  removeDefaultRecipient(id: number): Observable<{}> {
+    return of({})
+  }
+  saveDefaultRecipient(recipient: DefaultRecipient): Observable<{}> {
+    return of(recipient)
+  }
 }
 
 describe('RecipientsByTypeComponent', () => {

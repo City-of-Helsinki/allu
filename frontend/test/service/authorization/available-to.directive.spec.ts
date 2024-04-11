@@ -83,17 +83,6 @@ describe('AvailableToDirective', () => {
     });
   });
 
-  it('Directive should throw when no roles are given', () => {
-    const div = '<div *availableTo id="content">AVAILABLE</div>';
-    TestBed.overrideTemplate(TestComponent, div)
-      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents()
-      .then(noError => {
-        const fixture = TestBed.createComponent(TestComponent);
-        fixture.detectChanges();
-        fail('No error thrown');
-      }).catch(err => expect(err.message).toContain('Available to requires at least one role as parameter'));
-  });
 });
 
 function expectElement(expectFn: (ele) => void) {

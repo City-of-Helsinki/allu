@@ -100,8 +100,8 @@ describe('Bulk approval effects', () => {
   });
 
   it('should register effects', () => {
-    expect(metadata.loadBulkApprovalEntries).toEqual({ dispatch: true, resubscribeOnError: true });
-    expect(metadata.approve).toEqual({ dispatch: true, resubscribeOnError: true });
+    expect(metadata.loadBulkApprovalEntries).toEqual({ dispatch: true, useEffectsErrorHandler: true });
+    expect(metadata.approve).toEqual({ dispatch: true, useEffectsErrorHandler: true });
   });
 
   it('should return loaded entries', () => {
@@ -159,12 +159,12 @@ describe('Bulk approval effects', () => {
 
   const verifyChangeStatusForAll = (entries: BulkApprovalEntry[]) => entries.every(entry => verifyChangeStatus(entry));
 
-  const verifyChangeStatus = (entry: BulkApprovalEntry): boolean =>
+  const verifyChangeStatus = (entry: BulkApprovalEntry) =>
     expect(applicationService.changeStatus).toHaveBeenCalledWith(entry.id, entry.targetState, new StatusChangeInfo());
 
   const verifySendByStatusForAll = (entries: BulkApprovalEntry[]) => entries.every(entry => verifySendByStatus(entry));
 
-  const verifySendByStatus = (entry: BulkApprovalEntry): boolean =>
+  const verifySendByStatus = (entry: BulkApprovalEntry) =>
     expect(decisionService.sendByStatus).toHaveBeenCalledWith(entry.id, entry.targetState, new DecisionDetails(entry.distributionList));
 
   const verifyApproveEntryComplete = (ids: number[], error?: ErrorInfo) => {

@@ -8,7 +8,7 @@ import {StructureMeta} from '@model/application/meta/structure-meta';
 import { Some } from '@app/util/option';
 
 @Directive()
-export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
+export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() id: string;
   @Input() meta: StructureMeta;

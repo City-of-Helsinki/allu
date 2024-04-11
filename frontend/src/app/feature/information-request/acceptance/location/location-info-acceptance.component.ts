@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
+import {InfoAcceptanceDirective} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FormBuilder} from '@angular/forms';
 import {findTranslation} from '@util/translations';
@@ -16,7 +16,7 @@ import {NumberUtil} from '@util/number.util';
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any> implements OnInit {
+export class LocationInfoAcceptanceComponent extends InfoAcceptanceDirective<any> implements OnInit {
   @Input() oldLocation: Location;
   @Input() newLocation: Location;
 

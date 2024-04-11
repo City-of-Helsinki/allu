@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Application} from '@model/application/application';
-import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
+import {InfoAcceptanceDirective} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import {FieldKeyMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
@@ -23,7 +23,7 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> implements OnInit {
+export class OtherInfoAcceptanceComponent extends InfoAcceptanceDirective<any> implements OnInit {
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
   @Input() fieldKeys: string[];

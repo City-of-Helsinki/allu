@@ -31,7 +31,7 @@ describe('Oauth2Component', () => {
   beforeEach(() => {
     const store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake( (key: string): String => {
+    spyOn(localStorage, 'getItem').and.callFake( (key: string): string => {
       return store[key] || null;
     });
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void =>  {

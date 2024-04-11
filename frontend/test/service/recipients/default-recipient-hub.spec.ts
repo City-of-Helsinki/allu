@@ -4,7 +4,7 @@ import {DefaultRecipientService} from '@service/recipients/default-recipient.ser
 import {DefaultRecipient} from '@model/common/default-recipient';
 import {ApplicationType} from '@model/application/type/application-type';
 import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './default-recipient-mock-values';
-import {of} from 'rxjs/index';
+import {Observable, of} from 'rxjs/index';
 import {last} from 'rxjs/internal/operators';
 import {CurrentUserMock} from '../../mocks';
 import {CurrentUser} from '@service/user/current-user';
@@ -13,8 +13,12 @@ class DefaultRecipientServiceMock {
   getDefaultRecipients() {
     return of(RECIPIENTS_ALL);
   }
-  saveDefaultRecipient(recipient: DefaultRecipient) {}
-  removeDefaultRecipient(id: number) {}
+  saveDefaultRecipient(recipient: DefaultRecipient): Observable<DefaultRecipient> {
+    return of(recipient);
+  }
+  removeDefaultRecipient(id: number): Observable<{}> {
+    return of({});
+  }
 }
 
 const currentUserMock = CurrentUserMock.create(true, true);

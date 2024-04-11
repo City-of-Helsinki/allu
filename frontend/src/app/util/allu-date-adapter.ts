@@ -1,6 +1,6 @@
 import {NativeDateAdapter} from '@angular/material/core';
 import {TimeUtil} from './time.util';
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 const DEFAULT_MONTH_NAMES = {
   'long': [

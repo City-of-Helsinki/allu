@@ -271,11 +271,14 @@ export function availableToDirectiveMockMeta(mock: CurrentUserMock = new Current
 }
 
 export class MatDialogMock {
-  open<T, D = any, R = any>(componentOrTemplateRef: ComponentType<T> | TemplateRef<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> {
+  open(): any {
     return undefined;
   }
 }
 
 export class MatDialogRefMock {
-  afterClosed() {}
+ 
+  afterClosed(): Observable<any> {
+    return of();
+  }
 }

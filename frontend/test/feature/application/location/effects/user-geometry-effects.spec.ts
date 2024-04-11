@@ -69,7 +69,7 @@ describe('User area effects', () => {
   });
 
   it('should register load that dispatches an action', () => {
-    expect(metadata.load).toEqual({ dispatch: true, resubscribeOnError: true });
+    expect(metadata.load).toEqual({ dispatch: true });
   });
 
   it('should dispatch LoadSuccess when user has rights and load is successful', () => {
