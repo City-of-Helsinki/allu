@@ -35,7 +35,6 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/hammerjs/hammer.js",
               "node_modules/file-saver/FileSaver.js",
               "node_modules/finnish-ssn/dist/finnish-ssn.min.js"
             ]
@@ -138,7 +137,6 @@
             "tsConfig": "test/tsconfig.spec.json",
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/hammerjs/hammer.js",
               "node_modules/file-saver/FileSaver.js",
               "node_modules/finnish-ssn/dist/finnish-ssn.min.js"
             ],
