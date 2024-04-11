@@ -81,7 +81,7 @@ export const metaReducers = [];
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot(rootRoutes),
+    RouterModule.forRoot(rootRoutes, { relativeLinkResolution: 'legacy' }),
     BrowserAnimationsModule,
     StoreModule.forRoot(reducers, {metaReducers}),
     EffectsModule.forRoot([

@@ -1,7 +1,7 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {CommentComponent} from '@feature/comment/comment.component';
 import {Comment} from '@model/application/comment/comment';
 import {User} from '@model/user/user';
@@ -34,7 +34,7 @@ describe('CommentComponent', () => {
   let user: User;
   const currentUser: CurrentUserMock = CurrentUserMock.create(true, true);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,

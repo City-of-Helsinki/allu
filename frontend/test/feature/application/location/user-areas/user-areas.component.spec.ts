@@ -1,6 +1,6 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Feature, GeometryObject, Point} from 'geojson';
 import {UserAreasComponent} from '@feature/application/location/user-areas/user-areas.component';
@@ -28,7 +28,7 @@ describe('UserAreasComponent', () => {
   let comp: UserAreasComponent;
   let de: DebugElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule

@@ -1,6 +1,6 @@
 import {Component, DebugElement, Input} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../../mocks';
@@ -78,7 +78,7 @@ describe('SupervisionTaskComponent', () => {
 
   let userService: UserServiceMock;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,

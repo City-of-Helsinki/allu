@@ -1,6 +1,6 @@
 import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {User} from '@model/user/user';
 import {SupervisionComponent} from '@feature/application/supervision/supervision.component';
@@ -39,7 +39,7 @@ describe('SupervisionComponent', () => {
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,

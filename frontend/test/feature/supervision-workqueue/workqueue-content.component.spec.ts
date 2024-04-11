@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
@@ -33,7 +33,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,

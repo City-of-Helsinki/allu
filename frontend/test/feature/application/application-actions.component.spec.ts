@@ -1,6 +1,6 @@
 import {Component, DebugElement} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {ApplicationActionsComponent} from '@feature/application/info/application-actions.component';
@@ -76,7 +76,7 @@ describe('ApplicationActionsComponent', () => {
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,

@@ -1,6 +1,6 @@
 import {DebugElement} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {ChargeBasisDiscountComponent} from '@feature/application/invoicing/charge-basis/discount/charge-basis-discount.component';
@@ -20,7 +20,7 @@ describe('ChargeBasisDiscountComponent', () => {
   let de: DebugElement;
   let store: Store<fromInvoicing.State>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,

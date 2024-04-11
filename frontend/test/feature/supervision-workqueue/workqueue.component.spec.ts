@@ -1,5 +1,5 @@
 import {WorkQueueComponent} from '@feature/supervision-workqueue/workqueue.component';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Component, DebugElement} from '@angular/core';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
@@ -48,7 +48,7 @@ describe('SupervisionWorkqueueComponent', () => {
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,

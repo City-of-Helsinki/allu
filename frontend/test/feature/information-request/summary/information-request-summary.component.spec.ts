@@ -1,5 +1,5 @@
 import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -35,7 +35,7 @@ describe('InformationRequestSummary', () => {
   let location: Location;
   let store: Store<fromRoot.State>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,

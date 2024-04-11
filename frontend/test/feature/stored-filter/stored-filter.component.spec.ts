@@ -1,7 +1,7 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {StoredFilterType} from '../../../src/app/model/user/stored-filter-type';
 import {StoredFilter} from '../../../src/app/model/user/stored-filter';
-import {async, ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {NotificationServiceMock, UserServiceMock} from '../../mocks';
 import {StoredFilterComponent} from '../../../src/app/feature/stored-filter/stored-filter.component';
 import {UserService} from '../../../src/app/service/user/user-service';
@@ -64,7 +64,7 @@ describe('StoredFilterComponent', () => {
   let de: DebugElement;
   let userService: UserServiceMock;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         StoredFilterModule

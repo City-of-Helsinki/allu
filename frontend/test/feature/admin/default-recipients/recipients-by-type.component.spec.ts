@@ -1,5 +1,5 @@
 import {DebugElement} from '@angular/core';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {RecipientsByTypeComponent} from '../../../../src/app/feature/admin/default-recipients/recipients-by-type.component';
@@ -59,7 +59,7 @@ describe('RecipientsByTypeComponent', () => {
     page.update();
   }
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule],
       declarations: [

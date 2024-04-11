@@ -1,6 +1,6 @@
 import {Component, DebugElement, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FormGroup, FormsModule} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {CommentListComponent} from '../../../src/app/feature/comment/comment-list.component';
@@ -55,7 +55,7 @@ describe('CommentListComponent', () => {
   let comp: CommentListComponent;
   let de: DebugElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, FormsModule],
       declarations: [

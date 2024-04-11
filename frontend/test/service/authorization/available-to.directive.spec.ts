@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {async, TestBed} from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
@@ -16,7 +16,7 @@ const AVAILABLE = 'AVAILABLE';
 describe('AvailableToDirective', () => {
   const currentUserMock = CurrentUserMock.create(true, true);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TestComponent, AvailableToDirective],
       providers: [

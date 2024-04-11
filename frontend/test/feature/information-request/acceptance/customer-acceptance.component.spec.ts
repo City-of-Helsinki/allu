@@ -2,7 +2,7 @@ import {Component, DebugElement, Input, NgModule} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Customer} from '@model/customer/customer';
 import {CodeSet, CodeSetCodeMap, CodeSetTypeMap} from '@model/codeset/codeset';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromCustomerSearch from '@feature/customerregistry/reducers';
 import * as fromCodeSet from '@feature/allu/reducers/code-set-reducer';
@@ -94,7 +94,7 @@ describe('CustomerAcceptanceComponent', () => {
   let dialogRef: MatDialogRefMock;
   let dialog: MatDialogMock;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,
