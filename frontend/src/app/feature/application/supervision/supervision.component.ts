@@ -54,7 +54,11 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   }
 
   addNew(task: SupervisionTask = new SupervisionTask()): void {
-    task.plannedFinishingTime = task.plannedFinishingTime || new Date();
+    task = {
+      ...task,
+      plannedFinishingTime: task?.plannedFinishingTime || new Date()
+    };
+
     const formGroup = this.fb.group({
       id: [undefined],
       applicationId: [undefined],

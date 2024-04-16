@@ -31,7 +31,7 @@ export function reducer(state: State = initialState, action: UserActions) {
     }
 
     case UserActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, {
+      return adapter.setAll(action.payload, {
         ...state,
         loading: false
       });

@@ -91,7 +91,7 @@ describe('ApplicationActionsComponent', () => {
       ],
       providers: [
         {provide: Router, useClass: RouterMock},
-        {provide: ActivatedRoute},
+        {provide: ActivatedRoute, useValue: {}},
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: MatDialog, useClass: MatDialogMock},
         {provide: UserService, useClass: UserServiceMock},

@@ -55,9 +55,6 @@ const validTask: SupervisionTaskForm = {
   plannedFinishingTime: new Date(),
   description: 'some description here'
 };
-
-const currentApplication = new Application(1);
-
 @Component({
   selector: 'supervision-task-location',
   template: ''
@@ -110,11 +107,12 @@ describe('SupervisionTaskComponent', () => {
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
+    const currentApplication = new Application(1);
     currentApplication.locations = [new Location(1)];
+
     store.dispatch(new ApplicationActions.LoadSuccess(currentApplication));
     comp.form = new FormBuilder().group(taskForm);
     comp.supervisors = [supervisor];
-    currentApplication.type = ApplicationType.EVENT;
     comp.application = currentApplication;
     handler.assignedRoles = [RoleType.ROLE_CREATE_APPLICATION, RoleType.ROLE_PROCESS_APPLICATION];
     supervisor.assignedRoles = [RoleType.ROLE_SUPERVISE];
@@ -145,7 +143,7 @@ describe('SupervisionTaskComponent', () => {
     saveBtn.click();
     detectAndTick();
     const expectedTask = SupervisionTaskForm.to(comp.form.value);
-    expectedTask.applicationId = currentApplication.id;
+    expectedTask.applicationId = 1;
     expect(store.dispatch).toHaveBeenCalledWith(new Save(expectedTask));
   }));
 

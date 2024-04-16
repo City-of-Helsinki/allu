@@ -416,7 +416,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private getLocations(): Location[] {
     return !ArrayUtil.empty(this.form.value.supervisedLocations)
       ? this.form.value.supervisedLocations
-      : this.application.locations;
+      : this.application?.locations;
   }
 
   private getLocation(locations: Location[], locationId: number): Location {

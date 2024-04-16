@@ -78,11 +78,11 @@ export class ApplicationSearchEffects {
   );
 
   private getCurrentWorkQueueSearch(): Observable<[ApplicationSearchQuery, Sort, PageRequest]> {
-    return combineLatest(
+    return combineLatest([
       this.store.pipe(select(fromWorkQueue.getApplicationSearchParameters), filter(params => !!params)),
       this.store.pipe(select(fromWorkQueue.getApplicationSearchSort)),
       this.store.pipe(select(fromWorkQueue.getApplicationSearchPageRequest)),
-    );
+    ]);
   }
 
   /**

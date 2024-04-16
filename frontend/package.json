@@ -65,6 +65,7 @@
     "lodash": "^4.17.15",
     "moment": "^2.22.2",
     "ng2-file-upload": "1.2.1",
+    "ngrx-store-logger": "^0.2.4",
     "ngx-toastr": "11.1.0",
     "proj4leaflet": "1.0.2",
     "rxjs": "6.6.7",
