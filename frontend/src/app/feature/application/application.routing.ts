@@ -62,7 +62,7 @@ export const applicationTabs: Routes = [
 export const applicationRoutes: Routes = [
   { path: 'applications', canActivate: [AuthGuard],
     children: [
-    { path: '', canActivate: [AuthGuard], redirectTo: 'search', pathMatch: 'full' },
+    { path: '', redirectTo: 'search', pathMatch: 'full' },
     { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
     { path: 'location', component: LocationComponent, canActivate: [AuthGuard],
       resolve: { application: ApplicationResolve} },

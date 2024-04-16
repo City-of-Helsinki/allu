@@ -276,8 +276,7 @@ export class MatDialogMock {
   }
 }
 
-export class MatDialogRefMock {
- 
+export class MatDialogRefMock { 
   afterClosed(): Observable<any> {
     return of();
   }

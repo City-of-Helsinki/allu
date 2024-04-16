@@ -74,7 +74,6 @@ export function logger(reducer: ActionReducer<any>): any {
 export const metaReducers = environment.production ? [] : [logger];
 */
 
-export const metaReducers = [];
 
 @NgModule({
   imports: [
@@ -83,7 +82,12 @@ export const metaReducers = [];
     FormsModule,
     RouterModule.forRoot(rootRoutes, { relativeLinkResolution: 'legacy' }),
     BrowserAnimationsModule,
-    StoreModule.forRoot(reducers, {metaReducers}),
+    StoreModule.forRoot(reducers, {
+      runtimeChecks: { // Disable checks to avoid Leaflet causing errors
+        strictStateImmutability: false,
+        strictActionImmutability: false,
+      },
+    }),
     EffectsModule.forRoot([
       CityDistrictEffects,
       CodeSetEffects,
