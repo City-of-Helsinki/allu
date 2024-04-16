@@ -39,11 +39,11 @@ export class SupervisionWorkItemDatasource extends StoreDatasource<SupervisionWo
   }
 
   protected setupSearch(): void {
-    combineLatest(
+    combineLatest([
       this.store.pipe(select(fromSupervisionWorkQueue.getParameters), filter(search => !!search)),
       this.store.pipe(select(this.sortSelector)),
       this.store.pipe(select(this.pageRequestSelector))
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy)
     ).subscribe(([query, sort, pageRequest]) =>
       this.store.dispatch(new Search(ActionTargetType.SupervisionTaskWorkQueue, query, sort, pageRequest)));

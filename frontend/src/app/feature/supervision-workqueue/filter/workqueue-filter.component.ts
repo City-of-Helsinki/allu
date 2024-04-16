@@ -88,10 +88,10 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       this.store.dispatch(new SetSearchQuery(ActionTargetType.SupervisionTaskWorkQueue, query));
     });
 
-    this.taskFilter = combineLatest(
+    this.taskFilter = combineLatest([
       this.store.pipe(select(fromSupervisionWorkQueue.getParameters)),
       this.store.pipe(select(fromSupervisionWorkQueue.getSort))
-    ).pipe(
+    ]).pipe(
       map(([search, sort]) => ({ search, sort }))
     );
 

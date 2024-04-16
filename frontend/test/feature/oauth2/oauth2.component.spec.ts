@@ -42,7 +42,7 @@ describe('Oauth2Component', () => {
     });
     fixture = TestBed.createComponent(Oauth2Component);
     comp = fixture.componentInstance;
-    router = TestBed.get(Router) as RouterMock;
+    router = TestBed.inject(Router) as RouterMock;
   });
 
   it('should redirect user when url is found in localstorage', () => {

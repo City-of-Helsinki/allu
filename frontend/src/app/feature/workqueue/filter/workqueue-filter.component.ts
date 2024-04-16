@@ -85,10 +85,10 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
     this.tab$ = this.store.pipe(select(fromWorkQueue.getTab));
 
-    this.applicationFilter = combineLatest(
+    this.applicationFilter = combineLatest([
       this.store.pipe(select(fromWorkQueue.getApplicationSearchParameters)),
       this.store.pipe(select(fromWorkQueue.getApplicationSearchSort)),
-    ).pipe(
+    ]).pipe(
       map(([search, sort]) => ({ search, sort }))
     );
 

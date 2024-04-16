@@ -61,10 +61,10 @@ describe('User area effects', () => {
       ],
     });
 
-    effects = TestBed.get(UserAreaEffects);
+    effects = TestBed.inject(UserAreaEffects);
     metadata = getEffectsMetadata(effects);
-    locationService = TestBed.get(LocationService) as LocationServiceMock;
-    store = TestBed.get(Store);
+    locationService = TestBed.inject(LocationService) as LocationServiceMock;
+    store = TestBed.inject(Store);
     actions = new ReplaySubject(1);
   });
 

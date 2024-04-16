@@ -52,9 +52,9 @@ describe('AuthGuard', () => {
         AuthGuard
       ]
     });
-    authGuard = tb.get(AuthGuard);
-    authService = tb.get(AuthService) as AuthServiceMock;
-    configService = tb.get(ConfigService) as ConfigServiceMock;
+    authGuard = tb.inject(AuthGuard);
+    authService = tb.inject(AuthService) as AuthServiceMock;
+    configService = tb.inject(ConfigService) as ConfigServiceMock;
   });
 
   it('allows route activation when already authenticated', () => {

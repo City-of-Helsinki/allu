@@ -87,10 +87,10 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       debounceTime(300)
     ).subscribe(search => this.store.dispatch(new SearchForCurrentCustomer(this.config.actionTargetType, search)));
 
-    this.showCreateNew$ = combineLatest(
+    this.showCreateNew$ = combineLatest([
       this.referenceContact$,
       this.store.pipe(select(this.config.getCustomer))
-    ).pipe(
+    ]).pipe(
       map(([ref, customer]) => !isEqualWithSkip(ref, this._newContact, ['id', 'customerId']))
     );
 

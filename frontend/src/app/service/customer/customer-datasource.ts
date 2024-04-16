@@ -40,11 +40,11 @@ export class CustomerDatasource extends StoreDatasource<Customer> {
   }
 
   protected setupSearch(): void {
-    combineLatest(
+    combineLatest([
       this.store.pipe(select(fromCustomer.getCustomerSearch), filter(search => !!search)),
       this.store.pipe(select(fromCustomer.getCustomerSort)),
       this.store.pipe(select(fromCustomer.getCustomerPageRequest))
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy)
     ).subscribe(([query, sort, pageRequest]) =>
       this.store.dispatch(new Search(ActionTargetType.Customer, {query, sort, pageRequest})));

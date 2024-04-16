@@ -125,10 +125,10 @@ export class ProjectEditComponent {
   private initCustomerSearch(): void {
     this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomerList);
 
-    combineLatest(
+    combineLatest([
       this.customerTypeCtrl.valueChanges,
       this.customerCtrl.valueChanges.pipe(filter(customer => typeof customer === 'string'))
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy),
       debounceTime(300)
     ).subscribe(([type, name]) => {

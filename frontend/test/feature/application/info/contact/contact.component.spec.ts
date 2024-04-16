@@ -82,7 +82,7 @@ describe('ContactComponent', () => {
     comp.readonly = false;
     comp.customerRoleType = CustomerRoleType[CustomerRoleType.APPLICANT];
 
-    applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
+    applicationStore = TestBed.inject(ApplicationStore) as unknown as ApplicationStoreMock;
     const app = applicationStore.snapshot.application;
     app.customersWithContacts = [
       new CustomerWithContacts(CustomerRoleType.APPLICANT, undefined, CONTACTS_ALL)

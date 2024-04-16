@@ -24,9 +24,10 @@ export class UserAreaEffects {
   }
 
   @Effect()
-  load: Observable<Action> = combineLatest(
+  load: Observable<Action> = combineLatest([
     this.actions.pipe(ofType<Load>(UserAreaActionType.Load)),
     this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
+  ]
   ).pipe(
     filter(([action, user]) => ArrayUtil.anyMatch(userAreasAllowed, user.assignedRoles)),
     switchMap(([action, user]) => this.locationService.getUserAreas().pipe(

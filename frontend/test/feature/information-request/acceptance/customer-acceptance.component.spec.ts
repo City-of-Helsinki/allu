@@ -124,9 +124,9 @@ describe('CustomerAcceptanceComponent', () => {
     fixture = TestBed.createComponent(MockHostComponent);
     hostComp = fixture.componentInstance;
     de = fixture.debugElement;
-    store = TestBed.get(Store);
-    dialog = TestBed.get(MatDialog) as MatDialogMock;
-    dialogRef = TestBed.get(MatDialogRef) as MatDialogRefMock;
+    store = TestBed.inject(Store);
+    dialog = TestBed.inject(MatDialog) as unknown as MatDialogMock;
+    dialogRef = TestBed.inject(MatDialogRef) as MatDialogRefMock;
 
     hostComp.oldCustomer = oldCustomer;
     hostComp.newCustomer = newCustomer;

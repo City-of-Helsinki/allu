@@ -95,7 +95,7 @@ describe('HistoryComponent', () => {
     fixture = TestBed.createComponent(MockHostComponent);
     testHost = fixture.componentInstance;
     de = fixture.debugElement;
-    store = TestBed.get(Store);
+    store = TestBed.inject(Store);
     historyComponent = de.query(By.directive(HistoryComponent)).componentInstance;
 
     fixture.detectChanges();

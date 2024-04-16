@@ -62,9 +62,9 @@ describe('InformationRequestSummary', () => {
     de = fixture.debugElement;
     fixture.detectChanges();
     summaryComponent = de.query(By.directive(InformationRequestSummaryComponent)).componentInstance;
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
-    store = TestBed.get(Store);
+    router = TestBed.inject(Router);
+    location = TestBed.inject(Location);
+    store = TestBed.inject(Store);
   });
 
   it('loads component', () => {

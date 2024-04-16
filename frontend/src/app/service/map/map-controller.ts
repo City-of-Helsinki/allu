@@ -67,10 +67,10 @@ export class MapController {
               private mapLayerService: MapLayerService,
               private popupService: MapPopupService,
               private notification: NotificationService) {
-    combineLatest(
+    combineLatest([
       this._allLayers$,
       this._selectedLayers$
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy),
       filter(() => !!this.map)
     ).subscribe(([all, selected]) => this.selectLayers(all, selected));
@@ -414,10 +414,10 @@ export class MapController {
       return drawing && noSelectedSections;
     };
 
-    combineLatest(
+    combineLatest([
       this.mapStore.drawingAllowed,
       this.mapStore.fixedLocations
-    ).pipe(
+    ]).pipe(
       map(([drawing, sections]) => drawingAllowed(drawing, sections)),
       takeUntil(this.destroy),
       distinctUntilChanged(),

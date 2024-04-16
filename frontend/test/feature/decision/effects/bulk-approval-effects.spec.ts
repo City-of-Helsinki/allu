@@ -81,11 +81,11 @@ describe('Bulk approval effects', () => {
       ],
     });
 
-    effects = TestBed.get(BulkApprovalEffects);
+    effects = TestBed.inject(BulkApprovalEffects);
     metadata = getEffectsMetadata(effects);
-    decisionService = TestBed.get(DecisionService) as DecisionServiceMock;
-    applicationService = TestBed.get(ApplicationService) as ApplicationServiceMock;
-    store = TestBed.get(Store);
+    decisionService = TestBed.inject(DecisionService) as DecisionServiceMock;
+    applicationService = TestBed.inject(ApplicationService) as ApplicationServiceMock;
+    store = TestBed.inject(Store);
     actions$ = new ReplaySubject(1);
   });
 

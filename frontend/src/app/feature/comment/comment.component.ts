@@ -88,11 +88,11 @@ export class CommentComponent implements OnInit {
   }
 
   private currentUserCanEdit(creatorId: number): void {
-    combineLatest(
+    combineLatest([
         this.currentUser.isCurrentUser(creatorId),
         this.currentUser.hasRole(commentEditRoles),
         this.currentUser.hasRole(['ROLE_ADMIN'])
-      ).pipe(
+      ]).pipe(
         take(1)
       ).subscribe(([isCurrent, hasRole, isAdmin]) => {
         this.canEdit = ((creatorId === undefined || isCurrent) && hasRole) || isAdmin;

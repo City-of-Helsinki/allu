@@ -51,11 +51,11 @@ export class ApplicationSearchDatasource extends StoreDatasource<Application> {
   }
 
   protected setupSearch(): void {
-    combineLatest(
+    combineLatest([
       this.searchParameters,
       this.store.pipe(select(this.sortSelector)),
       this.store.pipe(select(this.pageRequestSelector)),
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy)
     ).subscribe(([search, sort, paging]) => {
       this.store.dispatch(new Search(this.actionTargetType, search, sort, paging));

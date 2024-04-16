@@ -81,8 +81,8 @@ describe('StoredFilterComponent', () => {
   }));
 
   beforeEach(() => {
-    filterStore = TestBed.get(StoredFilterStore) as StoredFilterStoreMock;
-    userService = TestBed.get(UserService) as UserServiceMock;
+    filterStore = TestBed.inject(StoredFilterStore) as StoredFilterStoreMock;
+    userService = TestBed.inject(UserService) as UserServiceMock;
     parentFixture = TestBed.createComponent(ParentComponent);
     parentComp = parentFixture.componentInstance;
     de = parentFixture.debugElement;

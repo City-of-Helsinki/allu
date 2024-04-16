@@ -62,7 +62,7 @@ describe('SupervisionWorkqueueFilterComponent', () => {
   }));
 
   beforeEach(() => {
-    store = TestBed.get(Store);
+    store = TestBed.inject(Store);
     fixture = TestBed.createComponent(WorkQueueFilterComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;

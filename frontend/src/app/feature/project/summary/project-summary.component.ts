@@ -54,10 +54,10 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngAfterViewInit(): void {
     // TODO: This should be done using ngrx store after map is refactored
-    combineLatest(
+    combineLatest([
       this.store.select(fromProject.getApplications),
       this.store.select(fromProject.getShowBasicInfo)
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy$),
       takeWhile(() => !!this.map),
       filter(([applications, show]) => show)

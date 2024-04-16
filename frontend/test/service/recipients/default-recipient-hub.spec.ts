@@ -36,8 +36,8 @@ describe('DefaultRecipientHub', () => {
         { provide: DefaultRecipientService, useClass: DefaultRecipientServiceMock },
       ]
     });
-    hub = tb.get(DefaultRecipientHub);
-    defaultRecipientService = tb.get(DefaultRecipientService) as DefaultRecipientServiceMock;
+    hub = tb.inject(DefaultRecipientHub);
+    defaultRecipientService = tb.inject(DefaultRecipientService) as DefaultRecipientServiceMock;
   });
 
   it('should emit values when initialized', fakeAsync(() => {

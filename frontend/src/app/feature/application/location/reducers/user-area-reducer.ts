@@ -35,7 +35,7 @@ export function reducer(state: State = initialState, action: UserAreaActions) {
     }
 
     case UserAreaActionType.LoadSuccess: {
-      return adapter.addAll(action.payload.features, {
+      return adapter.setAll(action.payload.features, {
         ...state,
         loading: false
       });

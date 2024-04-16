@@ -11,7 +11,7 @@ describe('Projection', () => {
       ],
     });
 
-    projection = TestBed.get(Projection);
+    projection = TestBed.inject(Projection);
   });
 
   it('should project wgs84 to epsg:3879 correctly', () => {

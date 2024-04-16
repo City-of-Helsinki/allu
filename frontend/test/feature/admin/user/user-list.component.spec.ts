@@ -55,9 +55,9 @@ describe('UserListComponent', () => {
     fixture = TestBed.createComponent(UserListComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
-    router = TestBed.get(Router) as Router;
-    userService = TestBed.get(UserService) as UserServiceMock;
-    store = TestBed.get(Store);
+    router = TestBed.inject(Router) as Router;
+    userService = TestBed.inject(UserService) as UserServiceMock;
+    store = TestBed.inject(Store);
 
     spyOn(userService, 'getAllUsers').and.returnValue(of(users));
     store.dispatch(new CityDistrictActions.LoadSuccess([new CityDistrict(1, 1, 'cd1')]));

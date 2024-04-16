@@ -76,8 +76,8 @@ describe('SupervisionWorkqueueComponent', () => {
   }));
 
   beforeEach(() => {
-    store = TestBed.get(Store);
-    dialog = TestBed.get(MatDialog);
+    store = TestBed.inject(Store);
+    dialog = TestBed.inject(MatDialog);
     fixture = TestBed.createComponent(WorkQueueComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;

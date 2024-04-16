@@ -25,10 +25,10 @@ describe('DefaultRecipientService', () => {
         DefaultRecipientService
       ]
     });
-    service = tb.get(DefaultRecipientService);
-    httpClient = tb.get(HttpClient);
-    httpTestingController = tb.get(HttpTestingController);
-    errorHandler = tb.get(ErrorHandler) as ErrorHandlerMock;
+    service = tb.inject(DefaultRecipientService);
+    httpClient = tb.inject(HttpClient);
+    httpTestingController = tb.inject(HttpTestingController);
+    errorHandler = tb.inject(ErrorHandler) as ErrorHandlerMock;
   });
 
   it('getComments() should return queried comments', fakeAsync(() => {

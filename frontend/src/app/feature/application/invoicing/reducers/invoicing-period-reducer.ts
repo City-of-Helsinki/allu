@@ -36,7 +36,7 @@ export function reducer(state: State = initialState, action: InvoicingPeriodActi
     }
 
     case InvoicingPeriodActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, {
+      return adapter.setAll(action.payload, {
         ...state,
         processing: false,
       });

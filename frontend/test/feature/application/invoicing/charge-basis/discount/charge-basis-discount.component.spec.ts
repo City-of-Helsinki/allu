@@ -41,7 +41,7 @@ describe('ChargeBasisDiscountComponent', () => {
     fixture = TestBed.createComponent(ChargeBasisDiscountComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
-    store = TestBed.get(Store);
+    store = TestBed.inject(Store);
 
     comp.form = ChargeBasisEntryForm.formGroup(new FormBuilder());
     comp.ngOnInit();

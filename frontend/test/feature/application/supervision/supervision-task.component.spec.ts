@@ -104,8 +104,8 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   beforeEach(() => {
-    store = TestBed.get(Store);
-    userService = TestBed.get(UserService) as UserServiceMock;
+    store = TestBed.inject(Store);
+    userService = TestBed.inject(UserService) as UserServiceMock;
     fixture = TestBed.createComponent(SupervisionTaskComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;

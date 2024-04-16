@@ -20,10 +20,10 @@ class DefaultRecipientHubMock {
     return this.recipients$.asObservable().pipe(share());
   }
   removeDefaultRecipient(id: number): Observable<{}> {
-    return of({})
+    return of({});
   }
   saveDefaultRecipient(recipient: DefaultRecipient): Observable<{}> {
-    return of(recipient)
+    return of(recipient);
   }
 }
 
@@ -78,7 +78,7 @@ describe('RecipientsByTypeComponent', () => {
     comp = fixture.componentInstance;
     de = fixture.debugElement;
     comp.type = ApplicationType[ApplicationType.EVENT];
-    hub = TestBed.get(DefaultRecipientHub) as DefaultRecipientHubMock;
+    hub = TestBed.inject(DefaultRecipientHub) as unknown as DefaultRecipientHubMock;
     hub.recipients$.next([RECIPIENT_ONE, RECIPIENT_TWO]);
     comp.ngOnInit();
     fixture.detectChanges();

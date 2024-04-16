@@ -47,10 +47,10 @@ describe('CommentService', () => {
         CommentService
       ]
     });
-    commentService = tb.get(CommentService);
-    httpClient = tb.get(HttpClient);
-    httpTestingController = tb.get(HttpTestingController);
-    errorHandler = tb.get(ErrorHandler) as ErrorHandlerMock;
+    commentService = tb.inject(CommentService);
+    httpClient = tb.inject(HttpClient);
+    httpTestingController = tb.inject(HttpTestingController);
+    errorHandler = tb.inject(ErrorHandler) as ErrorHandlerMock;
   });
 
   afterEach(() => {

@@ -107,10 +107,10 @@ describe('ApplicationActionsComponent', () => {
     fixture = TestBed.createComponent(TestHostComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
-    router = TestBed.get(Router) as RouterMock;
-    applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
-    dialog = TestBed.get(MatDialog) as MatDialogMock;
-    userService = TestBed.get(UserService) as UserServiceMock;
+    router = TestBed.inject(Router) as RouterMock;
+    applicationStore = TestBed.inject(ApplicationStore) as unknown as ApplicationStoreMock;
+    dialog = TestBed.inject(MatDialog) as MatDialogMock;
+    userService = TestBed.inject(UserService) as UserServiceMock;
 
     const app = applicationStore.snapshot.application;
     app.id  = applicationId;
