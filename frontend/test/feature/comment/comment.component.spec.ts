@@ -1,6 +1,6 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {CommentComponent} from '@feature/comment/comment.component';
 import {Comment} from '@model/application/comment/comment';
@@ -46,7 +46,7 @@ describe('CommentComponent', () => {
         CommentComponent
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {provide: CurrentUser, useValue: currentUser}
       ]
     })

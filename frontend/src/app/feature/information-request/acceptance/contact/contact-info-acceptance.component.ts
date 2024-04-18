@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output}
 import {Contact} from '@model/customer/contact';
 import {InfoAcceptanceDirective} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {findTranslation} from '@util/translations';
-import {FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
@@ -24,7 +24,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
   private _oldContact: Contact;
   private _newContact: Contact;
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: UntypedFormBuilder) {
     super(fb);
   }
 

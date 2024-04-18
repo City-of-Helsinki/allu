@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 import {ContactComponent} from '@feature/application/info/contact/contact.component';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
@@ -29,7 +29,7 @@ describe('ContactComponent', () => {
   let de: DebugElement;
   let fixture: ComponentFixture<ContactComponent>;
   let page: ContactPage;
-  let parentForm: FormGroup;
+  let parentForm: UntypedFormGroup;
   let applicationStore: ApplicationStoreMock;
 
   class ContactPage {
@@ -65,7 +65,7 @@ describe('ContactComponent', () => {
       declarations: [ContactComponent],
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
-        {provide: FormBuilder, useValue: new FormBuilder()},
+        {provide: UntypedFormBuilder, useValue: new UntypedFormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: ContactService, useClass: ContactServiceMock},
         {provide: NotificationService, useClass: NotificationServiceMock},
@@ -163,7 +163,7 @@ describe('ContactComponent', () => {
   }
 
   function createParentForm() {
-    const fb = new FormBuilder();
+    const fb = new UntypedFormBuilder();
     const form = fb.group({
       ordererId: [undefined]
     });

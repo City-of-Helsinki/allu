@@ -1,6 +1,6 @@
 import { HostBinding, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
 import {takeUntil} from 'rxjs/internal/operators';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
@@ -9,7 +9,7 @@ import { Some } from '@app/util/option';
 
 @Directive()
 export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() id: string;
   @Input() meta: StructureMeta;
   @Input() hideExisting = false;
@@ -19,7 +19,7 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
   @ViewChild('oldValuesSelect') oldValuesSelect: FieldSelectComponent;
   @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
 
-  selectionForm: FormGroup;
+  selectionForm: UntypedFormGroup;
   fieldDescriptions: FieldDescription[];
   oldValues: FieldValues;
   oldDisplayValues: FieldValues;
@@ -29,7 +29,7 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
   private _readonly: boolean;
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  protected constructor(protected fb: FormBuilder) {
+  protected constructor(protected fb: UntypedFormBuilder) {
     this.selectionForm = this.fb.group({
       oldValues: [{value: [], disabled: this.readonly}],
       newValues: [{value: [], disabled: this.readonly}]

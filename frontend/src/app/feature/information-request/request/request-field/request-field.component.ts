@@ -1,5 +1,5 @@
 import {Component, EventEmitter, forwardRef, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {StringUtil} from '@util/string.util';
 import {Subject} from 'rxjs/internal/Subject';
 import {takeUntil} from 'rxjs/operators';
@@ -20,14 +20,14 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
   @Input() label: string;
   @Output() selectedChange = new EventEmitter<boolean>();
 
-  selectedCtrl: FormControl;
-  descriptionCtrl: FormControl;
-  private form: FormGroup;
+  selectedCtrl: UntypedFormControl;
+  descriptionCtrl: UntypedFormControl;
+  private form: UntypedFormGroup;
 
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   ngOnInit() {
     this.selectedCtrl = this.fb.control(false);

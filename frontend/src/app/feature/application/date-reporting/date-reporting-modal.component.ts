@@ -1,4 +1,4 @@
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DateReport} from '@model/application/date-report';
@@ -31,13 +31,13 @@ export const DATE_REPORTING_MODAL_CONFIG = {width: '600px'};
   styleUrls: []
 })
 export class DateReportingModalComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   reportedDateTranslationKey: string;
   reportedEndDateTranslationKey: string;
 
   constructor(public dialogRef: MatDialogRef<DateReportingModalComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DateReportingModalData,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {

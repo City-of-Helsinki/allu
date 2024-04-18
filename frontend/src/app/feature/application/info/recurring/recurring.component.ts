@@ -1,5 +1,5 @@
 import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {ComplexValidator} from '@util/complex-validator';
 import {MAX_YEAR, MIN_YEAR} from '@util/time.util';
 import {Subject} from 'rxjs/internal/Subject';
@@ -24,16 +24,16 @@ const RECURRING_VALUE_ACCESSOR = {
 export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() readonly = false;
   @Input() forNowSelectable = true;
-  recurringForm: FormGroup;
+  recurringForm: UntypedFormGroup;
   minYear = MIN_YEAR;
   maxYear = MAX_YEAR;
 
-  private recurringTypeCtrl: FormControl;
-  private endYearCtrl: FormControl;
+  private recurringTypeCtrl: UntypedFormControl;
+  private endYearCtrl: UntypedFormControl;
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {

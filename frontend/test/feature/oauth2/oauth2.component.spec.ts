@@ -1,7 +1,7 @@
 import {RouterMock} from '../../mocks';
 import {Router} from '@angular/router';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {REDIRECT_URL} from '../../../src/util/local-storage';
 import {Oauth2Component} from '../../../src/app/feature/oauth2/oauth2.component';
 
@@ -21,7 +21,7 @@ describe('Oauth2Component', () => {
         Oauth2Component
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {provide: Router, useClass: RouterMock},
       ]
     })

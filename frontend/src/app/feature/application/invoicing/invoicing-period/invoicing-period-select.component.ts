@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {InvoicingPeriodLength} from '@feature/application/invoicing/invoicing-period/invoicing-period-length';
 import {Store} from '@ngrx/store';
@@ -17,11 +17,11 @@ export class InvoicingPeriodSelectComponent implements OnInit, OnDestroy {
 
   periods: InvoicingPeriodLength[] = [1, 3, 6, 12];
 
-  periodCtrl: FormControl;
+  periodCtrl: UntypedFormControl;
 
   private periodSub: Subscription;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {

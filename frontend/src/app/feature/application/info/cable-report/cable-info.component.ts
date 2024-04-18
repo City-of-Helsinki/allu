@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin} from 'rxjs';
 
@@ -24,11 +24,11 @@ import {FormUtil} from '@util/form.util';
   ]
 })
 export class CableInfoComponent implements OnInit {
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() readonly: boolean;
   @Input() cableReport: CableReport;
 
-  cableInfoEntries: FormArray;
+  cableInfoEntries: UntypedFormArray;
   translations = translations;
   cableInfoTypes = [
     DefaultTextType.TELECOMMUNICATION, DefaultTextType.ELECTRICITY, DefaultTextType.WATER_AND_SEWAGE,
@@ -39,7 +39,7 @@ export class CableInfoComponent implements OnInit {
   dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
   constructor(private defaultTextService: DefaultTextService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private dialog: MatDialog,
               private notification: NotificationService) {
   }

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Contact} from '@model/customer/contact';
 import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
@@ -34,15 +34,15 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
   ]
 })
 export class ContactComponent implements OnInit, OnDestroy {
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() customerRoleType: string;
   @Input() readonly: boolean;
   @Input() contactRequired = false;
 
   @Output() contactSelectChange: EventEmitter<Contact> = new EventEmitter<Contact>();
 
-  form: FormGroup;
-  contacts: FormArray;
+  form: UntypedFormGroup;
+  contacts: UntypedFormArray;
   availableContacts: Observable<Array<Contact>>;
   matchingContacts: Observable<Array<Contact>>;
   showOrderer = false;
@@ -50,7 +50,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   private customerIdChanges = new BehaviorSubject<number>(undefined);
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private customerService: CustomerService,
               private contactService: ContactService,
               private applicationStore: ApplicationStore,
@@ -181,13 +181,13 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   canBeAddedToDistribution(index: number): boolean {
-    const contact = <FormGroup>this.contacts.at(index);
+    const contact = <UntypedFormGroup>this.contacts.at(index);
     const email = contact.getRawValue().email;
     return !this.readonly && !!email && email.length > 2;
   }
 
   addToDistribution(index: number): void {
-    const contactFg = <FormGroup>this.contacts.at(index);
+    const contactFg = <UntypedFormGroup>this.contacts.at(index);
     const contact = contactFg.getRawValue();
     const distributionEntry = new DistributionEntry(null, contact.name, DistributionType.EMAIL, contact.email);
     this.store.dispatch(new AddToDistribution(distributionEntry));
@@ -225,8 +225,8 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   private initContacts(): void {
-    this.form = <FormGroup>this.parentForm.get(CustomerWithContactsForm.formName(CustomerRoleType[this.customerRoleType]));
-    this.contacts = <FormArray>this.form.get('contacts');
+    this.form = <UntypedFormGroup>this.parentForm.get(CustomerWithContactsForm.formName(CustomerRoleType[this.customerRoleType]));
+    this.contacts = <UntypedFormArray>this.form.get('contacts');
     const defaultContactList = this.contactRequired ? [new Contact()] : [];
     const roleType = CustomerRoleType[this.customerRoleType];
 
@@ -242,7 +242,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   private disableContactEdit(index: number): void {
-    const contactCtrl = <FormGroup>this.contacts.at(index);
+    const contactCtrl = <UntypedFormGroup>this.contacts.at(index);
     Object.keys(contactCtrl.controls)
       .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
       .forEach(key => contactCtrl.get(key).disable());

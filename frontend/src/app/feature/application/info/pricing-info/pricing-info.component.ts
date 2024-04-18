@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {EventNature, selectableNatures} from '@model/application/event/event-nature';
 import {FormUtil} from '@util/form.util';
@@ -15,7 +15,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 })
 export class PricingInfoComponent implements OnInit, OnDestroy {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() application: Application;
 
   @Output() billableChange = new EventEmitter<boolean>();
@@ -30,10 +30,10 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
   distanceFromWallSelectable: boolean;
   distanceFromWallSelectedDefault: boolean;
 
-  private billableSalesAreaControl: FormControl;
+  private billableSalesAreaControl: UntypedFormControl;
 
   ngOnInit(): void {
-    this.billableSalesAreaControl = <FormControl>this.form.get('billableSalesArea');
+    this.billableSalesAreaControl = <UntypedFormControl>this.form.get('billableSalesArea');
     if (this.billableSalesAreaControl) {
       this.billableSalesAreaSubscription = this.billableSalesAreaControl.valueChanges
         .subscribe(billable => this.billableChange.emit(billable));

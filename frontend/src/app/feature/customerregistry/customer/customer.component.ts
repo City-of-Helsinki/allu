@@ -4,7 +4,7 @@ import {Observable, Subject} from 'rxjs';
 import {NumberUtil} from '../../../util/number.util';
 import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {Contact} from '../../../model/customer/contact';
 import {NotificationService} from '../../notification/notification.service';
@@ -26,17 +26,17 @@ import {createTranslated} from '@service/error/error-info';
 })
 export class CustomerComponent implements OnInit {
   customerTypes = EnumUtil.enumValues(CustomerType);
-  form: FormGroup;
-  customerForm: FormGroup;
+  form: UntypedFormGroup;
+  customerForm: UntypedFormGroup;
   contactSubject = new Subject<Contact>();
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private customerService: CustomerService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private notification: NotificationService) {
     this.form = CustomerWithContactsForm.initialForm(this.fb);
-    this.customerForm = <FormGroup>this.form.get('customer');
+    this.customerForm = <UntypedFormGroup>this.form.get('customer');
   }
 
   ngOnInit(): void {
@@ -87,7 +87,7 @@ export class CustomerComponent implements OnInit {
   }
 
   private contactChanges(): Array<Contact> {
-    const contacts = <FormArray>this.form.get('contacts');
+    const contacts = <UntypedFormArray>this.form.get('contacts');
     return contacts.controls
       .filter(contactCtrl => contactCtrl.dirty) // take only changed values
       .map(changed => changed.value);

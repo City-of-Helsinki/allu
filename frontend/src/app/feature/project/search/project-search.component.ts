@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Project} from '@model/project/project';
@@ -29,7 +29,7 @@ export class ProjectSearchComponent implements OnInit {
   ];
 
   projects: Array<Project> = [];
-  queryForm: FormGroup;
+  queryForm: UntypedFormGroup;
   districts: Observable<Array<CityDistrict>>;
   dataSource: ProjectSearchDatasource;
 
@@ -40,7 +40,7 @@ export class ProjectSearchComponent implements OnInit {
               private projectState: ProjectState,
               private store: Store<fromRoot.State>,
               private notification: NotificationService,
-              fb: FormBuilder) {
+              fb: UntypedFormBuilder) {
     this.queryForm = fb.group({
       identifier: undefined,
       startTime: undefined,

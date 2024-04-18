@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {DistributionType} from '@model/common/distribution-type';
 import {EnumUtil} from '@util/enum.util';
@@ -31,11 +31,11 @@ export class DistributionListComponent implements OnInit {
 
   @Output() distributionChange: EventEmitter<DistributionEntry[]> = new EventEmitter<DistributionEntry[]>();
 
-  form: FormGroup;
-  distributionRows: FormArray;
+  form: UntypedFormGroup;
+  distributionRows: UntypedFormArray;
   distributionTypes = EnumUtil.enumValues(DistributionType);
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: UntypedFormBuilder) {
     this.form = this.fb.group({});
     this.distributionRows = fb.array([]);
   }
@@ -67,11 +67,11 @@ export class DistributionListComponent implements OnInit {
     this.distributionRows.insert(0, this.createDistribution(new DistributionEntry(undefined, undefined, DistributionType.EMAIL), true));
   }
 
-  edit(control: FormControl): void {
+  edit(control: UntypedFormControl): void {
     control.patchValue({edit: true});
   }
 
-  save(control: FormControl): void {
+  save(control: UntypedFormControl): void {
     control.patchValue({edit: false});
     this.emitDistributionChange();
   }
@@ -92,7 +92,7 @@ export class DistributionListComponent implements OnInit {
     return this.form.statusChanges;
   }
 
-  private createDistribution(distributionEntry: DistributionEntry, edit: boolean = false): FormGroup {
+  private createDistribution(distributionEntry: DistributionEntry, edit: boolean = false): UntypedFormGroup {
     return this.fb.group({
       id: [distributionEntry.id],
       name: [distributionEntry.name, Validators.required],

@@ -5,7 +5,7 @@ import {findTranslation} from '@util/translations';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {Some} from '@util/option';
 import {InfoAcceptanceDirective} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
-import {FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
@@ -25,7 +25,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
   _oldCustomer: Customer;
   _newCustomer: Customer;
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: UntypedFormBuilder) {
     super(fb);
   }
 

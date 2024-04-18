@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild}
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs/index';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
@@ -37,7 +37,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   @Input() oldCustomer: Customer;
   @Input() newCustomer: Customer;
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
@@ -47,8 +47,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   referenceCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(undefined);
 
-  form: FormGroup;
-  searchForm: FormGroup;
+  form: UntypedFormGroup;
+  searchForm: UntypedFormGroup;
 
   countryCodes$: Observable<CodeSetCodeMap>;
   matchingCustomers$: Observable<Customer[]>;
@@ -56,7 +56,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   protected formName = 'customer';
   protected actionTargetType = ActionTargetType.Customer;
-  protected useForInvoicingCtrl: FormControl;
+  protected useForInvoicingCtrl: UntypedFormControl;
   protected roleType: CustomerRoleType;
 
   protected destroy = new Subject<boolean>();
@@ -64,7 +64,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   private config: CustomerAcceptanceConfig;
 
   constructor(
-    protected fb: FormBuilder,
+    protected fb: UntypedFormBuilder,
     protected store: Store<fromRoot.State>,
     protected dialog: MatDialog) {}
 

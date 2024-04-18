@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {PublicityType} from '@model/application/publicity-type';
 import {EnumUtil} from '@util/enum.util';
@@ -16,7 +16,7 @@ import {map, takeUntil} from 'rxjs/operators';
 })
 export class DistributionComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() application: Application;
   @Input() distributionList: DistributionEntry[];
   @Input() readonly: boolean;
@@ -25,13 +25,13 @@ export class DistributionComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(DistributionListComponent) distributionListComponent: DistributionListComponent;
 
-  communicationForm: FormGroup;
+  communicationForm: UntypedFormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);
   distributionChangeAllowed = false;
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.communicationForm = this.fb.group({

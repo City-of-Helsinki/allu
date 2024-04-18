@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {ApplicationType} from '@model/application/type/application-type';
 import {EnumUtil} from '@util/enum.util';
@@ -35,7 +35,7 @@ interface TaskSearchFilter {
   ]
 })
 export class WorkQueueFilterComponent implements OnInit, OnDestroy {
-  queryForm: FormGroup;
+  queryForm: UntypedFormGroup;
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
   applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
@@ -52,7 +52,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   private destroy = new Subject<boolean>();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private store: Store<fromRoot.State>,
     private storedFilterStore: StoredFilterStore,
     private userService: UserService) {

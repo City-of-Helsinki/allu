@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {manualComments} from '@model/application/comment/comment-type';
 import {CommentForm} from './comment-form';
 import {Comment} from '@model/application/comment/comment';
@@ -32,11 +32,11 @@ export class CommentComponent implements OnInit {
   canEdit = false;
   isManualType = false;
   commentTypes = manualComments;
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   private originalForm: CommentForm;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private currentUser: CurrentUser) {
     this.form = this.fb.group({
       id: [undefined],

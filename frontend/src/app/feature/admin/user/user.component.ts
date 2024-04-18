@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 
 import {CurrentUser} from '@service/user/current-user';
@@ -26,7 +26,7 @@ import {createTranslated} from '@service/error/error-info';
   ]
 })
 export class UserComponent implements OnInit {
-  userForm: FormGroup;
+  userForm: UntypedFormGroup;
   submitted = false;
   applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
@@ -38,7 +38,7 @@ export class UserComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private userService: UserService,
               private store: Store<fromRoot.State>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private router: Router,
               private currentUser: CurrentUser) {
     this.userForm = this.fb.group({

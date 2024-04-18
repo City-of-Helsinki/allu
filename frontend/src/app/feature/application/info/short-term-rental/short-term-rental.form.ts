@@ -2,7 +2,7 @@ import {TimePeriod} from '../time-period';
 import {ShortTermRental} from '@model/application/short-term-rental/short-term-rental';
 import {Application} from '@model/application/application';
 import {ApplicationForm} from '@feature/application/info/application-form';
-import {FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {ComplexValidator} from '@util/complex-validator';
 import {MAX_YEAR, MIN_YEAR, TimeUtil} from '@util/time.util';
 
@@ -36,7 +36,7 @@ export function to(form: ShortTermRentalForm): ShortTermRental {
   return rental;
 }
 
-export function createStructure(fb: FormBuilder): { [key: string]: any; } {
+export function createStructure(fb: UntypedFormBuilder): { [key: string]: any; } {
   return {
     name: ['', [Validators.required, Validators.minLength(2)]],
     description: [''],
@@ -51,7 +51,7 @@ export function createStructure(fb: FormBuilder): { [key: string]: any; } {
   };
 }
 
-export function createDraftStructure(fb: FormBuilder): { [key: string]: any; } {
+export function createDraftStructure(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = createStructure(fb);
   form.description = [''];
   form.rentalTimes = fb.group({

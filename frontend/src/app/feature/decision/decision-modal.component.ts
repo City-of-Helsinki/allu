@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ApplicationStatus} from '@model/application/application-status';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {User} from '@model/user/user';
@@ -57,7 +57,7 @@ export class DecisionModalComponent implements OnInit {
   ownerSelection: boolean;
   isTerminationDraftRejection: boolean;
 
-  decisionForm: FormGroup;
+  decisionForm: UntypedFormGroup;
 
   owners: Observable<Array<User>>;
 
@@ -65,7 +65,7 @@ export class DecisionModalComponent implements OnInit {
               private userService: UserService,
               private applicationStore: ApplicationStore,
               @Inject(MAT_DIALOG_DATA) public data: DecisionModalData,
-              private fb: FormBuilder) {}
+              private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.decisionForm = this.fb.group({

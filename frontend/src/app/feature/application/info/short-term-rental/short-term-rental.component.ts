@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {createDraftStructure, createStructure, from, ShortTermRentalForm, to} from './short-term-rental.form';
@@ -57,9 +57,9 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   timePeriod$: Observable<TimePeriod>;
   terminationDate$: Observable<Date>;
 
-  private commercialCtrl: FormControl;
+  private commercialCtrl: UntypedFormControl;
 
-  constructor(fb: FormBuilder,
+  constructor(fb: UntypedFormBuilder,
               route: ActivatedRoute,
               applicationStore: ApplicationStore,
               applicationService: ApplicationService,
@@ -83,7 +83,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   protected initForm() {
     super.initForm();
 
-    this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
+    this.commercialCtrl = <UntypedFormControl>this.applicationForm.get('commercial');
     this.commercialCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(value => this.updateCommercialLabel(value));
 
@@ -112,7 +112,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.timePeriod$.subscribe(timePeriod => this.onTimePeriodChange(timePeriod));
   }
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     const draft = this.applicationStore.snapshot.draft;
     this.completeFormStructure = createStructure(this.fb);
     this.draftFormStructure = createDraftStructure(this.fb);

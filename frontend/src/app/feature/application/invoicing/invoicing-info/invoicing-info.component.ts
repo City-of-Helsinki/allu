@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
@@ -37,19 +37,19 @@ import {ApplicationExtension} from '@model/application/type/application-extensio
 })
 export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
-  recipientForm: FormGroup;
+  recipientForm: UntypedFormGroup;
   showDeposit: boolean;
   showInvoicingDate: boolean;
   applicationType: ApplicationType;
   customerLoading$: Observable<boolean>;
 
-  private notBillableCtrl: FormControl;
-  private notBillableReasonCtrl: FormControl;
-  private invoicingDateCtrl: FormControl;
+  private notBillableCtrl: UntypedFormControl;
+  private notBillableReasonCtrl: UntypedFormControl;
+  private invoicingDateCtrl: UntypedFormControl;
   private originalForm: InvoicingInfoForm;
   private originalRecipientForm: CustomerForm;
   private destroy: Subject<boolean> = new Subject<boolean>();
@@ -61,10 +61,10 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.recipientForm = <FormGroup>this.form.get('invoiceRecipient');
-    this.notBillableCtrl = <FormControl>this.form.get('notBillable');
-    this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
-    this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
+    this.recipientForm = <UntypedFormGroup>this.form.get('invoiceRecipient');
+    this.notBillableCtrl = <UntypedFormControl>this.form.get('notBillable');
+    this.notBillableReasonCtrl = <UntypedFormControl>this.form.get('notBillableReason');
+    this.invoicingDateCtrl = <UntypedFormControl>this.form.get('invoicingDate');
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
     this.initForm();
     this.customerLoading$ = this.store.pipe(select(fromInvoicing.getInvoicingCustomerLoading));

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, Validators} from '@angular/forms';
 import {Configuration} from '@model/config/configuration';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -29,12 +29,12 @@ export class ConfigurationContactValueComponent implements OnInit, OnDestroy {
 
   matching$: Observable<Contact[]>;
 
-  valueCtrl: FormControl;
+  valueCtrl: UntypedFormControl;
 
   private destroy = new Subject<boolean>();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private store: Store<fromRoot.State>
   ) {}
 

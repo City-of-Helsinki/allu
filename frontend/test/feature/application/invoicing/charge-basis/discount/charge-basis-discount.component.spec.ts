@@ -1,5 +1,5 @@
 import {DebugElement} from '@angular/core';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
@@ -43,7 +43,7 @@ describe('ChargeBasisDiscountComponent', () => {
     de = fixture.debugElement;
     store = TestBed.inject(Store);
 
-    comp.form = ChargeBasisEntryForm.formGroup(new FormBuilder());
+    comp.form = ChargeBasisEntryForm.formGroup(new UntypedFormBuilder());
     comp.ngOnInit();
     fixture.detectChanges();
   });

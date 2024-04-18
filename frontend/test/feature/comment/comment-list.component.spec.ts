@@ -1,5 +1,5 @@
 import {Component, DebugElement, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {FormGroup, FormsModule} from '@angular/forms';
+import {UntypedFormGroup, FormsModule} from '@angular/forms';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
@@ -46,7 +46,7 @@ class MockCommentComponent {
   @Output('save') onSave = new EventEmitter<Comment>();
   @Output('remove') onRemove = new EventEmitter<Comment>();
 
-  form = new FormGroup({});
+  form = new UntypedFormGroup({});
 }
 
 describe('CommentListComponent', () => {

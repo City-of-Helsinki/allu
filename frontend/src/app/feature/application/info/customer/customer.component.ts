@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
 import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
@@ -26,7 +26,7 @@ import {startWith} from 'rxjs/operators';
 })
 export class CustomerComponent implements OnInit, OnDestroy {
   @Input() pendingInfo: boolean;
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() readonly: boolean;
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
@@ -36,13 +36,13 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   @ViewChild('contacts', { static: true }) contacts: ContactComponent;
 
-  customerWithContactsForm: FormGroup;
-  customerForm: FormGroup;
+  customerWithContactsForm: UntypedFormGroup;
+  customerForm: UntypedFormGroup;
   customerClass: string[] = [];
 
   private _customerWithContacts: CustomerWithContacts;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private customerService: CustomerService,
               private notification: NotificationService) {
   }
@@ -121,7 +121,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   private initForm() {
     const roleType = this.customerWithContacts.roleType;
     this.customerWithContactsForm = CustomerWithContactsForm.initialForm(this.fb, roleType);
-    this.customerForm = <FormGroup>this.customerWithContactsForm.get('customer');
+    this.customerForm = <UntypedFormGroup>this.customerWithContactsForm.get('customer');
     this.parentForm.addControl(CustomerWithContactsForm.formName(roleType), this.customerWithContactsForm);
   }
 

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@angular/core';
 import {hasSpecifiers, KindsWithSpecifiers, SpecifierEntry} from '@model/application/type/application-specifier';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
 import {takeUntil} from 'rxjs/internal/operators';
 import {Subject} from 'rxjs/index';
@@ -20,7 +20,7 @@ import {ApplicationKind, mergeKindsWithSpecifiers} from '@model/application/type
 })
 export class KindAcceptanceComponent implements OnInit {
   @Input() applicationType: string;
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() oldValues: KindsWithSpecifiers;
   @Input() newValues: string;
   @Input() readonly: boolean;
@@ -31,13 +31,13 @@ export class KindAcceptanceComponent implements OnInit {
   multipleKinds = false;
   availableKinds: ApplicationKind[] = [];
   availableKindsWithSpecifiers: KindsWithSpecifiers = {};
-  form: FormGroup;
+  form: UntypedFormGroup;
 
-  private kindsCtrl: FormControl;
-  private specifiersCtrl: FormControl;
+  private kindsCtrl: UntypedFormControl;
+  private specifiersCtrl: UntypedFormControl;
   private destroy = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private store: Store<fromApplication.State>) {
   }
 

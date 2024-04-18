@@ -1,4 +1,4 @@
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {Contact} from '../../../model/customer/contact';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
@@ -26,7 +26,7 @@ export class CustomerWithContactsForm {
     );
   }
 
-  public static initialForm(fb: FormBuilder, roleType: CustomerRoleType = CustomerRoleType.APPLICANT): FormGroup {
+  public static initialForm(fb: UntypedFormBuilder, roleType: CustomerRoleType = CustomerRoleType.APPLICANT): UntypedFormGroup {
     return fb.group({
       roleType: [CustomerRoleType[roleType]],
       customer: CustomerForm.initialForm(fb),

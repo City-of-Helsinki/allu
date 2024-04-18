@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
@@ -31,7 +31,7 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
     );
   }
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],

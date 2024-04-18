@@ -1,6 +1,6 @@
 import {Component, DebugElement, Input} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatListOption} from '@angular/material/list';
@@ -40,7 +40,7 @@ class MockHostComponent {
     value2: 11
   };
 
-  form = new FormBuilder().group({
+  form = new UntypedFormBuilder().group({
     selectedValues: [[]]
   });
 }
@@ -77,7 +77,7 @@ describe('FieldSelectComponent', () => {
         SimpleMapMockComponent
       ],
       providers: [
-        FormBuilder
+        UntypedFormBuilder
       ]
     }).compileComponents();
   }));

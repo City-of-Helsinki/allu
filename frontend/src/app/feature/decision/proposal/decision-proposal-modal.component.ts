@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {CommentType} from '@model/application/comment/comment-type';
 import {StatusChangeInfo} from '@model/application/status-change-info';
 import {Observable} from 'rxjs';
@@ -26,14 +26,14 @@ export interface DecisionProposalData {
   styleUrls: ['./decision-proposal-modal.component.scss']
 })
 export class DecisionProposalModalComponent implements OnInit {
-  proposalForm: FormGroup;
+  proposalForm: UntypedFormGroup;
 
   handlers: Observable<Array<User>>;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DecisionProposalData,
               private dialogRef: MatDialogRef<DecisionProposalModalComponent>,
               private userService: UserService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private configHelper: ConfigurationHelperService) {}
 
   ngOnInit(): void {

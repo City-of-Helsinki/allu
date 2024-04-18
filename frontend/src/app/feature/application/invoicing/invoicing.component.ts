@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
@@ -41,14 +41,14 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
   @ViewChild(InvoicingInfoComponent, { static: true }) invoicingInfo: InvoicingInfoComponent;
 
   applicationId: number;
-  infoForm: FormGroup;
+  infoForm: UntypedFormGroup;
   invoices$: Observable<Invoice[]>;
 
-  private recipientForm: FormGroup;
-  private notBillableCtrl: FormControl;
+  private recipientForm: UntypedFormGroup;
+  private notBillableCtrl: UntypedFormControl;
 
   constructor(private applicationStore: ApplicationStore,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private customerService: CustomerService,
               private dialog: MatDialog,
               private currentUser: CurrentUser,
@@ -60,8 +60,8 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
     const application = this.applicationStore.snapshot.application;
     this.applicationId = application.id;
     this.infoForm = InvoicingInfoForm.initialForm(this.fb);
-    this.recipientForm = <FormGroup>this.infoForm.get('invoiceRecipient');
-    this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
+    this.recipientForm = <UntypedFormGroup>this.infoForm.get('invoiceRecipient');
+    this.notBillableCtrl = <UntypedFormControl>this.infoForm.get('notBillable');
     this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role])).subscribe(hasRequiredRole => {
       if (hasRequiredRole && applicationCanBeEdited(application)) {
         this.infoForm.enable();

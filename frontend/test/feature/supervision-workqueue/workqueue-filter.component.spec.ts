@@ -3,7 +3,7 @@ import {Component, DebugElement, Input} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../mocks';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {WorkQueueFilterComponent} from '@feature/supervision-workqueue/filter/workqueue-filter.component';
 import {findTranslation} from '@util/translations';
@@ -52,7 +52,7 @@ describe('SupervisionWorkqueueFilterComponent', () => {
         MockStoredFilterComponent
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {provide: StoredFilterStore, useClass: StoredFilterStoreMock},
         {provide: UserService, useClass: UserServiceMock},
       ]

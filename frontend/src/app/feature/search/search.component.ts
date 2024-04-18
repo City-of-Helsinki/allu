@@ -9,7 +9,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {UserService} from '@service/user/user-service';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CityDistrict} from '@model/common/city-district';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -38,7 +38,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     'receivedTime', 'startTime', 'endTime'
   ];
 
-  queryForm: FormGroup;
+  queryForm: UntypedFormGroup;
   applications: Array<Application>;
   owners: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
@@ -56,7 +56,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   constructor(private userService: UserService,
               private store: Store<fromRoot.State>,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
     this.queryForm = this.fb.group({
       applicationId: undefined,
       type: undefined,

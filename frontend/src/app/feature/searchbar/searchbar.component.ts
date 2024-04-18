@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ValidatorFn, Validators} from '@angular/forms';
 
 import {MapStore} from '@service/map/map-store';
 import {PostalAddress} from '@model/common/postal-address';
@@ -58,8 +58,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   @Output() addressChange = new EventEmitter<string>();
   @Output() searchChange = new EventEmitter<MapSearchFilter>();
 
-  searchForm: FormGroup;
-  addressControl: FormControl;
+  searchForm: UntypedFormGroup;
+  addressControl: UntypedFormControl;
   matchingAddresses$: Observable<PostalAddress[]>;
   statuses = EnumUtil.enumValues(ApplicationStatusGroup);
   MAP_FILTER = StoredFilterType.MAP;
@@ -78,7 +78,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   private baseDateValidators: ValidatorFn[] = [];
   private destroy = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private mapStore: MapStore,
               private storedFilterStore: StoredFilterStore,
               private notification: NotificationService,

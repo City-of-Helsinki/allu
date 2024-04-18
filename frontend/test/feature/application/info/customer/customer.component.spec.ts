@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 
 import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
@@ -33,7 +33,7 @@ class CodeSetServiceMock {
   template: ''
 })
 class MockContactComponent {
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() customerId: number;
   @Input() customerRoleType: string;
   @Input() contactList: Array<Contact> = [];
@@ -47,7 +47,7 @@ describe('CustomerComponent', () => {
   let comp: CustomerComponent;
   let fixture: ComponentFixture<CustomerComponent>;
   let page: CustomerPage;
-  let parentForm: FormGroup;
+  let parentForm: UntypedFormGroup;
 
   class CustomerPage {
     cardTitle: HTMLElement;
@@ -90,7 +90,7 @@ describe('CustomerComponent', () => {
         CustomerOptionContentComponent
       ],
       providers: [
-        {provide: FormBuilder, useValue: new FormBuilder()},
+        {provide: UntypedFormBuilder, useValue: new UntypedFormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock},
         {provide: NotificationService, useClass: NotificationServiceMock}
@@ -101,7 +101,7 @@ describe('CustomerComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CustomerComponent);
     comp = fixture.componentInstance;
-    const fb = new FormBuilder();
+    const fb = new UntypedFormBuilder();
     parentForm = fb.group({});
 
     comp.parentForm = parentForm;

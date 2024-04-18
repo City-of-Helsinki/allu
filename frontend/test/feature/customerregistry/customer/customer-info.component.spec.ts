@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 
 import {CustomerInfoComponent} from '../../../../src/app/feature/customerregistry/customer/customer-info.component';
@@ -26,8 +26,8 @@ describe('CustomerInfoComponent', () => {
   let comp: CustomerInfoComponent;
   let fixture: ComponentFixture<CustomerInfoComponent>;
   let page: CustomerInfoPage;
-  const fb = new FormBuilder();
-  let customerForm: FormGroup;
+  const fb = new UntypedFormBuilder();
+  let customerForm: UntypedFormGroup;
   let debugElement: DebugElement;
 
   class CustomerInfoPage {

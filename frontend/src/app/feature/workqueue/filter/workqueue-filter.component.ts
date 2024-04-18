@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
 import {EnumUtil} from '@util/enum.util';
@@ -37,7 +37,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   @Input() owners: Array<User>;
 
-  queryForm: FormGroup;
+  queryForm: UntypedFormGroup;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = workqueue_searchable;
   applicationTypes = Object.keys(ApplicationType)
@@ -53,7 +53,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   private destroy = new Subject<boolean>();
 
-  constructor(fb: FormBuilder,
+  constructor(fb: UntypedFormBuilder,
               private store: Store<fromRoot.State>,
               private storedFilterStore: StoredFilterStore) {
     this.queryForm = fb.group({

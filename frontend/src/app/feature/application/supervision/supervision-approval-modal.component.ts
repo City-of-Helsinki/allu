@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
 import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
@@ -37,7 +37,7 @@ export interface SupervisionApprovalResult {
 })
 export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
   resolutionType: SupervisionApprovalResolutionType;
-  form: FormGroup;
+  form: UntypedFormGroup;
   showNewSupervisionDate = false;
   application: Application;
 
@@ -45,7 +45,7 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: SupervisionApprovalModalData,
-    protected fb: FormBuilder,
+    protected fb: UntypedFormBuilder,
     protected dialogRef: MatDialogRef<SupervisionApprovalModalComponent>) {
   }
 

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {CustomerType} from '@model/customer/customer-type';
 import {EnumUtil} from '@util/enum.util';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NumberUtil} from '@util/number.util';
 import {CustomerForm} from './customer.form';
@@ -29,7 +29,7 @@ const DEBOUNCE_TIME_MS = 300;
   styleUrls: []
 })
 export class CustomerInfoComponent implements OnInit, OnDestroy {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() allowSearch = false;
   @Input() showInvoicingInfo = false;
   @Input() showInvoicingOnly = false;
@@ -43,22 +43,22 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   countries: Observable<Array<CodeSet>>;
   customerTypes = EnumUtil.enumValues(CustomerType);
   typeSubscription: Subscription;
-  registryKeyControl: FormControl;
+  registryKeyControl: UntypedFormControl;
   countrySubscription: Subscription;
 
-  private nameControl: FormControl;
-  private typeControl: FormControl;
-  private countryControl: FormControl;
-  private postalCodeControl: FormControl;
+  private nameControl: UntypedFormControl;
+  private typeControl: UntypedFormControl;
+  private countryControl: UntypedFormControl;
+  private postalCodeControl: UntypedFormControl;
 
   constructor(private customerService: CustomerService, private codeSetService: CodeSetService) {}
 
   ngOnInit() {
-    this.nameControl = <FormControl>this.form.get('name');
-    this.typeControl = <FormControl>this.form.get('type');
-    this.registryKeyControl = <FormControl>this.form.get('registryKey');
-    this.countryControl = <FormControl>this.form.get('country');
-    this.postalCodeControl = <FormControl> this.form.get('postalAddress').get('postalCode');
+    this.nameControl = <UntypedFormControl>this.form.get('name');
+    this.typeControl = <UntypedFormControl>this.form.get('type');
+    this.registryKeyControl = <UntypedFormControl>this.form.get('registryKey');
+    this.countryControl = <UntypedFormControl>this.form.get('country');
+    this.postalCodeControl = <UntypedFormControl> this.form.get('postalAddress').get('postalCode');
 
     this.matchingNameCustomers = this.nameControl.valueChanges.pipe(
       debounceTime(DEBOUNCE_TIME_MS),

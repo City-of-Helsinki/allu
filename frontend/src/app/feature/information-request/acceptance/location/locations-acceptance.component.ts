@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Location} from '@model/common/location';
 import {ArrayUtil} from '@util/array-util';
 import {Subject} from 'rxjs/internal/Subject';
@@ -17,7 +17,7 @@ const DEFAULT_LOCATION_KEY = 1;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LocationsAcceptanceComponent implements OnInit, AfterViewInit {
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() oldLocations: Location[] = [];
   @Input() newLocations: Location[] = [];
   @Input() readonly: boolean;
@@ -26,12 +26,12 @@ export class LocationsAcceptanceComponent implements OnInit, AfterViewInit {
   locationKeys: number[];
   oldLocationsByKey: {[key: number]: Location} = {};
   newLocationsByKey: {[key: number]: Location} = {};
-  locationForms: FormArray;
+  locationForms: UntypedFormArray;
 
   private locationChanges$ = new Subject<Location>();
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder, private store: Store<fromRoot.State>) {
+  constructor(private fb: UntypedFormBuilder, private store: Store<fromRoot.State>) {
   }
 
   ngOnInit(): void {

@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 
@@ -11,7 +11,7 @@ import {InformationRequestFieldKey} from '@model/information-request/information
 export class CustomerWithContactsAcceptanceComponent {
   @Input() oldCustomerWithContacts: CustomerWithContacts;
   @Input() newCustomerWithContacts: CustomerWithContacts;
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;

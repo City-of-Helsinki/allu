@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Location} from '@model/common/location';
 
 @Component({
@@ -9,7 +9,7 @@ import {Location} from '@model/common/location';
 })
 export class LocationAcceptanceComponent implements OnInit, OnDestroy {
   @Input() id = '';
-  @Input() formArray: FormArray;
+  @Input() formArray: UntypedFormArray;
   @Input() readonly: boolean;
   @Input() oldLocation: Location;
   @Input() newLocation: Location;
@@ -17,9 +17,9 @@ export class LocationAcceptanceComponent implements OnInit, OnDestroy {
 
   @Output() locationChanges: EventEmitter<Location> = new EventEmitter<Location>();
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({});

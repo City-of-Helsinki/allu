@@ -1,5 +1,5 @@
 import {Component, DebugElement, Input} from '@angular/core';
-import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {UntypedFormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
@@ -111,7 +111,7 @@ describe('SupervisionTaskComponent', () => {
     currentApplication.locations = [new Location(1)];
 
     store.dispatch(new ApplicationActions.LoadSuccess(currentApplication));
-    comp.form = new FormBuilder().group(taskForm);
+    comp.form = new UntypedFormBuilder().group(taskForm);
     comp.supervisors = [supervisor];
     comp.application = currentApplication;
     handler.assignedRoles = [RoleType.ROLE_CREATE_APPLICATION, RoleType.ROLE_PROCESS_APPLICATION];

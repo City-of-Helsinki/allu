@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {MatOption} from '@angular/material/core';
 import {debounceTime, map, takeUntil} from 'rxjs/internal/operators';
@@ -23,7 +23,7 @@ export class ApplicationIdentifierSelectComponent implements OnInit, OnDestroy {
   // Without prefix
   readonly IDENTIFIER_LENGTH = 7;
 
-  searchControl = new FormControl('', [ComplexValidator.isNumber, ComplexValidator.requiredLength(this.IDENTIFIER_LENGTH)]);
+  searchControl = new UntypedFormControl('', [ComplexValidator.isNumber, ComplexValidator.requiredLength(this.IDENTIFIER_LENGTH)]);
 
   private _matchingIdentifiers: IdentifierEntry[] = [];
   private destroy = new Subject<boolean>();

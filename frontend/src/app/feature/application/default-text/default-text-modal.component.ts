@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 
 import {DefaultText} from '../../../model/application/cable-report/default-text';
 import {DefaultTextType} from '../../../model/application/default-text-type';
@@ -24,13 +24,13 @@ export class DefaultTextModalComponent implements OnInit {
   @Input() type: DefaultTextType;
 
   typeName: string;
-  defaultTextform: FormGroup;
-  defaultTexts: FormArray;
+  defaultTextform: UntypedFormGroup;
+  defaultTexts: UntypedFormArray;
   changed = new Set<number>();
   translations = translations;
 
   constructor(public dialogRef: MatDialogRef<DefaultTextModalComponent>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private defaultTextService: DefaultTextService,
               private notification: NotificationService) {
     this.defaultTexts = fb.array([]);
@@ -66,7 +66,7 @@ export class DefaultTextModalComponent implements OnInit {
     }
   }
 
-  createEntry(defaultText: DefaultText): FormGroup {
+  createEntry(defaultText: DefaultText): UntypedFormGroup {
     return this.fb.group({
       id: defaultText.id,
       applicationType: ApplicationType[defaultText.applicationType],

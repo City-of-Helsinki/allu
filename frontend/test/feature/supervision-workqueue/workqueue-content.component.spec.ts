@@ -4,7 +4,7 @@ import {By} from '@angular/platform-browser';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {ActivatedRouteMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '@feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '@model/common/page';
@@ -51,7 +51,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
         WorkQueueContentComponent
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {provide: ActivatedRoute, useValue: new ActivatedRouteMock()},
         {provide: StoredFilterStore, useClass: StoredFilterStoreMock}
       ]

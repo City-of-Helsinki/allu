@@ -1,4 +1,4 @@
-import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {Some} from './option';
 import {TimeUtil} from './time.util';
 import {NumberUtil} from './number.util';
@@ -94,7 +94,7 @@ export class ComplexValidator {
   }
 
   static startBeforeEnd(startField: string, endField: string): ValidatorFn {
-    return (fg: FormGroup) => {
+    return (fg: UntypedFormGroup) => {
       const start = this.fieldValue(fg, startField);
       const end = this.fieldValue(fg, endField);
 
@@ -109,7 +109,7 @@ export class ComplexValidator {
   }
 
   static durationAtMax(startField: string, endField: string, maxDuration: number, unit: unitOfTime.DurationConstructor): ValidatorFn {
-    return (fg: FormGroup) => {
+    return (fg: UntypedFormGroup) => {
       const start = this.fieldValue(fg, startField);
       const end = this.fieldValue(fg, endField);
 
@@ -236,7 +236,7 @@ export class ComplexValidator {
     }
   }
 
-  private static fieldValue(group: FormGroup, fieldName: string) {
+  private static fieldValue(group: UntypedFormGroup, fieldName: string) {
     return Some(group.get(fieldName))
       .filter(control => !!control)
       .map(control => control.value)

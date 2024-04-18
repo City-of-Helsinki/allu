@@ -1,5 +1,5 @@
 import {Component, DebugElement, Input, NgModule} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Customer} from '@model/customer/customer';
 import {CodeSet, CodeSetCodeMap, CodeSetTypeMap} from '@model/codeset/codeset';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
@@ -34,11 +34,11 @@ import {CustomerOptionContentComponent} from '@feature/customerregistry/customer
     </form>`
 })
 class MockHostComponent {
-  form: FormGroup;
+  form: UntypedFormGroup;
   oldCustomer: Customer;
   newCustomer: Customer;
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: UntypedFormBuilder) {
     this.form = fb.group({});
   }
 }
@@ -51,7 +51,7 @@ class MockCustomerInfoAcceptanceComponent {
   _oldCustomer: Customer;
   _newCustomer: Customer;
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() countryCodes: CodeSetCodeMap;
   @Input() readonly: boolean;
   @Input() hideExisting: boolean;
@@ -112,7 +112,7 @@ describe('CustomerAcceptanceComponent', () => {
         CustomerOptionContentComponent
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {provide: MatDialogRef, useClass: MatDialogRefMock},
         {provide: MatDialog, useClass: MatDialogMock}
       ]

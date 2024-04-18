@@ -1,5 +1,5 @@
 import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, FormsModule} from '@angular/forms';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {User} from '@model/user/user';
@@ -25,7 +25,7 @@ const firstTask = new SupervisionTask(1);
   template: ''
 })
 class MockSupervisionTaskComponent {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() supervisors: Array<User> = [];
   @Input() application: Application;
   @Input() hasDisablingTags: boolean;
@@ -54,7 +54,7 @@ describe('SupervisionComponent', () => {
         MockSupervisionTaskComponent
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {provide: UserService, useClass: UserServiceMock}
       ]
     })

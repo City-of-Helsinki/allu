@@ -1,5 +1,5 @@
 import {PostalAddress} from '../../../model/common/postal-address';
-import {FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {postalCodeValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerType} from '@model/customer/customer-type';
@@ -61,7 +61,7 @@ export class CustomerForm {
     return customer;
   }
 
-  static initialForm(fb: FormBuilder): any {
+  static initialForm(fb: UntypedFormBuilder): any {
     return fb.group({
       id: undefined,
       type: [undefined, Validators.required],

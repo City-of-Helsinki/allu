@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {SupervisionTaskForm} from './supervision-task-form';
 import {ApplicationStore} from '@service/application/application-store';
 import {User} from '@model/user/user';
@@ -59,7 +59,7 @@ import * as fromSupervisionTask from './reducers';
 })
 export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Input() application: Application;
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Output() onRemove = new EventEmitter<void>();
 
   taskTypes: string[] = [];

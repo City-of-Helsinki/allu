@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
 import {TrafficArrangement} from '@model/application/traffic-arrangement/traffic-arrangement';
@@ -16,7 +16,7 @@ import {ApplicationStatus, isSameOrAfter} from '@model/application/application-s
 })
 export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],

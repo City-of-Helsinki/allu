@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Contact} from '@model/customer/contact';
@@ -16,12 +16,12 @@ import {ContactService} from '@service/customer/contact.service';
 export class ContactModalComponent implements OnInit {
   @Input() contactId: number;
 
-  contactForm: FormGroup;
+  contactForm: UntypedFormGroup;
 
   constructor(public dialogRef: MatDialogRef<ContactModalComponent>,
               private contactService: ContactService,
               private notification: NotificationService,
-              fb: FormBuilder) {
+              fb: UntypedFormBuilder) {
     this.contactForm = Contact.formGroup(fb);
   }
 

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@angular/core';
 import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {TimeUtil} from '@util/time.util';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'attachments-acceptance',
@@ -16,12 +16,12 @@ export class AttachmentsAcceptanceComponent implements OnInit {
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
 
   private _attachments: AttachmentInfo[] = [];
-  private form: FormGroup;
+  private form: UntypedFormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: UntypedFormBuilder) {
     this.form = fb.group({
       attachments: [undefined, Validators.requiredTrue]
     });

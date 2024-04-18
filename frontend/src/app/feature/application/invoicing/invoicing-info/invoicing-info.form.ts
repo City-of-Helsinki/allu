@@ -1,4 +1,4 @@
-import {FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 
 export class InvoicingInfoForm {
@@ -17,7 +17,7 @@ export class InvoicingInfoForm {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
-  static initialForm(fb: FormBuilder): any {
+  static initialForm(fb: UntypedFormBuilder): any {
     return fb.group({
       id: undefined,
       invoiceRecipient: CustomerForm.initialForm(fb),

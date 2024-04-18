@@ -1,7 +1,7 @@
 import {DebugElement} from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {RecipientsByTypeComponent} from '../../../../src/app/feature/admin/default-recipients/recipients-by-type.component';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {DefaultRecipientHub} from '../../../../src/app/service/recipients/default-recipient-hub';
@@ -66,7 +66,7 @@ describe('RecipientsByTypeComponent', () => {
         RecipientsByTypeComponent
       ],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         { provide: DefaultRecipientHub, useClass: DefaultRecipientHubMock },
         {provide: NotificationService, useClass: NotificationServiceMock}
       ]

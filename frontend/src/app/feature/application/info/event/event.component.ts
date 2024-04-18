@@ -8,7 +8,7 @@ import {ApplicationKind} from '@model/application/type/application-kind';
 import {EventNature} from '@model/application/event/event-nature';
 import {TimeUtil} from '@util/time.util';
 import {ComplexValidator} from '@util/complex-validator';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
   selector: 'event',
@@ -46,7 +46,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   }
 
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     const snapshot = this.applicationStore.snapshot;
     this.initFormStructures(snapshot.application);
     return this.fb.group(this.getExtensionFormStructure(snapshot.draft));

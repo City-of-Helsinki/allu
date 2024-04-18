@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {MapUtil} from '@service/map/map.util';
 import {MapStore} from '@service/map/map-store';
@@ -67,8 +67,8 @@ import {SaveDistribution} from '@feature/application/actions/application-actions
   ]
 })
 export class LocationComponent implements OnInit, OnDestroy {
-  locationForm: FormGroup;
-  fixedLocationsCtrl: FormControl;
+  locationForm: UntypedFormGroup;
+  fixedLocationsCtrl: UntypedFormControl;
   fixedLocationInfos: string[];
 
   location: Location;
@@ -107,7 +107,7 @@ export class LocationComponent implements OnInit, OnDestroy {
     private mapStore: MapStore,
     private mapController: MapController,
     private store: Store<fromRoot.State>,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private defaultRecipientHub: DefaultRecipientHub,
     private notification: NotificationService,
     private currentUser: CurrentUser,

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/internal/operators';
 import {MatDatepicker} from '@angular/material/datepicker';
@@ -52,7 +52,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   private winterTimeStart: string;
   public winterTimeEnd: string;
 
-  constructor(fb: FormBuilder,
+  constructor(fb: UntypedFormBuilder,
               route: ActivatedRoute,
               applicationStore: ApplicationStore,
               applicationService: ApplicationService,
@@ -144,7 +144,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
         });
   }
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],

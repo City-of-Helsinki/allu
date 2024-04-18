@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ProjectForm} from './project.form';
 import * as fromRoot from '../../allu/reducers';
 import * as fromProject from '../reducers';
@@ -32,21 +32,21 @@ import {Sort} from '@model/common/sort';
   styleUrls: ['./project-edit.component.scss']
 })
 export class ProjectEditComponent {
-  form: FormGroup;
+  form: UntypedFormGroup;
   customerTypes = EnumUtil.enumValues(CustomerType);
 
   matchingCustomers$: Observable<Customer[]>;
   matchingContacts$: Observable<Contact[]>;
   applications$: Observable<Application[]>;
 
-  private customerTypeCtrl: FormControl;
-  private customerCtrl: FormControl;
-  private contactCtrl: FormControl;
+  private customerTypeCtrl: UntypedFormControl;
+  private customerCtrl: UntypedFormControl;
+  private contactCtrl: UntypedFormControl;
 
   private destroy = new Subject<boolean>();
 
   constructor(private store: Store<fromRoot.State>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private projectService: ProjectService) {
     this.initForm();
 
