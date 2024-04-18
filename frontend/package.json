@@ -105,5 +105,10 @@
     "tslint": "~6.1.0",
     "typescript": "4.0.8",
     "webpack-sources": "1.3.0"
+  },
+  "overrides": {
+    "ngrx-store-logger": {
+        "@ngrx/store": ">=4.0.0"
+    }
   }
 }
