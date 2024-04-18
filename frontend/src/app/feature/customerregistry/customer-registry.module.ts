@@ -23,46 +23,42 @@ import {ContactEffects} from '@feature/customerregistry/effects/contact-effects'
 import {ContactOptionContentComponent} from '@feature/customerregistry/contact/contact-option-content.component';
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(customerRegistryRoutes),
-    FormsModule,
-    StoreModule.forFeature('customer', reducersToken),
-    EffectsModule.forFeature([
-      CustomerSearchEffects,
-      ContactSearchEffects,
-      ContactEffects
-    ]),
-    ReactiveFormsModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    AlluCommonModule
-  ],
-  declarations: [
-    CustomerRegistryComponent,
-    CustomerListComponent,
-    CustomerComponent,
-    CustomerInfoComponent,
-    CustomerContactsComponent,
-    CustomerModalComponent,
-    CustomerModalComponent,
-    ContactModalComponent,
-    CustomerOptionContentComponent,
-    ContactOptionContentComponent
-  ],
-  exports: [
-    CustomerModalComponent,
-    ContactModalComponent,
-    CustomerInfoComponent,
-    CustomerOptionContentComponent,
-    ContactOptionContentComponent
-  ],
-  providers: [
-    reducersProvider
-  ],
-  entryComponents: [
-    CustomerModalComponent,
-    ContactModalComponent,
-  ]
+    imports: [
+        RouterModule.forChild(customerRegistryRoutes),
+        FormsModule,
+        StoreModule.forFeature('customer', reducersToken),
+        EffectsModule.forFeature([
+            CustomerSearchEffects,
+            ContactSearchEffects,
+            ContactEffects
+        ]),
+        ReactiveFormsModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        AlluCommonModule
+    ],
+    declarations: [
+        CustomerRegistryComponent,
+        CustomerListComponent,
+        CustomerComponent,
+        CustomerInfoComponent,
+        CustomerContactsComponent,
+        CustomerModalComponent,
+        CustomerModalComponent,
+        ContactModalComponent,
+        CustomerOptionContentComponent,
+        ContactOptionContentComponent
+    ],
+    exports: [
+        CustomerModalComponent,
+        ContactModalComponent,
+        CustomerInfoComponent,
+        CustomerOptionContentComponent,
+        ContactOptionContentComponent
+    ],
+    providers: [
+        reducersProvider
+    ]
 })
 export class CustomerRegistryModule {}

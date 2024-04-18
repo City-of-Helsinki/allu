@@ -22,33 +22,27 @@ import {SupervisionTaskLocationComponent} from '@feature/application/supervision
 import { LoadingIndicatorComponent } from '@app/feature/common/loading-indicator/loading-indicator.component';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    AlluCommonModule,
-    RouterModule,
-    StoreModule.forFeature('supervisionTasks', reducers),
-    EffectsModule.forFeature([
-      SupervisionTaskEffects
-    ]),
-    MapModule
-  ],
-  declarations: [
-    SupervisionComponent,
-    SupervisionTaskComponent,
-    SupervisionApprovalModalComponent,
-    ExcavationSupervisionApprovalModalComponent,
-    AreaRentalSupervisionApprovalModalComponent,
-    SupervisionTaskLocationComponent
-  ],
-  providers: [
-    SupervisionTaskService
-  ],
-  entryComponents: [
-    SupervisionApprovalModalComponent,
-    ExcavationSupervisionApprovalModalComponent,
-    AreaRentalSupervisionApprovalModalComponent,
-    LoadingIndicatorComponent
-  ]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        AlluCommonModule,
+        RouterModule,
+        StoreModule.forFeature('supervisionTasks', reducers),
+        EffectsModule.forFeature([
+            SupervisionTaskEffects
+        ]),
+        MapModule
+    ],
+    declarations: [
+        SupervisionComponent,
+        SupervisionTaskComponent,
+        SupervisionApprovalModalComponent,
+        ExcavationSupervisionApprovalModalComponent,
+        AreaRentalSupervisionApprovalModalComponent,
+        SupervisionTaskLocationComponent
+    ],
+    providers: [
+        SupervisionTaskService
+    ]
 })
 export class SupervisionModule {}

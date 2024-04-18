@@ -8,26 +8,23 @@ import {DistributionSelectionComponent} from '@feature/application/distribution/
 import {DistributionModalComponent} from '@feature/application/distribution/distribution-modal.component';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    AlluCommonModule,
-    MatRadioModule
-  ],
-  declarations: [
-    DistributionComponent,
-    DistributionListComponent,
-    DistributionSelectionComponent,
-    DistributionModalComponent,
-  ],
-  exports: [
-    DistributionComponent,
-    DistributionListComponent,
-    DistributionSelectionComponent,
-    DistributionModalComponent
-  ],
-  entryComponents: [
-    DistributionModalComponent
-  ]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        AlluCommonModule,
+        MatRadioModule
+    ],
+    declarations: [
+        DistributionComponent,
+        DistributionListComponent,
+        DistributionSelectionComponent,
+        DistributionModalComponent,
+    ],
+    exports: [
+        DistributionComponent,
+        DistributionListComponent,
+        DistributionSelectionComponent,
+        DistributionModalComponent
+    ]
 })
 export class DistributionModule {}

@@ -36,57 +36,51 @@ import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-acti
 import {BulkApprovalEffects} from './effects/bulk-approval-effects';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    StoreModule.forFeature('decision', reducersToken),
-    EffectsModule.forFeature([
-      DecisionEffects,
-      ContractEffects,
-      ApprovalDocumentEffects,
-      TerminationEffects,
-      BulkApprovalEffects
-    ]),
-    AlluCommonModule,
-    ProgressBarModule,
-    DistributionModule,
-    PdfModule
-  ],
-  declarations: [
-    DecisionComponent,
-    DecisionDocumentsComponent,
-    DecisionDocumentComponent,
-    DecisionActionsComponent,
-    ContractActionsComponent,
-    DecisionModalComponent,
-    ApplicationBasicInfoComponent,
-    DecisionProposalModalComponent,
-    DecisionProposalComponent,
-    AttachmentThumbnailsComponent,
-    ContractApprovalModalComponent,
-    TerminationModalComponent,
-    TerminationActionsComponent,
-    BaseDecisionActionsComponent
-  ],
-  providers: [
-    DecisionService,
-    ContractService,
-    ApprovalDocumentService,
-    TerminationService,
-    TerminationModalService,
-    DecisionTabResolve,
-    ContractGuard,
-    reducersProvider
-  ],
-  entryComponents: [
-    DecisionModalComponent,
-    DecisionProposalModalComponent,
-    ContractApprovalModalComponent,
-    TerminationModalComponent
-  ],
-  exports: [
-    DecisionComponent
-  ]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        StoreModule.forFeature('decision', reducersToken),
+        EffectsModule.forFeature([
+            DecisionEffects,
+            ContractEffects,
+            ApprovalDocumentEffects,
+            TerminationEffects,
+            BulkApprovalEffects
+        ]),
+        AlluCommonModule,
+        ProgressBarModule,
+        DistributionModule,
+        PdfModule
+    ],
+    declarations: [
+        DecisionComponent,
+        DecisionDocumentsComponent,
+        DecisionDocumentComponent,
+        DecisionActionsComponent,
+        ContractActionsComponent,
+        DecisionModalComponent,
+        ApplicationBasicInfoComponent,
+        DecisionProposalModalComponent,
+        DecisionProposalComponent,
+        AttachmentThumbnailsComponent,
+        ContractApprovalModalComponent,
+        TerminationModalComponent,
+        TerminationActionsComponent,
+        BaseDecisionActionsComponent
+    ],
+    providers: [
+        DecisionService,
+        ContractService,
+        ApprovalDocumentService,
+        TerminationService,
+        TerminationModalService,
+        DecisionTabResolve,
+        ContractGuard,
+        reducersProvider
+    ],
+    exports: [
+        DecisionComponent
+    ]
 })
 export class DecisionModule {}

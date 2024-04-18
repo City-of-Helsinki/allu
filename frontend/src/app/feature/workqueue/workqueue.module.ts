@@ -20,33 +20,30 @@ import {reducersProvider, reducersToken} from '@feature/workqueue/reducers';
 import {CommentModule} from '@feature/comment/comment.module';
 
 @NgModule({
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    RouterModule,
-    AlluCommonModule,
-    MatButtonToggleModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatChipsModule,
-    SelectionGroupModule,
-    OwnerModalModule,
-    StoredFilterModule,
-    StoreModule.forFeature('workQueue', reducersToken),
-    CommentModule
-  ],
-  declarations: [
-    WorkQueueComponent,
-    WorkQueueFilterComponent,
-    WorkQueueContentComponent,
-    CommentsModalComponent
-  ],
-  providers: [
-    reducersProvider
-  ],
-  entryComponents: [
-    CommentsModalComponent
-  ]
+    imports: [
+        ReactiveFormsModule,
+        FormsModule,
+        RouterModule,
+        AlluCommonModule,
+        MatButtonToggleModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatChipsModule,
+        SelectionGroupModule,
+        OwnerModalModule,
+        StoredFilterModule,
+        StoreModule.forFeature('workQueue', reducersToken),
+        CommentModule
+    ],
+    declarations: [
+        WorkQueueComponent,
+        WorkQueueFilterComponent,
+        WorkQueueContentComponent,
+        CommentsModalComponent
+    ],
+    providers: [
+        reducersProvider
+    ]
 })
 export class WorkQueueModule {}

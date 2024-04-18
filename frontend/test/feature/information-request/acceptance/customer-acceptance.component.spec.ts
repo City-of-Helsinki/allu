@@ -66,13 +66,12 @@ class MockCustomerInfoAcceptanceComponent {
 }
 
 @NgModule({
-  imports: [AlluCommonModule],
-  declarations: [CustomerModalComponent],
-  providers: [
-    {provide: CustomerService, useClass: CustomerServiceMock},
-    {provide: NotificationService, useClass: NotificationServiceMock}
-  ],
-  entryComponents: [CustomerModalComponent]
+    imports: [AlluCommonModule],
+    declarations: [CustomerModalComponent],
+    providers: [
+        { provide: CustomerService, useClass: CustomerServiceMock },
+        { provide: NotificationService, useClass: NotificationServiceMock }
+    ]
 })
 class DialogTestModule { }
 

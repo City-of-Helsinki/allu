@@ -4,19 +4,16 @@ import {OwnerNotificationModalComponent} from '@feature/application/owner-notifi
 import {HistoryModule} from '@feature/history/history.module';
 
 @NgModule({
-  imports: [
-    AlluCommonModule,
-    HistoryModule
-  ],
-  declarations: [
-    OwnerNotificationModalComponent
-  ],
-  providers: [],
-  exports: [
-    OwnerNotificationModalComponent
-  ],
-  entryComponents: [
-    OwnerNotificationModalComponent
-  ]
+    imports: [
+        AlluCommonModule,
+        HistoryModule
+    ],
+    declarations: [
+        OwnerNotificationModalComponent
+    ],
+    providers: [],
+    exports: [
+        OwnerNotificationModalComponent
+    ]
 })
 export class OwnerNotificationModule {}

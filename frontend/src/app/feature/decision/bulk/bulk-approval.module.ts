@@ -7,23 +7,19 @@ import {BulkApprovalEntryComponent} from '@feature/decision/bulk/bulk-approval-e
 import {BulkApprovalEntryListComponent} from '@feature/decision/bulk/bulk-approval-entry-list.component';
 
 @NgModule({
-  imports: [
-    RouterModule,
-    AlluCommonModule
-  ],
-  declarations: [
-    BulkApprovalModalContainerComponent,
-    BulkApprovalModalComponent,
-    BulkApprovalEntryComponent,
-    BulkApprovalEntryListComponent
-  ],
-  providers: [
-  ],
-  entryComponents: [
-    BulkApprovalModalComponent
-  ],
-  exports: [
-    BulkApprovalModalContainerComponent
-  ]
+    imports: [
+        RouterModule,
+        AlluCommonModule
+    ],
+    declarations: [
+        BulkApprovalModalContainerComponent,
+        BulkApprovalModalComponent,
+        BulkApprovalEntryComponent,
+        BulkApprovalEntryListComponent
+    ],
+    providers: [],
+    exports: [
+        BulkApprovalModalContainerComponent
+    ]
 })
 export class BulkApprovalModule {}

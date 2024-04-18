@@ -38,58 +38,52 @@ import {InformationRequestEntryComponent} from '@feature/information-request/acc
 import {InformationAcceptanceResolve} from '@feature/information-request/acceptance/information-acceptance-resolve';
 
 @NgModule({
-  imports: [
-    StoreModule.forFeature('informationRequest', reducers),
-    EffectsModule.forFeature([InformationRequestEffects]),
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    AlluCommonModule,
-    MapModule,
-    CustomerRegistryModule,
-    RouterModule.forChild([]),
-    InformationRequestSummaryModule
-  ],
-  declarations: [
-    InformationAcceptanceModalComponent,
-    FieldValueComponent,
-    CustomerWithContactsAcceptanceComponent,
-    CustomerAcceptanceComponent,
-    CustomerInfoAcceptanceComponent,
-    ContactsAcceptanceComponent,
-    ContactAcceptanceComponent,
-    ContactInfoAcceptanceComponent,
-    KindAcceptanceComponent,
-    OtherAcceptanceComponent,
-    OtherInfoAcceptanceComponent,
-    InformationRequestModalComponent,
-    RequestFieldComponent,
-    FieldSelectComponent,
-    CustomerModalComponent,
-    ContactModalComponent,
-    LocationsAcceptanceComponent,
-    LocationAcceptanceComponent,
-    LocationInfoAcceptanceComponent,
-    AttachmentsAcceptanceComponent,
-    InformationRequestFieldsComponent,
-    InformationAcceptanceEntryComponent,
-    InformationRequestEntryComponent,
-  ],
-  providers: [
-    InformationRequestService,
-    InformationRequestResultService,
-    InformationAcceptanceResolve
-  ],
-  exports: [
-    InformationAcceptanceModalComponent,
-    InformationAcceptanceEntryComponent,
-    InformationRequestEntryComponent
-  ],
-  entryComponents: [
-    InformationAcceptanceModalComponent,
-    InformationRequestModalComponent,
-    CustomerModalComponent,
-    ContactModalComponent
-  ]
+    imports: [
+        StoreModule.forFeature('informationRequest', reducers),
+        EffectsModule.forFeature([InformationRequestEffects]),
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        AlluCommonModule,
+        MapModule,
+        CustomerRegistryModule,
+        RouterModule.forChild([]),
+        InformationRequestSummaryModule
+    ],
+    declarations: [
+        InformationAcceptanceModalComponent,
+        FieldValueComponent,
+        CustomerWithContactsAcceptanceComponent,
+        CustomerAcceptanceComponent,
+        CustomerInfoAcceptanceComponent,
+        ContactsAcceptanceComponent,
+        ContactAcceptanceComponent,
+        ContactInfoAcceptanceComponent,
+        KindAcceptanceComponent,
+        OtherAcceptanceComponent,
+        OtherInfoAcceptanceComponent,
+        InformationRequestModalComponent,
+        RequestFieldComponent,
+        FieldSelectComponent,
+        CustomerModalComponent,
+        ContactModalComponent,
+        LocationsAcceptanceComponent,
+        LocationAcceptanceComponent,
+        LocationInfoAcceptanceComponent,
+        AttachmentsAcceptanceComponent,
+        InformationRequestFieldsComponent,
+        InformationAcceptanceEntryComponent,
+        InformationRequestEntryComponent,
+    ],
+    providers: [
+        InformationRequestService,
+        InformationRequestResultService,
+        InformationAcceptanceResolve
+    ],
+    exports: [
+        InformationAcceptanceModalComponent,
+        InformationAcceptanceEntryComponent,
+        InformationRequestEntryComponent
+    ]
 })
 export class InformationRequestModule {}
