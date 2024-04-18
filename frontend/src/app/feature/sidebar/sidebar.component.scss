@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '../../../assets/colors';
 
 .sidebar {
@@ -8,7 +9,7 @@
 }
 
 .sidebar-item {
-  background: mat-color($allu-primary, 500);
+  background: mat.get-color-from-palette($allu-primary, 500);
   box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
   border-radius: 2px;
   height: 96px;
@@ -23,11 +24,11 @@
 }
 
 a {
-  color: mat-contrast($allu-primary, 500);
+  color: mat.get-contrast-color-from-palette($allu-primary, 500);
 }
 
 .sidebar-item.active {
   font-weight: bolder;
-  background: mat-contrast($allu-primary, 500);
-  color: mat-color($allu-primary, 500);
+  background: mat.get-contrast-color-from-palette($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
 }

@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @mixin information-request-status-theme($theme, $success, $basic) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
@@ -5,8 +6,8 @@
 
   information-request-status,
   information-request-status .mat-toolbar {
-    background: mat-color($primary, 50);
-    color: mat-color($primary, 500);
+    background: mat.get-color-from-palette($primary, 50);
+    color: mat.get-color-from-palette($primary, 500);
   }
 
   information-request-status .mat-progress-bar-background {
@@ -14,11 +15,11 @@
   }
 
   .active .mat-progress-bar-fill::after {
-    background-color: mat-color($accent, 500);
+    background-color: mat.get-color-from-palette($accent, 500);
   }
 
   .active .mat-progress-bar-buffer {
-    background: mat-color($accent, 500, 0.5);
+    background: mat.get-color-from-palette($accent, 500, 0.5);
   }
 
   .closed .mat-progress-bar-fill::after {
@@ -26,7 +27,7 @@
   }
 
   .connection.connection-active {
-    border-color: mat-color($accent, 500);
+    border-color: mat.get-color-from-palette($accent, 500);
   }
 
   .connection.connection-closed {

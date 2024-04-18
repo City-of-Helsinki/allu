@@ -1,9 +1,10 @@
+@use '~@angular/material' as mat;
 @mixin charge-basis-theme($theme) {
   $primary: map-get($theme, primary);
 
   charge-basis {
     li.charge-basis-entry-container:nth-of-type(odd) {
-      background: mat-color($primary, 50);
+      background: mat.get-color-from-palette($primary, 50);
     }
 
     li.charge-basis-entry-container:nth-of-type(even) {
@@ -11,7 +12,7 @@
     }
 
     .referring-entry {
-      border-color: mat-color($primary, 500);
+      border-color: mat.get-color-from-palette($primary, 500);
     }
   }
 }

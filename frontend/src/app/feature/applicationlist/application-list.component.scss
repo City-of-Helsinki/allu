@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '../../../assets/colors';
 
 :host {
@@ -11,11 +12,11 @@
 .mat-list .mat-list-item .mat-list-text > h1.mat-line {
   font-size: 18px;
   font-weight: 400;
-  color: mat-color($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
 }
 
 .mat-divider {
-  border-top-color: mat-color($allu-primary, 200);
+  border-top-color: mat.get-color-from-palette($allu-primary, 200);
 }
 
 .search-result-footer {

@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import 'colors';
 @import 'marker-cluster';
 @import 'variables';
@@ -18,7 +19,7 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
 .leaflet-container .allu-map-popup a.leaflet-popup-close-button {
   top: 2px;
   right: 4px;
-  color: mat-contrast($allu-primary, 500);
+  color: mat.get-contrast-color-from-palette($allu-primary, 500);
   font-size: 20px;
 }
 

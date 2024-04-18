@@ -1,18 +1,19 @@
+@use '~@angular/material' as mat;
 @mixin allu-common-theme($theme, $basic) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
 
   h1, h2, h3 {
-    color: mat-color($primary, 500);
+    color: mat.get-color-from-palette($primary, 500);
   }
 
   .text-highlighted,
   .text-primary {
-    color: mat-color($primary, 500);
+    color: mat.get-color-from-palette($primary, 500);
   }
 
   .text-primary-light {
-    color: mat-color($primary, 400);
+    color: mat.get-color-from-palette($primary, 400);
   }
 
   .text-basic {

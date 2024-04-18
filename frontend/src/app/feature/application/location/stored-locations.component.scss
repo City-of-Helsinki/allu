@@ -1,5 +1,6 @@
+@use '~@angular/material' as mat;
 @import '../../../../assets/colors';
 
 tr.selected {
-  background: mat-color($allu-primary, 100) !important;
+  background: mat.get-color-from-palette($allu-primary, 100) !important;
 }

@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '../../../../assets/colors';
 
 .btn-chip {
@@ -21,7 +22,7 @@
   }
 
   .mat-checkbox-layout .mat-checkbox-label {
-    color: mat-contrast($allu-primary, 500);
+    color: mat.get-contrast-color-from-palette($allu-primary, 500);
     text-align: center;
     line-height: 16px;
     width: 100%;
@@ -33,7 +34,7 @@
 }
 
 .btn-chip.selected {
-  background-color: mat-color($allu-accent, 500);
+  background-color: mat.get-color-from-palette($allu-accent, 500);
   font-weight: bold;
   letter-spacing: 1.5px;
 }

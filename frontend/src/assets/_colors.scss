@@ -1,6 +1,6 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 
-@include mat-core();
+@include mat.core();
 
 $black-87-opacity: rgba(black, 0.87);
 $black-50-opacity: rgba(black, 0.50);
@@ -25,17 +25,17 @@ $allu-blue: (
   A400: #2979ff,
   A700: #2962ff,
   contrast: (
-    50: $black-87-opacity,
-    100: $black-87-opacity,
-    200: $black-87-opacity,
-    300: $black-87-opacity,
-    400: $black-87-opacity,
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
     500: white,
     600: white,
     700: white,
-    800: $white-87-opacity,
-    900: $white-87-opacity,
-    A100: $black-87-opacity,
+    800: rgba(white, 0.87),
+    900: rgba(white, 0.87),
+    A100: rgba(black, 0.87),
     A200: white,
     A400: white,
     A700: white,
@@ -58,19 +58,19 @@ $allu-orange: (
   A400: #ffb31e,
   A700: #ffab11,
   contrast: (
-    50: $black-87-opacity,
-    100: $black-87-opacity,
-    200: $black-87-opacity,
-    300: $black-87-opacity,
-    400: $black-87-opacity,
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
     500: white,
     600: white,
     700: white,
     800: white,
     900: white,
-    A100: $black-87-opacity,
-    A200: $black-87-opacity,
-    A400: $black-87-opacity,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: rgba(black, 0.87),
     A700: black,
   )
 );
@@ -84,12 +84,12 @@ $allu-basic: (
   500: #9b9b9b
 );
 
-$allu-primary: mat-palette($allu-blue);
-$allu-accent:  mat-palette($allu-orange);
-$allu-warn:    mat-palette($mat-red);
-$allu-theme-palette: mat-light-theme($allu-primary, $allu-accent, $allu-warn);
+$allu-primary: mat.define-palette($allu-blue);
+$allu-accent:  mat.define-palette($allu-orange);
+$allu-warn:    mat.define-palette(mat.$red-palette);
+$allu-theme-palette: mat.define-light-theme($allu-primary, $allu-accent, $allu-warn);
 
-$allu-background: mat-color($allu-primary, 50);
+$allu-background: mat.get-color-from-palette($allu-primary, 50);
 $allu-text-black: #1f1f1f;
 $allu-card-background: #ffffff;
 $allu-card-shadow: #f5f5f5;
@@ -104,8 +104,8 @@ $allu-dark-secondary-text: rgba(black, 0.68);
 
 $allu-light-theme-foreground: (
   base:              black,
-  divider:           $dark-dividers,
-  dividers:          $dark-dividers,
+  divider:           rgba(black, 0.12),
+  dividers:          rgba(black, 0.12),
   disabled:          $allu-dark-disabled-text,
   disabled-button:   rgba(black, 0.26),
   disabled-text:     $allu-dark-disabled-text,

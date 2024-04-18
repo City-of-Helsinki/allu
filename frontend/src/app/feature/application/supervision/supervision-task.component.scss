@@ -1,7 +1,8 @@
+@use '~@angular/material' as mat;
 @import '../../../../assets/colors';
 
 .save-info {
-  color: mat-contrast($allu-primary, 100);
+  color: mat.get-contrast-color-from-palette($allu-primary, 100);
   padding-bottom: 15px;
 }
 

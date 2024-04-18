@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 
 .mat-select-placeholder.mat-floating-placeholder {
   transform: translate3d(0,0,0) scale(.75);
@@ -17,29 +17,29 @@
   $primary: map-get($theme, primary);
 
   ::-webkit-input-placeholder {
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 
   :-moz-placeholder { /* Firefox 18- */
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 
   ::-moz-placeholder {  /* Firefox 19+ */
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 
   :-ms-input-placeholder {
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 
   .mat-form-field-label,
   .mat-select-placeholder {
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 
   input[disabled] + .mat-form-field-labelwrapper .mat-form-field-label,
   .mat-select-disabled .mat-select-placeholder {
-    color: mat-color($primary, 200);
+    color: mat.get-color-from-palette($primary, 200);
   }
 }
 
@@ -48,15 +48,15 @@
   $accent: map-get($theme, accent);
 
   .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
-    background-color: mat-color($accent, 200);
+    background-color: mat.get-color-from-palette($accent, 200);
   }
 
   .mat-checkbox-checked .mat-checkbox-frame {
-    border-color: mat-color($accent, 200);
+    border-color: mat.get-color-from-palette($accent, 200);
   }
 
   .mat-checkbox-label {
-    color: $black-87-opacity;
+    color: rgba(black, 0.87);
   }
 
   .mat-checkbox-disabled .mat-checkbox-label {
@@ -68,7 +68,7 @@
   .mat-option:hover:not(.mat-option-disabled),
   .mat-option.mat-active:not(.mat-option-disabled),
   .mat-option:focus:not(.mat-option-disabled) {
-    background-color: mat-color($allu-primary, 200);
+    background-color: mat.get-color-from-palette($allu-primary, 200);
   }
 }
 
@@ -78,15 +78,15 @@ td.mat-calendar-body-cell:hover {
 
 .form-group .has-warning.ng-dirty:not(.ng-invalid) label.mat-form-field-label,
 .form-group .has-warning.ng-touched:not(.ng-invalid) label.mat-form-field-label {
-  color: mat-color($allu-accent, 700);
+  color: mat.get-color-from-palette($allu-accent, 700);
 }
 
 .form-group .has-warning:not(.ng-invalid) .mat-form-field-underline {
-  border-color: mat-color($allu-accent, 700);
+  border-color: mat.get-color-from-palette($allu-accent, 700);
 }
 
 .form-group .has-warning:not(.ng-invalid) .mat-form-field-ripple {
-  background-color: mat-color($allu-accent, 700);
+  background-color: mat.get-color-from-palette($allu-accent, 700);
 }
 
 /* hide up/down arrows ("spinners") on input fields marked type="number" */

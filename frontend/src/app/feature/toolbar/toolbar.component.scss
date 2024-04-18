@@ -1,8 +1,9 @@
+@use '~@angular/material' as mat;
 @import '../../../assets/colors';
 
 :host {
-  background: mat-color($allu-primary, 500);
-  color: mat-contrast($allu-primary, 500);
+  background: mat.get-color-from-palette($allu-primary, 500);
+  color: mat.get-contrast-color-from-palette($allu-primary, 500);
   display: flex;
   flex-wrap: wrap;
   flex: 1;
@@ -48,7 +49,7 @@ h1 {
 
 .toolbar-section {
   padding: 0 5px;
-  border-left: 2px solid mat-color($allu-primary, 300);
+  border-left: 2px solid mat.get-color-from-palette($allu-primary, 300);
 }
 
 .toolbar-section > * {
@@ -62,6 +63,6 @@ h1 {
   padding: 4px 12px;
   font-size: 14px;
   font-weight: bold;
-  background: mat-color($allu-accent, A700);
-  color: mat-contrast($allu-accent, 900);
+  background: mat.get-color-from-palette($allu-accent, A700);
+  color: mat.get-contrast-color-from-palette($allu-accent, 900);
 }

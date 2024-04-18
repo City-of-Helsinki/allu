@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 
 @mixin information-request-theme($theme, $border-color) {
   $primary: map-get($theme, primary);
@@ -15,13 +15,13 @@
   $primary: map-get($theme, primary);
 
   .field-group-options label {
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 
   li:nth-child(odd) .field-acceptance,
   li:nth-child(odd) .field-display,
   .label-row {
-    background: mat-color($primary, 50);
+    background: mat.get-color-from-palette($primary, 50);
   }
 }
 
@@ -30,7 +30,7 @@
 
   mat-selection-list .mat-list-option:nth-child(odd),
   mat-list .mat-list-item:nth-child(odd) {
-    background: mat-color($primary, 50);
+    background: mat.get-color-from-palette($primary, 50);
   }
 
   field-select .mat-selection-list .mat-list-option .mat-pseudo-checkbox {

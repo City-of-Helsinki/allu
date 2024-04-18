@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '../../../assets/colors';
 
 .modal-footer {
@@ -12,5 +13,5 @@ h2 {
   font-weight: normal;
   margin: 0;
   display: block;
-  color: mat-color($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
 }
