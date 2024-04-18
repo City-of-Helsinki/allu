@@ -63,7 +63,7 @@ import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects
 import {BulkApprovalModule} from '@feature/decision/bulk/bulk-approval.module';
 
 /*
-todo uprade replace deprecated logger 
+todo uprade replace deprecated logger
 export function logger(reducer: ActionReducer<any>): any {
   return storeLogger({
     collapsed: true
