@@ -1,5 +1,5 @@
 import {catchError, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Injectable} from '@angular/core';
 import * as fromProject from '../reducers';
 import {Observable, of} from 'rxjs';
@@ -36,8 +36,8 @@ export class ProjectEffects {
               private router: Router) {
   }
 
-  @Effect()
-  loadApplications: Observable<Action> = this.actions.pipe(
+  
+  loadApplications: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ProjectActionTypes.Load),
     map(action => action.payload),
     switchMap(payload => this.projectService.getProject(payload).pipe(
@@ -47,10 +47,10 @@ export class ProjectEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  save: Observable<Action> = this.actions.pipe(
+  
+  save: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Save>(ProjectActionTypes.Save),
     map(action => action.payload),
     switchMap(project =>
@@ -59,10 +59,10 @@ export class ProjectEffects {
         catchError(error => of(new NotifyFailure(error)))
       )
     )
-  );
+  ));
 
-  @Effect()
-  delete: Observable<Action> = this.actions.pipe(
+  
+  delete: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Delete>(ProjectActionTypes.Delete),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     filter(([action, project]) => NumberUtil.isExisting(project)),
@@ -72,39 +72,39 @@ export class ProjectEffects {
         catchError(error => of(new NotifyFailure(error)))
       )
     )
-  );
+  ));
 
-  @Effect()
-  removeParent: Observable<Action> = this.actions.pipe(
+  
+  removeParent: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<RemoveParent>(ProjectActionTypes.RemoveParent),
     switchMap(action => this.projectService.removeParent(action.payload).pipe(
       switchMap(() => [new RemoveParentSuccess(), new ChildAction.Load()]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect({dispatch: false})
-  navigateAfterSave = this.actions.pipe(
+  
+  navigateAfterSave = createEffect(() => this.actions.pipe(
     ofType<SaveSuccess>(ProjectActionTypes.SaveSuccess),
     map(action => action.payload),
     tap(project => this.router.navigate(['/projects', project.id]))
-  );
+  ), {dispatch: false});
 
-  @Effect({dispatch: false})
-  navigateAfterDelete = this.actions.pipe(
+  
+  navigateAfterDelete = createEffect(() => this.actions.pipe(
     ofType<DeleteSuccess>(ProjectActionTypes.DeleteSuccess),
     tap(project => this.router.navigate(['/projects']))
-  );
+  ), {dispatch: false});
 
   /**
    * Load project meta after logged in
    */
-  @Effect()
-  loadMeta: Observable<Action> = defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
+  
+  loadMeta: Observable<Action> = createEffect(() => defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
     filter(loggedIn => loggedIn),
     switchMap(() => this.metadataService.loadByType(META_PROJECT).pipe(
       map(meta => new MetaAction.LoadSuccess(meta)),
       catchError(error => of(new MetaAction.LoadFailed(error)))
     ))
-  ));
+  )));
 }

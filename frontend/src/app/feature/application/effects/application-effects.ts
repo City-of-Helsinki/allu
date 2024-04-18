@@ -1,5 +1,5 @@
 import {Action, select, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '../reducers';
 import {MetadataService} from '../../../service/meta/metadata.service';
 import {from, Observable, of} from 'rxjs/index';
@@ -26,8 +26,8 @@ export class ApplicationEffects {
               private applicationService: ApplicationService,
               private metadataService: MetadataService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.Load>(ApplicationActionType.Load),
     filter(action => NumberUtil.isDefined(action.payload)),
     switchMap(action => this.applicationService.get(action.payload).pipe(
@@ -38,20 +38,20 @@ export class ApplicationEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  loadMeta: Observable<Action> = this.actions.pipe(
+  
+  loadMeta: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<MetaAction.Load>(ApplicationMetaActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, application]) => this.metadataService.loadByApplicationType(application.type).pipe(
       map(meta => new MetaAction.LoadSuccess(meta)),
       catchError(error => of(new MetaAction.LoadFailed(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  removeClientApplicationData: Observable<Action> = this.actions.pipe(
+  
+  removeClientApplicationData: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.RemoveClientApplicationData>(ApplicationActionType.RemoveClientApplicationData),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     filter(([action, application]) => !!application.clientApplicationData),
@@ -63,10 +63,10 @@ export class ApplicationEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  changeOwner: Observable<Action> = this.actions.pipe(
+  
+  changeOwner: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.ChangeOwner>(ApplicationActionType.ChangeOwner),
     switchMap(action => this.applicationService.changeOwner(action.payload.ownerId, action.payload.applicationIds).pipe(
       switchMap(() => [
@@ -75,10 +75,10 @@ export class ApplicationEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  removeOwner: Observable<Action> = this.actions.pipe(
+  
+  removeOwner: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.RemoveOwner>(ApplicationActionType.RemoveOwner),
     switchMap(action => this.applicationService.removeOwner(action.payload).pipe(
       switchMap(() => [
@@ -87,10 +87,10 @@ export class ApplicationEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  removeOwnerNotification: Observable<Action> = this.actions.pipe(
+  
+  removeOwnerNotification: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.RemoveOwnerNotification>(ApplicationActionType.RemoveOwnerNotification),
     switchMap(action => this.applicationService.removeOwnerNotification(action.payload).pipe(
       switchMap(() => [
@@ -100,10 +100,10 @@ export class ApplicationEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  saveDistribution: Observable<Action> = this.actions.pipe(
+  
+  saveDistribution: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.SaveDistributionAndNotify | ApplicationAction.SaveDistribution>(
       ApplicationActionType.SaveDistributionAndNotify, ApplicationActionType.SaveDistribution
     ),
@@ -112,23 +112,23 @@ export class ApplicationEffects {
       switchMap(distribution => this.onSaveDistributionSuccess(action, distribution)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  loadDistribution: Observable<Action> = this.actions.pipe(
+  
+  loadDistribution: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.LoadDistribution>(ApplicationActionType.LoadDistribution),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.applicationService.getDistribution(app.id).pipe(
       map(distribution => new LoadDistributionSuccess(distribution)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  onApplicationLoad: Observable<Action> = this.actions.pipe(
+  
+  onApplicationLoad: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.Load>(ApplicationActionType.Load),
     map(() => new ClearCoordinates())
-  );
+  ));
 
   private onSaveDistributionSuccess(action: Action, result: DistributionEntry[]): Action[] {
     return action.type === ApplicationActionType.SaveDistribution

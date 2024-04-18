@@ -1,4 +1,4 @@
-import {Actions, Effect} from '@ngrx/effects';
+import {Actions, createEffect} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
 import {defer, Observable, of} from 'rxjs';
@@ -12,15 +12,15 @@ import {CodeSet, CodeSetTypeMap} from '../../../model/codeset/codeset';
 export class CodeSetEffects {
   constructor(private actions: Actions, private store: Store<fromAuth.State>, private codeSetService: CodeSetService) {}
 
-  @Effect()
-  init: Observable<Action> = defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
+  
+  init: Observable<Action> = createEffect(() => defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
     filter(loggedIn => loggedIn),
     switchMap(() => this.codeSetService.getCountries().pipe(
       map(codeSets => this.toCodeSetMap(codeSets)),
       map(codeSets => new LoadSuccess(codeSets)),
       catchError(error => of(new LoadFailed(error))))
     ))
-  );
+  ));
 
   private toCodeSetMap(codeSets: CodeSet[]): CodeSetTypeMap {
     return codeSets.reduce((prev: CodeSetTypeMap, cur) => {

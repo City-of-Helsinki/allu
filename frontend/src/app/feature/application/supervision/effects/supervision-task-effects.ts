@@ -3,7 +3,7 @@ import {Action, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {SupervisionTaskService} from '@service/supervision/supervision-task.service';
 import {EMPTY, from, Observable, of} from 'rxjs/index';
 import {
@@ -51,8 +51,8 @@ export class SupervisionTaskEffects {
               private dateReporting: DateReportingService,
               private applicationStore: ApplicationStore) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(SupervisionTaskActionType.Load),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.taskService.findTasksByApplicationId(app.id).pipe(
@@ -62,10 +62,10 @@ export class SupervisionTaskEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  save: Observable<Action> = this.actions.pipe(
+  
+  save: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Save>(SupervisionTaskActionType.Save),
     switchMap(action => this.taskService.save(action.payload).pipe(
       switchMap(task => [
@@ -74,10 +74,10 @@ export class SupervisionTaskEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  remove: Observable<Action> = this.actions.pipe(
+  
+  remove: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(SupervisionTaskActionType.Remove),
     switchMap(action => this.taskService.remove(action.payload).pipe(
       switchMap(() => [
@@ -86,10 +86,10 @@ export class SupervisionTaskEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  approve: Observable<Action> = this.actions.pipe(
+  
+  approve: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Approve>(SupervisionTaskActionType.Approve),
     switchMap(action => this.taskService.approve(action.payload.task).pipe(
       switchMap((task) => this.reportDatesOnApproval(task.applicationId, action.payload.reportedDate, task.type).pipe(
@@ -102,10 +102,10 @@ export class SupervisionTaskEffects {
       )),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reject: Observable<Action> = this.actions.pipe(
+  
+  reject: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Reject>(SupervisionTaskActionType.Reject),
     switchMap(action => this.taskService.reject(action.payload.task, action.payload.newSupervisionDate).pipe(
       switchMap((task) => [
@@ -114,10 +114,10 @@ export class SupervisionTaskEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  changeOwner: Observable<Action> = this.actions.pipe(
+  
+  changeOwner: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ChangeOwner>(SupervisionTaskActionType.ChangeOwner),
     switchMap(action => this.taskService.changeOwner(action.payload.ownerId, action.payload.taskIds).pipe(
       switchMap(() => [
@@ -127,10 +127,10 @@ export class SupervisionTaskEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  removeOwner: Observable<Action> = this.actions.pipe(
+  
+  removeOwner: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<RemoveOwner>(SupervisionTaskActionType.RemoveOwner),
     switchMap(action => this.taskService.removeOwner(action.payload).pipe(
       switchMap(() => [
@@ -140,32 +140,32 @@ export class SupervisionTaskEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reloadTags: Observable<Action> = this.actions.pipe(
+  
+  reloadTags: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Action>(...requiresTagReload),
     map(() => new TagActions.Load())
-  );
+  ));
 
-  @Effect()
-  reloadInvoicing: Observable<Action> = this.actions.pipe(
+  
+  reloadInvoicing: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Action>(SupervisionTaskActionType.ApproveSuccess),
     switchMap(() => [new LoadChargeBasis(), new LoadInvoices()])
-  );
+  ));
 
-  @Effect()
-  reloadComments: Observable<Action> = this.actions.pipe(
+  
+  reloadComments: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Action>(SupervisionTaskActionType.ApproveSuccess),
     map(() => new LoadComments(ActionTargetType.Application))
-  );
+  ));
 
-  @Effect()
-  removeDanglingOperationalConditionTask: Observable<Action> = this.actions.pipe(
+  
+  removeDanglingOperationalConditionTask: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApproveSuccess>(SupervisionTaskActionType.ApproveSuccess),
     withLatestExisting(this.store.select(fromSupervision.getOpenOperationalConditionTask)),
     map(([action, task]) => new RemoveSuccess(task.id))
-  );
+  ));
 
   private reportDatesOnApproval(appId: number, date: Date, type: SupervisionTaskType): Observable<Application> {
     if (date !== undefined) {

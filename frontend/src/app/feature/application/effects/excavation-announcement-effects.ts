@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '@feature/application/reducers';
 import {Action, select, Store} from '@ngrx/store';
 import {ApplicationStore} from '@service/application/application-store';
@@ -17,13 +17,13 @@ export class ExcavationAnnouncementEffects {
               private applicationStore: ApplicationStore,
               private excavationAnnouncementService: ExcavationAnnouncementService) {}
 
-  @Effect()
-  setRequiredTasks: Observable<Action> = this.actions.pipe(
+  
+  setRequiredTasks: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetRequiredTasks>(ExcavationAnnouncementActionType.SetRequiredTasks),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.excavationAnnouncementService.setRequiredTasks(app.id, action.payload).pipe(
       map(updated => this.applicationStore.setAndAction(updated)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 }

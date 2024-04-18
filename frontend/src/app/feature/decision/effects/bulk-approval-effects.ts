@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DecisionService} from '@app/service/decision/decision.service';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import * as fromDecision from '@feature/decision/reducers';
 import {forkJoin, from, Observable, of} from 'rxjs';
@@ -27,8 +27,8 @@ export class BulkApprovalEffects {
     private decisionService: DecisionService,
     private applicationService: ApplicationService) {}
 
-  @Effect()
-  loadBulkApprovalEntries: Observable<Action> = this.actions.pipe(
+  
+  loadBulkApprovalEntries: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(BulkApprovalActionType.Load),
     switchMap(action => this.decisionService.getBulkApprovalEntries(action.payload).pipe(
       map(entries => new LoadComplete({entries})),
@@ -37,14 +37,14 @@ export class BulkApprovalEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  approve: Observable<Action> = this.actions.pipe(
+  
+  approve: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Approve>(BulkApprovalActionType.Approve),
     mergeMap(action => forkJoin(...action.payload.map(entry => this.approveEntry(entry)))),
     map(() => new ApproveComplete())
-  );
+  ));
 
   approveEntry(entry: BulkApprovalEntry): Observable<ApproveEntryComplete> {
     return this.applicationService.changeStatus(entry.id, entry.targetState, new StatusChangeInfo()).pipe(

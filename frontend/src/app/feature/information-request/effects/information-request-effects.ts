@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromInformationRequest from '../reducers';
 import * as InformationRequestAction from '../actions/information-request-actions';
 import {InformationRequestActionType} from '../actions/information-request-actions';
@@ -34,18 +34,18 @@ export class InformationRequestEffects {
               private applicationService: ApplicationService,
               private informationRequestService: InformationRequestService) {}
 
-  @Effect()
-  getRequest: Observable<Action> = this.actions.pipe(
+  
+  getRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.GetRequest>(InformationRequestActionType.GetRequest),
     switchMap(action => this.store.pipe(
       select(fromInformationRequest.getInformationRequest(action.payload)),
       filter(request => !request),
       map(() => new InformationRequestAction.LoadRequest(action.payload))
     ))
-  );
+  ));
 
-  @Effect()
-  loadRequest: Observable<Action> = this.actions.pipe(
+  
+  loadRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.LoadRequest>(InformationRequestActionType.LoadRequest),
     switchMap(action => this.informationRequestService.getRequest(action.payload).pipe(
       map(request => new InformationRequestAction.LoadRequestSuccess(request)),
@@ -54,10 +54,10 @@ export class InformationRequestEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  loadLatestRequest: Observable<Action> = this.actions.pipe(
+  
+  loadLatestRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.LoadActiveRequest>(InformationRequestActionType.LoadActiveRequest),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -68,10 +68,10 @@ export class InformationRequestEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  saveRequest: Observable<Action> = this.actions.pipe(
+  
+  saveRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.SaveRequest>(InformationRequestActionType.SaveRequest),
     switchMap(action => this.informationRequestService.save(action.payload).pipe(
       switchMap(request => [
@@ -80,10 +80,10 @@ export class InformationRequestEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  saveAndSendRequest: Observable<Action> = this.actions.pipe(
+  
+  saveAndSendRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.SaveAndSendRequest>(InformationRequestActionType.SaveAndSendRequest),
     switchMap(action => this.informationRequestService.save(action.payload)),
     switchMap(request => this.applicationStore.changeStatus(request.applicationId, ApplicationStatus.WAITING_INFORMATION).pipe(
@@ -93,10 +93,10 @@ export class InformationRequestEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  getResponse: Observable<Action> = this.actions.pipe(
+  
+  getResponse: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ResponseAction.GetResponse>(InformationRequestResponseActionType.GetResponse),
     filter((action) => NumberUtil.isDefined(action.payload)),
     switchMap(action => this.store.pipe(
@@ -104,10 +104,10 @@ export class InformationRequestEffects {
       filter(response => !response),
       map(() => new ResponseAction.LoadResponse(action.payload))
     ))
-  );
+  ));
 
-  @Effect()
-  loadResponse: Observable<Action> = this.actions.pipe(
+  
+  loadResponse: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ResponseAction.LoadResponse>(InformationRequestResponseActionType.LoadResponse),
     filter((action) => NumberUtil.isDefined(action.payload)),
     switchMap((action) => this.informationRequestService.getResponseForRequest(action.payload).pipe(
@@ -117,10 +117,10 @@ export class InformationRequestEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  saveResult: Observable<Action> = this.actions.pipe(
+  
+  saveResult: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestResultAction.Save>(InformationRequestResultActionType.Save),
     switchMap(action => this.applicationStore.saveInformationRequestResult(action.payload).pipe(
       switchMap(() => [
@@ -129,10 +129,10 @@ export class InformationRequestEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  closeRequest: Observable<Action> = this.actions.pipe(
+  
+  closeRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.CloseRequest>(InformationRequestActionType.CloseRequest),
     filter(action => NumberUtil.isDefined(action.payload)),
     switchMap(action => this.informationRequestService.closeInformationRequest(action.payload).pipe(
@@ -144,10 +144,10 @@ export class InformationRequestEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  cancelRequest: Observable<Action> = this.actions.pipe(
+  
+  cancelRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.CancelRequest>(InformationRequestActionType.CancelRequest),
     switchMap(action => this.informationRequestService.delete(action.payload).pipe(
       withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
@@ -158,37 +158,37 @@ export class InformationRequestEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  clearApplicationClientData: Observable<Action> = this.actions.pipe(
+  
+  clearApplicationClientData: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestResultAction.SaveSuccess>(InformationRequestResultActionType.SaveSuccess),
     filter(action => !!action.payload.application.clientApplicationData),
     map(() => new ApplicationAction.RemoveClientApplicationData())
-  );
+  ));
 
-  @Effect()
-  onLoadRequestSuccess: Observable<Action> = this.actions.pipe(
+  
+  onLoadRequestSuccess: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.LoadRequestSuccess>(InformationRequestActionType.LoadRequestSuccess),
     filter(action => action.payload && canHaveResponse(action.payload.status)),
     map(action => new ResponseAction.GetResponse(action.payload.informationRequestId))
-  );
+  ));
 
-  @Effect()
-  getSummaries: Observable<Action> = this.actions.pipe(
+  
+  getSummaries: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SummaryAction.Get>(InformationRequestSummaryActionType.Get),
     withLatestFrom(this.store.pipe(select(fromInformationRequest.getSummariesLoaded))),
     filter(([action, loaded]) => !loaded),
     map(([action, loaded]) => new SummaryAction.Load())
-  );
+  ));
 
-  @Effect()
-  loadSummaries: Observable<Action> = this.actions.pipe(
+  
+  loadSummaries: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SummaryAction.Load>(InformationRequestSummaryActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.informationRequestService.getSummariesForApplication(app.id).pipe(
       map(summaries => new SummaryAction.LoadSuccess(summaries)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 }

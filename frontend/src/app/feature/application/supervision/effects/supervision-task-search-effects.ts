@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {SupervisionTaskService} from '@service/supervision/supervision-task.service';
@@ -31,8 +31,8 @@ export class SupervisionTaskSearchEffects {
               private store: Store<fromRoot.State>,
               private taskService: SupervisionTaskService) {}
 
-  @Effect()
-  search: Observable<Action> = this.actions.pipe(
+  
+  search: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Search>(SupervisionTaskSearchActionType.Search),
     switchMap(action => this.setTargetTypeSpecificParameters(action)),
     switchMap(action =>
@@ -40,10 +40,10 @@ export class SupervisionTaskSearchEffects {
         map(result => new SearchSuccess(action.targetType, result)),
         catchError(error => of(new SearchFailed(action.targetType, error)))
       ))
-  );
+  ));
 
-  @Effect()
-  onOwnerChanges: Observable<Action> = this.actions.pipe(
+  
+  onOwnerChanges: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ChangeOwnerSuccess | RemoveOwnerSuccess>(
       SupervisionTaskActionType.ChangeOwnerSuccess,
       SupervisionTaskActionType.RemoveOwnerSuccess
@@ -53,7 +53,7 @@ export class SupervisionTaskSearchEffects {
       new Search(ActionTargetType.SupervisionTaskWorkQueue, search, sort, pageRequest),
       new ClearSelected(ActionTargetType.SupervisionTaskWorkQueue)
     ])
-  );
+  ));
 
   private getCurrentWorkQueueSearch(): Observable<[SupervisionTaskSearchCriteria, Sort, PageRequest]> {
     return combineLatest(

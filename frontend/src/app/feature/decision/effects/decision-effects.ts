@@ -2,7 +2,7 @@ import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {DecisionService} from '@service/decision/decision.service';
 import {from, Observable, of} from 'rxjs/index';
 import {DecisionActionType, Load, LoadFailed, LoadSuccess} from '@feature/decision/actions/decision-actions';
@@ -19,8 +19,8 @@ export class DecisionEffects {
               private decisionService: DecisionService) {
   }
 
-  @Effect()
-  loadDecision: Observable<Action> = this.actions.pipe(
+  
+  loadDecision: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(DecisionActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -31,10 +31,10 @@ export class DecisionEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  decisionTabOpen: Observable<Action> = this.actions.pipe(
+  
+  decisionTabOpen: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetTab>(DocumentActionType.SetTab),
     filter(action => action.payload === DecisionTab.DECISION),
     withLatestFrom(this.store.select(fromDecision.getDecision)),
@@ -45,5 +45,5 @@ export class DecisionEffects {
         return new Load();
       }
     })
-  );
+  ));
 }

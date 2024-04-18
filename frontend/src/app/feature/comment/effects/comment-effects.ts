@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {from, Observable, of} from 'rxjs';
 
@@ -21,50 +21,50 @@ export class CommentEffects {
               private store: Store<fromComment.State>,
               private commentService: CommentService) {}
 
-  @Effect()
-  loadApplicationComments: Observable<Action> = this.actions.pipe(
+  
+  loadApplicationComments: Observable<Action> = createEffect(() => this.actions.pipe(
     withLatestExistingOfTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
-  );
+  ));
 
-  @Effect()
-  saveApplicationComment: Observable<Action> = this.actions.pipe(
+  
+  saveApplicationComment: Observable<Action> = createEffect(() => this.actions.pipe(
     withLatestExistingOfTargetAndType<Save>(ActionTargetType.Application, this.currentApplication, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
-  );
+  ));
 
-  @Effect()
-  loadProjectComments: Observable<Action> = this.actions.pipe(
+  
+  loadProjectComments: Observable<Action> = createEffect(() => this.actions.pipe(
     withLatestExistingOfTargetAndType<Load>(ActionTargetType.Project, this.currentProject, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
-  );
+  ));
 
-  @Effect()
-  saveProjectComment: Observable<Action> = this.actions.pipe(
+  
+  saveProjectComment: Observable<Action> = createEffect(() => this.actions.pipe(
     withLatestExistingOfTargetAndType<Save>(ActionTargetType.Project, this.currentProject, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
-  );
+  ));
 
-  @Effect()
-  remove: Observable<Action> = this.actions.pipe(
+  
+  remove: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(CommentActionType.Remove),
     switchMap(action => this.commentService.remove(action.payload).pipe(
       map(() => new RemoveSuccess(action.targetType, action.payload)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  contractApproved: Observable<Action> = this.actions.pipe(
+  
+  contractApproved: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApproveSuccess>(ContractActionType.ApproveSuccess),
     map(() => new Load(ActionTargetType.Application))
-  );
+  ));
 
-  @Effect()
-  contractRejected: Observable<Action> = this.actions.pipe(
+  
+  contractRejected: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<RejectSuccess>(ContractActionType.RejectSuccess),
     map(() => new Load(ActionTargetType.Application))
-  );
+  ));
 
 
   private loadByType(type: ActionTargetType, id): Observable<Action> {

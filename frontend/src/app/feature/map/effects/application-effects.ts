@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect} from '@ngrx/effects';
+import {Actions, createEffect} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Observable, of} from 'rxjs';
@@ -20,21 +20,21 @@ export class ApplicationEffects {
               private store: Store<fromRoot.State>,
               private mapDataService: MapDataService) {}
 
-  @Effect()
-  mapSearch: Observable<Action> = this.actions.pipe(
+  
+  mapSearch: Observable<Action> = createEffect(() => this.actions.pipe(
     withLatestOfTargetAndType<Search>(ActionTargetType.Home,
       this.store.pipe(select(fromMap.getSelectedApplicationLayers)),
       ApplicationActionType.Search),
     switchMap(([action, layers]) => this.loadByType(action.targetType, action.payload, layers))
-  );
+  ));
 
-  @Effect()
-  locationSearch: Observable<Action> = this.actions.pipe(
+  
+  locationSearch: Observable<Action> = createEffect(() => this.actions.pipe(
     withLatestOfTargetAndType<Search>(ActionTargetType.Location,
       this.store.pipe(select(fromLocation.getSelectedApplicationLayers)),
       ApplicationActionType.Search),
     switchMap(([action, layers]) => this.loadByType(action.targetType, action.payload, layers))
-  );
+  ));
 
   private loadByType(type: ActionTargetType, baseFilter: MapSearchFilter, layers: MapLayer[]): Observable<Action> {
     const searchFilter = this.withApplicationTypes(baseFilter, layers);

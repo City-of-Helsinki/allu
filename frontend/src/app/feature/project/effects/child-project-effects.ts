@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ProjectService} from '../../../service/project/project.service';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
@@ -16,8 +16,8 @@ export class ChildProjectEffects {
               private store: Store<fromProject.State>,
               private projectService: ProjectService) {}
 
-  @Effect()
-  loadChildren: Observable<Action> = this.actions.pipe(
+  
+  loadChildren: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ChildProjectActionType.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     filter(([payload, project]) => NumberUtil.isExisting(project)),
@@ -31,10 +31,10 @@ export class ChildProjectEffects {
           ]))
         )
     )
-  );
+  ));
 
-  @Effect()
-  addChild: Observable<Action> = this.actions.pipe(
+  
+  addChild: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Add>(ChildProjectActionType.Add),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     switchMap(([action, project]) =>
@@ -43,5 +43,5 @@ export class ChildProjectEffects {
         catchError(error => of(new NotifyFailure(error)))
       )
     )
-  );
+  ));
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ProjectService} from '../../../service/project/project.service';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
@@ -16,8 +16,8 @@ export class ParentProjectEffects {
               private store: Store<fromProject.State>,
               private projectService: ProjectService) {}
 
-  @Effect()
-  loadParents: Observable<Action> = this.actions.pipe(
+  
+  loadParents: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ParentProjectActionType.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     filter(([payload, project]) => NumberUtil.isExisting(project)),
@@ -31,5 +31,5 @@ export class ParentProjectEffects {
           ]))
         )
     )
-  );
+  ));
 }
