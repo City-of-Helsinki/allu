@@ -60,9 +60,10 @@ import {ConfigurationHelperService} from '@service/config/configuration-helper.s
 import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
 import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects';
-import {storeLogger} from 'ngrx-store-logger';
 import {BulkApprovalModule} from '@feature/decision/bulk/bulk-approval.module';
 
+/*
+todo uprade replace deprecated logger 
 export function logger(reducer: ActionReducer<any>): any {
   return storeLogger({
     collapsed: true
@@ -70,6 +71,7 @@ export function logger(reducer: ActionReducer<any>): any {
 }
 
 export const metaReducers = environment.production ? [] : [logger];
+*/
 
 @NgModule({
   imports: [
@@ -79,7 +81,6 @@ export const metaReducers = environment.production ? [] : [logger];
     RouterModule.forRoot(rootRoutes, { relativeLinkResolution: 'legacy' }),
     BrowserAnimationsModule,
     StoreModule.forRoot(reducers, {
-      metaReducers,
       runtimeChecks: { // Disable checks to avoid Leaflet causing errors
         strictStateImmutability: false,
         strictActionImmutability: false,
