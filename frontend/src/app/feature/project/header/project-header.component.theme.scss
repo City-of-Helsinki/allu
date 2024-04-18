@@ -1,4 +1,4 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @mixin project-header-theme($theme) {
   $primary: map-get($theme, primary);
 

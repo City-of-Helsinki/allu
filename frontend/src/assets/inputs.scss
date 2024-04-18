@@ -1,4 +1,4 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 
 .mat-select-placeholder.mat-floating-placeholder {
   transform: translate3d(0,0,0) scale(.75);
