@@ -1,4 +1,4 @@
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import {InformationAcceptanceData} from '@feature/information-request/acceptance/information-acceptance-modal.component';
 import {combineLatest, EMPTY, forkJoin, Observable, of} from 'rxjs';
 import {Injectable} from '@angular/core';
@@ -14,7 +14,7 @@ import {GetRequest} from '@feature/information-request/actions/information-reque
 import {GetResponse} from '@feature/information-request/actions/information-request-response-actions';
 
 @Injectable()
-export class InformationAcceptanceResolve implements Resolve<InformationAcceptanceData> {
+export class InformationAcceptanceResolve  {
   constructor(private store: Store<fromRoot.State>) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<InformationAcceptanceData> {

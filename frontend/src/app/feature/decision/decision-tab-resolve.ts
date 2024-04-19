@@ -1,4 +1,4 @@
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import * as fromDecision from '@feature/decision/reducers';
 import {Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
@@ -7,7 +7,7 @@ import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 
 @Injectable()
-export class DecisionTabResolve implements Resolve<boolean> {
+export class DecisionTabResolve  {
   constructor(private store: Store<fromDecision.State>) {}
 
   resolve(route: ActivatedRouteSnapshot): boolean {

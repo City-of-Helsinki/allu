@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Resolve, ActivatedRouteSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {Observable} from 'rxjs';
 
 import {Project} from '../../model/project/project';
@@ -20,7 +20,7 @@ import {filter, switchMap, take, tap} from 'rxjs/internal/operators';
 import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 
 @Injectable()
-export class ProjectResolve implements Resolve<Project> {
+export class ProjectResolve  {
   constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Project> {

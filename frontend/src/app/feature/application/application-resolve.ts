@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import {Observable, of} from 'rxjs';
 
 import {Application} from '@model/application/application';
@@ -23,7 +23,7 @@ import {NumberUtil} from '@util/number.util';
 import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 
 @Injectable()
-export class ApplicationResolve implements Resolve<Application> {
+export class ApplicationResolve  {
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromApplication.State>,
               private router: Router,
