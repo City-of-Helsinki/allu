@@ -36,7 +36,7 @@
 @import '../app/feature/application/invoicing/charge-basis/charge-basis.theme';
 @import '../app/feature/application/invoicing/invoice/invoice.theme';
 @import '../app/js/leaflet/draw-tools/src/L.Toolbar.css';
-@import "~ngx-toastr/toastr.css";
+@import 'ngx-toastr/toastr';
 
 // Theme components
 @include mat.all-component-themes($allu-theme);

@@ -78,7 +78,7 @@ export const metaReducers = environment.production ? [] : [logger];
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot(rootRoutes, { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(rootRoutes, {}),
     BrowserAnimationsModule,
     StoreModule.forRoot(reducers, {
       runtimeChecks: { // Disable checks to avoid Leaflet causing errors
