@@ -3,7 +3,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Store} from '@ngrx/store';
 import {Approve, CreateProposal, Reject} from '@feature/decision/actions/contract-actions';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
 import {Observable, Subject} from 'rxjs/index';
 import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';

@@ -4,7 +4,7 @@ import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
 import {Customer} from '@model/customer/customer';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {CustomerDatasource} from '@service/customer/customer-datasource';
 import {select, Store} from '@ngrx/store';

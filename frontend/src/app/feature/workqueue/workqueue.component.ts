@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '@feature/common/ownerModal/owner-modal.component';
 import {CurrentUser} from '@service/user/current-user';
 import {User} from '@model/user/user';

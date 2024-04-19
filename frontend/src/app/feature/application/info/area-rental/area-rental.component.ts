@@ -25,7 +25,7 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {ProjectService} from '@service/project/project.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 
 @Component({
   selector: 'area-rental',

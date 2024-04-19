@@ -7,7 +7,7 @@ import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {Customer} from '@model/customer/customer';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {findTranslation} from '@util/translations';

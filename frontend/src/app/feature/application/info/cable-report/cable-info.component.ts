@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {forkJoin} from 'rxjs';
 
 import {DefaultTextType} from '@model/application/default-text-type';

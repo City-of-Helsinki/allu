@@ -15,7 +15,7 @@ import {CustomerModalComponent} from '@feature/information-request/acceptance/cu
 import {CustomerService} from '@service/customer/customer.service';
 import {CustomerServiceMock, MatDialogMock, MatDialogRefMock, NotificationServiceMock} from '../../../mocks';
 import {NotificationService} from '@feature/notification/notification.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {of} from 'rxjs';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 import {CustomerType} from '@model/customer/customer-type';

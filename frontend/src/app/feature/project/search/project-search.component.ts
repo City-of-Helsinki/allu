@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {Project} from '@model/project/project';
 import {fromForm} from '@model/project/project-search-query';

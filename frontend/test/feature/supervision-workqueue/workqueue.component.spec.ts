@@ -5,7 +5,7 @@ import {Component, DebugElement} from '@angular/core';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../mocks';
 import {CurrentUser} from '@service/user/current-user';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {FormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';

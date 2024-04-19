@@ -4,7 +4,7 @@ import {Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
 import {ALWAYS_ENABLED_FIELDS} from '@feature/customerregistry/customer/customer-info.component';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Deposit} from '@model/application/invoice/deposit';

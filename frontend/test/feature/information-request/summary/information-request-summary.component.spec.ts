@@ -2,7 +2,7 @@ import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
 import {By} from '@angular/platform-browser';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 import {InformationRequestSummaryComponent} from '@feature/information-request/summary/information-request-summary.component';

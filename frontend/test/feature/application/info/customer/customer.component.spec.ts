@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MatCardModule} from '@angular/material/card';
+import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
 
 import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';

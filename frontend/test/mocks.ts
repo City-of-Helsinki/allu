@@ -19,7 +19,7 @@ import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs/
 import {map} from 'rxjs/internal/operators';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ComponentType} from '@angular/cdk/portal';
-import {MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 
 /**
  * Mock for application state

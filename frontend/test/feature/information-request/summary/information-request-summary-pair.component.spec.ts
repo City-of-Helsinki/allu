@@ -2,7 +2,7 @@ import {Component, DebugElement, Input} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
 import {By} from '@angular/platform-browser';
 import {FieldSelectComponent} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';

@@ -22,7 +22,7 @@ import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {Location} from '@model/common/location';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {User} from '@model/user/user';
 import {EMPTY, Observable, of} from 'rxjs/index';
 import {StoreModule} from '@ngrx/store';

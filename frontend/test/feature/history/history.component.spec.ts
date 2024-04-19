@@ -13,8 +13,8 @@ import {Load, LoadSuccess} from '@feature/history/actions/history-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {StructureMeta} from '@model/application/meta/structure-meta';
-import { MatSpinner } from '@angular/material/progress-spinner';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatLegacySpinner as MatSpinner } from '@angular/material/legacy-progress-spinner';
+import { MatLegacySlideToggle as MatSlideToggle } from '@angular/material/legacy-slide-toggle';
 import {FieldChange} from '@model/history/field-change';
 
 function createChangeHistoryItem(name: string, changeTime: Date): ChangeHistoryItem {

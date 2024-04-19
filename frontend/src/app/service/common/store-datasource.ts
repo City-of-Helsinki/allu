@@ -1,6 +1,6 @@
 import {DataSource} from '@angular/cdk/collections';
 import {Observable, Subject} from 'rxjs';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort, MatSortable} from '@angular/material/sort';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';

@@ -7,7 +7,7 @@ import {filter, map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {Store} from '@ngrx/store';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {findTranslation} from '@util/translations';

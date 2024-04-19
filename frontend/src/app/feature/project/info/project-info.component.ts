@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {Project} from '../../../model/project/project';
 import {CityDistrict} from '../../../model/common/city-district';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';

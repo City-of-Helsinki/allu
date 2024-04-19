@@ -1,5 +1,5 @@
 import {BulkApprovalEntry, EntryStatus} from '@app/model/decision/bulk-approval-entry';
-import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import {Component, Inject, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {Approve} from '@feature/decision/actions/bulk-approval-actions';

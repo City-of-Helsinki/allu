@@ -7,7 +7,7 @@ import {map, switchMap, take} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import {DistributionEntry} from '@model/common/distribution-entry';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import {DISTRIBUTION_MODAL_CONFIG, DistributionModalComponent} from '@feature/application/distribution/distribution-modal.component';
 import {distributionChangeAllowed} from '@model/application/application-status';
 

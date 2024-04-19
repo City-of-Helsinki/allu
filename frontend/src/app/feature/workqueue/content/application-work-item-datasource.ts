@@ -1,4 +1,4 @@
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {ApplicationSearchDatasource} from '@service/application/application-search-datasource';
 import {select, Store} from '@ngrx/store';

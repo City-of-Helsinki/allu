@@ -12,7 +12,7 @@ import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
 import {Customer} from '@model/customer/customer';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {MatOption} from '@angular/material/core';
+import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
 import {ComplexValidator} from '@util/complex-validator';
 import {Contact} from '@model/customer/contact';
 import {Application} from '@model/application/application';

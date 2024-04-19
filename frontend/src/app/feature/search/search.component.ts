@@ -11,7 +11,7 @@ import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CityDistrict} from '@model/common/city-district';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {ArrayUtil} from '@util/array-util';
 import {AddMultiple} from '@feature/project/actions/application-basket-actions';

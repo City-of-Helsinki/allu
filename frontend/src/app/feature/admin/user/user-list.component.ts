@@ -4,7 +4,7 @@ import {User} from '@model/user/user';
 import {UserService} from '@service/user/user-service';
 import * as fromRoot from '@feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {findTranslation, translateArray} from '@util/translations';
 import {map, withLatestFrom} from 'rxjs/operators';
