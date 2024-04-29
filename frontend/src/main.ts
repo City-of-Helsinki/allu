@@ -24,3 +24,6 @@ if (environment.hmr) {
 } else {
   bootstrap().catch(err => console.log(err));
 }
+
+// Fixes ReferenceError: type is not defined with leaflet-draw plugin
+window['type'] = true;
