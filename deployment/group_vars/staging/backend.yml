@@ -17,7 +17,7 @@ mail_server_host: smtp.sendgrid.net
 mail_server_port: 25
 mail_server_auth: true
 mail_server_starttls_required: true
-email_allowed_addresses: "*@vincit.fi,*@hel.fi,*@geometrix.fi"
+email_allowed_addresses: "*@gofore.fi,*@hel.fi,*@geometrix.fi"
 email_sender_address: Alueidenkaytto ja -valvonta Staging <noreply@kaupunkiymparisto.fi>
 
 invoice_cronstring: "0 0/15 * * * MON-FRI"

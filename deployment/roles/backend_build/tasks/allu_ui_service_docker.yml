@@ -1,9 +1,9 @@
-- name: Login to GitLab repository locally
+- name: Login to Github repository locally
   local_action:
     module: docker_login
-    registry: "{{ gitlab_registry_url }}"
-    username: "{{ gitlab_deploy_user }}"
-    password: "{{ gitlab_deploy_token }}"
+    registry: "{{ github_registry_url }}"
+    username: "{{ github_deploy_user }}"
+    password: "{{ github_deploy_token }}"
 
 - name: Build allu_ui_service Docker image. Uses random numbers to force Docker to build certain parts of image every time
   local_action:
@@ -19,11 +19,11 @@
     name: "allu_ui_service:{{ branch }}"
     force_source: true
 
-- name: Push built allu_ui_service Docker image to GitLab repository
+- name: Push built allu_ui_service Docker image to Github repository
   local_action:
     module: docker_image
     push: true
     source: local
     force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
     name: "allu_ui_service:{{ branch }}"
-    repository: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_ui_service:{{ branch }}"
+    repository: "{{ github_registry_url }}/city-of-helsinki/allu/allu_ui_service:{{ branch }}"

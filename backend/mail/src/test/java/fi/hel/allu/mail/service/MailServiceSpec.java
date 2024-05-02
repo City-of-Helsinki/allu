@@ -226,7 +226,7 @@ public class MailServiceSpec {
       mailService.send(mailMessage);
     });
     it("should send email to multiple recipients", () -> {
-      mailMessage.setTo(Arrays.asList("alluprojekti+1@vincit.fi", "alluprojekti+2@vincit.fi"));
+      mailMessage.setTo(Arrays.asList("alluprojekti+1@gofore.fi", "alluprojekti+2@gofore.fi"));
       mailService.send(mailMessage);
     });
   }
