@@ -1,20 +1,19 @@
 {
-"/api": {
-  "target": "http://localhost:9000",
-  "pathRewrite": {"/api/": ""},
-  "secure": false,
-  "changeOrigin": false
-},
-"/wms": {
-  "target": "http://testi.allu.kaupunkiymparisto.fi/",
-  "pathRewrite": {"/wms/": "/wms"},
-  "secure": false,
-  "changeOrigin": true
-},
-"/tms": {
-  "target": "http://testi.allu.kaupunkiymparisto.fi/",
-  "secure": false,
-  "changeOrigin": true
+  "/api": {
+    "target": "http://localhost:9000",
+    "pathRewrite": {"/api/": ""},
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/wms": {
+    "target": "https://185.26.49.172",
+    "pathRewrite": {"/wms/": "/wms"},
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/tms": {
+    "target": "https://185.26.49.172",
+    "secure": false,
+    "changeOrigin": true
+  }
 }
-}
-
