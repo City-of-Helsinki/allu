@@ -25,19 +25,19 @@ applicantreminder_cronstring: "0 0 1 * * MON-FRI"
 invoice_cronstring: "0 0 7 * * *"
 invoice_sending_enabled: true
 
-sap_ftp_invoice_host: 137.163.136.62
-sap_ftp_invoice_port: 22
+sap_ftp_invoice_host: 127.0.0.1
+sap_ftp_invoice_port: 8022
 sap_ftp_invoice_directory: /
 
 invoice_archivedir: /home/allu/scheduler-service/sap/invoice-archive
 
 # Customer update SFTP configuration
-sap_ftp_customer_host: 137.163.136.62
-sap_ftp_customer_port: 22
+sap_ftp_customer_host: 127.0.0.1
+sap_ftp_customer_port: 8022
 sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
-sftp_known_host: "|1|qFBZzn46HdNHCvCGv533+fbsrE8=|gTl+ddIZqk/Lf3KdLJnE+PHloOA= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk="
+sftp_known_host: "|1|3Qd7vSu3BVHj3ImF6o+iNNE4BQM=|d9gEVFytZuiexP+2VuNXCn+0Oxc= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk="
 
 # Customer update configuration
 customer_update_enabled: true
@@ -46,8 +46,16 @@ customer_update_sourcedir: /home/allu/scheduler-service/sap/customer-process
 customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
 customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 
+# Customer notification email (empty email -> no mails sent)
+customer_notification_email: talpa.asiakasrekisteri@hel.fi
 customer_notification_cronstring: "0 0 7 * * *"
+# Customer notification email (empty email -> no mails sent)
+invoice_notification_email: talpa.kympmyyntikp@hel.fi
 ui_baseurl: https://allu.kaupunkiymparisto.fi
+
+ssh_tunnel_server_address: 10.138.10.86
+ssh_tunnel_destination_address: 137.163.136.62
+allu_ssh_key_file: /servicehome/allu_keys/allu_id_rsa
 
 supervision_api_basepath: /supervision-api
 
