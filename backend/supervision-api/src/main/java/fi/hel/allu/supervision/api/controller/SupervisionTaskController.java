@@ -1,15 +1,14 @@
 package fi.hel.allu.supervision.api.controller;
 
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import fi.hel.allu.supervision.api.domain.*;
-import fi.hel.allu.supervision.api.mapper.MapperUtil;
 import fi.hel.allu.supervision.api.mapper.SupervisionTaskMapper;
 import fi.hel.allu.supervision.api.mapper.SupervisionTaskSearchParameterMapper;
 import fi.hel.allu.supervision.api.service.SupervisionTaskApprovalService;
@@ -26,6 +25,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -92,10 +93,9 @@ public class SupervisionTaskController {
     @PostMapping(value = "/supervisiontasks/search", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_VIEW')")
     public ResponseEntity<Page<SupervisionTaskSearchResult>> search(
-            @RequestBody @Valid SupervisionTaskSearchParameters searchParameters) {
-        SupervisionTaskSearchCriteria criteria = searchParameterMapper.createSearchCriteria(searchParameters);
-        Pageable pageRequest = MapperUtil.mapToPageRequest(searchParameters);
-        return ResponseEntity.ok(supervisionTaskService.search(criteria, pageRequest).map(
+            @RequestBody @Valid QueryParameters queryParameters,
+            @PageableDefault(page = 0, size = 100, sort = "id", direction = Sort.Direction.DESC) Pageable pageRequest) {
+        return ResponseEntity.ok(supervisionTaskService.search(queryParameters, pageRequest).map(
                 supervisionTaskMapper::mapToSearchResult));
     }
 

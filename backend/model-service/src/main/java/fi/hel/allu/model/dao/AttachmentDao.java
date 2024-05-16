@@ -7,17 +7,19 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.common.exception.NoSuchEntityException;
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,12 +37,15 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 @Repository
 public class AttachmentDao {
 
-  @Autowired
   private SQLQueryFactory queryFactory;
 
   final QBean<AttachmentInfo> attachmentInfoBean = bean(AttachmentInfo.class, attachment.all());
 
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(attachment.attachmentDataId);
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Collections.singletonList(attachment.attachmentDataId);
+
+  public AttachmentDao(SQLQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
+  }
 
   /**
    * find all attachment infos for an application
@@ -51,13 +56,12 @@ public class AttachmentDao {
    */
   @Transactional(readOnly = true)
   public List<AttachmentInfo> findByApplication(int applicationId) {
-    List<AttachmentInfo> attachmentInfos = queryFactory
+    return queryFactory
         .select(attachmentInfoBean)
         .from(attachment)
         .join(applicationAttachment).on(attachment.id.eq(applicationAttachment.attachmentId))
         .where(applicationAttachment.applicationId.eq(applicationId))
         .fetch();
-    return attachmentInfos;
   }
 
   /**
@@ -217,7 +221,7 @@ public class AttachmentDao {
    */
   @Transactional
   public void delete(int applicationId, int id) {
-    removeLinkApplicationToAttachment(applicationId, id);
+    removeLinkApplicationToAttachment(applicationId, Collections.singletonList(id));
     Integer attachmentDataId = getAttachmentDataIdForAttachment(id);
     long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
     if (changed == 0) {
@@ -334,25 +338,42 @@ public class AttachmentDao {
    */
   @Transactional
   public void linkApplicationToAttachment(int applicationId, int attachmentId) {
-    queryFactory.insert(applicationAttachment)
-        .set(applicationAttachment.applicationId, applicationId)
-        .set(applicationAttachment.attachmentId, attachmentId)
-        .execute();
+    linkApplicationToAttachment(applicationId, Collections.singletonList(attachmentId));
+  }
+
+  /**
+   * Link default attachments to application.
+   *
+   * @param applicationId   Application to which attachment is linked to.
+   * @param attachmentIds    Attachments to be linked with the application.
+   */
+  @Transactional
+  public void linkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
+    if (EmptyUtil.isNotEmpty(attachmentIds)) {
+      SQLInsertClause insert = queryFactory.insert(applicationAttachment);
+      for (Integer attachmentId : attachmentIds) {
+        insert.set(applicationAttachment.applicationId, applicationId)
+                .set(applicationAttachment.attachmentId, attachmentId)
+                .addBatch();
+      }
+      insert.execute();
+    }
   }
 
   /**
    * Remove link from attachment to application.
    *
-   * @param applicationId   Application to which attachment is linked to.
-   * @param attachmentId    Attachment to be unlinked with the application.
+   * @param applicationId Application to which attachment is linked to.
+   * @param attachmentIds Attachment to be unlinked with the application.
    */
   @Transactional
-  public void removeLinkApplicationToAttachment(int applicationId, int attachmentId) {
-    long changed = queryFactory.delete(applicationAttachment)
-        .where(applicationAttachment.attachmentId.eq(attachmentId).and(applicationAttachment.applicationId.eq(applicationId)))
-        .execute();
-    if (changed == 0) {
-      throw new NoSuchEntityException("attachment.unlink.failed", applicationId);
+  public void removeLinkApplicationToAttachment(int applicationId, List<Integer> attachmentIds) {
+    if (EmptyUtil.isNotEmpty(attachmentIds)) {
+      long changed = queryFactory.delete(applicationAttachment).where(applicationAttachment.attachmentId.in(
+              attachmentIds).and(applicationAttachment.applicationId.eq(applicationId))).execute();
+      if (changed == 0) {
+        throw new NoSuchEntityException("attachment.unlink.failed", applicationId);
+      }
     }
   }
 
@@ -374,7 +395,7 @@ public class AttachmentDao {
   }
 
   private Integer insertAttachmentData(byte[] data) {
-    Long size = Long.valueOf(data.length);
+    Long size = (long) data.length;
     Integer id = queryFactory.insert(attachmentData)
         .set(attachmentData.data, data)
         .set(attachmentData.size, size).executeWithKey(attachmentData.id);
@@ -384,16 +405,17 @@ public class AttachmentDao {
     return id;
   }
 
-
   private void updateDefaultAttachmentApplicationTypes(int defaultAttachmentId, List<ApplicationType> applicationTypes) {
     queryFactory.delete(defaultAttachmentApplicationType)
         .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).execute();
     if (applicationTypes != null) {
+      SQLInsertClause insert = queryFactory.insert(defaultAttachmentApplicationType);
       applicationTypes.forEach(at ->
-          queryFactory.insert(defaultAttachmentApplicationType)
+              insert
               .set(defaultAttachmentApplicationType.defaultAttachmentId, defaultAttachmentId)
               .set(defaultAttachmentApplicationType.applicationType, at)
-              .execute());
+              .addBatch());
+      insert.execute();
     }
   }
 
@@ -414,21 +436,23 @@ public class AttachmentDao {
     .execute();
   }
 
-  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
-    List<AttachmentInfo> infos = findByApplication(copyFromApplicationId);
-    infos.forEach(i -> copyForApplication(i, copyToApplicationId));
-  }
-
-  private void copyForApplication(AttachmentInfo info, Integer copyToApplicationId) {
-    Integer attachmentId = null;
-    if (isDefaultAttachment(info)) {
-      attachmentId = info.getId();
-    } else {
-      info.setId(null);
-      attachmentId = queryFactory.insert(attachment).populate(info)
-          .executeWithKey(attachment.id);
+  @Transactional
+  public void copyForApplication(List<AttachmentInfo> infos, Integer copyToApplicationId) {
+    if (EmptyUtil.isNotEmpty(infos)) {
+      List<Integer> attachmentIds = new ArrayList<>();
+      SQLInsertClause insert = queryFactory.insert(attachment);
+      for (AttachmentInfo info : infos) {
+        if (isDefaultAttachment(info)) {
+          attachmentIds.add(info.getId());
+        } else {
+          info.setId(null);
+          insert.populate(info).addBatch();
+        }
+      }
+      List<Integer> inserted = insert.executeWithKeys(attachment.id);
+      attachmentIds.addAll(inserted);
+      linkApplicationToAttachment(copyToApplicationId, attachmentIds);
     }
-    linkApplicationToAttachment(copyToApplicationId, attachmentId);
   }
 
   private boolean isDefaultAttachment(AttachmentInfo info) {

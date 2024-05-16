@@ -1,6 +1,5 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -28,9 +27,9 @@ import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
  */
 @Service
 public class SupervisionTaskService {
-  private SupervisionTaskDao supervisionTaskDao;
-  private LocationDao locationDao;
-  private ApplicationService applicationService;
+  private final SupervisionTaskDao supervisionTaskDao;
+  private final LocationDao locationDao;
+  private final ApplicationService applicationService;
 
   @Autowired
   public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, LocationDao locationDao,
@@ -46,7 +45,6 @@ public class SupervisionTaskService {
         .orElseThrow(() -> new NoSuchEntityException("Supervision task not found", Integer.toString(id)));
   }
 
-  @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationId(int applicationId) {
     return supervisionTaskDao.findByApplicationId(applicationId);
   }
@@ -82,15 +80,14 @@ public class SupervisionTaskService {
   @Transactional
   public void delete(int id) {
     supervisionTaskDao.findById(id).ifPresent(task -> {
-      SupervisionTaskToTag.onTaskDeleteRemoveTags(task.getType())
-          .forEach(type -> applicationService.removeTag(task.getApplicationId(), type));
+      List<ApplicationTagType> types = SupervisionTaskToTag.onTaskDeleteRemoveTags(task.getType());
+      applicationService.removeTagByTypes(task.getApplicationId(), types);
       supervisionTaskDao.delete(id);
     });
   }
 
-  @Transactional(readOnly = true)
-  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    return supervisionTaskDao.search(searchCriteria, pageRequest);
+  public SupervisionWorkItem getWorkItem(Integer id) {
+    return supervisionTaskDao.findSupervisionWorkItem(id);
   }
 
   @Transactional
@@ -149,6 +146,14 @@ public class SupervisionTaskService {
     return supervisionTaskDao.removeOwner(tasks);
   }
 
+  public List<Integer> getSupervisionTaskCount(Integer applicationId){
+    return supervisionTaskDao.getCountOfSupervisionTask(applicationId);
+  }
+
+  public Page<SupervisionWorkItem> findAll(Pageable pageRequest) {
+    return supervisionTaskDao.findAll(pageRequest);
+  }
+
   private SupervisionTask rejectedToNewTask(SupervisionTask rejected, ZonedDateTime newDate) {
     return new SupervisionTask(
         null,
@@ -174,7 +179,7 @@ public class SupervisionTaskService {
   private void createTag(ApplicationTagType tagType, Integer applicationId, Integer creatorId) {
     ApplicationTag tag = new ApplicationTag(creatorId, tagType, ZonedDateTime.now());
     applicationService.addTag(applicationId, tag);
-    tag.getType().getReplaces().forEach(type -> applicationService.removeTag(applicationId, type));
+    applicationService.removeTagByTypes(applicationId, tag.getType().getReplaces());
   }
 
   @Transactional
@@ -207,6 +212,6 @@ public class SupervisionTaskService {
   }
 
   public List<Location> getLocationsOfSupervisionTasks(List<SupervisionTask> tasks) {
-    return locationDao.findByIds(tasks.stream().map(t -> t.getLocationId()).collect(Collectors.toList()));
+    return locationDao.findByIds(tasks.stream().map(SupervisionTask::getLocationId).collect(Collectors.toList()));
   }
 }

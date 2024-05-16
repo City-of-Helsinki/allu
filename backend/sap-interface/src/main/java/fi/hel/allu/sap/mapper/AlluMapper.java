@@ -25,9 +25,8 @@ public class AlluMapper {
    * Bill text lines for area rentals and excavation announcements
    */
   private static final String[] BILL_TEXT_LINES = {
-      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja",
-      "puhtaanapidosta."
-   };
+      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta."
+  };
 
   /*
    * Allu-specific constant values for various SAP fields:

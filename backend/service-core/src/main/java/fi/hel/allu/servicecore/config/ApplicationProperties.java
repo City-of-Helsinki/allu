@@ -283,6 +283,10 @@ public class ApplicationProperties {
     return getSearchServiceUrl("/applications");
   }
 
+  public String getSupervisionTaskSearchCreateUrl() {
+    return getSearchServiceUrl("/supervisiontasks");
+  }
+
   /**
    * @return url to delete application from search index.,
    */
@@ -583,6 +587,14 @@ public class ApplicationProperties {
 
   public String getAllFixedLocationsUrl() {
     return getModelServiceUrl("/locations/fixed-location/all");
+  }
+
+  public String postSupervisionStatusUpdate() {
+    return getSearchServiceUrl("/supervisiontasks/update/status/");
+  }
+
+  public String getSupervisionTaskSearchDeleteUrl() {
+    return getSearchServiceUrl("/supervisiontasks/{id}");
   }
 
   public String getFixedLocationByIdUrl() {
@@ -1128,6 +1140,14 @@ public class ApplicationProperties {
   }
 
   /**
+   *
+   * @return url for updating supervisionTask information on elasticsearch
+   */
+  public String getSupervisionTaksSearchUpdateUrl() {
+    return getSearchServiceUrl("/supervisiontasks/update");
+  }
+
+  /**
    * @return url for retrieving supervision tasks by application id.
    */
   public String getSupervisionTaskByApplicationIdUrl() {
@@ -1156,6 +1176,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/supervisiontask");
   }
 
+  public String getSupervisionTaskGetWorkItemUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}/workitem");
+  }
+
   /**
    * @return url for updating existing supervision task-
    */
@@ -1181,7 +1205,7 @@ public class ApplicationProperties {
    * @return url for searching supervision tasks by given criteria
    */
   public String getSupervisionTaskSearchUrl() {
-    return getModelServiceUrl("/supervisiontask/search");
+    return getSearchServiceUrl("/supervisiontasks/search");
   }
 
   /**
@@ -1192,10 +1216,29 @@ public class ApplicationProperties {
   }
 
   /**
+   *
+   * @return url for retrieving all supervisionTaskWorkItems from model-service
+   */
+  public String getAllSupervisionTasksUrl() {
+    return getModelServiceUrl("/supervisiontask/all");
+  }
+
+  /**
    * @return url to update owner of supervision task.
    */
   public String getSupervisionTaskOwnerUpdateUrl() {
     return getModelServiceUrl("/supervisiontask/owner/{ownerId}");
+  }
+  public String getSupervisionTaskOwnerUpdateSearchUrl() {
+    return getSearchServiceUrl("/supervisiontasks/owner/update");
+  }
+
+  public String getSupervisionTaskSearchOwnerRemoveUrl() {
+    return getSearchServiceUrl("/supervisiontasks/owner/remove");
+  }
+
+  public String getSupervisionTaskCountUrl() {
+    return getModelServiceUrl("/supervisiontask/{applicationId}/count");
   }
 
   /**
@@ -1381,6 +1424,8 @@ public class ApplicationProperties {
   public String getSyncContactsUrl() {
     return getSearchServiceUrl("/contacts/sync/data");
   }
+
+  public String getSyncSupervisionTaskUrl() {return getSearchServiceUrl("/supervisiontasks/sync/data");}
 
   /**
    * @return url to fetch finished applications
@@ -1590,7 +1635,7 @@ public class ApplicationProperties {
   }
 
   public String getOwnerNotificationUrl() {
-    return getModelServiceUrl("/applications/{id}/ownernotification");
+    return getModelServiceUrl("/applications/{ids}/ownernotification");
   }
 
   public String getReplacingApplicationIdUrl() {

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.querydsl.sql.dml.SQLInsertClause;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,23 +35,25 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 @Repository
 public class InformationRequestDao {
 
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(informationRequest.id, informationRequest.applicationId,
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(informationRequest.id, informationRequest.applicationId,
       informationRequest.creatorId, informationRequest.creationTime);
 
-  @Autowired
-  private SQLQueryFactory queryFactory;
-
-  @Autowired
-  private ExternalApplicationDao externalApplicationDao;
-
-  @Autowired
-  private HistoryDao historyDao;
+  private final SQLQueryFactory queryFactory;
+  private final ExternalApplicationDao externalApplicationDao;
+  private final HistoryDao historyDao;
 
   private final QBean<InformationRequest> informationRequestBean = bean(InformationRequest.class,
       informationRequest.all());
 
   private final QBean<InformationRequestField> informationRequestFieldBean = bean(InformationRequestField.class,
       informationRequestField.all());
+
+  public InformationRequestDao(SQLQueryFactory queryFactory, ExternalApplicationDao externalApplicationDao,
+                               HistoryDao historyDao) {
+    this.queryFactory = queryFactory;
+    this.externalApplicationDao = externalApplicationDao;
+    this.historyDao = historyDao;
+  }
 
   @Transactional
   public InformationRequest insert(InformationRequest newInformationRequest) {
@@ -153,10 +155,8 @@ public class InformationRequestDao {
 
   @Transactional(readOnly = true)
   public List<InformationRequestFieldKey> getResponseFields(Integer informationRequestId) {
-    List<InformationRequestFieldKey> responseFields =
-        queryFactory.select(informationRequestResponseField.fieldKey).from(informationRequestResponseField).
+    return queryFactory.select(informationRequestResponseField.fieldKey).from(informationRequestResponseField).
         where(informationRequestResponseField.informationRequestId.eq(informationRequestId)).fetch();
-    return responseFields;
   }
 
   @Transactional
@@ -192,7 +192,7 @@ public class InformationRequestDao {
   }
 
   @Transactional
-  public InformationRequest move(int fromApplicationId, int toApplicationId) {
+  public void move(int fromApplicationId, int toApplicationId) {
     InformationRequest existing = findActiveByApplicationId(fromApplicationId);
     if (existing != null) {
       queryFactory
@@ -201,19 +201,17 @@ public class InformationRequestDao {
         .where(informationRequest.id.eq(existing.getId())).execute();
 
       externalApplicationDao.updateApplicationId(existing.getId(), toApplicationId);
-      return findById(existing.getId());
     }
-    return null;
   }
 
   public void insertResponseFields(Integer requestId, List<InformationRequestFieldKey> responseFields) {
     deleteResponseFields(requestId);
-    responseFields.stream().forEach(f -> insertSingleResponseField(requestId, f));
-  }
-
-  private Integer insertSingleResponseField(Integer requestId, InformationRequestFieldKey fieldKey) {
-    InformationRequestResponseField field = new InformationRequestResponseField(requestId, fieldKey);
-    return queryFactory.insert(informationRequestResponseField).populate(field).executeWithKey(informationRequestResponseField.id);
+    SQLInsertClause insertClause = queryFactory.insert(informationRequestResponseField);
+    for (InformationRequestFieldKey fieldKey : responseFields) {
+      InformationRequestResponseField field = new InformationRequestResponseField(requestId, fieldKey);
+      insertClause.populate(field).addBatch();
+    }
+    insertClause.execute();
   }
 
   private void deleteResponseFields(Integer requestId) {
@@ -230,13 +228,12 @@ public class InformationRequestDao {
   }
 
   private void insertFields(Integer requestId, List<InformationRequestField> fields) {
-    fields.forEach(f -> insertSingleField(f, requestId));
-  }
-
-  private Integer insertSingleField(InformationRequestField field, Integer requestId) {
-    field.setInformationRequestId(requestId);
-    return queryFactory.insert(informationRequestField).populate(field).executeWithKey(informationRequestField.id);
-
+    SQLInsertClause insertClause = queryFactory.insert(informationRequestField);
+    for (InformationRequestField field : fields) {
+      field.setInformationRequestId(requestId);
+      insertClause.populate(field).addBatch();
+    }
+    insertClause.execute();
   }
 
   private List<InformationRequestField> getInformationRequestFields(Integer requestId) {

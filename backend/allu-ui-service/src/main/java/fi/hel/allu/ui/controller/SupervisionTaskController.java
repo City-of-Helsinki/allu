@@ -1,12 +1,14 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,8 +69,9 @@ public class SupervisionTaskController {
   @PostMapping(value = "/search")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<SupervisionWorkItemJson>> search(
-      @Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    return new ResponseEntity<>(supervisionTaskService.searchWorkItems(searchCriteria, pageRequest), HttpStatus.OK);
+          @Valid @RequestBody QueryParameters queryParameters,
+          @PageableDefault(page = 0, size = 100, sort = "id", direction = Sort.Direction.DESC) Pageable pageRequest) {
+    return new ResponseEntity<>(supervisionTaskService.searchWorkItems(queryParameters, pageRequest), HttpStatus.OK);
   }
 
   @PutMapping(value = "/owner/{id}")

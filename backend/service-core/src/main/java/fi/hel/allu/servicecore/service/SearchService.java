@@ -1,12 +1,19 @@
 package fi.hel.allu.servicecore.service;
 
-import java.net.URI;
-import java.time.Duration;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.common.domain.geometry.Constants;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.UpdateTaskOwners;
+import fi.hel.allu.search.domain.*;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +30,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import fi.hel.allu.common.domain.geometry.Constants;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.search.domain.*;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import fi.hel.allu.servicecore.mapper.ProjectMapper;
-import fi.hel.allu.servicecore.util.PageRequestBuilder;
-import fi.hel.allu.servicecore.util.RestResponsePage;
 import reactor.util.retry.Retry;
+
+import java.net.URI;
+import java.time.Duration;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 @Service
 public class SearchService {
@@ -122,6 +124,15 @@ public class SearchService {
     put(uri.toString(), applicationFields, waitRefresh);
   }
 
+  public <T> void updateApplicationField(List<Integer> applicationIds, String fieldName, T fieldValue, boolean waitRefresh) {
+    HashMap<Integer, Map<String, T>> applicationFields = new HashMap<>();
+    applicationIds.forEach(id ->  applicationFields.put(id, Collections.singletonMap(fieldName, fieldValue)));
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdatePartialUrl())
+            .queryParam("waitRefresh", waitRefresh)
+            .buildAndExpand().toUri();
+    put(uri.toString(), applicationFields, waitRefresh);
+  }
+
   /**
    * Update the customer and related contacts for an application
    *
@@ -166,7 +177,7 @@ public class SearchService {
    * @param projectJson Project to be updated.
    */
   public void updateProject(ProjectJson projectJson) {
-    executePutWithRetry(applicationProperties.getProjectSearchUpdateUrl(), projectMapper.createProjectESModel(projectJson), projectJson.getId().intValue());
+    executePutWithRetry(applicationProperties.getProjectSearchUpdateUrl(), projectMapper.createProjectESModel(projectJson), projectJson.getId());
   }
 
   /**
@@ -231,8 +242,6 @@ public class SearchService {
    *
    * @param queryParameters list of query parameters
    * @pageRequest paging request for the search
-   * @param mapper function that maps a list of application ids to the matching
-   *          applications.
    * @return List of found applications.
    */
   public Page<ApplicationES> searchApplication(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
@@ -242,6 +251,30 @@ public class SearchService {
     }
     return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity(),
       new ParameterizedTypeReference<RestResponsePage<ApplicationES>>() {});
+  }
+
+  public Page<SupervisionWorkItem> searchSupervisionTask(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+    return search(applicationProperties.getSupervisionTaskSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity(),
+                  new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {});
+  }
+
+  public void updateSupervisionTasksStatus(Integer applicationId, StatusType statusType) {
+
+    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(applicationProperties.postSupervisionStatusUpdate());
+
+    builder.queryParam("applicationId", applicationId);
+    String uri = builder.build().toUri().toString();
+    executePostWithRetry(uri, statusType);
+  }
+
+  public void updateSupervisionTasks(SupervisionWorkItem supervisionWorkItem) {
+    List<SupervisionWorkItem> tasks = new ArrayList<>();
+    tasks.add(supervisionWorkItem);
+    executePutWithRetry(applicationProperties.getSupervisionTaksSearchUpdateUrl(), new ArrayList<>(tasks));
+  }
+
+  public void deleteSupervisionTask(Integer id) {
+    executeDeleteWithRetry(applicationProperties.getSupervisionTaskSearchDeleteUrl(), id);
   }
 
   /**
@@ -293,7 +326,6 @@ public class SearchService {
                                          Function<List<Integer>, List<ContactJson>> mapper) {
     return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, false, mapper,
       new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
-
   }
 
   public void updateCustomerOfApplications(CustomerJson updatedCustomer, Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleType) {
@@ -304,6 +336,21 @@ public class SearchService {
     if (!applicationWithContactsESs.isEmpty()) {
       executePutWithRetry(applicationProperties.getContactApplicationsSearchUpdateUrl(), applicationWithContactsESs);
     }
+  }
+
+  public void insertSupervisionTask(SupervisionWorkItem supervisionWorkItem){
+    executePostWithRetry(applicationProperties.getSupervisionTaskSearchCreateUrl(),
+                         supervisionWorkItem);
+  }
+
+  public void updateSupervisionTaskOwner(UpdateTaskOwners updateTaskOwners){
+    executePutWithRetry(applicationProperties.getSupervisionTaskOwnerUpdateSearchUrl(),
+                        updateTaskOwners);
+  }
+
+  public void removeSupervisionTaskOwner(List<Integer> taskIds){
+    executePutWithRetry(applicationProperties.getSupervisionTaskSearchOwnerRemoveUrl(),
+                        taskIds);
   }
 
   /**
@@ -318,7 +365,7 @@ public class SearchService {
     for (int i = 0; i < ids.size(); ++i) {
       idToOrder.put(ids.get(i), i);
     }
-    Collections.sort(unorderedList, Comparator.comparingInt(listItem -> idToOrder.get(objectToKey.applyAsInt(listItem))));
+    unorderedList.sort(Comparator.comparingInt(listItem -> idToOrder.get(objectToKey.applyAsInt(listItem))));
   }
 
 
@@ -335,10 +382,8 @@ public class SearchService {
 
     final PageRequest responsePageRequest = PageRequest.of(responsePage.getNumber(),
       Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
-
-    final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
+     return new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
       responsePage.getTotalElements());
-    return result;
   }
 
   private <T> void put(String url, T request, boolean waitRefresh, Object... uriVariables) {

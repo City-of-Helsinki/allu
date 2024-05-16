@@ -16,6 +16,7 @@ import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.OptimisticLockException;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
@@ -50,7 +51,7 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 public class ApplicationDao {
 
   /** Fields that won't be updated in regular updates */
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
           application.invoiced, application.clientApplicationData, application.applicationId,
@@ -94,7 +95,7 @@ public class ApplicationDao {
   /**
    * Returns also replaced application.
    */
-  @Transactional
+  @Transactional(readOnly = true)
   public Application findById(int id) {
     Application app = queryFactory.select(applicationBean).from(application).where(application.id.eq(id)).fetchOne();
     Optional.ofNullable(app).ifPresent(a -> populateDependencies(Collections.singletonList(a)));
@@ -134,7 +135,7 @@ public class ApplicationDao {
    * Finds applications related to the given customer with the role customer has within the application.
    *
    * @param id    Id of the customer whose applications are fetched.
-   * @return List of related application ids and roles of the customer within the application. Never <code>null</code>.
+   * @return Map of application ids keys and roles of the customer as values within the application. Never <code>null</code>.
    */
   @Transactional(readOnly = true)
   public Map<Integer, List<CustomerRoleType>> findByCustomer(int id) {
@@ -166,16 +167,16 @@ public class ApplicationDao {
    */
   @Transactional(readOnly = true)
   public List<Integer> findByEndTime(ZonedDateTime endsAfter, ZonedDateTime endsBefore,
-      List<ApplicationType> applicationTypes, List<StatusType> statusTypes) {
+                                     List<ApplicationType> applicationTypes, List<StatusType> statusTypes) {
     BooleanExpression whereCondition = application.endTime.between(endsAfter, endsBefore);
-    if (applicationTypes != null && ! applicationTypes.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(applicationTypes)) {
       whereCondition = whereCondition.and(application.type.in(applicationTypes));
     }
-    if (statusTypes != null && ! statusTypes.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(statusTypes)) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));
     }
-    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
-    return applications;
+    return queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED))
+            .fetch();
   }
 
   @Transactional(readOnly = true)
@@ -216,12 +217,11 @@ public class ApplicationDao {
   @Transactional
   public long markReminderSent(List<Integer> applications) {
     queryFactory.delete(applicationReminder).where(applicationReminder.applicationId.in(applications)).execute();
-    long inserted = queryFactory.insert(applicationReminder)
+    return queryFactory.insert(applicationReminder)
         .columns(applicationReminder.applicationId, applicationReminder.reminderTrigger)
         .select(SQLExpressions
             .select(application.id, application.endTime).from(application).where(application.id.in(applications)))
         .execute();
-    return inserted;
   }
 
   /**
@@ -335,38 +335,34 @@ public class ApplicationDao {
   /**
    * Updates owner of given applications.
    *
-   * @param owner New owner set to the applications.
+   * @param owner        New owner set to the applications.
    * @param applications Applications whose owner is updated.
-   * @return Number of updated applications.
    */
   @Transactional
-  public int updateOwner(int owner, List<Integer> applications) {
-    int updated = (int) queryFactory
-        .update(application)
-        .set(application.owner, owner)
-        .where(application.id.in(applications))
-        .execute();
-    return updated;
+  public void updateOwner(int owner, List<Integer> applications) {
+    queryFactory
+            .update(application)
+            .set(application.owner, owner)
+            .where(application.id.in(applications))
+            .execute();
   }
 
   @Transactional
-  public int removeOwner(List<Integer> applications) {
-    int updated = (int) queryFactory
-        .update(application)
-        .set(application.owner, Expressions.nullExpression())
-        .where(application.id.in(applications))
-        .execute();
-    return updated;
+  public void removeOwner(List<Integer> applications) {
+    queryFactory
+            .update(application)
+            .set(application.owner, Expressions.nullExpression())
+            .where(application.id.in(applications))
+            .execute();
   }
 
   @Transactional
-  public int updateHandler(Integer applicationId, Integer handlerId) {
-    int updated = (int) queryFactory
-        .update(application)
-        .set(application.handler, handlerId)
-        .where(application.id.eq(applicationId))
-        .execute();
-    return updated;
+  public void updateHandler(Integer applicationId, Integer handlerId) {
+    queryFactory
+            .update(application)
+            .set(application.handler, handlerId)
+            .where(application.id.eq(applicationId))
+            .execute();
   }
 
   @Transactional
@@ -376,9 +372,7 @@ public class ApplicationDao {
         .set(application.status, status)
         .where(application.id.eq(applicationId))
         .execute();
-    if (updated != 1) {
-      throw new NoSuchEntityException("application.update.notFound", applicationId);
-    }
+    validateUpdate(updated, applicationId);
     return findByIds(Collections.singletonList(applicationId)).get(0);
   }
 
@@ -399,9 +393,7 @@ public class ApplicationDao {
         .set(application.decisionTime, ZonedDateTime.now())
         .where(application.id.eq(applicationId))
         .execute();
-    if (updated != 1) {
-      throw new NoSuchEntityException("application.update.notFound", applicationId);
-    }
+    validateUpdate(updated, applicationId);
     return findByIds(Collections.singletonList(applicationId)).get(0);
   }
 
@@ -419,28 +411,29 @@ public class ApplicationDao {
         .set(application.status, status)
         .where(application.id.eq(applicationId))
         .execute();
-    if (updated != 1) {
+    validateUpdate(updated, applicationId);
+    return findById(applicationId);
+  }
+
+  private void validateUpdate(int validateNumber, int applicationId){
+    if (validateNumber != 1) {
       throw new NoSuchEntityException("application.update.notFound", applicationId);
     }
-    return findById(applicationId);
   }
 
   /**
    * Updates project of the given applications.
    *
-   * @param   projectId     New project set to the applications. May be <code>null</code>.
-   * @param   applications  Applications whose project is updated.
-   *
-   * @return  Number of updated applications.
+   * @param projectId    New project set to the applications. May be <code>null</code>.
+   * @param applications Applications whose project is updated.
    */
   @Transactional
-  public int updateProject(Integer projectId, List<Integer> applications) {
-    int updated = (int) queryFactory
-        .update(application)
-        .set(application.projectId, projectId)
-        .where(application.id.in(applications))
-        .execute();
-    return updated;
+  public void updateProject(Integer projectId, List<Integer> applications) {
+    queryFactory
+            .update(application)
+            .set(application.projectId, projectId)
+            .where(application.id.in(applications))
+            .execute();
   }
 
   /**
@@ -515,13 +508,12 @@ public class ApplicationDao {
   /**
    * Removes all tags of given type from application
    * @param applicationId Application's database ID
-   * @param tagType type of tag(s) to remove
+   * @param tagTypes      type of tag(s) to remove
    */
   @Transactional
-  public void removeTagByType(int applicationId, ApplicationTagType tagType) {
+  public void removeTagByTypes(int applicationId, List<ApplicationTagType> tagTypes) {
     queryFactory.delete(applicationTag)
-        .where(applicationTag.applicationId.eq(applicationId).and(applicationTag.type.eq(tagType)))
-        .execute();
+            .where(applicationTag.applicationId.eq(applicationId).and(applicationTag.type.in(tagTypes))).execute();
   }
 
   /**
@@ -535,7 +527,7 @@ public class ApplicationDao {
       .execute();
   }
 
-  String createApplicationId(ApplicationType applicationType) {
+  public String createApplicationId(ApplicationType applicationType) {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
     return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
@@ -616,9 +608,8 @@ public class ApplicationDao {
       ApplicationKind applicationKind = tuple.get(0, ApplicationKind.class);
       ApplicationSpecifier applicationSpecifier = tuple.get(1, ApplicationSpecifier.class);
       Integer applicationId = tuple.get(2, Integer.class);
-      if (!mappedResult.containsKey(applicationId)) {
-        mappedResult.put(applicationId, new LinkedHashMap<>());
-      }
+      mappedResult.computeIfAbsent(applicationId, k -> new LinkedHashMap<>());
+
       if (!mappedResult.get(applicationId).containsKey(applicationKind)) {
         mappedResult.get(applicationId).put(applicationKind, new ArrayList<>());
       }
@@ -650,8 +641,8 @@ public class ApplicationDao {
 
   private void replaceApplicationTags(Integer applicationId, List<ApplicationTag> tags) {
     queryFactory.delete(applicationTag).where(applicationTag.applicationId.eq(applicationId)).execute();
-    if (tags != null && !tags.isEmpty()) {
-      tags.forEach(tag -> insertSingleTag(applicationId, tag));
+    if (EmptyUtil.isNotEmpty(tags)) {
+      insertTags(applicationId, tags);
     }
   }
 
@@ -661,6 +652,25 @@ public class ApplicationDao {
     tag.setApplicationId(applicationId);
     Integer id = queryFactory.insert(applicationTag).populate(tag).executeWithKey(applicationTag.id);
     return queryFactory.select(applicationTagBean).from(applicationTag).where(applicationTag.id.eq(id)).fetchOne();
+  }
+
+  private void insertTags(int applicationId, List<ApplicationTag> tags) {
+    SQLInsertClause inserts = queryFactory.insert(applicationTag);
+    // Let the database assign ID
+    for (ApplicationTag tag : tags) {
+      tag.setId(null);
+      tag.setApplicationId(applicationId);
+      inserts.populate(tag).addBatch();
+    }
+    long result = inserts.execute();
+    validateInserts(tags.size() != result, "multiple ApplicationTag", applicationId);
+  }
+
+  private void validateInserts(boolean validation, String value, int applicationId) {
+    if (validation) {
+      String message = String.format("Inserting %s failed, applicationId: %o", value, applicationId);
+      throw new RuntimeException(message);
+    }
   }
 
   /* Set new kinds and specifiers for the given application id */
@@ -722,20 +732,13 @@ public class ApplicationDao {
     }
   }
 
-  private boolean hasValidRecurringEndTime(Application application) {
-    return application.getEndTime() != null &&
-        application.getRecurringEndTime() != null &&
-        application.getEndTime().isBefore(application.getRecurringEndTime());
-  }
-
   public List<Integer> findByInvoiceRecipient(int invoiceRecipientId) {
     QApplication application = QApplication.application;
-    List<Integer> applicationIds = queryFactory
+    return queryFactory
         .select(application.id)
         .from(application)
         .where(application.invoiceRecipientId.eq(invoiceRecipientId)).
         fetch();
-    return applicationIds;
   }
 
   public List<ApplicationIdentifier> findByApplicationIdStartingWith(String idStart) {
@@ -747,29 +750,12 @@ public class ApplicationDao {
         .fetch();
   }
 
-  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
-    attachmentDao.copyApplicationAttachments(copyFromApplicationId, copyToApplicationId);
-  }
-
   public void setApplicationReplaced(int replacedApplicationId, Integer replacingApplicationId) {
     queryFactory
         .update(application)
         .set(application.replacedByApplicationId, replacingApplicationId)
         .where(application.id.eq(replacedApplicationId))
         .execute();
-  }
-
-  /**
-   * Get invoicing date for application with given application ID
-   * @param applicationId
-   * @return
-   */
-  public ZonedDateTime getInvoicingDate(int applicationId) {
-    return queryFactory
-      .select(application.invoicingDate)
-      .from(application)
-      .where(application.id.eq(applicationId))
-      .fetchOne();
   }
 
   /**
@@ -819,6 +805,7 @@ public class ApplicationDao {
         .fetchOne();
   }
 
+  @Transactional
   public void updateCalculatedPrice(Integer id, Integer calculatedPrice) {
     queryFactory.update(application).set(application.calculatedPrice, calculatedPrice).where(application.id.eq(id)).execute();
   }
@@ -835,6 +822,7 @@ public class ApplicationDao {
     }
   }
 
+  @Transactional
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
     final ApplicationExtension extension = findExtension(id);
     if (extension instanceof OperationalConditionDates) {
@@ -847,43 +835,43 @@ public class ApplicationDao {
     }
   }
 
-  public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
+  public void setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
     final ApplicationExtension extension = findExtension(id);
     if (extension instanceof WorkFinishedDates) {
       ((WorkFinishedDates) extension).setWorkFinishedReported(dateReport.getReportingDate());
       ((WorkFinishedDates) extension).setCustomerWorkFinished(dateReport.getReportedDate());
       updateExtension(id, extension);
-      return findById(id);
     } else {
       throw new IllegalArgumentException("Setting customer work finished date not allowed for application found for ID " + id);
     }
   }
 
-  public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
+  @Transactional
+  public void setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
     final ApplicationExtension extension = findExtension(id);
     if (extension instanceof ValidityDates) {
       ((ValidityDates) extension).setValidityReported(dateReport.getReportingDate());
       ((ValidityDates) extension).setCustomerStartTime(dateReport.getReportedDate());
       ((ValidityDates) extension).setCustomerEndTime(dateReport.getReportedEndDate());
       updateExtension(id, extension);
-      return findById(id);
     } else {
       throw new IllegalArgumentException("Setting validity date not allowed for application found for ID " + id);
     }
   }
 
-  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+  @Transactional
+  public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     final ApplicationExtension extension = findExtension(id);
     if (extension instanceof OperationalConditionDates) {
       ((OperationalConditionDates) extension).setWinterTimeOperation(operationalConditionDate);
       updateExtension(id, extension);
-      return findById(id);
     } else {
       throw new IllegalArgumentException("Setting operational condition date not allowed for application found for ID " + id);
     }
   }
 
-  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+  @Transactional
+  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     final ApplicationExtension extension = findExtension(id);
     if (extension instanceof WorkFinishedDates) {
       ((WorkFinishedDates) extension).setWorkFinished(workFinishedDate);
@@ -891,7 +879,6 @@ public class ApplicationDao {
         ((GuaranteeEndTime) extension).setGuaranteeEndTime(SupervisionDates.guaranteeEndDate(workFinishedDate));
       }
       updateExtension(id, extension);
-      return findById(id);
     } else {
       throw new IllegalArgumentException("Setting work finished date not allowed for application found for ID " + id);
     }
@@ -1039,8 +1026,7 @@ public class ApplicationDao {
     if (!CollectionUtils.isEmpty(statusTypes)) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));
     }
-    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
-    return applications;
+    return queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
   }
 
   @Transactional
@@ -1055,18 +1041,18 @@ public class ApplicationDao {
     return queryFactory.select(application.version).from(application).where(application.id.eq(id)).fetchFirst();
   }
 
-  public void addOwnerNotification(Integer id) {
-    setOwnerNotification(id, true);
+  public void addOwnerNotification(List<Integer> ids) {
+    setOwnerNotification(ids, true);
   }
 
-  public void removeOwnerNotification(Integer id) {
-    setOwnerNotification(id, false);
+  public void removeOwnerNotification(List<Integer> ids) {
+    setOwnerNotification(ids, false);
   }
 
-  private void setOwnerNotification(Integer id, boolean hasNotification) {
+  private void setOwnerNotification(List<Integer> ids, boolean hasNotification) {
     queryFactory.update(application)
         .set(application.ownerNotification, hasNotification)
-        .where(application.id.eq(id))
+        .where(application.id.in(ids))
         .execute();
   }
 

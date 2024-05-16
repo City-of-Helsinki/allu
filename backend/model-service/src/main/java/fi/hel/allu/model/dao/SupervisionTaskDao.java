@@ -2,41 +2,34 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QApplication;
 import fi.hel.allu.QAttributeMeta;
 import fi.hel.allu.QStructureMeta;
 import fi.hel.allu.QUser;
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.common.PathUtil;
-import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.model.domain.SupervisionTaskLocation;
-import fi.hel.allu.model.domain.SupervisionWorkItem;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+import fi.hel.allu.model.util.SupervisionLocationMap;
 import org.geolatte.geom.Geometry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -57,29 +50,33 @@ public class SupervisionTaskDao {
   /**
    * Fields that won't be updated in regular updates
    */
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
+  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
     supervisionTask.id, supervisionTask.creationTime, supervisionTask.type);
 
-  final static QStructureMeta typeStructure = new QStructureMeta("typeStructure");
-  final static QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");
-  final static QStructureMeta applTypeStructure = new QStructureMeta("applTypeStructure");
-  final static QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
-  final static QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
-  final static QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
-  final static QUser creator = new QUser("creator");
-  final static QUser owner = new QUser("owner");
-
-  final static Map<String, Path<?>> COLUMNS = orderByColumns();
+  private static final QStructureMeta typeStructure = new QStructureMeta("typeStructure");
+  private static final QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");
+  private static final QStructureMeta applTypeStructure = new QStructureMeta("applTypeStructure");
+  private static final QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
+  private static final QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
+  private static final QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
+  private static final QUser creator = new QUser("creator");
+  private static final QUser owner = new QUser("owner");
 
   final QBean<SupervisionTask> supervisionTaskBean = bean(SupervisionTask.class, supervisionTask.all());
   final QBean<SupervisionWorkItem> supervisionWorkItemBean = bean(SupervisionWorkItem.class, supervisionWorkItemFields());
   final QBean<SupervisionTaskLocation> supervisionTaskLocationBean = bean(SupervisionTaskLocation.class, supervisionTaskLocation.all());
+  private static final QBean<User> ownerBean = bean(User.class, owner.all());
+  private static final QBean<User> creatorBean = bean(User.class, creator.all());
+  final QBean<SupervisionTaskLocationGeometry> supervisionTaskLocationGeometryBean = bean(SupervisionTaskLocationGeometry.class, supervisionTaskLocationGeometry.all());
 
+  private final LocationDao locationDao;
 
   private final SQLQueryFactory queryFactory;
 
-  public SupervisionTaskDao(SQLQueryFactory queryFactory) {
+  public SupervisionTaskDao(SQLQueryFactory queryFactory,
+                            LocationDao locationDao) {
     this.queryFactory = queryFactory;
+    this.locationDao = locationDao;
   }
 
   @Transactional(readOnly = true)
@@ -112,9 +109,67 @@ public class SupervisionTaskDao {
   }
 
   private List<SupervisionTask> querySupervisionTasks(Predicate... predicates) {
-    List<SupervisionTask> tasks = queryFactory.select(supervisionTaskBean).from(supervisionTask).where(predicates).fetch();
-    tasks.forEach(t -> setSupervisedLocations(t));
-    return tasks;
+    List<Tuple> tasks = queryFactory.select(supervisionTaskBean, supervisionTaskLocationBean, supervisionTaskLocationGeometryBean).from(supervisionTask)
+            .leftJoin(supervisionTaskSupervisedLocation).on(supervisionTask.id.eq(supervisionTaskSupervisedLocation.supervisionTaskId))
+            .leftJoin(supervisionTaskLocation).on(supervisionTaskLocation.id.eq(supervisionTaskSupervisedLocation.supervisionTaskLocationId))
+            .leftJoin(supervisionTaskLocationGeometry).on(supervisionTaskLocation.id.eq(supervisionTaskLocationGeometry.supervisionLocationId))
+            .where(predicates).fetch();
+
+    return populateSupervisionTasks(tasks);
+  }
+
+  private List<SupervisionTask> populateSupervisionTasks(List<Tuple> tuples) {
+    Map<Integer, Map<Integer, SupervisionLocationMap>> resultMap = new HashMap<>();
+    List<SupervisionTask> result = new ArrayList<>();
+    for (Tuple tuple : tuples) {
+      SupervisionTask supervisionTask = tuple.get(0, SupervisionTask.class);
+      if (supervisionTask != null) {
+        resultMap.putIfAbsent(supervisionTask.getId(), initSupervisionTask(result, supervisionTask));
+        Map<Integer, SupervisionLocationMap> locationMap = resultMap.get(supervisionTask.getId());
+        SupervisionTaskLocation supervisionTaskLocation = tuple.get(1, SupervisionTaskLocation.class);
+        if (supervisionTaskLocation != null && supervisionTaskLocation.getId() != null) {
+          mapTaskLocation(supervisionTaskLocation, locationMap);
+          mapGeometries(tuple, locationMap);
+        }
+      }
+    }
+    result.forEach(t -> populateTaskLocations(resultMap.get(t.getId()), t));
+    return result;
+  }
+
+  private Map<Integer, SupervisionLocationMap> initSupervisionTask(List<SupervisionTask> result,
+                                                                   SupervisionTask supervisionTask) {
+    if(result.stream().noneMatch(task -> Objects.equals(task.getId(), supervisionTask.getId()))) {
+      result.add(supervisionTask);
+    }
+    return new HashMap<>();
+  }
+
+  private void mapTaskLocation(SupervisionTaskLocation supervisionTaskLocation,
+                               Map<Integer, SupervisionLocationMap> locationMap) {
+    if (supervisionTaskLocation != null && supervisionTaskLocation.getId() != null) {
+      locationMap.putIfAbsent(supervisionTaskLocation.getId(), new SupervisionLocationMap(supervisionTaskLocation, new ArrayList<>()));
+    }
+  }
+
+  private void mapGeometries(Tuple tuple, Map<Integer, SupervisionLocationMap> locationMap) {
+    SupervisionTaskLocationGeometry locationGeometry = tuple.get(2, SupervisionTaskLocationGeometry.class);
+    if (locationGeometry != null && locationMap.containsKey(locationGeometry.getSupervisionLocationId())) {
+        locationMap.get(locationGeometry.getSupervisionLocationId()).getGeometries()
+                .add(locationGeometry.getGeometry());
+    }
+  }
+
+  private void populateTaskLocations(Map<Integer, SupervisionLocationMap> locationMap, SupervisionTask task) {
+    List<SupervisionTaskLocation> locations = locationMap.values().stream().map(this::populateGeometry)
+            .collect(Collectors.toList());
+    task.setSupervisedLocations(locations);
+  }
+
+  private SupervisionTaskLocation populateGeometry(SupervisionLocationMap locationMap) {
+    SupervisionTaskLocation supervisionTaskLocation = locationMap.getSupervisionTaskLocation();
+    supervisionTaskLocation.setGeometry(GeometryUtil.toGeometryCollection(locationMap.getGeometries()));
+    return supervisionTaskLocation;
   }
 
   private SupervisionTask setSupervisedLocations(SupervisionTask task) {
@@ -123,7 +178,6 @@ public class SupervisionTaskDao {
     }
     return task;
   }
-
 
   @Transactional
   public SupervisionTask insert(SupervisionTask st) {
@@ -172,147 +226,94 @@ public class SupervisionTaskDao {
       .execute();
   }
 
-
   @Transactional(readOnly = true)
-  public List<SupervisionTask> findFinalSupervisions(int applicationId) {
-    return querySupervisionTasks(supervisionTask.applicationId.eq(applicationId),
-      supervisionTask.type.eq(SupervisionTaskType.FINAL_SUPERVISION));
-  }
-
-  @Transactional
-  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    BooleanExpression conditions = conditions(searchCriteria)
-      .reduce((left, right) -> left.and(right))
-      .orElse(Expressions.TRUE);
-
-    SQLQuery<SupervisionWorkItem> q = queryFactory.select(supervisionWorkItemBean)
-      .from(supervisionTaskWithAddress)
-      .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
-      .leftJoin(project).on(application.projectId.eq(project.id))
-      .leftJoin(creator).on(supervisionTaskWithAddress.creatorId.eq(creator.id))
-      .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id))
-      .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
-      .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
-        .and(typeAttribute.name.eq(supervisionTaskWithAddress.type.stringValue())))
-      .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
-      .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
-        .and(applTypeAttribute.name.eq(application.type.stringValue())))
-      .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
-      .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
-        .and(applStatusAttribute.name.eq(application.status.stringValue())))
-      .where(conditions);
-
-    q = handlePageRequest(q, pageRequest);
-
-    QueryResults<SupervisionWorkItem> results = q.fetchResults();
-    return new PageImpl<>(results.getResults(), pageRequest, results.getTotal());
-  }
-
-  /*
-   * Add sort and paging to query from the given pageRequest.
-   */
-  private SQLQuery<SupervisionWorkItem> handlePageRequest(SQLQuery<SupervisionWorkItem> query, Pageable pageRequest) {
-    if (pageRequest == null) {
-      return query;
-    }
-    query = query.orderBy(toOrder(pageRequest.getSort()));
-    if (pageRequest.getOffset() != 0) {
-      query = query.offset(pageRequest.getOffset());
-    }
-    if (pageRequest.getPageSize() != 0) {
-      query = query.limit(pageRequest.getPageSize());
-    }
-    return query;
+  public Page<SupervisionWorkItem> findAll(Pageable pageRequest) {
+    long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
+    SQLQuery<Tuple> query = getSupervisionWorkItemQuery();
+    QueryResults<Tuple> results = query.orderBy(application.id.asc()).offset(offset).limit(count)
+            .fetchResults();
+    List<SupervisionWorkItem> mappedResult = results.getResults().stream().map(this::mapSupervisionWorkItemTuple).collect(Collectors.toList());
+    return new PageImpl<>(mappedResult, pageRequest, results.getTotal());
   }
 
   /**
-   * Convert given sort criteria to OrderSpecifiers
-   *
-   * @param sort
-   * @return
+   * Use SupervisionTask to find correct values but values are populated to class named SupervisionWorkItem
+   * @param id SupervisionTask id
+   * @return returns SupervisionWorkItem object
    */
-  public static OrderSpecifier<?>[] toOrder(Sort sort) {
-    List<OrderSpecifier<?>> order = new ArrayList<>();
-    sort.forEach(o -> {
-      ComparableExpressionBase<?> path = (ComparableExpressionBase<?>) Optional.ofNullable(COLUMNS.get(o.getProperty()))
-        .orElseThrow(() -> new NoSuchEntityException("Bad sort key: " + o.getProperty()));
-      order.add(o.isDescending() ? path.desc() : path.asc());
-    });
-    return order.toArray(new OrderSpecifier<?>[order.size()]);
+  @Transactional(readOnly = true)
+  public SupervisionWorkItem findSupervisionWorkItem(Integer id) {
+    SQLQuery<Tuple> query = getSupervisionWorkItemQuery();
+    Tuple tuple = query.where(supervisionTaskWithAddress.id.eq(id)).fetchOne();
+     return mapSupervisionWorkItemTuple(tuple);
   }
 
-  private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
-    List<SupervisionTaskStatusType> statuses = searchCriteria.getStatuses() != null && !searchCriteria.getStatuses().isEmpty() ?
-      searchCriteria.getStatuses() : Collections.singletonList(SupervisionTaskStatusType.OPEN);
-
-
-    return Stream.of(
-        Optional.of(supervisionTaskWithAddress.status.in(statuses)),
-        values(searchCriteria.getTaskTypes()).map(supervisionTaskWithAddress.type::in),
-        Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTaskWithAddress.plannedFinishingTime::goe),
-        Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTaskWithAddress.plannedFinishingTime::lt),
-        Optional.ofNullable(searchCriteria.getApplicationId()).map(String::toUpperCase).map(application.applicationId::startsWith),
-        values(searchCriteria.getOwners()).map(supervisionTaskWithAddress.ownerId::in),
-        values(searchCriteria.getApplicationTypes()).map(application.type::in),
-        values(searchCriteria.getApplicationStatus()).map(application.status::in),
-        values(searchCriteria.getCityDistrictIds()).map(this::cityDistrictsIn),
-        // Include also empty application ID list in search conditions
-        Optional.ofNullable(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
-      ).filter(opt -> opt.isPresent())
-      .map(opt -> opt.get());
+  private SQLQuery<Tuple> getSupervisionWorkItemQuery(){
+    return queryFactory.select(supervisionWorkItemBean, location.cityDistrictId, location.cityDistrictIdOverride,
+                               ownerBean, creatorBean, supervisionTaskWithAddress.type, application.type)
+            .from(supervisionTaskWithAddress)
+            .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
+            .leftJoin(project).on(application.projectId.eq(project.id))
+            .leftJoin(creator).on(supervisionTaskWithAddress.creatorId.eq(creator.id))
+            .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id))
+            .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
+            .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
+                                                .and(typeAttribute.name.eq(supervisionTaskWithAddress.type.stringValue())))
+            .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
+            .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
+                                                    .and(applTypeAttribute.name.eq(application.type.stringValue())))
+            .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
+            .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
+                                                      .and(applStatusAttribute.name.eq(application.status.stringValue())))
+            .leftJoin(location).on(supervisionTaskWithAddress.locationId.eq(location.id));
   }
 
-  private <T> Optional<List<T>> values(List<T> valueList) {
-    return Optional.ofNullable(valueList)
-      .filter(values -> !values.isEmpty());
+  @Transactional(readOnly = true)
+  public List<Integer> getCountOfSupervisionTask(Integer applicationId){
+    return queryFactory.select(supervisionTask.id)
+            .from(supervisionTask)
+            .where(supervisionTask.applicationId.eq(applicationId)).fetch();
+
   }
 
-  private BooleanExpression cityDistrictsIn(List<Integer> ids) {
-    // Use city district override when it is defined
-    BooleanExpression override = location.cityDistrictIdOverride.isNotNull().and(location.cityDistrictIdOverride.in(ids));
-    BooleanExpression calculated = location.cityDistrictIdOverride.isNull().and(location.cityDistrictId.in(ids));
-    BooleanExpression effective = override.or(calculated);
-
-    // Use tasks location when available otherwise use supervision tasks application's locations
-    return SQLExpressions.selectOne()
-      .from(location)
-      .where(
-        supervisionTaskWithAddress.locationId.isNotNull()
-          .and(supervisionTaskWithAddress.locationId.eq(location.id)
-            .and(effective))
-          .or(supervisionTaskWithAddress.locationId.isNull()
-            .and(supervisionTaskWithAddress.applicationId.eq(location.applicationId)
-              .and(effective))))
-      .exists();
+  private SupervisionWorkItem mapSupervisionWorkItemTuple(Tuple tuple) {
+    SupervisionWorkItem result = tuple.get(0, SupervisionWorkItem.class);
+    if (result != null) {
+      Integer cityDistrictId = tuple.get(1, Integer.class);
+      Integer cityDistrictIdOverride = tuple.get(2, Integer.class);
+      result.setCityDistrictId(cityDistrictIdOverride != null ? cityDistrictIdOverride : cityDistrictId);
+      result.setOwner(tuple.get(3, User.class));
+      result.setCreator(tuple.get(4, User.class));
+      result.setType(new SupervisionTypeES(tuple.get(5, SupervisionTaskType.class)));
+      result.setApplicationType(tuple.get(6, ApplicationType.class));
+      if (result.getCityDistrictId() == null) {
+        List<Location> locations = locationDao.findByApplicationId(result.getApplicationId());
+        Optional<Location> firstLocation = locations.stream().findFirst();
+        firstLocation.ifPresent(e -> updateCityDictrict(e, result));
+      }
+    }
+    return result;
   }
 
-  private static Map<String, Path<?>> orderByColumns() {
-    Map<String, Path<?>> cols = supervisionTaskWithAddress.getColumns().stream()
-      .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
-
-    // Override sorting for enum-column supervisionTask.type:
-    cols.put(supervisionTask.type.getMetadata().getName(), typeAttribute.uiName);
-    cols.put(PathUtil.pathNameWithParent(application.type), applTypeAttribute.uiName);
-    cols.put(PathUtil.pathNameWithParent(application.status), applStatusAttribute.uiName);
-    cols.put(PathUtil.pathNameWithParent(application.applicationId), application.applicationId);
-    cols.put(PathUtil.pathNameWithParent(project.name), project.name);
-    cols.put(PathUtil.pathNameWithParent(creator.realName), creator.realName);
-    cols.put(PathUtil.pathNameWithParent(owner.realName), owner.realName);
-    return cols;
+  private void updateCityDictrict(Location location, SupervisionWorkItem result) {
+    if (location.getCityDistrictIdOverride() == null) {
+      result.setCityDistrictId(location.getCityDistrictId());
+    } else {
+      result.setCityDistrictId(location.getCityDistrictIdOverride());
+    }
   }
 
   private static Map<String, Path<?>> supervisionWorkItemFields() {
     Map<String, Path<?>> map = new HashMap<>();
     map.put("id", supervisionTaskWithAddress.id);
-    map.put("type", supervisionTaskWithAddress.type);
     map.put("applicationId", application.id);
     map.put("applicationIdText", application.applicationId);
     map.put("applicationStatus", application.status);
-    map.put("creatorId", supervisionTaskWithAddress.creatorId);
     map.put("plannedFinishingTime", supervisionTaskWithAddress.plannedFinishingTime);
     map.put("address", supervisionTaskWithAddress.address);
     map.put("projectName", project.name);
-    map.put("ownerId", supervisionTaskWithAddress.ownerId);
+    map.put("cityDistrictId", location.cityDistrictId);
     return map;
   }
 
@@ -358,13 +359,11 @@ public class SupervisionTaskDao {
     if (!includedExternalApplicationIds.isEmpty()) {
       builder.and(application.externalApplicationId.in(includedExternalApplicationIds));
     }
-    Map<Integer, List<SupervisionTask>> result = queryFactory.select(supervisionTask.all())
+    return queryFactory.select(supervisionTask.all())
       .from(supervisionTask)
       .join(application).on(application.id.eq(supervisionTask.applicationId))
       .where(builder)
       .transform(groupBy(application.externalApplicationId).as(list(supervisionTaskBean)));
-    return result;
-
   }
 
   @Transactional(readOnly = true)
@@ -383,7 +382,7 @@ public class SupervisionTaskDao {
       .on(supervisionTaskLocation.id.eq(supervisionTaskSupervisedLocation.supervisionTaskLocationId))
       .where(supervisionTaskSupervisedLocation.supervisionTaskId.eq(supervisionTaskId))
       .fetch();
-    locations.forEach(l -> setLocationGeometry(l));
+    locations.forEach(this::setLocationGeometry);
     return locations;
   }
 

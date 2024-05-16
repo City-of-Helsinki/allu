@@ -12,6 +12,9 @@ import {
   BackendSupervisionTaskSearchCriteria,
   SupervisionTaskSearchCriteria
 } from '../../model/application/supervision/supervision-task-search-criteria';
+import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
+import {BackendQueryParameter, BackendQueryParameters} from '@service/backend-model/backend-query-parameters';
+import {QueryParametersMapper} from '@service/mapper/query/query-parameters-mapper';
 
 export class SupervisionSearchMapper {
   static mapWorkItem(backendWorkItem: BackendSupervisionWorkItem): SupervisionWorkItem {
@@ -32,18 +35,25 @@ export class SupervisionSearchMapper {
     return workItem;
   }
 
-  static mapSearchCriteria(searchCriteria: SupervisionTaskSearchCriteria): BackendSupervisionTaskSearchCriteria {
-    return (searchCriteria) ?
+  static mapSearchCriteria(searchCriteria: SupervisionTaskSearchCriteria): BackendQueryParameters {
+    return searchCriteria ?
       {
-        taskTypes: Some(searchCriteria.taskTypes).orElse([]),
-        applicationId: searchCriteria.applicationId,
-        after: TimeUtil.dateToBackend(searchCriteria.after),
-        before: TimeUtil.dateToBackend(searchCriteria.before),
-        applicationTypes: Some(searchCriteria.applicationTypes).orElse([]),
-        applicationStatus: Some(searchCriteria.applicationStatus).orElse([]),
-        owners: searchCriteria.owners,
-        cityDistrictIds: Some(searchCriteria.cityDistrictIds).orElse([])
+        queryParameters: SupervisionSearchMapper.mapSupervisionParameters(searchCriteria)
       } : undefined;
+  }
+
+  private static mapSupervisionParameters(query: SupervisionTaskSearchCriteria): Array<BackendQueryParameter> {
+    const queryParameters: Array<BackendQueryParameter> = [];
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'type',  query.taskTypes);
+    QueryParametersMapper.mapParameter(queryParameters, 'applicationIdText',  query.applicationId);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'plannedFinishingTime',  query.after, query.before, true);
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationType',  query.applicationTypes);
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationStatus',  query.applicationStatus);
+    const owners = query.owners || [];
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'owner.id',  owners.map(id => id.toString()));
+    const cityDistrictIds = query.cityDistrictIds || [];
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'cityDistrictId',  cityDistrictIds.map(id => id.toString()));
+    return queryParameters;
   }
 }
 

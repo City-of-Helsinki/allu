@@ -1,15 +1,15 @@
 package fi.hel.allu.servicecore.event;
 
-import java.util.List;
-import java.util.Objects;
-
+import fi.hel.allu.model.domain.NotificationConfiguration;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import fi.hel.allu.model.domain.NotificationConfiguration;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.ConfigurationService;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ApplicationUpdateEventListener {
@@ -37,17 +37,17 @@ public class ApplicationUpdateEventListener {
   private void notifyOwner(ApplicationUpdateEvent event) {
     Integer applicationOwner = getApplicationOwnerId(event.getApplicationId());
     if (applicationOwner != null && !applicationOwner.equals(event.getUpdaterId())) {
-      applicationServiceComposer.addOwnerNotification(event.getApplicationId());
+      applicationServiceComposer.addOwnerNotification(Collections.singletonList(event.getApplicationId()));
     }
   }
 
   @EventListener
   public void onApplicationOwnerChange(ApplicationOwnerChangeEvent event) {
     if (event.getOwnerId() != null && !Objects.equals(event.getOwnerId(), event.getUpdaterId())) {
-      applicationServiceComposer.addOwnerNotification(event.getApplicationId());
+      applicationServiceComposer.addOwnerNotification(event.getApplicationIds());
     } else {
       // Owner set to current user or new owner not given -> clear owner notification
-      applicationServiceComposer.removeOwnerNotification(event.getApplicationId());
+      applicationServiceComposer.removeOwnerNotification(event.getApplicationIds());
     }
   }
 

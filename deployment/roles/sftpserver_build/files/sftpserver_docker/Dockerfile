@@ -1,2 +1,3 @@
 FROM atmoz/sftp
-COPY sshd_config /etc/ssh/sshd_config
+RUN mkdir -p /etc/sftp/
+VOLUME /etc/ssh

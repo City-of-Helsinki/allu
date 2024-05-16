@@ -1,27 +1,28 @@
 package fi.hel.allu.model.dao;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
-
+import com.querydsl.sql.dml.SQLUpdateClause;
 import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QInvoice.invoice;
@@ -32,17 +33,21 @@ import static fi.hel.allu.QInvoiceRow.invoiceRow;
  */
 @Repository
 public class InvoiceDao {
-  @Autowired
-  private SQLQueryFactory queryFactory;
+  private final SQLQueryFactory queryFactory;
 
   // While inserting, don't copy id or applicationId from the object:
-  private final static ExcludingMapper EXCLUDE_IDS = new ExcludingMapper(NullHandling.DEFAULT,
+  private static final ExcludingMapper EXCLUDE_IDS = new ExcludingMapper(NullHandling.DEFAULT,
       Arrays.asList(invoice.id, invoice.applicationId));
 
-  private final static ExcludingMapper EXCLUDE_ROW_IDS = new ExcludingMapper(NullHandling.DEFAULT,
+  private static final ExcludingMapper EXCLUDE_ROW_IDS = new ExcludingMapper(NullHandling.DEFAULT,
       Arrays.asList(invoiceRow.id, invoiceRow.invoiceId));
   private final QBean<Invoice> invoiceBean = bean(Invoice.class, invoice.all());
   private final QBean<InvoiceRow> invoiceRowBean = bean(InvoiceRow.class, invoiceRow.all());
+
+  @Autowired
+  public InvoiceDao(SQLQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
+  }
 
   /**
    * Insert a new invoice for application. All data except id and applicationId
@@ -64,22 +69,33 @@ public class InvoiceDao {
   }
 
   /**
-   * Find an invoice by its database ID
+   * Find invoices by their database IDs
    *
-   * @param invoiceId The database ID of the invoice
-   * @return The found {@link Invoice} or empty {@link Optional}
+   * @param invoiceIds The database IDs of the invoice
+   * @return The found {@link Invoice}s or empty list
    */
   @Transactional(readOnly = true)
-  public Optional<Invoice> find(int invoiceId) {
-    Invoice theInvoice = queryFactory.select(invoiceBean).from(invoice).where(invoice.id.eq(invoiceId)).fetchOne();
-    if (theInvoice == null) {
-      return Optional.empty();
-    } else {
-      List<InvoiceRow> rows = queryFactory.select(invoiceRowBean).from(invoiceRow)
-          .where(invoiceRow.invoiceId.eq(invoiceId)).orderBy(invoiceRow.rowNumber.asc()).fetch();
-      theInvoice.setRows(rows);
-      return Optional.of(theInvoice);
+  public List<Invoice> findInvoices(List<Integer> invoiceIds) {
+    Map<Integer, Invoice> mappedResult = new HashMap<>();
+    if (EmptyUtil.isNotEmpty(invoiceIds)) {
+      List<Tuple> invoiceTuples = queryFactory.select(invoiceBean, invoiceRowBean).from(invoice).leftJoin(invoiceRow)
+              .on(invoice.id.eq(invoiceRow.invoiceId)).where(invoice.id.in(invoiceIds))
+              .orderBy(invoiceRow.rowNumber.asc()).fetch();
+      for (Tuple tuple : invoiceTuples) {
+        Invoice invoice = tuple.get(0, Invoice.class);
+        InvoiceRow invoiceRow = tuple.get(1, InvoiceRow.class);
+        mappedResult.putIfAbsent(invoice.getId(), initializeInvoice(invoice));
+        if (invoiceRow != null) {
+          mappedResult.get(invoice.getId()).getRows().add(invoiceRow);
+        }
+      }
     }
+    return new ArrayList<>(mappedResult.values());
+  }
+
+  private Invoice initializeInvoice(Invoice invoice){
+    invoice.setRows(new ArrayList<>());
+    return invoice;
   }
 
   /**
@@ -87,24 +103,16 @@ public class InvoiceDao {
    */
   @Transactional(readOnly = true)
   public List<Invoice> findByApplication(int applicationId) {
-    return queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.applicationId.eq(applicationId)).fetch()
-        .stream()
-        .map(id -> find(id))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
+     List<Integer> invoiceIds = queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId)).fetch();
+     return findInvoices(invoiceIds);
   }
 
   @Transactional(readOnly = true)
   public List<Invoice> findInvoicedInvoices(List<Integer> applicationIds) {
-    return queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.applicationId.in(applicationIds), invoice.invoiced.isTrue()).fetch()
-        .stream()
-        .map(id -> find(id))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
+    List<Integer> invoiceIds = queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.in(applicationIds), invoice.invoiced.isTrue()).fetch();
+    return findInvoices(invoiceIds);
   }
 
   /**
@@ -121,7 +129,7 @@ public class InvoiceDao {
     if (changed == 0) {
       throw new NoSuchEntityException("invoice.update.failed", Integer.toString(invoiceId));
     }
-    deleteRows(invoiceId);
+    deleteRows(Collections.singletonList(invoiceId));
     insertRows(invoiceId, updatedInvoice.getRows());
   }
 
@@ -131,31 +139,42 @@ public class InvoiceDao {
    * @param invoiceId Invoice's database ID
    */
   @Transactional
-  public void delete(int invoiceId) {
-    deleteRows(invoiceId);
+  public void deleteSingleInvoice(int invoiceId) {
+    deleteRows(Collections.singletonList(invoiceId));
     long changed = queryFactory.delete(invoice).where(invoice.id.eq(invoiceId)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("invoice.delete.failed", Integer.toString(invoiceId));
     }
   }
 
+  @Transactional
+  public void deleteInvoices(List<Integer> invoiceIds, int applicationId) {
+    if (EmptyUtil.isNotEmpty(invoiceIds)) {
+      deleteRows(invoiceIds);
+      long changed = queryFactory.delete(invoice).where(invoice.id.in(invoiceIds)).execute();
+      if (changed != invoiceIds.size()) {
+        throw new NoSuchEntityException("invoice.delete.failed", "ApplicationId :" + applicationId);
+      }
+    }
+  }
+
   /**
    * Delete all invoices for given application
    *
-   * @param applicationId
+   * @param applicationId id that will be used to delete invoices
    */
   @Transactional
   public void deleteOpenInvoicesByApplication(int applicationId) {
-    queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.applicationId.eq(applicationId), invoice.locked.isFalse(), invoice.invoiced.isFalse()).fetch()
-        .forEach(id -> delete(id));
+    List <Integer> invoiceIds = queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId), invoice.locked.isFalse(), invoice.invoiced.isFalse()).fetch();
+    deleteInvoices(invoiceIds, applicationId);
   }
 
   @Transactional
   public void deleteUninvoicedByApplication(int applicationId) {
-    queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).fetch()
-        .forEach(id -> delete(id));
+    List<Integer> invoiceIds = queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).fetch();
+    deleteInvoices(invoiceIds, applicationId);
   }
 
   /**
@@ -165,24 +184,25 @@ public class InvoiceDao {
    */
   @Transactional(readOnly = true)
   public List<Invoice> findPending() {
-    QApplication application =  QApplication.application;
-    return queryFactory.select(invoice.id).from(invoice)
+    QApplication application = QApplication.application;
+    List<Integer> invoiceIds = queryFactory.select(invoice.id).from(invoice)
         .join(application).on(application.id.eq(invoice.applicationId))
         .where(invoice.invoicableTime.isNotNull(), invoice.invoicableTime.before(ZonedDateTime.now())
             .and(invoice.invoiced.ne(true))
             .and(invoice.sapIdPending.isFalse())
             .and(application.status.notIn(StatusType.CANCELLED, StatusType.REPLACED)))
-        .fetch().stream()
-        .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get)
-          .filter(i -> isNotReplaced(i.getApplicationId()))
-          .collect(Collectors.toList());
+        .fetch();
+     List<Invoice> invoices = findInvoices(invoiceIds);
+     return filterIndirectReplacement(invoices);
   }
 
-  private boolean isNotReplaced(Integer applicationId) {
+  private List<Invoice> filterIndirectReplacement(List<Invoice> invoices) {
+    List<Integer> applicationIds = invoices.stream().map(Invoice::getApplicationId).collect(Collectors.toList());
     // Checks whether theres application which replaces application with given application id and which is not cancelled
-    return queryFactory.select(application.id).from(application)
-        .where(application.replacesApplicationId.eq(applicationId).and(application.status.ne(StatusType.CANCELLED)))
-        .fetchCount() == 0;
+    List<Integer> previousCancels = queryFactory.select(application.replacesApplicationId).from(application)
+            .where(application.replacesApplicationId.in(applicationIds).and(application.status.ne(StatusType.CANCELLED)))
+            .fetch();
+    return invoices.stream().filter(i -> !previousCancels.contains(i.getApplicationId())).collect(Collectors.toList());
   }
 
   /**
@@ -220,12 +240,12 @@ public class InvoiceDao {
         .where(invoice.invoicingPeriodId.eq(periodId), invoice.invoiced.isFalse()).execute();
   }
 
-  private void deleteRows(int invoiceId) {
-    queryFactory.delete(invoiceRow).where(invoiceRow.invoiceId.eq(invoiceId)).execute();
+  private void deleteRows(List<Integer> invoiceIds) {
+    queryFactory.delete(invoiceRow).where(invoiceRow.invoiceId.in(invoiceIds)).execute();
   }
 
   private void insertRows(int invoiceId, List<InvoiceRow> rows) {
-    if (rows != null && !rows.isEmpty()) {
+    if (EmptyUtil.isNotEmpty(rows)) {
       SQLInsertClause inserter = queryFactory.insert(invoiceRow);
       for (int rowNum = 0; rowNum < rows.size(); ++rowNum) {
         inserter.populate(rows.get(rowNum))
@@ -250,11 +270,6 @@ public class InvoiceDao {
   @Transactional
   public void lockInvoices(int applicationId) {
     setInvoicingLocked(applicationId, true);
-  }
-
-  @Transactional
-  public void unlockInvoices(int applicationId) {
-    setInvoicingLocked(applicationId, false);
   }
 
   private void setInvoicingLocked(int applicationId, boolean isLocked) {
@@ -286,10 +301,14 @@ public class InvoiceDao {
   }
 
   @Transactional(readOnly = true)
-  public boolean hasUninvoicedInvoices(Integer applicationId) {
-    return queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse())
-        .fetchCount() > 0;
+  public Map<Integer, List<Integer>> getUnvoicedInvoices(List<Integer> applicationIds) {
+    Map<Integer, List<Integer>> result = new HashMap<>();
+    if (EmptyUtil.isNotEmpty(applicationIds)) {
+      result = queryFactory.select(invoice.applicationId, invoice.id).from(invoice)
+              .where(invoice.applicationId.in(applicationIds), invoice.invoiced.isFalse())
+              .transform(groupBy(invoice.applicationId).as(list(invoice.id)));
+    }
+      return result;
   }
 
   @Transactional(readOnly = true)
@@ -316,8 +335,16 @@ public class InvoiceDao {
         .fetch();
   }
 
-  public void updateInvoiceRow(Integer invoiceRowId, InvoiceRow updatedRow) {
-    queryFactory.update(invoiceRow).populate(updatedRow, EXCLUDE_ROW_IDS).where(invoiceRow.id.eq(invoiceRowId))
-        .execute();
+  public void updateInvoiceRow(List<InvoiceRow> existingRows, Map<Integer, InvoiceRow> updatedRowsByChargeBasisId) {
+    if (EmptyUtil.isNotEmpty(existingRows) && EmptyUtil.isNotEmpty(updatedRowsByChargeBasisId)) {
+      SQLUpdateClause updateClause = queryFactory.update(invoiceRow);
+      for (InvoiceRow existingRow : existingRows) {
+        Integer chargeId = existingRow.getChargeBasisId();
+        if(updatedRowsByChargeBasisId.containsKey(chargeId)){
+          updateClause.populate(updatedRowsByChargeBasisId.get(chargeId), EXCLUDE_ROW_IDS).
+                  where(invoiceRow.id.eq(existingRow.getId())).addBatch();
+        }
+      }
+    }
   }
 }

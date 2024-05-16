@@ -26,3 +26,9 @@
         group=allu
         mode="u=rwx,g=r,o=r"
 
+- name: create directory for ssh configuration
+  file: path=/home/allu/sftpserver/ssh
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=r,o=r"

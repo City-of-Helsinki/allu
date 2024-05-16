@@ -4,10 +4,11 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.SQLInsertClause;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.PostalAddress;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +26,16 @@ import static fi.hel.allu.QPostalAddress.postalAddress;
 @Repository
 public class DistributionEntryDao {
 
-  @Autowired
-  private SQLQueryFactory queryFactory;
-  @Autowired
-  PostalAddressDao postalAddressDao;
+  private final SQLQueryFactory queryFactory;
+  private final PostalAddressDao postalAddressDao;
 
   final QBean<DistributionEntry> distributionEntryBean = bean(DistributionEntry.class, distributionEntry.all());
   final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
 
+  public DistributionEntryDao(SQLQueryFactory queryFactory, PostalAddressDao postalAddressDao) {
+    this.queryFactory = queryFactory;
+    this.postalAddressDao = postalAddressDao;
+  }
 
   @Transactional(readOnly = true)
   public List<DistributionEntry> findById(List<Integer> dEntryIds) {
@@ -51,14 +54,19 @@ public class DistributionEntryDao {
 
   @Transactional
   public List<DistributionEntry> insert(List<DistributionEntry> dEntries) {
-    List<Integer> dEntryIds = new ArrayList<>();
-    dEntries.forEach(dEntry -> {
-      dEntry.setId(null);
-      dEntryIds.add(queryFactory
-          .insert(distributionEntry).populate(dEntry).set(distributionEntry.postalAddressId, postalAddressDao.insertIfNotNull(dEntry))
-          .executeWithKey(distributionEntry.id));
-    });
-    return findById(dEntryIds);
+    if (EmptyUtil.isNotEmpty(dEntries)) {
+      SQLInsertClause insertClause = queryFactory.insert(distributionEntry);
+      for (DistributionEntry dEntry : dEntries) {
+        dEntry.setId(null);
+        insertClause.populate(dEntry).set(distributionEntry.postalAddressId, postalAddressDao.insertIfNotNull(dEntry))
+                .addBatch();
+      }
+      List<Integer> dEntryIds = insertClause.executeWithKeys(distributionEntry.id);
+      return findById(dEntryIds);
+    } else {
+      return new ArrayList<>();
+    }
+
   }
 
   @Transactional
@@ -94,7 +102,7 @@ public class DistributionEntryDao {
         .where(predicate)
         .fetch();
     return dEntryPostalAddress.stream()
-        .map(tuple -> PostalAddressUtil.mapPostalAddress(tuple))
+        .map(PostalAddressUtil::mapPostalAddress)
         .map(tuple -> tuple.get(0, DistributionEntry.class))
         .collect(Collectors.toList());
   }

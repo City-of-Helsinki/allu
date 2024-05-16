@@ -37,7 +37,7 @@ public class DateReportingController {
     return ResponseEntity.ok(dateReportingService.reportCustomerWorkFinished(id, dateReport));
   }
 
-  @RequestMapping(value = "/{id}/customervalidity", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/customervalidity")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_CREATE_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportCustomerValidity(@PathVariable Integer id,
                                                             @RequestBody @Valid ApplicationDateReport dateReport) {

@@ -14,11 +14,10 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DepositDao;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.Deposit;
-import fi.hel.allu.model.domain.SupervisionTask;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.*;
@@ -60,7 +59,7 @@ public class DepositServiceSpec {
           ArgumentCaptor<ApplicationTag> captor = ArgumentCaptor.forClass(ApplicationTag.class);
           deposit.setStatus(DepositStatusType.PAID_DEPOSIT);
           depositService.update(deposit.getId(), deposit);
-          Mockito.verify(applicationDao).removeTagByType(deposit.getApplicationId(), ApplicationTagType.DEPOSIT_REQUESTED);
+          Mockito.verify(applicationDao).removeTagByTypes(deposit.getApplicationId(), DepositService.depositTags);
           Mockito.verify(applicationDao).addTag(eq(deposit.getApplicationId()), captor.capture());
           assertEquals(ApplicationTagType.DEPOSIT_PAID, captor.getValue().getType());
         });
@@ -68,29 +67,27 @@ public class DepositServiceSpec {
           ArgumentCaptor<ApplicationTag> captor = ArgumentCaptor.forClass(ApplicationTag.class);
           deposit.setStatus(DepositStatusType.UNPAID_DEPOSIT);
           depositService.update(deposit.getId(), deposit);
-          Mockito.verify(applicationDao).removeTagByType(deposit.getApplicationId(), ApplicationTagType.DEPOSIT_PAID);
+          Mockito.verify(applicationDao).removeTagByTypes(deposit.getApplicationId(), DepositService.depositTags);
           Mockito.verify(applicationDao).addTag(eq(deposit.getApplicationId()), captor.capture());
           assertEquals(ApplicationTagType.DEPOSIT_REQUESTED, captor.getValue().getType());
         });
         it("should update tags for returned deposit", () -> {
           deposit.setStatus(DepositStatusType.RETURNED_DEPOSIT);
           depositService.update(deposit.getId(), deposit);
-          Mockito.verify(applicationDao).removeTagByType(deposit.getApplicationId(), ApplicationTagType.DEPOSIT_PAID);
+          Mockito.verify(applicationDao).removeTagByTypes(deposit.getApplicationId(), DepositService.depositTags);
           Mockito.verify(applicationDao, Mockito.never()).addTag(any(Integer.class), any(ApplicationTag.class));
         });
       });
       describe("Delete", () -> {
         final Deposit deposit = createDeposit(DepositStatusType.UNPAID_DEPOSIT);
-        beforeEach(() -> {
-          when(depositDao.findById(deposit.getId())).thenReturn(deposit);
-        });
+        beforeEach(() -> when(depositDao.findById(deposit.getId())).thenReturn(deposit));
         it("should delete given deposit", () -> {
           depositService.delete(deposit.getId());
           Mockito.verify(depositDao).delete(eq(deposit.getId()));
         });
         it("should remove deposit tag", () -> {
           depositService.delete(deposit.getId());
-          Mockito.verify(applicationDao).removeTagByType(deposit.getApplicationId(), ApplicationTagType.DEPOSIT_REQUESTED);
+          Mockito.verify(applicationDao).removeTagByTypes(deposit.getApplicationId(), DepositService.depositTags);
         });
       });
     });

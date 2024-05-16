@@ -178,7 +178,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private searchCustomer(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string): void {
-    const query: CustomerSearchQuery = {name, active: true, matchAny: true};
+    const query: CustomerSearchQuery = {name, active: true, matchAny: true, invoicingOnly: false};
 
     if (registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS) {
       query.registryKey = registryKey;

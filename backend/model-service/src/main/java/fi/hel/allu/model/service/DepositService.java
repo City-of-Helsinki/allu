@@ -3,7 +3,6 @@ package fi.hel.allu.model.service;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class DepositService {
   private DepositDao depositDao;
   private ApplicationDao applicationDao;
 
-  private static final List<ApplicationTagType> depositTags = Arrays.asList(
+  public static final List<ApplicationTagType> depositTags = Arrays.asList(
       ApplicationTagType.DEPOSIT_REQUESTED, ApplicationTagType.DEPOSIT_PAID);
 
   @Autowired
@@ -58,7 +57,7 @@ public class DepositService {
   public Deposit update(int id, Deposit deposit) {
     deposit.setId(id);
     Deposit updated = depositDao.update(deposit);
-    depositTags.forEach(tag -> applicationDao.removeTagByType(deposit.getApplicationId(), tag));
+    applicationDao.removeTagByTypes(deposit.getApplicationId(), depositTags);
     addDepositTagForApplication(deposit);
     return updated;
   }
@@ -69,6 +68,6 @@ public class DepositService {
   public void delete(int depositId) {
     Deposit deposit = depositDao.findById(depositId);
     depositDao.delete(depositId);
-    depositTags.forEach(tag -> applicationDao.removeTagByType(deposit.getApplicationId(), tag));
+    applicationDao.removeTagByTypes(deposit.getApplicationId(), depositTags);
   }
 }

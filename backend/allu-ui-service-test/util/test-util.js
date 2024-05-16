@@ -92,6 +92,7 @@ function tryRetryPromise(fn, times, delay) {
       if (counter > times) {
         console.error('Waited server too long, giving up after ' + counter + ' retries');
         reject(error.message);
+        console.error(error)
       } else {
         fn().then(resolve)
           .catch((e) => {

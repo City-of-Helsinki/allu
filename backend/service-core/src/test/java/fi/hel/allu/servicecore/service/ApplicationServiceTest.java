@@ -183,14 +183,14 @@ public class ApplicationServiceTest extends MockServices {
   public void shouldPublishApplicationEventOnOwnerUpdate() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()), true);
-    verify(eventDispatcher, times(1)).dispatchOwnerChangeEvent(eq(1), anyInt(), eq(2));
+    verify(eventDispatcher, times(1)).dispatchOwnerChangeEvent(eq(Collections.singletonList(1)), anyInt(), eq(2));
   }
 
   @Test
   public void shouldNotPublishApplicationEventOnOwnerUpdate() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()), false);
-    verify(eventDispatcher, times(0)).dispatchOwnerChangeEvent(eq(1), anyInt(), eq(2));
+    verify(eventDispatcher, times(0)).dispatchOwnerChangeEvent(eq(Collections.singletonList(1)), anyInt(), eq(2));
   }
 
   @Test

@@ -1,18 +1,5 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-
-import fi.hel.allu.common.util.OptionalUtil;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
-import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -22,11 +9,23 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.OptionalUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.*;
 
 /**
  *
@@ -69,7 +68,6 @@ public class ApplicationService {
    * @param id
    * @return the application
    */
-  @Transactional(readOnly = true)
   public Application findById(int id) {
     Application application = applicationDao.findById(id);
     if (application == null) {
@@ -175,7 +173,6 @@ public class ApplicationService {
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.
-   * @param   userId      Current user
    * @param   applications  Applications whose owner is updated.
    */
   @Transactional
@@ -327,9 +324,12 @@ public class ApplicationService {
     return applicationDao.addTag(applicationId, tag);
   }
 
-  @Transactional
   public void removeTag(int applicationId, ApplicationTagType type) {
-    applicationDao.removeTagByType(applicationId, type);
+    applicationDao.removeTagByTypes(applicationId, Collections.singletonList(type));
+  }
+
+  public void removeTagByTypes(int applicationId, List<ApplicationTagType> type) {
+    applicationDao.removeTagByTypes(applicationId, type);
   }
 
   @Transactional
@@ -411,7 +411,6 @@ public class ApplicationService {
    * Updates applications pricing for specified application
    * @param applicationId id of application to update
    */
-  @Transactional
   public void updateApplicationPricing(int applicationId) {
     applicationDao.updateCalculatedPrice(applicationId, pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
   }
@@ -496,7 +495,7 @@ public class ApplicationService {
       Application application = findById(id);
       boolean sapIdPending = isSapIdPending(application);
       if (!sapIdPending) {
-        applicationDao.removeTagByType(id, ApplicationTagType.SAP_ID_MISSING);
+        removeTag(id, ApplicationTagType.SAP_ID_MISSING);
       } else {
         applicationDao.addTag(id, new ApplicationTag(userId, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
       }
@@ -507,7 +506,6 @@ public class ApplicationService {
   /**
    * Sets excavation announcement operational condition date reported by customer
    */
-  @Transactional
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
     return applicationDao.setCustomerOperationalConditionDates(id, dateReport);
   }
@@ -517,15 +515,16 @@ public class ApplicationService {
    */
   @Transactional
   public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
-    return applicationDao.setCustomerWorkFinishedDates(id, dateReport);
+    applicationDao.setCustomerWorkFinishedDates(id, dateReport);
+    return findById(id);
   }
 
   /**
    * Sets excavation announcement validity dates reported by customer
    */
-  @Transactional
   public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
-    return applicationDao.setCustomerValidityDates(id, dateReport);
+    applicationDao.setCustomerValidityDates(id, dateReport);
+    return findById(id);
   }
 
   /**
@@ -533,18 +532,17 @@ public class ApplicationService {
    */
   @Transactional
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    Application application = applicationDao.setOperationalConditionDate(id, operationalConditionDate);
-    updateChargeBasis(id, application);
+    applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+    updateChargeBasis(id, findById(id));
     updateApplicationPricing(id);
   }
 
   /**
    * Sets excavation announcement work finished date and updates pricing of application
    */
-  @Transactional
   public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
-    updateChargeBasis(id, application);
+    applicationDao.setWorkFinishedDate(id, workFinishedDate);
+    updateChargeBasis(id, findById(id));
     updateApplicationPricing(id);
   }
 
@@ -598,13 +596,13 @@ public class ApplicationService {
   }
 
   @Transactional
-  public void addOwnerNotification(Integer id) {
-    applicationDao.addOwnerNotification(id);
+  public void addOwnerNotification(List<Integer> ids) {
+    applicationDao.addOwnerNotification(ids);
   }
 
   @Transactional
-  public void removeOwnerNotification(Integer id) {
-    applicationDao.removeOwnerNotification(id);
+  public void removeOwnerNotification(List<Integer> ids) {
+    applicationDao.removeOwnerNotification(ids);
   }
 
   @Transactional(readOnly = true)

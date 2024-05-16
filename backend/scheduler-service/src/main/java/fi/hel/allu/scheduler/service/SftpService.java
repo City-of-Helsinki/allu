@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class SftpService {
@@ -76,7 +75,7 @@ public class SftpService {
       List<String> list = channelSftp.ls(remoteDirectory).stream()
           .filter(e -> !e.getAttrs().isDir())
           .map(ChannelSftp.LsEntry::getFilename)
-          .collect(Collectors.toList());
+          .toList();
       for (String file : list){
         channelSftp.get(remoteDirectory+file, localDirectory+"/"+file);
         channelSftp.rename(channelSftp.getHome()+file, channelSftp.getHome() + remoteArchiveDirectory

@@ -2,7 +2,7 @@
   "name": "allu",
   "version": "0.0.1",
   "description": "Public interface tests for Allu",
-  "author": "Vincit",
+  "author": "Gofore",
   "homepage": "",
   "license": "",
   "scripts": {
@@ -17,10 +17,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/vincit/allu.git"
+    "url": "https://github.com/City-of-Helsinki/allu.git"
   },
   "publishConfig": {
-    "registry": "http://185.26.51.92:8082"
+    "registry": "https://registry.npmjs.org/"
   },
   "engines": {
     "node": ">= 4.2.1",

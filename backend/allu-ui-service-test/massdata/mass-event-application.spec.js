@@ -185,7 +185,7 @@ describe('Event application mass insert', () => {
       };
 
       TestUtil.login('kasittelija')
-        .then((token) => repeatRequest(10000, optionsFactory(token)))
+        .then((token) => repeatRequest(2000, optionsFactory(token)))
         .then(done);
     });
   });

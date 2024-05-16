@@ -62,7 +62,7 @@ public class ApplicationController {
    * @param id
    * @return the application
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}")
   public ResponseEntity<Application> findById(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.findById(id), HttpStatus.OK);
   }
@@ -73,7 +73,7 @@ public class ApplicationController {
    * @param   ids to be searched.
    * @return  found applications
    */
-  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  @PostMapping(value = "/find")
   public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
     return new ResponseEntity<>(applicationService.findByIds(ids), HttpStatus.OK);
   }
@@ -84,7 +84,7 @@ public class ApplicationController {
    * @param applicationIdStartsWith string containing part of applicationId used in search
    * @return list of application identifier which start with given text
    */
-  @RequestMapping(value = "/identifiers", method = RequestMethod.GET)
+  @GetMapping(value = "/identifiers")
   public ResponseEntity<List<ApplicationIdentifier>> findByApplicationIdStartingWith(@RequestParam String applicationIdStartsWith) {
     return new ResponseEntity<>(applicationService.findByApplicationIdStartingWith(applicationIdStartsWith), HttpStatus.OK);
   }
@@ -108,7 +108,7 @@ public class ApplicationController {
    * @param application
    * @return the updated application
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}")
   public ResponseEntity<Application> update(@PathVariable int id, @RequestParam(required = true) int userId,
       @Valid @RequestBody(required = true) Application application) {
     return new ResponseEntity<>(applicationService.update(id, application, userId), HttpStatus.OK);
@@ -121,7 +121,7 @@ public class ApplicationController {
    * @param customerWithContacts
    * @return the saved customer with their contacts
    */
-  @RequestMapping(value = "/{applicationId}/customerWithContacts", method = RequestMethod.PUT)
+  @PutMapping(value = "/{applicationId}/customerWithContacts")
   public ResponseEntity<CustomerWithContacts> replaceCustomerWithContacts(@PathVariable int applicationId,
                                                                           @Valid @RequestBody CustomerWithContacts customerWithContacts) {
     return ResponseEntity.ok(applicationService.replaceCustomerWithContacts(applicationId, customerWithContacts));
@@ -130,7 +130,7 @@ public class ApplicationController {
   /**
    * Remove the customer of the given type with their contacts from an application
    */
-  @RequestMapping(value = "/{applicationId}/customerWithContacts/{roleType}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{applicationId}/customerWithContacts/{roleType}")
   public ResponseEntity<Void> removeCustomerWithContacts(@PathVariable int applicationId, @PathVariable CustomerRoleType roleType) {
     applicationService.removeCustomerWithContacts(applicationId, roleType);
     return ResponseEntity.ok().build();
@@ -140,10 +140,9 @@ public class ApplicationController {
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.
-   * @param   userId      Current user
    * @param   applications  Applications whose owner is updated.
    */
-  @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/owner/{ownerId}")
   public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestBody List<Integer> applications) {
     applicationService.updateOwner(ownerId, applications);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -154,13 +153,13 @@ public class ApplicationController {
    *
    * @param   applications  Applications whose owner is removed.
    */
-  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
+  @PutMapping(value = "/owner/remove")
   public ResponseEntity<Void> removeOwner(@RequestBody List<Integer> applications) {
     applicationService.removeOwner(applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/handler/{handlerId}", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/handler/{handlerId}")
   public ResponseEntity<Void> updateHandler(@PathVariable("id") Integer id, @PathVariable("handlerId") Integer handlerId) {
     applicationService.updateHandler(id, handlerId);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -175,7 +174,7 @@ public class ApplicationController {
    *          The application data
    * @return The created application
    */
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity<Application> insert(@RequestParam(required = true) int userId, @Valid @RequestBody(required = true) Application application) {
     return new ResponseEntity<>(applicationService.insert(application, userId), HttpStatus.OK);
   }
@@ -183,11 +182,10 @@ public class ApplicationController {
   /**
    * Replace (create a copy from) application
    *
-   * @param applicationId
    *          Id of the application to replace
    * @return Id of the replacing application
    */
-  @RequestMapping(value = "/{id}/replace", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/replace")
   public ResponseEntity<Integer> replace(@PathVariable int id, @RequestParam(required = true) int userId) {
     return new ResponseEntity<>(applicationReplacementService.replaceApplication(id, userId), HttpStatus.OK);
   }
@@ -200,7 +198,7 @@ public class ApplicationController {
    *
    * @param id application's database ID.
    */
-  @RequestMapping(value = "/note/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/note/{id}")
   public ResponseEntity<Void> deleteNote(@PathVariable int id) {
     applicationService.deleteNote(id);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -211,7 +209,7 @@ public class ApplicationController {
    *
    * @param id application's database ID.
    */
-  @RequestMapping(value = "/drafts/{id}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/drafts/{id}")
   public ResponseEntity<Void> deleteDraft(@PathVariable int id) {
     applicationService.deleteDraft(id);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -223,12 +221,12 @@ public class ApplicationController {
    * @param id Application's database ID
    * @param tag Tag to add
    */
-  @RequestMapping(value = "/{id}/tags", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/tags")
   public ResponseEntity<ApplicationTag> addTag(@PathVariable int id, @RequestBody ApplicationTag tag) {
     return new ResponseEntity<>(applicationService.addTag(id, tag), HttpStatus.OK);
   }
 
-  @RequestMapping(value ="/{id}/tags/{tagType}", method = RequestMethod.DELETE)
+  @DeleteMapping(value ="/{id}/tags/{tagType}")
   public ResponseEntity<Void> removeTag(@PathVariable int id, @PathVariable ApplicationTagType tagType) {
     applicationService.removeTag(id, tagType);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -240,7 +238,7 @@ public class ApplicationController {
    * @param tags New tags
    * @return stored tags
    */
-  @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/tags")
   public ResponseEntity<List<ApplicationTag>> updateTags(@PathVariable int id, @RequestBody List<ApplicationTag> tags) {
     return new ResponseEntity<>(applicationService.updateTags(id, tags), HttpStatus.OK);
   }
@@ -251,7 +249,7 @@ public class ApplicationController {
    * @param id id of application which tags are fetched for
    * @return tags for specified application
    */
-  @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/tags")
   public ResponseEntity<List<ApplicationTag>> findTagsByApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.findTagsByApplicationId(id), HttpStatus.OK);
   }
@@ -262,7 +260,7 @@ public class ApplicationController {
    * @param id The application id
    * @return list of attachments
    */
-  @RequestMapping(value = "/{id}/attachments", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/attachments")
   public ResponseEntity<List<AttachmentInfo>> findAttachments(@PathVariable int id) {
     return new ResponseEntity<>(attachmentDao.findByApplication(id), HttpStatus.OK);
   }
@@ -277,7 +275,7 @@ public class ApplicationController {
    * @return
    * @throws IOException
    */
-  @RequestMapping(value = "/{id}/decision", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/decision")
   public ResponseEntity<Void> storeDecision(@PathVariable int id, @RequestParam("file") MultipartFile file)
       throws IOException {
     decisionDao.storeDecision(id, file.getBytes());
@@ -286,7 +284,7 @@ public class ApplicationController {
     return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
   }
 
-  @RequestMapping(value = "/{id}/decision/anonymized", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/decision/anonymized")
   public ResponseEntity<Void> storeAnonymizedDecision(@PathVariable int id, @RequestParam("file") MultipartFile file)
       throws IOException {
     decisionDao.storeAnonymizedDecision(id, file.getBytes());
@@ -333,7 +331,6 @@ public class ApplicationController {
   /**
    * Get list of applications about to end
    *
-   * @param specifiers List of application specifiers
    */
   @PostMapping(value = "/deadline-check")
   public ResponseEntity<List<Application>> deadlineCheck(@RequestBody @Valid DeadlineCheckParams checkParams) {
@@ -480,15 +477,15 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.getVersion(id), HttpStatus.OK);
   }
 
-  @PostMapping(value = "/{id}/ownernotification")
-  public ResponseEntity<Void> addOwnerNotification(@PathVariable Integer id) {
-    applicationService.addOwnerNotification(id);
+  @PostMapping(value = "/{ids}/ownernotification")
+  public ResponseEntity<Void> addOwnerNotification(@PathVariable  List<Integer> ids) {
+    applicationService.addOwnerNotification(ids);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/{id}/ownernotification")
-  public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
-    applicationService.removeOwnerNotification(id);
+  @DeleteMapping(value = "/{ids}/ownernotification")
+  public ResponseEntity<Void> removeOwnerNotification(@PathVariable List<Integer> ids) {
+    applicationService.removeOwnerNotification(ids);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

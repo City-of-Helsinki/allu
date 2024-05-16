@@ -10,30 +10,30 @@
 
 - name: Remove existing allu_scheduler_service image from Docker
   docker_image:
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
+    name: "{{ github_registry_url }}/city-of-helsinki/allu/allu_scheduler_service:{{ branch }}"
     state: absent
     force_absent: true
   become: yes
   when: "'test' in group_names or 'staging' in group_names"
 
-- name: Login to GitLab repository at the remote
+- name: Login to Github repository at the remote
   docker_login:
-    registry: "{{ gitlab_registry_url }}/vincit/allu/allu"
-    username: "{{ gitlab_deploy_user }}"
-    password: "{{ gitlab_deploy_token }}"
+    registry: "{{ github_registry_url }}/city-of-helsinki/allu"
+    username: "{{ github_deploy_user }}"
+    password: "{{ github_deploy_token }}"
   become: yes
 
-- name: Pull allu_scheduler_service Docker image from GitLab repository
+- name: Pull allu_scheduler_service Docker image from Github repository
   docker_image:
     source: pull
-    name: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
+    name: "{{ github_registry_url }}/city-of-helsinki/allu/allu_scheduler_service:{{ branch }}"
     force_source: yes
   become: yes
 
 - name: Start allu_scheduler_service container
   docker_container:
     name: "{{ scheduler_service_name }}"
-    image: "{{ gitlab_registry_url }}/vincit/allu/allu/allu_scheduler_service:{{ branch }}"
+    image: "{{ github_registry_url }}/city-of-helsinki/allu/allu_scheduler_service:{{ branch }}"
     restart_policy: always
     volumes:
       - /srv/data/allu:/servicehome:rw

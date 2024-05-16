@@ -35,8 +35,3 @@ services:
     ports:
       # <Port exposed> : < PostgreSQL Port running inside container>
       - "5433:5432"
-
-networks:
-  default:
-    name: allu-network
-    driver: bridge

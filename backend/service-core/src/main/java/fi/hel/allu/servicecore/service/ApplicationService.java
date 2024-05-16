@@ -209,8 +209,8 @@ public class ApplicationService {
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicationJson.setId(applicationId);
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
-    if(applicationJson.getStatus() != StatusType.DECISION || applicationJson.getStatus() != StatusType.OPERATIONAL_CONDITION){
-        setPaymentClasses(applicationJson);
+    if(applicationJson.getStatus() != StatusType.DECISION){
+    setPaymentClasses(applicationJson);
     }
     Integer currentUserId = userService.getCurrentUser().getId();
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
@@ -245,9 +245,9 @@ public class ApplicationService {
     restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
     Integer currentUserId = userService.getCurrentUser().getId();
     if (dispatchEvent) {
-      applicationIds.forEach(id -> applicationEventDispatcher.dispatchOwnerChangeEvent(id, currentUserId, updatedOwner));
+      applicationEventDispatcher.dispatchOwnerChangeEvent(applicationIds, currentUserId, updatedOwner);
     } else {
-      applicationIds.forEach(id -> applicationEventDispatcher.dispatchNotificationRemoval(id));
+      applicationEventDispatcher.dispatchNotificationRemoval(applicationIds);
     }
   }
 
@@ -610,12 +610,12 @@ public class ApplicationService {
     return BooleanUtils.isNotTrue(findApplicationById(id).getNotBillable());
   }
 
-  public void addOwnerNotification(Integer id) {
-    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, id);
+  public void addOwnerNotification(List<Integer> ids) {
+    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, ids.toArray());
   }
 
-  public void removeOwnerNotification(Integer id) {
-    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), id);
+  public void removeOwnerNotification(List<Integer> ids) {
+    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), ids.toArray());
   }
 
   public Integer getReplacingApplicationId(Integer applicationId) {

@@ -54,7 +54,7 @@ public class SupervisionTaskMapper {
                                                       UserJson creator, UserJson owner) {
     SupervisionWorkItemJson workItem = new SupervisionWorkItemJson();
     workItem.setId(task.getId());
-    workItem.setType(task.getType());
+    workItem.setType(task.getType().getValue());
     workItem.setApplicationId(task.getApplicationId());
     workItem.setApplicationIdText(task.getApplicationIdText());
     workItem.setApplicationStatus(task.getApplicationStatus());

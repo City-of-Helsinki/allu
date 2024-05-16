@@ -3,6 +3,7 @@ package fi.hel.allu.model.pricing;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.EmptyUtil;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.FixedLocation;
@@ -75,10 +76,11 @@ public class PricingExplanator {
 
   private List<String> formatExplanation(Location location, boolean includePaymentClass, String customPeriod) {
     final List<FixedLocation> fixedLocations = new ArrayList<>();
-    location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fixedLocations::add));
-    final String fixedLocation = Printable.forFixedLocations(fixedLocations);
-    final String locationAddress = Printable.forPostalAddress(location.getPostalAddress());
-    final String address = fixedLocation.length() > 0 ? fixedLocation : locationAddress;
+    if(EmptyUtil.isNotEmpty(location.getFixedLocationIds())){
+      fixedLocations.addAll(locationDao.getFixedLocations(location.getFixedLocationIds()));
+    }
+    final String address = !fixedLocations.isEmpty() ?
+            printableFixedLocationAddresses(fixedLocations) : printableAddress(location);
 
     final String paymentClass = includePaymentClass ?
       String.format(DEFAULT_LOCALE, ", maksuvyöhyke %s", location.getEffectivePaymentTariff()) : "";
@@ -90,6 +92,14 @@ public class PricingExplanator {
 
     final String explanation = address + paymentClass + " (" + period + "), " + area;
     return limitExplanationRowLength(explanation);
+  }
+
+  private String printableFixedLocationAddresses(List<FixedLocation> fixedLocations){
+    return Printable.forFixedLocations(fixedLocations);
+  }
+
+  private String printableAddress(Location location){
+    return Printable.forPostalAddress(location.getPostalAddress());
   }
 
   private List<String> limitExplanationRowLength(String explanation) {

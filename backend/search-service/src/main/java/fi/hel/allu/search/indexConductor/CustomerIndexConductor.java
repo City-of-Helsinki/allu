@@ -1,11 +1,10 @@
-package fi.hel.allu.search.service;
-
+package fi.hel.allu.search.indexConductor;
 
 import fi.hel.allu.search.util.Constants;
 import org.springframework.stereotype.Component;
 
 /**
- * Conductor component for the application index.
+ * Conductor component for the customer index.
  */
 @Component
 public class CustomerIndexConductor extends IndexConductor {

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.search.domain.LocationES;
+import fi.hel.allu.search.indexConductor.ApplicationIndexConductor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;

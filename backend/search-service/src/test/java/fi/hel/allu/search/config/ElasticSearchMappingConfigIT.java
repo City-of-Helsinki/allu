@@ -2,7 +2,7 @@ package fi.hel.allu.search.config;
 
 import fi.hel.allu.search.BaseIntegrationTest;
 import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.service.ApplicationIndexConductor;
+import fi.hel.allu.search.indexConductor.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;

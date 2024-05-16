@@ -5,7 +5,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.Strings;
-
 import org.elasticsearch.common.xcontent.DeprecationHandler;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -52,22 +51,22 @@ public class ElasticSearchMappingConfig {
   public void initializeIndex(String indexName) {
     try {
       CreateIndexRequest indexRequest = new CreateIndexRequest(indexName);
+      indexRequest.settings(getDefaultIndexSettings(indexName));
       if (indexName.startsWith(APPLICATION_INDEX_ALIAS)) {
-        indexRequest.settings(getIndexSettingsForApplication());
         indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
         indexRequest.mapping(getMappingBuilderForApplication());
       } else if (indexName.startsWith(CUSTOMER_INDEX_ALIAS)) {
-        indexRequest.settings(getIndexSettingsForCustomer());
         indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Customer"));
         indexRequest.mapping(getMappingBuilderForCustomer());
       } else if (indexName.startsWith(PROJECT_INDEX_ALIAS)) {
-        indexRequest.settings(getIndexSettingsForApplication());
         indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
         indexRequest.mapping(getMappingBuilderForProject());
       } else if (indexName.startsWith(CONTACT_INDEX_ALIAS)) {
-        indexRequest.settings(getIndexSettingsForCustomer());
         indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Contact"));
         indexRequest.mapping(getMappingBuilderForContact());
+      } else if (indexName.startsWith(SUPERVISION_TASK_INDEX)) {
+        indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
+        indexRequest.mapping(getMappingBuilderForSupervision());
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
@@ -199,21 +198,6 @@ public class ElasticSearchMappingConfig {
   }
 
   /**
-   * @return  Applications index settings.
-   */
-  public XContentBuilder getIndexSettingsForApplication() {
-    try {
-      XContentBuilder settingsBuilder = commonIndexSettings();
-      if (logger.isDebugEnabled()) {
-        logger.debug("application index settings {}", settingsBuilder);
-      }
-      return settingsBuilder;
-    } catch (IOException e) {
-      throw new RuntimeException(BUILDER_ERROR, e);
-    }
-  }
-
-  /**
    * @return  Default mappings for customers index that's applicable to all types.
    */
   public XContentBuilder getMappingBuilderForDefaultNameIndex(String indexName) {
@@ -276,13 +260,36 @@ public class ElasticSearchMappingConfig {
   }
 
   /**
+   * @return  Supervision specific type mappings for supervision index.
+   */
+  public XContentBuilder getMappingBuilderForSupervision() {
+    try {
+      XContentBuilder mappingBuilder = jsonBuilder()
+              .startObject()
+              .startObject(PROPERTIES_INDEX_ALIAS)
+              .startObject("applicationStatus")
+              .field("type", "text")
+              .field(FIELDS).copyCurrentStructure(parser(alphasort()))
+              .endObject()
+              .endObject()
+              .endObject();
+      if (logger.isDebugEnabled()) {
+        logger.debug("Supervision mapping: {}", mappingBuilder);
+      }
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException(BUILDER_ERROR, e);
+    }
+  }
+
+  /**
    * @return  Customers index settings.
    */
-  public XContentBuilder getIndexSettingsForCustomer() {
+  public XContentBuilder getDefaultIndexSettings(String index) {
     try {
       XContentBuilder settingsBuilder = commonIndexSettings();
       if (logger.isDebugEnabled()) {
-        logger.debug("customer index settings {}", settingsBuilder);
+        logger.debug("{} index settings {}", index, settingsBuilder);
       }
       return settingsBuilder;
     } catch (IOException e) {

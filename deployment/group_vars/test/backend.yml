@@ -17,7 +17,7 @@ mail_default_encoding: UTF-8
 mail_server_host: relay@hel.fi
 mail_server_port: 25
 mail_server_auth: false
-email_allowed_addresses: "*@vincit.fi,*@hel.fi"
+email_allowed_addresses: "*@gofore.fi,*@hel.fi"
 email_sender_address: Alueidenkaytto ja -valvonta Test <allu-noreply@hel.fi>
 
 invoice_sending_enabled: true
@@ -25,15 +25,15 @@ invoice_archivedir: /tmp/allu-invoice-archive
 invoice_cronstring: "0 */15 * * * *"
 sap_ftp_invoice_host: "{{ sftp_server_name }}"
 sap_ftp_invoice_port: 22
-sap_ftp_invoice_directory: /invoice/
+sap_ftp_invoice_directory: invoice/
 
 # Customer update SFTP configuration
 sap_ftp_customer_host: "{{ sftp_server_name }}"
 sap_ftp_customer_port: 22
-sap_ftp_customer_directory: /customer/
-sap_ftp_customer_arch_directory: /customer/arch/
+sap_ftp_customer_directory: customer/
+sap_ftp_customer_arch_directory: customer/arch/
 
-sftp_known_host: "|1|kRJ8Ifv8RCzT2mzkIw7fbpgnt6s=|Th6eeVrqXARbGP9P92T8vaC0SSk= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAD1sjUdha8Y/vuGZnvkrgZCr2rY6mHgQpIHOZobA5CV"
+sftp_known_host: "|1|HTHJZGotzDCcDEzhSGjaCPrhYkg=|xYjGs+EM02pIrb54xJ/L0RwiyIw= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA3MAwwofzcnF7DyYGyLzNCYwJkBZOZ/A8KIJT2EkVG3"
 
 # Customer update configuration
 customer_update_enabled: true

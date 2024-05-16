@@ -25,26 +25,30 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
-  @Autowired
-  private ApplicationServiceComposer applicationServiceComposer;
+
+  private final ApplicationServiceComposer applicationServiceComposer;
+  private final AttachmentService attachmentService;
+  private final InvoiceService invoiceService;
+  private final ApplicationGeometryValidator geometryValidator;
+  private final ApplicationSecurityService applicationSecurityService;
 
   @Autowired
-  private AttachmentService attachmentService;
-
-  @Autowired
-  private InvoiceService invoiceService;
-
-  @Autowired
-  private ApplicationGeometryValidator geometryValidator;
-
-  @Autowired
-  private ApplicationSecurityService applicationSecurityService;
-
+  public ApplicationController(ApplicationServiceComposer applicationServiceComposer,
+                               AttachmentService attachmentService,
+                               InvoiceService invoiceService, ApplicationGeometryValidator geometryValidator,
+                               ApplicationSecurityService applicationSecurityService) {
+    this.applicationServiceComposer = applicationServiceComposer;
+    this.attachmentService = attachmentService;
+    this.invoiceService = invoiceService;
+    this.geometryValidator = geometryValidator;
+    this.applicationSecurityService = applicationSecurityService;
+  }
 
   @InitBinder("applicationJson")
   protected void initBinder(WebDataBinder binder) {
@@ -150,7 +154,7 @@ public class ApplicationController {
    * @throws IOException
    * @throws IllegalArgumentException
    */
-  @RequestMapping(value = "/{id}/attachments", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/attachments")
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<List<AttachmentInfoJson>> addAttachments(
       @PathVariable int id,
@@ -164,7 +168,7 @@ public class ApplicationController {
    * @param id application's id
    * @return List of attachments for specified application
    */
-  @RequestMapping(value = "/{id}/attachments", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/attachments")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<AttachmentInfoJson>> getAttachments(@PathVariable int id) {
     return new ResponseEntity<>(attachmentService.findAttachmentsForApplication(id), HttpStatus.OK);
@@ -177,7 +181,7 @@ public class ApplicationController {
    *          attachment ID
    * @return attachment info for the ID
    */
-  @RequestMapping(value = "/attachments/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/attachments/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<AttachmentInfoJson> readAttachmentInfo(@PathVariable int id) {
     return new ResponseEntity<>(attachmentService.getAttachment(id), HttpStatus.OK);
@@ -191,7 +195,7 @@ public class ApplicationController {
    * @param attachmentInfoJson
    * @return
    */
-  @RequestMapping(value = "/attachments/{id}", method = RequestMethod.PUT)
+  @PutMapping(value = "/attachments/{id}")
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<AttachmentInfoJson> updateAttachmentInfo(@PathVariable int id,
       @Valid @RequestBody AttachmentInfoJson attachmentInfoJson) {
@@ -205,7 +209,7 @@ public class ApplicationController {
    * @param attachmentId    Id of the attachment to be deleted.
    * @return
    */
-  @RequestMapping(value = "/{applicationId}/attachments/{attachmentId}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{applicationId}/attachments/{attachmentId}")
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<Void> deleteAttachment(
       @PathVariable int applicationId,
@@ -221,7 +225,7 @@ public class ApplicationController {
    *          attachment's ID
    * @return The attachment's data
    */
-  @RequestMapping(value = "/attachments/{attachmentId}/data", method = RequestMethod.GET)
+  @GetMapping(value = "/attachments/{attachmentId}/data")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getAttachmentData(@PathVariable int attachmentId) {
     AttachmentInfoJson info = attachmentService.getAttachment(attachmentId);
@@ -241,7 +245,7 @@ public class ApplicationController {
    * @param id          attachment ID
    * @return attachment info for the ID.
    */
-  @RequestMapping(value = "/default-attachments/{id}", method = RequestMethod.GET)
+  @GetMapping(value = "/default-attachments/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<DefaultAttachmentInfoJson> readDefaultAttachmentInfo(@PathVariable int id) {
     return new ResponseEntity<>(attachmentService.getDefaultAttachment(id), HttpStatus.OK);
@@ -252,7 +256,7 @@ public class ApplicationController {
    *
    * @return attachment info of all default attachments.
    */
-  @RequestMapping(value = "/default-attachments", method = RequestMethod.GET)
+  @GetMapping(value = "/default-attachments")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> readDefaultAttachmentInfos() {
     return new ResponseEntity<>(attachmentService.getDefaultAttachments(), HttpStatus.OK);
@@ -263,32 +267,32 @@ public class ApplicationController {
    *
    * @return attachment info of all default attachments.
    */
-  @RequestMapping(value = "/default-attachments/applicationType/{applicationType}", method = RequestMethod.GET)
+  @GetMapping(value = "/default-attachments/applicationType/{applicationType}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> readDefaultAttachmentInfos(@PathVariable ApplicationType applicationType) {
     return new ResponseEntity<>(attachmentService.getDefaultAttachmentsByApplicationType(applicationType), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/tags")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationTagJson>> updateTags(@PathVariable int id,
      @Valid @RequestBody List<ApplicationTagJson> tags) {
     return new ResponseEntity<>(applicationServiceComposer.updateTags(id, tags), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/tags")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationTagJson>> getTags(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.findTags(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/tags", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/tags")
   @PreAuthorize("@applicationSecurityService.canModifyTag(#tag.getType())")
   public ResponseEntity<ApplicationTagJson> addTag(@PathVariable int id, @Valid @RequestBody ApplicationTagJson tag) {
     return new ResponseEntity<>(applicationServiceComposer.addTag(id, tag), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/tags/{tagType}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}/tags/{tagType}")
   @PreAuthorize("@applicationSecurityService.canModifyTag(#tagType)")
   public ResponseEntity<ApplicationTagJson> removeTag(@PathVariable int id, @PathVariable ApplicationTagType tagType) {
     applicationServiceComposer.removeTag(id, tagType);
@@ -301,7 +305,7 @@ public class ApplicationController {
    * @param id The appication's database ID
    * @return all invoices for given application ID
    */
-  @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/invoices")
   @PreAuthorize("hasAnyRole('ROLE_VIEW', 'ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<InvoiceJson>> getInvoices(@PathVariable int id) {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
@@ -310,7 +314,7 @@ public class ApplicationController {
   /**
    * Replaces (creates a copy) application with given application ID.
    */
-  @RequestMapping(value = "/{id}/replace",  method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/replace")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> replace(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.replaceApplication(id), HttpStatus.OK);
@@ -321,42 +325,42 @@ public class ApplicationController {
    * History include applications which were replaced and those which given
    * application replaces
    */
-  @RequestMapping(value = "/{id}/replacementHistory",  method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/replacementHistory")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationIdentifierJson>> replacementHistory(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.replacementHistory(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
+  @PutMapping(value = "/{id}/invoicerecipient")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam(value = "invoicerecipientid", required = false) final Integer invoiceRecipientId) {
     applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
+  @GetMapping(value = "/{id}/invoicerecipient")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<CustomerJson> getInvoiceRecipient(@PathVariable int id) {
     return ResponseEntity.ok(applicationServiceComposer.findInvoiceRecipientJson(id));
   }
 
-  @RequestMapping(value = "/{id}/clientapplicationdata", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}/clientapplicationdata")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> removeClientApplicationData(@PathVariable Integer id) {
     return ResponseEntity.ok(applicationServiceComposer.removeClientApplicationData(id));
   }
 
-  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.POST)
+  @PostMapping(value = "/{id}/ownernotification")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> addOwnerNotification(@PathVariable Integer id) {
-    applicationServiceComposer.addOwnerNotification(id);
+    applicationServiceComposer.addOwnerNotification(Collections.singletonList(id));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/{id}/ownernotification")
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
-    applicationServiceComposer.removeOwnerNotification(id);
+    applicationServiceComposer.removeOwnerNotification(Collections.singletonList(id));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

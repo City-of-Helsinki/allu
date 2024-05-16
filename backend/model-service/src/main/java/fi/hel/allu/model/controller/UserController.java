@@ -22,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
-  private UserDao userDao;
+  private final UserDao userDao;
 
   @Autowired
   public UserController(UserDao userDao) {
@@ -53,7 +53,7 @@ public class UserController {
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/role/{roleType}", method = RequestMethod.GET)
+  @GetMapping(value = "/role/{roleType}")
   public ResponseEntity<List<User>> findByRole(@PathVariable RoleType roleType) {
     return new ResponseEntity<>(userDao.findByRole(roleType), HttpStatus.OK);
   }

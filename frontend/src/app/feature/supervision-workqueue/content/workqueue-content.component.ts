@@ -24,7 +24,7 @@ import {SetTab} from '@feature/workqueue/actions/workqueue-actions';
 })
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
-    'selected', 'owner.realName', 'type', 'application.applicationId', 'address',
+    'selected', 'owner.realName', 'type', 'applicationId', 'address',
     'plannedFinishingTime', 'application.status', 'creator.realName'
   ];
   dataSource: SupervisionWorkItemDatasource;

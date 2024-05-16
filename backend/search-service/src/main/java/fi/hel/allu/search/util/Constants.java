@@ -14,6 +14,7 @@ public class Constants {
     public static final String PROPERTIES_INDEX_ALIAS = "properties";
     public static final String PROJECT_TYPE_NAME = "project";
     public static final String CUSTOMER_TYPE_NAME = "customer";
+    public static final String SUPERVISION_TASK_INDEX = "supervision_tasks";
 
     private Constants() {
         throw new IllegalStateException("Utility class");

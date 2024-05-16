@@ -1,15 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.slf4j.Logger;
@@ -42,16 +38,14 @@ public class SearchSyncService {
 
   private final RestTemplate restTemplate;
   private final ApplicationProperties applicationProperties;
-  private final ApplicationMapper applicationMapper;
   private final ProjectMapper projectMapper;
   private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
   public SearchSyncService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      ApplicationMapper applicationMapper, ProjectMapper projectMapper, ApplicationServiceComposer applicationServiceComposer) {
+                           ProjectMapper projectMapper, ApplicationServiceComposer applicationServiceComposer) {
     this.restTemplate = restTemplate;
     this.applicationProperties = applicationProperties;
-    this.applicationMapper = applicationMapper;
     this.projectMapper = projectMapper;
     this.applicationServiceComposer = applicationServiceComposer;
   }
@@ -69,6 +63,7 @@ public class SearchSyncService {
       syncProjects();
       syncCustomers();
       syncContacts();
+      syncSupervisionTasks();
       endSync();
     } catch (SyncFailedException e) {
       logger.error("Sync failure: " + e.getMessage() + ", canceling sync.");
@@ -171,6 +166,21 @@ public class SearchSyncService {
     logger.info("Contact sync finished");
   }
 
+  private void syncSupervisionTasks() {
+    logger.info("SupervisionTasks sync started");
+    int page = 0;
+    Page<SupervisionWorkItem> fromModel;
+    do {
+      fromModel = fetchSupervisionTasks(page);
+      logger.info("Page {} / {}", page + 1, fromModel.getTotalPages());
+      if (fromModel.getNumberOfElements() > 0) {
+        sendSupervisionTasks(fromModel.getContent());
+      }
+      page++;
+    } while (!fromModel.isLast());
+    logger.info("SupervisionTasks sync finished");
+  }
+
   private Page<Application> fetchApplications(int pageNum) {
     ParameterizedTypeReference<RestResponsePage<Application>> typeref = new ParameterizedTypeReference<RestResponsePage<Application>>() {
     };
@@ -214,9 +224,21 @@ public class SearchSyncService {
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
+  private Page<SupervisionWorkItem> fetchSupervisionTasks(int pageNum) {
+    ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {
+    };
+    return talkToServer("Fetch supervisiontasks", () -> restTemplate.exchange(applicationProperties.getAllSupervisionTasksUrl(),
+                                                                      HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
+  }
+
   private void sendContacts(List<ContactES> contacts) {
     talkToServer("Send contacts",
         () -> restTemplate.postForEntity(applicationProperties.getSyncContactsUrl(), contacts, Void.class));
+  }
+
+  private void sendSupervisionTasks(List<SupervisionWorkItem> supervisionTasks) {
+    talkToServer("Send supervisiontasks",
+                 () -> restTemplate.postForEntity(applicationProperties.getSyncSupervisionTaskUrl(), supervisionTasks, Void.class));
   }
 
   @SuppressWarnings("serial")

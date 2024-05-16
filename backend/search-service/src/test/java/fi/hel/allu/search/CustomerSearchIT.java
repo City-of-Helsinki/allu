@@ -1,11 +1,12 @@
 package fi.hel.allu.search;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.search.service.ApplicationIndexConductor;
+import fi.hel.allu.search.indexConductor.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.CustomerIndexConductor;
+import fi.hel.allu.search.indexConductor.CustomerIndexConductor;
 import fi.hel.allu.search.service.CustomerSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.apache.http.HttpHost;
@@ -24,6 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static fi.hel.allu.search.util.Constants.CUSTOMER_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,12 +55,12 @@ class CustomerSearchIT extends BaseIntegrationTest {
     }
 
     @Test
-    void testTnsertCustomer() throws IOException {
-        Integer customerId = 1;
+    void testInsertCustomer() throws IOException {
+        int customerId = 1;
         CustomerES customerES = createCustomer(TEST_NAME, customerId);
         customerSearchService.insert(customerES);
         customerSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(CUSTOMER_INDEX_ALIAS, "_doc", customerId.toString());
+        GetRequest getRequest = new GetRequest(CUSTOMER_INDEX_ALIAS, "_doc", Integer.toString(customerId));
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
         assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
@@ -75,6 +77,78 @@ class CustomerSearchIT extends BaseIntegrationTest {
         assertEquals(1, appList.size());
         assertEquals(1, (int) appList.get(0));
         customerSearchService.delete(customerES.getId().toString());
+    }
+
+    @Test
+    void testFindByTypeAndField() {
+        CustomerES customerES1 = createCustomer(TEST_NAME, 1);
+        customerES1.setType(CustomerType.PERSON);
+        customerSearchService.insert(customerES1);
+        CustomerES customerES2 = createCustomer(TEST_NAME + "2", 2);
+        customerES2.setType(CustomerType.PERSON);
+        customerES2.setInvoicingOnly(true);
+        customerSearchService.insert(customerES2);
+        CustomerES customerES3 = createCustomer(TEST_NAME + "3", 3);
+        customerES3.setType(CustomerType.COMPANY);
+        customerSearchService.insert(customerES3);
+        QueryParameters params = SearchTestUtil.createQueryParameters("name", TEST_NAME);
+        customerSearchService.refreshIndex();
+        List<Integer> appList = customerSearchService.findByTypeAndField(CustomerType.PERSON, params, null, true).getContent();
+        assertNotNull(appList);
+        assertEquals(2, appList.size());
+        customerSearchService.delete(customerES1.getId().toString());
+    }
+
+    @Test
+    void testFindByFieldWhereInvoicingOnlyFalse() {
+        CustomerES customerES1 = createCustomer(TEST_NAME, 1);
+        customerES1.setType(CustomerType.PERSON);
+        customerES1.setInvoicingOnly(false);
+        customerSearchService.insert(customerES1);
+        CustomerES customerES2 = createCustomer(TEST_NAME + "2", 2);
+        customerES2.setType(CustomerType.PERSON);
+        customerES2.setInvoicingOnly(true);
+        customerSearchService.insert(customerES2);
+        CustomerES customerES3 = createCustomer(TEST_NAME + "3", 3);
+        customerES3.setType(CustomerType.COMPANY);
+        customerES3.setInvoicingOnly(false);
+        customerSearchService.insert(customerES3);
+        QueryParameters params = SearchTestUtil.createQueryParameters("name", TEST_NAME);
+        SearchTestUtil.addQueryParameters(params, "invoicingOnly", "false");
+        customerSearchService.refreshIndex();
+        List<Integer> appList = customerSearchService.findByTypeAndField(CustomerType.PERSON, params, null, true).getContent();
+        assertNotNull(appList);
+        System.out.println("invoicingOnly false: " + appList.stream().map(Object::toString).collect(Collectors.joining()));
+        assertEquals(1, appList.size());
+        assertEquals(1, (int) appList.get(0));
+        customerSearchService.delete(customerES1.getId().toString());
+        customerSearchService.delete(customerES2.getId().toString());
+    }
+
+    @Test
+    void testFindByFieldWhereInvoicingOnlyTrue() {
+        CustomerES customerES1 = createCustomer(TEST_NAME, 1);
+        customerES1.setType(CustomerType.PERSON);
+        customerES1.setInvoicingOnly(false);
+        customerSearchService.insert(customerES1);
+        CustomerES customerES2 = createCustomer(TEST_NAME + "2", 2);
+        customerES2.setType(CustomerType.PERSON);
+        customerES2.setInvoicingOnly(true);
+        customerSearchService.insert(customerES2);
+        CustomerES customerES3 = createCustomer(TEST_NAME + "3", 3);
+        customerES3.setType(CustomerType.COMPANY);
+        customerES3.setInvoicingOnly(false);
+        customerSearchService.insert(customerES3);
+        QueryParameters params = SearchTestUtil.createQueryParameters("name", TEST_NAME);
+        SearchTestUtil.addQueryParameters(params, "invoicingOnly", "true");
+        customerSearchService.refreshIndex();
+        List<Integer> appList = customerSearchService.findByTypeAndField(CustomerType.PERSON, params, null, true).getContent();
+        assertNotNull(appList);
+        System.out.println("invoicingOnly true: " + appList.stream().map(Object::toString).collect(Collectors.joining()));
+        assertEquals(1, appList.size());
+        assertEquals(2, (int) appList.get(0));
+        customerSearchService.delete(customerES1.getId().toString());
+        customerSearchService.delete(customerES2.getId().toString());
     }
 
     @Test
