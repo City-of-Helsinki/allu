@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {InformationRequest} from '@model/information-request/information-request';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {EnumUtil} from '@util/enum.util';
@@ -23,11 +23,11 @@ export interface InformationRequestData {
 export class InformationRequestModalComponent implements OnInit {
 
   fieldKeys = EnumUtil.enumValues(InformationRequestFieldKey);
-  form: FormGroup;
+  form: UntypedFormGroup;
   request: InformationRequest;
 
   constructor(private dialogRef: MatDialogRef<InformationRequestModalComponent>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               @Inject(MAT_DIALOG_DATA) public data: InformationRequestData) {
     this.request = data.request || new InformationRequest();
     this.form = toFormGroup(fb, this.fieldKeys, this.request);

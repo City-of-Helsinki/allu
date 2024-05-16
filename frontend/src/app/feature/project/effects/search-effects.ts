@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ApplicationService} from '@service/application/application.service';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
@@ -16,13 +16,13 @@ export class SearchEffects {
               private customerService: CustomerService,
               private projectService: ProjectService) {}
 
-  @Effect()
-  projectSearch: Observable<Action> = this.actions.pipe(
+  
+  projectSearch: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<project.Search>(ProjectSearchActionType.Search),
     map(action => action.payload),
     switchMap(params => this.projectService.pagedSearch(params.query, params.sort, params.pageRequest).pipe(
       map(projects => new project.SearchSuccess(projects)),
       catchError(error => of(new project.SearchFailed(error)))
     ))
-  );
+  ));
 }

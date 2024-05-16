@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
@@ -21,8 +21,8 @@ export class ContactSearchEffects {
               private customerService: CustomerService,
               private contactService: ContactService) {}
 
-  @Effect()
-  loadContacts: Observable<Action> = this.actions.pipe(
+  
+  loadContacts: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<LoadByCustomer>(ContactSearchActionType.LoadByCustomer),
     concatMap(action =>
       this.customerService.findCustomerContacts(action.payload).pipe(
@@ -30,14 +30,14 @@ export class ContactSearchEffects {
         catchError(error => of(new LoadByCustomerFailed(action.targetType, error)))
       )
     )
-  );
+  ));
 
-  @Effect()
-  search: Observable<Action> = this.actions.pipe(
+  
+  search: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Search>(ContactSearchActionType.Search),
     switchMap(action => this.contactService.search(action.payload.query, action.payload.sort, action.payload.pageRequest).pipe(
       map(contacts => new SearchSuccess(action.targetType, contacts)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 }

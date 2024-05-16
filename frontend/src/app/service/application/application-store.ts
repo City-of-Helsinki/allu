@@ -355,11 +355,11 @@ export class ApplicationStore {
   }
 
   private getApplicationForSave(application: Application): Observable<Application> {
-    return combineLatest(
+    return combineLatest([
       this.store.select(fromApplication.getTags),
       this.store.select(fromApplication.getType),
       this.store.select(fromApplication.getKindsWithSpecifiers)
-    ).pipe(
+    ]).pipe(
       take(1),
       map(([tags, type, kindsWithSpecifiers]) => {
         const app = ObjectUtil.clone(application);

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
@@ -25,8 +25,8 @@ export class MapLayerEffects {
               private mapStore: MapStore) {
   }
 
-  @Effect()
-  initAvailableLayers: Observable<Action> = defer(() => this.store.pipe(
+  
+  initAvailableLayers: Observable<Action> = createEffect(() => defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
     filter(loggedIn => loggedIn),
     map(() => this.getMapLayers()),
@@ -36,10 +36,10 @@ export class MapLayerEffects {
       new AddLayers(ActionTargetType.Project, layers),
       new AddLayers(ActionTargetType.Application, layers)
     ])
-  ));
+  )));
 
-  @Effect()
-  initMapLayerTree: Observable<Action> = defer(() => this.store.pipe(
+  
+  initMapLayerTree: Observable<Action> = createEffect(() => defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
     filter(loggedIn => loggedIn),
     switchMap(() => this.configService.isStagingOrProduction()),
@@ -49,10 +49,10 @@ export class MapLayerEffects {
       new AddTreeStructure(ActionTargetType.Project, createLayerTree(isStagingOrProduction, true)),
       new AddTreeStructure(ActionTargetType.Application, createLayerTree(isStagingOrProduction, false))
     ])
-  ));
+  )));
 
-  @Effect({dispatch: false})
-  layersSelected: Observable<Action> = this.actions.pipe(
+  
+  layersSelected: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SelectLayers>(MapLayerActionType.SelectLayers),
     tap((action: SelectLayers) => {
       if (action.targetType === ActionTargetType.Location) {
@@ -61,7 +61,7 @@ export class MapLayerEffects {
         this.mapStore.mapSearchFilterChange({layers: action.payload});
       }
     })
-  );
+  ), {dispatch: false});
 
   private getMapLayers(): MapLayer[] {
     return [

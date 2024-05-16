@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '@feature/application/reducers';
 import {Action, select, Store} from '@ngrx/store';
 import {ApplicationStore} from '@service/application/application-store';
@@ -25,8 +25,8 @@ export class DateReportingEffects {
               private applicationStore: ApplicationStore,
               private dateReporting: DateReportingService) {}
 
-  @Effect()
-  reportOperationalCondition: Observable<Action> = this.actions.pipe(
+  
+  reportOperationalCondition: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ReportOperationalCondition>(DateReportingActionType.ReportOperationalCondition),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.dateReporting.reportOperationalCondition(app.id, action.payload).pipe(
@@ -36,10 +36,10 @@ export class DateReportingEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reportWorkFinished: Observable<Action> = this.actions.pipe(
+  
+  reportWorkFinished: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ReportWorkFinished>(DateReportingActionType.ReportWorkFinished),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.dateReporting.reportWorkFinished(app.id, action.payload).pipe(
@@ -49,10 +49,10 @@ export class DateReportingEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reportCustomerOperationalCondition: Observable<Action> = this.actions.pipe(
+  
+  reportCustomerOperationalCondition: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ReportCustomerOperationalCondition>(DateReportingActionType.ReportCustomerOperationalCondition),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.dateReporting.reportCustomerOperationalCondition(app.id, action.payload).pipe(
@@ -64,10 +64,10 @@ export class DateReportingEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reportCustomerWorkFinished: Observable<Action> = this.actions.pipe(
+  
+  reportCustomerWorkFinished: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ReportCustomerWorkFinished>(DateReportingActionType.ReportCustomerWorkFinished),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.dateReporting.reportCustomerWorkFinished(app.id, action.payload).pipe(
@@ -78,10 +78,10 @@ export class DateReportingEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reportCustomerValidity: Observable<Action> = this.actions.pipe(
+  
+  reportCustomerValidity: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ReportCustomerValidity>(DateReportingActionType.ReportCustomerValidity),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.dateReporting.reportCustomerValidity(app.id, action.payload).pipe(
@@ -92,10 +92,10 @@ export class DateReportingEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  reportLocationCustomerValidity: Observable<Action> = this.actions.pipe(
+  
+  reportLocationCustomerValidity: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ReportLocationCustomerValidity>(DateReportingActionType.ReportLocationCustomerValidity),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) =>
@@ -108,5 +108,5 @@ export class DateReportingEffects {
         ]),
         catchError(error => of(new NotifyFailure(error)))
       ))
-  );
+  ));
 }

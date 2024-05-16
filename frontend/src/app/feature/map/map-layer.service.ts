@@ -155,7 +155,6 @@ export class MapLayerService {
   private createAuthenticatedOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer {
     const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
     return L.tileLayer.auth(url, {
-      format: 'image/png',
       minZoom,
       token,
       timeout: timeout
@@ -165,7 +164,6 @@ export class MapLayerService {
   private createOverlayLayer(layerName: string, minZoom?: number): L.TileLayer {
     const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
     return L.tileLayer(url, {
-      format: 'image/png',
       minZoom
     });
   }

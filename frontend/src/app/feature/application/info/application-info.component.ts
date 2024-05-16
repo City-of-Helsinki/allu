@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {UrlUtil} from '@util/url.util';
@@ -14,7 +14,7 @@ import * as fromApplication from '../reducers';
 import {map, take} from 'rxjs/operators';
 import {ApplicationStatus} from '@model/application/application-status';
 import {Application} from '@model/application/application';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {applicationForm} from '@feature/application/info/application-form';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExternalUpdateNotificationType} from '@feature/application/notification/external-update/external-update-notification.component';
@@ -28,7 +28,7 @@ import {ExternalUpdateNotificationService} from '@feature/application/notificati
 })
 export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate, OnDestroy {
 
-  form: FormGroup;
+  form: UntypedFormGroup;
   type: string;
   showDraftSelection: boolean;
   readonly: boolean;
@@ -43,7 +43,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private store: Store<fromRoot.State>,
               private dialog: MatDialog,
               private applicationNotificationService: ExternalUpdateNotificationService,
-              private fb: FormBuilder) {}
+              private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.initForm();

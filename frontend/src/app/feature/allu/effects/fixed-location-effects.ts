@@ -1,4 +1,4 @@
-import {Actions, Effect} from '@ngrx/effects';
+import {Actions, createEffect} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
 import {Observable, of, defer} from 'rxjs';
@@ -13,21 +13,21 @@ import {NotifyFailure} from '@feature/notification/actions/notification-actions'
 export class FixedLocationEffects {
   constructor(private actions: Actions, private store: Store<fromAuth.State>, private locationService: LocationService) {}
 
-  @Effect()
-  initFixedLocations: Observable<Action> = defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
+  
+  initFixedLocations: Observable<Action> = createEffect(() => defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
     filter(loggedIn => loggedIn),
     switchMap(() => this.locationService.getFixedLocations().pipe(
       map(fixedLocations => new LoadSuccess(fixedLocations)),
       catchError(error => of(new NotifyFailure(error))))
     ))
-  );
+  ));
 
-  @Effect()
-  initFixedLocationAreas: Observable<Action> = defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
+  
+  initFixedLocationAreas: Observable<Action> = createEffect(() => defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
     filter(loggedIn => loggedIn),
     switchMap(() => this.locationService.getFixedLocationAreas().pipe(
       map(areas => new LoadAreasSuccess(areas)),
       catchError(error => of(new NotifyFailure(error))))
     ))
-  );
+  ));
 }

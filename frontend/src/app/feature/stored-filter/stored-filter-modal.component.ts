@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilter} from '../../model/user/stored-filter';
 
@@ -16,7 +16,7 @@ export const STORED_FILTER_MODAL_CONFIG = {width: '800PX', disableClose: false, 
 export class StoredFilterModalComponent implements OnInit {
 
   filterType: StoredFilterType;
-  form: FormGroup;
+  form: UntypedFormGroup;
   typeName: string;
 
   private userId: number;
@@ -24,7 +24,7 @@ export class StoredFilterModalComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<StoredFilterModalComponent>,
               @Inject(MAT_DIALOG_DATA) public data: StoredFilterModalData,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {

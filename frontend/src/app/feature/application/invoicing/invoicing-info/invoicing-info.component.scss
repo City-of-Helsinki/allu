@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../../assets/colors';
 
 [fxFlex] .align-right {
@@ -6,6 +7,6 @@
 
 .title-normal {
   font-size: 14px;
-  color: mat-contrast($allu-blue, 400);
+  color: mat.get-contrast-color-from-palette($allu-blue, 400);
   vertical-align: text-top;
 }

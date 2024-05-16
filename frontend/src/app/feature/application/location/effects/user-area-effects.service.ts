@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
@@ -23,10 +23,11 @@ export class UserAreaEffects {
   constructor(private actions: Actions, private store: Store<fromRoot.State>, private locationService: LocationService) {
   }
 
-  @Effect()
-  load: Observable<Action> = combineLatest(
+  
+  load: Observable<Action> = createEffect(() => combineLatest([
     this.actions.pipe(ofType<Load>(UserAreaActionType.Load)),
     this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
+  ]
   ).pipe(
     filter(([action, user]) => ArrayUtil.anyMatch(userAreasAllowed, user.assignedRoles)),
     switchMap(([action, user]) => this.locationService.getUserAreas().pipe(
@@ -36,5 +37,5 @@ export class UserAreaEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 }

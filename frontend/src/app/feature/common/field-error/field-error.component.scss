@@ -1,12 +1,13 @@
+@use '@angular/material' as mat;
 @import '../../../../assets/colors';
 
 :host {
   .has-error {
-    color: mat-color($allu-warn, 500);
+    color: mat.get-color-from-palette($allu-warn, 500);
   }
 
   .has-warning {
-    color: mat-color($allu-accent, 700);
+    color: mat.get-color-from-palette($allu-accent, 700);
   }
 }
 

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
-import {MatDialog} from '@angular/material';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import {
   OWNER_NOTIFICATION_MODAL_CONFIG,
   OwnerNotificationModalComponent

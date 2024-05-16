@@ -22,7 +22,7 @@ const initialState: State = adapter.getInitialState({
 export function reducer(state: State = initialState, action: FixedLocationActions) {
   switch (action.type) {
     case FixedLocationActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, {
+      return adapter.setAll(action.payload, {
         ...state,
         selectedId: state.selectedId
       });

@@ -1,6 +1,6 @@
 import {AfterContentInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
@@ -37,9 +37,9 @@ import {DistributionComponent} from '@feature/application/distribution/distribut
   template: ''
 })
 export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
-  @Input() applicationForm: FormGroup;
+  @Input() applicationForm: UntypedFormGroup;
 
-  @ViewChild(DistributionComponent, {static: false}) distributionComponent: DistributionComponent;
+  @ViewChild(DistributionComponent) distributionComponent: DistributionComponent;
 
   readonly: boolean;
   submitPending = false;
@@ -57,10 +57,10 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   protected destroy = new Subject<boolean>();
 
-  private hasPropertyDeveloperCtrl: FormControl;
-  private hasRepresentativeCtrl: FormControl;
+  private hasPropertyDeveloperCtrl: UntypedFormControl;
+  private hasRepresentativeCtrl: UntypedFormControl;
 
-  constructor(protected fb: FormBuilder,
+  constructor(protected fb: UntypedFormBuilder,
               protected route: ActivatedRoute,
               protected applicationStore: ApplicationStore,
               protected applicationService: ApplicationService,
@@ -111,7 +111,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     this.destroy.unsubscribe();
   }
 
-  onSubmit(form: FormGroup) {
+  onSubmit(form: UntypedFormGroup) {
     if (form.valid) {
       this.submitPending = true;
       this.savePendingDistribution();
@@ -147,7 +147,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   /**
    * Create application type specific form
    */
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({});
   }
 
@@ -249,13 +249,13 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     this.router.navigate(['applications', application.id, 'summary']);
   }
 
-  private updateValidators(key: string, formStructure: { [key: string]: any; }, form: FormGroup): void {
+  private updateValidators(key: string, formStructure: { [key: string]: any; }, form: UntypedFormGroup): void {
     const subStructure = formStructure[key];
     if (subStructure) {
       const subGroup = form.get(key);
 
       // Handle nester form groups recursively
-      if (subGroup instanceof FormGroup) {
+      if (subGroup instanceof UntypedFormGroup) {
         Object.keys(subStructure).forEach(subKey => this.updateValidators(subKey, subStructure, subGroup));
       } else if (subGroup) {
         const validators = subStructure.length > 1 ? subStructure[1] : [];

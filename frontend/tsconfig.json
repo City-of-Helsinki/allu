@@ -4,30 +4,42 @@
     "baseUrl": "src",
     "downlevelIteration": true,
     "importHelpers": true,
-    "module": "esnext",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es5",
+    "target": "ES2022",
+    "module": "ES2022",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
     ],
     "lib": [
-      "es2017",
+      "ES2022",
       "dom"
     ],
     "paths": {
-      "@app/*": ["app/*"],
-      "@feature/*": ["app/feature/*"],
-      "@model/*": ["app/model/*"],
-      "@service/*": ["app/service/*"],
-      "@util/*": ["app/util/*"],
-      "@test/*": ["../test/*"]
-    }
+      "@app/*": [
+        "app/*"
+      ],
+      "@feature/*": [
+        "app/feature/*"
+      ],
+      "@model/*": [
+        "app/model/*"
+      ],
+      "@service/*": [
+        "app/service/*"
+      ],
+      "@util/*": [
+        "app/util/*"
+      ],
+      "@test/*": [
+        "../test/*"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "preserveWhitespaces": false,

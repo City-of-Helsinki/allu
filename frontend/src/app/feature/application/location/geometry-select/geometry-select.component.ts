@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {Application} from '@model/application/application';
-import {MatOption} from '@angular/material/core';
+import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
 import {debounceTime, takeUntil} from 'rxjs/internal/operators';
 import {GeometryCollection} from 'geojson';
 import {ArrayUtil} from '@util/array-util';
@@ -24,7 +24,7 @@ export class GeometrySelectComponent implements OnInit, OnDestroy {
   @Output() searchChange = new EventEmitter<string>(true);
   @Output() selectedChange = new EventEmitter<GeometryCollection>(true);
 
-  searchControl = new FormControl();
+  searchControl = new UntypedFormControl();
 
   private destroy = new Subject<boolean>();
 

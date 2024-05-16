@@ -1,11 +1,11 @@
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import {ConfigService} from '../config/config.service';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/internal/operators';
 
 @Injectable()
-export class CanActivateLogin implements CanActivate {
+export class CanActivateLogin  {
   constructor(private configService: ConfigService, private router: Router) {
   }
 

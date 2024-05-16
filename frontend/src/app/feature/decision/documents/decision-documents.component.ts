@@ -25,12 +25,12 @@ export class DecisionDocumentsComponent implements OnInit {
   constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
-    this.tabs$ = combineLatest(
+    this.tabs$ = combineLatest([
       this.store.pipe(select(fromApplication.getCurrentApplication)),
       this.store.pipe(select(fromSupervision.hasTask(SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskStatusType.APPROVED))),
       this.store.pipe(select(fromSupervision.hasTask(SupervisionTaskType.FINAL_SUPERVISION, SupervisionTaskStatusType.APPROVED))),
       this.store.pipe(select(fromDecision.getTermination))
-    ).pipe(
+    ]).pipe(
       map(([application, operational, workFinished, termination]) =>
         this.getAvailableTabs(application, operational, workFinished, termination))
     );

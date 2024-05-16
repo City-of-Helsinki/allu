@@ -42,10 +42,10 @@ export class ProjectState {
   }
 
   loadRelatedProjects(id: number): Observable<Array<Project>> {
-    return combineLatest(
+    return combineLatest([
       this.loadParentProjects(id),
       this.loadChildProjects(id)
-    ).pipe(map(projects => [].concat.apply([], projects))); // maps array[array, array] => array
+    ]).pipe(map(projects => [].concat.apply([], projects))); // maps array[array, array] => array
   }
 
   get project(): Project {
@@ -69,10 +69,10 @@ export class ProjectState {
   }
 
   get relatedProjects(): Observable<Array<Project>> {
-    return combineLatest(
+    return combineLatest([
       this.parentProjects,
       this.childProjects
-    ).pipe(map(projects => [].concat.apply([], projects)));
+    ]).pipe(map(projects => [].concat.apply([], projects)));
   }
 
   save(project: Project): Observable<Project> {

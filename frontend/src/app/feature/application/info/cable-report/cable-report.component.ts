@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {ApplicationTag} from '@model/application/tag/application-tag';
@@ -34,7 +34,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     this.isSurveyRequired = this.store.pipe(select(fromApplication.hasTag(ApplicationTagType.SURVEY_REQUIRED)));
   }
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({
       validityTime: [{value: undefined, disabled: true}],
       constructionWork: [{value: false, disabled: this.readonly}],

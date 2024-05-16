@@ -42,10 +42,10 @@ export class ConfigurationHelperService {
   }
 
   public getTimePeriod(startConfig: ConfigurationKey, endConfig: ConfigurationKey): Observable<TimePeriod> {
-    return combineLatest(
+    return combineLatest([
       this.getSingleConfiguration(startConfig),
       this.getSingleConfiguration(endConfig)
-    ).pipe(
+    ]).pipe(
       take(1),
       filter(([start, end]) => !!start && !!end),
       map(([start, end]) => new TimePeriod(TimeUtil.dateFromBackend(start.value), TimeUtil.dateFromBackend(end.value)))
@@ -74,10 +74,10 @@ export class ConfigurationHelperService {
 
   public getDecisionMaker(applicationType: ApplicationType): Observable<User> {
     const key = ConfigurationKey[applicationType + '_DECISION_MAKER'];
-    return combineLatest(
+    return combineLatest([
       this.userService.getByRole(RoleType.ROLE_DECISION),
       this.getSingleConfiguration(key)
-    ).pipe(
+    ]).pipe(
       map(([decisionMakers, config]) => ArrayUtil.first(decisionMakers, u => u.userName === config.value))
     );
   }

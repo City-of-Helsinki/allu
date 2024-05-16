@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder} from '@angular/forms';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {UntypedFormBuilder} from '@angular/forms';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
 import {Observable, Subject} from 'rxjs';
@@ -38,7 +38,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
   private destroy = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private dialog: MatDialog,
               private store: Store<fromRoot.State>,
               private currentUser: CurrentUser) {

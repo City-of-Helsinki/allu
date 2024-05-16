@@ -1,6 +1,5 @@
 import {InjectionToken} from '@angular/core';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
-import {State} from '@feature/application/reducers';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromLayers from '@feature/map/reducers/map-layer-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';

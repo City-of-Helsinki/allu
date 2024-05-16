@@ -8,7 +8,7 @@ import {AttachmentComponent} from './attachment.component';
 import {AttachmentsComponent} from './attachments.component';
 import {DefaultAttachmentsComponent} from './default-attachments.component';
 import {SelectionGroupModule} from '../../common/selection-group/selection-group.module';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
 
 @NgModule({
   imports: [

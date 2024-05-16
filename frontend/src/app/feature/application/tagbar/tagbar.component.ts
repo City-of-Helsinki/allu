@@ -33,10 +33,10 @@ export class TagBarComponent implements OnInit {
 
   ngOnInit() {
     this.tags = this.store.pipe(select(fromApplication.getTags));
-    this.availableTagTypes = combineLatest(
+    this.availableTagTypes = combineLatest([
       this.store.pipe(select(fromAuth.getAllowedTags)),
       this.tags
-    ).pipe(
+    ]).pipe(
       map(([allowed, current]) => allowed.filter(type => !current.some(c => type === c.type))),
       map(tags => tags.sort(ArrayUtil.naturalSortTranslated(['application.tag.type'], tag => tag)))
     );

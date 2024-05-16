@@ -17,7 +17,7 @@ const initialState: State = adapter.getInitialState({
 export function reducer(state: State = initialState, action: CityDistrictActions) {
   switch (action.type) {
     case CityDistrictActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, {
+      return adapter.setAll(action.payload, {
         ...state,
         selectedId: state.selectedId
       });

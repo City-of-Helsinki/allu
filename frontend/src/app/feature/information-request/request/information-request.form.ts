@@ -1,4 +1,4 @@
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {InformationRequest} from '@model/information-request/information-request';
 import {InformationRequestField} from '@model/information-request/information-request-field';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
@@ -8,9 +8,9 @@ export interface InformationRequestForm {
   [key: string]: string;
 }
 
-export function toFormGroup(fb: FormBuilder,
+export function toFormGroup(fb: UntypedFormBuilder,
                             fields: string[] = [],
-                            request: InformationRequest = new InformationRequest()): FormGroup {
+                            request: InformationRequest = new InformationRequest()): UntypedFormGroup {
   const fieldValues = request.fields.reduce((acc, field) => {
     acc[field.fieldKey] = field.description;
     return acc;

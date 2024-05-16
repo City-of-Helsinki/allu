@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 
 import {Contact} from '../../../model/customer/contact';
@@ -16,21 +16,21 @@ import {filter, map, switchMap} from 'rxjs/internal/operators';
   styleUrls: []
 })
 export class CustomerContactsComponent implements OnInit, OnDestroy {
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() onAddContact: Observable<Contact> = EMPTY;
 
-  contacts: FormArray;
+  contacts: UntypedFormArray;
 
   private contactSubscription: Subscription;
   private customerId: number;
 
   constructor(private route: ActivatedRoute,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private customerService: CustomerService,
               private notification: NotificationService) {}
 
   ngOnInit(): void {
-    this.contacts = <FormArray>this.parentForm.get('contacts');
+    this.contacts = <UntypedFormArray>this.parentForm.get('contacts');
     this.contactSubscription = this.onAddContact.subscribe(c => this.addContact(c));
     this.route.params.pipe(map(p => p['id'])).subscribe(p => this.customerId = p);
 
@@ -61,7 +61,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     this.contacts.push(this.createContact(contact));
   }
 
-  private createContact(contact: Contact): FormGroup {
+  private createContact(contact: Contact): UntypedFormGroup {
     return this.fb.group({
       id: [contact.id],
       customerId: [contact.customerId],

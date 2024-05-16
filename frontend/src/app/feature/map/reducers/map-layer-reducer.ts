@@ -22,7 +22,7 @@ export const initialState: State = adapter.getInitialState({
 export function reducer(state: State = initialState, action: MapLayerActions) {
   switch (action.type) {
     case MapLayerActionType.AddLayers: {
-      return adapter.addAll(action.payload, {
+      return adapter.setAll(action.payload, {
         ...state
       });
     }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Observable} from 'rxjs/internal/Observable';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -26,8 +26,8 @@ export class InvoicingPeriodEffects {
               private store: Store<fromRoot.State>,
               private invoicingPeriodService: InvoicingPeriodService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoicingPeriodActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.invoicingPeriodService.load(app.id).pipe(
@@ -37,10 +37,10 @@ export class InvoicingPeriodEffects {
         new OperationFailed()
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  change: Observable<Action> = this.actions.pipe(
+  
+  change: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Change>(InvoicingPeriodActionType.Change),
     withLatestFrom(
       this.store.pipe(select(fromApplication.getCurrentApplication)),
@@ -58,10 +58,10 @@ export class InvoicingPeriodEffects {
       new NotifyFailure(error),
       new OperationFailed()
     ]))
-  );
+  ));
 
-  @Effect()
-  remove: Observable<Action> = this.actions.pipe(
+  
+  remove: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(InvoicingPeriodActionType.Remove),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.invoicingPeriodService.remove(app.id).pipe(
@@ -71,11 +71,11 @@ export class InvoicingPeriodEffects {
         new OperationFailed()
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  onApplicationLoad: Observable<Action> = this.actions.pipe(
+  
+  onApplicationLoad: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.LoadSuccess>(ApplicationActionType.LoadSuccess),
     map(() => new Load())
-  );
+  ));
 }

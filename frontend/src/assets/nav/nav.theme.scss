@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
 
 @mixin nav-primary-theme($theme) {
   $primary: map-get($theme, primary);
@@ -6,32 +6,32 @@
 
   .labels-solid .mat-tab-label,
   .labels-solid .mat-tab-link {
-    background-color: mat-color($primary, 200);
-    color: mat-contrast($primary, 500);
+    background-color: mat.get-color-from-palette($primary, 200);
+    color: mat.get-contrast-color-from-palette($primary, 500);
   }
 
   .labels-solid .mat-tab-label.mat-tab-label-active,
   .labels-solid .mat-tab-link.mat-tab-label-active {
     background-color: white;
-    color: mat-color($primary, 500);
+    color: mat.get-color-from-palette($primary, 500);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   }
 
   nav {
 
     a {
-      color: mat-contrast($primary, 500);
+      color: mat.get-contrast-color-from-palette($primary, 500);
     }
 
     .active,
     a.active {
-      background: mat-color($primary, 900);
+      background: mat.get-color-from-palette($primary, 900);
     }
   }
 
   .nav-controls {
     a {
-      color: mat-contrast($primary, 500);
+      color: mat.get-contrast-color-from-palette($primary, 500);
     }
   }
 }
@@ -41,16 +41,16 @@
   $accent: map-get($theme, accent);
 
   nav.nav-bar-secondary {
-    background-color: mat-color($primary, 900);
-    color: mat-contrast($primary, 900);
+    background-color: mat.get-color-from-palette($primary, 900);
+    color: mat.get-contrast-color-from-palette($primary, 900);
 
     a {
-      color: mat-contrast($primary, 900);
+      color: mat.get-contrast-color-from-palette($primary, 900);
     }
 
     .active {
-      color: mat-contrast($primary, 500);
-      border-bottom: 2px solid mat-color($accent, A100);
+      color: mat.get-contrast-color-from-palette($primary, 500);
+      border-bottom: 2px solid mat.get-color-from-palette($accent, A100);
     }
   }
 }

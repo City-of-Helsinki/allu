@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
-import {MatOption} from '@angular/material/core';
+import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
 import {debounceTime, takeUntil} from 'rxjs/internal/operators';
 import {Project} from '../../../model/project/project';
 
@@ -16,7 +16,7 @@ export class ProjectSelectComponent implements OnInit, OnDestroy {
   @Output() searchChange = new EventEmitter<string>(true);
   @Output() selectedChange = new EventEmitter<number>(true);
 
-  searchControl = new FormControl();
+  searchControl = new UntypedFormControl();
 
   private destroy = new Subject<boolean>();
 

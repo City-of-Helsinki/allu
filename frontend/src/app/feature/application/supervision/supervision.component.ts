@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, Validators} from '@angular/forms';
 import {FormUtil} from '@util/form.util';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
@@ -21,7 +21,7 @@ import {DECISION_BLOCKING_TAGS} from '@model/application/tag/application-tag-typ
   styleUrls: ['./supervision.component.scss']
 })
 export class SupervisionComponent implements OnInit, OnDestroy {
-  supervisionTasks: FormArray;
+  supervisionTasks: UntypedFormArray;
   supervisors: Array<User> = [];
   application$: Observable<Application>;
   hasDisablingTags$: Observable<boolean>;
@@ -29,7 +29,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
 
   private supervisionTaskSubscription: Subscription;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private userService: UserService,
               private store: Store<fromRoot.State>) {
     this.supervisionTasks = this.fb.array([]);
@@ -54,7 +54,11 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   }
 
   addNew(task: SupervisionTask = new SupervisionTask()): void {
-    task.plannedFinishingTime = task.plannedFinishingTime || new Date();
+    task = {
+      ...task,
+      plannedFinishingTime: task?.plannedFinishingTime || new Date()
+    };
+
     const formGroup = this.fb.group({
       id: [undefined],
       applicationId: [undefined],

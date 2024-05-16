@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MatCardModule} from '@angular/material/card';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -66,79 +66,76 @@ import {ApplicationSearchEffects} from '@feature/application/effects/application
 import {OwnerNotificationModule} from '@feature/application/owner-notification/owner-notification.module';
 
 @NgModule({
-  imports: [
-    AlluCommonModule,
-    RouterModule.forChild(applicationRoutes),
-    StoreModule.forFeature('application', reducersToken),
-    EffectsModule.forFeature([
-      ApplicationEffects,
-      ApplicationTagEffects,
-      ExcavationAnnouncementEffects,
-      DateReportingEffects,
-      ApplicationReplacementHistoryEffects,
-      ApplicationSearchEffects
-    ]),
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatToolbarModule,
-    MatDialogModule,
-    MatSlideToggleModule,
-    MapModule,
-    ProgressBarModule,
-    LocationModule,
-    TypeModule,
-    SidebarModule,
-    CommentModule,
-    TagBarModule,
-    AttachmentModule,
-    HistoryModule,
-    DefaultTextModule,
-    DistributionModule,
-    InvoicingModule,
-    CustomerRegistryModule,
-    SupervisionModule,
-    InformationRequestModule,
-    DecisionModule,
-    PdfModule,
-    NotificationModule,
-    DateReportingModule,
-    ApplicationIdentifierSelectModule,
-    OwnerNotificationModule
-  ],
-  declarations: [
-    ApplicationComponent,
-    ApplicationInfoBaseComponent,
-    ApplicationInfoComponent,
-    EventComponent,
-    ShortTermRentalComponent,
-    CableReportComponent,
-    CableInfoComponent,
-    ExcavationAnnouncementComponent,
-    ApplicationActionsComponent,
-    LoadingComponent,
-    CustomerComponent,
-    ContactComponent,
-    LocationDetailsComponent,
-    DefaultTextModalComponent,
-    NoteComponent,
-    TrafficArrangementComponent,
-    PlacementContractComponent,
-    AreaRentalComponent,
-    PricingInfoComponent,
-    RecurringComponent,
-    ApplicationCommentsComponent,
-    ApplicationHistoryComponent
-  ],
-  providers: [
-    ApplicationResolve,
-    ApplicationDraftService,
-    ExcavationAnnouncementService,
-    DateReportingService,
-    reducersProvider
-  ],
-  entryComponents: [
-    DefaultTextModalComponent
-  ]
+    imports: [
+        AlluCommonModule,
+        RouterModule.forChild(applicationRoutes),
+        StoreModule.forFeature('application', reducersToken),
+        EffectsModule.forFeature([
+            ApplicationEffects,
+            ApplicationTagEffects,
+            ExcavationAnnouncementEffects,
+            DateReportingEffects,
+            ApplicationReplacementHistoryEffects,
+            ApplicationSearchEffects
+        ]),
+        FormsModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        MatToolbarModule,
+        MatDialogModule,
+        MatSlideToggleModule,
+        MapModule,
+        ProgressBarModule,
+        LocationModule,
+        TypeModule,
+        SidebarModule,
+        CommentModule,
+        TagBarModule,
+        AttachmentModule,
+        HistoryModule,
+        DefaultTextModule,
+        DistributionModule,
+        InvoicingModule,
+        CustomerRegistryModule,
+        SupervisionModule,
+        InformationRequestModule,
+        DecisionModule,
+        PdfModule,
+        NotificationModule,
+        DateReportingModule,
+        ApplicationIdentifierSelectModule,
+        OwnerNotificationModule
+    ],
+    declarations: [
+        ApplicationComponent,
+        ApplicationInfoBaseComponent,
+        ApplicationInfoComponent,
+        EventComponent,
+        ShortTermRentalComponent,
+        CableReportComponent,
+        CableInfoComponent,
+        ExcavationAnnouncementComponent,
+        ApplicationActionsComponent,
+        LoadingComponent,
+        CustomerComponent,
+        ContactComponent,
+        LocationDetailsComponent,
+        DefaultTextModalComponent,
+        NoteComponent,
+        TrafficArrangementComponent,
+        PlacementContractComponent,
+        AreaRentalComponent,
+        PricingInfoComponent,
+        RecurringComponent,
+        ApplicationCommentsComponent,
+        ApplicationHistoryComponent
+    ],
+    providers: [
+        ApplicationResolve,
+        ApplicationDraftService,
+        ExcavationAnnouncementService,
+        DateReportingService,
+        reducersProvider
+    ]
 })
 export class ApplicationModule {}

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {DefaultRecipient} from '../../../model/common/default-recipient';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {EnumUtil} from '../../../util/enum.util';
@@ -17,10 +17,10 @@ export class RecipientsByTypeComponent implements OnInit {
 
   applicationTypes = Object.keys(ApplicationType);
 
-  form: FormGroup;
-  recipientRows: FormArray;
+  form: UntypedFormGroup;
+  recipientRows: UntypedFormArray;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private recipientHub: DefaultRecipientHub,
               private notification: NotificationService) {
     this.recipientRows = fb.array([]);
@@ -40,11 +40,11 @@ export class RecipientsByTypeComponent implements OnInit {
     this.onItemCountChanged.emit(this.recipientRows.length);
   }
 
-  edit(control: FormControl): void {
+  edit(control: UntypedFormControl): void {
     control.enable();
   }
 
-  save(control: FormControl): void {
+  save(control: UntypedFormControl): void {
     const value = control.value;
     const recipient = new DefaultRecipient(value.id, value.email, value.applicationType);
     this.recipientHub.saveDefaultRecipient(recipient)
@@ -70,7 +70,7 @@ export class RecipientsByTypeComponent implements OnInit {
     this.recipientRows.disable();
   }
 
-  private createRecipient(recipient: DefaultRecipient = DefaultRecipient.ofType(this.type)): FormGroup {
+  private createRecipient(recipient: DefaultRecipient = DefaultRecipient.ofType(this.type)): UntypedFormGroup {
     return this.fb.group({
       id: [recipient.id],
       email: [recipient.email, [Validators.required, Validators.email]],

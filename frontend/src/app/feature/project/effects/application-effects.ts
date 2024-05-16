@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {from, Observable, of} from 'rxjs';
 import {
   Add,
@@ -34,8 +34,8 @@ export class ApplicationEffects {
               private applicationService: ApplicationService,
               private projectService: ProjectService) {}
 
-  @Effect()
-  loadApplications: Observable<Action> = this.actions.pipe(
+  
+  loadApplications: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApplicationActionTypes.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     filter(([payload, project]) => NumberUtil.isExisting(project)),
@@ -49,26 +49,26 @@ export class ApplicationEffects {
           ]))
         )
     )
-  );
+  ));
 
-  @Effect()
-  addApplication: Observable<Action> = this.actions.pipe(
+  
+  addApplication: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Add>(ApplicationActionTypes.Add),
     map(action => action.payload),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     switchMap(([payload, project]) => this.addProjectApplications(project.id, [payload]))
-  );
+  ));
 
-  @Effect()
-  addApplications: Observable<Action> = this.actions.pipe(
+  
+  addApplications: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<AddMultiple>(ApplicationActionTypes.AddMultiple),
     map(action => action.payload),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     switchMap(([payload, project]) => this.addProjectApplications(project.id, payload))
-  );
+  ));
 
-  @Effect()
-  removeApplication: Observable<Action> = this.actions.pipe(
+  
+  removeApplication: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(ApplicationActionTypes.Remove),
     map(action => action.payload),
     switchMap(payload =>
@@ -80,26 +80,26 @@ export class ApplicationEffects {
         catchError(error => of(new NotifyFailure(error)))
       )
     )
-  );
+  ));
 
-  @Effect()
-  projectUpdate: Observable<Action> = this.actions.pipe(
+  
+  projectUpdate: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType(ApplicationActionTypes.AddSuccess, ApplicationActionTypes.RemoveSuccess),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     map(([payload, project]) => new projectActions.Load(project.id))
-  );
+  ));
 
-  @Effect()
-  projectSaved: Observable<Action> = this.actions.pipe(
+  
+  projectSaved: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SaveSuccess>(ProjectActionTypes.SaveSuccess),
     withLatestFrom(this.store.select(fromProject.getPendingApplicationIds)),
     map(([payload, ids]) => ids),
     filter(applications => applications.length >= 0),
     map(ids => new AddPending(ids))
-  );
+  ));
 
-  @Effect()
-  savePending: Observable<Action> = this.actions.pipe(
+  
+  savePending: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<AddPending>(ApplicationActionTypes.AddPending),
     map(action => action.payload),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
@@ -115,7 +115,7 @@ export class ApplicationEffects {
       }),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
   private addProjectApplications(projectId: number, applicationIds: number[]): Observable<Action> {
     return this.projectService.addProjectApplications(projectId, applicationIds)

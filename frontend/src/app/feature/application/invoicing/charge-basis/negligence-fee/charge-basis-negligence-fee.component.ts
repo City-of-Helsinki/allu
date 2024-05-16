@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Subject, Observable} from 'rxjs';
 import {Some} from '../../../../../util/option';
 import {EnumUtil} from '../../../../../util/enum.util';
@@ -15,17 +15,17 @@ import {debounceTime, map, startWith, takeUntil} from 'rxjs/internal/operators';
 })
 export class ChargeBasisNegligenceFeeComponent implements OnInit, OnDestroy {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
 
   negligenceFeeTypes = EnumUtil.enumValues(NegligenceFeeType).map(t => findTranslation(['invoice.negligenceFeeType', t]));
-  textCtrl: FormControl;
+  textCtrl: UntypedFormControl;
   matchingTexts: Observable<Array<string>>;
   unitTypes = EnumUtil.enumValues(ChargeBasisUnit);
 
   private destroy = new Subject<boolean>();
 
   ngOnInit(): void {
-    this.textCtrl = <FormControl>this.form.get('text');
+    this.textCtrl = <UntypedFormControl>this.form.get('text');
 
     this.matchingTexts = this.textCtrl.valueChanges.pipe(
       startWith(undefined),

@@ -32,6 +32,6 @@ export function editOptions(featureGroup: L.FeatureGroup, enabled: boolean): L.C
   return {
     featureGroup,
     edit: enabled ? {selectedPathOptions: pathStyle.DEFAULT_EDIT} : false,
-    remove: enabled ? {} : false
+    remove: enabled
   };
 }

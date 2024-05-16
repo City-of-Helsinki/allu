@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @mixin progressbar-theme($theme, $success, $basic) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
@@ -5,8 +6,8 @@
 
   progressbar,
   progressbar .mat-toolbar {
-    background: mat-color($primary, 50);
-    color: mat-color($primary, 500);
+    background: mat.get-color-from-palette($primary, 50);
+    color: mat.get-color-from-palette($primary, 500);
   }
 
   progressbar .mat-progress-bar-background {
@@ -14,11 +15,11 @@
   }
 
   .pending .mat-progress-bar-fill::after {
-    background-color: mat-color($accent, 500);
+    background-color: mat.get-color-from-palette($accent, 500);
   }
 
   .pending .mat-progress-bar-buffer {
-    background: mat-color($accent, 500, 0.5);
+    background: mat.get-color-from-palette($accent, 500, 0.5);
   }
 
   .decision .mat-progress-bar-fill::after {
@@ -30,11 +31,11 @@
   }
 
   .rejected .mat-progress-bar-fill::after {
-    background-color: mat-color($warn, 500);
+    background-color: mat.get-color-from-palette($warn, 500);
   }
 
   .cancelled .mat-progress-bar-fill::after {
-    background-color: mat-color($warn, 500, 0.5);
+    background-color: mat.get-color-from-palette($warn, 500, 0.5);
   }
 
   .history .mat-progress-bar-fill::after {

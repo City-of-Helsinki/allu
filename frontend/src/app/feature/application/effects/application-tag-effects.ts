@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as fromApplication from '../../application/reducers';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import {ApplicationService} from '../../../service/application/application.service';
 import {Observable, of} from 'rxjs/index';
@@ -28,18 +28,18 @@ export class ApplicationTagEffects {
               private applicationService: ApplicationService) {
   }
 
-  @Effect()
-  loadTags: Observable<Action> = this.actions.pipe(
+  
+  loadTags: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApplicationTagActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, current]) => this.applicationService.getTags(current.id).pipe(
       map(tags => new LoadSuccess(tags)),
       catchError(error => of(new LoadFailed(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  addTag: Observable<Action> = this.actions.pipe(
+  
+  addTag: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Add>(ApplicationTagActionType.Add),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, application]) => {
@@ -55,10 +55,10 @@ export class ApplicationTagEffects {
         return of(new AddSuccess(action.payload));
       }
     })
-  );
+  ));
 
-  @Effect()
-  removeTag: Observable<Action> = this.actions.pipe(
+  
+  removeTag: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(ApplicationTagActionType.Remove),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, application]) => {
@@ -74,10 +74,10 @@ export class ApplicationTagEffects {
         return of(new RemoveSuccess(action.payload));
       }
     })
-  );
+  ));
 
-  @Effect()
-  saveTags: Observable<Action> = this.actions.pipe(
+  
+  saveTags: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Save>(ApplicationTagActionType.Save),
     withLatestFrom(
       this.store.select(fromApplication.getTags),
@@ -88,6 +88,6 @@ export class ApplicationTagEffects {
       map(saved => new SaveSuccess(saved)),
       catchError(error => of(new SaveFailed(error)))
     ))
-  );
+  ));
 
 }

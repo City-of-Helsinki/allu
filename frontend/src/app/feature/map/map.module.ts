@@ -22,41 +22,38 @@ import {ApplicationEffects} from '@feature/map/effects/application-effects';
 import {Projection} from '@feature/map/projection';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule,
-    AlluCommonModule,
-    StoreModule.forFeature('map', reducersToken),
-    EffectsModule.forFeature([
-      MapLayerEffects,
-      AddressSearchEffects,
-      ApplicationEffects
-    ]),
-    ReactiveFormsModule,
-    MatTreeModule
-  ],
-  declarations: [
-    MapComponent,
-    MapPopupComponent,
-    MapLayerSelectComponent,
-    SimpleMapComponent
-  ],
-  exports: [
-    MapComponent,
-    MapLayerSelectComponent,
-    SimpleMapComponent
-  ],
-  providers: [
-    MapUtil,
-    MapLayerService,
-    MapPopupService,
-    MapController,
-    MapDataService,
-    reducersProvider,
-    Projection
-  ],
-  entryComponents: [
-    MapPopupComponent
-  ]
+    imports: [
+        CommonModule,
+        RouterModule,
+        AlluCommonModule,
+        StoreModule.forFeature('map', reducersToken),
+        EffectsModule.forFeature([
+            MapLayerEffects,
+            AddressSearchEffects,
+            ApplicationEffects
+        ]),
+        ReactiveFormsModule,
+        MatTreeModule
+    ],
+    declarations: [
+        MapComponent,
+        MapPopupComponent,
+        MapLayerSelectComponent,
+        SimpleMapComponent
+    ],
+    exports: [
+        MapComponent,
+        MapLayerSelectComponent,
+        SimpleMapComponent
+    ],
+    providers: [
+        MapUtil,
+        MapLayerService,
+        MapPopupService,
+        MapController,
+        MapDataService,
+        reducersProvider,
+        Projection
+    ]
 })
 export class MapModule {}

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {LocationService} from '@service/location.service';
@@ -20,17 +20,17 @@ export class AddressSearchEffects {
               private store: Store<fromRoot.State>,
               private locationService: LocationService) {}
 
-  @Effect()
-  search: Observable<Action> = this.actions.pipe(
+  
+  search: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Search>(AddressSearchActionType.Search),
     switchMap(action => this.locationService.search(action.payload).pipe(
       map(addresses => new SearchSuccess(addresses)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  fetchCoordinates: Observable<Action> = this.actions.pipe(
+  
+  fetchCoordinates: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<FetchCoordinates>(AddressSearchActionType.FetchCoordinates),
     filter(action => !!action.payload),
     switchMap(action => this.locationService.geocode(action.payload).pipe(
@@ -39,5 +39,5 @@ export class AddressSearchEffects {
         .orElseGet(() => new FetchCoordinatesSuccess(undefined))),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 }

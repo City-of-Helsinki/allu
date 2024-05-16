@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ApplicationType, getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
 import {ApplicationStore} from '@service/application/application-store';
 import {ArrayUtil} from '@util/array-util';
@@ -42,18 +42,18 @@ export class TypeComponent implements OnInit, OnDestroy {
   availableKinds: string[] = [];
   availableKindsWithSpecifiers: KindsWithSpecifiers = {};
   pendingKind$: Observable<string>;
-  form: FormGroup;
+  form: UntypedFormGroup;
   today: Date = new Date();
 
-  private typeCtrl: FormControl;
-  private kindsCtrl: FormControl;
-  private specifiersCtrl: FormControl;
-  private draftCtrl: FormControl;
+  private typeCtrl: UntypedFormControl;
+  private kindsCtrl: UntypedFormControl;
+  private specifiersCtrl: UntypedFormControl;
+  private draftCtrl: UntypedFormControl;
   private destroy = new Subject<boolean>();
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): any {

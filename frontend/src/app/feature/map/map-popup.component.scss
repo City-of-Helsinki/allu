@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../assets/colors';
 
 :host {
@@ -7,8 +8,8 @@
 h1.popup-header {
   font-size: 15px;
   line-height: 20px;
-  color: mat-contrast($allu-primary, 500);
-  background: mat-color($allu-primary, 500);
+  color: mat.get-contrast-color-from-palette($allu-primary, 500);
+  background: mat.get-color-from-palette($allu-primary, 500);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   padding: 5px 16px;

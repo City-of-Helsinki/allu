@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../assets/colors';
 
 .content-row,
@@ -6,7 +7,7 @@
 }
 
 .row-highlight {
-  background-color: mat-color($allu-primary, 50);
+  background-color: mat.get-color-from-palette($allu-primary, 50);
 }
 
 .details-row {
@@ -15,7 +16,7 @@
 
 .status-text {
   font-weight: bold;
-  color: mat-color($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
 }
 
 .mat-cell:first-of-type .details-cell {
@@ -37,7 +38,7 @@
 .details-cell.details-cell-text {
   overflow: auto;
   text-overflow: ellipsis;
-  color: mat-color($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
 }
 
 .mat-chip.slim-chip {

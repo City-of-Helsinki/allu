@@ -3,13 +3,19 @@
   "compilerOptions": {
     "outDir": "../out-tsc/app",
     "baseUrl": "./",
-    "types": []
+    "types": [],
+    "typeRoots": [
+      "../src/app/typings",
+      "../node_modules/@types",
+    ],
   },
   "angularCompilerOptions": {
     "preserveWhitespaces": false
   },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
+  "files": [
+    "main.ts"
+  ],
+  "include": [
+    "../src/**/*.d.ts"
   ]
 }

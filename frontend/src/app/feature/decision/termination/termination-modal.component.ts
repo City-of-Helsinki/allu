@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {CommentType} from '@model/application/comment/comment-type';
 import {Observable} from 'rxjs';
 import {User} from '@model/user/user';
@@ -26,7 +26,7 @@ export interface TerminationData {
   templateUrl: './termination-modal.component.html'
 })
 export class TerminationModalComponent implements OnInit {
-  terminationForm: FormGroup;
+  terminationForm: UntypedFormGroup;
 
   existingTermination: TerminationInfo;
 
@@ -35,7 +35,7 @@ export class TerminationModalComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: TerminationData,
               private dialogRef: MatDialogRef<TerminationModalComponent>,
               private userService: UserService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private configHelper: ConfigurationHelperService
   ) {}
 

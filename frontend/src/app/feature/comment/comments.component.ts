@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {Store} from '@ngrx/store';
 import {Remove, Save, ToggleDirection} from './actions/comment-actions';
 import {CommentListComponent} from './comment-list.component';
@@ -24,7 +24,7 @@ export class CommentsComponent implements OnInit {
   loading$: Observable<boolean>;
   direction$: Observable<SortDirection>;
 
-  @ViewChild(CommentListComponent, { static: false }) commentListComponent: CommentListComponent;
+  @ViewChild(CommentListComponent) commentListComponent: CommentListComponent;
 
   constructor(private dialog: MatDialog,
               private store: Store<fromRoot.State>) {}

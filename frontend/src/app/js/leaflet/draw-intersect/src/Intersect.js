@@ -1,5 +1,5 @@
 const intersect = require('@turf/intersect').default;
-const pip = require('@mapbox/leaflet-pip');
+const pip = require('../../leaflet-pip/leaflet-pip');
 
 function Intersect (map) {
   this._map = map;

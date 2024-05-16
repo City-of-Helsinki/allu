@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, FormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Configuration} from '@model/config/configuration';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -22,12 +22,12 @@ export class ConfigurationCalendarDateValueComponent implements OnInit, OnDestro
 
   @Input() configuration: Configuration;
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private store: Store<fromRoot.State>
   ) {}
 

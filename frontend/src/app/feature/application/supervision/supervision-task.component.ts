@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {SupervisionTaskForm} from './supervision-task-form';
 import {ApplicationStore} from '@service/application/application-store';
 import {User} from '@model/user/user';
@@ -17,7 +17,7 @@ import {
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {filter, map, take} from 'rxjs/internal/operators';
 import {Store, select} from '@ngrx/store';
@@ -59,7 +59,7 @@ import * as fromSupervisionTask from './reducers';
 })
 export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Input() application: Application;
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Output() onRemove = new EventEmitter<void>();
 
   taskTypes: string[] = [];
@@ -416,7 +416,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private getLocations(): Location[] {
     return !ArrayUtil.empty(this.form.value.supervisedLocations)
       ? this.form.value.supervisedLocations
-      : this.application.locations;
+      : this.application?.locations;
   }
 
   private getLocation(locations: Location[], locationId: number): Location {

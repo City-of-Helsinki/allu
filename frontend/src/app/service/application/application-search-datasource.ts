@@ -1,5 +1,5 @@
 import {combineLatest, Observable} from 'rxjs';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {Application} from '@model/application/application';
 import {filter, takeUntil} from 'rxjs/operators';
@@ -51,11 +51,11 @@ export class ApplicationSearchDatasource extends StoreDatasource<Application> {
   }
 
   protected setupSearch(): void {
-    combineLatest(
+    combineLatest([
       this.searchParameters,
       this.store.pipe(select(this.sortSelector)),
       this.store.pipe(select(this.pageRequestSelector)),
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy)
     ).subscribe(([search, sort, paging]) => {
       this.store.dispatch(new Search(this.actionTargetType, search, sort, paging));

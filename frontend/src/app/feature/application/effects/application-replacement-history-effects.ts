@@ -1,5 +1,5 @@
 import {Action, select, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '../reducers';
 import {Observable, of} from 'rxjs/index';
 import {catchError, map, switchMap} from 'rxjs/internal/operators';
@@ -20,19 +20,19 @@ export class ApplicationReplacementHistoryEffects {
               private store: Store<fromApplication.State>,
               private applicationService: ApplicationService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationReplacementHistoryActions.Load>(ApplicationReplacementHistoryActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.applicationService.getReplacementHistory(app.id).pipe(
       map(history => new ApplicationReplacementHistoryActions.LoadSuccess(history)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  onApplicationLoad: Observable<Action> = this.actions.pipe(
+  
+  onApplicationLoad: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.LoadSuccess>(ApplicationActionType.LoadSuccess),
     map(() => new ApplicationReplacementHistoryActions.Load())
-  );
+  ));
 }

@@ -1,9 +1,10 @@
+@use '@angular/material' as mat;
 @mixin invoice-theme($theme) {
   $primary: map-get($theme, primary);
 
   invoice {
     li.invoice-row-container:nth-of-type(odd) {
-      background: mat-color($primary, 50);
+      background: mat.get-color-from-palette($primary, 50);
     }
 
     li.invoice-row-container:nth-of-type(even) {

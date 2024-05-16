@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Contact} from '@model/customer/contact';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
@@ -9,7 +9,7 @@ import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUn
 import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CONTACT_MODAL_CONFIG, ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
 import {NumberUtil} from '@util/number.util';
 import {isEqualWithSkip} from '@util/object.util';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
@@ -26,7 +26,7 @@ import {findTranslation} from '@util/translations';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactAcceptanceComponent implements OnInit, OnDestroy {
-  @Input() formArray: FormArray;
+  @Input() formArray: UntypedFormArray;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() hideExisting = false;
@@ -38,15 +38,15 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   showCreateNew$: Observable<boolean>;
 
   matchingContacts$: Observable<Contact[]>;
-  form: FormGroup;
-  searchForm: FormGroup;
+  form: UntypedFormGroup;
+  searchForm: UntypedFormGroup;
 
   private _newContact: Contact;
   private destroy: Subject<boolean> = new Subject<boolean>();
   private search$: BehaviorSubject<string> = new BehaviorSubject('');
   private config: ContactAcceptanceConfig;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private store: Store<fromRoot.State>,
               protected dialog: MatDialog) {
     this.searchForm = this.fb.group({
@@ -87,10 +87,10 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       debounceTime(300)
     ).subscribe(search => this.store.dispatch(new SearchForCurrentCustomer(this.config.actionTargetType, search)));
 
-    this.showCreateNew$ = combineLatest(
+    this.showCreateNew$ = combineLatest([
       this.referenceContact$,
       this.store.pipe(select(this.config.getCustomer))
-    ).pipe(
+    ]).pipe(
       map(([ref, customer]) => !isEqualWithSkip(ref, this._newContact, ['id', 'customerId']))
     );
 

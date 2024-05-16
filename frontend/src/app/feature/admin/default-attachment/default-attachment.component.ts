@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as filesaver from 'file-saver';
@@ -22,7 +22,7 @@ import {FixedLocationArea} from '@model/common/fixed-location-area';
 })
 export class DefaultAttachmentComponent implements OnInit {
 
-  attachmentForm: FormGroup;
+  attachmentForm: UntypedFormGroup;
   districts: Observable<Array<CityDistrict>>;
   applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
@@ -32,7 +32,7 @@ export class DefaultAttachmentComponent implements OnInit {
 
   file: Blob;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private route: ActivatedRoute,
               private router: Router,
               private store: Store<fromRoot.State>,

@@ -5,7 +5,7 @@ import {Observable, Subject} from 'rxjs';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {NotificationService} from '../notification/notification.service';
 import {User} from '../../model/user/user';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {STORED_FILTER_MODAL_CONFIG, StoredFilterModalComponent} from './stored-filter-modal.component';
 import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
 import {catchError, filter, switchMap, takeUntil} from 'rxjs/internal/operators';

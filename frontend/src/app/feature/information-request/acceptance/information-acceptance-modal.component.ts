@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import {select, Store} from '@ngrx/store';
@@ -49,7 +49,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   readonly: boolean;
   oldInfo: Application;
   newInfo: Application;
-  form: FormGroup;
+  form: UntypedFormGroup;
   updatedFields: InformationRequestFieldKey[];
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
   hasLocationChanges: boolean;
@@ -61,7 +61,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private resultService: InformationRequestResultService,
               private applicationStore: ApplicationStore,
               private location: Location,

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
@@ -20,8 +20,8 @@ export class CustomerSearchEffects {
   constructor(private actions: Actions,
               private customerService: CustomerService) {}
 
-  @Effect()
-  customerSearch: Observable<Action> = this.actions.pipe(
+  
+  customerSearch: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Search>(CustomerSearchActionType.Search),
     switchMap(action =>
       this.customerService.pagedSearch(action.payload.query, action.payload.sort, action.payload.pageRequest).pipe(
@@ -29,22 +29,22 @@ export class CustomerSearchEffects {
         catchError(error => of(new SearchFailed(action.targetType, error)))
       )
     )
-  );
+  ));
 
-  @Effect()
-  searchCustomerByType: Observable<Action> = this.actions.pipe(
+  
+  searchCustomerByType: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SearchByType>(CustomerSearchActionType.SearchByType),
     concatMap(action => this.searchByType(action))
-  );
+  ));
 
-  @Effect()
-  findById: Observable<Action> = this.actions.pipe(
+  
+  findById: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<FindById>(CustomerSearchActionType.FindById),
     switchMap(action => this.customerService.findCustomerById(action.payload).pipe(
       map(customer => new FindByIdSuccess(action.targetType, customer)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
   private searchByType(action: SearchByType): Observable<Action> {
     return this.customerService.pagedSearchByType(

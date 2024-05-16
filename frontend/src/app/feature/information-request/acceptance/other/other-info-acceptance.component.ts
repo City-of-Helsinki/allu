@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Application} from '@model/application/application';
-import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
+import {InfoAcceptanceDirective} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import {FieldKeyMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {ApplicationExtension} from '@model/application/type/application-extension';
@@ -23,7 +23,7 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> implements OnInit {
+export class OtherInfoAcceptanceComponent extends InfoAcceptanceDirective<any> implements OnInit {
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
   @Input() fieldKeys: string[];
@@ -31,7 +31,7 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
 
   @Output() otherInfoChanges = new EventEmitter<FieldValues>();
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: UntypedFormBuilder) {
     super(fb);
   }
 

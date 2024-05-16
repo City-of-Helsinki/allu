@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, Validators} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {ReportedDateType} from '@feature/application/date-reporting/date-reporting-modal.component';
@@ -43,7 +43,7 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: AreaRentalSupervisionApprovalModalData,
-    fb: FormBuilder,
+    fb: UntypedFormBuilder,
     dialogRef: MatDialogRef<SupervisionApprovalModalComponent>) {
     super(data, fb, dialogRef);
     this.minDate = data.minDate;

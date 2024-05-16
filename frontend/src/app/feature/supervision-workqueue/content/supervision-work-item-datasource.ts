@@ -1,6 +1,6 @@
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {combineLatest} from 'rxjs';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
@@ -39,11 +39,11 @@ export class SupervisionWorkItemDatasource extends StoreDatasource<SupervisionWo
   }
 
   protected setupSearch(): void {
-    combineLatest(
+    combineLatest([
       this.store.pipe(select(fromSupervisionWorkQueue.getParameters), filter(search => !!search)),
       this.store.pipe(select(this.sortSelector)),
       this.store.pipe(select(this.pageRequestSelector))
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy)
     ).subscribe(([query, sort, pageRequest]) =>
       this.store.dispatch(new Search(ActionTargetType.SupervisionTaskWorkQueue, query, sort, pageRequest)));

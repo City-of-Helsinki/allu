@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import 'variables';
 @import 'colors';
 @import 'layout';
@@ -35,10 +36,10 @@
 @import '../app/feature/application/invoicing/charge-basis/charge-basis.theme';
 @import '../app/feature/application/invoicing/invoice/invoice.theme';
 @import '../app/js/leaflet/draw-tools/src/L.Toolbar.css';
-@import "~ngx-toastr/toastr.css";
+@import 'ngx-toastr/toastr';
 
 // Theme components
-@include angular-material-theme($allu-theme);
+@include mat.all-legacy-component-themes($allu-theme);
 @include allu-common-theme($allu-theme, $black-87-opacity);
 @include allu-icons-theme($allu-theme, $black-50-opacity, $allu-success);
 @include allu-list-theme($allu-theme);
@@ -116,11 +117,11 @@ li {
 }
 
 a {
-  color: mat-color($allu-primary, 400);
+  color: mat.get-color-from-palette($allu-primary, 400);
 }
 
 table {
-  background-color: mat-contrast($allu-primary, 500);
+  background-color: mat.get-contrast-color-from-palette($allu-primary, 500);
 }
 
 thead.mat-calendar-table-header {
@@ -128,7 +129,7 @@ thead.mat-calendar-table-header {
 }
 
 .row-highlight:hover {
-  background-color: mat-color($allu-primary, 50) !important;
+  background-color: mat.get-color-from-palette($allu-primary, 50) !important;
 }
 
 .main-content {
@@ -254,22 +255,22 @@ input:-webkit-autofill:active {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     margin-right: 0;
-    border-right: 1px solid mat-color($allu-primary, 600);
+    border-right: 1px solid mat.get-color-from-palette($allu-primary, 600);
   }
 
   [type="button"]:last-child {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     margin-left: 0;
-    border-left: 1px solid mat-color($allu-primary, 600);
+    border-left: 1px solid mat.get-color-from-palette($allu-primary, 600);
   }
 
   [type="button"]:not(:first-child):not(:last-child) {
     border-radius: 0;
     margin-left: 0;
     margin-right: 0;
-    border-left: 1px solid mat-color($allu-primary, 600);
-    border-right: 1px solid mat-color($allu-primary, 600);
+    border-left: 1px solid mat.get-color-from-palette($allu-primary, 600);
+    border-right: 1px solid mat.get-color-from-palette($allu-primary, 600);
   }
 }
 
@@ -292,8 +293,8 @@ ul.card-list {
   font-family: Roboto,"Helvetica Neue",sans-serif;
   padding: 0 16px;
   min-height: 64px;
-  background-color: mat-contrast($allu-primary, 500);
-  color: mat-color($allu-primary, 500);
+  background-color: mat.get-contrast-color-from-palette($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
   margin-bottom: 20px;
 
   .item-bar-content {
@@ -327,14 +328,14 @@ ul.card-list {
 
 .mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-accent {
   @extend .allu-chip;
-  color: mat-contrast($allu-accent, 800);
+  color: mat.get-contrast-color-from-palette($allu-accent, 800);
   font-weight: bold;
   letter-spacing: 1.5px;
 }
 
 .mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary {
   @extend .allu-chip;
-  color: mat-contrast($allu-primary, 500);
+  color: mat.get-contrast-color-from-palette($allu-primary, 500);
 }
 
 .mat-chip:not(.mat-basic-chip).slim-chip {
@@ -342,9 +343,9 @@ ul.card-list {
 }
 
 .mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary.chip-outline {
-  color: mat-color($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
   background-color: transparent;
-  border: 2px solid mat-color($allu-primary, 500);
+  border: 2px solid mat.get-color-from-palette($allu-primary, 500);
 }
 
 .input-full-width {
@@ -357,7 +358,7 @@ ul.card-list {
   left: -2px;
   text-align: left;
   transform-origin: left top;
-  color: mat-color($allu-primary, 300);
+  color: mat.get-color-from-palette($allu-primary, 300);
   transform: scale(0.75);
   flex-grow: 1;
 }
@@ -376,7 +377,7 @@ input.real-file-input {
 
 .file-drop-zone {
   display: inline-block;
-  border: 2px dashed mat-color($allu-primary, 200);
+  border: 2px dashed mat.get-color-from-palette($allu-primary, 200);
   border-radius: 6px;
   width: 100%;
   height: 100px;
@@ -386,15 +387,15 @@ input.real-file-input {
 }
 
 .file-over-drop-zone {
-  border-color: mat-color($allu-primary, 500);
+  border-color: mat.get-color-from-palette($allu-primary, 500);
 }
 
 .file-download-card {
   display: inline-flex;
-  border: 2px solid mat-color($allu-primary, 200);
+  border: 2px solid mat.get-color-from-palette($allu-primary, 200);
   border-radius: 6px;
   padding: 10px 30px;
-  color: mat-color($allu-primary, 500);
+  color: mat.get-color-from-palette($allu-primary, 500);
 
   span {
     vertical-align: middle;

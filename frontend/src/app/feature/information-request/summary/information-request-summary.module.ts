@@ -11,7 +11,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import {InformationRequestStatusComponent} from '@feature/information-request/summary/information-request-status.component';
 import {InformationRequestSummaryFieldsComponent} from '@feature/information-request/summary/information-request-summary-fields.component';
-import {MatTableModule} from '@angular/material';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 
 @NgModule({
   imports: [

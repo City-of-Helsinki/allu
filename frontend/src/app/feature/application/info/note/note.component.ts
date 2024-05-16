@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 
 import {ComplexValidator} from '@util/complex-validator';
@@ -16,7 +16,7 @@ import {Application} from '@model/application/application';
 })
 export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
-  private validityTimesControl: FormControl;
+  private validityTimesControl: UntypedFormControl;
   private recurringEndYearSubscription: Subscription;
 
   ngOnDestroy(): void {
@@ -26,12 +26,12 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
   protected initForm() {
     super.initForm();
 
-    this.validityTimesControl = <FormControl>this.applicationForm.controls['validityTimes'];
+    this.validityTimesControl = <UntypedFormControl>this.applicationForm.controls['validityTimes'];
     this.recurringEndYearSubscription = this.applicationForm.controls['recurringEndYear'].valueChanges
         .subscribe(val => this.onRecurringEndYearChanged(val));
   }
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],

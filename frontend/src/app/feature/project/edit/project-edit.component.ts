@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ProjectForm} from './project.form';
 import * as fromRoot from '../../allu/reducers';
 import * as fromProject from '../reducers';
@@ -12,7 +12,7 @@ import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
 import {Customer} from '@model/customer/customer';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {MatOption} from '@angular/material/core';
+import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
 import {ComplexValidator} from '@util/complex-validator';
 import {Contact} from '@model/customer/contact';
 import {Application} from '@model/application/application';
@@ -32,21 +32,21 @@ import {Sort} from '@model/common/sort';
   styleUrls: ['./project-edit.component.scss']
 })
 export class ProjectEditComponent {
-  form: FormGroup;
+  form: UntypedFormGroup;
   customerTypes = EnumUtil.enumValues(CustomerType);
 
   matchingCustomers$: Observable<Customer[]>;
   matchingContacts$: Observable<Contact[]>;
   applications$: Observable<Application[]>;
 
-  private customerTypeCtrl: FormControl;
-  private customerCtrl: FormControl;
-  private contactCtrl: FormControl;
+  private customerTypeCtrl: UntypedFormControl;
+  private customerCtrl: UntypedFormControl;
+  private contactCtrl: UntypedFormControl;
 
   private destroy = new Subject<boolean>();
 
   constructor(private store: Store<fromRoot.State>,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private projectService: ProjectService) {
     this.initForm();
 
@@ -125,10 +125,10 @@ export class ProjectEditComponent {
   private initCustomerSearch(): void {
     this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomerList);
 
-    combineLatest(
+    combineLatest([
       this.customerTypeCtrl.valueChanges,
       this.customerCtrl.valueChanges.pipe(filter(customer => typeof customer === 'string'))
-    ).pipe(
+    ]).pipe(
       takeUntil(this.destroy),
       debounceTime(300)
     ).subscribe(([type, name]) => {

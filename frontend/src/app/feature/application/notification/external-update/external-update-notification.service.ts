@@ -14,9 +14,10 @@ export class ExternalUpdateNotificationService {
   constructor(private store: Store<fromApplication.State>) {}
 
   public getNotificationType(): Observable<ExternalUpdateNotificationType> {
-    return combineLatest(
+    return combineLatest([
       this.pendingClientData(),
       this.informationRequest()
+    ]
     ).pipe(
       map((types: ExternalUpdateNotificationType[]) => this.pickType(types))
     );

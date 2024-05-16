@@ -11,7 +11,7 @@ import {
   QueryList,
   ViewEncapsulation
 } from '@angular/core';
-import {MatError} from '@angular/material/form-field';
+import {MatLegacyError as MatError} from '@angular/material/legacy-form-field';
 
 @Directive({
   selector: 'input[inputBoxInput], select[inputBoxInput], mat-select[inputBoxInput], button[inputBoxInput], textarea[inputBoxInput]'
@@ -47,7 +47,7 @@ export class InputBoxInputDirective {
 export class InputBoxComponent implements AfterContentInit {
   @Input() placeholder: string;
 
-  @ContentChild(InputBoxInputDirective, {static: false}) _inputChild: InputBoxInputDirective;
+  @ContentChild(InputBoxInputDirective) _inputChild: InputBoxInputDirective;
 
   @ContentChildren(MatError) errors: QueryList<MatError>;
 

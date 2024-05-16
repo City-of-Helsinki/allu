@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/index';
 import * as fromApplication from '@feature/application/reducers';
@@ -7,7 +7,7 @@ import {map, tap} from 'rxjs/internal/operators';
 import {ApplicationType} from '@model/application/type/application-type';
 
 @Injectable()
-export class ContractGuard implements CanActivate {
+export class ContractGuard  {
   constructor(private store: Store<fromApplication.State>,
               private router: Router) {}
 

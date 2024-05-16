@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {AbstractControlWarn} from '../../../util/complex-validator';
 
 const validatedAlways = [
@@ -12,7 +12,7 @@ const validatedAlways = [
   styleUrls: ['./field-error.component.scss']
 })
 export class FieldErrorComponent implements OnInit {
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() field: string;
   @Input() hasError: string;
 

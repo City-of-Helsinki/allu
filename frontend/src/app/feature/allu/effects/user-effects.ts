@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromAuth from '@feature/auth/reducers';
 import {Observable, of} from 'rxjs';
@@ -12,8 +12,8 @@ import {Load, LoadSuccess, UserActionType} from '@feature/allu/actions/user-acti
 export class UserEffects {
   constructor(private actions: Actions, private store: Store<fromAuth.State>, private userService: UserService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(UserActionType.Load),
     withLatestFrom(this.store.pipe(select(fromAuth.getLoggedIn))),
     filter(([action, loggedIn]) => loggedIn),
@@ -21,5 +21,5 @@ export class UserEffects {
       map(users => new LoadSuccess(users)),
       catchError(error => of(new NotifyFailure(error))))
     )
-  );
+  ));
 }

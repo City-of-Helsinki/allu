@@ -31,11 +31,11 @@ export class ApplicationListComponent implements OnInit {
               private store: Store<fromRoot.State>) {}
 
   ngOnInit() {
-    this.applications$ = combineLatest(this.show, this.store.pipe(select(fromMap.getApplications))).pipe(
+    this.applications$ = combineLatest([this.show, this.store.pipe(select(fromMap.getApplications))]).pipe(
       map(([show, applications]) => applications.length > show ? applications.slice(0, show) : applications)
     );
 
-    this.remaining$ = combineLatest(this.show, this.store.pipe(select(fromMap.getApplications))).pipe(
+    this.remaining$ = combineLatest([this.show, this.store.pipe(select(fromMap.getApplications))]).pipe(
       map(([show, applications]) => applications.length - show)
     );
   }

@@ -4,7 +4,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as ChargeBasisAction from '@feature/application/invoicing/actions/charge-basis-actions';
 import {ChargeBasisActionType} from '@feature/application/invoicing/actions/charge-basis-actions';
 import {Action, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs/index';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {catchError, map, switchMap} from 'rxjs/internal/operators';
@@ -18,19 +18,19 @@ export class InvoiceEffects {
               private store: Store<fromRoot.State>,
               private invoiceService: InvoiceService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoiceActionType.Load),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.invoiceService.getInvoices(app.id).pipe(
       map(invoices => new LoadSuccess(invoices)),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
-  @Effect()
-  onChargeBasisLoaded: Observable<Action> = this.actions.pipe(
+  
+  onChargeBasisLoaded: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ChargeBasisAction.LoadSuccess>(ChargeBasisActionType.LoadSuccess),
     map(() => new Load())
-  );
+  ));
 }

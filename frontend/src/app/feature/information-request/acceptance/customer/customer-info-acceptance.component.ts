@@ -4,8 +4,8 @@ import {PostalAddress} from '@model/common/postal-address';
 import {findTranslation} from '@util/translations';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {Some} from '@util/option';
-import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
-import {FormBuilder, Validators} from '@angular/forms';
+import {InfoAcceptanceDirective} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
@@ -21,11 +21,11 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Customer> implements OnInit {
+export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Customer> implements OnInit {
   _oldCustomer: Customer;
   _newCustomer: Customer;
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: UntypedFormBuilder) {
     super(fb);
   }
 

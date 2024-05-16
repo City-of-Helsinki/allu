@@ -1,7 +1,8 @@
+@use '@angular/material' as mat;
 @mixin comments-theme($theme) {
   $primary: map-get($theme, primary);
 
   .comment-list li {
-    border-bottom-color: mat-color($primary, 200);
+    border-bottom-color: mat.get-color-from-palette($primary, 200);
   }
 }

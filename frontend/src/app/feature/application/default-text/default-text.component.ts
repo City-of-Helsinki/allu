@@ -1,7 +1,7 @@
 import {Attribute, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {ApplicationType} from '@model/application/type/application-type';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {forkJoin, Subscription} from 'rxjs';
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../default-text/default-text-modal.component';
 import {DefaultText} from '@model/application/cable-report/default-text';
@@ -31,13 +31,13 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
   @Input() includeTypes: Array<string>;
 
   defaultTexts: Array<DefaultText> = [];
-  textsControl: FormControl;
+  textsControl: UntypedFormControl;
 
   private changeSub: Subscription;
   private dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
   constructor(@Attribute('required') public required: boolean = false,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private dialog: MatDialog,
               private defaultTextService: DefaultTextService,
               private notification: NotificationService) {}

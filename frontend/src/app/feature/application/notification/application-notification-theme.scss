@@ -1,13 +1,14 @@
+@use '@angular/material' as mat;
 @mixin application-notification-theme($theme) {
   $accent: map-get($theme, accent);
 
   application-notification .notification {
-    background-color: mat-color($accent, 500);
-    color: mat-contrast($accent, 500);
+    background-color: mat.get-color-from-palette($accent, 500);
+    color: mat.get-contrast-color-from-palette($accent, 500);
   }
 
   application-notification .notification a {
-    color: mat-contrast($accent, 500);
+    color: mat.get-contrast-color-from-palette($accent, 500);
   }
 }
 

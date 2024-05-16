@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Action, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs/index';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
@@ -24,15 +24,15 @@ export class InvoicingCustomerEffects {
               private store: Store<fromRoot.State>,
               private invoiceService: InvoiceService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoicingCustomerActionType.Load),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.findInvoicingCustomer(app.id, app.invoiceRecipientId))
-  );
+  ));
 
-  @Effect()
-  setRecipient: Observable<Action> = this.actions.pipe(
+  
+  setRecipient: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetRecipient>(InvoicingCustomerActionType.SetRecipient),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, app]) => app.id !== undefined),
@@ -40,7 +40,7 @@ export class InvoicingCustomerEffects {
       switchMap(() => [new SetRecipientSuccess(action.payload), new TagAction.Load(), new Load()]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 
   findInvoicingCustomer(appId: number, recipientId: number): Observable<Action> {
     if (NumberUtil.isDefined(recipientId)) {

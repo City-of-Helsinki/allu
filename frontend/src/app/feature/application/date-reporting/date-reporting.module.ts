@@ -5,19 +5,16 @@ import {AlluCommonModule} from '../../common/allu-common.module';
 import {DateReportingModalComponent} from '@feature/application/date-reporting/date-reporting-modal.component';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    AlluCommonModule
-  ],
-  declarations: [
-    DateReportingModalComponent
-  ],
-  exports: [
-    DateReportingModalComponent
-  ],
-  entryComponents: [
-    DateReportingModalComponent
-  ]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        AlluCommonModule
+    ],
+    declarations: [
+        DateReportingModalComponent
+    ],
+    exports: [
+        DateReportingModalComponent
+    ]
 })
 export class DateReportingModule {}

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import isEqual from 'lodash/isEqual';
-import {MatSelectionList} from '@angular/material/list';
+import {MatLegacySelectionList as MatSelectionList} from '@angular/material/legacy-list';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {MapFeature} from '@feature/map/map-feature';

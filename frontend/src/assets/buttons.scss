@@ -1,23 +1,23 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
 
 @mixin buttons-theme($theme) {
   $primary: map-get($theme, primary);
 
   .mat-button-toggle-checked {
-    background: mat-color($primary, 500);
-    color: $dark-primary-text;
+    background: mat.get-color-from-palette($primary, 500);
+    color: rgba(black, 0.87);
   }
 
   .mat-button-toggle-disabled.mat-button-toggle-checked {
-    background: mat-color($primary, 300);
+    background: mat.get-color-from-palette($primary, 300);
 
     & label {
-      color: mat-contrast($primary, 500);
+      color: mat.get-contrast-color-from-palette($primary, 500);
     }
   }
 
   button.button-link {
-    color: mat-color($primary, 300);
+    color: mat.get-color-from-palette($primary, 300);
   }
 }
 

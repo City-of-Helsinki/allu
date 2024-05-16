@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Contact} from '@model/customer/contact';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -17,17 +17,17 @@ import {config as acceptanceConfig} from '@feature/information-request/acceptanc
 })
 export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() newContacts: Contact[] = [];
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() hideExisting = false;
 
-  contactForms: FormArray;
+  contactForms: UntypedFormArray;
   contactChanges$ = new Subject<Contact>();
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {

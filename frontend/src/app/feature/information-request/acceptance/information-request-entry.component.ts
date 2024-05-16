@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import {select, Store} from '@ngrx/store';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import * as fromApplication from '@feature/application/reducers';

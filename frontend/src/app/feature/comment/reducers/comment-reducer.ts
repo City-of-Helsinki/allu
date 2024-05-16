@@ -28,7 +28,7 @@ export function reducer(state: State = initialState, action: CommentActions) {
     }
 
     case CommentActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, {
+      return adapter.setAll(action.payload, {
         ...state,
         loading: false
       });

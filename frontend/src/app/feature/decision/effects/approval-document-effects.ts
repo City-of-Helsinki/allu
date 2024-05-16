@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
@@ -27,8 +27,8 @@ export class ApprovalDocumentEffects {
               private approvalDocumentService: ApprovalDocumentService) {
   }
 
-  @Effect()
-  loadOperationalConditionApproval: Observable<Action> = this.actions.pipe(
+  
+  loadOperationalConditionApproval: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApprovalDocumentActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -39,10 +39,10 @@ export class ApprovalDocumentEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  tabOpen: Observable<Action> = this.actions.pipe(
+  
+  tabOpen: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetTab>(DocumentActionType.SetTab),
     map(action => TabToDocumentType[action.payload]),
     filter(documentType => documentType !== undefined),
@@ -54,7 +54,7 @@ export class ApprovalDocumentEffects {
         return new Load(documentType);
       }
     })
-  );
+  ));
 
   private getRelatedDocument() {
     return (source: Observable<ApprovalDocumentType>) => source.pipe(

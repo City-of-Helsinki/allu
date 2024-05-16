@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {commonAttachmentTypes} from '@model/application/attachment/attachment-type';
@@ -18,13 +18,13 @@ export class AttachmentComponent implements OnInit {
   @Output() onCancel = new EventEmitter<void>();
   @Output() onSave = new EventEmitter<AttachmentInfo>();
 
-  attachmentForm: FormGroup;
+  attachmentForm: UntypedFormGroup;
   attachmentTypes = commonAttachmentTypes;
 
   validForDecision = false;
   readonly maxAttachmentSize = 100 * MB;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {

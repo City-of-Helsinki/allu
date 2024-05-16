@@ -1,8 +1,9 @@
+@use '@angular/material' as mat;
 @mixin project-header-theme($theme) {
   $primary: map-get($theme, primary);
 
   .project-header-item {
     border-left: 1px solid #e1e7e5;
-    color: mat-color($primary, 400);
+    color: mat.get-color-from-palette($primary, 400);
   }
 }

@@ -17,7 +17,7 @@ export const initialState: State = adapter.getInitialState({
 export function reducer(state: State = initialState, action: InvoiceActions) {
   switch (action.type) {
     case InvoiceActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, state);
+      return adapter.setAll(action.payload, state);
     }
 
     default: {

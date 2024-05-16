@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {Deposit} from '../../../../model/application/invoice/deposit';
 import {EnumUtil} from '../../../../util/enum.util';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
@@ -23,12 +23,12 @@ export interface DepositModalData {
   styleUrls: []
 })
 export class DepositModalComponent implements OnInit {
-  depositForm: FormGroup;
+  depositForm: UntypedFormGroup;
   depositStatuses = EnumUtil.enumValues(DepositStatusType);
 
   constructor(public dialogRef: MatDialogRef<DepositModalComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DepositModalData,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {

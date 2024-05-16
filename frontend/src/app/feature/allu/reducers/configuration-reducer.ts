@@ -23,7 +23,7 @@ const initialState: State = adapter.getInitialState({
 export function reducer(state: State = initialState, action: ConfigurationActions) {
   switch (action.type) {
     case ConfigurationActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, state);
+      return adapter.setAll(action.payload, state);
     }
 
     case ConfigurationActionType.SaveSuccess: {

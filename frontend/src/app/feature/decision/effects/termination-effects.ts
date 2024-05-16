@@ -2,7 +2,7 @@ import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, select, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {TerminationService} from '@feature/decision/termination/termination-service';
 import {from, Observable} from 'rxjs/index';
 import {
@@ -44,8 +44,8 @@ export class TerminationEffects {
               private applicationStore: ApplicationStore) {
   }
 
-  @Effect()
-  loadTerminationInfo: Observable<Action> = this.actions.pipe(
+  
+  loadTerminationInfo: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.LoadInfo),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -58,10 +58,10 @@ export class TerminationEffects {
         ]))
       );
     })
-  );
+  ));
 
-  @Effect()
-  loadTerminationDocument: Observable<Action> = this.actions.pipe(
+  
+  loadTerminationDocument: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<LoadDocument>(TerminationActionType.LoadDocument),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -72,10 +72,10 @@ export class TerminationEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  terminationTabOpen: Observable<Action> = this.actions.pipe(
+  
+  terminationTabOpen: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetTab>(DocumentActionType.SetTab),
     filter(action => action.payload === DecisionTab.TERMINATION),
     withLatestFrom(this.store.select(fromDecision.getTerminationDocument)),
@@ -86,10 +86,10 @@ export class TerminationEffects {
         return new LoadDocument();
       }
     })
-  );
+  ));
 
-  @Effect()
-  terminateDecision: Observable<Action> = this.actions.pipe(
+  
+  terminateDecision: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.Terminate),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -109,10 +109,10 @@ export class TerminationEffects {
         ]))
       );
     })
-  );
+  ));
 
-  @Effect()
-  moveTerminationToDecision: Observable<Action> = this.actions.pipe(
+  
+  moveTerminationToDecision: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.MoveTerminationToDecision),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -124,10 +124,10 @@ export class TerminationEffects {
         new NotifyFailure(error)
       ])),
     ))
-  );
+  ));
 
-  @Effect()
-  removeTerminationDraft: Observable<Action> = this.actions.pipe(
+  
+  removeTerminationDraft: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.RemoveTerminationDraft),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, application]) => {
@@ -142,7 +142,7 @@ export class TerminationEffects {
         ]))
       );
     })
-  );
+  ));
 
 
   private changeStatusToDecisionMaking(applicationId: number, terminationInfo: TerminationInfo): Observable<Application> {

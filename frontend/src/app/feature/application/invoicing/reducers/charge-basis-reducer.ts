@@ -18,7 +18,7 @@ export function reducer(state: State = initialState, action: ChargeBasisActions)
   switch (action.type) {
 
     case ChargeBasisActionType.LoadSuccess: {
-      return adapter.addAll(action.payload, state);
+      return adapter.setAll(action.payload, state);
     }
 
     case ChargeBasisActionType.AddEntry: {

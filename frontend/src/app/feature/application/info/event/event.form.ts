@@ -4,7 +4,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {Application} from '@model/application/application';
 import {ApplicationForm} from '../application-form';
 import {ComplexValidator} from '@util/complex-validator';
-import {FormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
 import {SurfaceHardness} from '@model/application/event/surface-hardness';
 
@@ -71,7 +71,7 @@ export function toEvent(form: EventForm, type: ApplicationType): Event {
   return event;
 }
 
-export function eventForm(fb: FormBuilder): { [key: string]: any; } {
+export function eventForm(fb: UntypedFormBuilder): { [key: string]: any; } {
   return {
     description: [''],
     url: [''],
@@ -103,20 +103,20 @@ export function eventForm(fb: FormBuilder): { [key: string]: any; } {
   };
 }
 
-export function eventDraft(fb: FormBuilder): { [key: string]: any; } {
+export function eventDraft(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = eventForm(fb);
   form.description = [''];
   form.surfaceHardness = [undefined];
   return form;
 }
 
-export function outdoorEventForm(fb: FormBuilder): { [key: string]: any; } {
+export function outdoorEventForm(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = eventForm(fb);
   form.nature = ['', Validators.required];
   return form;
 }
 
-export function outdoorEventDraft(fb: FormBuilder): { [key: string]: any; } {
+export function outdoorEventDraft(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = outdoorEventForm(fb);
   form.description = [''];
   form.nature = [''];

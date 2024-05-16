@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../notification/notification.service';
@@ -18,12 +18,12 @@ export const CUSTOMER_MODAL_CONFIG = {width: '800PX', disableClose: false, data:
 export class CustomerModalComponent implements OnInit {
   @Input() customerId: number;
 
-  customerForm: FormGroup;
+  customerForm: UntypedFormGroup;
 
   constructor(public dialogRef: MatDialogRef<CustomerModalComponent>,
               private customerService: CustomerService,
               private notification: NotificationService,
-              fb: FormBuilder) {
+              fb: UntypedFormBuilder) {
     this.customerForm = CustomerForm.initialForm(fb);
   }
 

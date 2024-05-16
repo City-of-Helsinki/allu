@@ -1,4 +1,4 @@
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {ChargeBasisType, manualChargeBasisTypes} from '@model/application/invoice/charge-basis-type';
@@ -29,7 +29,7 @@ export class ChargeBasisEntryForm {
     this.referredTag = referredTag || EMPTY;
   }
 
-  public static formGroup(fb: FormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): FormGroup {
+  public static formGroup(fb: UntypedFormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): UntypedFormGroup {
     const formValue = ChargeBasisEntryForm.toFormValue(entry);
     return fb.group({
       id: [formValue.id],

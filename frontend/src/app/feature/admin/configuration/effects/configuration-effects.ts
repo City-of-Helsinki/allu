@@ -1,4 +1,4 @@
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
 import {defer, Observable, of} from 'rxjs';
@@ -13,18 +13,18 @@ import {findTranslation} from '@util/translations';
 export class ConfigurationEffects {
   constructor(private actions: Actions, private store: Store<fromAuth.State>, private configurationService: ConfigurationService) {}
 
-  @Effect()
-  init: Observable<Action> = defer(() => this.store.pipe(
+  
+  init: Observable<Action> = createEffect(() => defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
     filter(loggedIn => loggedIn),
     switchMap(() => this.configurationService.getConfigurations().pipe(
       map(configurations => new LoadSuccess(configurations)),
       catchError(error => of(new LoadFailed(error))))
     ))
-  );
+  ));
 
-  @Effect()
-  save: Observable<Action> = this.actions.pipe(
+  
+  save: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Save>(ConfigurationActionType.Save),
     switchMap(action => this.configurationService.save(action.payload).pipe(
       switchMap(saved => [
@@ -33,5 +33,5 @@ export class ConfigurationEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
-  );
+  ));
 }

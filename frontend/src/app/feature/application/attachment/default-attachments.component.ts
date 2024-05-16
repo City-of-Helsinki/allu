@@ -31,10 +31,10 @@ export class DefaultAttachmentsComponent implements OnInit {
   constructor(private attachmentHub: AttachmentHub, private currentUser: CurrentUser) {}
 
   ngOnInit(): void {
-    this.defaultAttachments$ = combineLatest(
+    this.defaultAttachments$ = combineLatest([
       this.attachmentHub.defaultAttachmentInfosBy(this.applicationType, this.attachmentType),
       this._selectedAttachments$
-    ).pipe(
+    ]).pipe(
       map(([existing, selected]) => existing.concat(selected)),
       map(attachments => attachments.filter(ArrayUtil.uniqueItem(a => a.id))),
       map(das => das.sort(ArrayUtil.naturalSort((item: DefaultAttachmentInfo) => item.name)))

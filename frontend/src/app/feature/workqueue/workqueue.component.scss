@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../assets/colors';
 
 mat-card {
@@ -5,7 +6,7 @@ mat-card {
 }
 
 .work-queue-controls {
-  background-color: mat-color($allu-primary, 50);
+  background-color: mat.get-color-from-palette($allu-primary, 50);
 
   .in-front {
     z-index: 100;

@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {EnumUtil} from '../../../../../util/enum.util';
 import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
 
@@ -10,6 +10,6 @@ import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-b
 })
 export class ChargeBasisFeeComponent {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   unitTypes = EnumUtil.enumValues(ChargeBasisUnit);
 }

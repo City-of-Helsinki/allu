@@ -34,7 +34,7 @@ import {CustomerService} from '../../service/customer/customer.service';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter} from '@angular/material/core';
-import {MatPaginatorIntl} from '@angular/material/paginator';
+import {MatLegacyPaginatorIntl as MatPaginatorIntl} from '@angular/material/legacy-paginator';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
 import {ConfigService} from '../../service/config/config.service';
@@ -60,9 +60,10 @@ import {ConfigurationHelperService} from '@service/config/configuration-helper.s
 import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
 import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects';
-import {storeLogger} from 'ngrx-store-logger';
 import {BulkApprovalModule} from '@feature/decision/bulk/bulk-approval.module';
 
+/*
+todo uprade replace deprecated logger
 export function logger(reducer: ActionReducer<any>): any {
   return storeLogger({
     collapsed: true
@@ -70,16 +71,21 @@ export function logger(reducer: ActionReducer<any>): any {
 }
 
 export const metaReducers = environment.production ? [] : [logger];
-
+*/
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot(rootRoutes),
+    RouterModule.forRoot(rootRoutes, {}),
     BrowserAnimationsModule,
-    StoreModule.forRoot(reducers, {metaReducers}),
+    StoreModule.forRoot(reducers, {
+      runtimeChecks: { // Disable checks to avoid Leaflet causing errors
+        strictStateImmutability: false,
+        strictActionImmutability: false,
+      },
+    }),
     EffectsModule.forRoot([
       CityDistrictEffects,
       CodeSetEffects,

@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
 import {Customer} from '@model/customer/customer';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import {MatSort} from '@angular/material/sort';
 import {CustomerDatasource} from '@service/customer/customer-datasource';
 import {select, Store} from '@ngrx/store';
@@ -25,7 +25,7 @@ export class CustomerListComponent implements OnInit {
 
   displayedColumns = ['name', 'type', 'registryKey', 'email', 'phone', 'postalAddress'];
 
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   customerTypes = EnumUtil.enumValues(CustomerType);
   customerSource: CustomerDatasource;
 
@@ -34,7 +34,7 @@ export class CustomerListComponent implements OnInit {
 
   constructor(private router: Router,
               private store: Store<fromRoot.State>,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
     this.searchForm = this.fb.group({
       name: [''],
       registryKey: [''],

@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
@@ -21,23 +21,23 @@ export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};
   ]
 })
 export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
-  chargeBasisEntryForm: FormGroup;
+  chargeBasisEntryForm: UntypedFormGroup;
   chargeBasisTypes = manualChargeBasisTypes;
 
-  typeCtrl: FormControl;
+  typeCtrl: UntypedFormControl;
 
   private destroy = new Subject<boolean>();
 
   constructor(public dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>,
               @Inject(MAT_DIALOG_DATA) public data: ChargeBasisEntryModalData,
-              private fb: FormBuilder) {
+              private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {
     this.chargeBasisTypes.sort(ArrayUtil.naturalSortTranslated(['chargeBasis.type'], (item: string) => item));
     const entry = this.data.entry || new ChargeBasisEntry(undefined, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PIECE, 1);
     this.chargeBasisEntryForm = ChargeBasisEntryForm.formGroup(this.fb, entry);
-    this.typeCtrl = <FormControl>this.chargeBasisEntryForm.get('type');
+    this.typeCtrl = <UntypedFormControl>this.chargeBasisEntryForm.get('type');
 
     this.typeCtrl.valueChanges.pipe(
       distinctUntilChanged(),

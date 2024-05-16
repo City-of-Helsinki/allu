@@ -1,19 +1,19 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
 
 @mixin stored-filter-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
 
   button[inputBoxInput] {
-    color: mat-color($primary, 500);
+    color: mat.get-color-from-palette($primary, 500);
   }
 
   .allu-menu-panel .menu-item-text {
-    color: mat-color($allu-primary, 300);
+    color: mat.get-color-from-palette($allu-primary, 300);
   }
 
   .allu-menu-panel .allu-menu-item:hover {
-    background: mat-color($allu-primary, 50);
+    background: mat.get-color-from-palette($allu-primary, 50);
   }
 
   .allu-menu-panel .allu-menu-item .mat-menu-item:hover {

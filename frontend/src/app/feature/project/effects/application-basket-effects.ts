@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
 import * as fromAuth from '../../auth/reducers';
@@ -28,17 +28,17 @@ export class ApplicationBasketEffects {
               private applicationService: ApplicationService,
               private notification: NotificationService) {}
 
-  @Effect()
-  load: Observable<Action> = this.actions.pipe(
+  
+  load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApplicationBasketActionType.Load),
     map(() => LocalStorageUtil.getItemArray<number>(BASKET)),
     combineLatest(this.store.select(fromAuth.getLoggedIn)),
     filter(([ids, loggedIn]) => loggedIn),
     switchMap(([ids, loggedIn]) => this.loadApplications(ids))
-  );
+  ));
 
-  @Effect()
-  add = this.actions.pipe(
+  
+  add = createEffect(() => this.actions.pipe(
     ofType<Add>(ApplicationBasketActionType.Add),
     map(action => action.payload),
     tap(id => {
@@ -46,10 +46,10 @@ export class ApplicationBasketEffects {
       this.notification.translateSuccess('applicationBasket.applicationAdded');
     }),
     map(id => new Load([id]))
-  );
+  ));
 
-  @Effect()
-  addMultiple = this.actions.pipe(
+  
+  addMultiple = createEffect(() => this.actions.pipe(
     ofType<AddMultiple>(ApplicationBasketActionType.AddMultiple),
     map(action => action.payload),
     tap(ids => {
@@ -57,30 +57,30 @@ export class ApplicationBasketEffects {
       this.notification.translateSuccess('applicationBasket.applicationsAdded');
     }),
     map(ids => new Load(ids))
-  );
+  ));
 
-  @Effect({dispatch: false})
-  remove = this.actions.pipe(
+  
+  remove = createEffect(() => this.actions.pipe(
     ofType<Remove>(ApplicationBasketActionType.Remove),
     map(action => action.payload),
     tap(id => {
       LocalStorageUtil.removeItemFromArray(BASKET, id);
       this.notification.translateSuccess('applicationBasket.applicationRemoved');
     })
-  );
+  ), {dispatch: false});
 
-  @Effect({dispatch: false})
-  clear = this.actions.pipe(
+  
+  clear = createEffect(() => this.actions.pipe(
     ofType<Clear>(ApplicationBasketActionType.Clear),
     tap(() => LocalStorageUtil.remove(BASKET))
-  );
+  ), {dispatch: false});
 
-  @Effect()
-  loadInitial: Observable<Action> = defer(() => of(LocalStorageUtil.getItemArray<number>(BASKET))).pipe(
+  
+  loadInitial: Observable<Action> = createEffect(() => defer(() => of(LocalStorageUtil.getItemArray<number>(BASKET))).pipe(
     combineLatest(this.store.select(fromAuth.getLoggedIn)),
     filter(([ids, loggedIn]) => loggedIn && ids.length > 0),
     switchMap(([ids, loggedIn]) => this.loadApplications(ids))
-  );
+  ));
 
   private loadApplications(ids: number[]): Observable<Action> {
     return this.applicationService.byIds(ids).pipe(

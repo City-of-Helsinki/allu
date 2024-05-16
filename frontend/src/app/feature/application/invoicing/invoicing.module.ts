@@ -31,45 +31,41 @@ import {InvoicingPeriodService} from '@feature/application/invoicing/invoicing-p
 import {DefaultTextModule} from '@feature/application/default-text/default-text.module';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    AlluCommonModule,
-    CustomerRegistryModule,
-    StoreModule.forFeature('invoicing', reducers),
-    EffectsModule.forFeature([
-      ChargeBasisEffects,
-      InvoicingCustomerEffects,
-      InvoiceEffects,
-      InvoicingPeriodEffects
-    ]),
-    DefaultTextModule
-  ],
-  declarations: [
-    InvoicingComponent,
-    InvoicingInfoComponent,
-    ChargeBasisComponent,
-    ChargeBasisEntryComponent,
-    InvoiceListComponent,
-    InvoiceGroupComponent,
-    InvoiceComponent,
-    InvoiceRowComponent,
-    InvoiceCommentsComponent,
-    ChargeBasisEntryModalComponent,
-    ChargeBasisDiscountComponent,
-    ChargeBasisNegligenceFeeComponent,
-    ChargeBasisFeeComponent,
-    DepositModalComponent,
-    InvoicingPeriodSelectComponent
-  ],
-  providers: [
-    InvoiceService,
-    DepositService,
-    InvoicingPeriodService
-  ],
-  entryComponents: [
-    ChargeBasisEntryModalComponent,
-    DepositModalComponent
-  ]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        AlluCommonModule,
+        CustomerRegistryModule,
+        StoreModule.forFeature('invoicing', reducers),
+        EffectsModule.forFeature([
+            ChargeBasisEffects,
+            InvoicingCustomerEffects,
+            InvoiceEffects,
+            InvoicingPeriodEffects
+        ]),
+        DefaultTextModule
+    ],
+    declarations: [
+        InvoicingComponent,
+        InvoicingInfoComponent,
+        ChargeBasisComponent,
+        ChargeBasisEntryComponent,
+        InvoiceListComponent,
+        InvoiceGroupComponent,
+        InvoiceComponent,
+        InvoiceRowComponent,
+        InvoiceCommentsComponent,
+        ChargeBasisEntryModalComponent,
+        ChargeBasisDiscountComponent,
+        ChargeBasisNegligenceFeeComponent,
+        ChargeBasisFeeComponent,
+        DepositModalComponent,
+        InvoicingPeriodSelectComponent
+    ],
+    providers: [
+        InvoiceService,
+        DepositService,
+        InvoicingPeriodService
+    ]
 })
 export class InvoicingModule {}

@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
@@ -24,11 +24,11 @@ const discountPercentValidators = {
 })
 export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
 
   unitTypes = [ChargeBasisUnit.PIECE, ChargeBasisUnit.PERCENT];
   referableEntries: Observable<Array<ChargeBasisEntry>>;
-  unitCtrl: FormControl;
+  unitCtrl: UntypedFormControl;
 
   private destroy = new Subject<boolean>();
 
@@ -37,7 +37,7 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.referableEntries = this.store.select(fromInvoicing.getAllReferrableChargeBasisEntries);
 
-    this.unitCtrl = <FormControl>this.form.get('unit');
+    this.unitCtrl = <UntypedFormControl>this.form.get('unit');
     this.unitCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(unit => this.unitChanges(unit));
   }

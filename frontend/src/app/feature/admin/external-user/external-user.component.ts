@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {EnumUtil} from '../../../util/enum.util';
 import {NumberUtil} from '../../../util/number.util';
@@ -29,21 +29,21 @@ const DEBOUNCE_TIME_MS = 300;
   ]
 })
 export class ExternalUserComponent implements OnInit {
-  userForm: FormGroup;
+  userForm: UntypedFormGroup;
 
   submitted = false;
   roles = EnumUtil.enumValues(ExternalRoleType).sort(ArrayUtil.naturalSortTranslated(['externalUser.role'], (role: string) => role));
   matchingNameCustomers: Observable<Array<Customer>>;
   connectedCustomers: Observable<Array<Customer>>;
 
-  private customerNameControl: FormControl;
-  private connectedCustomersCtrl: FormControl;
+  private customerNameControl: UntypedFormControl;
+  private connectedCustomersCtrl: UntypedFormControl;
   private connectedCustomers$ = new Subject<Array<Customer>>();
 
   constructor(private route: ActivatedRoute,
               private userHub: ExternalUserHub,
               private customerService: CustomerService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private store: Store<fromRoot.State>,
               private notification: NotificationService) {
 
@@ -62,7 +62,7 @@ export class ExternalUserComponent implements OnInit {
       connectedCustomers: this.connectedCustomersCtrl
     });
 
-    this.customerNameControl = <FormControl>this.userForm.get('customerName');
+    this.customerNameControl = <UntypedFormControl>this.userForm.get('customerName');
     this.connectedCustomers = this.connectedCustomers$.asObservable();
   }
 

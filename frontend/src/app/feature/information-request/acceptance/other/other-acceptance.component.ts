@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Application} from '@model/application/application';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {InformationRequestFieldKey, OtherInfoKeys} from '@model/information-request/information-request-field-key';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -16,18 +16,18 @@ import {StructureMeta} from '@model/application/meta/structure-meta';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OtherAcceptanceComponent implements OnInit {
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
   @Input() readonly: boolean;
   @Input() fieldKeys: InformationRequestFieldKey[];
   @Input() hideExisting = false;
 
-  form: FormGroup;
+  form: UntypedFormGroup;
   otherInfoKeys: string[] = [];
   meta$: Observable<StructureMeta>;
 
-  constructor(private fb: FormBuilder, private store: Store<fromRoot.State>) {
+  constructor(private fb: UntypedFormBuilder, private store: Store<fromRoot.State>) {
     this.form = this.fb.group({});
   }
 

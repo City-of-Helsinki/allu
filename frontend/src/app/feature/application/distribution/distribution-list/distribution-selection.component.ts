@@ -1,6 +1,6 @@
 import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {DistributionEntry} from '@model/common/distribution-entry';
-import {ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {Subscription} from 'rxjs';
 
 const DISTRIBUTION_SELECTION_VALUE_ACCESSOR = {
@@ -17,11 +17,11 @@ const DISTRIBUTION_SELECTION_VALUE_ACCESSOR = {
 export class DistributionSelectionComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() distributionList: DistributionEntry[] = [];
 
-  selected: FormControl;
+  selected: UntypedFormControl;
 
   private selectedSub: Subscription;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.selected = this.fb.control([]);

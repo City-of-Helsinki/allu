@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {filter, map, switchMap, take} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
 import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';

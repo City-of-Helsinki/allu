@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
@@ -25,7 +25,7 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {ProjectService} from '@service/project/project.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 
 @Component({
   selector: 'area-rental',
@@ -36,7 +36,7 @@ import {MatDialog} from '@angular/material/dialog';
 export class AreaRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
   showReportCustomerDates = false;
 
-  constructor(fb: FormBuilder,
+  constructor(fb: UntypedFormBuilder,
               route: ActivatedRoute,
               applicationStore: ApplicationStore,
               applicationService: ApplicationService,
@@ -48,7 +48,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     super(fb, route, applicationStore, applicationService, notification, router, projectService, store);
   }
 
-  protected createExtensionForm(): FormGroup {
+  protected createExtensionForm(): UntypedFormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined],

@@ -5,19 +5,16 @@ import {CommonModule} from '@angular/common';
 import {AlluCommonModule} from '../allu-common.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    AlluCommonModule
-  ],
-  declarations: [
-    OwnerModalComponent
-  ],
-  exports: [
-    OwnerModalComponent
-  ],
-  entryComponents: [
-    OwnerModalComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        AlluCommonModule
+    ],
+    declarations: [
+        OwnerModalComponent
+    ],
+    exports: [
+        OwnerModalComponent
+    ]
 })
 export class OwnerModalModule {}

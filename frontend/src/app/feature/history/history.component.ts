@@ -10,7 +10,7 @@ import {SetFieldsVisible} from './actions/history-actions';
 import {takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '../../util/time.util';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {MatSlideToggleChange} from '@angular/material/slide-toggle';
+import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/material/legacy-slide-toggle';
 
 @Component({
   selector: 'history',

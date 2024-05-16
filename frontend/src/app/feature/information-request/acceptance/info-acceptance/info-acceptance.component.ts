@@ -1,24 +1,25 @@
-import {HostBinding, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { HostBinding, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
 import {takeUntil} from 'rxjs/internal/operators';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {StructureMeta} from '@model/application/meta/structure-meta';
 import { Some } from '@app/util/option';
 
-export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
-  @Input() form: FormGroup;
+@Directive()
+export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
+  @Input() form: UntypedFormGroup;
   @Input() id: string;
   @Input() meta: StructureMeta;
   @Input() hideExisting = false;
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
-  @ViewChild('oldValuesSelect', { static: false }) oldValuesSelect: FieldSelectComponent;
-  @ViewChild('newValuesSelect', { static: false }) newValuesSelect: FieldSelectComponent;
+  @ViewChild('oldValuesSelect') oldValuesSelect: FieldSelectComponent;
+  @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
 
-  selectionForm: FormGroup;
+  selectionForm: UntypedFormGroup;
   fieldDescriptions: FieldDescription[];
   oldValues: FieldValues;
   oldDisplayValues: FieldValues;
@@ -28,7 +29,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   private _readonly: boolean;
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  protected constructor(protected fb: FormBuilder) {
+  protected constructor(protected fb: UntypedFormBuilder) {
     this.selectionForm = this.fb.group({
       oldValues: [{value: [], disabled: this.readonly}],
       newValues: [{value: [], disabled: this.readonly}]

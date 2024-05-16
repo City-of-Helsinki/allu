@@ -2,7 +2,7 @@ import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {from, Observable, of} from 'rxjs/index';
 import {
   Approve,
@@ -34,16 +34,16 @@ export class ContractEffects {
               private contractService: ContractService) {
   }
 
-  @Effect()
-  loadContract: Observable<Action> = this.actions.pipe(
+  
+  loadContract: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ContractActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.loadAvailableContract(application))
-  );
+  ));
 
-  @Effect()
-  contractTabOpen: Observable<Action> = this.actions.pipe(
+  
+  contractTabOpen: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetTab>(DocumentActionType.SetTab),
     filter(action => action.payload === DecisionTab.CONTRACT),
     withLatestFrom(this.store.select(fromDecision.getContract)),
@@ -54,10 +54,10 @@ export class ContractEffects {
         return new Load();
       }
     })
-  );
+  ));
 
-  @Effect()
-  createProposal: Observable<Action> = this.actions.pipe(
+  
+  createProposal: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<CreateProposal>(ContractActionType.CreateProposal),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -68,10 +68,10 @@ export class ContractEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  approve: Observable<Action> = this.actions.pipe(
+  
+  approve: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Approve>(ContractActionType.Approve),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -82,10 +82,10 @@ export class ContractEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  reject: Observable<Action> = this.actions.pipe(
+  
+  reject: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Reject>(ContractActionType.Reject),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
@@ -98,14 +98,14 @@ export class ContractEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
+  ));
 
-  @Effect()
-  reloadApplication: Observable<Action> = this.actions.pipe(
+  
+  reloadApplication: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType(ContractActionType.ApproveSuccess, ContractActionType.CreateProposalSuccess, ContractActionType.RejectSuccess),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     map(([contract, application]) => new ApplicationAction.Load(application.id))
-  );
+  ));
 
   private loadAvailableContract(application: Application): Observable<Action> {
     const contract = isBefore(application.status, ApplicationStatus.WAITING_CONTRACT_APPROVAL)

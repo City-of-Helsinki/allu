@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {CommentType} from '@model/application/comment/comment-type';
 import {Observable} from 'rxjs';
 import {User} from '@model/user/user';
@@ -25,14 +25,14 @@ export interface ContractApprovalData {
   templateUrl: './contract-approval-modal.component.html'
 })
 export class ContractApprovalModalComponent implements OnInit {
-  approvalForm: FormGroup;
+  approvalForm: UntypedFormGroup;
 
   handlers: Observable<Array<User>>;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ContractApprovalData,
               private dialogRef: MatDialogRef<ContractApprovalModalComponent>,
               private userService: UserService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private configHelper: ConfigurationHelperService) {}
 
   ngOnInit(): void {
