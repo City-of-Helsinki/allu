@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
 import {REDIRECT_URL} from '../../../util/local-storage';
-import {map} from 'rxjs/internal/operators';
+import {map, switchMap, take, tap} from 'rxjs/internal/operators';
 import {RoleType} from '@model/user/role-type';
 import {CurrentUser} from '@service/user/current-user';
 import {Router} from '@angular/router';
@@ -20,24 +20,24 @@ export class AdminGuard  {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    let isAdmin = false
-    this.currentUser.hasRole(['ROLE_ADMIN']).subscribe(
-      (hasRole: boolean) => {
-        isAdmin = hasRole
-      }
-    )
     if (this.authService.authenticated()) {
-      if (isAdmin) {
-        return of(true);
-      }
-      else {
-        this.router.navigateByUrl('/home');
-        return of(false);
-      }
-    } else {
-      return this.authenticate(route, state.url);
-    }
+  
+      return this.currentUser.hasOnlyView().pipe(
+        take(1),
+        switchMap(onlyView => {
+          if (!onlyView) {
+            return of(true);
+          } else {
+            this.router.navigate(['/home'])
+            return of(false)   
+          }
+        })
+      );
+      } else {
+        return this.authenticate(route, state.url);
+      } 
   }
+
   private authenticate(route: ActivatedRouteSnapshot, redirectUrl: string): Observable<boolean> {
     const code = route.queryParams['code'];
     if (code) {
