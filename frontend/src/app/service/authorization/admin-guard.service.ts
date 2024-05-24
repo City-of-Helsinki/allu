@@ -4,12 +4,9 @@ import {Observable, of} from 'rxjs';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
 import {REDIRECT_URL} from '../../../util/local-storage';
-import {map, switchMap, take, tap} from 'rxjs/internal/operators';
-import {RoleType} from '@model/user/role-type';
+import {map, switchMap, take} from 'rxjs/internal/operators';
 import {CurrentUser} from '@service/user/current-user';
 import {Router} from '@angular/router';
-
-
 
 
 @Injectable()
