@@ -28,7 +28,7 @@ class ConfigServiceMock {
 
 export class CurrentUserMock {
 
-  constructor(public allowHasRole = false, public allowHasType = false) {}
+  constructor(public allowHasRole = true, public allowHasType = true) {}
 
   public static create(allowHasRole: boolean, allowHasType: boolean) {
     const mock = new CurrentUserMock();
@@ -37,7 +37,7 @@ export class CurrentUserMock {
     return mock;
   }
 
-  public hasRole(roles: Array<string>): Observable<boolean> {
+  public hasOnlyView(roles: Array<string>): Observable<boolean> {
     return of(this.allowHasRole);
   }
 }
