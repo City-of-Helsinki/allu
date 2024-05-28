@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.dao.ConfigurationDao;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
@@ -14,18 +14,28 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,7 +59,14 @@ public class AttachmentControllerTest {
   @Autowired
   TestCommon testCommon;
 
+  @Mock
+  private AttachmentDao attachmentDao;
 
+  @InjectMocks
+  private AttachmentController attachmentController;
+
+  @Mock
+  ConfigurationDao configurationDao;
 
   @Before
   public void setup() throws Exception {
@@ -59,6 +76,14 @@ public class AttachmentControllerTest {
     application = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
     ResultActions resultActions = wtc.perform(post("/applications?userId=" + user.getId()), application).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(resultActions, Application.class);
+
+    when(configurationDao.findByKey(ConfigurationKey.ATTACHMENT_ALLOWED_TYPES)).thenReturn(
+      List.of(new Configuration(ConfigurationType.TEXT,ConfigurationKey.ATTACHMENT_ALLOWED_TYPES, ".pdf, .xlsx"))
+    );
+
+    when(configurationDao.findByKey(ConfigurationKey.ATTACHMENT_MAX_SIZE_MB)).thenReturn(
+      List.of(new Configuration(ConfigurationType.TEXT,ConfigurationKey.ATTACHMENT_MAX_SIZE_MB, "5"))
+    );
   }
 
   /********************************
@@ -76,6 +101,54 @@ public class AttachmentControllerTest {
         wtc.perform(multipart("/attachments/applications/" + applicationId).file(infoPart).file("data", data));
     resultActions.andExpect(status().isCreated());
     return wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
+  }
+
+
+  /**
+   * Add attachment
+   */
+  @Test
+  public void testAddAttachment_Success() throws IOException {
+    int applicationId = 1;
+    AttachmentInfo attachmentInfo = new AttachmentInfo();
+    attachmentInfo.setName("filename.pdf");
+    MultipartFile data = new MockMultipartFile("data", "filename.pdf", "text/plain", "some xml".getBytes());
+    AttachmentInfo inserted = new AttachmentInfo();
+    when(attachmentDao.insert(anyInt(), any(AttachmentInfo.class), any())).thenReturn(inserted);
+
+    ResponseEntity<AttachmentInfo> response = attachmentController.addAttachment(applicationId, attachmentInfo, data);
+
+    assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertEquals(inserted, response.getBody());
+  }
+
+  /**
+   * Add too large attachment
+   */
+  @Test
+  public void testAddAttachment_FileTooLarge() throws IOException {
+    AttachmentInfo attachmentInfo = new AttachmentInfo();
+    attachmentInfo.setName("largefile.pdf");
+
+    byte[] fileContent = new byte[6 * 1024 * 1024]; // 6MB
+    MultipartFile data = new MockMultipartFile("data", "largefile.pdf", "text/plain", fileContent);
+
+    ResponseEntity<AttachmentInfo> response = attachmentController.addAttachment(1, attachmentInfo, data);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  /**
+   * Add attachment that has non allowed file extension
+   */
+  @Test
+  public void testAddAttachment_NotAllowedFileExtension() throws IOException {
+    AttachmentInfo attachmentInfo = new AttachmentInfo();
+    attachmentInfo.setName("not-allowed.psd");
+    byte[] fileContent = new byte[1024 * 1024]; // 1MB
+    MultipartFile data = new MockMultipartFile("data", "not-allowed.psd", "text/plain", fileContent);
+
+    ResponseEntity<AttachmentInfo> response = attachmentController.addAttachment(1, attachmentInfo, data);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
   /**

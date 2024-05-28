@@ -1,12 +1,16 @@
 package fi.hel.allu.servicecore.service;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import fi.hel.allu.model.domain.ConfigurationKey;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -30,6 +34,7 @@ import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -47,6 +52,7 @@ public class AttachmentServiceTest {
   private UserService userService;
   private ApplicationHistoryService applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
   private ApplicationEventDispatcher eventDispatcher = Mockito.mock(ApplicationEventDispatcher.class);
+  private ConfigurationService configurationService;
 
   private final int USER_ID = 1;
   private final int APPLICATION_ID = 1234;
@@ -55,13 +61,16 @@ public class AttachmentServiceTest {
   public void setUp() {
     restTemplate = Mockito.mock(RestTemplate.class);
     userService = Mockito.mock(UserService.class);
+    configurationService = Mockito.mock(ConfigurationService.class);
     attachmentService = new AttachmentService(TestProperties.getProperties(), restTemplate, userService,
-        applicationHistoryService, eventDispatcher);
+    applicationHistoryService, eventDispatcher, configurationService);
     UserJson userJson = new UserJson();
     userJson.setId(USER_ID);
     userJson.setRealName("real name");
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
     Mockito.when(userService.findUserById(USER_ID)).thenReturn(userJson);
+    Mockito.when(configurationService.getSingleValue(ConfigurationKey.ATTACHMENT_MAX_SIZE_MB)).thenReturn("5");
+    Mockito.when(configurationService.getSingleValue(ConfigurationKey.ATTACHMENT_ALLOWED_TYPES)).thenReturn(".doc, .xls, .pdf, .bin");
     Mockito.when(restTemplate.exchange(
         Mockito.anyString(),
         Mockito.eq(HttpMethod.POST),
@@ -87,6 +96,44 @@ public class AttachmentServiceTest {
       checkThatIsMockResult(result);
     }
     assertEquals(ITEMS, results.size());
+  }
+
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void testAddAttachmentWithIncorrectType() throws IllegalArgumentException, IOException {
+    final int ITEMS = 5;
+    AttachmentInfoJson infos[] = new AttachmentInfoJson[ITEMS];
+    MultipartFile files[] = new MultipartFile[ITEMS];
+    AttachmentInfoJson attachmentInfo = newAttachmentInfoJson();
+    attachmentInfo.setName("dumdedoo.mp3");
+    for (int i = 0; i < ITEMS; ++i) {
+      infos[i] = attachmentInfo;
+      files[i] = new MockMultipartFile("dumdedoo.mp3", generateMockData(4321));
+    }
+
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Incorrect file type. Allowed file types are: .doc, .xls, .pdf, .bin");
+    attachmentService.addAttachments(APPLICATION_ID, infos, files);
+  }
+
+  @Test
+  public void testAddAttachmentWithTooLargeFile() throws IllegalArgumentException, IOException {
+    final int ITEMS = 5;
+    AttachmentInfoJson infos[] = new AttachmentInfoJson[ITEMS];
+    MultipartFile files[] = new MultipartFile[ITEMS];
+    AttachmentInfoJson attachmentInfo = newAttachmentInfoJson();
+    attachmentInfo.setName("dumdedoo.doc");
+    for (int i = 0; i < ITEMS; ++i) {
+      infos[i] = attachmentInfo;
+      files[i] = new MockMultipartFile("dumdedoo.doc", generateMockData(6 * 1024 * 1024));
+    }
+
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("File size exceeds the maximum allowed limit of 5 MB");
+    attachmentService.addAttachments(APPLICATION_ID, infos, files);
   }
 
   @Test

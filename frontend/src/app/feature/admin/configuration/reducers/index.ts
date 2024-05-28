@@ -4,6 +4,7 @@ import {InjectionToken} from '@angular/core';
 import {Configuration} from '@model/config/configuration';
 import * as fromContactSearch from '@feature/customerregistry/reducers/contact-search-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import { ConfigurationKey } from '@app/model/config/configuration-key';
 
 export interface State {
   configurations: fromConfigurations.State;
@@ -38,6 +39,11 @@ export const {
 export const getEditableConfigurations = createSelector(
   getAllConfigurations,
   (configurations: Configuration[]) => configurations.filter(c => c.editable)
+);
+
+export const getConfiguration = (key: ConfigurationKey) => createSelector(
+  getAllConfigurations,
+  (configurations: Configuration[]) => configurations.filter(c => c.key === key)
 );
 
 export const getConfigurationContactSearchState = createSelector(

@@ -7,13 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.domain.ConfigurationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +32,9 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
+import static fi.hel.allu.common.util.AttachmentUtil.bytesToMegabytes;
+import static fi.hel.allu.common.util.AttachmentUtil.getFileExtension;
+
 @Service
 public class AttachmentService {
 
@@ -45,16 +46,17 @@ public class AttachmentService {
   private final UserService userService;
   private final ApplicationHistoryService applicationHistoryService;
   private final ApplicationEventDispatcher applicationEventDispatcher;
-
+  private final ConfigurationService configurationService;
 
   @Autowired
   public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
-      ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher) {
+                           ApplicationHistoryService applicationHistoryService, ApplicationEventDispatcher applicationEventDispatcher, ConfigurationService configurationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationHistoryService = applicationHistoryService;
     this.applicationEventDispatcher = applicationEventDispatcher;
+    this.configurationService = configurationService;
   }
 
   public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
@@ -206,6 +208,17 @@ public class AttachmentService {
    */
   public AttachmentInfoJson addAttachment(int applicationId, AttachmentInfoJson info, MultipartFile data)
       throws IOException {
+    double attachmentSizeInMB =  bytesToMegabytes(data.getSize());
+    String attachmentExtension = getFileExtension(info.getName());
+    String allowedFileTypes = configurationService.getSingleValue(ConfigurationKey.ATTACHMENT_ALLOWED_TYPES);
+    int maxFileSize = Integer.parseInt(configurationService.getSingleValue(ConfigurationKey.ATTACHMENT_MAX_SIZE_MB));
+
+    if (!allowedFileTypes.contains(attachmentExtension)) {
+      throw new IllegalArgumentException("Incorrect file type. Allowed file types are: " + allowedFileTypes);
+    } else if (attachmentSizeInMB > maxFileSize){
+      throw new IllegalArgumentException("File size exceeds the maximum allowed limit of " + maxFileSize + " MB");
+    }
+
     // Create the attachment info for model-service:
     AttachmentInfo toModel = toAttachmentInfo(info);
     Integer currentUserId = userService.getCurrentUser().getId();
@@ -304,15 +317,17 @@ public class AttachmentService {
   }
 
   private void setCommonAttachmentJsonFields(AttachmentInfo attachmentInfo, AttachmentInfoJson result) {
-    result.setId(attachmentInfo.getId());
-    result.setHandlerName(getUserName(attachmentInfo.getUserId()));
-    result.setType(attachmentInfo.getType());
-    result.setMimeType(attachmentInfo.getMimeType());
-    result.setName(attachmentInfo.getName());
-    result.setDescription(attachmentInfo.getDescription());
-    result.setCreationTime(attachmentInfo.getCreationTime());
-    result.setSize(getAttachmentSize(attachmentInfo.getId()));
-    result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
+ //   if (attachmentInfo != null) {
+      result.setId(attachmentInfo.getId());
+      result.setHandlerName(getUserName(attachmentInfo.getUserId()));
+      result.setType(attachmentInfo.getType());
+      result.setMimeType(attachmentInfo.getMimeType());
+      result.setName(attachmentInfo.getName());
+      result.setDescription(attachmentInfo.getDescription());
+      result.setCreationTime(attachmentInfo.getCreationTime());
+      result.setSize(getAttachmentSize(attachmentInfo.getId()));
+      result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
+  //  }
   }
 
   private String getUserName(Integer id) {
