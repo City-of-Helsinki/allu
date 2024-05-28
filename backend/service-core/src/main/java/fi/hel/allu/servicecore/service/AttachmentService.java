@@ -317,7 +317,6 @@ public class AttachmentService {
   }
 
   private void setCommonAttachmentJsonFields(AttachmentInfo attachmentInfo, AttachmentInfoJson result) {
- //   if (attachmentInfo != null) {
       result.setId(attachmentInfo.getId());
       result.setHandlerName(getUserName(attachmentInfo.getUserId()));
       result.setType(attachmentInfo.getType());
@@ -327,7 +326,6 @@ public class AttachmentService {
       result.setCreationTime(attachmentInfo.getCreationTime());
       result.setSize(getAttachmentSize(attachmentInfo.getId()));
       result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
-  //  }
   }
 
   private String getUserName(Integer id) {
