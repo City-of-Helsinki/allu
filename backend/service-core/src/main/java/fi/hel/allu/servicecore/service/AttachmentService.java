@@ -317,15 +317,15 @@ public class AttachmentService {
   }
 
   private void setCommonAttachmentJsonFields(AttachmentInfo attachmentInfo, AttachmentInfoJson result) {
-      result.setId(attachmentInfo.getId());
-      result.setHandlerName(getUserName(attachmentInfo.getUserId()));
-      result.setType(attachmentInfo.getType());
-      result.setMimeType(attachmentInfo.getMimeType());
-      result.setName(attachmentInfo.getName());
-      result.setDescription(attachmentInfo.getDescription());
-      result.setCreationTime(attachmentInfo.getCreationTime());
-      result.setSize(getAttachmentSize(attachmentInfo.getId()));
-      result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
+    result.setId(attachmentInfo.getId());
+    result.setHandlerName(getUserName(attachmentInfo.getUserId()));
+    result.setType(attachmentInfo.getType());
+    result.setMimeType(attachmentInfo.getMimeType());
+    result.setName(attachmentInfo.getName());
+    result.setDescription(attachmentInfo.getDescription());
+    result.setCreationTime(attachmentInfo.getCreationTime());
+    result.setSize(getAttachmentSize(attachmentInfo.getId()));
+    result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
   }
 
   private String getUserName(Integer id) {
