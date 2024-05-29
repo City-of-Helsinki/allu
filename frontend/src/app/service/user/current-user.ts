@@ -4,6 +4,7 @@ import {User} from '../../model/user/user';
 import {Observable, BehaviorSubject, of} from 'rxjs';
 import {NumberUtil} from '../../util/number.util';
 import {filter, first, map} from 'rxjs/internal/operators';
+import { RoleType } from '@app/model/user/role-type';
 
 @Injectable()
 export class CurrentUser {
@@ -31,6 +32,12 @@ export class CurrentUser {
   public hasRole(roles: Array<string>): Observable<boolean> {
     return this.user.pipe(
       map(u => u.roles.reduce((prev, cur) => prev || roles.some(role => role === cur), false))
+    );
+  }
+
+  public hasOnlyView(): Observable<boolean> {
+    return this.user.pipe(
+      map(u => u.roles.length === 1 && u.roles.includes(RoleType.ROLE_VIEW))
     );
   }
 

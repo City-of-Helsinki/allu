@@ -13,6 +13,7 @@ import {ApplicationService} from '../../service/application/application.service'
 import {LocationService} from '../../service/location.service';
 import {MapStore} from '../../service/map/map-store';
 import {AuthGuard} from '../../service/authorization/auth-guard.service';
+import {AdminGuard} from '@app/service/authorization/admin-guard.service';
 import {AlluComponent} from './allu.component';
 import {rootRoutes} from './allu.routing';
 import {MapSearchModule} from '../mapsearch/mapsearch.module';
@@ -130,6 +131,7 @@ export const metaReducers = environment.production ? [] : [logger];
     ContactService,
     MapStore,
     AuthGuard,
+    AdminGuard,
     CanDeactivateGuard,
     CanActivateLogin,
     ApplicationStore,
