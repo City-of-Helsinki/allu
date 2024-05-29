@@ -88,6 +88,7 @@ export class LocationComponent implements OnInit, OnDestroy {
   userAreaCount$: Observable<number>;
   userAreas$: Observable<Feature<GeometryObject>[]>;
   userAreasLoading$: Observable<boolean>;
+  displayMap = false;
 
   private submitPending = false;
   private destroy = new Subject<boolean>();
@@ -209,6 +210,11 @@ export class LocationComponent implements OnInit, OnDestroy {
     this.userAreaCount$ = this.store.pipe(select(fromLocation.getUserAreaCount));
 
     this.store.dispatch(new UserAreaActions.Load());
+
+    // fixes the map not always being displayed
+    setTimeout(() => {
+      this.displayMap = true;
+    });
   }
 
   ngOnDestroy() {
