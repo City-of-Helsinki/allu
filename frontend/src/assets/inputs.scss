@@ -48,7 +48,8 @@
 .mat-input-element:disabled,
 .mat-label,
 .mat-input-element,
-.mat-input-element::placeholder {
+.mat-input-element::placeholder,
+.mat-radio-label-content {
   color: rgba(0, 0, 0, 0.68) !important;
 }
 

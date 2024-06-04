@@ -4,12 +4,12 @@
   $primary: map-get($theme, primary);
 
   .mat-button-toggle-checked {
-    background: mat.get-color-from-palette($primary, 500);
-    color: rgba(black, 0.87);
+    background: mat.get-color-from-palette($primary, 500) !important;
+    color: rgba(black, 0.87) !important;
   }
 
   .mat-button-toggle-disabled.mat-button-toggle-checked {
-    background: mat.get-color-from-palette($primary, 300);
+    background: mat.get-color-from-palette($primary, 300) !important;
 
     & label {
       color: mat.get-contrast-color-from-palette($primary, 500);
