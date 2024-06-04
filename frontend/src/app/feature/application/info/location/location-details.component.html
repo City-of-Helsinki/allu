@@ -132,7 +132,8 @@
             [layerTree]="layerTree$ | async"></map-layer-select>
         </div>
 
-        <map [selection]="true"
+        <map *ngIf="displayMap" 
+            [selection]="true"
              [applicationId]="application.id"
              [showOnlyApplicationArea]="true"
              role="OTHER"
