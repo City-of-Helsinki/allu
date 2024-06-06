@@ -19,7 +19,7 @@
 <div fxLayout="row">
   <div fxFlex>
     <mat-form-field class="input-full-width">
-      <textarea matInput matTextareaAutosize [required]="required"
+      <textarea matInput cdkTextareaAutosize [required]="required"
                 [formControl]="textsControl"
                 [placeholder]="[textType, 'applicationTerms'] | translation"></textarea>
       <mat-error *ngIf="textsControl.hasError('required')">{{[textType, 'missing'] | translation}}</mat-error>
