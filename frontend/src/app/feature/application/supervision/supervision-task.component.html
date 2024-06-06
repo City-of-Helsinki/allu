@@ -65,7 +65,7 @@
               <div fxLayout="row">
                 <div fxFlex="100%">
                   <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="description"
+                <textarea matInput cdkTextareaAutosize formControlName="description"
                           [placeholder]="'supervision.task.description' | translation"></textarea>
                   </mat-form-field>
                 </div>
@@ -73,7 +73,7 @@
               <div fxLayout="row" *ngIf="form.getRawValue().result">
                 <div fxFlex="100%">
                   <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="result"
+                <textarea matInput cdkTextareaAutosize formControlName="result"
                           [placeholder]="'supervision.task.result' | translation"></textarea>
                   </mat-form-field>
                 </div>
