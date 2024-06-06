@@ -24,7 +24,7 @@
       <mat-form-field class="input-full-width">
         <textarea matInput type="text" formControlName="manualExplanation"
                   placeholder="{{'chargeBasis.explanation' | translation}}"
-                  matAutosizeMaxRows="5" matTextareaAutosize wrap="hard"
+                  matAutosizeMaxRows="5" cdkTextareaAutosize wrap="hard"
                   maxRows="5" maxlength="354">
         </textarea>
         <mat-error *ngIf="form.get('manualExplanation').hasError('tooManyRows')">
