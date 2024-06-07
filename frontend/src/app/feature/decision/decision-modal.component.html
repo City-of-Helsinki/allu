@@ -21,7 +21,7 @@
     <div fxLayout="row" *ngIf="type === 'RETURNED_TO_PREPARATION' || type === 'REJECTED'">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <textarea matInput matTextareaAutosize formControlName="comment" required
+          <textarea matInput cdkTextareaAutosize formControlName="comment" required
                     [placeholder]="'decision.reason' | translation"></textarea>
           <mat-error *ngIf="decisionForm.get('comment').hasError('required')">
             {{'decision.field.commentMissing' | translation}}
@@ -32,7 +32,7 @@
     <div fxLayout="row" *ngIf="emailDistribution">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-            <textarea matInput matTextareaAutosize formControlName="emailMessage"
+            <textarea matInput cdkTextareaAutosize formControlName="emailMessage"
                       [placeholder]="'decision.emailMessage' | translation"></textarea>
         </mat-form-field>
       </div>

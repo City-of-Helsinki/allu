@@ -6,7 +6,7 @@
     <div fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-                    <textarea matInput matTextareaAutosize formControlName="comment" required
+                    <textarea matInput cdkTextareaAutosize formControlName="comment" required
                               [placeholder]="'decision.proposal.comment' | translation"></textarea>
           <mat-error *ngIf="proposalForm.get('comment').hasError('required')">
             {{'decision.proposal.field.commentMissing' | translation}}

@@ -71,7 +71,7 @@
             </ng-container>
             <div fxFlex="calc(100% - 18px)">
               <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="description"
+                <textarea matInput cdkTextareaAutosize formControlName="description"
                           [required]="required(applicationForm.get('description'))"
                           [placeholder]="'application.event.description' | translation"></textarea>
                 <mat-hint>
@@ -83,7 +83,7 @@
             </div>
             <div fxFlex="calc(100% - 18px)">
               <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="timeExceptions"
+                <textarea matInput cdkTextareaAutosize formControlName="timeExceptions"
                           [placeholder]="'application.event.timeExceptions' | translation"></textarea>
               </mat-form-field>
             </div>
@@ -147,7 +147,7 @@
             </div>
             <div fxFlex="calc(100% - 18px)" [hidden]="!structureArea.checked">
               <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="structureDescription"
+                <textarea matInput cdkTextareaAutosize formControlName="structureDescription"
                           [placeholder]="'application.event.structureDescription' | translation"></textarea>
               </mat-form-field>
             </div>
@@ -228,7 +228,7 @@
             </div>
             <div fxFlex="calc(100% - 18px)" [hidden]="!marketingProviders.checked">
               <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="marketingProviders"
+                <textarea matInput cdkTextareaAutosize formControlName="marketingProviders"
                           [placeholder]="'application.event.marketingProvidersDescription' | translation"
                           ></textarea>
               </mat-form-field>
@@ -240,7 +240,7 @@
             </div>
             <div fxFlex="calc(100% - 18px)" [hidden]="!foodSales.checked">
               <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="foodProviders"
+                <textarea matInput cdkTextareaAutosize formControlName="foodProviders"
                           [placeholder]="'application.event.foodProviders' | translation"></textarea>
               </mat-form-field>
             </div>

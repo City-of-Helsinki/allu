@@ -45,7 +45,7 @@
   <div fxLayout="row">
     <div fxFlex>
       <mat-form-field  *ngIf="form.enabled" class="input-full-width">
-        <textarea matInput matTextareaAutosize
+        <textarea matInput cdkTextareaAutosize
                   formControlName="text" id="commentText"
                   [placeholder]="'comment.myComment' | translation"></textarea>
         <mat-error *ngIf="form.get('text').hasError('required')">

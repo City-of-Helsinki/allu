@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {MapStore} from '@service/map/map-store';
@@ -39,12 +39,14 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   availableLayers$: Observable<MapLayer[]>;
   fixedLocationInfos$: Observable<string[]>;
   layerTree$: Observable<TreeStructureNode<void>>;
+  displayMap = false;
 
   private _application: Application;
 
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
-              private store: Store<fromRoot.State>) {
+              private store: Store<fromRoot.State>,
+              private cdr: ChangeDetectorRef) {
   }
 
   @Input() set application(application: Application) {
@@ -73,6 +75,12 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
     this.availableLayers$ = this.store.pipe(select(fromApplication.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromApplication.getSelectedLayers));
     this.layerTree$ = this.store.pipe(select(fromApplication.getTreeStructure));
+
+    // fixes the map not always being displayed
+    setTimeout(() => {
+      this.displayMap = true;
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {

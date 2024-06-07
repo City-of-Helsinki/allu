@@ -1,6 +1,7 @@
 <div fxLayout="column">
   <div fxFlex class="map-container">
     <simple-map
+      *ngIf="displayMap"
       [mapId]="'map-' + taskId"
       [content]="mapFeatures"
       [selectedFeature]="relatedLocation?.id"></simple-map>

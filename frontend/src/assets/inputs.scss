@@ -43,6 +43,17 @@
   }
 }
 
+.mat-select-disabled .mat-select-value,
+.mat-form-field-label,
+.mat-input-element:disabled,
+.mat-label,
+.mat-input-element,
+.mat-input-element::placeholder,
+.mat-radio-label-content {
+  color: rgba(0, 0, 0, 0.68) !important;
+}
+
+
 @mixin checkbox-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);

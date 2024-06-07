@@ -7,7 +7,7 @@
     <div fxLayout="column">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-            <textarea matInput matTextareaAutosize formControlName="result" required
+            <textarea matInput cdkTextareaAutosize formControlName="result" required
                       [placeholder]="'supervision.task.result' | translation"></textarea>
           <mat-error *ngIf="form.get('result').hasError('required')">
             {{'supervision.task.field.resultMissing' | translation}}

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {MapSearchFilter} from '@service/map-search-filter';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
@@ -29,17 +29,25 @@ export class MapSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   searchFilter$: Observable<MapSearchFilter>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
+  displayMap = false;
 
   constructor(private storedFilterStore: StoredFilterStore,
               private mapStore: MapStore,
               private store: Store<fromRoot.State>,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
     this.searchFilter$ = this.mapStore.mapSearchFilter;
     this.availableLayers$ = this.store.pipe(select(fromMapLayers.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
+    
+    // fixes the map not always being displayed
+    setTimeout(() => {
+      this.displayMap = true;
+      this.cdr.detectChanges();
+    });
   }
 
   ngAfterViewInit(): void {
