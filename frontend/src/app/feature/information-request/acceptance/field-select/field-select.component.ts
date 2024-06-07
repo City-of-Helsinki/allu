@@ -33,11 +33,16 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   @ViewChild(MatSelectionList, { static: true }) selectionList: MatSelectionList;
 
   isDisabled: boolean;
+  displayMap = false;
 
   private _fieldValues: FieldValues;
   private _comparedValues: FieldValues;
 
   ngOnInit(): void {
+    // fixes the map not always being displayed
+    setTimeout(() => {
+      this.displayMap = true;
+    });
   }
 
   /** Implemented as part of ControlValueAccessor. */
