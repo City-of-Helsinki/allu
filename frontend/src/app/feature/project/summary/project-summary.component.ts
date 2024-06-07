@@ -34,6 +34,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
   layerTree$: Observable<TreeStructureNode<void>>;
+  displayMap = false;
 
   private destroy$ = new Subject<boolean>();
   @ViewChild(MapComponent) private map: MapComponent;
@@ -50,6 +51,11 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.availableLayers$ = this.store.pipe(select(fromProject.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromProject.getSelectedLayers));
     this.layerTree$ = this.store.pipe(select(fromProject.getTreeStructure));
+
+    // fixes the map not always being displayed
+    setTimeout(() => {
+      this.displayMap = true;
+    });
   }
 
   ngAfterViewInit(): void {
