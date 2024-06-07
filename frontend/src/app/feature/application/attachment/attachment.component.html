@@ -43,6 +43,9 @@
           <mat-error *ngIf="attachmentForm.get('size').hasError('max')">
             {{'attachment.error.maxSizeExceeded' | translation:{size: getMaxAttachmentSize()} }}
           </mat-error>
+          <mat-error *ngIf="attachmentForm.get('file').hasError('invalidExtension')">
+            {{'attachment.error.allowedFileExtensions' | translation:{extensions: attachmentAllowedTypes} }}
+          </mat-error>
         </div>
       </div>
       <div fxLayout="row">

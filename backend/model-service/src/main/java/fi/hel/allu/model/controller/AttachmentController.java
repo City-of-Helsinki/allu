@@ -3,7 +3,10 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.dao.ConfigurationDao;
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.Configuration;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Collections;
+
+import static fi.hel.allu.common.util.AttachmentUtil.bytesToMegabytes;
+import static fi.hel.allu.common.util.AttachmentUtil.getFileExtension;
 
 @RestController
 @RequestMapping("/attachments")
@@ -23,6 +29,10 @@ public class AttachmentController {
 
   @Autowired
   private AttachmentDao attachmentDao;
+
+  @Autowired
+  ConfigurationDao configurationDao;
+
 
   public AttachmentController() {
   }
@@ -54,10 +64,18 @@ public class AttachmentController {
       // Empty attachments don't make sense, let's explicitly forbid them
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } else {
+      double attachmentSizeInMB = bytesToMegabytes(data.getSize());
+      String attachmentExtension = getFileExtension(attachmentInfo.getName());
+      String allowedFileTypes = getConfigurationValue(ConfigurationKey.ATTACHMENT_ALLOWED_TYPES);
+      int maxFileSize = Integer.parseInt(getConfigurationValue(ConfigurationKey.ATTACHMENT_MAX_SIZE_MB));
+
+      if (!allowedFileTypes.contains(attachmentExtension) || attachmentSizeInMB > maxFileSize) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      }
+
       AttachmentInfo inserted = attachmentDao.insert(applicationId, attachmentInfo, data.getBytes());
       return new ResponseEntity<>(inserted, HttpStatus.CREATED);
     }
-
   }
 
   @PutMapping(value = "/applications/{applicationId}/default")
@@ -238,5 +256,12 @@ public class AttachmentController {
   public ResponseEntity<List<DefaultAttachmentInfo>> searchDefaultAttachmentInfo(
       @PathVariable String applicationType) {
     return new ResponseEntity<>(attachmentDao.searchDefault(ApplicationType.valueOf(applicationType)), HttpStatus.OK);
+  }
+
+  private String getConfigurationValue(ConfigurationKey key) {
+    return configurationDao.findByKey(key).stream()
+      .findFirst()
+      .map(Configuration::getValue)
+      .orElseThrow(() -> new NoSuchEntityException("Configuration " + key + " not found."));
   }
 }
