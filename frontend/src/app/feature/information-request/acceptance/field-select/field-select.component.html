@@ -15,6 +15,7 @@
     <div fxLayout="row" fxLayoutAlign="start center">
       <div fxFlex *ngIf="description.type==='GEOMETRY'; else textField">
         <simple-map
+          *ngIf="displayMap"
           [mapId]="'map-' + id"
           [content]="getMapContent(description.field)"></simple-map>
       </div>
