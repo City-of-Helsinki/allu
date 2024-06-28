@@ -1758,13 +1758,19 @@ export const translations = {
       invoiced: 'Laskutetut'
     },
     negligenceFeeType: {
-      START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
+      START_BEFORE_PERMIT: 'Aloitus ennen päätöksen saamista',
+      NEGLEGTING_NOTIFICATION_OBLIGATION: 'Ilmoitusvelvollisuuden laiminlyönti',
       AREA_UNCLEAN: 'Alue epäsiisti',
+      EXCAVATION_MAP_RESTRICTION_NOT_UPDATED: 'Kaivun karttarajaus päivittämättä',
+      WORKING_ZONE_RESTRICTION_NOT_UPDATED: 'Työalueen rajaus päivittämättä',
       ACTIONS_AGAINST_TRAFFIC_ARRANGEMENT: 'Liikennejärjestelypäätöksen vastainen toiminta',
       UNAUTHORIZED_PARKING: 'Auton luvaton pysäköinti alueella',
       LATE_NOTIFICATION_OF_COMPLETION: 'Valmistumisilmoitus tullut myöhässä',
       LATE_NOTIFICATION_OF_OPERATION_STATE: 'Toiminnallinen tila ilmoitettu myöhässä',
       LATE_REQUEST_OF_EXTRA_TIME: 'Lisäaikaa haettu myöhässä',
+      WORK_ZONE_RESTORATION_INADEQUATE: 'Työalueen ennallistaminen puutteellinen',
+      NEGLEGTING_MAINTENANCE: 'Työnaikaisten kunnossapitovelvoitteiden laiminlyönti',
+      NEGLECTING_PERMIT_TERMS: 'Päätösehtojen laiminlyönti',
       OTHER: 'Muu syy'
     },
     partition: {
@@ -1837,7 +1843,7 @@ export const translations = {
       title: 'Laskuperusteen tyyppi',
       CALCULATED: 'Laskettu',
       AREA_USAGE_FEE: 'Alueenkäyttömaksu',
-      NEGLIGENCE_FEE: 'Laiminlyöntimaksu',
+      NEGLIGENCE_FEE: 'Ylimääräinen valvontamaksu',
       ADDITIONAL_FEE: 'Ylimääräinen maksu',
       DISCOUNT: 'Alennus'
     },
