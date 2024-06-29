@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   authenticated(): boolean {
-    const jwt = localStorage.getItem('jwt');
+    const jwt = sessionStorage.getItem('jwt');
     return !!jwt && !this.jwtHelper.isTokenExpired(jwt);
   }
 
@@ -46,17 +46,17 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('jwt');
+    sessionStorage.removeItem('jwt');
     this.currentUser.clearUser();
     this.store.dispatch(new LoggedOut());
   }
 
   get token(): string {
-    return localStorage.getItem('jwt');
+    return sessionStorage.getItem('jwt');
   }
 
   private storeJwt(token: string): void {
-    localStorage.setItem('jwt', token);
+    sessionStorage.setItem('jwt', token);
   }
 
   private loggedIn(jwt: string): Observable<User> {
