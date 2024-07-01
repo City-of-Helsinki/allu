@@ -59,6 +59,11 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationES.setName("testi");
         applicationSearchService.insert(applicationES);
         applicationSearchService.refreshIndex();
+        try {
+          // kludge to fix testing the now asynchronous code
+          Thread.sleep(5000);
+        }
+        catch (Exception e) {}
         GetRequest getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
                 "_doc",

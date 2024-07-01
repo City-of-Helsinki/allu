@@ -36,6 +36,7 @@ import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
@@ -59,6 +60,30 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+class ReindexListener implements ActionListener<BulkByScrollResponse> {
+
+    private final String source, destination;
+
+    private final GenericSearchService searchService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ReindexListener.class);
+
+    public ReindexListener(String source, String destination, GenericSearchService searchService) {
+        this.source = source;
+        this.destination = destination;
+        this.searchService = searchService;
+    }
+    @Override
+    public void onResponse(BulkByScrollResponse response) {
+        logger.info("Reindexed {} to {}, {} documents, took {} s", this.source, this.destination, response.getTotal(), response.getTook().getSeconds());
+        searchService.finalizeAsyncReindexing(this.source, this.destination);
+    }
+
+    @Override
+    public void onFailure(Exception e) {
+        logger.error("Reindexing {} to {} failed: {}", this.source, this.destination, e.toString());
+    }
+}
 
 /**
  * Generic ElasticSearch functionality for different kinds of searches.
@@ -136,32 +161,27 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         indexConductor.generateNewIndexName();
         initializeIndex(indexConductor.getNewIndexName());
         if (currentIndexName == null) {
-            logger.debug("No current index -> create one");
+            logger.info("No current index -> create one");
             addAlias(indexConductor.getNewIndexName(), indexConductor.getIndexAliasName());
             indexConductor.commitNewIndex();
         } else {
-            logger.debug("Reindexing {} to {} ({})", currentIndexName, indexConductor.getNewIndexName(), this);
+            logger.info("Reindexing {} to {} ({})", currentIndexName, indexConductor.getNewIndexName(), this);
             reIndexing(currentIndexName, indexConductor.getNewIndexName());
-            indexConductor.commitNewIndex();
         }
     }
 
     public void reIndexing(String currentIndexName, String newIndexName) {
-        reIndexMapping(currentIndexName, newIndexName);
-        reIndexingAlias(currentIndexName, newIndexName, indexConductor.getIndexAliasName());
-        deleteIndex(currentIndexName);
+        ReindexRequest request = new ReindexRequest();
+        request.setSourceIndices(currentIndexName);
+        request.setDestIndex(newIndexName);
+        request.setRefresh(true);
+        client.reindexAsync(request, RequestOptions.DEFAULT, new ReindexListener(currentIndexName, newIndexName, this));
     }
 
-    public void reIndexMapping(String currentIndex, String newIndex) {
-        ReindexRequest request = new ReindexRequest();
-        request.setSourceIndices(currentIndex);
-        request.setDestIndex(newIndex);
-        request.setRefresh(true);
-        try {
-            client.reindex(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void finalizeAsyncReindexing(String currentIndexName, String newIndexName) {
+        reIndexingAlias(currentIndexName, newIndexName, indexConductor.getIndexAliasName());
+        deleteIndex(currentIndexName);
+        indexConductor.commitNewIndex();
     }
 
     /* Set up the lookup map for property's sort suffix: */
@@ -534,7 +554,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
 
     private void addAlias(String indexName, String alias) {
-        logger.debug("Add alias {} for index {}", alias, indexName);
+        logger.info("Add alias {} for index {}", alias, indexName);
         IndicesAliasesRequest request = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions aliasAction = creteAliasAction(indexName,
                                                                           IndicesAliasesRequest.AliasActions.Type.ADD);
