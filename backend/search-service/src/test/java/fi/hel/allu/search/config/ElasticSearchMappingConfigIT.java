@@ -28,6 +28,14 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
 
     private ApplicationSearchService applicationSearchService;
 
+    private void delayForAsync() {
+        try {
+        // kludge to fix testing the now asynchronous code
+            Thread.sleep(5000);
+        }
+        catch (Exception e) {}
+    }
+
     @BeforeEach
     void SetUp() {
         client = new RestHighLevelClient(
@@ -35,7 +43,8 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         ElasticSearchMappingConfig elasticSearchMappingConfig = new ElasticSearchMappingConfig(client);
         applicationSearchService = new ApplicationSearchService(elasticSearchMappingConfig, client,
                                                                 new ApplicationIndexConductor());
-        applicationSearchService.initIndex();
+        applicationSearchService.initIndex("SetUp()");
+        delayForAsync();
     }
 
     @Test
@@ -59,11 +68,6 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationES.setName("testi");
         applicationSearchService.insert(applicationES);
         applicationSearchService.refreshIndex();
-        try {
-          // kludge to fix testing the now asynchronous code
-          Thread.sleep(5000);
-        }
-        catch (Exception e) {}
         GetRequest getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
                 "_doc",
@@ -71,8 +75,9 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
         assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
-        applicationSearchService.initIndex();
-         getRequest = new GetRequest(
+        applicationSearchService.initIndex("testReindexing()");
+        delayForAsync();
+        getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
                 "_doc",
                 id.toString());

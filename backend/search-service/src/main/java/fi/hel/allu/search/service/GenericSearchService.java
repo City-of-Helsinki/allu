@@ -62,26 +62,27 @@ import java.util.stream.Collectors;
 
 class ReindexListener implements ActionListener<BulkByScrollResponse> {
 
-    private final String source, destination;
+    private final String source, destination, debug;
 
     private final GenericSearchService searchService;
 
     private static final Logger logger = LoggerFactory.getLogger(ReindexListener.class);
 
-    public ReindexListener(String source, String destination, GenericSearchService searchService) {
+    public ReindexListener(String source, String destination, GenericSearchService searchService, String debug) {
         this.source = source;
         this.destination = destination;
         this.searchService = searchService;
+        this.debug = debug;
     }
     @Override
     public void onResponse(BulkByScrollResponse response) {
-        logger.info("Reindexed {} to {}, {} documents, took {} s", this.source, this.destination, response.getTotal(), response.getTook().getSeconds());
-        searchService.finalizeAsyncReindexing(this.source, this.destination);
+        logger.info("{}: Reindexed {} to {}, {} documents, took {} s", this.debug, this.source, this.destination, response.getTotal(), response.getTook().getSeconds());
+        searchService.finalizeAsyncReindexing(this.source, this.destination, this.debug);
     }
 
     @Override
     public void onFailure(Exception e) {
-        logger.error("Reindexing {} to {} failed: {}", this.source, this.destination, e.toString());
+        logger.error("{}: Reindexing {} to {} failed: {}", this.debug, this.source, this.destination, e.toString());
     }
 }
 
@@ -156,31 +157,35 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
 
     public void initIndex() {
+      initIndex("");
+    }
+
+    public void initIndex(String debug) {
         String currentIndexName = getCurrentIndexName(indexConductor.getIndexAliasName());
 
         indexConductor.generateNewIndexName();
-        initializeIndex(indexConductor.getNewIndexName());
+        initializeIndex(indexConductor.getNewIndexName(), debug);
         if (currentIndexName == null) {
-            logger.info("No current index -> create one");
-            addAlias(indexConductor.getNewIndexName(), indexConductor.getIndexAliasName());
+            logger.info("{}: No current index -> create one", debug);
+            addAlias(indexConductor.getNewIndexName(), indexConductor.getIndexAliasName(), debug);
             indexConductor.commitNewIndex();
         } else {
-            logger.info("Reindexing {} to {} ({})", currentIndexName, indexConductor.getNewIndexName(), this);
-            reIndexing(currentIndexName, indexConductor.getNewIndexName());
+            logger.info("{}: Reindexing {} to {} ({})", debug, currentIndexName, indexConductor.getNewIndexName(), this);
+            reIndexing(currentIndexName, indexConductor.getNewIndexName(), debug);
         }
     }
 
-    public void reIndexing(String currentIndexName, String newIndexName) {
+    public void reIndexing(String currentIndexName, String newIndexName, String debug) {
         ReindexRequest request = new ReindexRequest();
         request.setSourceIndices(currentIndexName);
         request.setDestIndex(newIndexName);
         request.setRefresh(true);
-        client.reindexAsync(request, RequestOptions.DEFAULT, new ReindexListener(currentIndexName, newIndexName, this));
+        client.reindexAsync(request, RequestOptions.DEFAULT, new ReindexListener(currentIndexName, newIndexName, this, debug));
     }
 
-    public void finalizeAsyncReindexing(String currentIndexName, String newIndexName) {
-        reIndexingAlias(currentIndexName, newIndexName, indexConductor.getIndexAliasName());
-        deleteIndex(currentIndexName);
+    public void finalizeAsyncReindexing(String currentIndexName, String newIndexName, String debug) {
+        reIndexingAlias(currentIndexName, newIndexName, indexConductor.getIndexAliasName(), debug);
+        deleteIndex(currentIndexName, debug);
         indexConductor.commitNewIndex();
     }
 
@@ -483,7 +488,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         if (indexConductor.tryStartSync()) {
             try {
                 indexConductor.generateNewIndexName();
-                initializeIndex(indexConductor.getNewIndexName());
+                initializeIndex(indexConductor.getNewIndexName(), "");
                 indexConductor.setSyncActive();
             } catch (Exception e) {
                 indexConductor.setSyncPassive();
@@ -510,10 +515,11 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         if (indexConductor.tryDeactivateSync()) {
             try {
                 reIndexingAlias(indexConductor.getCurrentIndexName(), indexConductor.getNewIndexName(),
-                                indexConductor.getIndexAliasName());
+                                indexConductor.getIndexAliasName(),
+                          "");
                 final String oldIndex = indexConductor.getCurrentIndexName();
                 indexConductor.commitNewIndex();
-                deleteIndex(oldIndex);
+                deleteIndex(oldIndex, "");
                 indexConductor.setSyncPassive();
             } catch (Exception e) {
                 indexConductor.setSyncActive();
@@ -528,7 +534,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     public void cancelSync() {
         if (indexConductor.tryDeactivateSync()) {
             try {
-                deleteIndex(indexConductor.getNewIndexName());
+                deleteIndex(indexConductor.getNewIndexName(), "");
             } finally {
                 indexConductor.setSyncPassive();
             }
@@ -553,8 +559,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         return aliases.keySet().iterator().next();
     }
 
-    private void addAlias(String indexName, String alias) {
-        logger.info("Add alias {} for index {}", alias, indexName);
+    private void addAlias(String indexName, String alias, String debug) {
+        logger.info("{}: Add alias {} for index {}", debug, alias, indexName);
         IndicesAliasesRequest request = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions aliasAction = creteAliasAction(indexName,
                                                                           IndicesAliasesRequest.AliasActions.Type.ADD);
@@ -562,8 +568,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         executeAliasRequests(request);
     }
 
-    public void reIndexingAlias(String oldIndexName, String newIndexName, String alias) {
-        logger.debug("Update alias '{}' {}->{}", alias, oldIndexName, newIndexName);
+    public void reIndexingAlias(String oldIndexName, String newIndexName, String alias, String debug) {
+        logger.debug("{}: Update alias '{}' {}->{}", debug, alias, oldIndexName, newIndexName);
         IndicesAliasesRequest request = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions removeAliasAction = creteAliasAction(oldIndexName,
                                                                                 IndicesAliasesRequest.AliasActions.Type.REMOVE);
@@ -591,8 +597,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
     }
 
-    private void initializeIndex(String indexName) {
-        logger.debug("initializeIndex {}", indexName);
+    private void initializeIndex(String indexName, String debug) {
+        logger.debug("{}: initializeIndex {}", debug, indexName);
         elasticSearchMappingConfig.initializeIndex(indexName);
     }
 
@@ -638,16 +644,17 @@ public class GenericSearchService<T, Q extends QueryParameters> {
      */
     public void deleteIndex() {
         indexConductor.generateNewIndexName();
-        initializeIndex(indexConductor.getNewIndexName());
+        initializeIndex(indexConductor.getNewIndexName(), "");
         reIndexingAlias(indexConductor.getCurrentIndexName(), indexConductor.getCurrentIndexName(),
-                        indexConductor.getIndexAliasName());
+                        indexConductor.getIndexAliasName(),
+                        "");
         final String oldIndex = indexConductor.getCurrentIndexName();
         indexConductor.commitNewIndex();
-        deleteIndex(oldIndex);
+        deleteIndex(oldIndex, "");
     }
 
-    private void deleteIndex(String indexName) {
-        logger.debug("deleteIndex {}", indexName);
+    private void deleteIndex(String indexName, String debug) {
+        logger.debug("{}: deleteIndex {}", debug, indexName);
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         try {
             client.indices().delete(request, RequestOptions.DEFAULT);
