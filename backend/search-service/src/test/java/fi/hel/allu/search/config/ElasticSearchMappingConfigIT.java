@@ -16,12 +16,15 @@ import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.IOException;
 
 import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
 
     private RestHighLevelClient client;
@@ -31,7 +34,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
     private void delayForAsync() {
         try {
         // kludge to fix testing the now asynchronous code
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         }
         catch (Exception e) {}
     }
