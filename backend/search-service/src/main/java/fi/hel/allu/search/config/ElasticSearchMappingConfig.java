@@ -76,6 +76,7 @@ public class ElasticSearchMappingConfig {
     } catch (ResourceAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index {} not created, because it exists already.", indexName);
     } catch (IOException e) {
+      logger.error("Error initializing index {}: {}", indexName, e.toString());
       throw new RuntimeException(e);
     }
   }

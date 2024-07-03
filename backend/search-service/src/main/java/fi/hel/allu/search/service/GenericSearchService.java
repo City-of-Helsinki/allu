@@ -34,6 +34,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.unit.ByteSizeValue;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
@@ -180,6 +181,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         request.setSourceIndices(currentIndexName);
         request.setDestIndex(newIndexName);
         request.setRefresh(true);
+        request.setTimeout(TimeValue.timeValueMinutes(10));
         client.reindexAsync(request, RequestOptions.DEFAULT, new ReindexListener(currentIndexName, newIndexName, this, debug));
     }
 
@@ -187,7 +189,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         reIndexingAlias(currentIndexName, newIndexName, indexConductor.getIndexAliasName(), debug);
         deleteIndex(currentIndexName, debug);
         indexConductor.commitNewIndex();
-        logger.info("{}: async reindexing finalized", debug);
+        logger.info("{}: async reindexing {} -> {} finalized", debug, currentIndexName, newIndexName);
     }
 
     /* Set up the lookup map for property's sort suffix: */
@@ -492,6 +494,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                 initializeIndex(indexConductor.getNewIndexName(), "");
                 indexConductor.setSyncActive();
             } catch (Exception e) {
+                logger.error("Error starting sync: {}", e.toString());
                 indexConductor.setSyncPassive();
                 throw e;
             }
@@ -523,6 +526,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                 deleteIndex(oldIndex, "");
                 indexConductor.setSyncPassive();
             } catch (Exception e) {
+                logger.error("Error ending sync: {}", e.toString());
                 indexConductor.setSyncActive();
                 throw e;
             }
@@ -540,6 +544,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                 indexConductor.setSyncPassive();
             }
         }
+        else logger.error("Unable to cancel sync");
     }
 
     private String getCurrentIndexName(String indexAliasName) {
@@ -551,13 +556,17 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             aliases = client.indices()
                     .getAlias(aliasesRequest, RequestOptions.DEFAULT).getAliases();
         } catch (IOException e) {
+            logger.error("Error getting current index name for {}: {}", indexAliasName, e.toString());
             throw new RuntimeException(e);
         }
 
         if (aliases.isEmpty()) {
+            logger.info("No current index for alias {}", indexAliasName);
             return null;
         }
-        return aliases.keySet().iterator().next();
+        String result = aliases.keySet().iterator().next();
+        logger.info("Current index for alias {} is {}", indexAliasName, result);
+        return result;
     }
 
     private void addAlias(String indexName, String alias, String debug) {
@@ -571,7 +580,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
 
     public void reIndexingAlias(String oldIndexName, String newIndexName, String alias, String debug) {
-        logger.debug("{}: Update alias '{}' {}->{}", debug, alias, oldIndexName, newIndexName);
+        logger.info("{}: Update alias '{}' {}->{}", debug, alias, oldIndexName, newIndexName);
         IndicesAliasesRequest request = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions removeAliasAction = creteAliasAction(oldIndexName,
                                                                                 IndicesAliasesRequest.AliasActions.Type.REMOVE);
@@ -581,7 +590,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         addAliasAction.writeIndex(true);
         request.addAliasAction(addAliasAction);
         executeAliasRequests(request);
-        logger.debug("{}: done realiasing {} to {}", debug, alias, newIndexName);
+        logger.info("{}: done realiasing {} to {}", debug, alias, newIndexName);
     }
 
     private IndicesAliasesRequest.AliasActions creteAliasAction(String index,
@@ -595,13 +604,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         try {
             client.indices().updateAliases(indicesAliasesRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            logger.error("Updating Aliases failed {}", indicesAliasesRequest);
+            logger.error("Updating Aliases failed {}: {}", indicesAliasesRequest, e.toString());
             throw new RuntimeException(e);
         }
     }
 
     private void initializeIndex(String indexName, String debug) {
-        logger.debug("{}: initializeIndex {}", debug, indexName);
+        logger.info("{}: initializeIndex {}", debug, indexName);
         elasticSearchMappingConfig.initializeIndex(indexName);
     }
 
@@ -657,11 +666,11 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
 
     private void deleteIndex(String indexName, String debug) {
-        logger.debug("{}: deleteIndex {}", debug, indexName);
+        logger.info("{}: deleteIndex {}", debug, indexName);
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         try {
             client.indices().delete(request, RequestOptions.DEFAULT);
-            logger.debug("{}: deleted index {}", debug, indexName);
+            logger.info("{}: deleted index {}", debug, indexName);
         } catch (IOException e) {
             logger.error("{}: Error deleting index {}: {}", debug, indexName, e.toString());
             throw new RuntimeException(e);
