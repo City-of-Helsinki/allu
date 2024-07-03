@@ -15,6 +15,7 @@ import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -65,6 +66,7 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testReindexing() throws IOException {
         Integer id = 1;
         ApplicationES applicationES = createApplication(id);

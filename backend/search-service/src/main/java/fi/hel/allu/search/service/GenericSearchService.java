@@ -187,6 +187,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         reIndexingAlias(currentIndexName, newIndexName, indexConductor.getIndexAliasName(), debug);
         deleteIndex(currentIndexName, debug);
         indexConductor.commitNewIndex();
+        logger.info("{}: async reindexing finalized", debug);
     }
 
     /* Set up the lookup map for property's sort suffix: */
@@ -566,6 +567,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                                                                           IndicesAliasesRequest.AliasActions.Type.ADD);
         request.addAliasAction(aliasAction);
         executeAliasRequests(request);
+        logger.info("{}: done adding alias {} for {}", debug, alias, indexName);
     }
 
     public void reIndexingAlias(String oldIndexName, String newIndexName, String alias, String debug) {
@@ -579,6 +581,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         addAliasAction.writeIndex(true);
         request.addAliasAction(addAliasAction);
         executeAliasRequests(request);
+        logger.debug("{}: done realiasing {} to {}", debug, alias, newIndexName);
     }
 
     private IndicesAliasesRequest.AliasActions creteAliasAction(String index,
@@ -658,7 +661,9 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         try {
             client.indices().delete(request, RequestOptions.DEFAULT);
+            logger.debug("{}: deleted index {}", debug, indexName);
         } catch (IOException e) {
+            logger.error("{}: Error deleting index {}: {}", debug, indexName, e.toString());
             throw new RuntimeException(e);
         }
     }
