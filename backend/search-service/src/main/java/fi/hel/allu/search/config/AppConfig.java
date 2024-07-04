@@ -34,7 +34,7 @@ public class AppConfig {
                             public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder builder) {
                                 return builder
                                         .setConnectTimeout(5000)
-                                        .setSocketTimeout(80000);
+                                        .setSocketTimeout(600000);
                             }
                         }));
     }
