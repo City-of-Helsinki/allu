@@ -77,6 +77,7 @@ public class InvoicingService {
     final List<Invoice> invoices = getPendingInvoices();
     if (invoices.isEmpty()) {
       logger.info("No invoices to send.");
+      sendNotificationEmail(new ArrayList<String>(),0);
       return;
     }
 
