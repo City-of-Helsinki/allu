@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
@@ -11,7 +11,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {getLoggedInUser} from '@feature/auth/reducers';
 import * as fromApplication from '../reducers';
-import {map, take} from 'rxjs/operators';
+import {map, take, takeUntil} from 'rxjs/operators';
 import {ApplicationStatus} from '@model/application/application-status';
 import {Application} from '@model/application/application';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
@@ -42,6 +42,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private route: ActivatedRoute,
               private store: Store<fromRoot.State>,
               private dialog: MatDialog,
+              private cdr: ChangeDetectorRef,
               private applicationNotificationService: ExternalUpdateNotificationService,
               private fb: UntypedFormBuilder) {}
 
@@ -49,6 +50,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     this.initForm();
 
     this.application$ = this.store.pipe(select(fromApplication.getCurrentApplication));
+    this.application$.pipe(takeUntil(this.destroy)).subscribe(() => this.cdr.detectChanges);
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
     this.notificationType$ = this.applicationNotificationService.getNotificationType();
