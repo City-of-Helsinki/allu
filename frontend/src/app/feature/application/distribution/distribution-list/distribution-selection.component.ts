@@ -41,7 +41,9 @@ export class DistributionSelectionComponent implements OnInit, OnDestroy, Contro
   registerOnTouched(fn: any): void {}
 
   setDisabledState(isDisabled: boolean): void {
-    this.selected.disable({emitEvent: false});
+    if (isDisabled) {
+      this.selected.disable({emitEvent: false});
+    }
   }
 
   writeValue(selected: DistributionEntry[] = []): void {
