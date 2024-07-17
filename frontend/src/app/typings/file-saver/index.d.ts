@@ -1,4 +1,4 @@
 declare module 'filesaver' {
-  // tslint:disable-next-line
+  // eslint-disable-next-line
   export var saveAs: any;
 }
