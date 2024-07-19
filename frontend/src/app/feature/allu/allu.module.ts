@@ -95,7 +95,7 @@ export const metaReducers = environment.production ? [] : [logger];
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production // Restrict extension to log-only mode
-    }),
+    , connectInZone: true}),
     ToastrModule.forRoot(),
     // App modules
     ApplicationModule,
