@@ -16,7 +16,9 @@
       ],
       "rules": {
         "@typescript-eslint/no-unused-vars": 0,
-        "@typescript-eslint/no-explicit-any": 0
+        "@typescript-eslint/no-explicit-any": 0,
+        "no-extra-boolean-cast": 0,
+        "no-irregular-whitespace": 0
       }
     },
     {
