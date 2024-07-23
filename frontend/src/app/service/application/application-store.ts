@@ -162,7 +162,7 @@ export class ApplicationStore {
     }
   }
 
-  removeAttachment(attachmentId: number): Observable<{}> {
+  removeAttachment(attachmentId: number): Observable<object> {
     const appId = this.snapshot.application.id;
     return this.attachmentHub.remove(appId, attachmentId).pipe(
       tap(response => this.loadAttachments(appId).subscribe())
@@ -212,7 +212,7 @@ export class ApplicationStore {
     );
   }
 
-  delete(id: number): Observable<{}> {
+  delete(id: number): Observable<object> {
     const response = this.snapshot.draft
       ? this.applicationDraftService.remove(id)
       : this.applicationService.remove(id);

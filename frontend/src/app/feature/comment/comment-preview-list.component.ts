@@ -16,7 +16,7 @@ export class CommentPreviewListComponent {
 
   constructor() {}
 
-  @Input('comments') set comments(comments: Comment[]) {
+  @Input() set comments(comments: Comment[]) {
     this.visibleComments = comments
       ? this.getVisibleComments(comments)
       : [];

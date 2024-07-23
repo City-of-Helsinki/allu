@@ -30,7 +30,7 @@ export class AlluDateAdapter extends NativeDateAdapter {
     return DEFAULT_DAY_OF_WEEK_NAMES[style];
   }
 
-  format(date: Date, displayFormat: Object): string {
+  format(date: Date, displayFormat: object): string {
     return TimeUtil.getUiDateString(date);
   }
 
