@@ -32,7 +32,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   @Input() showPropertyDeveloper = false;
   @Input() contactRequired = false;
 
-  @Output() showPendingInfo = new EventEmitter<{}>();
+  @Output() showPendingInfo = new EventEmitter<object>();
 
   @ViewChild('contacts', { static: true }) contacts: ContactComponent;
 
