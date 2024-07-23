@@ -28,7 +28,7 @@ import {take} from 'rxjs/operators';
 import {ErrorInfo} from '@service/error/error-info';
 
 class DecisionServiceMock {
-  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<{}> {
+  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<object> {
     return EMPTY;
   }
 

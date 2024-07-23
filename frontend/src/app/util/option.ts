@@ -45,7 +45,6 @@ export class SomeOpt<T> implements Option<T> {
   constructor(private val: T) {}
 
   isDefined(): boolean {
-    /* eslint-disable no-null/no-null */
     return this.val !== undefined && this.val !== null;
   }
 
@@ -79,7 +78,6 @@ export class SomeOpt<T> implements Option<T> {
 }
 
 export function Some<T>(val: T): Option<T> {
-  /* eslint-disable no-null/no-null */
   return val === undefined || val === null
     ? new NoneOpt()
     : new SomeOpt(val);

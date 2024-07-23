@@ -58,7 +58,7 @@ export class ApplicationStoreMock {
     this.applicationCopy$.next(app);
   }
 
-  delete(id: number): Observable<{}> {
+  delete(id: number): Observable<object> {
     return of({});
   }
 
