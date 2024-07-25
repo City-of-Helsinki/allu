@@ -20,7 +20,8 @@
         "no-extra-boolean-cast": 0,
         "no-irregular-whitespace": 0,
         "@angular-eslint/no-output-rename": 0,
-        "@angular-eslint/no-output-on-prefix": 0
+        "@angular-eslint/no-output-on-prefix": 0,
+        "@angular-eslint/no-empty-lifecycle-method": 0
       }
     },
     {
