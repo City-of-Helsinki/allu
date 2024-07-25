@@ -1,3 +1,5 @@
+/* eslint-disable no-duplicate-case */
+// No point in modifying already working flow
 import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Application} from '@model/application/application';
 import {NumberUtil} from '@util/number.util';
