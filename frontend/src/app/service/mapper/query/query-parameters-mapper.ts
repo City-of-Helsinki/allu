@@ -91,6 +91,7 @@ export class QueryParametersMapper {
     let retVal;
     if (str) {
       retVal = str.trim();
+      // eslint-disable-next-line no-useless-escape
       retVal = retVal.replace('\s+', ' ');
     }
     return retVal;
