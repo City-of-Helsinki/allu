@@ -72,7 +72,7 @@ export function upsert<T>(dictionary: Dictionary<T>, key: string | number, value
   };
 }
 
-export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
+export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
 
 export function isNumber(value: any): boolean {
   return typeof value === 'number';

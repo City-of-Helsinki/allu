@@ -42,7 +42,7 @@ export class UserListComponent implements OnInit {
     this.userService.getAllUsers().pipe(
       withLatestFrom(this.store.select(fromRoot.getCityDistrictEntities)),
       map(([users, cityDistricts]) => users.map(user => this.toUserElement(user, cityDistricts)))
-    ).subscribe(users =>  {
+    ).subscribe(users => {
       this.dataSource.data = users;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

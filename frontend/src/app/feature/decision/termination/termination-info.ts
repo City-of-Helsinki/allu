@@ -1,7 +1,7 @@
 import {StatusChangeInfo} from '@model/application/status-change-info';
 import {CommentType} from '@model/application/comment/comment-type';
 
-export class TerminationInfo extends StatusChangeInfo {
+export class TerminationInfo extends StatusChangeInfo {
   constructor(
     public draft: boolean,
     public id?: number,

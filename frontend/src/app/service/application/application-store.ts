@@ -255,7 +255,7 @@ export class ApplicationStore {
     );
   }
 
-  saveDeposit(deposit: Deposit): Observable<Deposit> {
+  saveDeposit(deposit: Deposit): Observable<Deposit> {
     return this.depositService.save(deposit).pipe(
       tap(saved => {
         this.store.dispatch(new TagAction.Load());
@@ -340,7 +340,7 @@ export class ApplicationStore {
     );
   }
 
-  private saveDraft(application: Application): Observable<Application> {
+  private saveDraft(application: Application): Observable<Application> {
     const newApplication = !NumberUtil.isExisting(application);
     if (newApplication) {
       return this.applicationDraftService.save(application).pipe(

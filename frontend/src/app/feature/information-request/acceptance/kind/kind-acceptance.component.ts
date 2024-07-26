@@ -61,7 +61,7 @@ export class KindAcceptanceComponent implements OnInit {
     return hasSpecifiers(this.availableKindsWithSpecifiers);
   }
 
-  kindSelection(kinds: string | Array<string>) {
+  kindSelection(kinds: string | Array<string>) {
     const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
     const availableSpecifiers = getAvailableSpecifiers(this.applicationType, selectedKinds);
     this.availableKindsWithSpecifiers = availableSpecifiers;

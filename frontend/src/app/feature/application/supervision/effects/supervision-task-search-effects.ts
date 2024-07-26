@@ -29,7 +29,7 @@ import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 export class SupervisionTaskSearchEffects {
   constructor(private actions: Actions,
               private store: Store<fromRoot.State>,
-              private taskService: SupervisionTaskService) {}
+              private taskService: SupervisionTaskService){}
 
   
   search: Observable<Action> = createEffect(() => this.actions.pipe(
