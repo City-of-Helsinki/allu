@@ -297,11 +297,12 @@ export class MapController {
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.map.on('draw:created', (e: any) => {
       if (this.mapUtil.isValidGeometry(e.layer)) {
         editedItems.addLayer(e.layer);
-        self.shapes$.next(new ShapeAdded(editedItems));
+        this.shapes$.next(new ShapeAdded(editedItems));
         e.layer.showMeasurements(translations.map.measure);
       } else {
         this.map.removeLayer(e.layer);
