@@ -27,6 +27,9 @@ export const restrictedLayers = {
     'Maanomistus vuokrausalueet': null,
     'Maanomistus sisäinen vuokraus': null
   },
+};
+
+export const undergroundAndCableLayers = {
   'Maanalaiset tilat': {
     'Maanalaiset tilat reunaviivat': null,
     'Maanalaiset tilat alueet': null,
@@ -55,13 +58,32 @@ export const restrictedBaseLayerTree = {
   }
 };
 
+export const allLayersBaseLayerTree = {
+  'Karttatasot': {
+    ...commonLayers,
+    ...restrictedLayers,
+    ...undergroundAndCableLayers
+  }
+};
+
 export const applicationLayerTree = applicationLayers.reduce((tree, layer) => {
   tree[layer] = null;
   return tree;
 }, {});
 
-export function createLayerTree(withRestricted: boolean, withApplications: boolean) {
-  const tree = withRestricted ? restrictedBaseLayerTree : baseLayerTree;
+/**
+ * @param withRestricted when false returns only common layers
+ * @param withApplications whether to return application types
+ * @param undergroundLayers when true adds underground and cable layers if withRestricted is also tgrue
+ * @returns 
+ */
+
+export function createLayerTree(withRestricted: boolean, withApplications: boolean, undergroundLayers: boolean) {
+  let tree = withRestricted ? restrictedBaseLayerTree : baseLayerTree;
+  if (withRestricted && undergroundLayers) {
+    tree = allLayersBaseLayerTree;
+  }
+
   return withApplications
     ? { ...tree, 'Hakemustyypit': applicationLayerTree }
     : { ...tree };
