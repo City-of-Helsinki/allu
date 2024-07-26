@@ -26,7 +26,7 @@ export class ObjectUtil {
       const cloned = Object.create(source);
 
       for (key in source) {
-        if (source.hasOwnProperty(key)) {
+        if (Object.hasOwn(source, key)) {
           value = source[key];
 
           if (!!value && value instanceof Date) {
