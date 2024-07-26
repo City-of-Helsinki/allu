@@ -31,7 +31,7 @@ export class NotificationService {
     this.toastService.success(message, title);
   }
 
-  info(title: string, message?: string): void  {
+  info(title: string, message?: string): void {
     this.toastService.info(message, title);
   }
 

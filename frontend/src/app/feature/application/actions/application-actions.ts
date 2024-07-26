@@ -57,7 +57,7 @@ export class SetKindsWithSpecifiers implements Action {
   constructor(public payload: KindsWithSpecifiers) {}
 }
 
-export class RemoveClientApplicationData implements Action  {
+export class RemoveClientApplicationData implements Action {
   readonly type = ApplicationActionType.RemoveClientApplicationData;
 }
 

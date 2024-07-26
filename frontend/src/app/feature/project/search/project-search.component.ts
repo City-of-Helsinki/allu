@@ -40,7 +40,7 @@ export class ProjectSearchComponent implements OnInit {
               private projectState: ProjectState,
               private store: Store<fromRoot.State>,
               private notification: NotificationService,
-              fb: UntypedFormBuilder) {
+              fb: UntypedFormBuilder) {
     this.queryForm = fb.group({
       identifier: undefined,
       startTime: undefined,

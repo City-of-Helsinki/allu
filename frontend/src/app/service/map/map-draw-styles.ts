@@ -10,8 +10,8 @@ export const styleByApplicationType = {
 };
 
 export const winkki = {
-  EVENT:  {color: '#FF6CB8', opacity: 1, fillOpacity: 0.4},
-  ROAD_WORKS:  {color: '#FEB24C', opacity: 1, fillOpacity: 0.4},
+  EVENT: {color: '#FF6CB8', opacity: 1, fillOpacity: 0.4},
+  ROAD_WORKS: {color: '#FEB24C', opacity: 1, fillOpacity: 0.4},
 };
 
 export const CITY_DISTRICTS = {color: '#000000', weight: 2, dashArray: '10, 10', opacity: 1, fillOpacity: 0};
