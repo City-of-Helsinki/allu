@@ -97,7 +97,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     }, {emitEvent: false});
   }
 
-  kindSelection(kinds: string | Array<string>) {
+  kindSelection(kinds: string | Array<string>) {
     const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
     const remaining = this.getRemainingKindsWithSpecifiers();
     const selected = this.createSelection(selectedKinds, remaining);
@@ -124,7 +124,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     const selectedSpecifiers = fromKindsWithSpecifiers(app.kindsWithSpecifiers);
 
     const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
-    this.typeCtrl = this.fb.control({ value: app.type, disabled: this.typeChangeDisabled });
+    this.typeCtrl = this.fb.control({ value: app.type, disabled: this.typeChangeDisabled});
     this.kindsCtrl = this.fb.control(kinds, Validators.required);
     this.specifiersCtrl = this.fb.control(selectedSpecifiers);
     this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);

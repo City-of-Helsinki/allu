@@ -21,6 +21,7 @@ const ID_FIELD = 'id';
   providers: [SELECTION_GROUP_VALUE_ACCESSOR, SelectionEventService]
 })
 export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterViewInit {
+  // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() select = new EventEmitter<SelectionEvent>();
 
   @ContentChildren(SelectionItemComponent, {descendants: true}) selectionItems: QueryList<SelectionItemComponent>;
@@ -81,8 +82,8 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
   }
 
   private idSame(item1: any, item2: any): boolean {
-    return item1.hasOwnProperty(ID_FIELD)
-      && item2.hasOwnProperty(ID_FIELD)
+    return Object.hasOwn(item1, ID_FIELD)
+      && Object.hasOwn(item2, ID_FIELD)
       && item1.id === item2.id;
-  }
+  } 
 }

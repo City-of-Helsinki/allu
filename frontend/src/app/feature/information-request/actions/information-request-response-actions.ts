@@ -31,7 +31,7 @@ export class LoadResponseFailed implements ActionWithPayload<ErrorInfo> {
 }
 
 export type InformationRequestResponseAction =
-  | GetResponse
-  | LoadResponse
+  | GetResponse
+  | LoadResponse
   | LoadResponseSuccess
   | LoadResponseFailed;

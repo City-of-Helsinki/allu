@@ -56,7 +56,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   constructor(private userService: UserService,
               private store: Store<fromRoot.State>,
-              private fb: UntypedFormBuilder) {
+              private fb: UntypedFormBuilder) {
     this.queryForm = this.fb.group({
       applicationId: undefined,
       type: undefined,

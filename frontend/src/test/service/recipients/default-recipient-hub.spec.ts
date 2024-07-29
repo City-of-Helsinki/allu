@@ -16,7 +16,7 @@ class DefaultRecipientServiceMock {
   saveDefaultRecipient(recipient: DefaultRecipient): Observable<DefaultRecipient> {
     return of(recipient);
   }
-  removeDefaultRecipient(id: number): Observable<{}> {
+  removeDefaultRecipient(id: number): Observable<object> {
     return of({});
   }
 }

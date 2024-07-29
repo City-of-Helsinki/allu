@@ -174,7 +174,7 @@ export class MapController {
   }
 
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
-                      style?: Object, featureInfo?: MapFeatureInfo) {
+                      style?: object, featureInfo?: MapFeatureInfo) {
     const layer = this.mapLayerService.getContentLayer(layerName);
     if (layer) {
       geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, featureInfo));
@@ -183,22 +183,22 @@ export class MapController {
     }
   }
 
-  public drawFocused(geometries: Array<GeoJSON.GeometryCollection>, style?: Object): void {
+  public drawFocused(geometries: Array<GeoJSON.GeometryCollection>, style?: object): void {
     geometries.forEach(g => this.drawGeometryToLayer(g, this.focusedItems, style));
   }
 
-  public drawFixedGeometries(geometries: Array<GeoJSON.GeometryCollection>, style?: Object) {
+  public drawFixedGeometries(geometries: Array<GeoJSON.GeometryCollection>, style?: object) {
     geometries.forEach(geometry => this.drawEditableGeometry(geometry, style));
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }
 
-  public drawFeatures(featureCollection: FeatureCollection<GeometryObject>, style?: Object): void {
+  public drawFeatures(featureCollection: FeatureCollection<GeometryObject>, style?: object): void {
     this.drawFeaturesToLayer(featureCollection, this.editedItems, style);
     this.showMeasurements(this.editedItems);
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }
 
-  public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: Object) {
+  public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: object) {
     if (geometry) {
       this.drawGeometryToLayer(geometry, this.editedItems, style);
       this.showMeasurements(this.editedItems);
@@ -297,11 +297,12 @@ export class MapController {
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.map.on('draw:created', (e: any) => {
       if (this.mapUtil.isValidGeometry(e.layer)) {
         editedItems.addLayer(e.layer);
-        self.shapes$.next(new ShapeAdded(editedItems));
+        this.shapes$.next(new ShapeAdded(editedItems));
         e.layer.showMeasurements(translations.map.measure);
       } else {
         this.map.removeLayer(e.layer);

@@ -36,7 +36,7 @@ export class LoadFailed implements ActionWithPayload<ErrorInfo> {
 
 export class Paged implements Action {
   readonly type = ApplicationActionTypes.Paged;
-  public payload: { sort?: Sort, pageRequest?: PageRequest };
+  public payload: {sort?: Sort, pageRequest?: PageRequest };
 
   constructor(public sort?: Sort, public pageRequest?: PageRequest) {
     this.payload = {sort, pageRequest};

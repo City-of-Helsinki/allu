@@ -42,7 +42,7 @@ export class InvoicingPeriodService {
     );
   }
 
-  remove(applicationId: number): Observable<{}> {
+  remove(applicationId: number): Observable<object> {
     const url = `${BASE_URL}/${applicationId}/invoicingperiods`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('invoicing.period.error.remove')))

@@ -37,7 +37,7 @@ export class DefaultAttachmentComponent implements OnInit {
               private router: Router,
               private store: Store<fromRoot.State>,
               private attachmentHub: AttachmentHub,
-              private notification: NotificationService) {
+              private notification: NotificationService) {
 
     this.attachmentForm = this.fb.group({
       id: [undefined],

@@ -33,9 +33,9 @@ export class DefaultRecipientService {
     }
   }
 
-  removeDefaultRecipient(id: number): Observable<{}> {
+  removeDefaultRecipient(id: number): Observable<object> {
     if (NumberUtil.isDefined(id)) {
-      return this.http.delete<{}>(DEFAULT_RECIPIENTS_ID_URL.replace(':id', String(id))).pipe(
+      return this.http.delete<object>(DEFAULT_RECIPIENTS_ID_URL.replace(':id', String(id))).pipe(
         catchError(error => this.errorHandler.handle(error, findTranslation('recipient.error.remove'))));
     } else {
       return of(new HttpResponse({status: HttpStatus.OK}));

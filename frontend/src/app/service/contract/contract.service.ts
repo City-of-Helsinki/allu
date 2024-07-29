@@ -50,9 +50,9 @@ export class ContractService {
     );
   }
 
-  public reject(applicationId: number, reason: string): Observable<{}> {
+  public reject(applicationId: number, reason: string): Observable<object> {
     const url = `${URL_PREFIX}/${applicationId}/contract/rejected`;
-    return this.http.post<{}>(url, reason).pipe(
+    return this.http.post<object>(url, reason).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('contract.error.rejectFailed')))
     );
   }
