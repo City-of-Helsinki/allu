@@ -15,6 +15,18 @@ import {MapStore} from '@service/map/map-store';
 import {ConfigService} from '@service/config/config.service';
 import {createLayerTree} from '@feature/map/map-layer-tree';
 import LayersObject = Control.LayersObject;
+import { CurrentUser } from '@app/service/user/current-user';
+import { forkJoin } from 'rxjs';
+import { RoleType } from '@app/model/user/role-type';
+
+const allowedRolesToSeeUndergroundAndCableLayers = [
+  RoleType.ROLE_CREATE_APPLICATION, 
+  RoleType.ROLE_PROCESS_APPLICATION, 
+  RoleType.ROLE_SUPERVISE, 
+  RoleType.ROLE_DECISION,
+  RoleType.ROLE_DECLARANT, 
+  RoleType.ROLE_MANAGE_SURVEY 
+];
 
 @Injectable()
 export class MapLayerEffects {
@@ -22,9 +34,9 @@ export class MapLayerEffects {
               private store: Store<fromRoot.State>,
               private layerService: MapLayerService,
               private configService: ConfigService,
-              private mapStore: MapStore) {
+              private mapStore: MapStore,
+              private user: CurrentUser) {
   }
-
   
   initAvailableLayers: Observable<Action> = createEffect(() => defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
@@ -37,17 +49,19 @@ export class MapLayerEffects {
       new AddLayers(ActionTargetType.Application, layers)
     ])
   )));
-
   
   initMapLayerTree: Observable<Action> = createEffect(() => defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
     filter(loggedIn => loggedIn),
-    switchMap(() => this.configService.isStagingOrProduction()),
-    switchMap((isStagingOrProduction) => [
-      new AddTreeStructure(ActionTargetType.Home, createLayerTree(isStagingOrProduction, true)),
-      new AddTreeStructure(ActionTargetType.Location, createLayerTree(isStagingOrProduction, true)),
-      new AddTreeStructure(ActionTargetType.Project, createLayerTree(isStagingOrProduction, true)),
-      new AddTreeStructure(ActionTargetType.Application, createLayerTree(isStagingOrProduction, false))
+    switchMap(() => forkJoin([
+      this.configService.isStagingOrProduction(), 
+      this.user.hasRole(allowedRolesToSeeUndergroundAndCableLayers) 
+    ])),
+    switchMap(([isStagingOrProduction, userCanAccessUndergroundAndCableLayers]) => [
+      new AddTreeStructure(ActionTargetType.Home, createLayerTree(isStagingOrProduction, true, userCanAccessUndergroundAndCableLayers)),
+      new AddTreeStructure(ActionTargetType.Location, createLayerTree(isStagingOrProduction, true, userCanAccessUndergroundAndCableLayers)),
+      new AddTreeStructure(ActionTargetType.Project, createLayerTree(isStagingOrProduction, true, userCanAccessUndergroundAndCableLayers)),
+      new AddTreeStructure(ActionTargetType.Application, createLayerTree(isStagingOrProduction, false, userCanAccessUndergroundAndCableLayers))
     ])
   )));
 
