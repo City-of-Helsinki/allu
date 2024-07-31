@@ -148,7 +148,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const confirmType = this.infoForm.valid ? 'confirmSave' : 'confirmDiscard';
     const data = {
       title: findTranslation(['invoice', confirmType, 'title']),

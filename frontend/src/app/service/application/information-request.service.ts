@@ -85,9 +85,9 @@ export class InformationRequestService {
     );
   }
 
-  delete(id: number): Observable<object> {
+  delete(id: number): Observable<{}> {
     const url = `${informationRequestUrl}/${id}`;
-    return this.http.delete<object>(url).pipe(
+    return this.http.delete<{}>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.delete')))
     );
   }

@@ -31,7 +31,7 @@ export const adminRoutes: Routes = [
     ]},
     { path: 'default-attachments', data: {attachmentType: 'DEFAULT'}, children: attachmentChildRoutes },
     { path: 'default-images', data: {attachmentType: 'DEFAULT_IMAGE'}, children: attachmentChildRoutes },
-    { path: 'default-recipients', component: DefaultRecipientsComponent},
+    { path: 'default-recipients', component: DefaultRecipientsComponent},
     { path: 'configuration', component: ConfigurationComponent }
   ]}
 ];

@@ -33,7 +33,7 @@ export class CommentService {
       : this.insertFor(target, id, comment);
   }
 
-  remove(id: number): Observable<object> {
+  remove(id: number): Observable<{}> {
     const url = `${COMMENTS_URL}/${id}`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')))

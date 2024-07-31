@@ -9,7 +9,7 @@
         <div>
           <mat-checkbox
             [checked]="(someSelected$ | async) && (allSelected$ | async)"
-            [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
+            [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
             (change)="checkAll()"></mat-checkbox>
         </div>
       </mat-header-cell>

@@ -104,7 +104,7 @@ export class StoredFilterStore {
     );
   }
 
-  remove(id: number): Observable<object> {
+  remove(id: number): Observable<{}> {
     return this.storedFilterService.remove(id).pipe(
       tap(() => this.loadAndClearCurrent(id))
     );

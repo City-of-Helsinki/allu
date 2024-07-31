@@ -23,7 +23,7 @@ export class MapPopupService {
       const header = this.createHeader(entries);
       const content = this.createContent(entries);
       return this.createPopup(header, content);
-    } else {
+    } else  {
       throw Error('Popup requires at least one feature');
     }
   }

@@ -9,7 +9,7 @@ export enum ApplicationMetaActionType {
   LoadFailed = '[ApplicationMeta] Load application metadata failed',
 }
 
-export class Load implements Action {
+export class Load implements Action  {
   readonly type = ApplicationMetaActionType.Load;
 }
 

@@ -41,7 +41,7 @@ export class AttachmentService {
     return this.upload(url, attachments);
   }
 
-  remove(applicationId: number, attachmentId: number): Observable<object> {
+  remove(applicationId: number, attachmentId: number): Observable<{}> {
     const url = uploadUrl.replace('appId', String(applicationId)) + '/' + attachmentId;
     return this.http.delete(url);
   }
@@ -95,7 +95,7 @@ export class AttachmentService {
     );
   }
 
-  removeDefaultAttachment(id: number): Observable<object> {
+  removeDefaultAttachment(id: number): Observable<{}> {
     const url = defaultAttachmentUrlEdit + '/' + id;
     return this.http.delete(url);
   }

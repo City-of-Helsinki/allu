@@ -16,8 +16,6 @@ export const initialState: State = {
 export function reducer(state: State = initialState, action: AddressSearchActions) {
   switch (action.type) {
     case AddressSearchActionType.SearchSuccess:
-      // no point refactoring complex working sort 
-      // eslint-disable-next-line no-case-declarations
       const sorted = [...action.payload].sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress));
       return {
         ...state,
