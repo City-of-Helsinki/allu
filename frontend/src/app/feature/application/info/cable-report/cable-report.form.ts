@@ -95,6 +95,8 @@ function getSelectedInfoTypes(entries: CableInfoEntry[]): string[] {
 }
 
 function getValidityTime(status: ApplicationStatus, cableReport: CableReport): Date {
+  return cableReport.validityTime;
+
   if (status >= ApplicationStatus.DECISION) {
     return cableReport.validityTime;
   } else {
