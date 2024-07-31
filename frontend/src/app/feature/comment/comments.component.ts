@@ -59,7 +59,7 @@ export class CommentsComponent implements OnInit {
     }
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const data = {
       title: findTranslation(['comment.confirmDiscard.title']),
       description: findTranslation(['comment.confirmDiscard.description']),

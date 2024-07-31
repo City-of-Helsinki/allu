@@ -55,7 +55,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   constructor(fb: UntypedFormBuilder,
               private store: Store<fromRoot.State>,
-              private storedFilterStore: StoredFilterStore) {
+              private storedFilterStore: StoredFilterStore) {
     this.queryForm = fb.group({
       type: undefined,
       owner: undefined,

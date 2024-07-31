@@ -170,7 +170,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
     this.application = application;
   }
 
-  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<object> {
+  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
@@ -183,7 +183,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
       .orElseGet(() => of({}));
   }
 
-  private sendDecisionDocument(appId: number, details: DecisionDetails, status: ApplicationStatus): Observable<object> {
+  private sendDecisionDocument(appId: number, details: DecisionDetails, status: ApplicationStatus): Observable<{}> {
     if (status === ApplicationStatus.OPERATIONAL_CONDITION) {
       return this.decisionService.sendOperationalCondition(appId, details);
     } else if (status === ApplicationStatus.FINISHED) {

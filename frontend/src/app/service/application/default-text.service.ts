@@ -42,7 +42,7 @@ export class DefaultTextService {
     }
   }
 
-  public remove(id: number): Observable<object> {
+  public remove(id: number): Observable<{}> {
     const url = DEFAULT_TEXTS_URL + '/' + id;
     return this.http.delete(url).pipe(
       catchError(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')))

@@ -128,7 +128,7 @@ export class ApplicationService {
   /**
    * Deletes given application (only NOTE-types can be deleted)
    */
-  public remove(id: number): Observable<object> {
+  public remove(id: number): Observable<{}> {
     const url = APPLICATIONS_URL + '/note/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')))
@@ -164,7 +164,7 @@ export class ApplicationService {
   /**
    * Changes owner of given applications. Does not return anything. Use Observable's subscribe complete.
    */
-  public changeOwner(owner: number, applicationIds: Array<number>): Observable<object> {
+  public changeOwner(owner: number, applicationIds: Array<number>): Observable<{}> {
     const url = APPLICATIONS_URL + '/owner/' + owner;
     return this.http.put(url, JSON.stringify(applicationIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')))
@@ -174,7 +174,7 @@ export class ApplicationService {
   /**
    * Removes owner of given applications. Does not return anything. Use Observable's subscribe complete.
    */
-  public removeOwner(applicationIds: Array<number>): Observable<object> {
+  public removeOwner(applicationIds: Array<number>): Observable<{}> {
     const url = APPLICATIONS_URL + '/owner/remove';
     return this.http.put(url, JSON.stringify(applicationIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')))
@@ -200,7 +200,7 @@ export class ApplicationService {
     );
   }
 
-  public removeTag(appId: number, tagType: ApplicationTagType): Observable<object> {
+  public removeTag(appId: number, tagType: ApplicationTagType): Observable<{}> {
     const url = `${APPLICATIONS_URL}/${appId}/tags/${tagType}`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagRemoveFailed')))
@@ -245,7 +245,7 @@ export class ApplicationService {
     );
   }
 
-  removeOwnerNotification(id: number): Observable<object> {
+  removeOwnerNotification(id: number): Observable<{}> {
     const url = `${APPLICATIONS_URL}/${id}/ownernotification`;
     return this.http.delete<void>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeOwnerNotification')))

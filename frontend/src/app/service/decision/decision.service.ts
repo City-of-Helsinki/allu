@@ -31,27 +31,27 @@ export class DecisionService {
     );
   }
 
-  public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<object> {
+  public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendWorkFinished(applicationId: number, emailDetails: DecisionDetails): Observable<object> {
+  public sendWorkFinished(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = WORK_FINISHED_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendOperationalCondition(applicationId: number, emailDetails: DecisionDetails): Observable<object> {
+  public sendOperationalCondition(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = OPERATIONAL_CONDITION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<object> {
+  public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = TERMINATION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<object> {
+  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<{}> {
     switch (status) {
       case ApplicationStatus.OPERATIONAL_CONDITION: {
         return this.sendOperationalCondition(applicationId, emailDetails);
@@ -76,7 +76,7 @@ export class DecisionService {
     );
   }
 
-  private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<object> {
+  private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<{}> {
     if (emailDetails.decisionDistributionList && emailDetails.decisionDistributionList.length) {
       return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails))).pipe(
         catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.send')))

@@ -45,7 +45,7 @@ export class DepositService {
     }
   }
 
-  remove(id: number): Observable<object> {
+  remove(id: number): Observable<{}> {
     const url = DEPOSIT_REMOVE_URL.replace(':id', String(id));
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('deposit.error.remove')))

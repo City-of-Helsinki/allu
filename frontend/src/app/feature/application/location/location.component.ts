@@ -357,7 +357,7 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   editedItemCountChanged(editedItemCount: number) {
     this.editedItemCount = editedItemCount;
-    if (editedItemCount > 0) {
+    if (editedItemCount > 0) {
       this.fixedLocationsCtrl.disable({emitEvent: false});
     } else {
       this.fixedLocationsCtrl.enable({emitEvent: false});

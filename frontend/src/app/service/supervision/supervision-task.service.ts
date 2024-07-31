@@ -59,7 +59,7 @@ export class SupervisionTaskService {
     }
   }
 
-  remove(id: number): Observable<object> {
+  remove(id: number): Observable<{}> {
     const url = SUPERVISION_TASK_URL + '/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('supervisiontask.error.remove')))
@@ -75,14 +75,14 @@ export class SupervisionTaskService {
     );
   }
 
-  changeOwner(ownerId: number, taskIds: Array<number>): Observable<object> {
+  changeOwner(ownerId: number, taskIds: Array<number>): Observable<{}> {
     const url = SUPERVISION_TASK_OWNER_URL + '/' + ownerId;
     return this.http.put(url, JSON.stringify(taskIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')))
     );
   }
 
-  removeOwner(taskIds: Array<number>): Observable<object> {
+  removeOwner(taskIds: Array<number>): Observable<{}> {
     const url = SUPERVISION_TASK_OWNER_URL + '/remove';
     return this.http.put(url, JSON.stringify(taskIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')))

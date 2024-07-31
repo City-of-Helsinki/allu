@@ -35,7 +35,7 @@ declare module 'leaflet' {
     }
 
     class Like extends Filter {
-      constructor(propertyName: string, likeExpression: string, attributes: object);
+      constructor(propertyName: string, likeExpression: string, attributes: Object);
     }
 
     class And extends Filter {
@@ -55,7 +55,7 @@ declare module 'leaflet' {
     function gt(property: string, literal: string, matchCase?: boolean): GT;
     function leq(property: string, literal: string, matchCase?: boolean): LEQ;
     function geq(property: string, literal: string, matchCase?: boolean): GEQ;
-    function like(propertyName: string, likeExpression: string, attributes: object): Like;
+    function like(propertyName: string, likeExpression: string, attributes: Object): Like;
     function and(first: Filter, ...rest: Filter[]): And;
     function or(first: Filter, ...rest: Filter[]): Or;
     function bbox(propertyName: string, latLngBounds: L.LatLngBounds, CRS: L.CRS): BBox;
