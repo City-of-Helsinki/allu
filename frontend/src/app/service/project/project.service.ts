@@ -70,7 +70,7 @@ export class ProjectService {
     }
   }
 
-  public delete(id: number): Observable<object> {
+  public delete(id: number): Observable<{}> {
     const url = ProjectService.PROJECT_URL + '/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('project.error.removeFailed')))
@@ -89,7 +89,7 @@ export class ProjectService {
     return this.addProjectApplications(id, [applicationId]);
   }
 
-  public removeApplication(appId: number): Observable<object> {
+  public removeApplication(appId: number): Observable<{}> {
     const url = `${ProjectService.PROJECT_URL}/applications/${appId}`;
     return this.http.delete(url).pipe(
       catchError(err => this.errorHandler.handle(err, findTranslation('project.error.applicationRemoveFailed')))
@@ -123,7 +123,7 @@ export class ProjectService {
     );
   }
 
-  public removeParent(ids: Array<number>): Observable<object> {
+  public removeParent(ids: Array<number>): Observable<{}> {
     const url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
     return this.http.put(url, JSON.stringify(ids)).pipe(
       catchError(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')))

@@ -80,7 +80,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     this.form.patchValue({receivedTime: date});
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const data = {
       title: findTranslation(['application.confirmDiscard.title']),
       description: findTranslation(['application.confirmDiscard.description']),

@@ -47,7 +47,7 @@ class StoredFilterStoreMock {
     return of(filter);
   }
 
-  remove(id: number): Observable<object> {
+  remove(id: number): Observable<{}> {
     return of({});
   }
 

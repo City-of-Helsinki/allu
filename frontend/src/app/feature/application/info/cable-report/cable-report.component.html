@@ -98,7 +98,7 @@
             </div>
           </div>
           <div class="row form-group">
-            <button *ngIf="(isSurveyRequired | async) === false" type="button" mat-raised-button color="primary" (click)="markSurveyRequired()">
+            <button *ngIf="!(isSurveyRequired | async)" type="button" mat-raised-button color="primary" (click)="markSurveyRequired()">
               {{'application.cableReport.action.markSurveyRequired' | translation}}
             </button>
             <button *ngIf="isSurveyRequired | async" type="button" mat-raised-button color="accent" (click)="markSurveyDone()">

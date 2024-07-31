@@ -40,9 +40,9 @@ export class ApplicationDraftService {
   /**
    * Deletes given draft
    */
-  public remove(id: number): Observable<object> {
+  public remove(id: number): Observable<{}> {
     const url = `${DRAFTS_URL}/${id}`;
-    return this.http.delete<object>(url).pipe(
+    return this.http.delete<{}>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')))
     );
   }

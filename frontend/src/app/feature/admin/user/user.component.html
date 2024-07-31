@@ -62,7 +62,7 @@
                   <mat-select formControlName="assignedRoles" [multiple]="true"
                               [placeholder]="'user.roles' | translation"
                               class="input-full-width">
-                    <mat-option value="ROLE_ADMIN" [disabled]="(canRemoveAdminRole() | async) === false">
+                    <mat-option value="ROLE_ADMIN" [disabled]="!(canRemoveAdminRole() | async)">
                       {{'user.role.ROLE_ADMIN' | translation}}
                     </mat-option>
                     <mat-option *ngFor="let role of roles" [value]="role">{{['user.role', role] | translation}}

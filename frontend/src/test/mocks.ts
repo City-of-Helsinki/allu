@@ -58,7 +58,7 @@ export class ApplicationStoreMock {
     this.applicationCopy$.next(app);
   }
 
-  delete(id: number): Observable<object> {
+  delete(id: number): Observable<{}> {
     return of({});
   }
 
@@ -233,7 +233,7 @@ export class NotificationServiceMock {
 
   success(title: string, message?: string): void {}
 
-  info(title: string, message?: string): void {}
+  info(title: string, message?: string): void  {}
 
   error(title: string, message?: string): void {}
 

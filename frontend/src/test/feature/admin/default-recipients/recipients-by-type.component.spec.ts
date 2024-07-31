@@ -19,10 +19,10 @@ class DefaultRecipientHubMock {
   defaultRecipientsByApplicationType(type: string) {
     return this.recipients$.asObservable().pipe(share());
   }
-  removeDefaultRecipient(id: number): Observable<object> {
+  removeDefaultRecipient(id: number): Observable<{}> {
     return of({});
   }
-  saveDefaultRecipient(recipient: DefaultRecipient): Observable<object> {
+  saveDefaultRecipient(recipient: DefaultRecipient): Observable<{}> {
     return of(recipient);
   }
 }

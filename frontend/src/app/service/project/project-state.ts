@@ -45,7 +45,6 @@ export class ProjectState {
     return combineLatest([
       this.loadParentProjects(id),
       this.loadChildProjects(id)
-    // eslint-disable-next-line prefer-spread
     ]).pipe(map(projects => [].concat.apply([], projects))); // maps array[array, array] => array
   }
 
@@ -73,7 +72,6 @@ export class ProjectState {
     return combineLatest([
       this.parentProjects,
       this.childProjects
-    // eslint-disable-next-line prefer-spread
     ]).pipe(map(projects => [].concat.apply([], projects)));
   }
 

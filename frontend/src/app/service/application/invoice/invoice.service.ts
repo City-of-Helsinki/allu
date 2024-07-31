@@ -31,7 +31,7 @@ export class InvoiceService {
     );
   }
 
-  saveRecipient(applicationId: number, recipientId: number): Observable<object> {
+  saveRecipient(applicationId: number, recipientId: number): Observable<{}> {
     const url = `${APPLICATIONS_URL}/${applicationId}/invoicerecipient`;
 
     const params = NumberUtil.isDefined(recipientId)

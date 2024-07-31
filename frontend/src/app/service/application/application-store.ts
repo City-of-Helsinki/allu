@@ -162,7 +162,7 @@ export class ApplicationStore {
     }
   }
 
-  removeAttachment(attachmentId: number): Observable<object> {
+  removeAttachment(attachmentId: number): Observable<{}> {
     const appId = this.snapshot.application.id;
     return this.attachmentHub.remove(appId, attachmentId).pipe(
       tap(response => this.loadAttachments(appId).subscribe())
@@ -212,7 +212,7 @@ export class ApplicationStore {
     );
   }
 
-  delete(id: number): Observable<object> {
+  delete(id: number): Observable<{}> {
     const response = this.snapshot.draft
       ? this.applicationDraftService.remove(id)
       : this.applicationService.remove(id);
@@ -255,7 +255,7 @@ export class ApplicationStore {
     );
   }
 
-  saveDeposit(deposit: Deposit): Observable<Deposit> {
+  saveDeposit(deposit: Deposit): Observable<Deposit> {
     return this.depositService.save(deposit).pipe(
       tap(saved => {
         this.store.dispatch(new TagAction.Load());
@@ -340,7 +340,7 @@ export class ApplicationStore {
     );
   }
 
-  private saveDraft(application: Application): Observable<Application> {
+  private saveDraft(application: Application): Observable<Application> {
     const newApplication = !NumberUtil.isExisting(application);
     if (newApplication) {
       return this.applicationDraftService.save(application).pipe(

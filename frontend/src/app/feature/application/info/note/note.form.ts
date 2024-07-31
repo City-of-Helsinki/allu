@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import {Note} from '@model/application/note/note';
 import {TimePeriod} from '@feature/application/info/time-period';
 import {Application} from '@model/application/application';

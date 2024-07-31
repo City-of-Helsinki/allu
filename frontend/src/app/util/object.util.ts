@@ -26,7 +26,7 @@ export class ObjectUtil {
       const cloned = Object.create(source);
 
       for (key in source) {
-        if (Object.hasOwn(source, key)) {
+        if (source.hasOwnProperty(key)) {
           value = source[key];
 
           if (!!value && value instanceof Date) {
@@ -72,7 +72,7 @@ export function upsert<T>(dictionary: Dictionary<T>, key: string | number, value
   };
 }
 
-export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
+export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
 
 export function isNumber(value: any): boolean {
   return typeof value === 'number';

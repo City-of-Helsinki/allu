@@ -230,11 +230,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   showExternalUpdates(): void {
-    this.router.navigate(['pending_info'], {relativeTo: this.route});
+    this.router.navigate(['pending_info'], {relativeTo: this.route});
   }
 
   showInformationRequestInfo(): void {
-    this.router.navigate(['information_request'], {relativeTo: this.route});
+    this.router.navigate(['information_request'], {relativeTo: this.route});
   }
 
   cancelInformationRequest(): void {

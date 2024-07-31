@@ -125,7 +125,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
     return true;
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const data = {
       title: findTranslation(['attachment.confirmDiscard.title']),
       description: findTranslation(['attachment.confirmDiscard.description']),
