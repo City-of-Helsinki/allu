@@ -1576,7 +1576,8 @@ export const translations = {
       'Voit lisätä vakioliitteen Liitteet-välilehdeltä',
       addFailed: 'Liiteen {{name}} tallennus epäonnistui',
       deleteFailed: 'Liiteen {{name}} poistaminen epäonnistui',
-      maxSizeExceeded: 'Liitteen maksimikoko on {{size}}'
+      maxSizeExceeded: 'Liitteen maksimikoko on {{size}}',
+      allowedFileExtensions: 'Sallitut tiedostopäätteet ovat: {{extensions}}',
     },
     confirmDiscard: {
       title: 'Hylätäänkö muutokset',
@@ -2126,7 +2127,9 @@ export const translations = {
       SUMMER_TERRACE_INVOICING_DATE: 'Kesäterassien laskutuspäivä',
       WINTER_TERRACE_INVOICING_DATE: 'Talviterassien laskutuspäivä',
       PARKLET_INVOICING_DATE: 'Parklettien laskutuspäivä',
-      DEFAULT_CONTACT: 'Oletusyhteyshenkilö'
+      DEFAULT_CONTACT: 'Oletusyhteyshenkilö',
+      ATTACHMENT_ALLOWED_TYPES: 'Sallitut tiedostopäätteet liitteille',
+      ATTACHMENT_MAX_SIZE_MB: 'Liitteiden maksimi koko (MB)'
     },
     field: {
       valueMissing: 'Arvo puuttuu'
