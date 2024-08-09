@@ -9,6 +9,8 @@ import {DefaultRecipientsComponent} from './default-recipients/default-recipient
 import {ExternalUserListComponent} from './external-user/external-user-list.component';
 import {ExternalUserComponent} from './external-user/external-user.component';
 import {ConfigurationComponent} from '@feature/admin/configuration/configuration.component';
+import {AdminGuard} from '@app/service/authorization/admin-guard.service';
+
 
 const attachmentChildRoutes = [
   { path: '', component: DefaultAttachmentsComponent },
@@ -17,7 +19,7 @@ const attachmentChildRoutes = [
 ];
 
 export const adminRoutes: Routes = [
-  { path: 'admin', component: AdminComponent, children: [
+  { path: 'admin', component: AdminComponent, canActivate: [AdminGuard], children: [
     { path: '', redirectTo: 'users', pathMatch: 'full'},
     { path: 'users', children: [
       { path: '', component: UserListComponent },
