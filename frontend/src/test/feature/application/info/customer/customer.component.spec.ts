@@ -11,7 +11,7 @@ import {CustomerWithContacts} from '../../../../../app/model/customer/customer-w
 import {CustomerRoleType} from '../../../../../app/model/customer/customer-role-type';
 import {Component, Input} from '@angular/core';
 import {Contact} from '../../../../../app/model/customer/contact';
-import {CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
+import {CurrentUserMock, CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
 import {CustomerService} from '../../../../../app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../app/model/codeset/codeset';
@@ -20,6 +20,7 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { CurrentUser } from '@app/service/user/current-user';
 
 const headerText = 'Hakija';
 
@@ -95,7 +96,8 @@ describe('CustomerComponent', () => {
         {provide: UntypedFormBuilder, useValue: new UntypedFormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock},
-        {provide: NotificationService, useClass: NotificationServiceMock}
+        {provide: NotificationService, useClass: NotificationServiceMock},
+        {provide: CurrentUser, useClass: CurrentUserMock}
       ]
     }).compileComponents();
   }));
@@ -115,6 +117,7 @@ describe('CustomerComponent', () => {
   it('should show header text from input', fakeAsync(() => {
     fixture.detectChanges();
     page.addPageElements();
+    console.log('page.cardTitle.textContent', page.cardTitle.textContent)
     expect(page.cardTitle.textContent).toContain(headerText);
   }));
 
