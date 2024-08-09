@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {CustomerType} from '@model/customer/customer-type';
 import {EnumUtil} from '@util/enum.util';
-import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NumberUtil} from '@util/number.util';
 import {CustomerForm} from './customer.form';
@@ -17,6 +17,9 @@ import {CodeSetService} from '@service/codeset/codeset.service';
 import {CodeSet} from '@model/codeset/codeset';
 import {postalCodeValidator} from '@util/complex-validator';
 import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
+import { CurrentUser } from '@app/service/user/current-user';
+import {RoleType} from '@model/user/role-type';
+
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.minLength(2)];
@@ -29,7 +32,7 @@ const DEBOUNCE_TIME_MS = 300;
   styleUrls: []
 })
 export class CustomerInfoComponent implements OnInit, OnDestroy {
-  @Input() form: UntypedFormGroup;
+  @Input() form: FormGroup;
   @Input() allowSearch = false;
   @Input() showInvoicingInfo = false;
   @Input() showInvoicingOnly = false;
@@ -51,7 +54,10 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   private countryControl: UntypedFormControl;
   private postalCodeControl: UntypedFormControl;
 
-  constructor(private customerService: CustomerService, private codeSetService: CodeSetService) {}
+  customerInstance: Customer;
+
+
+  constructor(private customerService: CustomerService, private codeSetService: CodeSetService, private currentUser: CurrentUser) {}
 
   ngOnInit() {
     this.nameControl = <UntypedFormControl>this.form.get('name');
@@ -59,6 +65,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.registryKeyControl = <UntypedFormControl>this.form.get('registryKey');
     this.countryControl = <UntypedFormControl>this.form.get('country');
     this.postalCodeControl = <UntypedFormControl> this.form.get('postalAddress').get('postalCode');
+    this.customerInstance = new Customer();
 
     this.matchingNameCustomers = this.nameControl.valueChanges.pipe(
       debounceTime(DEBOUNCE_TIME_MS),
@@ -79,6 +86,12 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       .subscribe(country => this.updatePostalAddressValidator(country));
 
     this.countries = this.codeSetService.getCountries();
+
+
+  }
+
+  ngAfterViewInit() {
+    this.checkForRestrictedEdit();
   }
 
   ngOnDestroy(): void {
@@ -118,6 +131,22 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       this.form.enable();
       this.customerChange.emit(new Customer());
     }
+  }
+
+  checkForRestrictedEdit(): void {
+    // ALLU-19 restrict usage to admin and invoicing roles when sap number exists
+    this.form.controls.sapCustomerNumber.valueChanges.subscribe(value => {
+      if (value) {
+        this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).subscribe(hasRequiredRole => {
+          if (!hasRequiredRole) {
+            this.form.enable();
+          } else {
+            this.form.disable();
+          }
+        });
+      }
+    });
+
   }
 
   onKeyup(event: KeyboardEvent): void {
