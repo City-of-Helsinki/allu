@@ -185,13 +185,17 @@ export class TimeUtil {
   }
 
   public static isInTimePeriod(date: Date, periodStart: Date, periodEnd: Date): boolean {
+    if (!date || !periodStart || !periodEnd) {
+      return false;
+    }
+
     const start = moment(periodStart);
     const winterEndDate = this.toTimePeriodEnd(date, periodEnd);
     let winterStartYear = winterEndDate.getFullYear();
     if (start.month() > winterEndDate.getMonth()) {
       winterStartYear = winterEndDate.getFullYear() - 1;
     }
-    return this.isBetweenInclusive(date, start.year(winterStartYear).toDate(), winterEndDate);
+    return this.isBetweenInclusive(date, start.year(winterStartYear).toDate(), winterEndDate); 
   }
 
   public static toTimePeriodEnd(date: Date, periodEnd: Date): Date {
