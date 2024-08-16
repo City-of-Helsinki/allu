@@ -105,7 +105,7 @@ export class AttachmentService {
     if (attachments && attachments.length !== 0) {
       const uploader = new ExtendedFileUploader({
         url: url,
-        authToken: 'Bearer ' + localStorage.getItem('jwt')}, attachments);
+        authToken: 'Bearer ' + sessionStorage.getItem('jwt')}, attachments);
       const files = attachments.map(a => a.file);
 
       uploader.onSuccessItem = (item, response, status, headers) => {
