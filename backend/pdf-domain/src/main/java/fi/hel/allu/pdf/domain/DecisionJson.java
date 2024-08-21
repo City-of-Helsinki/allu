@@ -65,7 +65,7 @@ public class DecisionJson {
   private String structureDescription;
 
   private String totalRent;
-  private int vatPercentage;
+  private String vatPercentage;
   private boolean notBillable;
   private String notBillableReason;
   private boolean hasEkokompassi;
@@ -480,11 +480,11 @@ public class DecisionJson {
     this.totalRent = totalRent;
   }
 
-  public int getVatPercentage() {
+  public String getVatPercentage() {
     return vatPercentage;
   }
 
-  public void setVatPercentage(int vatPercentage) {
+  public void setVatPercentage(String vatPercentage) {
     this.vatPercentage = vatPercentage;
   }
 

@@ -125,7 +125,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     getSiteArea(application.getLocations()).ifPresent(decisionJson::setSiteArea);
     decisionJson.setCustomerReference(application.getCustomerReference());
     decisionJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
-    decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
+    decisionJson.setVatPercentage("25,5"); // FIXME: find actual value somehow
 
     if (application.getType() == null) {
       throw new IllegalArgumentException("Application type is required");
@@ -339,7 +339,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       decisionJson.setSiteArea(null);
     }
     if (vat0Kinds.contains(application.getKind())) {
-      decisionJson.setVatPercentage(0);
+      decisionJson.setVatPercentage("0");
     }
 
     decisionJson.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
