@@ -16,7 +16,7 @@ import {
 import {CodeSetService} from '@service/codeset/codeset.service';
 import {CodeSet} from '@model/codeset/codeset';
 import {postalCodeValidator} from '@util/complex-validator';
-import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap, take} from 'rxjs/internal/operators';
 import { CurrentUser } from '@app/service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 
@@ -133,20 +133,19 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkForRestrictedEdit(): void {
+  async checkForRestrictedEdit(): Promise<void> {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists
-    this.form.controls.sapCustomerNumber.valueChanges.subscribe(value => {
-      if (value) {
-        this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).subscribe(hasRequiredRole => {
-          if (!hasRequiredRole) {
-            this.form.enable();
-          } else {
-            this.form.disable();
-          }
-        });
-      }
-    });
+    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
 
+    this.form.controls.sapCustomerNumber.valueChanges
+      .pipe(take(1))
+      .subscribe(value => {
+        if (value && userHasRole) {
+          this.form.enable();
+        } else {
+          this.form.disable();
+        }
+      });
   }
 
   onKeyup(event: KeyboardEvent): void {
