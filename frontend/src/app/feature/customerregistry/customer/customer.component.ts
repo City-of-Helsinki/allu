@@ -16,6 +16,9 @@ import {CustomerService} from '../../../service/customer/customer.service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
 import {FormUtil} from '@util/form.util';
 import {createTranslated} from '@service/error/error-info';
+import { CurrentUser } from '@app/service/user/current-user';
+import { RoleType } from '@app/model/user/role-type';
+
 
 @Component({
   selector: 'customer',
@@ -29,12 +32,14 @@ export class CustomerComponent implements OnInit {
   form: UntypedFormGroup;
   customerForm: UntypedFormGroup;
   contactSubject = new Subject<Contact>();
+  isRemoveVisible = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private customerService: CustomerService,
               private fb: UntypedFormBuilder,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private currentUser: CurrentUser) {
     this.form = CustomerWithContactsForm.initialForm(this.fb);
     this.customerForm = <UntypedFormGroup>this.form.get('customer');
   }
@@ -45,6 +50,19 @@ export class CustomerComponent implements OnInit {
       filter(id => NumberUtil.isDefined(id)),
       switchMap(id => this.customerService.findCustomerById(id))
     ).subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
+
+    this.removeButtonVisibilityStatus();
+  }
+
+  async removeButtonVisibilityStatus(): Promise<void> {
+    // ALLU-19 restrict usage to admin and invoicing roles when sap number exists, this hides the remove
+    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
+
+    if (this.customerForm.value.sapCustomerNumber && userHasRole) {
+      this.isRemoveVisible = true;
+    } else {
+      if (this.customerForm.value.id) this.isRemoveVisible = true;
+    }
   }
 
   newContact(): void {
