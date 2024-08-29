@@ -32,7 +32,7 @@ export class CustomerComponent implements OnInit {
   form: UntypedFormGroup;
   customerForm: UntypedFormGroup;
   contactSubject = new Subject<Contact>();
-  isRemoveVisible = false;
+  isRemoveVisible = true;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -58,11 +58,9 @@ export class CustomerComponent implements OnInit {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists, this hides the remove
     const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
 
-    if (this.customerForm.value.sapCustomerNumber && userHasRole) {
-      this.isRemoveVisible = true;
-    } else {
-      if (this.customerForm.value.id) this.isRemoveVisible = true;
-    }
+    if (this.customerForm.value.sapCustomerNumber && !userHasRole) {
+      this.isRemoveVisible = false;
+    } 
   }
 
   newContact(): void {
