@@ -60,9 +60,7 @@ export class CustomerComponent implements OnInit {
 
     if (this.customerForm.value.sapCustomerNumber && !userHasRole) {
       this.isRemoveVisible = false;
-    } else {
-      if (this.customerForm.value.id) this.isRemoveVisible = true;
-    }
+    } 
   }
 
   newContact(): void {
