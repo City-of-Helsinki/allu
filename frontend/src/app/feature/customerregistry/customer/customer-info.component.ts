@@ -136,15 +136,12 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   async checkForRestrictedEdit(): Promise<void> {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists
     const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
-
+    
     this.form.controls.sapCustomerNumber.valueChanges
       .pipe(take(1))
       .subscribe(value => {
-        if (value && userHasRole) {
-          this.form.enable();
-        } else {
-          this.form.disable();
-        }
+        // if there exists sapNumber but user doesn't have role. disable 
+        if (value && !userHasRole) this.form.disable();
       });
   }
 
