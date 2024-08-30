@@ -36,7 +36,12 @@ public class AppConfig {
                                         .setConnectTimeout(5000)
                                         .setSocketTimeout(600000);
                             }
-                        }));
+                        }).setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+                            .setDefaultIOReactorConfig(IOReactorConfig.custom()
+                                .setSoKeepAlive(true)
+                                .build())
+                        ).setMaxRetryTimeoutMillis(600000)
+        );
     }
 
     @Bean
