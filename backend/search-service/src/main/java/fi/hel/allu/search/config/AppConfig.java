@@ -42,7 +42,7 @@ public class AppConfig {
                             .setDefaultIOReactorConfig(IOReactorConfig.custom()
                                 .setSoKeepAlive(true)
                                 .build())
-                        )
+                        ).setMaxRetryTimeoutMillis(600000)
         );
     }
 
