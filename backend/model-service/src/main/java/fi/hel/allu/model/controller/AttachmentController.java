@@ -19,12 +19,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-<<<<<<< HEAD
-=======
 
 import static fi.hel.allu.common.util.AttachmentUtil.bytesToMegabytes;
 import static fi.hel.allu.common.util.AttachmentUtil.getFileExtension;
->>>>>>> c671801e9 (attachment limitations)
 
 @RestController
 @RequestMapping("/attachments")
