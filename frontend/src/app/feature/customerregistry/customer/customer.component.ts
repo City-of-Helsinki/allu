@@ -13,7 +13,7 @@ import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take} from 'rxjs/internal/operators';
 import {FormUtil} from '@util/form.util';
 import {createTranslated} from '@service/error/error-info';
 import { CurrentUser } from '@app/service/user/current-user';
@@ -58,9 +58,13 @@ export class CustomerComponent implements OnInit {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists, this hides the remove
     const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
 
-    if (this.customerForm.value.sapCustomerNumber && !userHasRole) {
-      this.isRemoveVisible = false;
-    } 
+    this.customerForm.get('sapCustomerNumber').valueChanges
+      .pipe(take(1))
+      .subscribe(value => {
+        if (value && !userHasRole) {
+          this.isRemoveVisible = false;
+        } 
+    });
   }
 
   newContact(): void {
