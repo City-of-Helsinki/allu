@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 
@@ -39,7 +39,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   private destroy$ = new Subject<boolean>();
   @ViewChild(MapComponent) private map: MapComponent;
 
-  constructor(private store: Store<fromRoot.State>) {}
+  constructor(private store: Store<fromRoot.State>, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.districts$ = this.store.pipe(select(fromProject.getProjectDistricts));
@@ -51,11 +51,11 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.availableLayers$ = this.store.pipe(select(fromProject.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromProject.getSelectedLayers));
     this.layerTree$ = this.store.pipe(select(fromProject.getTreeStructure));
-
     // fixes the map not always being displayed
     setTimeout(() => {
       this.displayMap = true;
-    });
+      this.cdr.detectChanges();
+    }, 100);
   }
 
   ngAfterViewInit(): void {
