@@ -51,6 +51,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.availableLayers$ = this.store.pipe(select(fromProject.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromProject.getSelectedLayers));
     this.layerTree$ = this.store.pipe(select(fromProject.getTreeStructure));
+
     // fixes the map not always being displayed
     setTimeout(() => {
       this.displayMap = true;
@@ -59,18 +60,21 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngAfterViewInit(): void {
     // TODO: This should be done using ngrx store after map is refactored
-    combineLatest([
-      this.store.select(fromProject.getApplications),
-      this.store.select(fromProject.getShowBasicInfo)
-    ]).pipe(
-      takeUntil(this.destroy$),
-      takeWhile(() => !!this.map),
-      filter(([applications, show]) => show)
-    ).subscribe(([applications, show]) => {
-      if (show && !!this.map) {
-        this.store.dispatch(new SearchSuccess(ActionTargetType.Project, applications));
-      }
-    });
+    setTimeout(() => {
+      combineLatest([
+        this.store.select(fromProject.getApplications),
+        this.store.select(fromProject.getShowBasicInfo)
+      ]).pipe(
+        takeUntil(this.destroy$),
+        takeWhile(() => !!this.map),
+        filter(([applications, show]) => show)
+      ).subscribe(([applications, show]) => {
+        if (show && !!this.map) {
+          this.store.dispatch(new SearchSuccess(ActionTargetType.Project, applications));
+        }
+      });
+    }, 0)
+
   }
 
   ngOnDestroy(): void {
