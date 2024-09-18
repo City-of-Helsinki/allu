@@ -1,1 +1,1 @@
-ansible_ssh_common_args: '-o ProxyCommand="ssh -i /var/lib/jenkins/allu_keys/allu_id_rsa -W %h:%p allu@94.199.118.40"'
+ansible_ssh_common_args: ''
