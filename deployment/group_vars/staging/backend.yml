@@ -20,17 +20,17 @@ mail_server_starttls_required: true
 email_allowed_addresses: "*@gofore.fi,*@hel.fi,*@geometrix.fi"
 email_sender_address: Alueidenkaytto ja -valvonta Staging <noreply@kaupunkiymparisto.fi>
 
-invoice_cronstring: "0 0 0 24 4 ?"
-invoice_sending_enabled: false
-sap_ftp_invoice_host: 137.163.136.62
-sap_ftp_invoice_port: 22
+invoice_cronstring: "0 0/15 * * * MON-FRI"
+invoice_sending_enabled: true
+sap_ftp_invoice_host: 127.0.0.1
+sap_ftp_invoice_port: 8022
 sap_ftp_invoice_directory: /
 
 invoice_archivedir: /home/allu/scheduler-service/sap/invoice-archive
 
 # Customer update SFTP configuration
-sap_ftp_customer_host: 137.163.136.62
-sap_ftp_customer_port: 22
+sap_ftp_customer_host: 127.0.0.1
+sap_ftp_customer_port: 8022
 sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
@@ -45,6 +45,10 @@ customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 
 customer_notification_cronstring: "0 0 7 * * *"
 ui_baseurl: https://staging.allu.kaupunkiymparisto.fi
+
+ssh_tunnel_server_address: 10.235.144.146
+ssh_tunnel_destination_address: 137.163.136.62
+allu_ssh_key_file: /servicehome/allu_keys/allu_id_rsa
 
 supervision_api_basepath: /supervision-api
 
