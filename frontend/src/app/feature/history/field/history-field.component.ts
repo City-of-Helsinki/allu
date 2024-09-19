@@ -20,8 +20,10 @@ export class HistoryFieldComponent implements OnInit {
   }
 
   @Input() set fieldChange(fieldChange: FieldChange) {
+  setTimeout(() => {
     if (this.meta) {
       this.content = this.formatter.toFormattedChange(fieldChange, this.meta);
     }
+  }, 0)
   }
 }
