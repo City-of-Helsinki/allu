@@ -32,6 +32,7 @@ export interface ApplicationState {
   cableReportSearch: fromApplicationSearch.State;
   placementContractSearch: fromApplicationSearch.State;
   layers: fromLayers.State;
+  replacedDisableRemoveButton: fromApplication.State;
 }
 
 export interface State extends fromRoot.State {
@@ -48,6 +49,7 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   cableReportSearch: fromApplicationSearch.createReducerFor(ActionTargetType.CableReport),
   placementContractSearch: fromApplicationSearch.createReducerFor(ActionTargetType.PlacementContract),
   layers: fromLayers.createReducerFor(ActionTargetType.Application),
+  replacedDisableRemoveButton: fromApplication.reducer
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Application reducers');
@@ -68,6 +70,12 @@ export const getCurrentApplication = createSelector(
   getApplicationEntitiesState,
   fromApplication.getCurrent
 );
+
+export const selectRemoveButtonDisabled = createSelector(
+  getApplicationEntitiesState,
+  fromApplication.getRemoveButtonDisableStatus
+);
+
 
 export const getApplicationLoaded = createSelector(
   getApplicationEntitiesState,

@@ -28,11 +28,12 @@ import {
   OperationalConditionDates,
   WorkFinishedDates
 } from '@app/model/application/type/application-extension';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
+import { selectRemoveButtonDisabled } from '../reducers';
 
 @Component({
   selector: 'application-actions',
@@ -67,6 +68,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showActions = true;
   applicationId: number;
   type: ApplicationType;
+  removeButtonDisabled$: Observable<boolean>;
 
   private _informationRequest: InformationRequest;
   private applicationSub: Subscription;
@@ -79,8 +81,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private notification: NotificationService,
               private terminationModalService: TerminationModalService,
               private route: ActivatedRoute) {
+
+    this.removeButtonDisabled$ = this.store.pipe(select(selectRemoveButtonDisabled));
   }
 
+  
   ngOnInit(): void {
     this.applicationSub = this.applicationStore.application.subscribe(app => {
       const status = app.status;
@@ -102,6 +107,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.applicationId = app.id;
       this.type = app.type;
     });
+
+    // ALLU-17, if application has been replaced and the replacement is in any other than CANCEL state, hide cancel button.
+    this.removeButtonDisabled$.subscribe(disabled => {
+      if (disabled) this.showCancel = false;
+    });
   }
 
   ngOnDestroy(): void {
@@ -118,6 +128,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   get informationRequest() {
     return this._informationRequest;
+  }
+
+  handleShowCancelButtonLogic() {
+    
   }
 
   copyApplicationAsNew(): void {

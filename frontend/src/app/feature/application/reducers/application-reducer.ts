@@ -19,6 +19,7 @@ export interface State {
   type: ApplicationType;
   kindsWithSpecifiers: KindsWithSpecifiers;
   distribution: DistributionEntry[];
+  replacedDisableRemoveButton: boolean;
 }
 
 const initialState: State = {
@@ -29,7 +30,8 @@ const initialState: State = {
   clientData: undefined,
   type: undefined,
   kindsWithSpecifiers: undefined,
-  distribution: []
+  distribution: [],
+  replacedDisableRemoveButton: false,
 };
 
 type HandledActions = ApplicationActions | InvoicingCustomerActions | ApplicationMetaActions;
@@ -53,7 +55,8 @@ export function reducer(state: State = initialState, action: HandledActions) {
         current: application,
         clientData: application.clientApplicationData,
         type: application.type,
-        kindsWithSpecifiers: application.kindsWithSpecifiers
+        kindsWithSpecifiers: application.kindsWithSpecifiers,
+        replacedDisableRemoveButton: false,
       };
     }
 
@@ -116,10 +119,18 @@ export function reducer(state: State = initialState, action: HandledActions) {
       };
     }
 
+    case ApplicationActionType.Replaced:
+      return {
+        ...state,
+        replacedDisableRemoveButton: true
+      }
+    
     default:
       return {...state};
   }
 }
+
+export const getRemoveButtonDisableStatus = (state: State) => state.replacedDisableRemoveButton;
 
 export const getCurrent = (state: State) => state.current;
 
