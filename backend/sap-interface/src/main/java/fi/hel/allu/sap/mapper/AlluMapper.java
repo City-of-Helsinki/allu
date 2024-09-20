@@ -25,7 +25,8 @@ public class AlluMapper {
    * Bill text lines for area rentals and excavation announcements
    */
   private static final String[] BILL_TEXT_LINES = {
-      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta."
+      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja",
+      "puhtaanapidosta."
    };
 
   /*
@@ -77,10 +78,6 @@ public class AlluMapper {
     if (application.getType() == ApplicationType.AREA_RENTAL || application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       salesOrder.setBillTextL1(BILL_TEXT_LINES[0]);
       salesOrder.setBillTextL2(BILL_TEXT_LINES[1]);
-      salesOrder.setBillTextL3(BILL_TEXT_LINES[2]);
-      salesOrder.setBillTextL4(BILL_TEXT_LINES[3]);
-      salesOrder.setBillTextL5(BILL_TEXT_LINES[4]);
-      salesOrder.setBillTextL6(BILL_TEXT_LINES[5]);
     } else {
       salesOrder.setBillTextL1(application.getName());
     }
