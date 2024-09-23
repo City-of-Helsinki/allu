@@ -130,10 +130,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     return this._informationRequest;
   }
 
-  handleShowCancelButtonLogic() {
-    
-  }
-
   copyApplicationAsNew(): void {
     const application = this.applicationStore.snapshot.application;
     application.id = undefined;
