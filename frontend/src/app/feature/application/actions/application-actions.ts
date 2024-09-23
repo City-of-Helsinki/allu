@@ -25,6 +25,10 @@ export enum ApplicationActionType {
   AddToDistribution = '[Application] Add to distribution',
   LoadDistribution = '[Application] Load distribution',
   LoadDistributionSuccess = '[Application] Load distribution success',
+  LoadReplacingApplication = '[Application] Load replacing application',
+  LoadReplacingApplicationSuccess = '[Application] Load replacing application success',
+  LoadReplacingApplicationFailed = '[Application] Load replacing application failed',
+  Replaced = '[Application] Replaced disable remove button',
 }
 
 export class Load implements Action {
@@ -43,6 +47,28 @@ export class LoadFailed implements ActionWithPayload<ErrorInfo> {
   readonly type = ApplicationActionType.LoadFailed;
 
   constructor(public payload: ErrorInfo) {}
+}
+
+export class LoadReplacingApplication implements Action {
+  readonly type = ApplicationActionType.LoadReplacingApplication;
+
+  constructor(public payload: number) {}
+}
+
+export class LoadReplacingApplicationSuccess implements Action {
+  readonly type = ApplicationActionType.LoadReplacingApplicationSuccess;
+
+  constructor(public payload: Application) {}
+}
+
+export class LoadReplacingApplicationFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = ApplicationActionType.LoadReplacingApplicationFailed;
+
+  constructor(public payload: ErrorInfo) {}
+}
+
+export class Replaced implements Action {
+  readonly type = ApplicationActionType.Replaced;
 }
 
 export class SetType implements Action {
@@ -146,4 +172,8 @@ export type ApplicationActions =
   | SaveDistributionSuccess
   | AddToDistribution
   | LoadDistribution
-  | LoadDistributionSuccess;
+  | LoadDistributionSuccess
+  | LoadReplacingApplication
+  | LoadReplacingApplicationSuccess
+  | LoadReplacingApplicationFailed
+  | Replaced;

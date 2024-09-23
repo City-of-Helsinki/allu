@@ -4,7 +4,7 @@ import {ApplicationStore} from '@service/application/application-store';
 import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '@model/application/application-status';
 import {ApplicationType} from '@model/application/type/application-type';
 import {NotificationService} from '@feature/notification/notification.service';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {Application} from '@model/application/application';
 import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
@@ -15,7 +15,7 @@ import {findTranslation} from '@util/translations';
 import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, take, takeUntil} from 'rxjs/operators';
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
@@ -28,11 +28,12 @@ import {
   OperationalConditionDates,
   WorkFinishedDates
 } from '@app/model/application/type/application-extension';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
+import { selectRemoveButtonDisabled } from '../reducers';
 
 @Component({
   selector: 'application-actions',
@@ -67,6 +68,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showActions = true;
   applicationId: number;
   type: ApplicationType;
+  removeButtonDisabled$: Observable<boolean>;
+  private destroy$ = new Subject<void>();
 
   private _informationRequest: InformationRequest;
   private applicationSub: Subscription;
@@ -79,9 +82,13 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private notification: NotificationService,
               private terminationModalService: TerminationModalService,
               private route: ActivatedRoute) {
+
+    this.removeButtonDisabled$ = this.store.pipe(select(selectRemoveButtonDisabled));
   }
 
+  
   ngOnInit(): void {
+
     this.applicationSub = this.applicationStore.application.subscribe(app => {
       const status = app.status;
       this.showDecision = this.showDecisionForApplication(app);
@@ -102,10 +109,20 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.applicationId = app.id;
       this.type = app.type;
     });
+
+    // ALLU-17, if application has been replaced and the replacement is in any other than CANCEL state, hide cancel button.
+    this.removeButtonDisabled$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(
+    (disabled => {
+      if (disabled) this.showCancel = false;
+    }));
   }
 
   ngOnDestroy(): void {
     this.applicationSub.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   @Input() set informationRequest(informationRequest: InformationRequest) {

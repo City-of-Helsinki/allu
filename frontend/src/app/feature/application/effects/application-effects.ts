@@ -17,6 +17,7 @@ import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {ClearCoordinates} from '@feature/map/actions/address-search-actions';
 import {findTranslation} from '@util/translations';
 import {DistributionEntry} from '@model/common/distribution-entry';
+import { ApplicationStatus } from '@app/model/application/application-status';
 
 @Injectable()
 export class ApplicationEffects {
@@ -40,6 +41,22 @@ export class ApplicationEffects {
     ))
   ));
 
+  loadReplacingApplication: Observable<Action> = createEffect(() => this.actions.pipe(
+    ofType<ApplicationAction.LoadReplacingApplication>(ApplicationActionType.LoadReplacingApplication),
+    filter(action => NumberUtil.isDefined(action.payload)),
+    switchMap(action => this.applicationService.get(action.payload).pipe(
+      map(replacingApplication => {
+        if (replacingApplication.status !== ApplicationStatus.CANCELLED) {
+          this.store.dispatch(new ApplicationAction.Replaced);
+        }
+        return new ApplicationAction.LoadReplacingApplicationSuccess(replacingApplication)
+      })
+    )),
+    catchError(error => from([
+      new ApplicationAction.LoadReplacingApplicationFailed(error),
+      new NotifyFailure(error)
+    ]))
+  ));
   
   loadMeta: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<MetaAction.Load>(ApplicationMetaActionType.Load),

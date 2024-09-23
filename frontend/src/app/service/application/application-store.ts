@@ -43,6 +43,7 @@ export interface ApplicationState {
   deposit?: Deposit;
   draft?: boolean;
   processing?: boolean;
+  replacedDisableRemoveButton: boolean;
 }
 
 export const initialState: ApplicationState = {
@@ -53,7 +54,8 @@ export const initialState: ApplicationState = {
   relatedProject: undefined,
   deposit: undefined,
   draft: false,
-  processing: false
+  processing: false,
+  replacedDisableRemoveButton: false,
 };
 
 @Injectable()
