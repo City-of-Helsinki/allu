@@ -40,7 +40,7 @@ export class ApplicationEffects {
       ]))
     ))
   ));
-// @ts-ignore
+
   loadReplacingApplication: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.LoadReplacingApplication>(ApplicationActionType.LoadReplacingApplication),
     filter(action => NumberUtil.isDefined(action.payload)),
