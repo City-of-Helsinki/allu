@@ -39,7 +39,7 @@ export class ApplicationStoreMock {
   }
 
   get snapshot(): ApplicationState {
-    return {application: this.application$.getValue(), applicationCopy: this.applicationCopy$.getValue()};
+    return {application: this.application$.getValue(), applicationCopy: this.applicationCopy$.getValue(), replacedDisableRemoveButton: false};
   }
 
   get application() {
@@ -51,7 +51,7 @@ export class ApplicationStoreMock {
   }
 
   get changes(): Observable<ApplicationState> {
-    return this.application$.pipe(map(app => ({application: app})));
+    return this.application$.pipe(map(app => ({application: app, replacedDisableRemoveButton: false})));
   }
 
   applicationCopyChange(app: Application) {
