@@ -130,7 +130,7 @@ export function reducer(state: State = initialState, action: HandledActions) {
   }
 }
 
-export const getRemoveButtonDisableStatus = (state: State) => state.replacedDisableRemoveButton;
+export const getRemoveButtonDisableStatus = (state: State) => state?.replacedDisableRemoveButton ?? false;
 
 export const getCurrent = (state: State) => state.current;
 
