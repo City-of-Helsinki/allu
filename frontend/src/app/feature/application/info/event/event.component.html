@@ -130,7 +130,7 @@
             <div fxFlex="0 0 calc(25% - 18px)">
               <mat-checkbox #structureArea [disabled]="readonly"
                             class="input-field-checkbox"
-                            [checked]="applicationForm.get('structureArea').value === true">
+                            [checked]="applicationForm.get('structureArea')?.value > 0">
                 {{'application.event.hasStructures' | translation}}
               </mat-checkbox>
             </div>
