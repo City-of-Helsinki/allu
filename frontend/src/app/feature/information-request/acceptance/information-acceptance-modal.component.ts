@@ -71,23 +71,25 @@ export class InformationAcceptanceModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onApplicationChange(this.data.oldInfo);
-    this.oldInfo = this.data.oldInfo;
-    this.newInfo = this.data.newInfo;
-    this.updatedFields = this.data.updatedFields;
-    this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
+    setTimeout(() => {
+      this.onApplicationChange(this.data.oldInfo);
+      this.oldInfo = this.data.oldInfo;
+      this.newInfo = this.data.newInfo;
+      this.updatedFields = this.data.updatedFields;
+      this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
 
-    if (this.data.informationRequest) {
-      this.requestDataAvailable = this.data.informationRequest.fields.length > 0;
-      this.hideExisting = this.data.informationRequest.status === InformationRequestStatus.CLOSED;
-    }
+      if (this.data.informationRequest) {
+        this.requestDataAvailable = this.data.informationRequest.fields.length > 0;
+        this.hideExisting = this.data.informationRequest.status === InformationRequestStatus.CLOSED;
+      }
 
-    // set initial values to the store
-    const baseInfo = this.data.oldInfo || new Application();
-    this.onApplicationChange(baseInfo);
-    this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
-    this.applicationTypeBillable = [ApplicationType.CABLE_REPORT, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS]
-      .indexOf(this.oldInfo.type) < 0;
+      // set initial values to the store
+      const baseInfo = this.data.oldInfo || new Application();
+      this.onApplicationChange(baseInfo);
+      this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
+      this.applicationTypeBillable = [ApplicationType.CABLE_REPORT, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS]
+        .indexOf(this.oldInfo.type) < 0;
+    },0)
   }
 
   onSubmit(): void {
