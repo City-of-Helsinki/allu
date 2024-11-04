@@ -57,28 +57,28 @@ describe('AuthGuard', () => {
     configService = tb.inject(ConfigService) as ConfigServiceMock;
   });
 
-  it('allows route activation when already authenticated', () => {
+  it('allows route activation when already authenticated', async () => {
     spyOn(authService, 'authenticated').and.returnValue(true);
-    authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot)
+    (await authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot))
       .subscribe(canActivate => expect(canActivate).toEqual(true));
   });
 
-  it('authenticates when code is found in route parameters', () => {
+  it('authenticates when code is found in route parameters', async () => {
     spyOn(authService, 'authenticated').and.returnValue(false);
     const loginOauth = spyOn(authService, 'loginOAuth').and.returnValue(of(new User()));
     activatedRouteSnapshot.queryParams = {code: 'CODE'};
 
-    authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot).subscribe();
+    (await authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot)).subscribe();
     expect(loginOauth).toHaveBeenCalledWith('CODE');
   });
 
-  it('redirects to oauth login when no code is found in route parameters', () => {
+  it('redirects to oauth login when no code is found in route parameters', async () => {
     spyOn(authService, 'authenticated').and.returnValue(false);
     const getConfiguration = spyOn(configService, 'getConfiguration').and.returnValue(EMPTY);
     activatedRouteSnapshot.queryParams = {code: undefined};
     routerStateSnapshot.url = 'testUrl';
 
-    authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot).subscribe();
+    (await authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot)).subscribe();
     expect(localStorage.getItem(REDIRECT_URL)).toBe(routerStateSnapshot.url);
     expect(getConfiguration).toHaveBeenCalled();
   });
