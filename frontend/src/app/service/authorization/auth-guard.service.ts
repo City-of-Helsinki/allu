@@ -13,8 +13,9 @@ export class AuthGuard  {
               private configService: ConfigService) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    if (this.authService.authenticated()) {
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<Observable<boolean>> {
+    const authenticated = await this.authService.authenticated();
+    if (authenticated) {
       return of(true);
     } else {
       return this.authenticate(route, state.url);
