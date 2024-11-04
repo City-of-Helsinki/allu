@@ -19,7 +19,7 @@ import {postalCodeValidator} from '@util/complex-validator';
 import {debounceTime, filter, map, switchMap, take} from 'rxjs/internal/operators';
 import { CurrentUser } from '@app/service/user/current-user';
 import {RoleType} from '@model/user/role-type';
-
+import { Router } from '@angular/router'
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.minLength(2)];
@@ -57,7 +57,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   customerInstance: Customer;
 
 
-  constructor(private customerService: CustomerService, private codeSetService: CodeSetService, private currentUser: CurrentUser) {}
+  constructor(private customerService: CustomerService, private codeSetService: CodeSetService, private currentUser: CurrentUser, private router: Router) {}
 
   ngOnInit() {
     this.nameControl = <UntypedFormControl>this.form.get('name');
@@ -136,13 +136,17 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   async checkForRestrictedEdit(): Promise<void> {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists
     const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
-    
     this.form.controls.sapCustomerNumber.valueChanges
       .pipe(take(1))
       .subscribe(value => {
-        // if there exists sapNumber but user doesn't have role. disable 
+        // if there exists sapNumber but user doesn't have role. disable
         if (value && !userHasRole) this.form.disable();
       });
+
+    if (this.router.url.endsWith('/edit/info')) {
+      const sapNumber = await this.form.get('sapCustomerNumber').value;
+      if (!userHasRole && sapNumber) this.form.disable();
+    }
   }
 
   onKeyup(event: KeyboardEvent): void {
