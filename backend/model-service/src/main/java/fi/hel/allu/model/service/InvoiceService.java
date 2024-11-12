@@ -182,13 +182,13 @@ public class InvoiceService {
     List<Integer> invoicePeriodIds = invoiceDao.getInvoicePeriodIds(invoiceIds);
     invoicingPeriodService.closeInvoicingPeriods(invoicePeriodIds);
     // Mark application invoiced after all invoices are sent.
-    Map<Integer, List<Integer>> unInvoicedMap = invoiceDao.getUnvoicedInvoices(invoiceIds);
     List<Integer> invoicedApplicationIds =  invoiceDao.getApplicationIdsForInvoices(invoiceIds)
         .stream()
-        .filter(id -> !unInvoicedMap.containsKey(id))
+        .filter(id -> !invoiceDao.hasUninvoicedInvoices(id))
         .collect(Collectors.toList());
 
     applicationDao.markInvoiced(invoicedApplicationIds);
+
   }
 
   /**
@@ -231,6 +231,10 @@ public class InvoiceService {
     invoiceDao.setInvoiceRecipient(applicationId, invoiceRecipientId, sapIdPending);
   }
 
+  public void unlockInvoices(Integer applicationId) {
+    invoiceDao.unlockInvoices(applicationId);
+  }
+
   // Update existing invoice rows. Does not create new rows / delete old rows
   @Transactional
   public void updateInvoiceRows(Integer applicationId) {
@@ -238,6 +242,6 @@ public class InvoiceService {
     Map<Integer, InvoiceRow> updatedRowsByChargeBasisId = pricingService.toSingleInvoice(chargeBasisService.getChargeBasis(applicationId))
         .stream()
         .collect(Collectors.toMap(InvoiceRow::getChargeBasisId, Function.identity()));
-    invoiceDao.updateInvoiceRow(existingRows, updatedRowsByChargeBasisId);
+    existingRows.forEach(row -> invoiceDao.updateInvoiceRow(row.getId(), updatedRowsByChargeBasisId.get(row.getChargeBasisId())));
   }
 }

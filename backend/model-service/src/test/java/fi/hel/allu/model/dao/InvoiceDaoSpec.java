@@ -1,25 +1,32 @@
 package fi.hel.allu.model.dao;
 
-import com.greghaskins.spectrum.Spectrum;
-import com.greghaskins.spectrum.Variable;
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.greghaskins.spectrum.Spectrum;
+import com.greghaskins.spectrum.Variable;
+
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Invoice;
+import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -47,8 +54,8 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
       context("When DB is empty", () -> {
         it("find should return empty optional", () -> {
-          List<Invoice> result = invoiceDao.findInvoices(Collections.singletonList(99));
-          assertTrue(result.isEmpty());
+          Optional<Invoice> result = invoiceDao.find(99);
+          assertFalse(result.isPresent());
         });
 
         it("insert should throw error", () -> {
@@ -56,7 +63,7 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
         });
 
         it("delete should throw error", () -> {
-          assertThrows(NoSuchEntityException.class).when(() -> invoiceDao.deleteSingleInvoice(99));
+          assertThrows(NoSuchEntityException.class).when(() -> invoiceDao.delete(99));
         });
 
         it("update should throw error", () -> {
@@ -93,21 +100,21 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
           beforeEach(() -> invoiceId.set(invoiceDao.insert(appId.get(), TEST_INVOICE)));
 
           it("can find the invoice", () -> {
-            List<Invoice> invoiceOpt = invoiceDao.findInvoices(Collections.singletonList(invoiceId.get()));
-            assertFalse(invoiceOpt.isEmpty());
-            compareInvoices(TEST_INVOICE, invoiceOpt.get(0));
+            Optional<Invoice> invoiceOpt = invoiceDao.find(invoiceId.get());
+            assertTrue(invoiceOpt.isPresent());
+            compareInvoices(TEST_INVOICE, invoiceOpt.get());
           });
 
           it("can update the invoice", () -> {
             final Invoice newInvoice = otherInvoice();
             invoiceDao.update(invoiceId.get(), newInvoice);
-            Invoice readBack = invoiceDao.findInvoices(Collections.singletonList(invoiceId.get())).get(0);
+            Invoice readBack = invoiceDao.find(invoiceId.get()).get();
             compareInvoices(newInvoice, readBack);
           });
 
           it("can delete the invoice", () -> {
-            invoiceDao.deleteSingleInvoice(invoiceId.get());
-            assertTrue( invoiceDao.findInvoices(Collections.singletonList(invoiceId.get())).isEmpty());
+            invoiceDao.delete(invoiceId.get());
+            assertFalse(invoiceDao.find(invoiceId.get()).isPresent());
           });
 
           it("can find all inserted with findByApplication", () -> {
@@ -121,8 +128,8 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
           it("can delete all inserted with deleteByApplication", () -> {
             int otherId = invoiceDao.insert(appId.get(), otherInvoice());
             invoiceDao.deleteOpenInvoicesByApplication(appId.get());
-            assertTrue(invoiceDao.findInvoices(Collections.singletonList(invoiceId.get())).isEmpty());
-            assertTrue(invoiceDao.findInvoices(Collections.singletonList(otherId)).isEmpty());
+            assertFalse(invoiceDao.find(invoiceId.get()).isPresent());
+            assertFalse(invoiceDao.find(otherId).isPresent());
           });
 
         });
