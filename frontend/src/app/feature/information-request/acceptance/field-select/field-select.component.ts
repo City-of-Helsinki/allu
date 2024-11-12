@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewChild, ChangeDetectorRef} from '@angular/core';
 import isEqual from 'lodash/isEqual';
 import {MatLegacySelectionList as MatSelectionList} from '@angular/material/legacy-list';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -26,6 +26,9 @@ const FIELD_SELECT_VALUE_ACCESSOR = {
 })
 export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
+  constructor(private cdr: ChangeDetectorRef) {
+}
+
   @Input() id = '';
   @Input() descriptions: FieldDescription[] = [];
   @Input() meta: StructureMeta;
@@ -42,7 +45,8 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
     // fixes the map not always being displayed
     setTimeout(() => {
       this.displayMap = true;
-    });
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   /** Implemented as part of ControlValueAccessor. */
