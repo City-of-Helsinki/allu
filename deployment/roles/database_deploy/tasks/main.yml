@@ -4,4 +4,5 @@
 - include_tasks: create_directories.yml
 - include_tasks: docker.yml
 - include_tasks: database.yml
+- include_tasks: copy_files.yml
 - include_tasks: backup.yml
