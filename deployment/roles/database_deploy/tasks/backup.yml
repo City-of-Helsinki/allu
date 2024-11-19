@@ -21,3 +21,26 @@
   when: "'production' in group_names"
   become: yes
   become_user: root
+
+- name: Create cron job for wal archive cleaning
+  cron:
+    name: Clean wal files
+    hour: 5
+    minute: 0
+    user: root
+    job: "/usr/local/bin/wal_cleanup.sh"
+    cron_file: allu_archive-cleanup
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for wal archival process checking
+  cron:
+    name: Check wal archiving
+    minute: 45
+    user: root
+    job: "/usr/local/bin/wal_archiver_checker.sh"
+    cron_file: allu_archiver-check
+  when: "'production' in group_names"
+  become: yes
+  become_user: root

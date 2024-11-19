@@ -1,0 +1,13 @@
+- name: Copy the wal_cleanup.sh script to /usr/local/bin
+  copy: src=wal_cleanup.sh dest=/usr/local/bin/wal_cleanup.sh
+        owner=root
+        group=root
+        mode="u=rwx,g=rx,o=rx"
+  when: "'production' in group_names"
+
+- name: Copy the wal_archiver_checker.sh script to /usr/local/bin
+  copy: src=wal_archiver_checker.sh dest=/usr/local/bin/wal_archiver_checker.sh
+        owner=root
+        group=root
+        mode="u=rwx,g=rx,o=rx"
+  when: "'production' in group_names"
