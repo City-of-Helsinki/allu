@@ -4,9 +4,9 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,8 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.dao.TerminationDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.service.*;
 
 @Service
@@ -93,10 +95,10 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
   private void updateInvoicingPeriodEndDates(Integer applicationId, ZonedDateTime workFinishedDate) {
     ZonedDateTime endTime = TimeUtil.homeTime(workFinishedDate).truncatedTo(ChronoUnit.DAYS);
     // Update period end date for periods not having end date or ending after work finished date
-    List<Integer> invoicingPeriodIds = invoicingPeriodService.findOpenPeriodsForApplicationId(applicationId)
-        .stream().filter(period -> period.getEndTime() == null || period.getEndTime().isAfter(endTime))
-            .map(InvoicingPeriod::getId).collect(Collectors.toList());
-    invoicingPeriodService.updatePeriodEndDates(invoicingPeriodIds, endTime);
+    invoicingPeriodService.findOpenPeriodsForApplicationId(applicationId)
+        .stream()
+        .filter(period -> period.getEndTime() == null || period.getEndTime().isAfter(endTime))
+        .forEach(period -> invoicingPeriodService.updatePeriodEndDate(period.getId(), endTime));
   }
 
 }

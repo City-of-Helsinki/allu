@@ -2,9 +2,8 @@ package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.Map.Entry;
 
-import com.querydsl.sql.dml.SQLUpdateClause;
-import fi.hel.allu.common.util.EmptyUtil;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hel.allu.QChargeBasis.chargeBasis;
@@ -27,18 +25,21 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 
 @Repository
 public class ChargeBasisDao {
-
-  protected static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
       chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable,
       chargeBasis.locked, chargeBasis.invoicable);
 
   private final SQLQueryFactory queryFactory;
 
+
+
   final QBean<ChargeBasisEntry> chargeBasisBean = bean(ChargeBasisEntry.class, chargeBasis.all());
+
 
   public ChargeBasisDao(SQLQueryFactory queryFactory) {
     this.queryFactory = queryFactory;
   }
+
 
   /**
    * Get the charge basis entries for an application
@@ -73,19 +74,19 @@ public class ChargeBasisDao {
     deleteDanglingEntries(modification.getApplicationId());
   }
 
-  @Transactional
-  public void updateEntries(Map<Integer, ChargeBasisEntry> entriesToUpdate) {
-    if(EmptyUtil.isNotEmpty(entriesToUpdate)) {
-      SQLUpdateClause update = queryFactory.update(chargeBasis);
-      entriesToUpdate.forEach((k, v) -> addBatch(k, v, update));
-      update.execute();
+  private void updateEntries(Map<Integer, ChargeBasisEntry> entriesToUpdate) {
+    for (Entry<Integer, ChargeBasisEntry> entry : entriesToUpdate.entrySet()) {
+      updateEntry(entry.getKey(), entry.getValue());
     }
   }
 
-  private void addBatch(Integer id, ChargeBasisEntry entry, SQLUpdateClause update){
+  @Transactional
+  public ChargeBasisEntry updateEntry(Integer id, ChargeBasisEntry entry) {
     entry.setModificationTime(ZonedDateTime.now());
-    update.populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
-            .where(chargeBasis.id.eq(id)).addBatch();
+    queryFactory.update(chargeBasis)
+    .populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+    .where(chargeBasis.id.eq(id)).execute();
+    return findChargeBasisEntry(id);
   }
 
   @Transactional
@@ -93,8 +94,7 @@ public class ChargeBasisDao {
     int entryNumber = nextEntryNumber(applicationId);
     entry.setModificationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(chargeBasis)
-        .populate(entry, new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS,
-                                             Collections.singletonList(chargeBasis.manuallySet)))
+        .populate(entry, new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))
         .set(chargeBasis.applicationId, applicationId)
         .set(chargeBasis.entryNumber, entryNumber)
         .set(chargeBasis.manuallySet, true)
@@ -110,7 +110,7 @@ public class ChargeBasisDao {
         entry.setModificationTime(modificationTime);
         insert
             .populate(entry,
-                new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Collections.singletonList(chargeBasis.manuallySet)))
+                new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))
             .set(chargeBasis.applicationId, applicationId).set(chargeBasis.entryNumber, nextEntryNumber++)
             .set(chargeBasis.manuallySet, manuallySet)
             .addBatch();
@@ -160,6 +160,7 @@ public class ChargeBasisDao {
   public void lockEntriesOfPeriod(Integer periodId) {
     queryFactory.update(chargeBasis).set(chargeBasis.locked, true).where(chargeBasis.invoicingPeriodId.eq(periodId)).execute();
   }
+
 
   @Transactional(readOnly = true)
   public List<Integer> getLockedChargeBasisIds(int applicationId) {
@@ -229,11 +230,11 @@ public class ChargeBasisDao {
   }
 
   @Transactional(readOnly = true)
-  public Map<String, Boolean> isInvoicable(int applicationId, List<String> tags, boolean manuallySet) {
-    return queryFactory.select(chargeBasis.tag, chargeBasis.invoicable).from(chargeBasis)
-            .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.tag.in(tags),
-                   chargeBasis.manuallySet.eq(manuallySet))
-            .transform(groupBy(chargeBasis.tag).as(chargeBasis.invoicable));
+  public Boolean isInvoicable(int applicationId, String tag, boolean manuallySet) {
+    return queryFactory.select(chargeBasis.invoicable)
+        .from(chargeBasis)
+        .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.tag.eq(tag), chargeBasis.manuallySet.eq(manuallySet))
+        .fetchFirst();
   }
 
   public Optional<ChargeBasisEntry> findByTag(int applicationId, String tag) {

@@ -111,11 +111,9 @@ public class ChargeBasisService {
     validateModificationsAllowed(Collections.singletonList(entryId), applicationId);
     setPeriodIfMissing(applicationId, entry);
     setAreaUsageTagIfMissing(applicationId, entry);
-    Map<Integer, ChargeBasisEntry> map = new HashMap<>();
-    map.put(entryId, entry);
-    chargeBasisDao.updateEntries(map);
+    ChargeBasisEntry updated = chargeBasisDao.updateEntry(entryId, entry);
     handleInvoicingChanged(applicationId);
-    return chargeBasisDao.findChargeBasisEntry(applicationId, entryId);
+    return updated;
   }
 
   @Transactional
@@ -304,9 +302,7 @@ public class ChargeBasisService {
     // Get calculated entries without dividing to periods
     List<ChargeBasisEntry> calculatedEntries = pricingService.calculateChargeBasisWithoutInvoicingPeriods(applicationDao.findById(id));
     // Sets invoicable value for calculated entries not divided to periods (divided entries must be handled separately since period specific row has different tag)
-    Map<String, Boolean> mapInvoicables = chargeBasisDao.isInvoicable(id, calculatedEntries.stream().map(ChargeBasisEntry::getTag).collect(
-            Collectors.toList()),  false);
-    calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(mapInvoicables.get(e.getTag()))));
+    calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(chargeBasisDao.isInvoicable(id, e.getTag(), false))));
     // Fetch manual entries from db and add to result.
     return Stream.concat(calculatedEntries.stream(), getChargeBasis(id).stream().filter(ChargeBasisEntry::getManuallySet))
         .collect(Collectors.toList());

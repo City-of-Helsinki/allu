@@ -151,7 +151,7 @@ public class InvoicingPeriodService {
 
   @Transactional
   public void deletePeriods(Integer applicationId, List<Integer> periodIds) {
-    invoicingPeriodDao.deleteByPeriodIds(periodIds);
+    periodIds.forEach(id -> invoicingPeriodDao.deletePeriod(id));
     if (!CollectionUtils.isEmpty(periodIds)) {
       invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     }
@@ -171,27 +171,20 @@ public class InvoicingPeriodService {
     periods.put(StatusType.FINISHED, new InvoicingPeriod(applicationId, StatusType.FINISHED));
     Map<StatusType, InvoicingPeriod> currentPeriods = findForApplicationId(applicationId).stream()
         .collect(Collectors.toMap(InvoicingPeriod::getInvoicableStatus, Function.identity() ));
-
-    List<InvoicingPeriod> insertedPeriods = periods.entrySet().stream().filter(p -> !currentPeriods.containsKey(p.getKey()))
-            .map(p-> p.getValue()).collect(Collectors.toList());
-    invoicingPeriodDao.insertPeriods(insertedPeriods);
-
-    List<InvoicingPeriod> periodsToDelet = currentPeriods.entrySet().stream().filter(c -> !periods.containsKey(c.getKey()))
-            .map(c -> c.getValue()).collect(Collectors.toList());
-    deletePeriods(periodsToDelet);
-
+    periods.entrySet().stream().filter(p -> !currentPeriods.containsKey(p.getKey()))
+        .forEach(p -> invoicingPeriodDao.insertInvoicingPeriod(p.getValue()));
+    currentPeriods.entrySet().stream().filter(c -> !periods.containsKey(c.getKey())).forEach(c -> deletePeriod(c.getValue()));
     if (currentPeriods.keySet().size() != periods.size()) {
       invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     }
   }
 
-  private void deletePeriods(List<InvoicingPeriod> invoicingPeriod) {
-    if (invoicingPeriod.stream().anyMatch(InvoicingPeriod::isClosed)) {
+  private void deletePeriod(InvoicingPeriod invoicingPeriod) {
+    if (invoicingPeriod.isClosed()) {
       throw new IllegalOperationException("invoicingPeriod.invoiced");
     }
-    List<Integer> periodIds = invoicingPeriod.stream().map(InvoicingPeriod::getId).collect(Collectors.toList());
-    invoicingPeriodDao.removeEntriesFromPeriods(periodIds);
-    invoicingPeriodDao.deleteByPeriodIds(periodIds);
+    invoicingPeriodDao.removeEntriesFromPeriod(invoicingPeriod.getId());
+    invoicingPeriodDao.deletePeriod(invoicingPeriod.getId());
   }
 
   private boolean isWinterTimeOperation(Integer applicationId) {
@@ -203,8 +196,9 @@ public class InvoicingPeriodService {
     return false;
   }
 
-  public void updatePeriodEndDates(List<Integer> periodIds, ZonedDateTime endTime) {
-    invoicingPeriodDao.updateEndTimes(periodIds, endTime);
+  @Transactional
+  public void updatePeriodEndDate(Integer periodId, ZonedDateTime endTime) {
+    invoicingPeriodDao.updateEndTime(periodId, endTime);
   }
 
   @Transactional

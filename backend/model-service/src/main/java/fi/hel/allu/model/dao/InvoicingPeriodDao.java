@@ -3,7 +3,6 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import fi.hel.allu.common.util.EmptyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.QInvoice;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -73,11 +73,9 @@ public class InvoicingPeriodDao {
    }
 
    @Transactional
-   public void deleteByPeriodIds(List<Integer> periodIds) {
-       // Deletes also invoices and charge basis entries
-       if (EmptyUtil.isNotEmpty(periodIds)) {
-           queryFactory.delete(invoicingPeriod).where(invoicingPeriod.id.in(periodIds)).execute();
-       }
+   public void deletePeriod(Integer periodId) {
+     // Deletes also invoices and charge basis entries
+     queryFactory.delete(invoicingPeriod).where(invoicingPeriod.id.eq(periodId)).execute();
    }
 
    public void closeInvoicingPeriod(Integer invoicingPeriodId) {
@@ -86,20 +84,18 @@ public class InvoicingPeriodDao {
    }
 
   @Transactional
-  public void removeEntriesFromPeriods(List<Integer> periodIds) {
-      if (EmptyUtil.isNotEmpty(periodIds)) {
-          queryFactory.update(chargeBasis)
-             .setNull(chargeBasis.invoicingPeriodId)
-             .where(chargeBasis.invoicingPeriodId.in(periodIds))
-             .execute();
-      }
+  public void removeEntriesFromPeriod(Integer periodId) {
+    queryFactory.update(chargeBasis)
+       .setNull(chargeBasis.invoicingPeriodId)
+       .where(chargeBasis.invoicingPeriodId.eq(periodId))
+       .execute();
   }
 
   @Transactional
-  public void updateEndTimes(List<Integer> periodId, ZonedDateTime endTime) {
-      if (EmptyUtil.isNotEmpty(periodId)) {
-          queryFactory.update(invoicingPeriod).set(invoicingPeriod.endTime, endTime)
-                  .where(invoicingPeriod.id.in(periodId)).execute();
-      }
+  public void updateEndTime(Integer periodId, ZonedDateTime endTime) {
+    queryFactory.update(invoicingPeriod)
+      .set(invoicingPeriod.endTime, endTime)
+      .where(invoicingPeriod.id.eq(periodId))
+      .execute();
   }
 }

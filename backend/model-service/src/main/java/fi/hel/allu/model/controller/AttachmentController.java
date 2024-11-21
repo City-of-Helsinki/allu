@@ -86,7 +86,7 @@ public class AttachmentController {
 
   @DeleteMapping(value = "/applications/{applicationId}/default")
   public ResponseEntity<Void> removeDefaultAttachments(@PathVariable Integer applicationId,  @RequestBody List<Integer> defaultAttachmentIds) {
-    defaultAttachmentIds.forEach(id -> attachmentDao.removeLinkApplicationToAttachment(applicationId, Collections.singletonList(id)));
+    defaultAttachmentIds.forEach(id -> attachmentDao.removeLinkApplicationToAttachment(applicationId, id));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -151,7 +151,7 @@ public class AttachmentController {
     Optional<DefaultAttachmentInfo> dai = attachmentDao.findDefaultById(attachmentId, false);
     if (dai.isPresent()) {
       AttachmentInfo ai = attachmentDao.findById(attachmentId).get();
-      attachmentDao.removeLinkApplicationToAttachment(applicationId, Collections.singletonList(ai.getId()));
+      attachmentDao.removeLinkApplicationToAttachment(applicationId, ai.getId());
     } else {
       attachmentDao.delete(applicationId, attachmentId);
     }
