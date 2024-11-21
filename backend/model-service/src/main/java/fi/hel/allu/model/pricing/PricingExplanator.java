@@ -75,7 +75,7 @@ public class PricingExplanator {
 
   private List<String> formatExplanation(Location location, boolean includePaymentClass, String customPeriod) {
     final List<FixedLocation> fixedLocations = new ArrayList<>();
-    fixedLocations.addAll(locationDao.getFixedLocations(location.getFixedLocationIds()));
+    location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fixedLocations::add));
     final String fixedLocation = Printable.forFixedLocations(fixedLocations);
     final String locationAddress = Printable.forPostalAddress(location.getPostalAddress());
     final String address = fixedLocation.length() > 0 ? fixedLocation : locationAddress;
