@@ -20,7 +20,7 @@
                          [placeholder]="'contact.name' | translation"
                          [matAutocomplete]="nameSearch" (keyup)="onKeyup($event, index)"/>
                   <mat-autocomplete #nameSearch="matAutocomplete">
-                    <mat-option *ngFor="let contact of matchingContacts | async"
+                    <mat-option *ngFor="let contact of getMatchingContacts(index) | async"
                                 [value]="contact.name" (onSelectionChange)="contactSelected(contact, index)">
                       {{ contact.name }}
                     </mat-option>

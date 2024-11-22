@@ -3,7 +3,7 @@ import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/f
 import {Contact} from '@model/customer/contact';
 import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
-import {Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {CustomerWithContactsForm} from '@feature/customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {ApplicationStore} from '@service/application/application-store';
@@ -49,6 +49,8 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   private customerIdChanges = new BehaviorSubject<number>(undefined);
   private destroy: Subject<boolean> = new Subject<boolean>();
+
+  private matchingContactsMap: Map<number, Observable<Array<Contact>>> = new Map();
 
   constructor(private fb: UntypedFormBuilder,
               private customerService: CustomerService,
@@ -99,7 +101,6 @@ export class ContactComponent implements OnInit, OnDestroy {
     if (this.contacts.controls.length <= index) {
       return false;
     }
-
     const contact = this.contacts.at(index).value;
     return Some(this.parentForm.getRawValue().ordererId)
       .map(form => toOrdererId(form))
@@ -135,10 +136,13 @@ export class ContactComponent implements OnInit, OnDestroy {
   addContact(contact: Contact = new Contact()): void {
     const fg = Contact.formGroup(this.fb, contact);
     const nameControl = fg.get('name');
-    this.matchingContacts = nameControl.valueChanges.pipe(
+
+    const matchingContacts$ = nameControl.valueChanges.pipe(
       debounceTime(300),
       switchMap(name => this.onNameSearchChange(name))
     );
+
+    this.matchingContactsMap.set(this.contacts.length,  matchingContacts$);
 
     this.contacts.push(fg);
 
@@ -178,6 +182,18 @@ export class ContactComponent implements OnInit, OnDestroy {
   remove(index: number): void {
     this.resetOrdererIfMatchingIndex(index);
     this.contacts.removeAt(index);
+
+    const updatedMap = new Map<number, Observable<Array<Contact>>>();
+
+    Array.from(this.matchingContactsMap.entries()).forEach(([key, value]) => {
+      if (key < index) {
+        updatedMap.set(key, value);
+      } else if (key > index) {
+        updatedMap.set(key - 1, value);
+      }
+    });
+
+    this.matchingContactsMap = updatedMap;
   }
 
   canBeAddedToDistribution(index: number): boolean {
@@ -200,6 +216,10 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.resetOrdererIfMatchingIndex(0);
     this.contacts.reset();
     this.contacts.enable();
+  }
+
+  getMatchingContacts(index: number): Observable<Array<Contact>> {
+    return this.matchingContactsMap.get(index) || of([]);
   }
 
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
@@ -229,15 +249,19 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.contacts = <UntypedFormArray>this.form.get('contacts');
     const defaultContactList = this.contactRequired ? [new Contact()] : [];
     const roleType = CustomerRoleType[this.customerRoleType];
-
     this.applicationStore.application.pipe(
       map(app => app.customerWithContactsByRole(roleType)),
-      tap(cwc => this.customerIdChanges.next(cwc.customerId)),
+      tap(cwc => {
+        this.customerIdChanges.next(cwc.customerId)
+      }),
       map(cwc => cwc.contacts.length > 0 ? cwc.contacts : defaultContactList),
       takeUntil(this.destroy)
     ).subscribe(contacts => {
+
       FormUtil.clearArray(this.contacts);
-      contacts.forEach(contact => this.addContact(contact));
+      contacts.forEach(contact => {
+        this.addContact(contact)
+      });
     });
   }
 
@@ -249,6 +273,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   private resetOrdererIfMatchingIndex(index: number) {
+    
     if (this.isOrderer(index)) {
       this.parentForm.patchValue({ordererId: undefined});
     }
