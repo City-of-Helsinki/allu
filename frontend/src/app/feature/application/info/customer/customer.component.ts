@@ -120,6 +120,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   onClearFormPress(): void {
     this.contacts.resetContacts();
+    this.contacts.onCustomerChange(null);
     this.customerForm.reset();
   }
 
