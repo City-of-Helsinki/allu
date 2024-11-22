@@ -71,7 +71,6 @@ export class InformationAcceptanceModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    setTimeout(() => {
       this.onApplicationChange(this.data.oldInfo);
       this.oldInfo = this.data.oldInfo;
       this.newInfo = this.data.newInfo;
@@ -89,7 +88,6 @@ export class InformationAcceptanceModalComponent implements OnInit {
       this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
       this.applicationTypeBillable = [ApplicationType.CABLE_REPORT, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS]
         .indexOf(this.oldInfo.type) < 0;
-    },0)
   }
 
   onSubmit(): void {

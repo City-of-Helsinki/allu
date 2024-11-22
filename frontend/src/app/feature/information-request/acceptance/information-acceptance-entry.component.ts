@@ -32,9 +32,7 @@ export class InformationAcceptanceEntryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.showPendingInfo();
-    }, 0);
+    this.showPendingInfo();
   }
 
   private showPendingInfo(): void {
