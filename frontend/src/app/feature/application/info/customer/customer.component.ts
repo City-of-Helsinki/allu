@@ -14,6 +14,7 @@ import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Contact} from '@model/customer/contact';
 import {startWith} from 'rxjs/operators';
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'customer',
@@ -39,12 +40,16 @@ export class CustomerComponent implements OnInit, OnDestroy {
   customerWithContactsForm: UntypedFormGroup;
   customerForm: UntypedFormGroup;
   customerClass: string[] = [];
+  hideClearButton: boolean;
 
   private _customerWithContacts: CustomerWithContacts;
 
   constructor(private fb: UntypedFormBuilder,
               private customerService: CustomerService,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private router: Router
+            ) {
+    this.hideClearButton = true;
   }
 
   @Input() set customerWithContacts(customerWithContacts) {
@@ -72,6 +77,14 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
     this.customerForm.get('type').valueChanges
       .subscribe(type => this.onCustomerTypeChange(type));
+
+    // show hide clear button when there is something typed in the name field
+    this.customerForm.get('name').valueChanges
+    .pipe(startWith(this.customerForm.get('name').value))
+      .subscribe(name => {
+        this.hideClearButton = !(name && name.length > 0 && this.router.url.endsWith('/edit/info'));
+    });
+
   }
 
   ngOnDestroy(): void {
@@ -103,6 +116,11 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   onPropertyDeveloperChange(checked: boolean): void {
     this.parentForm.patchValue({hasPropertyDeveloper: checked});
+  }
+
+  onClearFormPress(): void {
+    this.contacts.resetContacts();
+    this.customerForm.reset();
   }
 
   get isNewCustomer() {
