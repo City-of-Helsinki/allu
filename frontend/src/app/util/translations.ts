@@ -1358,7 +1358,8 @@ export const translations = {
       moveTo: 'Siirrä',
       close: 'Sulje',
       newApplication: 'Uusi hakemus',
-      newProject: 'Uusi hanke'
+      newProject: 'Uusi hanke',
+      clear: 'Tyhjennä'
     },
     time: {
       today: 'Tänään',

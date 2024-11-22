@@ -41,7 +41,11 @@
             </div>
           </div>
         </mat-card-content>
+        <div class="row" *ngIf="!hideClearButton">
+          <button type="button" mat-raised-button color="primary" (click)="onClearFormPress()">{{'common.button.clear' | translation}}</button>
+        </div>
       </allu-card>
+      
     </div>
   </form>
   <contact #contacts [parentForm]="parentForm" [readonly]="readonly"

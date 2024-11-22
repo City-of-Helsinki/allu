@@ -16,7 +16,7 @@ import {
 import {CodeSetService} from '@service/codeset/codeset.service';
 import {CodeSet} from '@model/codeset/codeset';
 import {postalCodeValidator} from '@util/complex-validator';
-import {debounceTime, filter, map, switchMap, take} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, startWith, switchMap, take} from 'rxjs/internal/operators';
 import { CurrentUser } from '@app/service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 import { Router } from '@angular/router'
@@ -87,12 +87,17 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
 
     this.countries = this.codeSetService.getCountries();
 
-
+    this.form.get("id").valueChanges
+      .pipe(startWith(this.form.get('id').value))
+      .subscribe(id => {
+        if (id) this.form.disable();
+        if (!id) this.form.enable();
+    });
   }
 
-  ngAfterViewInit() {
-    this.checkForRestrictedEdit();
-  }
+  // ngAfterViewInit() {
+  //   this.checkForRestrictedEdit();
+  // }
 
   ngOnDestroy(): void {
     this.typeSubscription.unsubscribe();
