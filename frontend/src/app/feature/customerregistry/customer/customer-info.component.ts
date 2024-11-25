@@ -91,9 +91,10 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     .pipe(startWith(this.form.get('id').value))
     .subscribe(id => {
       if (this.router.url.endsWith('/edit/info')) {
-        if (id) this.form.disable();
         if (!id) this.form.enable();
       }
+      else if (id) this.form.disable();
+
     });
 
   }
