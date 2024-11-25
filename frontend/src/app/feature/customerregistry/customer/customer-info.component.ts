@@ -86,6 +86,13 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       .subscribe(country => this.updatePostalAddressValidator(country));
 
     this.countries = this.codeSetService.getCountries();
+    
+    this.form.get("id").valueChanges
+    .pipe(startWith(this.form.get('id').value))
+    .subscribe(id => {
+      if (id) this.form.disable();
+      if (!id) this.form.enable();
+    });
 
   }
 
