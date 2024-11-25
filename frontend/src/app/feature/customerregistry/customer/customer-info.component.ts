@@ -33,7 +33,7 @@ const DEBOUNCE_TIME_MS = 300;
 })
 export class CustomerInfoComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
-  @Input() allowSearch = false;
+  @Input() allowSearch = true;
   @Input() showInvoicingInfo = false;
   @Input() showInvoicingOnly = false;
   @Input() showInvoicingProhibited = false;
@@ -86,18 +86,15 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       .subscribe(country => this.updatePostalAddressValidator(country));
 
     this.countries = this.codeSetService.getCountries();
-
+    
     this.form.get("id").valueChanges
-      .pipe(startWith(this.form.get('id').value))
-      .subscribe(id => {
-        if (id) this.form.disable();
-        if (!id) this.form.enable();
+    .pipe(startWith(this.form.get('id').value))
+    .subscribe(id => {
+      if (id) this.form.disable();
+      if (!id) this.form.enable();
     });
-  }
 
-  // ngAfterViewInit() {
-  //   this.checkForRestrictedEdit();
-  // }
+  }
 
   ngOnDestroy(): void {
     this.typeSubscription.unsubscribe();
@@ -135,22 +132,6 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       });
       this.form.enable();
       this.customerChange.emit(new Customer());
-    }
-  }
-
-  async checkForRestrictedEdit(): Promise<void> {
-    // ALLU-19 restrict usage to admin and invoicing roles when sap number exists
-    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
-    this.form.controls.sapCustomerNumber.valueChanges
-      .pipe(take(1))
-      .subscribe(value => {
-        // if there exists sapNumber but user doesn't have role. disable
-        if (value && !userHasRole) this.form.disable();
-      });
-
-    if (this.router.url.endsWith('/edit/info')) {
-      const sapNumber = await this.form.get('sapCustomerNumber').value;
-      if (!userHasRole && sapNumber) this.form.disable();
     }
   }
 
