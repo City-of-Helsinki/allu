@@ -126,10 +126,14 @@ public class CustomerService {
       CustomerJson updatedCustomer = customerWithContactsJson.getCustomer();
       updatedCustomer.setId(customerId);
       updatedCustomerWithContactsJson.setCustomer(updateCustomer(updatedCustomer.getId(), updatedCustomer));
-      if (!customerWithContactsJson.getCustomer().isActive() && customerWithContactsJson.getContacts().isEmpty()) {
-        List<ContactJson> contactsToSetInactive = contactService.findByCustomer(customerId);
-        contactsToSetInactive.forEach(c -> c.setActive(false));
-        customerWithContactsJson.setContacts(contactsToSetInactive);
+      if (!customerWithContactsJson.getCustomer().isActive()) {
+        if (customerWithContactsJson.getContacts().isEmpty()) {
+          List<ContactJson> contactsToSetInactive = contactService.findByCustomer(customerId);
+          contactsToSetInactive.forEach(c -> c.setActive(false));
+          customerWithContactsJson.setContacts(contactsToSetInactive);
+        } else {
+          customerWithContactsJson.getContacts().forEach(c -> c.setActive(false));
+        }
       }
     }
     if (customerWithContactsJson.getContacts() != null) {
