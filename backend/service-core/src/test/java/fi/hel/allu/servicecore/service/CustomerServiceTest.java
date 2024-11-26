@@ -54,14 +54,25 @@ public class CustomerServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-    customerService = new CustomerService(
-        TestProperties.getProperties(), restTemplate, new CustomerMapper(userService, codeSetService), Mockito.mock(SearchService.class),
-        Mockito.mock(ContactService.class), userService, Mockito.mock(PersonAuditLogService.class), changeHistoryMapper);
+    CustomerService realCustomerService = new CustomerService(
+      TestProperties.getProperties(),
+      restTemplate,
+      new CustomerMapper(userService, codeSetService),
+      Mockito.mock(SearchService.class),
+      contactService,
+      userService,
+      Mockito.mock(PersonAuditLogService.class),
+      changeHistoryMapper);
+    customerService = Mockito.spy(realCustomerService);
     when(userService.getCurrentUser()).thenReturn(new UserJson());
     when(codeSetService.findByTypeAndCode(Mockito.eq(CodeSetType.Country), Mockito.anyString()))
-        .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
+      .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
     when(codeSetService.findById(Mockito.anyInt()))
-        .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
+      .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
+    CustomerJson customer = new CustomerJson();
+    customer.setId(1);
+    customer.setActive(false);
+    doReturn(customer).when(customerService).updateCustomer(Mockito.anyInt(), Mockito.any());
   }
 
   @Test
@@ -95,62 +106,61 @@ public class CustomerServiceTest extends MockServices {
     Assert.assertEquals(103, customerJson.getId().intValue());
   }
 
-  //@Test
+  @Test
   public void updateCustomerWithContacts_customerInactive_emptyContactList_setRelatedContactsInactive() {
-    List<ContactJson> mockContacts = Arrays.asList(
-      new ContactJson(1, 1, "Contact 1", "", "", "", "", "", true, false),
-      new ContactJson(2, 1, "Contact 2", "", "", "", "", "", true, false)
-    );
-    when(contactService.findByCustomer(1)).thenReturn(mockContacts);
-
     CustomerJson inactiveCustomer = new CustomerJson();
     inactiveCustomer.setId(1);
-    //inactiveCustomer.setType();
-    //inactiveCustomer.setName("Customer 1");
     inactiveCustomer.setActive(false);
-    //inactiveCustomer.setCountry("Suomi");
-
+    List<ContactJson> mockContacts = Arrays.asList(
+      new ContactJson(1, inactiveCustomer.getId(), "Contact 1", "", "", "", "", "", true, false),
+      new ContactJson(2, inactiveCustomer.getId(), "Contact 2", "", "", "", "", "", true, false)
+    );
     CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
     customerWithContactsJson.setCustomer(inactiveCustomer);
     customerWithContactsJson.setContacts(new ArrayList<>());
+
+    when(contactService.findByCustomer(inactiveCustomer.getId())).thenReturn(mockContacts);
+    when(contactService.updateContacts(any())).thenAnswer(invocation -> {
+      List<ContactJson> inputContacts = invocation.getArgument(0);
+      inputContacts.forEach(c -> c.setActive(false));
+      return inputContacts;
+    });
 
     CustomerWithContactsJson updatedCustomerWithContactsJson = customerService.updateCustomerWithContacts(inactiveCustomer.getId(), customerWithContactsJson);
 
     Assert.assertNotNull(updatedCustomerWithContactsJson.getContacts());
     Assert.assertEquals(2, updatedCustomerWithContactsJson.getContacts().size());
     updatedCustomerWithContactsJson.getContacts().forEach(contact -> Assert.assertFalse(contact.isActive()));
-
     verify(contactService, times(1)).findByCustomer(1);
     verify(contactService, times(1)).updateContacts(any());
     verify(contactService, never()).createContacts(any());
   }
 
-  //@Test
+  @Test
   public void updateCustomerWithContacts_customerInactive_withContactList_setRelatedContactsInactive() {
-    List<ContactJson> contacts = Arrays.asList(
-      new ContactJson(1, 1, "Contact 1", "", "", "", "", "", true, false),
-      new ContactJson(2, 1, "Contact 2", "", "", "", "", "", true, false)
-    );
-
     CustomerJson inactiveCustomer = new CustomerJson();
     inactiveCustomer.setId(1);
-    //inactiveCustomer.setType();
-    //inactiveCustomer.setName("Customer 1");
     inactiveCustomer.setActive(false);
-    //inactiveCustomer.setCountry("Suomi");
-
+    List<ContactJson> contacts = Arrays.asList(
+      new ContactJson(1, inactiveCustomer.getId(), "Contact 1", "", "", "", "", "", true, false),
+      new ContactJson(2, inactiveCustomer.getId(), "Contact 2", "", "", "", "", "", true, false)
+    );
     CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
     customerWithContactsJson.setCustomer(inactiveCustomer);
     customerWithContactsJson.setContacts(contacts);
+
+    when(contactService.updateContacts(any())).thenAnswer(invocation -> {
+      List<ContactJson> inputContacts = invocation.getArgument(0);
+      inputContacts.forEach(c -> c.setActive(false));
+      return inputContacts;
+    });
 
     CustomerWithContactsJson updatedCustomerWithContactsJson = customerService.updateCustomerWithContacts(inactiveCustomer.getId(), customerWithContactsJson);
 
     Assert.assertNotNull(updatedCustomerWithContactsJson.getContacts());
     Assert.assertEquals(2, updatedCustomerWithContactsJson.getContacts().size());
     updatedCustomerWithContactsJson.getContacts().forEach(contact -> Assert.assertFalse(contact.isActive()));
-
     Assert.assertEquals(contacts.size(), updatedCustomerWithContactsJson.getContacts().size());
-
     verify(contactService, never()).findByCustomer(anyInt());
     verify(contactService, times(1)).updateContacts(any());
     verify(contactService, never()).createContacts(any());
