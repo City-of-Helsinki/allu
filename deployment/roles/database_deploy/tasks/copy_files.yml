@@ -1,3 +1,10 @@
+- name: Copy the backup_database.sh script to /usr/local/bin
+  copy: src=backup_database.sh dest=/usr/local/bin/backup_database.sh
+        owner=root
+        group=root
+        mode="u=rwx,g=rx,o=rx"
+  when: "'production' in group_names"
+
 - name: Copy the wal_cleanup.sh script to /usr/local/bin
   copy: src=wal_cleanup.sh dest=/usr/local/bin/wal_cleanup.sh
         owner=root
