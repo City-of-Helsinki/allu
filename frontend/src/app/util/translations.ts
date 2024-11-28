@@ -564,7 +564,9 @@ export const translations = {
     address: 'Osoite',
     startTime: 'Alkupäivä',
     endTime: 'Loppupäivä',
-    receivedTime: 'Saapunut'
+    receivedTime: 'Saapunut',
+    changeTime: 'Viimeisin muutos',
+    changeType: 'Muutoksen tyyppi'
   },
   applicationInfo: {
     title: 'Hakemuksen perustiedot',
@@ -2104,6 +2106,7 @@ export const translations = {
       defaultAttachments: 'Vakioliitteet',
       defaultImages: 'Tyyppikuvat',
       defaultRecipients: 'Päätöksen vastaanottajat',
+      pruneApplications: 'Poistettavat hakemukset',
       configuration: 'Asetukset',
     }
   },

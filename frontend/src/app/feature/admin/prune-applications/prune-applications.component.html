@@ -1,0 +1,76 @@
+<div class="main-content">
+  <h1> {{ title }} </h1>
+
+
+  <div fxLayout="row">
+    <div fxFlex>
+      <div class="mat-elevation-z8 data-table data-table-with-paging">
+
+        <mat-table #table [dataSource]="mockData" matSort [trackBy]="trackById">
+
+          <ng-container matColumnDef="selected">
+            <mat-header-cell *matHeaderCellDef>
+              <div>
+                <mat-checkbox
+                  [checked]="(someSelected$ | async) && (allSelected$ | async)"
+                  [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                  (change)="checkAll()"></mat-checkbox>
+              </div>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <mat-checkbox
+                (change)="checkSingle(row.id)"></mat-checkbox>
+            </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="applicationId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
+                {{row.applicationId}}
+              </a>
+            </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="startTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.startTime' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <validity-start-time [startTime]="row.startTime" [recurring]="!!row.recurringEndTime"></validity-start-time>
+            </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="endTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.endTime' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <validity-end-time
+                  [startTime]="row.startTime"
+                  [endTime]="row.endTime"
+                  [recurringEndTime]="row.recurringEndTime"></validity-end-time>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="changeTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.changeTime' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{row.changeTime}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="changeType">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.changeType' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{ 'history.change.type.' + row.changeType | translation}}
+            </mat-cell>
+          </ng-container>
+          
+  
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"
+                   class="row-highlight"></mat-row>
+        </mat-table>
+      </div>
+    </div>
+  </div>
+  
+
+</div>

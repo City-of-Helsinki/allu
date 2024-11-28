@@ -26,6 +26,7 @@ import {ExternalUserHub} from '@service/user/external-user-hub';
 import {ExternalUserService} from '@service/user/external-user-service';
 import {ExternalUserComponent} from './external-user/external-user.component';
 import {ConfigurationModule} from '@feature/admin/configuration/configuration.module';
+import { PruneApplicationsComponent } from './prune-applications/prune-applications.component';
 
 @NgModule({
   imports: [
@@ -52,7 +53,8 @@ import {ConfigurationModule} from '@feature/admin/configuration/configuration.mo
     DefaultAttachmentsComponent,
     DefaultAttachmentComponent,
     DefaultRecipientsComponent,
-    RecipientsByTypeComponent
+    RecipientsByTypeComponent,
+    PruneApplicationsComponent
   ],
   providers: [
     DefaultRecipientService,
