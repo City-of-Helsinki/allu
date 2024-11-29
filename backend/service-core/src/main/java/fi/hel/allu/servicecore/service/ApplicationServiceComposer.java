@@ -95,6 +95,10 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
+  public List<ApplicationJson> fetchActiveExcavationAnnouncements() {
+    return List.of();
+  }
+
 
   public List<ApplicationJson> getCompactPopulatedApplicationList(List<Application> applicationList) {
     return applicationJsonService.getCompactPopulatedApplicationList(applicationList);
