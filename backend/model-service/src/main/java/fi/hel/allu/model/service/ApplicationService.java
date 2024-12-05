@@ -425,6 +425,10 @@ public class ApplicationService {
     return applicationDao.findByEndTime(null, params.getEndsBefore(), params.getTypeSelector(), params.getStatusSelector());
   }
 
+  public List<Application> findActiveExcavationAnnouncements() {
+    return applicationDao.findActiveExcavationAnnouncements();
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     return applicationDao.findFinishedNotes();

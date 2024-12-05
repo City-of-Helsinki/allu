@@ -4,6 +4,8 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -247,19 +249,19 @@ public class ApplicationArchiverServiceTest {
     return task;
   }
 
-  private List<ApplicationJson> createExcavationAnnouncementList() {
-    ApplicationJson excavationAnnouncement1 = new ApplicationJson();
-    ExcavationAnnouncementJson extensionJson1 = new ExcavationAnnouncementJson();
+  private List<Application> createExcavationAnnouncementList() {
+    Application excavationAnnouncement1 = new Application();
+    ExcavationAnnouncement extensionJson1 = new ExcavationAnnouncement();
     extensionJson1.setCableReports(List.of("JS2400602"));
     excavationAnnouncement1.setExtension(extensionJson1);
 
-    ApplicationJson excavationAnnouncement2 = new ApplicationJson();
-    ExcavationAnnouncementJson extensionJson2 = new ExcavationAnnouncementJson();
+    Application excavationAnnouncement2 = new Application();
+    ExcavationAnnouncement extensionJson2 = new ExcavationAnnouncement();
     extensionJson2.setCableReports(List.of("JS2400901", "JS2400701"));
     excavationAnnouncement2.setExtension(extensionJson2);
 
-    ApplicationJson excavationAnnouncement3 = new ApplicationJson();
-    ExcavationAnnouncementJson extensionJson3 = new ExcavationAnnouncementJson();
+    Application excavationAnnouncement3 = new Application();
+    ExcavationAnnouncement extensionJson3 = new ExcavationAnnouncement();
     extensionJson3.setCableReports(List.of("JS2400507"));
     excavationAnnouncement3.setExtension(extensionJson3);
 
