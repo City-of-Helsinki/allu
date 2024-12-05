@@ -146,7 +146,8 @@ public class ApplicationArchiverService {
   private boolean readyForFinished(ApplicationJson application) {
     return isFinished(application)
       && !requiresSurvey(application)
-      && !hasOpenSupervisionTasksBlockingFinished(application);
+      && !hasOpenSupervisionTasksBlockingFinished(application)
+      && !cableReportAssociatedWithActiveExcavationAnnouncement(application);
   }
 
   private boolean readyForArchive(ApplicationJson application) {
