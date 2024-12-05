@@ -386,6 +386,15 @@ public class ApplicationService {
         HttpMethod.POST, new HttpEntity<>(params), typeRef).getBody();
   }
 
+  /**
+   * Finds active excavation announcements
+   */
+  public List<Application> findActiveExcavationAnnouncements() {
+    ParameterizedTypeReference<List<Application>> typeRef = new ParameterizedTypeReference<List<Application>>() {};
+    return restTemplate.exchange(applicationProperties.getActiveExcavationAnnouncementsUrl(),
+      HttpMethod.GET, null, typeRef).getBody();
+  }
+
   public List<Integer> findFinishedNotes() {
     ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
     return restTemplate.exchange(applicationProperties.getFinishedNotesUrl(), HttpMethod.GET, null, typeRef).getBody();
