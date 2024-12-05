@@ -103,7 +103,7 @@ export class CustomerComponent implements OnInit {
   }
 
   private customerChanges(): Customer {
-    return CustomerForm.toCustomer(this.customerForm.value);
+    return CustomerForm.toCustomer(this.customerForm.getRawValue());
   }
 
   private contactChanges(): Array<Contact> {
