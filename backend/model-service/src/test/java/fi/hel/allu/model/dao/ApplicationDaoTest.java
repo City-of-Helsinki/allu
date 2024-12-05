@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
@@ -17,6 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -404,5 +407,61 @@ public class ApplicationDaoTest {
     applicationTag.setCreationTime(ZonedDateTime.now());
     applicationTag.setType(applicationTagType);
     return applicationTag;
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withMultipleResults() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app1 = applicationDao.insert(app1);
+    app2 = applicationDao.insert(app2);
+
+    List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
+    testCommon.insertDummyAnonymizableApplicationIds(ids);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+    testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(2, results.size());
+    assertEquals(app1.getId(), results.get(0).getId());
+    assertEquals(app2.getId(), results.get(1).getId());
+    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
+    assertEquals(app2.getApplicationId(), results.get(1).getApplicationId());
+    for (AnonymizableApplication aa : results) {
+      assertNotNull(aa.getStartTime());
+      assertNotNull(aa.getEndTime());
+      assertNotNull(aa.getChangeType());
+      assertNotNull(aa.getChangeTime());
+    }
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withLatestChangeTime() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+
+    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now().minusDays(30));
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", ZonedDateTime.now());
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(1, results.size());
+    assertEquals(app1.getId(), results.get(0).getId());
+    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
+    assertNotNull(results.get(0).getStartTime());
+    assertNotNull(results.get(0).getEndTime());
+    assertEquals(ChangeType.STATUS_CHANGED, results.get(0).getChangeType());
+
+    LocalDate today = LocalDate.now();
+    LocalDate latestChangeTime = results.get(0).getChangeTime().toLocalDate();
+    assertEquals(today, latestChangeTime);
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withNoData() {
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+    assertTrue(results.isEmpty());
   }
 }

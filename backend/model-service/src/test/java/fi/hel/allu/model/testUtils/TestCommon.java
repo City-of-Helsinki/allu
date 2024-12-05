@@ -2,9 +2,12 @@ package fi.hel.allu.model.testUtils;
 
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import fi.hel.allu.common.types.ChangeType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.geolatte.geom.Geometry;
@@ -260,6 +263,33 @@ public class TestCommon {
 
   public Integer insertApplication(Application application) {
     return applicationDao.insert(application).getId();
+  }
+
+  public void insertDummyApplicationHistoryChange(int userId, int applicationId, ChangeType changeType, String changeSpec1, String changeSpec2, ZonedDateTime changeTime) throws SQLException {
+    String formattedChangeTime = changeTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    String sql = String.format(
+      "insert into allu.change_history (user_id, application_id, change_type, change_specifier, change_specifier_2, change_time) " +
+        "values (%d, %d, '%s', '%s', '%s', '%s')",
+      userId,
+      applicationId,
+      changeType.name(),
+      changeSpec1,
+      changeSpec2,
+      formattedChangeTime
+    );
+    sqlRunner.runSql(sql);
+  }
+
+  public void insertDummyAnonymizableApplicationIds(List<Integer> ids) throws SQLException {
+    StringBuilder sql = new StringBuilder("insert into allu.anonymizable_application (application_id) VALUES ");
+    for (int i = 0; i < ids.size(); i++) {
+      sql.append("(").append(ids.get(i)).append(")");
+      if (i < ids.size() - 1) {
+        sql.append(", ");
+      }
+    }
+    sql.append(";");
+    sqlRunner.runSql(sql.toString());
   }
 
   /**
