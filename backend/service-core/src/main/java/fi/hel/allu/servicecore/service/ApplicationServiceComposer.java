@@ -95,11 +95,6 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
-  public List<ApplicationJson> fetchActiveExcavationAnnouncements() {
-    return List.of();
-  }
-
-
   public List<ApplicationJson> getCompactPopulatedApplicationList(List<Application> applicationList) {
     return applicationJsonService.getCompactPopulatedApplicationList(applicationList);
   }
@@ -581,6 +576,10 @@ public class ApplicationServiceComposer {
    */
   public List<Integer> findFinishedApplications(List<StatusType> statuses, List<ApplicationType> applicationTypes) {
     return applicationService.findFinishedApplications(statuses, applicationTypes);
+  }
+
+  public List<Application> fetchActiveExcavationAnnouncements() {
+    return applicationService.findActiveExcavationAnnouncements();
   }
 
   public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {

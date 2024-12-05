@@ -407,6 +407,11 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.findFinishedApplications(params), HttpStatus.OK);
   }
 
+  @GetMapping(value = "/activeexcavationannouncements")
+  public ResponseEntity<List<Application>> findActiveExcavationAnnouncements() {
+    return new ResponseEntity<>(applicationService.findActiveExcavationAnnouncements(), HttpStatus.OK);
+  }
+
   /**
    * Finds finished notes
    */

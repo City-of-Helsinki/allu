@@ -6,6 +6,8 @@ import java.util.*;
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 import org.apache.commons.lang3.BooleanUtils;
@@ -48,7 +50,7 @@ public class ApplicationArchiverService {
   private final SupervisionTaskService supervisionTaskService;
   private final TerminationService terminationService;
 
-  private List<ApplicationJson> activeExcavationAnnouncements = null;
+  private List<Application> activeExcavationAnnouncements = null;
 
   @Autowired
   public ApplicationArchiverService(ApplicationServiceComposer applicationServiceComposer,
@@ -85,7 +87,7 @@ public class ApplicationArchiverService {
       .forEach(app -> archiveApplication(app.getId()));
   }
 
-  private void moveToFinishedOrArchived(Integer applicationId) {
+  public void moveToFinishedOrArchived(Integer applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     if (readyForArchive(application)) {
       archiveApplication(applicationId);
@@ -102,7 +104,7 @@ public class ApplicationArchiverService {
     return applicationServiceComposer.findFinishedNotes();
   }
 
-  private List<ApplicationJson> fetchActiveExcavationAnnouncements() {
+  private List<Application> fetchActiveExcavationAnnouncements() {
     return applicationServiceComposer.fetchActiveExcavationAnnouncements();
   }
 
@@ -225,10 +227,11 @@ public class ApplicationArchiverService {
   private boolean cableReportAssociatedWithActiveExcavationAnnouncement(ApplicationJson application) {
     if (application.getType() != ApplicationType.CABLE_REPORT) return false;
     if (activeExcavationAnnouncements == null) activeExcavationAnnouncements = fetchActiveExcavationAnnouncements();
-    for (ApplicationJson excavationAnnouncement : activeExcavationAnnouncements) {
-      if (excavationAnnouncement.getExtension() != null && excavationAnnouncement.getExtension() instanceof ExcavationAnnouncementJson) {
-        ExcavationAnnouncementJson extension = (ExcavationAnnouncementJson) excavationAnnouncement.getExtension();
-        if (extension.getCableReports().contains(application.getApplicationId())) return true;
+    for (Application excavationAnnouncement : activeExcavationAnnouncements) {
+      if (excavationAnnouncement.getExtension() != null && excavationAnnouncement.getExtension() instanceof ExcavationAnnouncement extension) {
+          if (extension.getCableReports() != null && extension.getCableReports().contains(application.getApplicationId())) {
+            return true;
+          }
       }
     }
     return false;
