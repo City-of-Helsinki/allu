@@ -640,4 +640,13 @@ public class ApplicationService {
     });
     return target;
   }
+
+  /**
+   * Find anonymizable/"deletable" applications
+   * @return list of anonymizable/"deletable" applications
+   */
+  @Transactional(readOnly = true)
+  public List<AnonymizableApplication> getAnonymizableApplications() {
+    return applicationDao.findAnonymizableApplications();
+  }
 }

@@ -2,6 +2,7 @@ package fi.hel.allu.model.controller;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -256,4 +257,11 @@ public class ApplicationControllerTest {
     return insertedApp;
   }
 
+  @Test
+  public void testGetAnonymizableApplications_noData() throws Exception {
+    ResultActions resultActions = wtc.perform(get("/applications/anonymizable"))
+      .andExpect(status().isOk());
+    String jsonResponse = resultActions.andReturn().getResponse().getContentAsString();
+    assertEquals("[]", jsonResponse);
+  }
 }
