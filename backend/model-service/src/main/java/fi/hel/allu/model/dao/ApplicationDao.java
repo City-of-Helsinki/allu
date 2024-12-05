@@ -9,7 +9,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
+import fi.hel.allu.QAnonymizableApplication;
 import fi.hel.allu.QApplication;
+import fi.hel.allu.QChangeHistory;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
@@ -1075,5 +1077,35 @@ public class ApplicationDao {
         .from(application)
         .where(application.id.eq(applicationId))
         .fetchFirst();
+  }
+
+  /**
+   * Find deletable application data (ID, application ID, start time, end time, change type and (latest) change time)
+   * by application id found from anonymizable_application-table from database.
+   * @return list of deletable applications
+   */
+  public List<DeletableApplication> findDeletableApplications() {
+    QAnonymizableApplication aa = QAnonymizableApplication.anonymizableApplication;
+    QApplication a = QApplication.application;
+    QChangeHistory ch = QChangeHistory.changeHistory;
+
+    SubQueryExpression<ZonedDateTime> latestChangeTime = select(ch.changeTime.max())
+      .from(ch)
+      .where(ch.applicationId.eq(aa.applicationId));
+
+    return queryFactory
+      .select(Projections.constructor(DeletableApplication.class,
+        aa.applicationId.as("id"),
+        a.applicationId.as("applicationId"),
+        a.startTime,
+        a.endTime,
+        ch.changeType,
+        ch.changeTime
+      ))
+      .from(aa)
+      .join(a).on(aa.applicationId.eq(a.id))
+      .join(ch).on(aa.applicationId.eq(ch.applicationId)
+        .and(ch.changeTime.eq(latestChangeTime)))
+      .fetch();
   }
 }
