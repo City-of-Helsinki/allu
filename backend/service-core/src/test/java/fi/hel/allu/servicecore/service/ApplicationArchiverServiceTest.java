@@ -222,6 +222,22 @@ public class ApplicationArchiverServiceTest {
       .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
   }
 
+  @Test
+  public void shouldNotFinishCableReportAssociatedWithUnfinishedExcavationAnnouncement() {
+    applicationJson.setApplicationId("JS2400701");
+    applicationJson.setType(ApplicationType.CABLE_REPORT);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().minusDays(1));
+
+    when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
+
+    archiverService.moveToFinishedOrArchived(APPLICATION_ID);
+    verify(applicationServiceComposer, never())
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
+    verify(applicationServiceComposer, never())
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
+  }
+
   private void createApplication() {
     applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.FINISHED);
