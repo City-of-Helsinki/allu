@@ -500,4 +500,12 @@ public class ApplicationController {
     return ResponseEntity.ok(decisionDao.searchDecisions(searchCriteria));
   }
 
+  /**
+   * Get deletable applications
+   * @return list of deletable applications
+   */
+  @GetMapping(value = "/deletable")
+  public ResponseEntity<List<DeletableApplication>> getDeletableApplications() {
+    return ResponseEntity.ok(applicationService.getDeletableApplications());
+  }
 }

@@ -636,4 +636,12 @@ public class ApplicationService {
     });
     return target;
   }
+
+  /**
+   * Find deletable applications
+   * @return list of deletable applications
+   */
+  public List<DeletableApplication> getDeletableApplications() {
+    return applicationDao.findDeletableApplications();
+  }
 }
