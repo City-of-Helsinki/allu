@@ -500,4 +500,15 @@ public class ApplicationController {
     return ResponseEntity.ok(decisionDao.searchDecisions(searchCriteria));
   }
 
+  /**
+   * Delete applications by ids
+   * @param ids of applications
+   * @return no content
+   */
+  @DeleteMapping(value = "/delete")
+  public ResponseEntity<Void> deleteApplicationsByIds(@RequestBody List<Integer> ids) {
+    applicationService.deleteApplicationsByIds(ids);
+    return ResponseEntity.noContent().build();
+  }
+
 }

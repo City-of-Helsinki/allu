@@ -636,4 +636,12 @@ public class ApplicationService {
     });
     return target;
   }
+
+  /**
+   * Delete applications by ids
+   * @param ids of applications
+   */
+  public void deleteApplicationsByIds(List<Integer> ids) {
+    applicationDao.deleteByIds(ids);
+  }
 }

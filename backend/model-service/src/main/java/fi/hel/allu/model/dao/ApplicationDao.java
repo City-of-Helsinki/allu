@@ -1076,4 +1076,14 @@ public class ApplicationDao {
         .where(application.id.eq(applicationId))
         .fetchFirst();
   }
+
+  /**
+   * Delete applications by their ids from the database
+   * @param ids of applications
+   */
+  public void deleteByIds(List<Integer> ids) {
+    if (ids != null && !ids.isEmpty()) {
+      queryFactory.delete(application).where(application.id.in(ids)).execute();
+    }
+  }
 }
