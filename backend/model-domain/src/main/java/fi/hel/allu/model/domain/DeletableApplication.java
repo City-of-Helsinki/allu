@@ -4,6 +4,9 @@ import fi.hel.allu.common.types.ChangeType;
 
 import java.time.ZonedDateTime;
 
+/**
+ * In Finnish: poistettava hakemus
+ */
 public class DeletableApplication {
   private int id;
   private String applicationId;
@@ -71,5 +74,4 @@ public class DeletableApplication {
   public void setChangeTime(ZonedDateTime changeTime) {
     this.changeTime = changeTime;
   }
-
 }

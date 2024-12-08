@@ -20,6 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -94,6 +95,13 @@ public class WebTestCommon {
     ObjectMapper mapper = new ObjectMapper();
     mapper.registerModule(new JavaTimeModule());
     return mapper.readValue(resultString, theClass);
+  }
+
+  public <T> List<T> parseObjectsFromResult(ResultActions resultActions, Class<T> theClass) throws Exception {
+    String resultString = resultActions.andReturn().getResponse().getContentAsString();
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    return mapper.readValue(resultString, mapper.getTypeFactory().constructCollectionType(List.class, theClass));
   }
 
   @SuppressWarnings("unchecked")

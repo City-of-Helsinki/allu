@@ -358,4 +358,15 @@ public class ApplicationDaoTest {
     applicationTag.setType(applicationTagType);
     return applicationTag;
   }
+
+  @Test
+  public void testFindDeletableApplications_withMultipleResults() {
+
+  }
+
+  @Test
+  public void testFindDeletableApplications_withNoData() {
+    List<DeletableApplication> results = applicationDao.findDeletableApplications();
+    assertTrue(results.isEmpty());
+  }
 }

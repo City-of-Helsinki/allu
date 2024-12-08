@@ -2,6 +2,7 @@ package fi.hel.allu.model.controller;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -256,4 +257,15 @@ public class ApplicationControllerTest {
     return insertedApp;
   }
 
+  @Test
+  public void testGetDeletableApplications_withMultipleResults() throws Exception {
+
+  }
+
+  @Test
+  public void testGetDeletableApplications_noData() throws Exception {
+    ResultActions resultActions = wtc.perform(get("/applications/deletable")).andExpect(status().isOk());
+    List<DeletableApplication> results = wtc.parseObjectsFromResult(resultActions, DeletableApplication.class);
+    assertEquals(0, results.size());
+  }
 }
