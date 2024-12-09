@@ -6,7 +6,10 @@ import java.util.*;
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.CableReportJson;
+import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -47,6 +50,8 @@ public class ApplicationArchiverService {
   private final SupervisionTaskService supervisionTaskService;
   private final TerminationService terminationService;
 
+  private List<Application> activeExcavationAnnouncements = null;
+
   @Autowired
   public ApplicationArchiverService(ApplicationServiceComposer applicationServiceComposer,
       SupervisionTaskService supervisionTaskService, TerminationService terminationService) {
@@ -71,6 +76,8 @@ public class ApplicationArchiverService {
     readyApplications.forEach(id -> moveToFinishedOrArchived(id));
     List<Integer> finishedNotes = fetchFinishedNotes();
     finishedNotes.forEach(id -> archiveApplication(id));
+    // these might have been fetched in cableReportAssociatedWithActiveExcavationAnnouncement() while checking for archivals, release them now
+    activeExcavationAnnouncements = null;
   }
 
   public void updateStatusForTerminatedApplications() {
@@ -80,7 +87,7 @@ public class ApplicationArchiverService {
       .forEach(app -> archiveApplication(app.getId()));
   }
 
-  private void moveToFinishedOrArchived(Integer applicationId) {
+  public void moveToFinishedOrArchived(Integer applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     if (readyForArchive(application)) {
       archiveApplication(applicationId);
@@ -95,6 +102,10 @@ public class ApplicationArchiverService {
 
   private List<Integer> fetchFinishedNotes() {
     return applicationServiceComposer.findFinishedNotes();
+  }
+
+  private List<Application> fetchActiveExcavationAnnouncements() {
+    return applicationServiceComposer.fetchActiveExcavationAnnouncements();
   }
 
   /**
@@ -115,6 +126,7 @@ public class ApplicationArchiverService {
    *   <li>Application does not have open supervision tasks</li>
    *   <li>Application does not have open deposit</li>
    *   <li>Application does not require a survey</li>
+   *   <li>If application is a cable report, it is not associated with an active excavation announcement</li>
    * </ul>
    */
   public ApplicationJson archiveApplicationIfNecessary(Integer applicationId) {
@@ -134,7 +146,8 @@ public class ApplicationArchiverService {
   private boolean readyForFinished(ApplicationJson application) {
     return isFinished(application)
       && !requiresSurvey(application)
-      && !hasOpenSupervisionTasksBlockingFinished(application);
+      && !hasOpenSupervisionTasksBlockingFinished(application)
+      && !cableReportAssociatedWithActiveExcavationAnnouncement(application);
   }
 
   private boolean readyForArchive(ApplicationJson application) {
@@ -143,7 +156,8 @@ public class ApplicationArchiverService {
         && isInvoiced(application)
         && !hasOpenSupervisionTasks(application)
         && !hasOpenDeposits(application)
-        && !requiresSurvey(application);
+        && !requiresSurvey(application)
+        && !cableReportAssociatedWithActiveExcavationAnnouncement(application);
   }
 
   /**
@@ -209,5 +223,18 @@ public class ApplicationArchiverService {
       .anyMatch(t ->
         SupervisionTaskStatusType.OPEN.equals(t.getStatus())
         && taskType.equals(t.getType()));
+  }
+
+  private boolean cableReportAssociatedWithActiveExcavationAnnouncement(ApplicationJson application) {
+    if (application.getType() != ApplicationType.CABLE_REPORT) return false;
+    if (activeExcavationAnnouncements == null) activeExcavationAnnouncements = fetchActiveExcavationAnnouncements();
+    for (Application excavationAnnouncement : activeExcavationAnnouncements) {
+      if (excavationAnnouncement.getExtension() != null && excavationAnnouncement.getExtension() instanceof ExcavationAnnouncement extension) {
+          if (extension.getCableReports() != null && extension.getCableReports().contains(application.getApplicationId())) {
+            return true;
+          }
+      }
+    }
+    return false;
   }
 }
