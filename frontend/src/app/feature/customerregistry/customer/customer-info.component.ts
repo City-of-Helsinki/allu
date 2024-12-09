@@ -67,6 +67,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.countryControl = <UntypedFormControl>this.form.get('country');
     this.postalCodeControl = <UntypedFormControl> this.form.get('postalAddress').get('postalCode');
     this.customerInstance = new Customer();
+    
 
     this.matchingNameCustomers = this.nameControl.valueChanges.pipe(
       debounceTime(DEBOUNCE_TIME_MS),
@@ -94,6 +95,9 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(id => this.handleFormLockStatus(id));
+
+    // in customerregistery only editing should happen in the customerform
+    if (this.router.url.includes('/customers/')) this.allowSearch = false;
   }
 
   ngOnDestroy(): void {
