@@ -351,6 +351,53 @@ public class ApplicationDaoTest {
     assertEquals(applicationIds.size(), inserted);
   }
 
+  @Test
+  public void testFindActiveExcavationAnnouncements() {
+    // insert excavation announcements with all possible statuses
+    int serial = 1;
+    int replaceWith = -1;
+    for (StatusType status : StatusType.values()) {
+      if (status != StatusType.REPLACED) {
+        Application application = testCommon.dummyExcavationAnnouncementApplication("Excavation " + serial, "Dig it " + serial++);
+        application.setStatus(status);
+        Application inserted = applicationDao.insert(application);
+        if (status == StatusType.PENDING_CLIENT) replaceWith = inserted.getId();
+      }
+      else {
+        Application application = testCommon.dummyExcavationAnnouncementApplication("Replaced excavation", "Replaced owner");
+        application.setStatus(StatusType.HANDLING);
+        Application inserted = applicationDao.insert(application);
+        applicationDao.setApplicationReplaced(inserted.getId(), replaceWith);
+      }
+    }
+
+    // insert some other types of applicatoins in active statuses
+    Application outdoor = testCommon.dummyOutdoorApplication("Outdoor application", "Outsider");
+    outdoor.setStatus(StatusType.HANDLING);
+    applicationDao.insert(outdoor);
+
+    Application areaRental = testCommon.dummyAreaRentalApplication("Area rental", "Renter");
+    areaRental.setStatus(StatusType.DECISION);
+    applicationDao.insert(areaRental);
+
+    Application bridgeBanner = testCommon.dummyBridgeBannerApplication("Bridge Banner", "Bruce Banner");
+    bridgeBanner.setStatus(StatusType.WAITING_INFORMATION);
+    applicationDao.insert(bridgeBanner);
+
+    Application placementContract = testCommon.dummyPlacementContractApplication("Placement contract", "Placer");
+    placementContract.setStatus(StatusType.PENDING_CLIENT);
+    applicationDao.insert(placementContract);
+
+    List<Application> excavationAnnouncements = applicationDao.findActiveExcavationAnnouncements();
+
+    List<StatusType> excludedStatuses = List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED);
+
+    for (Application app : excavationAnnouncements) {
+      assertFalse(excludedStatuses.contains(app.getStatus()));
+      assertEquals(ApplicationType.EXCAVATION_ANNOUNCEMENT, app.getType());
+    }
+  }
+
   private ApplicationTag createApplicationTag(ApplicationTagType applicationTagType) {
     ApplicationTag applicationTag = new ApplicationTag();
     applicationTag.setAddedBy(1);
