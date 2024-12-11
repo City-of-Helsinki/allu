@@ -2,7 +2,11 @@ package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.servicecore.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,10 +15,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.domain.CableReportJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -208,6 +208,36 @@ public class ApplicationArchiverServiceTest {
     verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED));
   }
 
+  @Test
+  public void shouldNotArchiveCableReportAssociatedWithUnfinishedExcavationAnnouncement() {
+    applicationJson.setApplicationId("JS2400701");
+    applicationJson.setType(ApplicationType.CABLE_REPORT);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().minusDays(1));
+
+    when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
+
+    archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
+    verify(applicationServiceComposer, never())
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
+  }
+
+  @Test
+  public void shouldNotFinishCableReportAssociatedWithUnfinishedExcavationAnnouncement() {
+    applicationJson.setApplicationId("JS2400701");
+    applicationJson.setType(ApplicationType.CABLE_REPORT);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().minusDays(1));
+
+    when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
+
+    archiverService.moveToFinishedOrArchived(APPLICATION_ID);
+    verify(applicationServiceComposer, never())
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull());
+    verify(applicationServiceComposer, never())
+      .changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
+  }
+
   private void createApplication() {
     applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.FINISHED);
@@ -233,5 +263,24 @@ public class ApplicationArchiverServiceTest {
     task.setType(taskType);
     task.setStatus(status);
     return task;
+  }
+
+  private List<Application> createExcavationAnnouncementList() {
+    Application excavationAnnouncement1 = new Application();
+    ExcavationAnnouncement extensionJson1 = new ExcavationAnnouncement();
+    extensionJson1.setCableReports(List.of("JS2400602"));
+    excavationAnnouncement1.setExtension(extensionJson1);
+
+    Application excavationAnnouncement2 = new Application();
+    ExcavationAnnouncement extensionJson2 = new ExcavationAnnouncement();
+    extensionJson2.setCableReports(List.of("JS2400901", "JS2400701"));
+    excavationAnnouncement2.setExtension(extensionJson2);
+
+    Application excavationAnnouncement3 = new Application();
+    ExcavationAnnouncement extensionJson3 = new ExcavationAnnouncement();
+    extensionJson3.setCableReports(List.of("JS2400507"));
+    excavationAnnouncement3.setExtension(extensionJson3);
+
+    return List.of(excavationAnnouncement1, excavationAnnouncement2, excavationAnnouncement3);
   }
 }

@@ -59,6 +59,9 @@ public class ApplicationDao {
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
+  private static final List<StatusType> INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES =
+      List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED);
+
   private final SQLQueryFactory queryFactory;
   private final ApplicationSequenceDao applicationSequenceDao;
   private final StructureMetaDao structureMetaDao;
@@ -176,6 +179,13 @@ public class ApplicationDao {
     }
     List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
     return applications;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Application> findActiveExcavationAnnouncements() {
+    BooleanExpression whereCondition = application.type.eq(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    whereCondition = whereCondition.and(application.status.notIn(INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES));
+    return queryFactory.select(applicationBean).from(application).where(whereCondition).fetch();
   }
 
   @Transactional(readOnly = true)

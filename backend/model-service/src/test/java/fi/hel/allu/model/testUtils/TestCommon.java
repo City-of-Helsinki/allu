@@ -184,6 +184,14 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyExcavationAnnouncementApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
+    app.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STREET_AND_GREEN, Collections.emptyList()));
+    app.setExtension(dummyExcavationAnnouncement());
+    return app;
+  }
+
   /**
    * Create a dummy outdoor applicationExtension.
    *
@@ -221,6 +229,12 @@ public class TestCommon {
     PlacementContract placementContract = new PlacementContract();
     placementContract.setAdditionalInfo("Some additional info");
     return placementContract;
+  }
+
+  public ApplicationExtension dummyExcavationAnnouncement() {
+    ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
+    excavationAnnouncement.setAdditionalInfo("Some additional info");
+    return excavationAnnouncement;
   }
 
   public ApplicationTag dummyTag(ApplicationTagType tagType) {

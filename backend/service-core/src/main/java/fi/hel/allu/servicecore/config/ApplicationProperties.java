@@ -1390,6 +1390,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to fetch active excavation announcements
+   */
+  public String getActiveExcavationAnnouncementsUrl() {
+    return getModelServiceUrl("/applications/activeexcavationannouncements");
+  }
+
+  /**
    * @return url to fetch finished notes
    */
   public String getFinishedNotesUrl() {
