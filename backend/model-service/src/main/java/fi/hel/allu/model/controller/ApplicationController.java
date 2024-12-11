@@ -499,5 +499,4 @@ public class ApplicationController {
   public ResponseEntity<List<DocumentSearchResult>> searchDecisions(@RequestBody DocumentSearchCriteria searchCriteria) {
     return ResponseEntity.ok(decisionDao.searchDecisions(searchCriteria));
   }
-
 }
