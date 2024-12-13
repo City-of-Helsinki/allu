@@ -582,6 +582,14 @@ public class ApplicationServiceComposer {
     return applicationService.findActiveExcavationAnnouncements();
   }
 
+  public List<Application> fetchPotentiallyAnonymizableApplications() {
+    return List.of();
+  }
+
+  public void addToAnonymizableApplications(List<Integer> applicationIds) {
+
+  }
+
   public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {
     return applicationService.getApplicationStatus(applicationId);
   }

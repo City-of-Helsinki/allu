@@ -48,6 +48,7 @@ public class ApplicationArchiveController {
     @PatchMapping(value = "/checkanonymizable")
     @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
     public ResponseEntity<Void> checkForAnonymizableApplications() {
+      applicationArchiverService.checkForAnonymizableApplications();
       return new ResponseEntity<>(HttpStatus.OK);
     }
 }
