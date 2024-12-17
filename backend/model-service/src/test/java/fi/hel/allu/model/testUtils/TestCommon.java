@@ -192,6 +192,14 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyCableReportApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
+    app.setType(ApplicationType.CABLE_REPORT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STREET_AND_GREEN, Collections.emptyList()));
+    app.setExtension(dummyCableReport());
+    return app;
+  }
+
   /**
    * Create a dummy outdoor applicationExtension.
    *
@@ -235,6 +243,11 @@ public class TestCommon {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
     excavationAnnouncement.setAdditionalInfo("Some additional info");
     return excavationAnnouncement;
+  }
+
+  public ApplicationExtension dummyCableReport() {
+    CableReport cableReport = new CableReport();
+    return cableReport;
   }
 
   public ApplicationTag dummyTag(ApplicationTagType tagType) {
