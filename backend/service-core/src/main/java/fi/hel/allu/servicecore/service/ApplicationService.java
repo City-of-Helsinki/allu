@@ -643,4 +643,13 @@ public class ApplicationService {
         .exchange(applicationProperties.getPricelistPaymentClassesUrl(), HttpMethod.GET, null, typeRef, type, kind)
         .getBody();
   }
+
+  /**
+   * Get list of anonymizable/"deletable" applications by calling model-service endpoint. Data is retrieved from model-service's database.
+   * @return list of anonymizable/"deletable" applications
+   */
+  public List<AnonymizableApplication> getAnonymizableApplications() {
+    ParameterizedTypeReference<List<AnonymizableApplication>> tr = new ParameterizedTypeReference<>() {};
+    return restTemplate.exchange(applicationProperties.getAnonymizableApplicationsUrl(), HttpMethod.GET, null, tr).getBody();
+  }
 }
