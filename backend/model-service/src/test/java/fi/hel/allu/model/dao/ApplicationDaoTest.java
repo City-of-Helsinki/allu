@@ -460,6 +460,22 @@ public class ApplicationDaoTest {
   }
 
   @Test
+  public void testFindDeletableApplications_withDuplicateChangeTime() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+
+    ZonedDateTime time = ZonedDateTime.now();
+    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", time);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", time);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.COMMENT_ADDED, "", "", time);
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(1, results.size());
+  }
+
+  @Test
   public void testFindAnonymizableApplications_withNoData() {
     List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
     assertTrue(results.isEmpty());

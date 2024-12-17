@@ -1103,7 +1103,7 @@ public class ApplicationDao {
       .from(ch)
       .where(ch.applicationId.eq(aa.applicationId));
 
-    return queryFactory
+    List<AnonymizableApplication> applications = queryFactory
       .select(Projections.constructor(AnonymizableApplication.class,
         aa.applicationId.as("id"),
         a.applicationId.as("applicationId"),
@@ -1117,5 +1117,14 @@ public class ApplicationDao {
       .join(ch).on(aa.applicationId.eq(ch.applicationId)
         .and(ch.changeTime.eq(latestChangeTime)))
       .fetch();
+
+    // Use Set to follow IDs which are already processed and remove them from the list
+    // There can be duplicate change_time-values in change_history table which means that query will find more than one row for the same application's ID
+    // (This is a rare case of anonymisation, but possible)
+    // It was decided that it is not fatal, even if the "wrong" change_type occurs
+    Set<Integer> seenIds = new HashSet<>();
+    applications.removeIf(application -> !seenIds.add(application.getId()));
+
+    return applications;
   }
 }

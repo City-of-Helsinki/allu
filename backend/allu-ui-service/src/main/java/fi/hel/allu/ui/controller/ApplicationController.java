@@ -4,6 +4,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.AnonymizableApplication;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
@@ -68,6 +69,16 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationJson>> fetch(@RequestParam("ids") final List<Integer> ids) {
     return new ResponseEntity<>(applicationServiceComposer.findApplicationsByIds(ids), HttpStatus.OK);
+  }
+
+  /**
+   * Get anonymizable/"deletable" applications
+   * @return list of anonymizable/"deletable" applications
+   */
+  @GetMapping(value = "/anonymizable")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<List<AnonymizableApplication>> getAnonymizableApplications() {
+    return ResponseEntity.ok(applicationServiceComposer.getAnonymizableApplications());
   }
 
   /**
