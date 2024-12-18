@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
@@ -23,8 +25,8 @@ import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ApplicationServiceTest {
 
@@ -62,29 +64,29 @@ public class ApplicationServiceTest {
   public void testInsertSetsInvoiceLines() {
     Application inserted = new Application();
     inserted.setId(112);
-    Mockito.when(applicationDao.insert(Mockito.any(Application.class))).thenReturn(inserted);
+    when(applicationDao.insert(Mockito.any(Application.class))).thenReturn(inserted);
 
     Application newApp = new Application();
     newApp.setLocations(Collections.singletonList(new Location()));
     newApp.setName("Foo");
     applicationService.insert(newApp, 1);
-    Mockito.verify(pricingService).calculateChargeBasis(Mockito.eq(inserted));
-    Mockito.verify(applicationDao).insert(Mockito.eq(newApp));
-    Mockito.verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(112), Mockito.anyList());
+    verify(pricingService).calculateChargeBasis(Mockito.eq(inserted));
+    verify(applicationDao).insert(Mockito.eq(newApp));
+    verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(112), Mockito.anyList());
   }
 
   @Test
   public void testUpdateSetsInvoiceLines() {
     Application updated = new Application();
     updated.setId(112);
-    Mockito.when(applicationDao.update(Mockito.anyInt(), Mockito.any(Application.class))).thenReturn(updated);
+    when(applicationDao.update(Mockito.anyInt(), Mockito.any(Application.class))).thenReturn(updated);
 
     Application application = new Application();
     application.setName("Foo");
     applicationService.update(123, application, 1);
-    Mockito.verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
-    Mockito.verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(123), Mockito.anyList());
-    Mockito.verify(pricingService).calculateChargeBasis(Mockito.any(Application.class));
+    verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
+    verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(123), Mockito.anyList());
+    verify(pricingService).calculateChargeBasis(Mockito.any(Application.class));
   }
 
   @Test
@@ -92,10 +94,10 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     final ApplicationTag tag = new ApplicationTag(1, ApplicationTagType.STATEMENT_REQUESTED, ZonedDateTime.now());
     final List<ApplicationTag> tagList = Arrays.asList(tag);
-    Mockito.when(applicationDao.updateTags(APP_ID, tagList)).thenReturn(tagList);
+    when(applicationDao.updateTags(APP_ID, tagList)).thenReturn(tagList);
 
     List<ApplicationTag> saved = applicationService.updateTags(APP_ID, tagList);
-    Mockito.verify(applicationDao).updateTags(APP_ID, tagList);
+    verify(applicationDao).updateTags(APP_ID, tagList);
     assertEquals(tag, saved.get(0));
   }
 
@@ -107,15 +109,15 @@ public class ApplicationServiceTest {
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("SAP_123");
     Application application = Mockito.mock(Application.class);
-    Mockito.when(applicationDao.findByIds(Mockito.anyList())).thenReturn(Arrays.asList(application));
-    Mockito.when(application.getNotBillable()).thenReturn(false);
-    Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
-    Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
-    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    when(applicationDao.findByIds(Mockito.anyList())).thenReturn(Arrays.asList(application));
+    when(application.getNotBillable()).thenReturn(false);
+    when(application.getInvoiceRecipientId()).thenReturn(IID);
+    when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
-    Mockito.verify(invoiceService).createInvoices(APP_ID, false);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, 0);
-    Mockito.verify(applicationDao, times(0)).addTag(Mockito.anyInt(), Mockito.any());
+    verify(invoiceService).createInvoices(APP_ID, false);
+    verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, 0);
+    verify(applicationDao, times(0)).addTag(Mockito.anyInt(), Mockito.any());
   }
 
   @Test
@@ -126,16 +128,16 @@ public class ApplicationServiceTest {
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("");
     Application application = Mockito.mock(Application.class);
-    Mockito.when(applicationDao.findByIds(Mockito.anyList())).thenReturn(Arrays.asList(application));
-    Mockito.when(application.getNotBillable()).thenReturn(false);
-    Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
-    Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
-    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    when(applicationDao.findByIds(Mockito.anyList())).thenReturn(Arrays.asList(application));
+    when(application.getNotBillable()).thenReturn(false);
+    when(application.getInvoiceRecipientId()).thenReturn(IID);
+    when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
-    Mockito.verify(invoiceService).createInvoices(APP_ID, true);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, 0);
+    verify(invoiceService).createInvoices(APP_ID, true);
+    verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, 0);
     ArgumentCaptor<ApplicationTag> tagCaptor = ArgumentCaptor.forClass(ApplicationTag.class);
-    Mockito.verify(applicationDao, times(1)).addTag(Mockito.eq(APP_ID), tagCaptor.capture());
+    verify(applicationDao, times(1)).addTag(Mockito.eq(APP_ID), tagCaptor.capture());
     assertEquals(ApplicationTagType.SAP_ID_MISSING, tagCaptor.getValue().getType());
   }
 
@@ -144,10 +146,10 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     final int UID = 234;
     Application application = Mockito.mock(Application.class);
-    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.REJECTED, UID);
-    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID, false);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, 0);
+    verify(invoiceService, times(0)).createInvoices(APP_ID, false);
+    verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, 0);
   }
 
   @Test
@@ -155,8 +157,8 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     final int UID = 234;
     applicationService.changeApplicationStatus(APP_ID, StatusType.FINISHED, UID);
-    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID, false);
-    Mockito.verify(applicationDao).updateStatus(APP_ID, StatusType.FINISHED);
+    verify(invoiceService, times(0)).createInvoices(APP_ID, false);
+    verify(applicationDao).updateStatus(APP_ID, StatusType.FINISHED);
   }
 
   @Test
@@ -168,13 +170,13 @@ public class ApplicationServiceTest {
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("");
     Application application = Mockito.mock(Application.class);
-    Mockito.when(application.getHandler()).thenReturn(HANDLER_ID);
-    Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
-    Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
-    Mockito.when(applicationDao.findByIds(Mockito.anyList())).thenReturn(Arrays.asList(application));
-    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    when(application.getHandler()).thenReturn(HANDLER_ID);
+    when(application.getInvoiceRecipientId()).thenReturn(IID);
+    when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    when(applicationDao.findByIds(Mockito.anyList())).thenReturn(Arrays.asList(application));
+    when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, HANDLER_ID);
+    verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, HANDLER_ID);
   }
 
   @Test
@@ -184,9 +186,9 @@ public class ApplicationServiceTest {
     final int HANDLER_ID = 235;
     final Application application = new Application();
     application.setHandler(HANDLER_ID);
-    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.REJECTED, UID);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, HANDLER_ID);
+    verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, HANDLER_ID);
   }
 
   @Test(expected = IllegalOperationException.class)
@@ -194,14 +196,54 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     final Application application = new Application();
     application.setId(APP_ID);
-    Mockito.when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
+    when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
     applicationService.update(APP_ID, application, 1);
   }
 
   @Test(expected = IllegalOperationException.class)
   public void shouldThrowWhenTryingToUpdateCancelledApplicationsStatus() {
     final int APP_ID = 123;
-    Mockito.when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
+    when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
     applicationService.changeApplicationStatus(APP_ID, StatusType.HANDLING, 1);
+  }
+
+  @Test
+  public void testGetAnonymizableApplications_returnsCorrectData() {
+    ZonedDateTime startTime = ZonedDateTime.parse("2024-12-01T10:00:00+02:00");
+    ZonedDateTime endTime = ZonedDateTime.parse("2024-12-31T18:00:00+02:00");
+    ZonedDateTime changeTime = ZonedDateTime.parse("2024-11-27T12:31:01+02:00");
+
+    List<AnonymizableApplication> mockApplications = List.of(
+      new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, changeTime),
+      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, changeTime)
+    );
+
+    when(applicationDao.findAnonymizableApplications()).thenReturn(mockApplications);
+
+    List<AnonymizableApplication> results = applicationService.getAnonymizableApplications();
+
+    assertEquals(2, results.size());
+    for (int i = 0; i < results.size(); i++) {
+      AnonymizableApplication aa = results.get(i);
+      assertEquals(i + 1, aa.getId().intValue());
+      assertEquals("APP00" + (i + 1), aa.getApplicationId());
+      assertEquals(i == 0 ? ApplicationType.EXCAVATION_ANNOUNCEMENT : ApplicationType.AREA_RENTAL, aa.getApplicationType());
+      assertEquals(startTime, aa.getStartTime());
+      assertEquals(endTime, aa.getEndTime());
+      assertEquals(i == 0 ? ChangeType.CONTENTS_CHANGED : ChangeType.STATUS_CHANGED, aa.getChangeType());
+      assertEquals(changeTime, aa.getChangeTime());
+    }
+
+    verify(applicationDao, times(1)).findAnonymizableApplications();
+  }
+
+  @Test
+  public void testGetAnonymizableApplications_emptyList() {
+    when(applicationDao.findAnonymizableApplications()).thenReturn(List.of());
+
+    List<AnonymizableApplication> result = applicationService.getAnonymizableApplications();
+
+    assertTrue(result.isEmpty());
+    verify(applicationDao, times(1)).findAnonymizableApplications();
   }
 }
