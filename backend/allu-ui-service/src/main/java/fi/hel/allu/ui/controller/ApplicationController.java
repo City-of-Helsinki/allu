@@ -71,6 +71,17 @@ public class ApplicationController {
   }
 
   /**
+   * Anonymize applications by ids
+   * @param ids of applications
+   * @return no content
+   */
+  @PatchMapping(value = "/anonymize")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<Void> anonymizeApplicationsByIds(@RequestBody List<Integer> ids) {
+    return ResponseEntity.noContent().build();
+  }
+
+  /**
    * Delete a note from database.
    *
    * @param id note application's database ID
