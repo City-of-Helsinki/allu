@@ -1090,7 +1090,7 @@ public class ApplicationDao {
   }
 
   /**
-   * Find anonymizable/"deletable" application data (ID, application ID, start time, end time, change type and (latest) change time)
+   * Find anonymizable/"deletable" application data (ID, application ID, application type, start time, end time, change type and (latest) change time)
    * by application id found from anonymizable_application-table from database.
    * @return list of anonymizable/"deletable" applications
    */
@@ -1107,6 +1107,7 @@ public class ApplicationDao {
       .select(Projections.constructor(AnonymizableApplication.class,
         aa.applicationId.as("id"),
         a.applicationId.as("applicationId"),
+        a.type,
         a.startTime,
         a.endTime,
         ch.changeType,
