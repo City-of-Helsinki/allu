@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.ChangeType;
 
 import java.time.ZonedDateTime;
@@ -10,6 +11,7 @@ import java.time.ZonedDateTime;
 public class AnonymizableApplication {
   private Integer id;
   private String applicationId;
+  private ApplicationType applicationType;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ChangeType changeType;
@@ -18,9 +20,10 @@ public class AnonymizableApplication {
   public AnonymizableApplication() {
   }
 
-  public AnonymizableApplication(Integer id, String applicationId, ZonedDateTime startTime, ZonedDateTime endTime, ChangeType changeType, ZonedDateTime changeTime) {
+  public AnonymizableApplication(Integer id, String applicationId, ApplicationType applicationType, ZonedDateTime startTime, ZonedDateTime endTime, ChangeType changeType, ZonedDateTime changeTime) {
     this.id = id;
     this.applicationId = applicationId;
+    this.applicationType = applicationType;
     this.startTime = startTime;
     this.endTime = endTime;
     this.changeType = changeType;
@@ -41,6 +44,14 @@ public class AnonymizableApplication {
 
   public void setApplicationId(String applicationId) {
     this.applicationId = applicationId;
+  }
+
+  public ApplicationType getApplicationType() {
+    return applicationType;
+  }
+
+  public void setApplicationType(ApplicationType applicationType) {
+    this.applicationType = applicationType;
   }
 
   public ZonedDateTime getStartTime() {
