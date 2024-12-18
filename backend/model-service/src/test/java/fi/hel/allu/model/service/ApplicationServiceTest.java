@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.dao.InvoiceRecipientDao;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
@@ -213,8 +214,8 @@ public class ApplicationServiceTest {
     ZonedDateTime changeTime = ZonedDateTime.parse("2024-11-27T12:31:01+02:00");
 
     List<AnonymizableApplication> mockApplications = List.of(
-      new AnonymizableApplication(1, "APP001", startTime, endTime, ChangeType.CONTENTS_CHANGED, changeTime),
-      new AnonymizableApplication(2, "APP002", startTime, endTime, ChangeType.STATUS_CHANGED, changeTime)
+      new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, changeTime),
+      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, changeTime)
     );
 
     when(applicationDao.findAnonymizableApplications()).thenReturn(mockApplications);
@@ -226,6 +227,7 @@ public class ApplicationServiceTest {
       AnonymizableApplication aa = results.get(i);
       assertEquals(i + 1, aa.getId().intValue());
       assertEquals("APP00" + (i + 1), aa.getApplicationId());
+      assertEquals(i == 0 ? ApplicationType.EXCAVATION_ANNOUNCEMENT : ApplicationType.AREA_RENTAL, aa.getApplicationType());
       assertEquals(startTime, aa.getStartTime());
       assertEquals(endTime, aa.getEndTime());
       assertEquals(i == 0 ? ChangeType.CONTENTS_CHANGED : ChangeType.STATUS_CHANGED, aa.getChangeType());

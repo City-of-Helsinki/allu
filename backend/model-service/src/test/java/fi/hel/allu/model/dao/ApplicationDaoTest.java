@@ -429,6 +429,7 @@ public class ApplicationDaoTest {
     assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
     assertEquals(app2.getApplicationId(), results.get(1).getApplicationId());
     for (AnonymizableApplication aa : results) {
+      assertNotNull(aa.getApplicationType());
       assertNotNull(aa.getStartTime());
       assertNotNull(aa.getEndTime());
       assertNotNull(aa.getChangeType());
@@ -450,6 +451,7 @@ public class ApplicationDaoTest {
     assertEquals(1, results.size());
     assertEquals(app1.getId(), results.get(0).getId());
     assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
+    assertNotNull(results.get(0).getApplicationType());
     assertNotNull(results.get(0).getStartTime());
     assertNotNull(results.get(0).getEndTime());
     assertEquals(ChangeType.STATUS_CHANGED, results.get(0).getChangeType());
