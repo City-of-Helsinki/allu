@@ -1,0 +1,65 @@
+<div class="main-content prune-data-controls">
+  <h1> {{ title }} </h1>
+
+  <div fxLayout='row'>
+    <div fxFlex>
+      <div class="labels-solid labels-end">
+        <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+          <a mat-tab-link
+             *ngFor="let tab of tabs"
+             [routerLink]="['/admin/prune-data', tab | lowercase]"
+             routerLinkActive #rla="routerLinkActive"
+             [routerLinkActiveOptions]="{exact: true}"
+             [active]="rla.isActive">
+            {{['prunedata.tab', tab] | translation}}
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- mockup table -->
+  <div fxLayout="row">
+    <div fxFlex>
+      <div class="mat-elevation-z8 data-table data-table-with-paging">
+        <mat-table #table [dataSource]="dataSource$ | async" matSort [trackBy]="trackById">
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+              <ng-container *ngIf="column === 'selected'; else regularHeader">
+                <mat-checkbox
+                  [checked]="(someSelected$ | async) && (allSelected$ | async)"
+                  [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                  (change)="checkAll()">
+                </mat-checkbox>
+              </ng-container>
+              <ng-template #regularHeader>
+                {{'prunedata.columns.' + column | translation}}
+              </ng-template>
+            </mat-header-cell>
+            
+            <mat-cell *matCellDef="let row">
+              <ng-container [ngSwitch]="column">
+                <ng-container *ngSwitchCase="'selected'">
+                  <mat-checkbox 
+                    [checked]="false"
+                    (change)="checkSingle(row.id)">
+                  </mat-checkbox>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{row[column]}}
+                </ng-container>
+              </ng-container>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
+        </mat-table>
+      </div>
+    </div>
+  </div>
+  
+  <mat-tab-nav-panel #tabPanel>
+  </mat-tab-nav-panel>
+
+</div>

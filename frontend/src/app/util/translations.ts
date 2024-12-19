@@ -2110,6 +2110,25 @@ export const translations = {
       configuration: 'Asetukset',
     }
   },
+  prunedata: {
+    tab: {
+      AREA_RENTALS: 'Aluevuokraukset',
+      CABLE_REPORTS: 'Kaapeliraportit',
+      EXCAVATION_ANNOUNCEMENTS: 'Kaivuilmoitukset',
+      SHORT_TERM_RENTALS: 'Lyhytaikaiset vuokrat',
+      PLACEMENT_CONTRACTS: 'Sijoitussopimukset',
+      EVENTS: 'Tapahtumat',
+      TRAFFIC_ARRANGEMENTS: 'Liikennejärjestelyt',
+      USER_DATA: 'Käyttäjätiedot'
+    },
+    columns: {
+      applicationId: 'Hakemus Id',
+      startTime: 'Aloitusaika',
+      endTime: 'Lopetusaika',
+      changeTime: 'Muutettu',
+      changeType: 'Muutos'
+    }
+  },
   configuration: {
     key: {
       CUSTOMER_NOTIFICATION_RECEIVER_EMAIL: ' Sähköpostiosoite uusista asiakkaista ilmoittamiseen',

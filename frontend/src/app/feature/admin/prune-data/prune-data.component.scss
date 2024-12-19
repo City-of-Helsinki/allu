@@ -1,0 +1,20 @@
+@use '@angular/material' as mat;
+@import '../../../../assets/colors';
+
+.h1 {
+  color: green;
+}
+
+.prune-data-controls {
+  background-color: mat.get-color-from-palette($allu-primary, 50);
+
+  nav {
+    width: 100%;
+    display: flex;
+    overflow-x: auto; 
+    
+    a {
+      padding: 16px;
+    }
+  }
+}
