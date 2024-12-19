@@ -34,7 +34,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </div>
       <div class="department">
         <p>Kaupunkiympäristö</p>
-        <p>Alueidenkäyttö ja -valvonta</p>
+        <p>Alueiden käyttö ja valvonta</p>
+	<p>Katutyö- ja sijaintipalvelut</p>
       </div>
       <div class="half-right">
         <h1>Sopimus</h1>

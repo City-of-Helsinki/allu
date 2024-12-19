@@ -112,7 +112,7 @@
         <section>
           <h2>Lisätiedot</h2>
           <p class="indented space-above">
-            Kaupunkiympäristö/Alueidenkäyttö ja -valvonta<br/>
+            Katutyö- ja sijaintipalvelut -tiimi<br/>
             Työpajankatu 8<br/>
             PL 58231, 00099 Helsingin kaupunki<br/>
             asiakaspalvelu puh. (09) 310 22111<br/>
