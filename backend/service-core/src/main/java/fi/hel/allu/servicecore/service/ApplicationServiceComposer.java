@@ -583,11 +583,11 @@ public class ApplicationServiceComposer {
   }
 
   public List<Application> fetchPotentiallyAnonymizableApplications() {
-    return List.of();
+    return applicationService.fetchPotentiallyAnonymizableApplications();
   }
 
   public void addToAnonymizableApplications(List<Integer> applicationIds) {
-
+    applicationService.addToAnonymizableApplications(applicationIds);
   }
 
   public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {

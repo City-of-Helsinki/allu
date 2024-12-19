@@ -429,6 +429,14 @@ public class ApplicationService {
     return applicationDao.findActiveExcavationAnnouncements();
   }
 
+  public List<Application> findPotentiallyAnonymizableApplications() {
+    return applicationDao.fetchPotentiallyAnonymizableApplications();
+  }
+
+  public void addToAnonymizableApplications(List<Integer> applicationsIds) {
+    applicationDao.insertToAnonymizableApplication(applicationsIds);
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     return applicationDao.findFinishedNotes();
