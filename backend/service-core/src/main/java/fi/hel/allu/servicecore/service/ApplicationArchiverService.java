@@ -256,7 +256,7 @@ public class ApplicationArchiverService {
     return false;
   }
   public void checkForAnonymizableApplications() {
-    addToAnonymizableApplications(
+    List<Integer> anonymizeIds =
       fetchPotentiallyAnonymizableApplications().stream()
       // cable reports are all we know how to handle for now, let's be sure although DB should return only them currently
       .filter(app -> app.getType() == ApplicationType.CABLE_REPORT)
@@ -265,8 +265,9 @@ public class ApplicationArchiverService {
       .filter(app -> ((CableReport) app.getExtension()).getValidityTime().isBefore(ZonedDateTime.now().minusYears(2)))
       .filter(app -> !cableReportAssociatedWithActiveExcavationAnnouncement(app))
       .map(Application::getId)
-      .collect(Collectors.toList())
-    );
+      .toList();
+
+    if (anonymizeIds.size() > 0) addToAnonymizableApplications(anonymizeIds);
 
     // these might have been fetched in cableReportAssociatedWithActiveExcavationAnnouncement(), release them now
     activeExcavationAnnouncements = null;
