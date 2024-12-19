@@ -1396,6 +1396,14 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/activeexcavationannouncements");
   }
 
+  public String getFetchPotentiallyAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/potentiallyanonymizable");
+  }
+
+  public String getAddToAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/addtoanonymizable");
+  }
+
   /**
    * @return url to fetch finished notes
    */
