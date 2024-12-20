@@ -149,25 +149,25 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="unboxed">
         <section>
           <h2>Yleiset sopimusehdot</h2>
-	  <h2>1. Sopimuksen tarkoitus ja voimassaolo</h2>
+	  <h2 class="padded-header">1. Sopimuksen tarkoitus ja voimassaolo</h2>
 	  <p>
 	    Kaupunki antaa tällä sopimuksella oikeuden sijoittaa sopimuksessa yksilöidyt rakenteet
 (jäljempänä “rakenteet”) kaupungin omistamalle kiinteistölle. Sopimus on voimassa toistaiseksi,
 ellei määräaikaisuudesta ole erikseen sovittu.
 	  </p>
-	  <h2>2. Sopimuksen raukeaminen ja uusiminen</h2>
+	  <h2 class="padded-header">2. Sopimuksen raukeaminen ja uusiminen</h2>
 	  <p>
 	    Sopimus raukeaa ilman erillistä ilmoitusta kaupungin allekirjoituspäivästä lukien yhden (1) vuoden
 kuluttua, ellei rakenteiden toteutusta ole tuona aikana aloitettu. Sopimus on uusittava, mikäli
 toteutussuunnitelma muuttuu tai kohteeseen sisältyy muita kuin hakemuksessa esitettyjä rakenteita.
 	  </p>
-	  <h2>3. Työn suorittaminen</h2>
+	  <h2 class="padded-header">3. Työn suorittaminen</h2>
 	  <h2>3.1 Työn suorittamisen ajankohta</h2>
 	  <p>
 	    Työ on suoritettava tämän sopimuksen erityisehdoissa mainittuna ajankohtana, mikäli erityisehdoissa on
 suorittamisajankohtaa koskeva ehto.
 	  </p>
-	  <h2>3.2 Kaivutyöt</h2>
+	  <h2 class="padded-header">3.2 Kaivutyöt</h2>
 	  <p>
 	    Ennen kaivutyöhön ryhtymistä sijoittavan sopimusosapuolen on haettava johtoselvitys sekä tehtävä
 kaupungille ilmoitus yleisellä alueella tehtävästä työstä. Ilmoituksessa on mainittava sijoitussopimuksen
@@ -177,23 +177,22 @@ Liikennealueella tai liikenteeseen vaikuttavalla alueella työskenneltäessä on
 työsuunnitelma sekä hyväksytettävä päätös tilapäisistä liikennejärjestelyistä. Työn aikana tarkastajalle
 on sallittava pääsy alueelle valvomaan työn toteutusta.
 	  </p>
+	  <br/>
 	  <p>
 Työn suorittamisessa ja ennallistamisessa noudatetaan ajantasaista Yleisten alueiden käyttö, tilapäiset
-[yhteyshenkilön nimi]
-yhteyshenkilon.sahkoposti@test.test,
-[0931031222]
 liikennejärjestelyt ja katutyöt -ohjetta (PKS-ohje), joka on luettavissa kaupungin verkkosivuilla
 (sopimuksentekohetkellä osoitteessa https://www.hel.fi/fi/kaupunkiymparisto-jaliikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/kaduilla-ja-puistoissa-tehtavat-tyot). Työalue on
 ennallistettava kaupungin hyväksymään tilaan aina rakenteisiin liittyvien kaivutöiden (mm. sijoittaminen,
 kunnossapito tai poisto) jälkeen.
 	  </p>
+	  <br/>
 	  <p>
 Matala-asennusmenetelmien (mm. ketjusahaus, jyrsintä, mikro-ojitus tai auraus) käyttö työn
 toteutuksessa ei ole sallittua. Suojaputkitus tulee asentaa vähintään 70 cm peittosyvyyteen ja
 varustetaan signaalilangalla, jotta paikannus onnistuu passiivisin peilausvälinein. Tästä ehdosta voi
 poiketa vain kaupungin kirjallisella suostumuksella.
 	  </p>
-	  <h2>3.3 Viheralueiden suojaaminen</h2>
+	  <h2 class="padded-header">3.3 Viheralueiden suojaaminen</h2>
 	  <p>
 	    Ellei tämän sopimuksen erityisehdoissa toisin mainita, alueella kasvavia puita tai pensaita ei saa poistaa,
 kaataa eikä juuristoja vahingoittaa sijoitustyön yhteydessä. Tarvittaessa puiden läheisyydessä työ on
@@ -201,7 +200,7 @@ suoritettava lapiokaivuuna puun juuristoa tai runkoa vaurioittamatta. Puiden run
 suojata asianmukaisesti noudattaen PKS-ohjetta ja InfraRYL-vaatimuksia (InfraRYL 11113.3
 Kasvillisuuden ja luontoalueiden suojaaminen tai vastaava ajantasainen versio).
 	  </p>
-	  <h2>4. Kartoittaminen</h2>
+	  <h2 class="padded-header">4. Kartoittaminen</h2>
 	  <p>
 	    Sijoittava sopimusosapuoli on velvollinen kartoittamaan sopimuksen mukaiset rakenteet. Sijaintitietojen
 rekisteröimisen osalta on noudatettava kaupunkiympäristön kaupunkimittauspalveluiden ja maa- ja
@@ -209,25 +208,26 @@ kallioperä -yksikön ohjeita (sopimuksentekohetkellä luettavissa kaupungin ver
 https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/sijoitussopimus) sekä muita kaupungin ilmoittamia ohjeita. Edellä mainittu koskee myös
 rakenteiden siirtämistä ja poistamista.
 	  </p>
-	  <h2>5. Kunnossapito ja kustannukset</h2>
+	  <h2 class="padded-header">5. Kunnossapito ja kustannukset</h2>
 	  <p>
 	    Sijoittava sopimusosapuoli vastaa rakenteiden kunnostamisesta ja kunnossapidosta.
 	    Sijoittava sopimusosapuoli vastaa kaikista rakenteiden rakentamisen ja käytön kustannuksista.
 	  </p>
-	  <h2>6. Vakuus</h2>
+	  <h2 class="padded-header">6. Vakuus</h2>
 	  <p>
 	    Sijoittava sopimusosapuoli on velvollinen antamaan kaupungille vakuuden, jos vakuudesta on
 erillinen ehto tämän sopimuksen erityisehdoissa. Vakuus toimii vakuutena kaikista tästä
 sopimuksesta aiheutuvien velvollisuuksien täyttämisestä.
 	  </p>
+	  <br/>
 	  <p>
 	    Vakuus palautetaan hyväksytyn loppukatselmuksen jälkeen siltä osin kuin sitä ei ole käytetty tai
 kaupungilla ei ole vakuuteen kohdistuvia vaatimuksia. Tämän sopimuksen mukainen
 loppukatselmus voidaan pitää myös kaivutyötä koskevan loppukatselmuksen yhteydessä.
 Vakuudelle ei makseta korkoa.
 	  </p>
-	  <h2>7. Sopimussakko</h2>
-	  <h2>7.1 Sopimussakkojen luokat</h2>
+	  <h2 class="padded-header">7. Sopimussakko</h2>
+	  <h2 class="padded-header">7.1 Sopimussakkojen luokat</h2>
 	  <p>
 	    Sijoittava sopimusosapuoli voidaan velvoittaa maksamaan kaupungille sopimussakkoa
 sopimuksen velvoitteiden laiminlyönneistä alla olevan luokituksen mukaisesti.
@@ -257,18 +257,19 @@ sopimuksessa.
 	  <ul>
 	    <li>Vähäisemmät sopimusrikkomukset</li>
 	  </ul>
-	  <h2>7.2 Sopimussakon kertyminen jatkuvissa laiminlyönneissä</h2>
+	  <h2 class="padded-header">7.2 Sopimussakon kertyminen jatkuvissa laiminlyönneissä</h2>
 	  <p>
 	    Mikäli kaupunki katsoo sijoittavan sopimusosapuolen olevan velvollinen maksamaan sopimussakkoa,
 kaupungin ilmoittaa siitä kirjallisesti sijoittavalle sopimusosapuolelle riittävästi yksilöitynä ja lähettää
 sopimussakosta laskun.
 	  </p>
-	  <h2>8. Vahingonkorvaus</h2>
-	  <h2>8.1 Yleiset vahingonkorvausehdot</h2>
+	  <h2 class="padded-header">8. Vahingonkorvaus</h2>
+	  <h2 class="padded-header">8.1 Yleiset vahingonkorvausehdot</h2>
 	  <p>
 	    Sopimussakosta riippumatta sijoittava sopimusosapuoli on velvollinen korvaamaan kaupungille ja
 kolmannelle aiheuttamansa vahingon.
 	  </p>
+	  <br/>
 	  <p>
 	    Jos kaupunki velvoitetaan tuomioistuimen lainvoimaisella tuomiolla suorittamaan kolmannelle
 osapuolelle vahingonkorvausta vahingosta, joka on aiheutunut sijoittavan sopimusosapuolen
@@ -276,11 +277,12 @@ sopimusrikkomuksesta tai tuottamuksesta, on kaupungilla oikeus periä sijoittava
 kolmannelle osapuolelle tällaisesta sijoittavan sopimusosapuolen sopimusrikkomuksen tai tuottamuksen
 johdosta aiheutuneesta vahingosta suorittamansa vahingonkorvaus
 	  </p>
+	  <br/>
 	  <p>
 	    Kaupunki ei vastaa välillisistä vahingoista. Kaupungin suorittama työn valvonta ei poista sijoittavan
 sopimusosapuolen vastuuta aiheutuneista vahingoista.
 	  </p>
-	  <h2>8.2 Puuvaurioita koskevat vahingonkorvausehdot</h2>
+	  <h2 class="padded-header">8.2 Puuvaurioita koskevat vahingonkorvausehdot</h2>
 	  <p>
 	    Puuvauriosta, joka edellyttää kaupungin arvion mukaan kokonaisen puun uusimista, sijoittava
 sopimusosapuoli on velvollinen maksamaan vahingonkorvausta kaupungin arvioiman puun arvon
@@ -289,87 +291,90 @@ vaatiessa istutettava uusi puu kustannuksellaan ja tehtävä puulle kaupungin m�
 hoitotoimenpiteet kaupungin määräämän ajan. Kaupunki määrää tällöin istutustavan sekä istutettavan
 lajin ja koon.
 	  </p>
+	  <br/>
 	  <p>
 	    Pienemmistä puuvaurioista (esimerkiksi katkenneet oksat, runkovauriot ja pienemmät juuristovauriot)
 sijoittava sopimusosapuoli on velvollinen maksamaan kaupungille vahingonkorvausta kaupungin
 arvioiman vaurion arvon mukaisesti, kuitenkin vähintään 3000 euroa. Lisäksi sijoittavan
 sopimusosapuolen on tehtävä puulle hoitoleikkaus kustannuksellaan kaupungin määräämällä tavalla.
 	  </p>
-	  <h2>9. Kaupungin oikeus laiminlyöntien korjaamiseen</h2>
+	  <h2 class="padded-header">9. Kaupungin oikeus laiminlyöntien korjaamiseen</h2>
 	  <p>
-	    os työaluetta ei ole ennallistettu kaupungin ohjeiden ja määräysten mukaisesti kaupungin kaivutyötä
+	    Jos työaluetta ei ole ennallistettu kaupungin ohjeiden ja määräysten mukaisesti kaupungin kaivutyötä
 koskevassa päätöksessä mainittuun päivämäärään tai kaupungin erikseen määräämään päivämäärään
 mennessä, kaupungilla on oikeus ennallistaa alue sijoittavan sopimusosapuolen kustannuksella.
 	  </p>
+	  <br/>
 	  <p>
 	    Jos rakenteita sijoitetaan sopimuksen vastaisesti (esim. sopimuksesta poikkeavaan sijaintiin) tai jos
 sopimusehtoja muuten laiminlyödään, kaupungilla on oikeus 1) siirtää tai poistaa rakenteet sijoittavan
 sopimusosapuolen kustannuksella ja 2) ennallistaa alue sijoittavan sopimusosapuolen kustannuksella.
 	  </p>
-	  <h2>10. Rakenteiden siirtäminen</h2>
+	  <h2 class="padded-header">10. Rakenteiden siirtäminen</h2>
 	  <p>
 	    Kaupungilla on oikeus välttämättömän syyn vuoksi vaatia rakenteiden siirtämistä väliaikaisesti tai
 pysyvästi, jolloin sijoittavan sopimusosapuolen on tehtävä siirtotyö kustannuksellaan.
 	  </p>
-	  <h2>11. Sopimuksen irtisanominen</h2>
-	  <h2>11.1 Irtisanomisaika</h2>
+	  <h2 class="padded-header">11. Sopimuksen irtisanominen</h2>
+	  <h2 class="padded-header">11.1 Irtisanomisaika</h2>
 	  <p>
 	    Sopimuksen irtisanomisaika on kuusi (6) kuukautta pois lukien maalämpöporakaivot varusteineen, joita
 koskevan sijoitussopimuksen irtisanomisaika on kaksi (2) vuotta.
 	  </p>
-	  <h2>11.2 Menettely kaupungin irtisanoessa</h2>
+	  <h2 class="padded-header">11.2 Menettely kaupungin irtisanoessa</h2>
 	  <p>
-	    Sopimuksen irtisanomisaika on kuusi (6) kuukautta pois lukien maalämpöporakaivot varusteineen, joita
-koskevan sijoitussopimuksen irtisanomisaika on kaksi (2) vuotta.
-11.2 Menettely kaupungin irtisanoessa
 Kaupungin irtisanoessa sopimuksen sijoitetut rakenteet on poistettava, ellei toisin sovita. Sijoittavan
 sopimusosapuolen on tehtävä työ kustannuksellaan. Vaihtoehtoisesti kaupungin erillisellä kirjallisella
 suostumuksella rakenteet voi jättää paikoilleen, jolloin kaupunki merkitsee ne käytöstä poistetuksi
 johtokartalle.
 	  </p>
-	  <h2>11.3 Menettely sijoittavan sopimusosapuolen irtisanoessa</h2>
+	  <h2 class="padded-header">11.3 Menettely sijoittavan sopimusosapuolen irtisanoessa</h2>
 	  <p>
 	    Sijoittavan sopimusosapuolen irtisanoessa sopimuksen rakenteita ei lähtökohtaisesti tarvitse poistaa.
 Kaupungilla on kuitenkin tarvittaessa oikeus vaatia rakenteiden poistoa myös sijoittavan
 sopimusosapuolen irtisanoessa sopimuksen, jolloin sijoittavan sopimusosapuolen on poistettava
 rakenteet kustannuksellaan.
 	  </p>
+	  <br/>
 	  <p>
 	    Kaikista käytöstä poistetuista rakenteista on ilmoitettava kaupungin alueiden käyttö- ja valvontayksikön
 katutyö- ja sijaintipalvelut –tiimille (kymp.alueidenkaytto@hel.fi) viipymättä. Vaikka rakenteet
 poistettaisiin käytöstä, ne säilyvät edelleen sijoittavan sopimusosapuolen omistuksessa ja
 kunnossapitovastuulla.
 	  </p>
-	  <h2>11.4 Toimenpiteet irtisanomisajan päättymisen jälkeen</h2>
+	  <h2 class="padded-header">11.4 Toimenpiteet irtisanomisajan päättymisen jälkeen</h2>
 	  <p>
 	    Jos rakenteita ei ole poistettu irtisanomisajan päättymiseen mennessä, kaupungilla on oikeus 1) siirtää
 tai poistaa rakenteet sijoittavan sopimusosapuolen kustannuksella ja 2) ennallistaa alue sijoittavan
 sopimusosapuolen kustannuksella.
 	  </p>
-	  <h2>12. Hylätyt rakenteet</h2>
+	  <h2 class="padded-header">12. Hylätyt rakenteet</h2>
 	  <p>
 	    Jos kaupungilla on perusteltu syy epäillä, ettei rakenteita enää käytetä, ne aiheuttavat vaaraa tai niiden
 omistajuus on epäselvä, kaupungilla on tarvittaessa oikeus 1) siirtää tai poistaa rakenteet sijoittavan
 sopimusosapuolen kustannuksella ja 2) ennallistaa alue sijoittavan sopimusosapuolen kustannuksella.
 Vaihtoehtoisesti kaupunki voi jättää rakenteet paikoilleen ja merkitä ne käytöstä poistetuksi johtokartalle.
 	  </p>
+	  <br/>
 	  <p>
 	    Edellä tarkoitettu perusteltu syy voi olla esimerkiksi se, ettei sijoittava sopimusosapuoli vastaa kaupungin
 yhteydenottoon kahden (2) kuukauden kuluessa.
 	  </p>
-	  <h2>13. Omistajanvaihdokset</h2>
+	  <h2 class="padded-header">13. Omistajanvaihdokset</h2>
 	  <p>
 	    Jos sijoitettavien rakenteiden omistaja vaihtuu, sijoittava sopimusosapuoli on velvollinen siirtämään
 tämän sopimuksen rakenteiden luovutuksensaajalle.
 	  </p>
+	  <br/>
 	  <p>
 	    Jos sijoitettavat rakenteet palvelevat kiinteistöä tai rakennusta, sijoittava sopimusosapuoli on velvollinen
 siirtämään tämän sopimuksen kiinteistön tai rakennuksen luovutuksensaajalle.
 	  </p>
+	  <br/>
 	  <p>
 	    Edellä kuvatusta sopimuksen siirtämisestä on ilmoitettava kaupungille.
 	  </p>
-	  <h2>14. Muutoksenhaun vaikutus sopimukseen</h2>
+	  <h2 class="padded-header">14. Muutoksenhaun vaikutus sopimukseen</h2>
 	  <p>
 	    Mikäli alueiden käyttö ja valvonta -yksikön katutyö- ja sijaintipalveluiden tiimipäällikön päätös kumoutuu
 tai muuttuu oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka
