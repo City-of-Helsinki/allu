@@ -162,7 +162,7 @@ kuluttua, ellei rakenteiden toteutusta ole tuona aikana aloitettu. Sopimus on uu
 toteutussuunnitelma muuttuu tai kohteeseen sisältyy muita kuin hakemuksessa esitettyjä rakenteita.
 	  </p>
 	  <h2 class="padded-header">3. Työn suorittaminen</h2>
-	  <h2>3.1 Työn suorittamisen ajankohta</h2>
+	  <h2 class="padded-header">3.1 Työn suorittamisen ajankohta</h2>
 	  <p>
 	    Työ on suoritettava tämän sopimuksen erityisehdoissa mainittuna ajankohtana, mikäli erityisehdoissa on
 suorittamisajankohtaa koskeva ehto.
