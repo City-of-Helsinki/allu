@@ -1,5 +1,7 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.sql.SQLQueryFactory;
+import fi.hel.allu.QAnonymizableApplication;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static fi.hel.allu.QAnonymizableApplication.anonymizableApplication;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,6 +39,9 @@ public class ApplicationDaoTest {
   private ContactDao contactDao;
   @Autowired
   private DistributionEntryDao distributionEntryDao;
+
+  @Autowired
+  private SQLQueryFactory queryFactory;
 
   DistributionEntry testDistributionEntry;
 
@@ -396,6 +402,59 @@ public class ApplicationDaoTest {
       assertFalse(excludedStatuses.contains(app.getStatus()));
       assertEquals(ApplicationType.EXCAVATION_ANNOUNCEMENT, app.getType());
     }
+  }
+
+  @Test
+  public void testFetchPotentiallyAnonymizableApplications() {
+
+    // wrong types of applications
+    Application outdoor = testCommon.dummyOutdoorApplication("Outdoor application", "Outsider");
+    outdoor.setStatus(StatusType.HANDLING);
+    outdoor = applicationDao.insert(outdoor);
+
+    Application areaRental = testCommon.dummyAreaRentalApplication("Area rental", "Renter");
+    areaRental.setStatus(StatusType.DECISION);
+    areaRental = applicationDao.insert(areaRental);
+
+    // long enough ago and not already found - we want to get this one from the query
+    Application cableReport1 = testCommon.dummyCableReportApplication("Cable report1", "Reporter1");
+    cableReport1.setStatus(StatusType.DECISION);
+    cableReport1.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    cableReport1 = applicationDao.insert(cableReport1);
+
+    // not long enough ago
+    Application cableReport2 = testCommon.dummyCableReportApplication("Cable report2", "Reporter2");
+    cableReport2.setStatus(StatusType.DECISION);
+    cableReport2.setEndTime(ZonedDateTime.now().minusYears(1).minusMonths(6));
+    cableReport2 = applicationDao.insert(cableReport2);
+
+    // long enough ago but already found
+    Application cableReport3 = testCommon.dummyCableReportApplication("Cable report3", "Reporter3");
+    cableReport3.setStatus(StatusType.DECISION);
+    cableReport3.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    cableReport3 = applicationDao.insert(cableReport3);
+    applicationDao.insertToAnonymizableApplication(List.of(cableReport3.getId()));
+
+    List<Application> potentials = applicationDao.fetchPotentiallyAnonymizableApplications();
+
+    assertEquals(1, potentials.size());
+    assertEquals(potentials.get(0).getId(), cableReport1.getId());
+  }
+
+  @Test
+  public void testInsertToAnonymizableApplication() {
+    Integer app1 = testCommon.insertApplication("Outdoor1", "Customer1");
+    Integer app2 = testCommon.insertApplication("Outdoor2", "Customer2");
+    Integer app3 = testCommon.insertApplication("Outdoor3", "Customer3");
+
+    applicationDao.insertToAnonymizableApplication(List.of(app1, app2, app3));
+
+    List<Integer> applicationIds = queryFactory.select(anonymizableApplication.applicationId).from(anonymizableApplication).fetch();
+
+    assertEquals(3, applicationIds.size());
+    assert(applicationIds.contains(app1));
+    assert(applicationIds.contains(app2));
+    assert(applicationIds.contains(app3));
   }
 
   private ApplicationTag createApplicationTag(ApplicationTagType applicationTagType) {

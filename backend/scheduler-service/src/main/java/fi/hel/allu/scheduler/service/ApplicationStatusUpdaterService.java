@@ -56,4 +56,11 @@ public class ApplicationStatusUpdaterService {
         applicationProperties.getUpdateTerminatedApplicationsUrl(), HttpMethod.PATCH,
         new HttpEntity<>(null, authenticationService.createAuthenticationHeader()), Void.class).getBody();
   }
+
+  public void checkAnonymizableApplications() {
+    logger.info("Checking for anonymizable applications");
+    restTemplate.exchange(
+      applicationProperties.getCheckAnonymizableApplicationsUrl(), HttpMethod.PATCH,
+      new HttpEntity<>(null, authenticationService.createAuthenticationHeader()), Void.class).getBody();
+  }
 }

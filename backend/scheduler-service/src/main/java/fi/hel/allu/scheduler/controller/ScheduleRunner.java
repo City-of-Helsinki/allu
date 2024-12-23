@@ -104,4 +104,9 @@ public class ScheduleRunner {
   public void updateCityDistricts() {
     cityDistrictUpdaterService.updateCityDistricts();
   }
+
+  @Scheduled(cron = "${anonymization.update.cronstring}")
+  public void checkAnonymizableApplications() {
+    applicationStatusUpdaterService.checkAnonymizableApplications();
+  }
 }
