@@ -28,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -648,8 +649,15 @@ public class ApplicationService {
    * Get list of anonymizable/"deletable" applications by calling model-service endpoint. Data is retrieved from model-service's database.
    * @return list of anonymizable/"deletable" applications
    */
-  public List<AnonymizableApplication> getAnonymizableApplications() {
-    ParameterizedTypeReference<List<AnonymizableApplication>> tr = new ParameterizedTypeReference<>() {};
-    return restTemplate.exchange(applicationProperties.getAnonymizableApplicationsUrl(), HttpMethod.GET, null, tr).getBody();
+  public List<AnonymizableApplicationJson> getAnonymizableApplications() {
+    ResponseEntity<AnonymizableApplication[]> re = restTemplate.getForEntity(applicationProperties.getAnonymizableApplicationsUrl(), AnonymizableApplication[].class);
+    AnonymizableApplication[] body = re.getBody();
+    if (body != null) {
+      return Arrays.stream(body)
+        .map(ApplicationMapper::mapToAnonymizableApplicationJson)
+        .collect(Collectors.toList());
+    } else {
+      return Collections.emptyList();
+    }
   }
 }

@@ -639,4 +639,16 @@ public class ApplicationMapper {
 
     return applicationJson;
   }
+
+  public static AnonymizableApplicationJson mapToAnonymizableApplicationJson(AnonymizableApplication anonymizableApplication) {
+    return new AnonymizableApplicationJson(
+      anonymizableApplication.getId(),
+      anonymizableApplication.getApplicationId(),
+      anonymizableApplication.getApplicationType(),
+      anonymizableApplication.getStartTime(),
+      anonymizableApplication.getEndTime(),
+      anonymizableApplication.getChangeType(),
+      anonymizableApplication.getChangeTime()
+    );
+  }
 }
