@@ -3,7 +3,6 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.model.domain.AnonymizableApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
@@ -685,7 +684,7 @@ public class ApplicationServiceComposer {
     return getApplicationStatus(applicationId).getType();
   }
 
-  public List<AnonymizableApplication> getAnonymizableApplications() {
+  public List<AnonymizableApplicationJson> getAnonymizableApplications() {
     return applicationService.getAnonymizableApplications();
   }
 }
