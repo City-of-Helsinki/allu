@@ -275,7 +275,7 @@ kolmannelle osapuolelle aiheuttamansa vahingon.
 osapuolelle vahingonkorvausta vahingosta, joka on aiheutunut sijoittavan sopimusosapuolen
 sopimusrikkomuksesta tai tuottamuksesta, on kaupungilla oikeus periä sijoittavalta sopimusosapuolelta
 kolmannelle osapuolelle tällaisesta sijoittavan sopimusosapuolen sopimusrikkomuksen tai tuottamuksen
-johdosta aiheutuneesta vahingosta suorittamansa vahingonkorvaus
+johdosta aiheutuneesta vahingosta suorittamansa vahingonkorvaus.
 	  </p>
 	  <br/>
 	  <p>
