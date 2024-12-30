@@ -267,7 +267,7 @@ sopimussakosta laskun.
 	  <h2 class="padded-header">8.1 Yleiset vahingonkorvausehdot</h2>
 	  <p>
 	    Sopimussakosta riippumatta sijoittava sopimusosapuoli on velvollinen korvaamaan kaupungille ja
-kolmannelle aiheuttamansa vahingon.
+kolmannelle osapuolelle aiheuttamansa vahingon.
 	  </p>
 	  <br/>
 	  <p>
