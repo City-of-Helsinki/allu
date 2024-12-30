@@ -683,4 +683,8 @@ public class ApplicationServiceComposer {
   public ApplicationType getApplicationType(Integer applicationId) {
     return getApplicationStatus(applicationId).getType();
   }
+
+  public List<AnonymizableApplicationJson> getAnonymizableApplications() {
+    return applicationService.getAnonymizableApplications();
+  }
 }

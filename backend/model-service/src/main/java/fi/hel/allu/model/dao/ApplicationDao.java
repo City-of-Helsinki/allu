@@ -9,7 +9,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
+import fi.hel.allu.QAnonymizableApplication;
 import fi.hel.allu.QApplication;
+import fi.hel.allu.QChangeHistory;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
@@ -1085,5 +1087,45 @@ public class ApplicationDao {
         .from(application)
         .where(application.id.eq(applicationId))
         .fetchFirst();
+  }
+
+  /**
+   * Find anonymizable/"deletable" application data (ID, application ID, application type, start time, end time, change type and (latest) change time)
+   * by application id found from anonymizable_application-table from database.
+   * @return list of anonymizable/"deletable" applications
+   */
+  public List<AnonymizableApplication> findAnonymizableApplications() {
+    QAnonymizableApplication aa = QAnonymizableApplication.anonymizableApplication;
+    QApplication a = QApplication.application;
+    QChangeHistory ch = QChangeHistory.changeHistory;
+
+    SubQueryExpression<ZonedDateTime> latestChangeTime = select(ch.changeTime.max())
+      .from(ch)
+      .where(ch.applicationId.eq(aa.applicationId));
+
+    List<AnonymizableApplication> applications = queryFactory
+      .select(Projections.constructor(AnonymizableApplication.class,
+        aa.applicationId.as("id"),
+        a.applicationId.as("applicationId"),
+        a.type,
+        a.startTime,
+        a.endTime,
+        ch.changeType,
+        ch.changeTime
+      ))
+      .from(aa)
+      .join(a).on(aa.applicationId.eq(a.id))
+      .join(ch).on(aa.applicationId.eq(ch.applicationId)
+        .and(ch.changeTime.eq(latestChangeTime)))
+      .fetch();
+
+    // Use Set to follow IDs which are already processed and remove them from the list
+    // There can be duplicate change_time-values in change_history table which means that query will find more than one row for the same application's ID
+    // (This is a rare case of anonymisation, but possible)
+    // It was decided that it is not fatal, even if the "wrong" change_type occurs
+    Set<Integer> seenIds = new HashSet<>();
+    applications.removeIf(application -> !seenIds.add(application.getId()));
+
+    return applications;
   }
 }

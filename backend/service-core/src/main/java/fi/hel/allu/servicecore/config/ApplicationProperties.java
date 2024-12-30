@@ -1607,4 +1607,11 @@ public class ApplicationProperties {
   public String getPricelistPaymentClassesUrl() {
     return getModelServiceUrl("/prices/paymentclasses?type={type}&kind={kind}");
   }
+
+  /**
+   * @return url to fetch anonymizable/"deletable" applications from model-service (database)
+   */
+  public String getAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/anonymizable");
+  }
 }

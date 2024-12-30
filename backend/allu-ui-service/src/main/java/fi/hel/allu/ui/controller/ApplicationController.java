@@ -82,6 +82,16 @@ public class ApplicationController {
   }
 
   /**
+   * Get anonymizable/"deletable" applications
+   * @return list of anonymizable/"deletable" applications
+   */
+  @GetMapping(value = "/anonymizable")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<List<AnonymizableApplicationJson>> getAnonymizableApplications() {
+    return new ResponseEntity<>(applicationServiceComposer.getAnonymizableApplications(), HttpStatus.OK);
+  }
+
+  /**
    * Delete a note from database.
    *
    * @param id note application's database ID
