@@ -395,6 +395,10 @@ public class ApplicationProperties {
     return getExtServiceUrl("/v1/applications/terminated/status");
   }
 
+  public String getCheckAnonymizableApplicationsUrl() {
+    return getExtServiceUrl("/v1/applications/checkanonymizable");
+  }
+
   public String getKnownHosts() {
     return knownHosts;
   }
