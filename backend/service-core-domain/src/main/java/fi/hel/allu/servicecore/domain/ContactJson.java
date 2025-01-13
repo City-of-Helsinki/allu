@@ -27,6 +27,19 @@ public class ContactJson implements ContactInterface {
     this.id = id;
   }
 
+  public ContactJson(Integer id, Integer customerId, String name, String streetAddress, String postalCode, String city, String email, String phone, boolean active, Boolean orderer) {
+    this.id = id;
+    this.customerId = customerId;
+    this.name = name;
+    this.streetAddress = streetAddress;
+    this.postalCode = postalCode;
+    this.city = city;
+    this.email = email;
+    this.phone = phone;
+    this.active = active;
+    this.orderer = orderer;
+  }
+
   @Schema(description = "Id of the contact")
   public Integer getId() {
     return id;
