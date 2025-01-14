@@ -1,8 +1,5 @@
 package fi.hel.allu.model.config;
 
-import java.sql.Connection;
-
-import javax.inject.Provider;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +38,7 @@ public class JdbcConfiguration {
   public com.querydsl.sql.Configuration querydslConfiguration() {
     SQLTemplates templates = PostGISTemplates.builder().printSchema().build();
     com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
-    configuration.setExceptionTranslator(new SpringExceptionTranslator());
+    configuration.setExceptionTranslator(new SpringExceptionTranslator(new FallbackTranslator()));
     configuration.register(new StringToCustomerType());
     configuration.register(new StringToCustomerRoleType());
     configuration.register(new StringToApplicationType());

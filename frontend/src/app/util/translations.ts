@@ -2152,7 +2152,8 @@ export const translations = {
       PARKLET_INVOICING_DATE: 'Parklettien laskutuspäivä',
       DEFAULT_CONTACT: 'Oletusyhteyshenkilö',
       ATTACHMENT_ALLOWED_TYPES: 'Sallitut tiedostopäätteet liitteille',
-      ATTACHMENT_MAX_SIZE_MB: 'Liitteiden maksimi koko (MB)'
+      ATTACHMENT_MAX_SIZE_MB: 'Liitteiden maksimi koko (MB)',
+      CABLE_REPORT_ANONYMIZATION_YEARS: 'Johtoselvitysten anonymisointiaika (vuosia)'
     },
     field: {
       valueMissing: 'Arvo puuttuu'

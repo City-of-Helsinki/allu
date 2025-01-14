@@ -13,10 +13,10 @@
 - name: Create cron job for production database backup
   cron:
     name: Backup database
-    hour: 21
+    hour: 23
     minute: 30
     user: root
-    job: "echo \"Start backup: $(date)\" >> /etc/cron.d/allu_database-backup.log; cd /srv/backup/allu/database/dumps/; chmod 0600 db_backup-latest.tar.gz; rm db_backup-latest.tar.gz; pg_basebackup -h localhost -U postgres -D /srv/backup/allu/database/dumps/latest -X stream >> /etc/cron.d/allu_database-backup.log 2>&1; df -h >> /etc/cron.d/allu_database-backup.log; tar --remove-files -zcf db_backup-latest.tar.gz latest/ >> /etc/cron.d/allu_database-backup.log 2>&1 && chmod 0400 db_backup-latest.tar.gz; echo \"End backup: $(date)\" >> /etc/cron.d/allu_database-backup.log;"
+    job: "/usr/local/bin/backup_database.sh"
     cron_file: allu_database-backup
   when: "'production' in group_names"
   become: yes

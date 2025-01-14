@@ -425,6 +425,10 @@ public class ApplicationService {
     return applicationDao.findByEndTime(null, params.getEndsBefore(), params.getTypeSelector(), params.getStatusSelector());
   }
 
+  public List<Application> findActiveExcavationAnnouncements() {
+    return applicationDao.findActiveExcavationAnnouncements();
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     return applicationDao.findFinishedNotes();
@@ -635,5 +639,14 @@ public class ApplicationService {
       target.setSapCustomerNumber(customer.getSapCustomerNumber());
     });
     return target;
+  }
+
+  /**
+   * Find anonymizable/"deletable" applications
+   * @return list of anonymizable/"deletable" applications
+   */
+  @Transactional(readOnly = true)
+  public List<AnonymizableApplication> getAnonymizableApplications() {
+    return applicationDao.findAnonymizableApplications();
   }
 }

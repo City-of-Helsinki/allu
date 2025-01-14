@@ -1390,6 +1390,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to fetch active excavation announcements
+   */
+  public String getActiveExcavationAnnouncementsUrl() {
+    return getModelServiceUrl("/applications/activeexcavationannouncements");
+  }
+
+  /**
    * @return url to fetch finished notes
    */
   public String getFinishedNotesUrl() {
@@ -1599,5 +1606,12 @@ public class ApplicationProperties {
 
   public String getPricelistPaymentClassesUrl() {
     return getModelServiceUrl("/prices/paymentclasses?type={type}&kind={kind}");
+  }
+
+  /**
+   * @return url to fetch anonymizable/"deletable" applications from model-service (database)
+   */
+  public String getAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/anonymizable");
   }
 }

@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
@@ -17,6 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -351,11 +354,132 @@ public class ApplicationDaoTest {
     assertEquals(applicationIds.size(), inserted);
   }
 
+  @Test
+  public void testFindActiveExcavationAnnouncements() {
+    // insert excavation announcements with all possible statuses
+    int serial = 1;
+    int replaceWith = -1;
+    for (StatusType status : StatusType.values()) {
+      if (status != StatusType.REPLACED) {
+        Application application = testCommon.dummyExcavationAnnouncementApplication("Excavation " + serial, "Dig it " + serial++);
+        application.setStatus(status);
+        Application inserted = applicationDao.insert(application);
+        if (status == StatusType.PENDING_CLIENT) replaceWith = inserted.getId();
+      }
+      else {
+        Application application = testCommon.dummyExcavationAnnouncementApplication("Replaced excavation", "Replaced owner");
+        application.setStatus(StatusType.HANDLING);
+        Application inserted = applicationDao.insert(application);
+        applicationDao.setApplicationReplaced(inserted.getId(), replaceWith);
+      }
+    }
+
+    // insert some other types of applicatoins in active statuses
+    Application outdoor = testCommon.dummyOutdoorApplication("Outdoor application", "Outsider");
+    outdoor.setStatus(StatusType.HANDLING);
+    applicationDao.insert(outdoor);
+
+    Application areaRental = testCommon.dummyAreaRentalApplication("Area rental", "Renter");
+    areaRental.setStatus(StatusType.DECISION);
+    applicationDao.insert(areaRental);
+
+    Application bridgeBanner = testCommon.dummyBridgeBannerApplication("Bridge Banner", "Bruce Banner");
+    bridgeBanner.setStatus(StatusType.WAITING_INFORMATION);
+    applicationDao.insert(bridgeBanner);
+
+    Application placementContract = testCommon.dummyPlacementContractApplication("Placement contract", "Placer");
+    placementContract.setStatus(StatusType.PENDING_CLIENT);
+    applicationDao.insert(placementContract);
+
+    List<Application> excavationAnnouncements = applicationDao.findActiveExcavationAnnouncements();
+
+    List<StatusType> excludedStatuses = List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED);
+
+    for (Application app : excavationAnnouncements) {
+      assertFalse(excludedStatuses.contains(app.getStatus()));
+      assertEquals(ApplicationType.EXCAVATION_ANNOUNCEMENT, app.getType());
+    }
+  }
+
   private ApplicationTag createApplicationTag(ApplicationTagType applicationTagType) {
     ApplicationTag applicationTag = new ApplicationTag();
     applicationTag.setAddedBy(1);
     applicationTag.setCreationTime(ZonedDateTime.now());
     applicationTag.setType(applicationTagType);
     return applicationTag;
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withMultipleResults() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app1 = applicationDao.insert(app1);
+    app2 = applicationDao.insert(app2);
+
+    List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
+    testCommon.insertDummyAnonymizableApplicationIds(ids);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+    testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(2, results.size());
+    assertEquals(app1.getId(), results.get(0).getId());
+    assertEquals(app2.getId(), results.get(1).getId());
+    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
+    assertEquals(app2.getApplicationId(), results.get(1).getApplicationId());
+    for (AnonymizableApplication aa : results) {
+      assertNotNull(aa.getApplicationType());
+      assertNotNull(aa.getStartTime());
+      assertNotNull(aa.getEndTime());
+      assertNotNull(aa.getChangeType());
+      assertNotNull(aa.getChangeTime());
+    }
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withLatestChangeTime() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+
+    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now().minusDays(30));
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", ZonedDateTime.now());
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(1, results.size());
+    assertEquals(app1.getId(), results.get(0).getId());
+    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
+    assertNotNull(results.get(0).getApplicationType());
+    assertNotNull(results.get(0).getStartTime());
+    assertNotNull(results.get(0).getEndTime());
+    assertEquals(ChangeType.STATUS_CHANGED, results.get(0).getChangeType());
+
+    LocalDate today = LocalDate.now();
+    LocalDate latestChangeTime = results.get(0).getChangeTime().toLocalDate();
+    assertEquals(today, latestChangeTime);
+  }
+
+  @Test
+  public void testFindDeletableApplications_withDuplicateChangeTime() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+
+    ZonedDateTime time = ZonedDateTime.now();
+    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", time);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", time);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.COMMENT_ADDED, "", "", time);
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(1, results.size());
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withNoData() {
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+    assertTrue(results.isEmpty());
   }
 }

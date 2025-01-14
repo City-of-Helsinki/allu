@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {CustomerType} from '@model/customer/customer-type';
 import {EnumUtil} from '@util/enum.util';
 import {FormBuilder, FormGroup, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
-import {EMPTY, Observable, Subscription} from 'rxjs';
+import {EMPTY, Observable, Subject, Subscription} from 'rxjs';
 import {NumberUtil} from '@util/number.util';
 import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '@util/complex-validator';
@@ -16,7 +16,7 @@ import {
 import {CodeSetService} from '@service/codeset/codeset.service';
 import {CodeSet} from '@model/codeset/codeset';
 import {postalCodeValidator} from '@util/complex-validator';
-import {debounceTime, filter, map, startWith, switchMap, take} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, startWith, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import { CurrentUser } from '@app/service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 import { Router } from '@angular/router'
@@ -53,6 +53,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   private typeControl: UntypedFormControl;
   private countryControl: UntypedFormControl;
   private postalCodeControl: UntypedFormControl;
+  private destroy$ = new Subject<void>();
 
   customerInstance: Customer;
 
@@ -66,6 +67,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.countryControl = <UntypedFormControl>this.form.get('country');
     this.postalCodeControl = <UntypedFormControl> this.form.get('postalAddress').get('postalCode');
     this.customerInstance = new Customer();
+    
 
     this.matchingNameCustomers = this.nameControl.valueChanges.pipe(
       debounceTime(DEBOUNCE_TIME_MS),
@@ -88,20 +90,55 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.countries = this.codeSetService.getCountries();
     
     this.form.get("id").valueChanges
-    .pipe(startWith(this.form.get('id').value))
-    .subscribe(id => {
-      if (this.router.url.endsWith('/edit/info')) {
-        if (!id) this.form.enable();
-      }
-      else if (id) this.form.disable();
+      .pipe(
+        startWith(this.form.get('id').value),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(id => this.handleFormLockStatus(id));
 
-    });
-
+    // in customerregistery only editing should happen in the customerform
+    if (this.router.url.includes('/customers/')) this.allowSearch = false;
   }
 
   ngOnDestroy(): void {
     this.typeSubscription.unsubscribe();
     this.countrySubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  async handleFormLockStatus(id: number): Promise<void> {
+    const currentRoute = this.router.url;
+
+    // // if were in edit and have no customer, unlock the customer form
+    if (currentRoute.endsWith('/edit/info') && !id) {
+      if (this.form.disabled) this.form.enable();
+    }
+    // // inside customer, form should be editable for roles with proper permissions
+    else if (currentRoute.includes('/customer')) {
+      await this.checkForRestrictedEdit();
+    }
+    // disable form in the summary view 
+    if (currentRoute.endsWith('/summary/info') && id) {
+      if (this.form.enabled) this.form.disable();
+    }
+    // enable form by default
+    else {
+      if (this.form.disabled) this.form.enable();
+    }
+  }
+
+  //this check should only happen inside /customer
+  async checkForRestrictedEdit(): Promise<void> {
+    if (this.form.disabled) this.form.enable();
+    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
+    this.form.get("sapCustomerNumber").valueChanges
+      .pipe(take(1))
+      .subscribe(value => {
+        // if there exists sapNumber but user doesn't have role. disable
+        if (value && !userHasRole) this.form.disable();
+      });
+
   }
 
   onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {

@@ -6,13 +6,13 @@
     "changeOrigin": false
   },
   "/wms": {
-    "target": "https://185.26.49.172",
+    "target": "https://testi.allu.kaupunkiymparisto.fi",
     "pathRewrite": {"/wms/": "/wms"},
     "secure": false,
     "changeOrigin": true
   },
   "/tms": {
-    "target": "https://185.26.49.172",
+    "target": "https://testi.allu.kaupunkiymparisto.fi",
     "secure": false,
     "changeOrigin": true
   }

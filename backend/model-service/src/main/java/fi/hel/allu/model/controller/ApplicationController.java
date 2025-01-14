@@ -407,6 +407,11 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.findFinishedApplications(params), HttpStatus.OK);
   }
 
+  @GetMapping(value = "/activeexcavationannouncements")
+  public ResponseEntity<List<Application>> findActiveExcavationAnnouncements() {
+    return new ResponseEntity<>(applicationService.findActiveExcavationAnnouncements(), HttpStatus.OK);
+  }
+
   /**
    * Finds finished notes
    */
@@ -500,4 +505,12 @@ public class ApplicationController {
     return ResponseEntity.ok(decisionDao.searchDecisions(searchCriteria));
   }
 
+  /**
+   * Get anonymizable/"deletable" applications
+   * @return list of anonymizable/"deletable" applications
+   */
+  @GetMapping(value = "/anonymizable")
+  public ResponseEntity<List<AnonymizableApplication>> getAnonymizableApplications() {
+    return ResponseEntity.ok(applicationService.getAnonymizableApplications());
+  }
 }
