@@ -214,8 +214,8 @@ public class ApplicationServiceTest {
     ZonedDateTime changeTime = ZonedDateTime.parse("2024-11-27T12:31:01+02:00");
 
     List<AnonymizableApplication> mockApplications = List.of(
-      new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, changeTime),
-      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, changeTime)
+      new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, "foo", changeTime),
+      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, null, changeTime)
     );
 
     when(applicationDao.findAnonymizableApplications()).thenReturn(mockApplications);

@@ -17,18 +17,20 @@ public class AnonymizableApplicationJson {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ChangeType changeType;
+  private String changeSpecifier;
   private ZonedDateTime changeTime;
 
   public AnonymizableApplicationJson() {
   }
 
-  public AnonymizableApplicationJson(Integer id, String applicationId, ApplicationType applicationType, ZonedDateTime startTime, ZonedDateTime endTime, ChangeType changeType, ZonedDateTime changeTime) {
+  public AnonymizableApplicationJson(Integer id, String applicationId, ApplicationType applicationType, ZonedDateTime startTime, ZonedDateTime endTime, ChangeType changeType, String changeSpecifier, ZonedDateTime changeTime) {
     this.id = id;
     this.applicationId = applicationId;
     this.applicationType = applicationType;
     this.startTime = startTime;
     this.endTime = endTime;
     this.changeType = changeType;
+    this.changeSpecifier = changeSpecifier;
     this.changeTime = changeTime;
   }
 
@@ -85,6 +87,10 @@ public class AnonymizableApplicationJson {
   public void setChangeType(ChangeType changeType) {
     this.changeType = changeType;
   }
+
+  public String getChangeSpecifier() { return changeSpecifier; }
+
+  public void setChangeSpecifier(String changeSpecifier) { this.changeSpecifier = changeSpecifier; }
 
   @Schema(description = "Changing time of the anonymizable application")
   public ZonedDateTime getChangeTime() {

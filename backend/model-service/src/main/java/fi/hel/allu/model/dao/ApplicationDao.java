@@ -1111,6 +1111,7 @@ public class ApplicationDao {
         a.startTime,
         a.endTime,
         ch.changeType,
+        ch.changeSpecifier,
         ch.changeTime
       ))
       .from(aa)
