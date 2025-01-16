@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXml;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentNewClassXml;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2022;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentOldClassXml;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPre2022;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 
 @Profile("!DEV")
@@ -42,8 +42,8 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   protected String parseResult(List<String> responses, ApplicationJson applicationJson) {
     String paymentClass = UNDEFINED;
     for (String response : responses) {
-      final PaymentClassXml paymentOldClassXml = getPaymentClass(response, applicationJson);
-      final List<FeatureClassMember> paymentClasses = paymentOldClassXml.getFeatureMemeber().stream()
+      final PaymentClassXml paymentClassXml = getPaymentClass(response, applicationJson);
+      final List<FeatureClassMember> paymentClasses = paymentClassXml.getFeatureMemeber().stream()
           .sorted(Comparator.comparing(f -> f.getMaksuluokka().getPayment()))
           .collect(Collectors.toList());
       if (!paymentClasses.isEmpty()) {
@@ -58,15 +58,15 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   private PaymentClassXml getPaymentClass(String response, ApplicationJson applicationJson){
     if(isNewExcavationPayment(applicationJson)){
-      return WfsUtil.unmarshalWfs(response, PaymentNewClassXml.class);
+      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2022.class);
     }
     else{
-      return WfsUtil.unmarshalWfs(response, PaymentOldClassXml.class);
+      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
     }
   }
 
   @Override
-  protected String getFeatureTypeName() {
+  protected String getFeatureTypeNamePre2022() {
     return FEATURE_TYPE_NAME;
   }
 
@@ -76,7 +76,7 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   }
 
   @Override
-  protected String getFeatureTypeNameNew() {
-    return getFeatureTypeName() + "_2022";
+  protected String getFeatureTypeNamePost2022() {
+    return getFeatureTypeNamePre2022() + "_2022";
   }
 }

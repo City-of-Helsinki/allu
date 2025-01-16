@@ -56,7 +56,7 @@ public abstract class AbstractWfsPaymentDataService {
       "</wfs:GetFeature>";
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
-  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
+  private static final LocalDateTime POST_2022_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
   private final ApplicationProperties applicationProperties;
   private final AsyncWfsRestTemplate restTemplate;
 
@@ -67,9 +67,9 @@ public abstract class AbstractWfsPaymentDataService {
 
   protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson);
 
-  protected abstract String getFeatureTypeName();
+  protected abstract String getFeatureTypeNamePre2022();
 
-  protected abstract String getFeatureTypeNameNew();
+  protected abstract String getFeatureTypeNamePost2022();
 
   protected abstract String getFeaturePropertyName();
 
@@ -89,9 +89,9 @@ public abstract class AbstractWfsPaymentDataService {
 
   private String getRequest(StartTimeInterface startTime) {
     if (isNewExcavationPayment(startTime)) {
-      return String.format(REQUEST, getFeatureTypeNameNew(), getFeaturePropertyName());
+      return String.format(REQUEST, getFeatureTypeNamePost2022(), getFeaturePropertyName());
     }
-    return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
+    return String.format(REQUEST, getFeatureTypeNamePre2022(), getFeaturePropertyName());
   }
 
   protected boolean isNewExcavationPayment(StartTimeInterface startTime) {
@@ -100,7 +100,7 @@ public abstract class AbstractWfsPaymentDataService {
     }
     ZonedDateTime startTimeHelsinkiZone = startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
 
-    return startTimeHelsinkiZone.isAfter(ZonedDateTime.of(NEW_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+    return startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2022_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
   private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
