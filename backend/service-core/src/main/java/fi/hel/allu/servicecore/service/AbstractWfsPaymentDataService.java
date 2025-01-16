@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractWfsPaymentDataService {
 
   protected static final String UNDEFINED = "undefined";
+  private static final String PROPERTYNAME = "<ogc:PropertyName>%s</ogc:PropertyName>";
   private static final String COORDINATES = "<coordinates>";
   private static final String REQUEST =
     "<wfs:GetFeature xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
@@ -37,7 +38,7 @@ public abstract class AbstractWfsPaymentDataService {
         "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +
         "xmlns:ogc=\"http://www.opengis.net/ogc\" service=\"WFS\" version=\"1.0.0\">" +
         "<wfs:Query typeName=\"helsinki:%s\">" +
-          "<ogc:PropertyName>%s</ogc:PropertyName>" +
+          PROPERTYNAME +
           "<ogc:Filter>" +
             "<ogc:Intersects>" +
               "<ogc:PropertyName>geom</ogc:PropertyName>" +
@@ -91,7 +92,10 @@ public abstract class AbstractWfsPaymentDataService {
   }
 
   private String getRequest(StartTimeInterface startTime) {
-    return String.format(REQUEST, getFeatureTypenameFor(startTime), getFeaturePropertyName());
+    // remove PropertyName element from post-2025 requests
+    if (startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
+      return String.format(REQUEST.replaceFirst(PROPERTYNAME, ""), getFeatureTypenameFor(startTime), getFeaturePropertyName());
+    else return String.format(REQUEST, getFeatureTypenameFor(startTime));
   }
 
   protected String getFeatureTypenameFor(StartTimeInterface startTime) {
