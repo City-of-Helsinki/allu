@@ -46,7 +46,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String getFeatureTypeName() {
+  protected String getFeatureTypeNamePre2022() {
     return FEATURE_TYPE_NAME;
   }
 
@@ -56,7 +56,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String getFeatureTypeNameNew() {
-    return getFeatureTypeName();
+  protected String getFeatureTypeNamePost2022() {
+    return getFeatureTypeNamePre2022();
   }
 }
