@@ -10,7 +10,7 @@ import { selectCurrentTab } from './prune-data.selectors';
 
 @Injectable()
 export class PruneDataEffects {
-  private endpoint = '/api/anonymizable';
+  private endpoint = '/api/applications/anonymizable';
   private userEndpoint = '/api/anonymizable/user';
 
   constructor(

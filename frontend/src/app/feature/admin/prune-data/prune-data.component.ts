@@ -1,16 +1,18 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Application } from '@app/model/application/application';
-import { TimeUtil } from '../../../util/time.util';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 
 import * as fromRoot from '@feature/allu/reducers';
 import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { pruneDataTabs } from './prune-data-tab';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map, switchMap, takeUntil, take } from 'rxjs/operators';
-import { MatSort } from '@angular/material/sort';
+import { map, switchMap, takeUntil, take, filter } from 'rxjs/operators';
+import { MatSort, Sort } from '@angular/material/sort';
 import * as PruneDataActions from './store/prune-data.actions';
-import { selectAllSelected, selectPruneData, selectSomeSelected } from './store/prune-data.selectors';
+import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility } from './store/prune-data.selectors';
+import { findTranslation } from '@app/util/translations';
 
 interface ColumnConfig {
   columns: string[];
@@ -24,59 +26,26 @@ interface ColumnConfig {
 })
 export class PruneDataComponent implements OnInit, OnDestroy {
   title = 'Tiedon poisto'
-  dataSource$ = this.store.select(selectPruneData);
+  filteredDataSource$ = this.store.select(selectFilteredData)
   someSelected$ = this.store.select(selectSomeSelected);
   allSelected$ = this.store.select(selectAllSelected);
+  selectedIds$ = this.store.select(selectSelectedIds);
+  selectedTab$ = this.store.select(selectCurrentTab);
+  deleteModalVisible = this.store.select(selectDeleteModalVisibility);
   tabs = pruneDataTabs;
 
-  private columnConfigs: { [key: string]: ColumnConfig } = {
-    'applications': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'area-rentals': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'cable-reports': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'excavation-announcements': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'short-term-rentals': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'placement-contracts': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'events': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'traffic-arrangements': {
-      columns: ['applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'],
-      translations: {}
-    },
-    'user_data': {
-      columns: ['userId', 'firstName', 'lastName', 'email', 'phoneNumber', 'modifiedAt'],
-      translations: {}
-    }
-  };
+  hasSelectedItems$ = this.selectedIds$.pipe(
+    map(selectedIds => selectedIds.length > 0))
 
-  displayedColumns: string[] = this.columnConfigs['applications'].columns;
 
+  displayedColumns: string[] = ['selected', 'applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'];
   currentTab$ = this.route.params.pipe(
     map(params => {
       const tab = params['tab'];
-      this.displayedColumns = this.columnConfigs[tab]?.columns || this.columnConfigs['applications'].columns;
       return tab;
     })
   );
+  
 
   private destroy$ = new Subject<void>();
 
@@ -87,8 +56,8 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     private store: Store<fromRoot.State>,
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
   ) {
-    // Remove the existing subscription and use the currentTab$ observable
   }
 
   ngOnInit(): void {
@@ -100,7 +69,6 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$))
     .subscribe(tab => {
       this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
-      this.store.dispatch(PruneDataActions.fetchAllData({ tab }));
     });
   }
 
@@ -125,26 +93,50 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  isSelected(id: number): boolean {
-    return true;
-    // return this.store.select(selectSelectedIds).pipe(
-    //   map(selectedIds => selectedIds.includes(id))
-    // );
+  isSelected(id: number): any {
+    return this.store.select(selectSelectedIds).pipe(
+      map(selectedIds => selectedIds.includes(id))
+    );
+  }
+
+  onSort(sort: Sort): void {
+    const { active, direction } = sort;
+
+    if (!direction) {
+      this.store.dispatch(PruneDataActions.tableSortReset());
+      return;
+    }
+
+    this.filteredDataSource$
+    .pipe(take(1))
+    .subscribe((data) => {
+      const sortedData = [...data].sort((a, b) => {
+        const isAsc = direction === 'asc';
+        return this.compare(a[active], b[active], isAsc);
+      });
+      
+      this.store.dispatch(PruneDataActions.tableSortChange({data: sortedData}));
+    });
+  }
+
+  compare(a: any, b: any, isAsc: boolean): number {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   deleteSelected(): void {
-    // const selectedIds = ... // logic to get selected ids
-    // this.store.dispatch(PruneDataActions.deleteData({ ids: selectedIds }));
+    const data = {
+      title: 'Vahvista hakemusten anonymisointi',
+      description: 'valitut hakemukset anonymisoidaan',
+      confirmText: 'Anonymisoi',
+      cancelText: 'Peruuta'
+    };
+    this.dialog.open(ConfirmDialogComponent, {data})
+      .afterClosed()
+      .pipe(filter(result => result)) // Ignore no answers
+      .subscribe(() => this.handleDelete());
   }
 
-  addToBasket(): void {
-    // this.store.pipe(
-    //   select(fromApplication.getSelectedApplications),
-    //   take(1)
-    // ).subscribe(selected => {
-    //   this.store.dispatch(new AddMultiple(selected));
-    //   this.store.dispatch(new ClearSelected(ActionTargetType.Application));
-    // });
+  handleDelete(): void {
   }
 
 }

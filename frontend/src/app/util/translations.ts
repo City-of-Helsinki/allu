@@ -2106,19 +2106,19 @@ export const translations = {
       defaultAttachments: 'Vakioliitteet',
       defaultImages: 'Tyyppikuvat',
       defaultRecipients: 'Päätöksen vastaanottajat',
-      pruneApplications: 'Poistettavat hakemukset',
+      pruneData: 'Poistettavat tiedot',
       configuration: 'Asetukset',
     }
   },
   prunedata: {
     tab: {
-      AREA_RENTALS: 'Aluevuokraukset',
-      CABLE_REPORTS: 'Kaapeliraportit',
-      EXCAVATION_ANNOUNCEMENTS: 'Kaivuilmoitukset',
-      SHORT_TERM_RENTALS: 'Lyhytaikaiset vuokrat',
-      PLACEMENT_CONTRACTS: 'Sijoitussopimukset',
-      EVENTS: 'Tapahtumat',
-      TRAFFIC_ARRANGEMENTS: 'Liikennejärjestelyt',
+      AREA_RENTAL: 'Aluevuokraukset',
+      CABLE_REPORT: 'Kaapeliraportit',
+      EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitukset',
+      SHORT_TERM_RENTAL: 'Lyhytaikaiset vuokrat',
+      PLACEMENT_CONTRACT: 'Sijoitussopimukset',
+      EVENT: 'Tapahtumat',
+      TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Liikennejärjestelyt',
       USER_DATA: 'Käyttäjätiedot'
     },
     columns: {

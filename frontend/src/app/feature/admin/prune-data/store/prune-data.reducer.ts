@@ -1,6 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
 import * as PruneDataActions from './prune-data.actions';
 import { PruneDataItem } from '../models/prude-data-item.model';
+import { TimeUtil } from '@app/util/time.util';
+import moment from 'moment';
 
 
 export interface PruneDataState {
@@ -10,30 +12,21 @@ export interface PruneDataState {
   loading: boolean;
   error: any;
   selectedIds: number[];
+  showDeleteModal: boolean;
 }
     
 export const initialState: PruneDataState = {
   allData: [],
   filteredData: [],
-  currentTab: null,
+  currentTab: 'EXCAVATION_ANNOUNCEMENTS',
   loading: false,
   error: null,
-  selectedIds: []
+  selectedIds: [],
+  showDeleteModal: false,
 };
 
 export const pruneDataReducer = createReducer(
   initialState,
-  on(PruneDataActions.loadPruneData, state => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
-  on(PruneDataActions.loadPruneDataSuccess, (state, { data }) => ({
-    ...state,
-    allData: data,
-    filteredData: filterDataByTab(data, state.currentTab),
-    loading: false
-  })),
   on(PruneDataActions.setCurrentTab, (state, { tab }) => ({
     ...state,
     currentTab: tab,
@@ -46,27 +39,26 @@ export const pruneDataReducer = createReducer(
       : [...state.selectedIds, id]
   })),
   on(PruneDataActions.toggleSelectAll, (state) => {
-    const allIds = state.allData.map(item => item.id);
+    const allIds = state.filteredData.map(item => item.id);
     const newSelectedIds = state.selectedIds.length === allIds.length ? [] : allIds;
     return {
       ...state,
       selectedIds: newSelectedIds
     };
   }),
-  on(PruneDataActions.setCurrentTab, (state, { tab }) => ({
-    ...state,
-    currentTab: tab,
-  })),
   on(PruneDataActions.fetchAllData, state => ({
     ...state,
     loading: true,
     error: null,
   })),
-  on(PruneDataActions.fetchAllDataSuccess, (state, { data }) => ({
+  on(PruneDataActions.fetchAllDataSuccess, (state, { data }) => {
+    const humanReadableData = makeDateTimesHumanReadable(data);
+    return {
     ...state,
     loading: false,
-    data,
-  })),
+    allData: humanReadableData,
+    filteredData: filterDataByTab(humanReadableData, state.currentTab)}
+  }),
   on(PruneDataActions.fetchAllDataFailure, (state, { error }) => ({
     ...state,
     loading: false,
@@ -78,9 +70,31 @@ export const pruneDataReducer = createReducer(
   on(PruneDataActions.deleteDataFailure, (state, { error }) => ({
     ...state,
     error,
-})));
+  })),
+  on(PruneDataActions.tableSortReset, (state) => ({
+    ...state,
+    filteredData: filterDataByTab(state.allData, state.currentTab)
+  })),
+  on(PruneDataActions.tableSortChange, (state, { data }) => ({
+    ...state,
+    filteredData: data
+  })),
+  on(PruneDataActions.deleteModalVisibility, (state, { show }) => ({
+    ...state,
+    showDeleteModal: show
+  })),
+);
 
 function filterDataByTab(data: PruneDataItem[], tab: string | null): PruneDataItem[] {
   if (!tab) return data;
-  return data.filter(item => item);
-} 
+  return data.filter(item => item.applicationType === tab.toUpperCase());
+}
+
+function makeDateTimesHumanReadable(data: PruneDataItem[]) {
+  return data.map(d => ({
+    ...d, 
+    startTime: moment(d.startTime).format('DD.MM.YYYY'), 
+    endTime: moment(d.endTime).format('DD.MM.YYYY'),
+    changeTime: moment(d.changeTime).format('DD.MM.YYYY - HH:mm')
+  }));
+}

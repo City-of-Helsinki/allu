@@ -10,7 +10,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlluCommonModule } from '@feature/common/allu-common.module';
 import { EffectsModule } from '@ngrx/effects';
 import { PruneDataEffects } from './store/prune-data.effects';
-
 import { PruneDataComponent } from './prune-data.component';
 import { pruneDataReducer } from './store/prune-data.reducer';
 

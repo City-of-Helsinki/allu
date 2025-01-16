@@ -1,6 +1,12 @@
 <div class="main-content prune-data-controls">
   <h1> {{ title }} </h1>
 
+  <div class="delete-button-row">
+    <button *ngIf="hasSelectedItems$ | async" mat-raised-button type="button" color="primary" (click)="deleteSelected()">
+      Poista valitut
+    </button>
+  </div>
+
   <div fxLayout='row'>
     <div fxFlex>
       <div class="labels-solid labels-end">
@@ -18,11 +24,11 @@
     </div>
   </div>
 
-  <!-- mockup table -->
   <div fxLayout="row">
     <div fxFlex>
       <div class="mat-elevation-z8 data-table data-table-with-paging">
-        <mat-table #table [dataSource]="dataSource$ | async" matSort [trackBy]="trackById">
+        <mat-table #table [dataSource]="filteredDataSource$ | async" matSort (matSortChange)="onSort($event)" [trackBy]="trackById">
+
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <ng-container *ngIf="column === 'selected'; else regularHeader">
@@ -41,12 +47,27 @@
               <ng-container [ngSwitch]="column">
                 <ng-container *ngSwitchCase="'selected'">
                   <mat-checkbox 
-                    [checked]="false"
+                    [checked]="isSelected(row.id) | async"
                     (change)="checkSingle(row.id)">
                   </mat-checkbox>
                 </ng-container>
+                <ng-container *ngSwitchCase="'applicationId'">
+                      <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
+                        {{row.applicationId}}
+                      </a>
+                </ng-container>
                 <ng-container *ngSwitchDefault>
-                  {{row[column]}}
+                  <ng-container *ngIf="column === 'changeType'; else regularContent">
+                    <ng-container *ngIf="row.changeSpecifier; else defaultTranslation">
+                      {{ 'history.change.typeWithSpecifier.' + row.changeType + '.' + row.changeSpecifier | translation }}
+                    </ng-container>
+                    <ng-template #defaultTranslation>
+                      {{ 'history.change.type.' + row.changeType | translation }}
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #regularContent>
+                    {{row[column]}}
+                  </ng-template>
                 </ng-container>
               </ng-container>
             </mat-cell>

@@ -1,18 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { PruneDataItem } from '../models/prude-data-item.model';
 
-export const loadPruneData = createAction('[Prune Data] Load Data');
-
-export const loadPruneDataSuccess = createAction(
-  '[Prune Data] Load Data Success',
-  props<{ data: PruneDataItem[] }>()
-);
-
-export const loadPruneDataFailure = createAction(
-  '[Prune Data] Load Data Failure',
-  props<{ error: any }>()
-);
-
 export const setCurrentTab = createAction(
   '[Prune Data] Set Current Tab',
   props<{ tab: string }>()
@@ -43,7 +31,7 @@ export const fetchAllDataFailure = createAction(
     props<{ error: string }>()
   );
   
-  export const deleteData = createAction(
+export const deleteData = createAction(
     '[PruneData] Delete Data',
     props<{ ids: number[] }>()
 );
@@ -53,7 +41,21 @@ export const deleteDataSuccess = createAction(
     props<{ ids: number[] }>()
 );
   
-  export const deleteDataFailure = createAction(
+export const deleteDataFailure = createAction(
     '[PruneData] Delete Data Failure',
     props<{ error: string }>()
+);
+
+export const tableSortChange = createAction(
+  '[PruneData] Table Sort Change',
+  props<{ data: PruneDataItem[] }>()
+);
+
+export const tableSortReset = createAction(
+  '[PruneData] Table Sort Reset'
+);
+
+export const deleteModalVisibility = createAction(
+  '[PruneData] Table Sort Reset',
+  props<{ show: boolean }>()
 );

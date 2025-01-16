@@ -36,7 +36,7 @@ export const adminRoutes: Routes = [
     { path: 'default-images', data: {attachmentType: 'DEFAULT_IMAGE'}, children: attachmentChildRoutes },
     { path: 'default-recipients', component: DefaultRecipientsComponent},
     { path: 'prune-data', children: [
-     { path: '', redirectTo: 'area-rentals', pathMatch: 'full' },
+     { path: '', redirectTo: 'excavation_announcement', pathMatch: 'full' },
      { path: ':tab', component: PruneDataComponent}
     ]},
     { path: 'configuration', component: ConfigurationComponent }
