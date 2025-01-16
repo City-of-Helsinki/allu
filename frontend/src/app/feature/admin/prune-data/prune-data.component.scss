@@ -1,0 +1,29 @@
+@use '@angular/material' as mat;
+@import '../../../../assets/colors';
+
+.h1 {
+  color: green;
+}
+
+.prune-data-controls {
+  background-color: mat.get-color-from-palette($allu-primary, 50);
+
+  .modal-content {
+    background-color: orange;
+  }
+
+  .delete-button-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 32px;
+  }
+  nav {
+    width: 100%;
+    display: flex;
+    overflow-x: auto; 
+    
+    a {
+      padding: 16px;
+    }
+  }
+}

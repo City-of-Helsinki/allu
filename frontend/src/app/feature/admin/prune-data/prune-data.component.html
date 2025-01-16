@@ -1,0 +1,86 @@
+<div class="main-content prune-data-controls">
+  <h1> {{ title }} </h1>
+
+  <div class="delete-button-row">
+    <button *ngIf="hasSelectedItems$ | async" mat-raised-button type="button" color="primary" (click)="deleteSelected()">
+      Poista valitut
+    </button>
+  </div>
+
+  <div fxLayout='row'>
+    <div fxFlex>
+      <div class="labels-solid labels-end">
+        <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+          <a mat-tab-link
+             *ngFor="let tab of tabs"
+             [routerLink]="['/admin/prune-data', tab | lowercase]"
+             routerLinkActive #rla="routerLinkActive"
+             [routerLinkActiveOptions]="{exact: true}"
+             [active]="rla.isActive">
+            {{['prunedata.tab', tab] | translation}}
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div fxLayout="row">
+    <div fxFlex>
+      <div class="mat-elevation-z8 data-table data-table-with-paging">
+        <mat-table #table [dataSource]="filteredDataSource$ | async" matSort (matSortChange)="onSort($event)" [trackBy]="trackById">
+
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+              <ng-container *ngIf="column === 'selected'; else regularHeader">
+                <mat-checkbox
+                  [checked]="(someSelected$ | async) && (allSelected$ | async)"
+                  [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                  (change)="checkAll()">
+                </mat-checkbox>
+              </ng-container>
+              <ng-template #regularHeader>
+                {{'prunedata.columns.' + column | translation}}
+              </ng-template>
+            </mat-header-cell>
+            
+            <mat-cell *matCellDef="let row">
+              <ng-container [ngSwitch]="column">
+                <ng-container *ngSwitchCase="'selected'">
+                  <mat-checkbox 
+                    [checked]="isSelected(row.id) | async"
+                    (change)="checkSingle(row.id)">
+                  </mat-checkbox>
+                </ng-container>
+                <ng-container *ngSwitchCase="'applicationId'">
+                      <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
+                        {{row.applicationId}}
+                      </a>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <ng-container *ngIf="column === 'changeType'; else regularContent">
+                    <ng-container *ngIf="row.changeSpecifier; else defaultTranslation">
+                      {{ 'history.change.typeWithSpecifier.' + row.changeType + '.' + row.changeSpecifier | translation }}
+                    </ng-container>
+                    <ng-template #defaultTranslation>
+                      {{ 'history.change.type.' + row.changeType | translation }}
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #regularContent>
+                    {{row[column]}}
+                  </ng-template>
+                </ng-container>
+              </ng-container>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
+        </mat-table>
+      </div>
+    </div>
+  </div>
+  
+  <mat-tab-nav-panel #tabPanel>
+  </mat-tab-nav-panel>
+
+</div>

@@ -564,7 +564,9 @@ export const translations = {
     address: 'Osoite',
     startTime: 'Alkupäivä',
     endTime: 'Loppupäivä',
-    receivedTime: 'Saapunut'
+    receivedTime: 'Saapunut',
+    changeTime: 'Viimeisin muutos',
+    changeType: 'Muutoksen tyyppi'
   },
   applicationInfo: {
     title: 'Hakemuksen perustiedot',
@@ -2104,7 +2106,27 @@ export const translations = {
       defaultAttachments: 'Vakioliitteet',
       defaultImages: 'Tyyppikuvat',
       defaultRecipients: 'Päätöksen vastaanottajat',
+      pruneData: 'Poistettavat tiedot',
       configuration: 'Asetukset',
+    }
+  },
+  prunedata: {
+    tab: {
+      AREA_RENTAL: 'Aluevuokraukset',
+      CABLE_REPORT: 'Kaapeliraportit',
+      EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitukset',
+      SHORT_TERM_RENTAL: 'Lyhytaikaiset vuokrat',
+      PLACEMENT_CONTRACT: 'Sijoitussopimukset',
+      EVENT: 'Tapahtumat',
+      TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Liikennejärjestelyt',
+      USER_DATA: 'Käyttäjätiedot'
+    },
+    columns: {
+      applicationId: 'Hakemus Id',
+      startTime: 'Aloitusaika',
+      endTime: 'Lopetusaika',
+      changeTime: 'Muutettu',
+      changeType: 'Muutos'
     }
   },
   configuration: {

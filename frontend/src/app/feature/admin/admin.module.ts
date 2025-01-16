@@ -26,6 +26,7 @@ import {ExternalUserHub} from '@service/user/external-user-hub';
 import {ExternalUserService} from '@service/user/external-user-service';
 import {ExternalUserComponent} from './external-user/external-user.component';
 import {ConfigurationModule} from '@feature/admin/configuration/configuration.module';
+import { PruneDataModule } from './prune-data/prune-data.module'
 
 @NgModule({
   imports: [
@@ -40,7 +41,8 @@ import {ConfigurationModule} from '@feature/admin/configuration/configuration.mo
     ConfigurationModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    PruneDataModule
   ],
   declarations: [
     AdminComponent,
@@ -52,7 +54,7 @@ import {ConfigurationModule} from '@feature/admin/configuration/configuration.mo
     DefaultAttachmentsComponent,
     DefaultAttachmentComponent,
     DefaultRecipientsComponent,
-    RecipientsByTypeComponent
+    RecipientsByTypeComponent,
   ],
   providers: [
     DefaultRecipientService,

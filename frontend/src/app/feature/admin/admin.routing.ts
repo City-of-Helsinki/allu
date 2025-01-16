@@ -10,6 +10,7 @@ import {ExternalUserListComponent} from './external-user/external-user-list.comp
 import {ExternalUserComponent} from './external-user/external-user.component';
 import {ConfigurationComponent} from '@feature/admin/configuration/configuration.component';
 import {AdminGuard} from '@app/service/authorization/admin-guard.service';
+import { PruneDataComponent } from './prune-data/prune-data.component';
 
 
 const attachmentChildRoutes = [
@@ -34,6 +35,10 @@ export const adminRoutes: Routes = [
     { path: 'default-attachments', data: {attachmentType: 'DEFAULT'}, children: attachmentChildRoutes },
     { path: 'default-images', data: {attachmentType: 'DEFAULT_IMAGE'}, children: attachmentChildRoutes },
     { path: 'default-recipients', component: DefaultRecipientsComponent},
+    { path: 'prune-data', children: [
+     { path: '', redirectTo: 'excavation_announcement', pathMatch: 'full' },
+     { path: ':tab', component: PruneDataComponent}
+    ]},
     { path: 'configuration', component: ConfigurationComponent }
   ]}
 ];
