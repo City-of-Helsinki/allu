@@ -1,13 +1,16 @@
 package fi.hel.allu.servicecore.service;
 
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXml;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2022;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2025;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -57,12 +60,17 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   }
 
   private PaymentClassXml getPaymentClass(String response, ApplicationJson applicationJson){
-    if(isNewExcavationPayment(applicationJson)){
-      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2022.class);
-    }
-    else{
+
+    if (applicationJson.getStartTime() == null) {
       return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
     }
+    ZonedDateTime startTimeHelsinkiZone = applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
+
+    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
+      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2025.class);
+    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2022_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
+      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2022.class);
+    return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
   }
 
   @Override
@@ -79,4 +87,10 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   protected String getFeatureTypeNamePost2022() {
     return getFeatureTypeNamePre2022() + "_2022";
   }
+
+  @Override
+  protected String getFeatureTypeNamePost2025() {
+    return getFeatureTypeNamePre2022() + "_2025";
+  }
+
 }
