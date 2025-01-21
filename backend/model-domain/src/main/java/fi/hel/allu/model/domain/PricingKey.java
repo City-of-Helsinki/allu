@@ -9,6 +9,12 @@ public enum PricingKey {
   SMALL_AREA_DAILY_FEE,
   MEDIUM_AREA_DAILY_FEE,
   LARGE_AREA_DAILY_FEE,
+  LESS_THAN_60M2,
+  FROM_60_TO_120M2,
+  FROM_121_TO_250M2,
+  FROM_251_TO_500M2,
+  FROM_501_TO_1000M2,
+  MORE_THAN_1000M2,
 
   // Short term rental
   BENJI_DAILY_PRICE,
@@ -34,7 +40,8 @@ public enum PricingKey {
   MAJOR_DISTURBANCE_HANDLING_FEE,
   UNIT_PRICE,
   UNDERPASS_DICOUNT_PERCENTAGE,
-  AREA_UNIT_M2;
+  AREA_UNIT_M2,
+  FROM_15M2;
 
   public static PricingKey forTerraceKind(ApplicationKind kind) {
     switch (kind) {
