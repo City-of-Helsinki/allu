@@ -29,9 +29,6 @@ public class ExcavationPricing extends Pricing {
   private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
   private static final String SELF_SUPERVISION_TEXT = "Omavalvonta";
 
-  private static final double SMALL_AREA_LIMIT = 60.0;
-  private static final double LARGE_AREA_LIMIT = 120.0;
-
   public ExcavationPricing(Application application,
       WinterTimeService winterTimeService, PricingExplanator pricingExplanator, PricingDao pricingDao,
       List<InvoicingPeriod> invoicingPeriods) {
@@ -79,12 +76,18 @@ public class ExcavationPricing extends Pricing {
   }
 
   private int getDailyFee(double locationArea, String paymentClass) {
-    if (locationArea < SMALL_AREA_LIMIT) {
-      return getPrice(PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
-    } else if (locationArea > LARGE_AREA_LIMIT) {
-      return getPrice(PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
+    if (locationArea <= 60.0) {
+      return getPrice(PricingKey.LESS_THAN_60M2, paymentClass);
+    } else if (locationArea <= 120.0) {
+      return getPrice(PricingKey.FROM_60_TO_120M2, paymentClass);
+    } else if (locationArea <= 250.0) {
+      return getPrice(PricingKey.FROM_121_TO_250M2, paymentClass);
+    } else if (locationArea <= 500.0) {
+      return getPrice(PricingKey.FROM_251_TO_500M2, paymentClass);
+    } else if (locationArea <= 1000.0) {
+      return getPrice(PricingKey.FROM_501_TO_1000M2, paymentClass);
     } else {
-      return getPrice(PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
+      return getPrice(PricingKey.MORE_THAN_1000M2, paymentClass);
     }
   }
 
