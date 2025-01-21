@@ -1,5 +1,7 @@
 package fi.hel.allu.model.dao;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,8 +57,9 @@ public class PricingDao {
         .select(pricing.value)
         .from(pricing)
         .where(pricing.applicationType.eq(type)
-            .and(pricing.key.eq(key.name()))
-            .and(pricing.paymentClass.eq(paymentClass)))
+          .and(pricing.key.eq(key.name()))
+          .and(pricing.paymentClass.eq(paymentClass))
+          .and(pricing.validity.eq(Date.valueOf(LocalDate.of(2025, 3, 1))).or(pricing.validity.isNull())))
         .fetchFirst();
     if (value == null) {
       throw new NoSuchEntityException("pricing.notFound");
@@ -70,7 +73,8 @@ public class PricingDao {
         .select(pricing.value)
         .from(pricing)
         .where(pricing.applicationType.eq(type)
-            .and(pricing.key.eq(key.name())))
+          .and(pricing.key.eq(key.name()))
+          .and(pricing.validity.eq(Date.valueOf(LocalDate.of(2025, 3, 1))).or(pricing.validity.isNull())))
         .fetchFirst();
     if (value == null) {
       throw new NoSuchEntityException("pricing.notFound");
@@ -80,7 +84,9 @@ public class PricingDao {
 
   @Transactional(readOnly = true)
   public List<String> getPaymentClasses(ApplicationType type, ApplicationKind kind) {
-    BooleanExpression condition = pricing.applicationType.eq(type).and(pricing.paymentClass.isNotNull());
+    BooleanExpression condition = pricing.applicationType.eq(type)
+      .and(pricing.paymentClass.isNotNull())
+      .and(pricing.validity.eq(Date.valueOf(LocalDate.of(2025, 3, 1))).or(pricing.validity.isNull()));
     if (type == ApplicationType.SHORT_TERM_RENTAL) {
       // Short term rentals have kind specific payment classes
       condition = condition.and(pricing.key.eq(kind.name()));
