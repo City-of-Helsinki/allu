@@ -34,7 +34,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String parseResult(List<String> responses, ApplicationJson applicationJson) {
+  protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
     return responses.stream()
         .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneXml.class))
         .filter(p -> p.featureMember != null)
