@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.vividsolutions.jts.geom.TopologyException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
@@ -12,6 +13,8 @@ import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2
 import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2025;
 import org.geolatte.geom.*;
 import org.geolatte.geom.crs.CrsId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ import static java.lang.Math.max;
 @Service
 public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService implements PaymentClassService {
 
+  private static final Logger logger = LoggerFactory.getLogger(PaymentClassServiceImpl.class);
 
   private static final String FEATURE_TYPE_NAME = "Katutoiden_maksuluokat";
   private static final String FEATURE_PROPERTY_NAME = "maksuluokka";
@@ -40,15 +44,16 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   @Override
   public String getPaymentClass(LocationJson location, ApplicationJson applicationJson) {
     return executeWfsRequest(location, applicationJson);
-
   }
 
 
   @Override
   protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
-    if (applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
-      return parseResultPost2025(responses, location);
-    else return parseResultPre2025(responses, applicationJson);
+    return isApplicationPost2025(applicationJson) ? parseResultPost2025(responses, location) : parseResultPre2025(responses, applicationJson);
+  }
+
+  protected boolean isApplicationPost2025(ApplicationJson applicationJson) {
+    return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
   protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
@@ -68,24 +73,29 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return paymentClass;
   }
 
-  protected String parseResultPost2025(List<String> responses, LocationJson location) {
+  private List<PaymentClassXmlPost2025> responsesToPaymentClasses(List<String> responses) {
+    return responses.stream().map(this::getPaymentClassPost2025).toList();
+  }
+
+  private List<HashMap<String, List<String>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
+    return paymentClasses.stream().map(PaymentClassXmlPost2025::getPaymentLevels).toList();
+  }
+
+  private HashMap<String, List<String>> combineHashMaps(List<HashMap<String, List<String>>> hashMapList) {
     HashMap<String, List<String>> combinedMap = new HashMap<String, List<String>>();
-    for (String response : responses) {
-      final PaymentClassXmlPost2025 paymentClassXml = getPaymentClassPost2025(response);
-      HashMap<String, List<String>> paymentMap = paymentClassXml.getPaymentLevels();
-      for (String level : paymentMap.keySet()) {
+
+    for (HashMap<String, List<String>> nextMap : hashMapList) {
+      for (String level : nextMap.keySet()) {
         if (!combinedMap.containsKey(level)) combinedMap.put(level, new ArrayList<String>());
-        combinedMap.get(level).addAll(paymentMap.get(level));
+        combinedMap.get(level).addAll(nextMap.get(level));
       }
     }
-    HashMap<String, List<Polygon>> polygonMap = coordinatesToPolygons(combinedMap);
-    HashMap<String, List<Double>> areaMap = polygonsToAreas(polygonMap);
-    HashMap<String, Double> areaSumMap = sumAreas(areaMap);
 
-    Double totalArea = location.getArea();
-    if (totalArea == null || totalArea == 0.0) totalArea = computeLocationAreaLocally(location);
+    return combinedMap;
+  }
 
-    return computePaymentLevel(totalArea, areaSumMap);
+  protected String parseResultPost2025(List<String> responses, LocationJson location) {
+    return computePaymentLevel(getLocationArea(location), sumAreas(intersectionsToAreas(polygonsToIntersections(coordinatesToPolygons(combineHashMaps(paymentClassesToPaymentMaps(responsesToPaymentClasses(responses)))), location))));
   }
 
   HashMap<String, List<Polygon>> coordinatesToPolygons(HashMap<String, List<String>> coordinateMap) {
@@ -122,12 +132,51 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return polygonMap;
   }
 
-  private HashMap<String, List<Double>> polygonsToAreas(HashMap<String, List<Polygon>> polygonMap) {
+  private HashMap<String, List<Polygon>> polygonsToIntersections(HashMap<String, List<Polygon>> polygonMap, LocationJson location) {
+    Geometry locationGeometry = location.getGeometry();
+    List<Polygon> locationPolygons = new ArrayList<Polygon>();
+    if (locationGeometry.getGeometryType() == GeometryType.POLYGON) locationPolygons.add((Polygon)locationGeometry);
+    else {
+      GeometryCollection collection = (GeometryCollection)locationGeometry;
+      for (Geometry geom : collection)
+        locationPolygons.add((Polygon)geom);
+    }
+
+    HashMap<String, List<Polygon>> resultMap = new HashMap<>();
+    for (String level : polygonMap.keySet()) {
+      resultMap.put(level, new ArrayList<Polygon>());
+      for (Polygon polygon : polygonMap.get(level)) {
+        for (Polygon locationPolygon : locationPolygons) {
+          try {
+            Geometry intersection = polygon.intersection(locationPolygon);
+            switch (intersection.getGeometryType()) {
+              case POLYGON -> {
+                resultMap.get(level).add((Polygon) intersection);
+              }
+              case GEOMETRY_COLLECTION -> {
+                GeometryCollection collection = (GeometryCollection) intersection;
+                for (int i = 0; i < collection.getNumGeometries(); i++)
+                  resultMap.get(level).add((Polygon) collection.getGeometryN(i));
+              }
+              default -> {
+                logger.warn("Intersection GeometryType was " + intersection.getGeometryType());
+              }
+            }
+          }
+          catch (TopologyException e) {
+            logger.warn("Intersection operation threw TopologyException, ignoring polygon from WFS server. Exception was: " + e.getMessage());
+          }
+        }
+      }
+    }
+    return resultMap;
+  }
+
+  private HashMap<String, List<Double>> intersectionsToAreas(HashMap<String, List<Polygon>> polygonMap) {
     HashMap<String, List<Double>> areaMap = new HashMap<>();
 
-    for (String level : polygonMap.keySet()) {
+    for (String level : polygonMap.keySet())
       areaMap.put(level, polygonMap.get(level).stream().map(Polygon::getArea).toList());
-    }
 
     return areaMap;
   }
@@ -139,9 +188,10 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return resultMap;
   }
 
-  private Double computeLocationAreaLocally(LocationJson location) {
-
-    return computeGeometryAreaLocally(location.getGeometry());
+  private Double getLocationArea(LocationJson location) {
+    Double totalArea = location.getArea();
+    if (totalArea == null || totalArea == 0.0) return computeGeometryAreaLocally(location.getGeometry());
+    else return totalArea;
   }
 
   private Double computeGeometryAreaLocally(Geometry geometry) {
@@ -157,8 +207,8 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
         return ((Polygon)geometry).getArea();
       }
       default -> {
-        // don't know what to to with whatever this is?
-        System.out.println("GeometryType was " + geometry.getGeometryType());
+        // don't know what to do with whatever this is?
+        logger.warn("GeometryType was " + geometry.getGeometryType());
         return 0.0;
       }
     }
@@ -167,23 +217,29 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   private String computePaymentLevel(double totalArea, HashMap<String, Double> areaSumMap) {
 
     // if there are no areas of other levels then it's just a 5
-    if (areaSumMap.isEmpty()) return "5";
+    if (areaSumMap.isEmpty()) {
+      logger.info("No areas with payment levels 1-4, choosing 5");
+      return "5";
+    }
 
     double level5Area = totalArea;
     for (Double area : areaSumMap.values()) level5Area -= area;
     areaSumMap.put("5", max(level5Area, 0.0));
 
-    // find highest level (lowest number) with at least 15 m2 of area, if any
-    String highestLevel = null;
-    for (String level : areaSumMap.keySet()) {
-      if (areaSumMap.get(level) >= 15 && (highestLevel == null || highestLevel.compareTo(level) == 1)) {
-        highestLevel = level;
-      }
-    }
+    StringBuilder sb = new StringBuilder();
+    sb.append("Payment level area map has these areas:");
+    for (String level : areaSumMap.keySet())
+      sb.append(" ").append(level).append(" - ").append(areaSumMap.get(level));
+    logger.info(sb.toString());
 
-     if (highestLevel != null) {
+    // find the highest level (lowest number) with at least 15 m2 of area, if any
+    String highestLevel = null;
+    for (String level : areaSumMap.keySet())
+      if (areaSumMap.get(level) >= 15 && (highestLevel == null || highestLevel.compareTo(level) == 1))
+        highestLevel = level;
+
+     if (highestLevel != null)
        return highestLevel;
-     }
 
      // find the level with the highest area
     highestLevel = null;
