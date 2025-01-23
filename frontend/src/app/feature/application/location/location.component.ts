@@ -230,8 +230,11 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   get paymentTariffs(): string[] {
+    const switchOverDate = new Date('2025-02-28');
+    const startDate = this.application.startTime;
+    const isStartAfterSwitchOver = startDate > switchOverDate;
     return Some(this.application)
-      .map(app => getPaymentTariffs(app.kinds))
+      .map(app => getPaymentTariffs(app.kinds, isStartAfterSwitchOver))
       .orElse([]);
   }
 
