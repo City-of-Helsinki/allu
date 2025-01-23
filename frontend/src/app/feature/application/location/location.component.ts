@@ -231,11 +231,11 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   get paymentTariffs(): string[] {
     const switchOverDate = new Date('2025-02-28');
-    const startDate = this.application.startTime;
+    const startTime = this.application?.startTime;
+    const startDate = startTime ? new Date(startTime) : null;
 
-    const isStartDateValid = !isNaN(startDate.getTime());
-    const isStartAfterSwitchOver = isStartDateValid && startDate.getTime() > switchOverDate.getTime();
-    
+    const isStartAfterSwitchOver = startDate && !isNaN(startDate.getTime()) && startDate.getTime() > switchOverDate.getTime();
+
     return Some(this.application)
       .map(app => getPaymentTariffs(app.kinds, isStartAfterSwitchOver))
       .orElse([]);
