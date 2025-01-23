@@ -232,7 +232,10 @@ export class LocationComponent implements OnInit, OnDestroy {
   get paymentTariffs(): string[] {
     const switchOverDate = new Date('2025-02-28');
     const startDate = this.application.startTime;
-    const isStartAfterSwitchOver = startDate > switchOverDate;
+
+    const isStartDateValid = !isNaN(startDate.getTime());
+    const isStartAfterSwitchOver = isStartDateValid && startDate.getTime() > switchOverDate.getTime();
+    
     return Some(this.application)
       .map(app => getPaymentTariffs(app.kinds, isStartAfterSwitchOver))
       .orElse([]);
