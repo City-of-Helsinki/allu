@@ -19,9 +19,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -67,7 +70,7 @@ public abstract class AbstractWfsPaymentDataService {
     this.restTemplate = restTemplate;
   }
 
-  protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson);
+  protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location);
 
   protected abstract String getFeatureTypeNamePre2022();
 
@@ -84,7 +87,7 @@ public abstract class AbstractWfsPaymentDataService {
     try {
       final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
       final List<String> responses = collectResponses(responseFutures);
-      return parseResult(responses, applicationJson);
+      return parseResult(responses, applicationJson, location);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return UNDEFINED;
