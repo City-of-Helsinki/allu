@@ -59,6 +59,7 @@ public abstract class AbstractWfsPaymentDataService {
         "</wfs:Query>" +
       "</wfs:GetFeature>";
 
+  private static final int WFS_QUERY_RETRIES = 5;
   private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
   protected static final LocalDateTime POST_2022_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
   protected static final LocalDateTime POST_2025_PAYMENT_DATE = LocalDateTime.of(2025, 2, 28, 23, 59, 0, 0);
@@ -84,14 +85,16 @@ public abstract class AbstractWfsPaymentDataService {
     final List<String> coordinateArray = getCoordinates(location);
     final List<String> requests = coordinateArray.stream()
       .map(c -> getRequest(applicationJson).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
-    try {
-      final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
-      final List<String> responses = collectResponses(responseFutures);
-      return parseResult(responses, applicationJson, location);
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      return UNDEFINED;
+    for (int retry = 0; retry < WFS_QUERY_RETRIES; retry++){
+      try {
+        final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
+        final List<String> responses = collectResponses(responseFutures);
+        return parseResult(responses, applicationJson, location);
+      } catch (Exception e) {
+        logger.error("WFS request threw exception on retry #" + retry + ": " + e.getMessage(), e);
+      }
     }
+    return UNDEFINED;
   }
 
   private String getRequest(StartTimeInterface startTime) {
