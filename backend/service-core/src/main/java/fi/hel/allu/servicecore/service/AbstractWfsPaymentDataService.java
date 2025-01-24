@@ -99,7 +99,7 @@ public abstract class AbstractWfsPaymentDataService {
 
   private String getRequest(StartTimeInterface startTime) {
     // remove PropertyName element from post-2025 requests
-    if (startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
+    if (startTime.getStartTime() != null && startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
       return String.format(REQUEST.replaceFirst(PROPERTYNAME, ""), getFeatureTypenameFor(startTime));
     else return String.format(REQUEST, getFeatureTypenameFor(startTime), getFeaturePropertyName());
   }
