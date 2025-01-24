@@ -92,8 +92,6 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   private submitPending = false;
   private destroy = new Subject<boolean>();
-  switchOverDate = new Date('2025-02-28');
-  private locationFormSubscription: Subscription;
   private localStartDate: Date | null = null;
 
   @ViewChild(TypeComponent, { static: true })
@@ -143,13 +141,7 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.locationFormSubscription = this.locationForm.get('startDate')?.valueChanges.subscribe((formStartDate) => {
-        this.localStartDate = formStartDate ? new Date(formStartDate) : null;
-    });
-
-    this.localStartDate = this.locationForm.get('startDate')?.value
-    ? new Date(this.locationForm.get('startDate')?.value)
-    : null;
+    this.localStartDate = null;
 
     this.mapStore.locationSearchFilterChange(defaultFilter);
 
@@ -232,7 +224,6 @@ export class LocationComponent implements OnInit, OnDestroy {
     this.destroy.next(true);
     this.destroy.unsubscribe();
     this.mapStore.reset();
-    this.locationFormSubscription.unsubscribe();
   }
 
   get showMap() {
