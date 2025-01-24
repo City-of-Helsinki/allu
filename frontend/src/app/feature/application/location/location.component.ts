@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
-import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {combineLatest, Observable, of, Subject, Subscription} from 'rxjs';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {MapUtil} from '@service/map/map.util';
@@ -92,6 +92,9 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   private submitPending = false;
   private destroy = new Subject<boolean>();
+  switchOverDate = new Date('2025-02-28');
+  private locationFormSubscription: Subscription;
+  private localStartDate: Date | null = null;
 
   @ViewChild(TypeComponent, { static: true })
   private typeComponent: TypeComponent;
@@ -140,6 +143,14 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.locationFormSubscription = this.locationForm.get('startDate')?.valueChanges.subscribe((formStartDate) => {
+        this.localStartDate = formStartDate ? new Date(formStartDate) : null;
+    });
+
+    this.localStartDate = this.locationForm.get('startDate')?.value
+    ? new Date(this.locationForm.get('startDate')?.value)
+    : null;
+
     this.mapStore.locationSearchFilterChange(defaultFilter);
 
     this.router.events.pipe(
@@ -221,6 +232,7 @@ export class LocationComponent implements OnInit, OnDestroy {
     this.destroy.next(true);
     this.destroy.unsubscribe();
     this.mapStore.reset();
+    this.locationFormSubscription.unsubscribe();
   }
 
   get showMap() {
@@ -230,15 +242,23 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   get paymentTariffs(): string[] {
-    const switchOverDate = new Date('2025-02-28');
-    const startTime = this.application?.startTime;
-    const startDate = startTime ? new Date(startTime) : null;
-
-    const isStartAfterSwitchOver = startDate && !isNaN(startDate.getTime()) && startDate.getTime() > switchOverDate.getTime();
+    const isStartAfterSwitchOver = this.handleSwitchOverDateLogic();
 
     return Some(this.application)
       .map(app => getPaymentTariffs(app.kinds, isStartAfterSwitchOver))
       .orElse([]);
+  }
+
+  handleSwitchOverDateLogic(): boolean {
+    const switchOverDate = new Date('2025-02-28');
+    // is this already created application
+    if (this.application.id) {
+      const startTime = this.application.startTime;
+      return startTime.getTime() > switchOverDate.getTime();
+    } else { // new application
+      if (!this.localStartDate) return false; // startdate not yet set
+      return this.localStartDate.getTime() > switchOverDate.getTime();
+    }
   }
 
   get showPaymentTariff(): boolean {
@@ -301,6 +321,12 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   onSearchChange(searchFilter: MapSearchFilter): void {
+    if (searchFilter.startDate) {
+      const parsedDate = new Date(searchFilter.startDate);
+      this.localStartDate = !isNaN(parsedDate.getTime()) ? parsedDate : null;
+    } else {
+      this.localStartDate = null;
+    }
     this.mapStore.locationSearchFilterChange(searchFilter);
   }
 
