@@ -20,6 +20,8 @@ public class PaymentClassXmlPost2025 {
   public HashMap<String, List<String>> getPaymentLevels() {
     HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
 
+    if (featureMember == null) return resultMap;
+
     for (FeatureClassMemberPost2025 member : featureMember) {
       PaymentLevelInfo info = member.getPaymentLevelInfo();
       if (resultMap.containsKey(info.getPaymentLevel()))
