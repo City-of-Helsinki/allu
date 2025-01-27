@@ -153,7 +153,7 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
               case POLYGON -> {
                 resultMap.get(level).add((Polygon) intersection);
               }
-              case GEOMETRY_COLLECTION -> {
+              case GEOMETRY_COLLECTION, MULTI_POLYGON -> {
                 GeometryCollection collection = (GeometryCollection) intersection;
                 for (int i = 0; i < collection.getNumGeometries(); i++)
                   resultMap.get(level).add((Polygon) collection.getGeometryN(i));
