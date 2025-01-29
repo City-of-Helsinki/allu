@@ -1,12 +1,14 @@
 package fi.hel.allu.servicecore.service.geocode.paymentlevel;
 
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PolygonCoordinates;
+
 import java.util.List;
 
 public class PaymentLevelInfo {
   public String paymentLevel;
-  public List<String> coordinates;
+  public List<PolygonCoordinates> coordinates;
 
-  public PaymentLevelInfo(String paymentLevel, List<String> coordinates) {
+  public PaymentLevelInfo(String paymentLevel, List<PolygonCoordinates> coordinates) {
     this.paymentLevel = paymentLevel;
     this.coordinates = coordinates;
   }
@@ -15,7 +17,7 @@ public class PaymentLevelInfo {
     return paymentLevel;
   }
 
-  public List<String> getCoordinates() {
+  public List<PolygonCoordinates> getCoordinates() {
     return coordinates;
   }
 }

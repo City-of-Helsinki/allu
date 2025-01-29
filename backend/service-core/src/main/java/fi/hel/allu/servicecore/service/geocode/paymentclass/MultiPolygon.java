@@ -9,7 +9,7 @@ public class MultiPolygon {
   @XmlElement(name = "polygonMember", namespace = "http://www.opengis.net/gml")
   public List<PolygonMember> polygonMembers;
 
-  public List<String> getCoordinates() {
+  public List<PolygonCoordinates> getCoordinates() {
     return polygonMembers.stream().map(PolygonMember::getCoordinates).collect(Collectors.toList());
   }
 }
