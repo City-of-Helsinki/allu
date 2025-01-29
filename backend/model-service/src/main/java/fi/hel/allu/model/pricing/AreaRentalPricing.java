@@ -40,7 +40,7 @@ public class AreaRentalPricing extends Pricing {
     this.pricingExplanator = pricingExplanator;
     this.invoicingPeriods = invoicingPeriods.stream().sorted(Comparator.comparing(InvoicingPeriod::getStartTime))
         .collect(Collectors.toList());
-    AREA_UNIT = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.AREA_UNIT_M2);
+    AREA_UNIT = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.AREA_UNIT_M2, application.getStartTime());
     setHandlingFee();
   }
 
@@ -48,12 +48,12 @@ public class AreaRentalPricing extends Pricing {
     final Integer periodId = getFirstOpenPeriodId();
     final AreaRental areaRental = (AreaRental)application.getExtension();
     if (toBoolean(areaRental.getMajorDisturbance())) {
-      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE);
+      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE, application.getStartTime());
       setPriceInCents(price);
       addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
           HANDLING_FEE_TEXT, price, Arrays.asList(MAJOR_DISTURBANCE_EXPLANATION), null, periodId, null);
     } else {
-      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MINOR_DISTURBANCE_HANDLING_FEE);
+      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MINOR_DISTURBANCE_HANDLING_FEE, application.getStartTime());
       setPriceInCents(price);
       addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
           HANDLING_FEE_TEXT, price, Arrays.asList(MINOR_DISTURBANCE_EXPLANATION), null, periodId, null);
@@ -65,19 +65,19 @@ public class AreaRentalPricing extends Pricing {
   }
 
   @Override
-  public void addLocationPrice(Location location) {
-    List<AreaRentalPeriodPrice> periodPrices = getLocationPeriodPrices(location);
+  public void addLocationPrice(Location location, ZonedDateTime startTime) {
+    List<AreaRentalPeriodPrice> periodPrices = getLocationPeriodPrices(location, startTime);
     for (AreaRentalPeriodPrice periodPrice : periodPrices) {
       addChargeBasisEntry(location, periodPrice);
       setPriceInCents(periodPrice.getNetPrice() + getPriceInCents());
       if (toBoolean(location.getUnderpass())) {
-        addUnderpassDiscount(periodPrice);
+        addUnderpassDiscount(periodPrice, startTime);
       }
     }
   }
 
-  private void addUnderpassDiscount(AreaRentalPeriodPrice periodPrice) {
-    final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE);
+  private void addUnderpassDiscount(AreaRentalPeriodPrice periodPrice, ZonedDateTime startTime) {
+    final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE, startTime);
     ChargeBasisTag tag = periodPrice.getPeriodId() != null ? ChargeBasisTag.AreaRentalUnderpass(Integer.toString(periodPrice.getLocationKey()), Integer.toString(periodPrice.getPeriodId())) :
       ChargeBasisTag.AreaRentalUnderpass(Integer.toString(periodPrice.getLocationKey()));
     String explanation = String.format(LOCATION_IDENTIFIER, application.getApplicationId(), periodPrice.getLocationKey());
@@ -92,9 +92,9 @@ public class AreaRentalPricing extends Pricing {
         null, periodPrice.getPeriodId(), periodPrice.getLocationId());
   }
 
-  protected List<AreaRentalPeriodPrice> getLocationPeriodPrices(Location location) {
+  protected List<AreaRentalPeriodPrice> getLocationPeriodPrices(Location location, ZonedDateTime startTime) {
     AreaRentalLocationPrice locationPrice = new AreaRentalLocationPrice(location, AREA_UNIT);
-    locationPrice.setDailyPrice(getPrice(locationPrice.getNumUnits(), locationPrice.getPaymentClass()));
+    locationPrice.setDailyPrice(getPrice(locationPrice.getNumUnits(), locationPrice.getPaymentClass(), startTime));
     List<AreaRentalPeriodPrice> periodPrices = new ArrayList<>();
 
     if (invoicingPeriods.isEmpty()) {
@@ -124,11 +124,11 @@ public class AreaRentalPricing extends Pricing {
   }
 
 
-  private int getPrice(int numUnits, String paymentClass) {
+  private int getPrice(int numUnits, String paymentClass, ZonedDateTime startTime) {
     if (paymentClass.equals(PriceUtil.UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
       return 0;
     }
-    return numUnits * pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, paymentClass);
+    return numUnits * pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, paymentClass, startTime);
   }
 
   private String getPriceText(AreaRentalPeriodPrice periodPrice) {

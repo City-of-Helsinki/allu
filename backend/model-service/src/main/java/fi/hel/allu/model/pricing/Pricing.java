@@ -6,6 +6,7 @@ import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
 
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ public abstract class Pricing {
   /**
    * Add a single location's price with given location
    */
-  public void addLocationPrice(Location location) {
+  public void addLocationPrice(Location location, ZonedDateTime startTime) {
     throw new NotImplementedException("Location price with payment class not implemented in " + this.getClass());
   }
 
