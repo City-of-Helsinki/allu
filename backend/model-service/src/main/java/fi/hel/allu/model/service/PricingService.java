@@ -180,7 +180,7 @@ public class PricingService {
       locations = locationDao.findByApplicationId(application.getId());
     }
     for (Location l : locations) {
-      pricing.addLocationPrice(l);
+      pricing.addLocationPrice(l, application.getStartTime());
     }
     return pricing.getChargeBasisEntries();
   }

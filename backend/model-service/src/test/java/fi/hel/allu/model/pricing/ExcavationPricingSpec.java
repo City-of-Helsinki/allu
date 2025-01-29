@@ -20,6 +20,8 @@ import fi.hel.allu.model.service.WinterTimeService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(Spectrum.class)
 public class ExcavationPricingSpec extends LocationBasedPricing {
@@ -42,10 +44,10 @@ public class ExcavationPricingSpec extends LocationBasedPricing {
           winterTimeService = Mockito.mock(WinterTimeService.class);
           pricingExplanator = Mockito.mock(PricingExplanator.class);
           pricingDao = Mockito.mock(PricingDao.class);
-          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE)).thenReturn(18000);
-          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.SMALL_AREA_DAILY_FEE, "3")).thenReturn(1250);
-          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.MEDIUM_AREA_DAILY_FEE, "2")).thenReturn(3250);
-          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.LARGE_AREA_DAILY_FEE, "1")).thenReturn(8000);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.HANDLING_FEE), any())).thenReturn(18000);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.SMALL_AREA_DAILY_FEE), eq("3"), any())).thenReturn(1250);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.MEDIUM_AREA_DAILY_FEE), eq("2"), any())).thenReturn(3250);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.LARGE_AREA_DAILY_FEE), eq("1"), any())).thenReturn(8000);
 
           app = new Application();
           app.setExtension(new ExcavationAnnouncement());
@@ -55,21 +57,21 @@ public class ExcavationPricingSpec extends LocationBasedPricing {
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {
-            exc.addLocationPrice(getLocation(1, 65.0, "2", start, end));
+            exc.addLocationPrice(getLocation(1, 65.0, "2", start, end), start);
             assertEquals(3 * 3250 + 18000, exc.getPriceInCents());
           });
         });
 
         context("On price class 1, with area of 121 sqm", () -> {
           it("should cost 3 * 80 +  180 EUR", () -> {
-            exc.addLocationPrice(getLocation(1, 121.0, "1", start, end));
+            exc.addLocationPrice(getLocation(1, 121.0, "1", start, end), start);
             assertEquals(3 * 8000 + 18000, exc.getPriceInCents());
           });
         });
 
         context("On price class 3, with area of 21 sqm", () -> {
           it("should cost 3 * 12.50 +  180 EUR", () -> {
-            exc.addLocationPrice(getLocation(1, 21.0, "3", start, end));
+            exc.addLocationPrice(getLocation(1, 21.0, "3", start, end), start);
             assertEquals(3 * 1250 + 18000, exc.getPriceInCents());
           });
         });

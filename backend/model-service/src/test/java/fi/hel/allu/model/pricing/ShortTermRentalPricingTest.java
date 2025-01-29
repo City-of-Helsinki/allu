@@ -85,14 +85,14 @@ public class ShortTermRentalPricingTest {
     application.setExtension(str);
     setShortTermRentalPricing();
     shortTermRentalPricing.calculatePrice();
-    verify(pricingDao, times(0)).findValue(ApplicationType.SHORT_TERM_RENTAL, PricingKey.forTerraceKind(application.getKind()), null);
+    verify(pricingDao, times(0)).findValue(eq(ApplicationType.SHORT_TERM_RENTAL), eq(PricingKey.forTerraceKind(application.getKind())), eq(null), any());
   }
 
   @Test
   public void shouldUpdateNonRecurringTerracePrice() {
     setShortTermRentalPricing();
     shortTermRentalPricing.calculatePrice();
-    verify(pricingDao).findValue(ApplicationType.SHORT_TERM_RENTAL, PricingKey.forTerraceKind(application.getKind()), null);
+    verify(pricingDao).findValue(eq(ApplicationType.SHORT_TERM_RENTAL), eq(PricingKey.forTerraceKind(application.getKind())), eq(null), any());
     verify(pricingExplanator).getExplanationWithCustomPeriod(any(), anyString());
     verify(terminationDao).getTerminationInfo(APPLICATION_ID);
   }
@@ -102,7 +102,7 @@ public class ShortTermRentalPricingTest {
     setApplicationRecurring();
     setShortTermRentalPricing();
     shortTermRentalPricing.calculatePrice();
-    verify(pricingDao).findValue(ApplicationType.SHORT_TERM_RENTAL, PricingKey.forTerraceKind(application.getKind()), null);
+    verify(pricingDao).findValue(eq(ApplicationType.SHORT_TERM_RENTAL), eq(PricingKey.forTerraceKind(application.getKind())), eq(null), any());
     verify(pricingExplanator, times(6)).getExplanationWithCustomPeriod(any(), anyString());
   }
 
@@ -111,7 +111,7 @@ public class ShortTermRentalPricingTest {
     setApplicationTerminated();
     setShortTermRentalPricing();
     shortTermRentalPricing.calculatePrice();
-    verify(pricingDao).findValue(ApplicationType.SHORT_TERM_RENTAL, PricingKey.forTerraceKind(application.getKind()), null);
+    verify(pricingDao).findValue(eq(ApplicationType.SHORT_TERM_RENTAL), eq(PricingKey.forTerraceKind(application.getKind())), eq(null), any());
     verify(pricingExplanator).getExplanationWithCustomPeriod(any(), anyString());
     verify(terminationDao).getTerminationInfo(APPLICATION_ID);
   }
@@ -122,7 +122,7 @@ public class ShortTermRentalPricingTest {
     setApplicationTerminated();
     setShortTermRentalPricing();
     shortTermRentalPricing.calculatePrice();
-    verify(pricingDao).findValue(ApplicationType.SHORT_TERM_RENTAL, PricingKey.forTerraceKind(application.getKind()), null);
+    verify(pricingDao).findValue(eq(ApplicationType.SHORT_TERM_RENTAL), eq(PricingKey.forTerraceKind(application.getKind())), eq(null), any());
     verify(pricingExplanator, times(6)).getExplanationWithCustomPeriod(any(), anyString());
   }
 
