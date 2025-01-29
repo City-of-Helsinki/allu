@@ -7,5 +7,5 @@ public class PolygonMember {
   @XmlElement(name = "Polygon", namespace = "http://www.opengis.net/gml")
   public Polygon polygon;
 
-  public String getCoordinates() { return polygon.getCoordinates(); }
+  public PolygonCoordinates getCoordinates() { return polygon.getCoordinates(); }
 }

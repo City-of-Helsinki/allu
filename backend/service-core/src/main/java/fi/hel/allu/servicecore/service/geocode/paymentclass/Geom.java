@@ -8,5 +8,5 @@ public class Geom {
   @XmlElement(name = "MultiPolygon", namespace = "http://www.opengis.net/gml")
   public MultiPolygon multiPolygon;
 
-  public List<String> getCoordinates() { return multiPolygon.getCoordinates();}
+  public List<PolygonCoordinates> getCoordinates() { return multiPolygon.getCoordinates();}
 }

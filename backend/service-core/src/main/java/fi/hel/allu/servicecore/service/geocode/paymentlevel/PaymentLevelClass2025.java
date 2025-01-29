@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service.geocode.paymentlevel;
 
 import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.Geom;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.PolygonCoordinates;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
@@ -17,7 +18,7 @@ public class PaymentLevelClass2025 {
   @XmlElement(name = "geom", namespace = VariablesUtils.HELSINKI_NAMESPACE)
   public Geom geom;
 
-  public List<String> getCoordinates() {
+  public List<PolygonCoordinates> getCoordinates() {
     return geom.getCoordinates();
   };
 
