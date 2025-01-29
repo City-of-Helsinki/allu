@@ -40,8 +40,7 @@ public enum PricingKey {
   MAJOR_DISTURBANCE_HANDLING_FEE,
   UNIT_PRICE,
   UNDERPASS_DICOUNT_PERCENTAGE,
-  AREA_UNIT_M2,
-  FROM_15M2;
+  AREA_UNIT_M2;
 
   public static PricingKey forTerraceKind(ApplicationKind kind) {
     switch (kind) {
