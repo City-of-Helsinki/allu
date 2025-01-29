@@ -19,6 +19,8 @@ import fi.hel.allu.model.service.InvoicingPeriodService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(Spectrum.class)
 public class AreaRentalPricingSpec extends LocationBasedPricing {
@@ -35,13 +37,13 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         app.setExtension(new AreaRental());
         pricingDao = Mockito.mock(PricingDao.class);
         pricingExplanator = Mockito.mock(PricingExplanator.class);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MINOR_DISTURBANCE_HANDLING_FEE)).thenReturn(6000);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE)).thenReturn(18000);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "3")).thenReturn(130);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "2")).thenReturn(300);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "1")).thenReturn(600);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE)).thenReturn(50);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.AREA_UNIT_M2)).thenReturn(15);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.MINOR_DISTURBANCE_HANDLING_FEE), any())).thenReturn(6000);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE), any())).thenReturn(18000);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.UNIT_PRICE), eq("3"), any())).thenReturn(130);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.UNIT_PRICE), eq("2"), any())).thenReturn(300);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.UNIT_PRICE), eq("1"), any())).thenReturn(600);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.UNDERPASS_DICOUNT_PERCENTAGE), any())).thenReturn(50);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.AREA_UNIT_M2), any())).thenReturn(15);
       });
 
       context("with Five-day snow work", () -> {
@@ -57,21 +59,21 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
 
         context("On price class 2, with area of 85 sqm", () -> {
           it("Should cost 5 * 6 * 3.00 EUR +  60 EUR", () -> {
-            arp.addLocationPrice(getLocation(1, 85.0, "2", start, end));
+            arp.addLocationPrice(getLocation(1, 85.0, "2", start, end), start);
             assertEquals(5 * 6 * 300 + 6000, arp.getPriceInCents());
           });
         });
 
         context("On price class 3, with area of 45 sqm", () -> {
           it("Should cost 5 * 3 * 1.30 EUR +  60 EUR", () -> {
-            arp.addLocationPrice(getLocation(1, 45.0, "3", start, end));
+            arp.addLocationPrice(getLocation(1, 45.0, "3", start, end), start);
             assertEquals(5 * 3 * 130 + 6000, arp.getPriceInCents());
           });
         });
 
         context("On price class 1, with area of 45.1 sqm", () -> {
           it("Should cost 5 * 4 * 6.00 EUR +  60 EUR", () -> {
-            arp.addLocationPrice(getLocation(1, 45.1, "1", start, end));
+            arp.addLocationPrice(getLocation(1, 45.1, "1", start, end), start);
             assertEquals(5 * 4 * 600 + 6000, arp.getPriceInCents());
           });
         });
@@ -80,7 +82,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
           it("Should cost 0.5 * 5 * 4 * 6.00 EUR +  60 EUR", () -> {
             Location location = getLocation(1, 45.1, "1", start, end);
             location.setUnderpass(true);
-            arp.addLocationPrice(location);
+            arp.addLocationPrice(location, start);
             assertEquals((int)Math.round(0.5 * 5 * 4 * 600) + 6000, arp.getPriceInCents());
           });
         });
@@ -101,7 +103,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
 
         context("On price class 2, with area of 1000 sqm", () -> {
           it("Should cost 30 * 67 * 3.00 EUR + 60 EUR", () -> {
-            arp.addLocationPrice(getLocation(1, 1000.0, "2", start, end));
+            arp.addLocationPrice(getLocation(1, 1000.0, "2", start, end), start);
             assertEquals(30 * 67 * 300 + 6000, arp.getPriceInCents());
           });
         });
@@ -124,7 +126,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
 
         context("On price class 2, with area of 1000 sqm", () -> {
           it("Should cost 30 * 67 * 3.00 EUR + 180 EUR", () -> {
-            arp.addLocationPrice(getLocation(1, 1000.0, "2", start, end));
+            arp.addLocationPrice(getLocation(1, 1000.0, "2", start, end), start);
             assertEquals(30 * 67 * 300 + 18000, arp.getPriceInCents());
           });
         });

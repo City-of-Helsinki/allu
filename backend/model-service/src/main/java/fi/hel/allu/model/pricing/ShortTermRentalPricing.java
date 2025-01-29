@@ -104,7 +104,7 @@ public class ShortTermRentalPricing extends Pricing {
     case BENJI:
       // 320 EUR/day
       updatePricePerUnit(ChargeBasisTag.ShortTermRentalBenji(), ChronoUnit.DAYS,
-          getPrice(PricingKey.BENJI_DAILY_PRICE), InvoiceLines.BENJI);
+          getPrice(PricingKey.BENJI_DAILY_PRICE, application.getStartTime()), InvoiceLines.BENJI);
       break;
     case BRIDGE_BANNER:
       // Non-commercial organizer: 150 EUR/week
@@ -112,7 +112,7 @@ public class ShortTermRentalPricing extends Pricing {
       updateBridgeBannerPrice();
       break;
     case CIRCUS: {
-      final int price = getPrice(PricingKey.CIRCUS_DAILY_PRICE);
+      final int price = getPrice(PricingKey.CIRCUS_DAILY_PRICE, application.getStartTime());
       updatePricePerUnit(ChargeBasisTag.ShortTermRentalCircus(), ChronoUnit.DAYS,
           price, priceText(price, InvoiceLines.CIRCUS));
       break;
@@ -121,12 +121,12 @@ public class ShortTermRentalPricing extends Pricing {
       // Associations: 50 EUR/event
       // Companies: 100 EUR/event
       if (customerIsCompany) {
-        final int price = getPrice(PricingKey.DOG_TRAINING_EVENT_COMPANY_PRICE);
+        final int price = getPrice(PricingKey.DOG_TRAINING_EVENT_COMPANY_PRICE, application.getStartTime());
         setPriceInCents(price);
         addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
             price, InvoiceLines.DOG_TRAINING_EVENT_COM, price, explanationService.getExplanation(application));
       } else {
-        final int price = getPrice(PricingKey.DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
+        final int price = getPrice(PricingKey.DOG_TRAINING_EVENT_ASSOCIATION_PRICE, application.getStartTime());
         setPriceInCents(price);
         addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
             price, InvoiceLines.DOG_TRAINING_EVENT_ORG, price, explanationService.getExplanation(application));
@@ -137,7 +137,7 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case KESKUSKATU_SALES: {
       // 50 EUR/day/starting 10 sqm
-      final int price = getPrice(PricingKey.KESKUSKATU_SALES_TEN_SQM_PRICE);
+      final int price = getPrice(PricingKey.KESKUSKATU_SALES_TEN_SQM_PRICE, application.getStartTime());
       updatePriceByTimeAndArea(price, ChronoUnit.DAYS, 10, false,
           priceText(price, InvoiceLines.KESKUSKATU_SALES), null, ChargeBasisTag.ShortTermRentalKeskuskatuSales(), null);
       break;
@@ -149,7 +149,7 @@ public class ShortTermRentalPricing extends Pricing {
       // at max 0.8 m from a wall: free of charge
       // over 0.8m from a wall: 2 EUR/sqm/kk
       if (billableSalesArea) {
-        final int price = getPrice(PricingKey.PROMOTION_OR_SALES_MONTHLY);
+        final int price = getPrice(PricingKey.PROMOTION_OR_SALES_MONTHLY, application.getStartTime());
         updatePriceByTimeAndArea(price, ChronoUnit.MONTHS, 1, false,
             priceText(price, InvoiceLines.PROMOTION_OR_SALES_LARGE), null,
             ChargeBasisTag.ShortTermRentalPromotionOrSales(), null);
@@ -162,19 +162,19 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case SEASON_SALE: {
       // 50 EUR/day/starting 10 sqm
-      final int price = getPrice(PricingKey.SEASON_SALE_TEN_SQM_PRICE);
+      final int price = getPrice(PricingKey.SEASON_SALE_TEN_SQM_PRICE, application.getStartTime());
       updatePriceByTimeAndArea(price, ChronoUnit.DAYS, 10, false, priceText(price, InvoiceLines.SEASON_SALES),
           null, ChargeBasisTag.ShortTermRentalSeasonSale(), null);
       break;
     }
     case STORAGE_AREA:
       // 0.50 EUR/sqm/month
-      updatePriceByTimeAndArea(getPrice(PricingKey.STORAGE_AREA_MONTHLY_PRICE), ChronoUnit.MONTHS, 1, false,
+      updatePriceByTimeAndArea(getPrice(PricingKey.STORAGE_AREA_MONTHLY_PRICE, application.getStartTime()), ChronoUnit.MONTHS, 1, false,
           InvoiceLines.STORAGE_AREA, null, ChargeBasisTag.ShortTermRentalStorageArea(), null);
       break;
     case SUMMER_THEATER: {
       // 120 EUR/month
-      final int price = getPrice(PricingKey.SUMMER_THEATER_YEARLY_PRICE);
+      final int price = getPrice(PricingKey.SUMMER_THEATER_YEARLY_PRICE, application.getStartTime());
       updatePricePerUnit(ChargeBasisTag.ShortTermRentalSummerTheater(), ChronoUnit.MONTHS,
           price, priceText(price, InvoiceLines.SUMMER_THEATER));
       break;
@@ -267,7 +267,7 @@ public class ShortTermRentalPricing extends Pricing {
       numTerms = application.getEndTime().getYear() - application.getStartTime().getYear() + 1;
     }
 
-    final int urbanFarmingTermPrice = getPrice(PricingKey.URBAN_FARMING_TERM_PRICE);
+    final int urbanFarmingTermPrice = getPrice(PricingKey.URBAN_FARMING_TERM_PRICE, application.getStartTime());
     double billableArea = getBillableArea();
     int netPrice = urbanFarmingTermPrice * (int) billableArea * numTerms;
 
@@ -282,8 +282,8 @@ public class ShortTermRentalPricing extends Pricing {
     return applicationArea == 0.0 ? 0.0 : Math.ceil(applicationArea);
   }
 
-  private int getPrice(PricingKey key) {
-    return pricingDao.findValue(ApplicationType.SHORT_TERM_RENTAL, key);
+  private int getPrice(PricingKey key, ZonedDateTime startTime) {
+    return pricingDao.findValue(ApplicationType.SHORT_TERM_RENTAL, key, startTime);
   }
 
   private String priceText(int priceInCents, String text) {
@@ -299,7 +299,7 @@ public class ShortTermRentalPricing extends Pricing {
     String paymentClass = getPaymentClass(application);
     // Price per square meter per month
     int unitPrice = pricingDao.findValue(ApplicationType.SHORT_TERM_RENTAL,
-        PricingKey.forTerraceKind(application.getKind()), paymentClass);
+        PricingKey.forTerraceKind(application.getKind()), paymentClass, application.getStartTime());
     getTerracePrices(paymentClass, unitPrice).forEach(p -> addTerracePeriodPrice(p));
   }
 
@@ -327,15 +327,15 @@ public class ShortTermRentalPricing extends Pricing {
   }
 
   private void updateBridgeBannerPrice() {
-    int centsPerUnit = isCommercial() ? getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL) :
-      getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
+    int centsPerUnit = isCommercial() ? getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL, application.getStartTime()) :
+      getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL, application.getStartTime());
     String invoiceLine = isCommercial() ? InvoiceLines.BANDEROL_COMMERCIAL : InvoiceLines.BANDEROL_NONCOMMERCIAL;
     pricePerFixedLocation(centsPerUnit, ChronoUnit.WEEKS, invoiceLine, ChargeBasisTag::ShortTermRentalBridgeBanner);
   }
 
   private void updateDogTrainingFieldPrice() {
-    int centsPerUnit = customerIsCompany ? getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_COMPANY)
-        : getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
+    int centsPerUnit = customerIsCompany ? getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_COMPANY, application.getStartTime())
+        : getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_ASSOCIATION, application.getStartTime());
     String invoiceLine = customerIsCompany ? priceText(centsPerUnit, InvoiceLines.DOG_TRAINING_FIELD_COM) :
       priceText(centsPerUnit, InvoiceLines.DOG_TRAINING_FIELD_ORG);
     pricePerFixedLocation(centsPerUnit, ChronoUnit.YEARS, invoiceLine, ChargeBasisTag::ShortTermRentalDogTrainingField);
