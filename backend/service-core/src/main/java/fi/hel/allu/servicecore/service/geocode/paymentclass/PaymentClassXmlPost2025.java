@@ -17,8 +17,8 @@ public class PaymentClassXmlPost2025 {
   @XmlElement(name = "featureMember", namespace = "http://www.opengis.net/gml")
   public List<FeatureClassMemberPost2025> featureMember;
 
-  public HashMap<String, List<String>> getPaymentLevels() {
-    HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
+  public HashMap<String, List<PolygonCoordinates>> getPaymentLevels() {
+    HashMap<String, List<PolygonCoordinates>> resultMap = new HashMap<String, List<PolygonCoordinates>>();
 
     if (featureMember == null) return resultMap;
 

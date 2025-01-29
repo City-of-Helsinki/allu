@@ -8,10 +8,10 @@ import com.vividsolutions.jts.geom.TopologyException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXml;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2022;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPost2025;
+import fi.hel.allu.servicecore.service.geocode.paymentclass.*;
 import org.geolatte.geom.*;
+import org.geolatte.geom.LinearRing;
+import org.geolatte.geom.Polygon;
 import org.geolatte.geom.crs.CrsId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClassXmlPre2022;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 
 import static java.lang.Math.max;
@@ -77,16 +76,16 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return responses.stream().map(this::getPaymentClassPost2025).toList();
   }
 
-  private List<HashMap<String, List<String>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
+  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
     return paymentClasses.stream().map(PaymentClassXmlPost2025::getPaymentLevels).toList();
   }
 
-  private HashMap<String, List<String>> combineHashMaps(List<HashMap<String, List<String>>> hashMapList) {
-    HashMap<String, List<String>> combinedMap = new HashMap<String, List<String>>();
+  private HashMap<String, List<PolygonCoordinates>> combineHashMaps(List<HashMap<String, List<PolygonCoordinates>>> hashMapList) {
+    HashMap<String, List<PolygonCoordinates>> combinedMap = new HashMap<String, List<PolygonCoordinates>>();
 
-    for (HashMap<String, List<String>> nextMap : hashMapList) {
+    for (HashMap<String, List<PolygonCoordinates>> nextMap : hashMapList) {
       for (String level : nextMap.keySet()) {
-        if (!combinedMap.containsKey(level)) combinedMap.put(level, new ArrayList<String>());
+        if (!combinedMap.containsKey(level)) combinedMap.put(level, new ArrayList<PolygonCoordinates>());
         combinedMap.get(level).addAll(nextMap.get(level));
       }
     }
@@ -98,36 +97,33 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return computePaymentLevel(getLocationArea(location), sumAreas(intersectionsToAreas(polygonsToIntersections(coordinatesToPolygons(combineHashMaps(paymentClassesToPaymentMaps(responsesToPaymentClasses(responses)))), location))));
   }
 
-  HashMap<String, List<Polygon>> coordinatesToPolygons(HashMap<String, List<String>> coordinateMap) {
+  LinearRing coordinatesToLinearRing(String coordinateString) {
+    double[] doubleCoords = Arrays.stream(coordinateString.split(" ")).flatMap(str -> Arrays.stream(str.split(","))).mapToDouble(Double::parseDouble).toArray();
+
+    PointSequenceBuilder builder = PointSequenceBuilders.fixedSized(doubleCoords.length / 2, DimensionalFlag.d2D, new CrsId("EPSG", 3879));
+    for (int i = 0; i < doubleCoords.length; i += 2) builder.add(doubleCoords[i], doubleCoords[i+1]);
+    PointSequence sequence = builder.toPointSequence();
+
+    return new LinearRing(sequence, null);
+  }
+
+  Polygon polygonCoordinatesToPolygon(PolygonCoordinates polygonCoordinates) {
+    LinearRing[] linearRings = new LinearRing[1 + polygonCoordinates.getInnerBoundaryCoordinates().size()];
+
+    linearRings[0] = coordinatesToLinearRing(polygonCoordinates.getOuterBoundaryCoordinates());
+
+    int i = 1;
+    for (String innerBoundaryCoordinates : polygonCoordinates.getInnerBoundaryCoordinates())
+      linearRings[i++] = coordinatesToLinearRing(innerBoundaryCoordinates);
+
+    return new Polygon(linearRings);
+  }
+
+  HashMap<String, List<Polygon>> coordinatesToPolygons(HashMap<String, List<PolygonCoordinates>> coordinateMap) {
     HashMap<String, List<Polygon>> polygonMap = new HashMap<>();
 
-    for (String paymentLevel : coordinateMap.keySet()) {
-      polygonMap.put(paymentLevel, new ArrayList<>());
-
-      for (String coordinateString : coordinateMap.get(paymentLevel)) {
-
-        List<Double> parsedCoordinates = new ArrayList<>();
-
-        String[] coordinatePairs = coordinateString.split(" ");
-        for (String coordinatePair : coordinatePairs) {
-          String[] coordinates = coordinatePair.split(",");
-          parsedCoordinates.add(Double.valueOf(coordinates[0]));
-          parsedCoordinates.add(Double.valueOf(coordinates[1]));
-        }
-
-        double[] doublePrimitives = new double[parsedCoordinates.size()];
-        int i = 0;
-        for (Double element : parsedCoordinates) {
-          doublePrimitives[i++] = element;
-        }
-
-        PointSequenceBuilder builder = PointSequenceBuilders.fixedSized(doublePrimitives.length / 2, DimensionalFlag.d2D, new CrsId("EPSG", 3879));
-        for (i = 0; i < doublePrimitives.length; i += 2) builder.add(doublePrimitives[i], doublePrimitives[i+1]);
-        PointSequence sequence = builder.toPointSequence();
-        Polygon poly = new Polygon(sequence, null);
-        polygonMap.get(paymentLevel).add(poly);
-      }
-    }
+    for (String paymentLevel : coordinateMap.keySet())
+      polygonMap.put(paymentLevel, coordinateMap.get(paymentLevel).stream().map(this::polygonCoordinatesToPolygon).toList());
 
     return polygonMap;
   }
@@ -185,6 +181,7 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     HashMap<String, Double> resultMap = new HashMap<>();
     for (String level : areaMap.keySet())
       resultMap.put(level, areaMap.get(level).stream().reduce(0.0, Double::sum));
+
     return resultMap;
   }
 
