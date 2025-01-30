@@ -224,7 +224,9 @@ describe('Excavation announcement application', () => {
           "compactionAndBearingCapacityMeasurement": true,
           "qualityAssuranceTest": true
         },
-        'invoicingDate': '2018-12-22T22:00:00Z'
+        'invoicingDate': '2018-12-22T22:00:00Z',
+	'startTime': applicationStartTime,
+	'endTime': applicationEndTime
       }
     ;
 
