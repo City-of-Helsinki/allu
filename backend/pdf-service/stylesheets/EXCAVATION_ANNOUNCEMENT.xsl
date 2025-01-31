@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance">
 <xsl:output method="html" encoding="utf-8" indent="yes"/>
 <xsl:template match="/root">
 <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
@@ -323,7 +323,20 @@
                 </div>
               </div>
               <p class="space-above">
-                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 17.2.2022 § 28.
+		<!-- Käytössä on XSLT 1.0, joten saatavissa ei ole asiallista päivämäärävertailua :-( -->
+		<xsl:variable name="day" select="format-number(substring-before(data/reservationStartDate,'.'),'00')"/>
+		<xsl:variable name="restOfDate" select="substring-after(data/reservationStartDate,'.')"/>
+		<xsl:variable name="month" select="format-number(substring-before($restOfDate,'.'),'00')"/>
+		<xsl:variable name="year" select="substring-after($restOfDate,'.')"/>
+		<xsl:variable name="date" select="concat($year, $month, $day)"/>
+		<xsl:choose>
+		  <xsl:when test="$date &lt; 20250301">
+                    Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 17.2.2022 § 28.
+		  </xsl:when>
+		  <xsl:otherwise>
+		    Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 10.10.2024 § 157.
+		  </xsl:otherwise>
+		</xsl:choose>
               </p>
             </div>
             <p class="space-above">
