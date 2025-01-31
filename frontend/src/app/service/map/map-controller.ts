@@ -442,7 +442,7 @@ export class MapController {
   }
 
   private setMapLayers(selected: MapLayer[], deselected: MapLayer[]): void {
-    deselected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
-    selected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
+    deselected.filter(layer => !!layer).map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
+    selected.filter(layer => !!layer).map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
   }
 }
