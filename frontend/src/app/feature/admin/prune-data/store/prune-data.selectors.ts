@@ -38,8 +38,13 @@ export const selectDeleteModalVisibility = createSelector(
   state => state.showDeleteModal
 );
 
+export const selectDeleteInProgress = createSelector(
+  selectPruneDataState,
+  state => state.deleteInProgress
+)
+
 export const selectAllSelected = createSelector(
-  selectPruneData,
+  selectFilteredData,
   selectSelectedIds,
   (items, selectedIds) => items.length > 0 && items.length === selectedIds.length
 );
