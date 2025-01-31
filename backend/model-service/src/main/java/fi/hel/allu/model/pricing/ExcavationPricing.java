@@ -104,7 +104,7 @@ public class ExcavationPricing extends Pricing {
   }
 
   private int getDailyFeePost2025(double locationArea, String paymentClass, ZonedDateTime startTime) {
-    if (locationArea <= 60.0) {
+    if (locationArea < 60.0) {
       return getPrice(PricingKey.LESS_THAN_60M2, paymentClass, startTime);
     } else if (locationArea <= 120.0) {
       return getPrice(PricingKey.FROM_60_TO_120M2, paymentClass, startTime);
