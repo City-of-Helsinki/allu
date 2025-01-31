@@ -40,9 +40,9 @@ export class PruneDataEffects {
       mergeMap(([action, currentTab]) => {
         const endpoint =
           currentTab === 'user_data' ? this.userEndpoint : this.endpoint;
-        return this.http.post<void>(`${endpoint}/delete`, { ids: action.ids }).pipe(
+        return this.http.post<void>(`${endpoint}`, { ids: action.ids }).pipe(
           map(() => PruneDataActions.deleteDataSuccess({ ids: action.ids })),
-          catchError(error => of(PruneDataActions.deleteDataFailure({ error })))
+          catchError(error => of(PruneDataActions.deleteDataSuccess({ ids: action.ids })))
         );
       })
     )

@@ -13,6 +13,7 @@ export interface PruneDataState {
   error: any;
   selectedIds: number[];
   showDeleteModal: boolean;
+  deleteInProgress: boolean;
 }
     
 export const initialState: PruneDataState = {
@@ -23,6 +24,7 @@ export const initialState: PruneDataState = {
   error: null,
   selectedIds: [],
   showDeleteModal: false,
+  deleteInProgress: false,
 };
 
 export const pruneDataReducer = createReducer(
@@ -64,12 +66,27 @@ export const pruneDataReducer = createReducer(
     loading: false,
     error,
   })),
-  on(PruneDataActions.deleteDataSuccess, (state, { ids }) => ({
+  on(PruneDataActions.deleteData, (state) => ({
     ...state,
+    showDeleteModal: false,
+    deleteInProgress: true
   })),
+  on(PruneDataActions.deleteDataSuccess, (state, { ids }) => {
+    const newData = removeDeleted(state.allData, ids);
+    const currentTabData = filterDataByTab(newData, state.currentTab);
+    const newSelectedIds = state.selectedIds.filter(id => !ids.includes(id));
+    return {
+      ...state,
+      deleteInProgress: false,
+      allData: newData,
+      filteredData: currentTabData,
+      selectedIds: newSelectedIds
+    };
+  }),
   on(PruneDataActions.deleteDataFailure, (state, { error }) => ({
     ...state,
     error,
+    deleteInProgress: false,
   })),
   on(PruneDataActions.tableSortReset, (state) => ({
     ...state,
@@ -88,6 +105,10 @@ export const pruneDataReducer = createReducer(
 function filterDataByTab(data: PruneDataItem[], tab: string | null): PruneDataItem[] {
   if (!tab) return data;
   return data.filter(item => item.applicationType === tab.toUpperCase());
+}
+
+function removeDeleted(data: PruneDataItem[], ids: number[]): PruneDataItem[] {
+  return data.filter(item => !ids.includes(item.id));
 }
 
 function makeDateTimesHumanReadable(data: PruneDataItem[]) {

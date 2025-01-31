@@ -8,11 +8,10 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { pruneDataTabs } from './prune-data-tab';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map, switchMap, takeUntil, take, filter } from 'rxjs/operators';
+import { map, switchMap, takeUntil, take, filter, first } from 'rxjs/operators';
 import { MatSort, Sort } from '@angular/material/sort';
 import * as PruneDataActions from './store/prune-data.actions';
-import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility } from './store/prune-data.selectors';
-import { findTranslation } from '@app/util/translations';
+import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility, selectDeleteInProgress } from './store/prune-data.selectors';
 
 interface ColumnConfig {
   columns: string[];
@@ -32,11 +31,11 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   selectedIds$ = this.store.select(selectSelectedIds);
   selectedTab$ = this.store.select(selectCurrentTab);
   deleteModalVisible = this.store.select(selectDeleteModalVisibility);
+  deleteInProgress = this.store.select(selectDeleteInProgress);
   tabs = pruneDataTabs;
 
   hasSelectedItems$ = this.selectedIds$.pipe(
     map(selectedIds => selectedIds.length > 0))
-
 
   displayedColumns: string[] = ['selected', 'applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'];
   currentTab$ = this.route.params.pipe(
@@ -45,12 +44,10 @@ export class PruneDataComponent implements OnInit, OnDestroy {
       return tab;
     })
   );
-  
 
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatSort) sort: MatSort;
-
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -70,6 +67,8 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     .subscribe(tab => {
       this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
     });
+
+    console.log('this.deleteInrpgos', this.deleteInProgress)
   }
 
   ngOnDestroy(): void {
@@ -137,6 +136,9 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
   handleDelete(): void {
+    this.selectedIds$.pipe(first()).subscribe((ids) => {
+      this.store.dispatch(PruneDataActions.deleteData({ids}))
+    });
   }
 
 }

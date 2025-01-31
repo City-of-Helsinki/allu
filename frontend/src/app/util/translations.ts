@@ -2113,20 +2113,20 @@ export const translations = {
   prunedata: {
     tab: {
       AREA_RENTAL: 'Aluevuokraukset',
-      CABLE_REPORT: 'Kaapeliraportit',
+      CABLE_REPORT: 'Johtoselvitykset',
       EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitukset',
       SHORT_TERM_RENTAL: 'Lyhytaikaiset vuokrat',
       PLACEMENT_CONTRACT: 'Sijoitussopimukset',
       EVENT: 'Tapahtumat',
       TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Liikennejärjestelyt',
-      USER_DATA: 'Käyttäjätiedot'
+      USER_DATA: 'Asiakastiedot'
     },
     columns: {
       applicationId: 'Hakemus Id',
       startTime: 'Aloitusaika',
       endTime: 'Lopetusaika',
       changeTime: 'Muutettu',
-      changeType: 'Muutos'
+      changeType: 'Muutos',
     }
   },
   configuration: {
