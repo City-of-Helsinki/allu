@@ -41,7 +41,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   @ViewChild(DistributionComponent) distributionComponent: DistributionComponent;
 
-  readonly: boolean = true;
+  readonly: boolean;
   submitPending = false;
   showTerms = false;
   applicationChanges: Observable<Application>;
@@ -95,7 +95,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     ).subscribe(draft => this.onDraftChange(draft));
 
     this.distribution$ = this.store.pipe(select(fromApplication.getDistributionList));
-
   }
 
   ngAfterContentInit(): void {
@@ -166,7 +165,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
     setTimeout(() => {
       this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary') || !applicationCanBeEdited(application);
-    }, 0);
+    });
   }
 
   /**
