@@ -45,7 +45,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loading$: Observable<boolean>;
 
-
   private destroy = new Subject<boolean>();
 
   constructor(
@@ -59,7 +58,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.roleChange(this.role);
     this.mapController.availableLayers = this.availableLayers;
 
-    this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
+    // fixes the NG0100: ExpressionChangedAfterItHasBeenCheckedError error
+    setTimeout(() => {
+      this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
+    });
   }
 
   /**
