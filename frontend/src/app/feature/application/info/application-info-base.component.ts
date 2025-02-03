@@ -163,9 +163,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       invoiceRecipientId: application.invoiceRecipientId
     }, {emitEvent: false});
 
-    setTimeout(() => {
-      this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary') || !applicationCanBeEdited(application);
-    });
+    this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary') || !applicationCanBeEdited(application);
   }
 
   /**
