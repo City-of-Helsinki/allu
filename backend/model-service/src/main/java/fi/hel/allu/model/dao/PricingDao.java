@@ -87,8 +87,8 @@ public class PricingDao {
   @Transactional(readOnly = true)
   public List<String> getPaymentClasses(ApplicationType type, ApplicationKind kind) {
     BooleanExpression condition = pricing.applicationType.eq(type)
-      .and(pricing.paymentClass.isNotNull())
-      .and(pricing.validity.eq(Date.valueOf(LocalDate.of(2025, 3, 1))).or(pricing.validity.isNull()));
+      .and(pricing.paymentClass.isNotNull());
+
     if (type == ApplicationType.SHORT_TERM_RENTAL) {
       // Short term rentals have kind specific payment classes
       condition = condition.and(pricing.key.eq(kind.name()));
