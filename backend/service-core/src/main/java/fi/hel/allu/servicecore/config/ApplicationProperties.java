@@ -226,8 +226,20 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/version");
   }
 
+  /**
+   *
+   * @return url to check whether applications are currently anonymizable
+   */
   public String getApplicationAnonymizabilityCheckUrl() {
     return getModelServiceUrl("/applications/checkanonymizability");
+  }
+
+  /**
+   *
+   * @return url to anonymize given applications
+   */
+  public String getAnonymizeApplicationsUrl() {
+    return getModelServiceUrl("/applications/anonymize");
   }
 
   /**

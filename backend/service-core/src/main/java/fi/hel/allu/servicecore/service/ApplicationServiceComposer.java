@@ -170,6 +170,7 @@ public class ApplicationServiceComposer {
    */
   public boolean anonymizeApplications(List<Integer> applicationIds) {
     if (!applicationService.checkApplicationAnonymizability(applicationIds)) return false;
+    applicationService.anonymizeApplications(applicationIds);
     return true;
   }
 

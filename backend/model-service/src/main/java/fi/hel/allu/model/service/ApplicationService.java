@@ -441,6 +441,10 @@ public class ApplicationService {
     return applicationDao.findNonanonymizableOf(applicationIds);
   }
 
+  public void anonymizeApplications(List<Integer> applicationIds) {
+
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     return applicationDao.findFinishedNotes();

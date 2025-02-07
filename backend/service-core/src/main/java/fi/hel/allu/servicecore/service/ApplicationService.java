@@ -242,6 +242,16 @@ public class ApplicationService {
   }
 
   /**
+   * Anonymize given applications
+   *
+   * @param applicationIds list of application IDs to anonymize
+   */
+  void anonymizeApplications(List<Integer> applicationIds) {
+    restTemplate.exchange(applicationProperties.getAnonymizeApplicationsUrl(),
+      HttpMethod.PATCH, new HttpEntity<>(applicationIds), Void.class);
+  }
+
+  /**
    * Delete a note from model-service's database.
    *
    * @param applicationId note application's database ID
