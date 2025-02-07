@@ -226,6 +226,20 @@ public class ApplicationService {
     return setInvoicingPeriods(application);
   }
 
+  /**
+   * Check that all given applications have previously been marked as anonymizable
+   *
+   * @param applicationIds list of application IDs to check
+   *
+   * @return true if all given applications are anonymizable, otherwise false
+   */
+  boolean checkApplicationAnonymizability(List<Integer> applicationIds) {
+    ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
+    List<Integer> nonanonymizableApplicationIds =
+      restTemplate.exchange(applicationProperties.getApplicationAnonymizabilityCheckUrl(), HttpMethod.POST, new HttpEntity<>(applicationIds), typeRef).getBody();
+
+    return nonanonymizableApplicationIds == null || nonanonymizableApplicationIds.isEmpty();
+  }
 
   /**
    * Delete a note from model-service's database.

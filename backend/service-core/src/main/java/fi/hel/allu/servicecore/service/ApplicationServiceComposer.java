@@ -161,6 +161,19 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Anonymize given applications
+   *
+   * @param applicationIds list of application IDs that should be anonymized
+   *
+   * @return False (and nothing anonymized) if all given application IDs have not been marked
+   *         previously as ready for anonymization in the database, otherwise true
+   */
+  public boolean anonymizeApplications(List<Integer> applicationIds) {
+    if (!applicationService.checkApplicationAnonymizability(applicationIds)) return false;
+    return true;
+  }
+
+  /**
    * Delete a note from model-service's and search-service's database.
    *
    * @param applicationId note application's database ID

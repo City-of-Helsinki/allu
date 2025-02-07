@@ -208,6 +208,18 @@ public class ApplicationDao {
   }
 
   @Transactional(readOnly = true)
+  public List<Integer> findNonanonymizableOf(List<Integer> applicationIds) {
+    List<Integer> anonymizables =
+      queryFactory
+        .select(anonymizableApplication.applicationId)
+        .from(anonymizableApplication)
+        .where(anonymizableApplication.applicationId.in(applicationIds))
+        .fetch();
+
+    return applicationIds.stream().filter(id -> !anonymizables.contains(id)).toList();
+  }
+
+  @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     ZonedDateTime now = ZonedDateTime.now();
     BooleanExpression recurringCondition = application.recurringEndTime.isNull()
