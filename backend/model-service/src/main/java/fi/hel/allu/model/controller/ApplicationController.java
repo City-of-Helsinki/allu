@@ -428,6 +428,12 @@ public class ApplicationController {
     return new ResponseEntity<List<Integer>>(applicationService.checkAnonymizability(applicationIds), HttpStatus.OK);
   }
 
+  @PatchMapping(value = "/anonymize")
+  public ResponseEntity<Void> anonymizeApplications(@RequestBody List<Integer> applicationIds) {
+    applicationService.anonymizeApplications(applicationIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   /**
    * Finds finished notes
    */
