@@ -264,4 +264,35 @@ public class ApplicationControllerTest {
     String jsonResponse = resultActions.andReturn().getResponse().getContentAsString();
     assertEquals("[]", jsonResponse);
   }
+
+  @Test
+  public void checkApplicationAnonymizabilityWithValid() throws Exception {
+    Application app1 = testCommon.dummyOutdoorApplication("Test Application", "Owner");
+    Application app1Result = insertApplication(app1);
+    Application app2 = testCommon.dummyOutdoorApplication("Test Application2", "Owner2");
+    Application app2Result = insertApplication(app2);
+
+    wtc.perform(patch("/applications/addtoanonymizable").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json")).andExpect(status().isOk()).andReturn();
+
+    ResultActions resultActions = wtc.perform(post("/applications/checkanonymizability").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json"))
+      .andExpect(status().isOk());
+    String jsonResponse = resultActions.andReturn().getResponse().getContentAsString();
+    assertEquals("[]", jsonResponse);
+  }
+
+  @Test
+  public void checkApplicationAnonymizabilityWithInvalid() throws Exception {
+    Application app1 = testCommon.dummyOutdoorApplication("Test Application", "Owner");
+    Application app1Result = insertApplication(app1);
+    Application app2 = testCommon.dummyOutdoorApplication("Test Application2", "Owner2");
+    Application app2Result = insertApplication(app2);
+
+    wtc.perform(patch("/applications/addtoanonymizable").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json")).andExpect(status().isOk()).andReturn();
+
+    ResultActions resultActions = wtc.perform(post("/applications/checkanonymizability").content("[" + app2Result.getId() + "," + (app1Result.getId() + app2Result.getId()) + "]").contentType("application/json"))
+      .andExpect(status().isOk());
+    String jsonResponse = resultActions.andReturn().getResponse().getContentAsString();
+    assertEquals("[" + (app1Result.getId() + app2Result.getId()) + "]", jsonResponse);
+  }
+
 }

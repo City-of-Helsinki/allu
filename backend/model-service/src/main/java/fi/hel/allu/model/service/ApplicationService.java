@@ -437,6 +437,10 @@ public class ApplicationService {
     applicationDao.insertToAnonymizableApplication(applicationsIds);
   }
 
+  public List<Integer> checkAnonymizability(List<Integer> applicationIds) {
+    return applicationDao.findNonanonymizableOf(applicationIds);
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     return applicationDao.findFinishedNotes();

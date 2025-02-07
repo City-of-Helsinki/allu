@@ -541,4 +541,32 @@ public class ApplicationDaoTest {
     List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
     assertTrue(results.isEmpty());
   }
+
+  @Test
+  public void testNonanonymizableOfWithValid() {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2 = applicationDao.insert(app2);
+    applicationDao.insertToAnonymizableApplication(List.of(app1.getId(), app2.getId()));
+
+    List<Integer> result = applicationDao.findNonanonymizableOf(List.of(app1.getId(), app2.getId()));
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  public void testNonanonymizableOfWithInvalid() {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2 = applicationDao.insert(app2);
+    applicationDao.insertToAnonymizableApplication(List.of(app1.getId(), app2.getId()));
+
+    int invalidId = app1.getId() + app2.getId();
+    List<Integer> result = applicationDao.findNonanonymizableOf(List.of(app2.getId(), app1.getId() + app2.getId()));
+
+    assertEquals(1, result.size());
+    int returnedId = result.get(0);
+    assertEquals(invalidId, returnedId);
+  }
 }

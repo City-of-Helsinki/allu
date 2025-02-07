@@ -226,6 +226,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/version");
   }
 
+  public String getApplicationAnonymizabilityCheckUrl() {
+    return getModelServiceUrl("/applications/checkanonymizability");
+  }
+
   /**
    * @return url to delete a note in model service.
    */

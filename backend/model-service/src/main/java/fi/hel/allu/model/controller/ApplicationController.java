@@ -423,6 +423,11 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @PostMapping(value = "/checkanonymizability")
+  public ResponseEntity<List<Integer>> checkAnonymizability(@RequestBody List<Integer> applicationIds) {
+    return new ResponseEntity<List<Integer>>(applicationService.checkAnonymizability(applicationIds), HttpStatus.OK);
+  }
+
   /**
    * Finds finished notes
    */
