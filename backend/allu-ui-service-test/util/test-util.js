@@ -97,6 +97,7 @@ function tryRetryPromise(fn, times, delay) {
         fn().then(resolve)
           .catch((e) => {
             error = e;
+            console.log(e.message);
             console.log('waiting for retry...', counter);
             ++counter;
             setTimeout(() => {
