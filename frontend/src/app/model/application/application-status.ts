@@ -21,7 +21,8 @@ export enum ApplicationStatus {
   FINISHED = 'FINISHED',
   CANCELLED = 'CANCELLED',
   REPLACED = 'REPLACED',
-  ARCHIVED = 'ARCHIVED'
+  ARCHIVED = 'ARCHIVED',
+  ANONYMIZED = 'ANONYMIZED'
 }
 
 export const statusNames = Object.keys(ApplicationStatus);
@@ -143,7 +144,8 @@ export const decided = [
   ApplicationStatus.OPERATIONAL_CONDITION,
   ApplicationStatus.FINISHED,
   ApplicationStatus.TERMINATED,
-  ApplicationStatus.ARCHIVED
+  ApplicationStatus.ARCHIVED,
+  ApplicationStatus.ANONYMIZED
 ];
 
 export enum ApplicationStatusGroup {

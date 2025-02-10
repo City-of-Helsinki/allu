@@ -23,7 +23,8 @@ public enum StatusType {
   FINISHED(15), // Valmis
   CANCELLED(16), // Peruttu
   REPLACED(17), // Korvattu
-  ARCHIVED(18); // Arkistoitu
+  ARCHIVED(18), // Arkistoitu
+  ANONYMIZED(19); // Anonymisoitu
 
   // Status order in application process flow
   private int orderNumber;
