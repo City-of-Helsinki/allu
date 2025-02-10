@@ -58,10 +58,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.roleChange(this.role);
     this.mapController.availableLayers = this.availableLayers;
 
-    // fixes the NG0100: ExpressionChangedAfterItHasBeenCheckedError error
-    setTimeout(() => {
       this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
-    });
   }
 
   /**
