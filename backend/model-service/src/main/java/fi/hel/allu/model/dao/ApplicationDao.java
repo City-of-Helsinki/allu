@@ -455,15 +455,20 @@ public class ApplicationDao {
    */
   @Transactional
   public Application updateStatus(int applicationId, StatusType status) {
-    int updated = (int) queryFactory
-        .update(application)
-        .set(application.status, status)
-        .where(application.id.eq(applicationId))
-        .execute();
-    if (updated != 1) {
-      throw new NoSuchEntityException("application.update.notFound", applicationId);
-    }
+    updateStatuses(List.of(applicationId), status);
     return findById(applicationId);
+  }
+
+  @Transactional
+  public void updateStatuses(List<Integer> applicationIds, StatusType status) {
+    int updated = (int) queryFactory
+      .update(application)
+      .set(application.status, status)
+      .where(application.id.in(applicationIds))
+      .execute();
+    if (updated != applicationIds.size()) {
+      throw new NoSuchEntityException("application.update.notFound", applicationIds.size() == 1 ? applicationIds.get(0) : 0);
+    }
   }
 
   /**

@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QAnonymizableApplication;
 import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
@@ -164,6 +165,28 @@ public class ApplicationDaoTest {
     Application applOut = applicationDao.insert(application);
     Application updated = applicationDao.updateStatus(applOut.getId(), StatusType.CANCELLED);
     assertEquals(StatusType.CANCELLED, updated.getStatus());
+  }
+
+  @Test
+  public void testUpdateStatusThrows() {
+    NoSuchEntityException exc = assertThrows(
+      NoSuchEntityException.class,
+      () -> applicationDao.updateStatus(9999999, StatusType.CANCELLED)
+    );
+
+    assertEquals("application.update.notFound", exc.getMessage());
+    assertEquals("9999999", exc.getMissingEntityId());
+  }
+
+  @Test
+  public void testUpdateStatuses() {
+    Application application1 = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
+    Application appl1Out = applicationDao.insert(application1);
+    Application application2 = testCommon.dummyOutdoorApplication("Test Application2", "Test Owner2");
+    Application appl2Out = applicationDao.insert(application2);
+    applicationDao.updateStatuses(List.of(appl1Out.getId(), appl2Out.getId()), StatusType.CANCELLED);
+    assertEquals(StatusType.CANCELLED, applicationDao.findById(appl1Out.getId()).getStatus());
+    assertEquals(StatusType.CANCELLED, applicationDao.findById(appl2Out.getId()).getStatus());
   }
 
   @Test
