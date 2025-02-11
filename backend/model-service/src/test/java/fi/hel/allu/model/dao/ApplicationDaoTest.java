@@ -476,7 +476,7 @@ public class ApplicationDaoTest {
     app2 = applicationDao.insert(app2);
 
     List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
-    testCommon.insertDummyAnonymizableApplicationIds(ids);
+    applicationDao.insertToAnonymizableApplication(ids);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
     testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
 
@@ -501,7 +501,7 @@ public class ApplicationDaoTest {
     Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
     app1 = applicationDao.insert(app1);
 
-    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    applicationDao.insertToAnonymizableApplication(List.of(app1.getId()));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now().minusDays(30));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", ZonedDateTime.now());
 
@@ -526,7 +526,7 @@ public class ApplicationDaoTest {
     app1 = applicationDao.insert(app1);
 
     ZonedDateTime time = ZonedDateTime.now();
-    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    applicationDao.insertToAnonymizableApplication(List.of(app1.getId()));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.COMMENT_ADDED, "", "", time);
