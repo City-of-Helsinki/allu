@@ -293,18 +293,6 @@ public class TestCommon {
     sqlRunner.runSql(sql);
   }
 
-  public void insertDummyAnonymizableApplicationIds(List<Integer> ids) throws SQLException {
-    StringBuilder sql = new StringBuilder("insert into allu.anonymizable_application (application_id) VALUES ");
-    for (int i = 0; i < ids.size(); i++) {
-      sql.append("(").append(ids.get(i)).append(")");
-      if (i < ids.size() - 1) {
-        sql.append(", ");
-      }
-    }
-    sql.append(";");
-    sqlRunner.runSql(sql.toString());
-  }
-
   /**
    * Create a location with given street address and geometry.
    *
