@@ -442,6 +442,9 @@ public class ApplicationService {
   }
 
   public void anonymizeApplications(List<Integer> applicationIds) {
+    for (Integer id : applicationIds) {
+      removeTags(id);
+    }
     applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
   }
 
