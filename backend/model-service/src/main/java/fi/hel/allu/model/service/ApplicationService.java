@@ -442,7 +442,7 @@ public class ApplicationService {
   }
 
   public void anonymizeApplications(List<Integer> applicationIds) {
-
+    applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
   }
 
   @Transactional(readOnly = true)
