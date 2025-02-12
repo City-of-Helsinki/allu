@@ -63,7 +63,7 @@ public class ApplicationDao {
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
   private static final List<StatusType> INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES =
-      List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED);
+      List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED, StatusType.ANONYMIZED);
 
   private final SQLQueryFactory queryFactory;
   private final ApplicationSequenceDao applicationSequenceDao;
