@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +20,6 @@ import org.mockito.MockitoAnnotations;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 
 import static org.junit.Assert.*;
@@ -52,12 +49,14 @@ public class ApplicationServiceTest {
   private ApplicationService applicationService;
   @Mock
   private InvoiceRecipientDao invoiceRecipientDao;
+  @Mock
+  private DistributionEntryDao distributionEntryDao;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
-        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, invoiceRecipientDao);
+        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, invoiceRecipientDao, distributionEntryDao);
   }
 
   @Test
