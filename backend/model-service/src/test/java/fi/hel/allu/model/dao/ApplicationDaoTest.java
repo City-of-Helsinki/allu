@@ -1,7 +1,6 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.QAnonymizableApplication;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
@@ -591,5 +590,43 @@ public class ApplicationDaoTest {
     assertEquals(1, result.size());
     int returnedId = result.get(0);
     assertEquals(invalidId, returnedId);
+  }
+
+  @Test
+  public void testRemoveAllCustomersWithContacts() {
+    Customer testCustomer = testCommon.insertPerson();
+    Contact testContact = testCommon.insertContact(testCustomer.getId());
+
+    Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
+    app1.setCustomersWithContacts(List.of(
+      new CustomerWithContacts(
+        CustomerRoleType.APPLICANT,
+        testCustomer,
+        List.of(testContact)
+      ),
+      new CustomerWithContacts(
+        CustomerRoleType.CONTRACTOR,
+        testCustomer,
+        List.of(testContact)
+      )
+    ));
+    app1 = applicationDao.insert(app1);
+
+    Application app2 = testCommon.dummyExcavationAnnouncementApplication("Application2", "Client2");
+    app2.setCustomersWithContacts(List.of(
+      new CustomerWithContacts(
+        CustomerRoleType.APPLICANT,
+        testCustomer,
+        List.of(testContact)
+      )
+    ));
+    app2 = applicationDao.insert(app2);
+
+    applicationDao.removeAllCustomersWithContacts(List.of(app1.getId()));
+
+    Application savedApp1 = applicationDao.findById(app1.getId());
+    Application savedApp2 = applicationDao.findById(app2.getId());
+    assertEquals(0, savedApp1.getCustomersWithContacts().size());
+    assertEquals(1, savedApp2.getCustomersWithContacts().size());
   }
 }
