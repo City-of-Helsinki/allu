@@ -445,6 +445,7 @@ public class ApplicationService {
     for (Integer id : applicationIds) {
       removeTags(id);
     }
+    applicationDao.removeAllCustomersWithContacts(applicationIds);
     applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
   }
 

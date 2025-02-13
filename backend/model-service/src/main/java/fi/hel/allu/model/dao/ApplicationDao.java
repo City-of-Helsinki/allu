@@ -768,6 +768,15 @@ public class ApplicationDao {
     }
   }
 
+  public void removeAllCustomersWithContacts(List<Integer> applicationIds) {
+    List<Integer> applicationCustomers = queryFactory.select(applicationCustomer.id)
+      .from(applicationCustomer)
+      .where(applicationCustomer.applicationId.in(applicationIds)).fetch();
+
+    queryFactory.delete(applicationCustomerContact).where(applicationCustomerContact.applicationCustomerId.in(applicationCustomers)).execute();
+    queryFactory.delete(applicationCustomer).where(applicationCustomer.id.in(applicationCustomers)).execute();
+  }
+
   private boolean hasValidRecurringEndTime(Application application) {
     return application.getEndTime() != null &&
         application.getRecurringEndTime() != null &&
