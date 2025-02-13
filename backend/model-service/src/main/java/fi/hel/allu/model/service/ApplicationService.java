@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import fi.hel.allu.common.util.OptionalUtil;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,6 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 
@@ -45,12 +42,13 @@ public class ApplicationService {
   private final UserDao userDao;
   private final InvoicingPeriodService invoicingPeriodService;
   private final InvoiceRecipientDao invoiceRecipientDao;
+  private final DistributionEntryDao distributionEntryDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
     ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
     LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
-    InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao) {
+    InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -61,6 +59,7 @@ public class ApplicationService {
     this.userDao = userDao;
     this.invoicingPeriodService = invoicingPeriodService;
     this.invoiceRecipientDao = invoiceRecipientDao;
+    this.distributionEntryDao = distributionEntryDao;
   }
 
   /**
@@ -444,6 +443,7 @@ public class ApplicationService {
   public void anonymizeApplications(List<Integer> applicationIds) {
     for (Integer id : applicationIds) {
       removeTags(id);
+      distributionEntryDao.deleteByApplication(id);
     }
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);

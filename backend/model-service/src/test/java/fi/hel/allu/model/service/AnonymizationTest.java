@@ -2,24 +2,16 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
-import fi.hel.allu.model.dao.UserDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import fi.hel.allu.model.testUtils.TestCommon;
 import java.util.List;
 
-import org.checkerframework.checker.units.qual.C;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,7 +30,7 @@ public class AnonymizationTest {
   @Autowired
   private TestCommon testCommon;
   @Autowired
-  private ApplicationDao applicationDao;
+  private DistributionEntryDao distributionEntryDao;
 
   @Test
   public void shouldSetStatusToAnonymized() {
@@ -113,5 +105,37 @@ public class AnonymizationTest {
     assertEquals(0, anonApp1.getCustomersWithContacts().size());
     Application anonApp2 = applicationService.findById(app2.getId());
     assertEquals(0, anonApp2.getCustomersWithContacts().size());
+  }
+
+  @Test
+  public void shouldRemoveDistributionEntries() {
+    Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
+    app1 = applicationService.insert(app1, 3);
+    DistributionEntry dist1 = new DistributionEntry();
+    dist1.setDistributionType(DistributionType.EMAIL);
+    dist1.setEmail("test.email@test.net");
+    dist1.setName("Teuvo Testaaja");
+    dist1.setApplicationId(app1.getId());
+    DistributionEntry dist2 = new DistributionEntry();
+    dist2.setDistributionType(DistributionType.PAPER);
+    dist2.setName("Pekka Paperimies");
+    dist2.setPostalAddress(new PostalAddress("Paperikatu 3", "52400", "Jämsänkoski"));
+    dist2.setApplicationId(app1.getId());
+    distributionEntryDao.insert(List.of(dist1, dist2));
+    Application app2 = testCommon.dummyExcavationAnnouncementApplication("Application2", "Client2");
+    app2 = applicationService.insert(app2, 3);
+    DistributionEntry dist3 = new DistributionEntry();
+    dist3.setDistributionType(DistributionType.EMAIL);
+    dist3.setEmail("mun.maili@foomail.com");
+    dist3.setName("Keijo Kokeilija");
+    dist3.setApplicationId(app2.getId());
+    distributionEntryDao.insert(List.of(dist3));
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    Application anonApp1 = applicationService.findById(app1.getId());
+    assertEquals(0, anonApp1.getDecisionDistributionList().size());
+    Application anonApp2 = applicationService.findById(app2.getId());
+    assertEquals(0, anonApp2.getDecisionDistributionList().size());
   }
 }
