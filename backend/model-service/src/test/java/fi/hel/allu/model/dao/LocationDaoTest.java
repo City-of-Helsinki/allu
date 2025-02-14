@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.FixedLocation;
@@ -460,6 +461,31 @@ public class LocationDaoTest {
     assertEquals(geometry.getNumPoints() - 2, result.getNumPoints(), "Should simplify 4 lines to 2 lines");
     assertNotEquals(0, result.getNumPoints(), "Simplify should always give at least 1 point, " +
             "given that it should not remove lines, only replace");
+  }
+
+  @Test
+  public void testRemoveAdditionalInfoForApplication() {
+    List<String> infos = List.of("XXX", "YYY", "ZZZ");
+    List<Integer> appIds = new ArrayList<>();
+    for (int i = 0; i < infos.size(); i++) {
+      Application app = testCommon.dummyCableReportApplication("Application" + i, "Owner" + i);
+      int appId = applicationDao.insert(app).getId();
+      Location loc = new Location();
+      loc.setGeometry(geometrycollection(3879, Pol_0_0));
+      loc.setAdditionalInfo(infos.get(i));
+      loc.setStartTime(ZonedDateTime.of(2025, 6, 1, 12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
+      loc.setEndTime(ZonedDateTime.of(2025, 6, 5, 12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
+      loc.setPaymentTariffOverride("3");
+      loc.setApplicationId(appId);
+      locationDao.insert(loc);
+      appIds.add(appId);
+    }
+
+    locationDao.removeAdditionalInfoForApplications(List.of(appIds.get(0), appIds.get(1)));
+
+    assertEquals("", applicationDao.findById(appIds.get(0)).getLocations().get(0).getAdditionalInfo());
+    assertEquals("", applicationDao.findById(appIds.get(1)).getLocations().get(0).getAdditionalInfo());
+    assertEquals("ZZZ", applicationDao.findById(appIds.get(2)).getLocations().get(0).getAdditionalInfo());
   }
 
   private Location newLocationWithDefaults() {

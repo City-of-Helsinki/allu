@@ -43,12 +43,13 @@ public class ApplicationService {
   private final InvoicingPeriodService invoicingPeriodService;
   private final InvoiceRecipientDao invoiceRecipientDao;
   private final DistributionEntryDao distributionEntryDao;
+  private final LocationDao locationDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
-    LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
-    InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao) {
+                            ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
+                            LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
+                            InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao, LocationDao locationDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -60,6 +61,7 @@ public class ApplicationService {
     this.invoicingPeriodService = invoicingPeriodService;
     this.invoiceRecipientDao = invoiceRecipientDao;
     this.distributionEntryDao = distributionEntryDao;
+    this.locationDao = locationDao;
   }
 
   /**
@@ -446,6 +448,7 @@ public class ApplicationService {
       distributionEntryDao.deleteByApplication(id);
     }
     applicationDao.removeAllCustomersWithContacts(applicationIds);
+    locationDao.removeAdditionalInfoForApplications(applicationIds);
     applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
   }
 
