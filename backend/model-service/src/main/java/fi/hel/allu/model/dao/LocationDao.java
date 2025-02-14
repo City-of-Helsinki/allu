@@ -669,4 +669,9 @@ public class LocationDao {
     public String getCityDistrictNameById(Integer id) {
         return queryFactory.select(cityDistrict.name).from(cityDistrict).where(cityDistrict.id.eq(id)).fetchFirst();
     }
+
+    @Transactional
+    public void removeAdditionalInfoForApplications(List<Integer> applicationIds) {
+      queryFactory.update(location).set(location.additionalInfo, "").where(location.applicationId.in(applicationIds)).execute();
+    }
 }

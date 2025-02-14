@@ -4,12 +4,16 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
+
+import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.geolatte.geom.Geometry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -137,5 +144,40 @@ public class AnonymizationTest {
     assertEquals(0, anonApp1.getDecisionDistributionList().size());
     Application anonApp2 = applicationService.findById(app2.getId());
     assertEquals(0, anonApp2.getDecisionDistributionList().size());
+  }
+
+  @Test
+  public void shouldRemoveLocationAdditionalInfo() {
+    Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
+    Geometry geometry = polygon(3879,
+      ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
+    Location loc1 = new Location();
+    loc1.setGeometry(geometry);
+    loc1.setAdditionalInfo("XXX");
+    loc1.setStartTime(ZonedDateTime.of(2025, 6 ,1 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
+    loc1.setEndTime(ZonedDateTime.of(2025, 6 ,5 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
+    loc1.setPaymentTariffOverride("3");
+    app1.setLocations(List.of(loc1));
+    app1 = applicationService.insert(app1, 3);
+    Application app2 = testCommon.dummyExcavationAnnouncementApplication("Application2", "Client2");
+    Location loc2 = new Location();
+    loc2.setGeometry(geometry);
+    loc2.setAdditionalInfo("YYY");
+    loc2.setStartTime(ZonedDateTime.of(2025, 6 ,1 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
+    loc2.setEndTime(ZonedDateTime.of(2025, 6 ,5 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
+    loc2.setPaymentTariffOverride("3");
+    app2.setLocations(List.of(loc2));
+    app2 = applicationService.insert(app2, 3);
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    Application anonApp1 = applicationService.findById(app1.getId());
+    for (Location loc : anonApp1.getLocations()) {
+      assertEquals("", loc.getAdditionalInfo());
+    }
+    Application anonApp2 = applicationService.findById(app2.getId());
+    for (Location loc : anonApp2.getLocations()) {
+      assertEquals("", loc.getAdditionalInfo());
+    }
   }
 }
