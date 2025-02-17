@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
@@ -178,6 +179,41 @@ public class AnonymizationTest {
     Application anonApp2 = applicationService.findById(app2.getId());
     for (Location loc : anonApp2.getLocations()) {
       assertEquals("", loc.getAdditionalInfo());
+    }
+  }
+
+  @Test
+  public void shouldRemoveAdditionalInfoFromCableInfos() {
+    Application app1 = testCommon.dummyCableReportApplication("Application1", "Client1");
+    CableReport ext = (CableReport)app1.getExtension();
+    CableInfoEntry entry1 = new CableInfoEntry();
+    entry1.setType(DefaultTextType.ELECTRICITY);
+    entry1.setAdditionalInfo("Beware for electricity");
+    CableInfoEntry entry2 = new CableInfoEntry();
+    entry2.setType(DefaultTextType.SEWAGE_PIPE);
+    entry2.setAdditionalInfo("Down the sewer");
+    ext.setInfoEntries(List.of(entry1, entry2));
+    app1 = applicationService.insert(app1, 3);
+
+    Application app2 = testCommon.dummyCableReportApplication("Application2", "Client2");
+    CableReport ext2 = (CableReport)app2.getExtension();
+    CableInfoEntry entry3 = new CableInfoEntry();
+    entry3.setType(DefaultTextType.TELECOMMUNICATION);
+    entry3.setAdditionalInfo("Don't cut the cables");
+    ext2.setInfoEntries(List.of(entry3));
+    app2 = applicationService.insert(app2, 3);
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    Application anonApp1 = applicationService.findById(app1.getId());
+    CableReport anonExt1 = (CableReport)anonApp1.getExtension();
+    for (CableInfoEntry entry : anonExt1.getInfoEntries()) {
+      assertEquals("", entry.getAdditionalInfo());
+    }
+    Application anonApp2 = applicationService.findById(app2.getId());
+    CableReport anonExt2 = (CableReport)anonApp2.getExtension();
+    for (CableInfoEntry entry : anonExt2.getInfoEntries()) {
+      assertEquals("", entry.getAdditionalInfo());
     }
   }
 }

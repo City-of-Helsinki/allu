@@ -442,10 +442,23 @@ public class ApplicationService {
     return applicationDao.findNonanonymizableOf(applicationIds);
   }
 
+  public void removeAdditionalInfos(Application application) {
+    CableReport entries = (CableReport)application.getExtension();
+    if (entries == null) return;
+
+    for (CableInfoEntry entry : entries.getInfoEntries())
+      entry.setAdditionalInfo("");
+
+    applicationDao.update(application.getId(), application);
+  }
+
   public void anonymizeApplications(List<Integer> applicationIds) {
     for (Integer id : applicationIds) {
       removeTags(id);
       distributionEntryDao.deleteByApplication(id);
+      Application app = applicationDao.findById(id);
+      if (app.getType() == ApplicationType.CABLE_REPORT)
+        removeAdditionalInfos(app);
     }
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     locationDao.removeAdditionalInfoForApplications(applicationIds);
