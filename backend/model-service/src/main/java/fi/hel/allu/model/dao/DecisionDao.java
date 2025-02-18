@@ -112,4 +112,9 @@ public class DecisionDao {
       .map(p -> p.get())
       .reduce((left, right) -> left.and(right));
   }
+
+  @Transactional
+  public void removeDecisions(List<Integer> applicationIds) {
+    queryFactory.delete(decision).where(decision.applicationId.in(applicationIds)).execute();
+  }
 }

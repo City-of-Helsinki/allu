@@ -11,8 +11,10 @@ import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
 
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.geolatte.geom.Geometry;
 import org.junit.Test;
@@ -39,6 +41,8 @@ public class AnonymizationTest {
   private TestCommon testCommon;
   @Autowired
   private DistributionEntryDao distributionEntryDao;
+  @Autowired
+  private DecisionDao decisionDao;
 
   @Test
   public void shouldSetStatusToAnonymized() {
@@ -215,5 +219,22 @@ public class AnonymizationTest {
     for (CableInfoEntry entry : anonExt2.getInfoEntries()) {
       assertEquals("", entry.getAdditionalInfo());
     }
+  }
+
+  @Test
+  public void shouldRemoveDecision() {
+    Application app1 = testCommon.dummyCableReportApplication("Application1", "Client1");
+    app1 = applicationService.insert(app1, 3);
+    decisionDao.storeDecision(app1.getId(), "Lorem ipsum".getBytes(StandardCharsets.UTF_8));
+    Application app2 = testCommon.dummyCableReportApplication("Application2", "Client2");
+    app2 = applicationService.insert(app2, 3);
+    decisionDao.storeDecision(app2.getId(), "dolor sit amet".getBytes());
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    Optional<byte[]> decision = decisionDao.getDecision(app1.getId());
+    assert(decision.isEmpty());
+    Optional<byte[]> decision2 = decisionDao.getDecision(app2.getId());
+    assert(decision2.isEmpty());
   }
 }

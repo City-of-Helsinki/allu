@@ -44,12 +44,14 @@ public class ApplicationService {
   private final InvoiceRecipientDao invoiceRecipientDao;
   private final DistributionEntryDao distributionEntryDao;
   private final LocationDao locationDao;
+  private final DecisionDao decisionDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
                             ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
                             LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
-                            InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao, LocationDao locationDao) {
+                            InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao,
+                            LocationDao locationDao, DecisionDao decisionDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -62,6 +64,7 @@ public class ApplicationService {
     this.invoiceRecipientDao = invoiceRecipientDao;
     this.distributionEntryDao = distributionEntryDao;
     this.locationDao = locationDao;
+    this.decisionDao = decisionDao;
   }
 
   /**
@@ -444,7 +447,7 @@ public class ApplicationService {
 
   public void removeAdditionalInfos(Application application) {
     CableReport entries = (CableReport)application.getExtension();
-    if (entries == null) return;
+    if (entries == null || entries.getInfoEntries() == null) return;
 
     for (CableInfoEntry entry : entries.getInfoEntries())
       entry.setAdditionalInfo("");
@@ -463,6 +466,7 @@ public class ApplicationService {
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     locationDao.removeAdditionalInfoForApplications(applicationIds);
     applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
+    decisionDao.removeDecisions(applicationIds);
   }
 
   @Transactional(readOnly = true)
