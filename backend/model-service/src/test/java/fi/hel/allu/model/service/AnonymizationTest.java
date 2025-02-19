@@ -1,8 +1,10 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.util.TimeUtil;
@@ -43,6 +45,8 @@ public class AnonymizationTest {
   private DistributionEntryDao distributionEntryDao;
   @Autowired
   private DecisionDao decisionDao;
+  @Autowired
+  private AttachmentDao attachmentDao;
 
   @Test
   public void shouldSetStatusToAnonymized() {
@@ -236,5 +240,61 @@ public class AnonymizationTest {
     assert(decision.isEmpty());
     Optional<byte[]> decision2 = decisionDao.getDecision(app2.getId());
     assert(decision2.isEmpty());
+  }
+
+  @Test
+  public void shouldRemoveAttachments() {
+    DefaultAttachmentInfo defaultInfo = attachmentDao.insertDefault(new DefaultAttachmentInfo(
+      null,
+      3,
+      AttachmentType.DEFAULT,
+      "application/pdf",
+      "defaulttest",
+      "defaulttest",
+      null,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      false,
+      null,
+      List.of(ApplicationType.CABLE_REPORT),
+      42
+    ), "lorem ipsum".getBytes(StandardCharsets.UTF_8));
+
+    Application app1 = testCommon.dummyCableReportApplication("Application1", "Client1");
+    app1 = applicationService.insert(app1 ,3);
+    attachmentDao.linkApplicationToAttachment(app1.getId(), defaultInfo.getId());
+    AttachmentInfo attachment1 = attachmentDao.insert(app1.getId(), new AttachmentInfo(
+      null,
+      3,
+      AttachmentType.ADDED_BY_HANDLER,
+      "application/pdf",
+      "test1",
+      "test1",
+      null,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      false
+    ), "dolor sit amet".getBytes(StandardCharsets.UTF_8));
+
+    Application app2 = testCommon.dummyCableReportApplication("Application2", "Client2");
+    app2 = applicationService.insert(app2 ,3);
+    attachmentDao.linkApplicationToAttachment(app2.getId(), defaultInfo.getId());
+    AttachmentInfo attachment2 = attachmentDao.insert(app2.getId(), new AttachmentInfo(
+      null,
+      3,
+      AttachmentType.ADDED_BY_HANDLER,
+      "application/pdf",
+      "test2",
+      "test2",
+      null,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      false
+    ), "dolor sit amet".getBytes(StandardCharsets.UTF_8));
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    assertEquals(0, attachmentDao.findByApplication(app1.getId()).size());
+    assertEquals(0, attachmentDao.findByApplication(app2.getId()).size());
+    assert(attachmentDao.findDefaultById(defaultInfo.getId()).isPresent());
+    assert(attachmentDao.findById(attachment1.getId()).isEmpty());
+    assert(attachmentDao.findById(attachment2.getId()).isEmpty());
   }
 }

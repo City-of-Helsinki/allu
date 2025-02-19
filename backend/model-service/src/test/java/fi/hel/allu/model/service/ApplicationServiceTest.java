@@ -55,13 +55,15 @@ public class ApplicationServiceTest {
   private LocationDao locationDao;
   @Mock
   private DecisionDao decisionDao;
+  @Mock
+  private AttachmentDao attachmentDao;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
         customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, invoiceRecipientDao,
-        distributionEntryDao, locationDao, decisionDao);
+        distributionEntryDao, locationDao, decisionDao, attachmentDao);
   }
 
   @Test

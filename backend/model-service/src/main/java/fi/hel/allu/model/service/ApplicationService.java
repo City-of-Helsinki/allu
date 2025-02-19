@@ -45,13 +45,14 @@ public class ApplicationService {
   private final DistributionEntryDao distributionEntryDao;
   private final LocationDao locationDao;
   private final DecisionDao decisionDao;
+  private final AttachmentDao attachmentDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
                             ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
                             LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
                             InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao,
-                            LocationDao locationDao, DecisionDao decisionDao) {
+                            LocationDao locationDao, DecisionDao decisionDao, AttachmentDao attachmentDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -65,6 +66,7 @@ public class ApplicationService {
     this.distributionEntryDao = distributionEntryDao;
     this.locationDao = locationDao;
     this.decisionDao = decisionDao;
+    this.attachmentDao = attachmentDao;
   }
 
   /**
@@ -455,6 +457,16 @@ public class ApplicationService {
     applicationDao.update(application.getId(), application);
   }
 
+  public void removeAttachments(Application application) {
+    List<AttachmentInfo> attachments = attachmentDao.findByApplication(application.getId());
+
+    for (AttachmentInfo info : attachments) {
+      if (info.getType().isDefaultAttachment())
+        attachmentDao.removeLinkApplicationToAttachment(application.getId(), info.getId());
+      else attachmentDao.delete(application.getId(), info.getId());
+    }
+  }
+
   public void anonymizeApplications(List<Integer> applicationIds) {
     for (Integer id : applicationIds) {
       removeTags(id);
@@ -462,6 +474,7 @@ public class ApplicationService {
       Application app = applicationDao.findById(id);
       if (app.getType() == ApplicationType.CABLE_REPORT)
         removeAdditionalInfos(app);
+      removeAttachments(app);
     }
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     locationDao.removeAdditionalInfoForApplications(applicationIds);
