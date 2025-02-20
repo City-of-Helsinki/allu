@@ -1,9 +1,6 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.DistributionType;
@@ -47,6 +44,11 @@ public class AnonymizationTest {
   private DecisionDao decisionDao;
   @Autowired
   private AttachmentDao attachmentDao;
+  @Autowired
+  private SupervisionTaskDao supervisionTaskDao;
+
+  private final Geometry testGeometry = polygon(3879, ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
+
 
   @Test
   public void shouldSetStatusToAnonymized() {
@@ -158,10 +160,8 @@ public class AnonymizationTest {
   @Test
   public void shouldRemoveLocationAdditionalInfo() {
     Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
-    Geometry geometry = polygon(3879,
-      ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
     Location loc1 = new Location();
-    loc1.setGeometry(geometry);
+    loc1.setGeometry(testGeometry);
     loc1.setAdditionalInfo("XXX");
     loc1.setStartTime(ZonedDateTime.of(2025, 6 ,1 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
     loc1.setEndTime(ZonedDateTime.of(2025, 6 ,5 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
@@ -170,7 +170,7 @@ public class AnonymizationTest {
     app1 = applicationService.insert(app1, 3);
     Application app2 = testCommon.dummyExcavationAnnouncementApplication("Application2", "Client2");
     Location loc2 = new Location();
-    loc2.setGeometry(geometry);
+    loc2.setGeometry(testGeometry);
     loc2.setAdditionalInfo("YYY");
     loc2.setStartTime(ZonedDateTime.of(2025, 6 ,1 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
     loc2.setEndTime(ZonedDateTime.of(2025, 6 ,5 ,12, 0, 0, 0, TimeUtil.HelsinkiZoneId));
@@ -296,5 +296,74 @@ public class AnonymizationTest {
     assert(attachmentDao.findDefaultById(defaultInfo.getId()).isPresent());
     assert(attachmentDao.findById(attachment1.getId()).isEmpty());
     assert(attachmentDao.findById(attachment2.getId()).isEmpty());
+  }
+
+  @Test
+  public void shouldAnonymizeSupervisionTasks() {
+    Location loc = testCommon.createLocation("Testikatu 42", testGeometry, ZonedDateTime.now(TimeUtil.HelsinkiZoneId), ZonedDateTime.now(TimeUtil.HelsinkiZoneId).plusWeeks(1));
+
+    Application  app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+    SupervisionTask task1 = new SupervisionTask(
+      null,
+      app1.getId(),
+      SupervisionTaskType.SUPERVISION,
+      3,
+      3,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId).plusWeeks(1),
+      null,
+      SupervisionTaskStatusType.OPEN,
+      "Description here",
+      "Result here",
+      loc.getId()
+    );
+    supervisionTaskDao.insert(task1);
+    SupervisionTask task2 = new SupervisionTask(
+      null,
+      app1.getId(),
+      SupervisionTaskType.OPERATIONAL_CONDITION,
+      3,
+      3,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId).plusWeeks(1),
+      null,
+      SupervisionTaskStatusType.OPEN,
+      "Another description here",
+      "Result here too",
+      loc.getId()
+    );
+    supervisionTaskDao.insert(task2);
+
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Application2", "Client2"), 3);
+    SupervisionTask task3 = new SupervisionTask(
+      null,
+      app2.getId(),
+      SupervisionTaskType.SUPERVISION,
+      3,
+      3,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId).plusWeeks(1),
+      null,
+      SupervisionTaskStatusType.OPEN,
+      "Lorem ipsum",
+      "Hocus pocus",
+      loc.getId()
+    );
+    supervisionTaskDao.insert(task3);
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    for (SupervisionTask task : supervisionTaskDao.findByApplicationId(app1.getId())) {
+      assertNull(task.getCreatorId());
+      assertNull(task.getOwnerId());
+      assertNull(task.getDescription());
+      assertNull(task.getResult());
+    }
+    for (SupervisionTask task : supervisionTaskDao.findByApplicationId(app2.getId())) {
+      assertNull(task.getCreatorId());
+      assertNull(task.getOwnerId());
+      assertNull(task.getDescription());
+      assertNull(task.getResult());
+    }
   }
 }

@@ -420,4 +420,16 @@ public class SupervisionTaskDao {
       .where(supervisionTaskSupervisedLocation.supervisionTaskId.eq(supervisionTaskId))
       .execute();
   }
+
+  @Transactional
+  public void anonymizeSupervisionTasks(List<Integer> applicationIds) {
+    queryFactory
+      .update(supervisionTask)
+      .set(supervisionTask.creatorId, (Integer)null)
+      .set(supervisionTask.ownerId, (Integer)null)
+      .set(supervisionTask.description, (String)null)
+      .set(supervisionTask.result, (String)null)
+      .where(supervisionTask.applicationId.in(applicationIds))
+      .execute();
+  }
 }
