@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.AttachmentType;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.util.TimeUtil;
@@ -46,6 +47,8 @@ public class AnonymizationTest {
   private AttachmentDao attachmentDao;
   @Autowired
   private SupervisionTaskDao supervisionTaskDao;
+  @Autowired
+  private CommentDao commentDao;
 
   private final Geometry testGeometry = polygon(3879, ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
 
@@ -365,5 +368,32 @@ public class AnonymizationTest {
       assertNull(task.getDescription());
       assertNull(task.getResult());
     }
+  }
+
+  @Test
+  public void shouldRemoveComments() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+    Comment comment1 = new Comment();
+    comment1.setText("Lorem ipsum");
+    comment1.setType(CommentType.INTERNAL);
+    comment1.setUserId(3);
+    commentDao.insertForApplication(comment1,app1.getId());
+    Comment comment2 = new Comment();
+    comment2.setText("dolor sit amet");
+    comment2.setType(CommentType.EXTERNAL_SYSTEM);
+    comment2.setUserId(3);
+    commentDao.insertForApplication(comment2,app1.getId());
+
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Application2", "Client2"), 3);
+    Comment comment3 = new Comment();
+    comment3.setText("consectetur adipiscing elit");
+    comment3.setType(CommentType.INTERNAL);
+    comment3.setUserId(3);
+    commentDao.insertForApplication(comment3,app2.getId());
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    assertEquals(0, commentDao.findByApplicationId(app1.getId()).size());
+    assertEquals(0, commentDao.findByApplicationId(app2.getId()).size());
   }
 }

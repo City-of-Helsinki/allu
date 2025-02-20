@@ -47,13 +47,14 @@ public class ApplicationService {
   private final DecisionDao decisionDao;
   private final AttachmentDao attachmentDao;
   private final SupervisionTaskDao supervisionTaskDao;
+  private final CommentDao commentDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
                             ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
                             LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
                             InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao,
-                            LocationDao locationDao, DecisionDao decisionDao, AttachmentDao attachmentDao, SupervisionTaskDao supervisionTaskDao) {
+                            LocationDao locationDao, DecisionDao decisionDao, AttachmentDao attachmentDao, SupervisionTaskDao supervisionTaskDao, CommentDao commentDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -69,6 +70,7 @@ public class ApplicationService {
     this.decisionDao = decisionDao;
     this.attachmentDao = attachmentDao;
     this.supervisionTaskDao = supervisionTaskDao;
+    this.commentDao = commentDao;
   }
 
   /**
@@ -483,6 +485,7 @@ public class ApplicationService {
     applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
     decisionDao.removeDecisions(applicationIds);
     supervisionTaskDao.anonymizeSupervisionTasks(applicationIds);
+    commentDao.deleteCommentsForApplications(applicationIds);
   }
 
   @Transactional(readOnly = true)
