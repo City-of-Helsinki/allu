@@ -490,6 +490,7 @@ public class ApplicationService {
     supervisionTaskDao.anonymizeSupervisionTasks(applicationIds);
     commentDao.deleteCommentsForApplications(applicationIds);
     historyDao.anonymizeHistoryFor(applicationIds);
+    applicationDao.removeFromAnonymizableApplication(applicationIds);
   }
 
   @Transactional(readOnly = true)

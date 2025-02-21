@@ -219,6 +219,11 @@ public class ApplicationDao {
     return applicationIds.stream().filter(id -> !anonymizables.contains(id)).toList();
   }
 
+  @Transactional
+  public void removeFromAnonymizableApplication(List<Integer> applicationIds) {
+    queryFactory.delete(anonymizableApplication).where(anonymizableApplication.applicationId.in(applicationIds)).execute();
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     ZonedDateTime now = ZonedDateTime.now();

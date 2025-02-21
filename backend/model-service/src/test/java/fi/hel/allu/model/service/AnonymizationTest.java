@@ -470,4 +470,19 @@ public class AnonymizationTest {
       changes
     );
   }
+
+  @Test
+  public void shouldRemoveAnonymizedIdsFromAnonymizableApplication() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+    historyDao.addApplicationChange(app1.getId(), createChangeHistoryItem(app1.getApplicationId(), ChangeType.CREATED));
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Application2", "Client2"), 3);
+    historyDao.addApplicationChange(app2.getId(), createChangeHistoryItem(app2.getApplicationId(), ChangeType.CREATED));
+
+    applicationService.addToAnonymizableApplications(List.of(app1.getId(), app2.getId()));
+    applicationService.anonymizeApplications(List.of(app1.getId()));
+
+    List<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications();
+    assertEquals(1, anonymizable.size());
+    assertEquals(app2.getId(), anonymizable.get(0).getId());
+  }
 }
