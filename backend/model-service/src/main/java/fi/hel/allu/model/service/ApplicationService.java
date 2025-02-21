@@ -48,13 +48,14 @@ public class ApplicationService {
   private final AttachmentDao attachmentDao;
   private final SupervisionTaskDao supervisionTaskDao;
   private final CommentDao commentDao;
+  private final HistoryDao historyDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
                             ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
                             LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
                             InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao,
-                            LocationDao locationDao, DecisionDao decisionDao, AttachmentDao attachmentDao, SupervisionTaskDao supervisionTaskDao, CommentDao commentDao) {
+                            LocationDao locationDao, DecisionDao decisionDao, AttachmentDao attachmentDao, SupervisionTaskDao supervisionTaskDao, CommentDao commentDao, HistoryDao historyDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -71,6 +72,7 @@ public class ApplicationService {
     this.attachmentDao = attachmentDao;
     this.supervisionTaskDao = supervisionTaskDao;
     this.commentDao = commentDao;
+    this.historyDao = historyDao;
   }
 
   /**
@@ -471,6 +473,7 @@ public class ApplicationService {
     }
   }
 
+  @Transactional
   public void anonymizeApplications(List<Integer> applicationIds) {
     for (Integer id : applicationIds) {
       removeTags(id);
@@ -486,6 +489,7 @@ public class ApplicationService {
     decisionDao.removeDecisions(applicationIds);
     supervisionTaskDao.anonymizeSupervisionTasks(applicationIds);
     commentDao.deleteCommentsForApplications(applicationIds);
+    historyDao.anonymizeHistoryFor(applicationIds);
   }
 
   @Transactional(readOnly = true)

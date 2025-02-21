@@ -1,10 +1,7 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.AttachmentType;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.common.types.DefaultTextType;
-import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.*;
@@ -49,6 +46,8 @@ public class AnonymizationTest {
   private SupervisionTaskDao supervisionTaskDao;
   @Autowired
   private CommentDao commentDao;
+  @Autowired
+  private HistoryDao historyDao;
 
   private final Geometry testGeometry = polygon(3879, ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
 
@@ -395,5 +394,80 @@ public class AnonymizationTest {
 
     assertEquals(0, commentDao.findByApplicationId(app1.getId()).size());
     assertEquals(0, commentDao.findByApplicationId(app2.getId()).size());
+  }
+
+  @Test
+  public void shouldRemoveFieldChangesAndUserData() {
+    List<ChangeType> remainingChanges = List.of(
+      ChangeType.CREATED,
+      ChangeType.STATUS_CHANGED,
+      ChangeType.REPLACED,
+      ChangeType.CONTRACT_STATUS_CHANGED,
+      ChangeType.SUPERVISION_ADDED,
+      ChangeType.SUPERVISION_APPROVED,
+      ChangeType.SUPERVISION_REJECTED,
+      ChangeType.SUPERVISION_REMOVED,
+      ChangeType.SUPERVISION_UPDATED
+    );
+
+    List<ChangeType> app1Changes = List.of(
+      ChangeType.CREATED,
+      ChangeType.STATUS_CHANGED,
+      ChangeType.CONTENTS_CHANGED,
+      ChangeType.REPLACED,
+      ChangeType.CUSTOMER_CHANGED,
+      ChangeType.CONTACT_CHANGED,
+      ChangeType.LOCATION_CHANGED,
+      ChangeType.OWNER_CHANGED,
+      ChangeType.CONTRACT_STATUS_CHANGED
+    );
+    List<ChangeType> app2Changes = List.of(
+      ChangeType.COMMENT_ADDED,
+      ChangeType.COMMENT_REMOVED,
+      ChangeType.ATTACHMENT_ADDED,
+      ChangeType.ATTACHMENT_REMOVED,
+      ChangeType.SUPERVISION_ADDED,
+      ChangeType.SUPERVISION_APPROVED,
+      ChangeType.SUPERVISION_REJECTED,
+      ChangeType.SUPERVISION_REMOVED,
+      ChangeType.SUPERVISION_UPDATED
+    );
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Application2", "Client2"), 3);
+    // just add random changes without regard to them making sense
+    for (ChangeType app1Change : app1Changes) historyDao.addApplicationChange(app1.getId(), createChangeHistoryItem(app1.getApplicationId(), app1Change));
+    for (ChangeType app2Change : app2Changes) historyDao.addApplicationChange(app2.getId(), createChangeHistoryItem(app2.getApplicationId(), app2Change));
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    List<ChangeHistoryItem> app1History = historyDao.getApplicationHistory(List.of(app1.getId()));
+    assertEquals(4, app1History.size());
+    for (ChangeHistoryItem change : app1History) assert(remainingChanges.contains(change.getChangeType()));
+    List<ChangeHistoryItem> app2History = historyDao.getApplicationHistory(List.of(app2.getId()));
+    assertEquals(5, app2History.size());
+    for (ChangeHistoryItem change : app2History) assert(remainingChanges.contains(change.getChangeType()));
+  }
+
+  private ChangeHistoryItem createChangeHistoryItem(String applicationId, ChangeType type) {
+    List<ChangeType> typesWithFieldChanges = List.of(
+      ChangeType.CREATED,
+      ChangeType.CONTENTS_CHANGED,
+      ChangeType.CUSTOMER_CHANGED,
+      ChangeType.CREATED,
+      ChangeType.CONTACT_CHANGED,
+      ChangeType.OWNER_CHANGED
+    );
+    ChangeHistoryItemInfo info = new ChangeHistoryItemInfo();
+    info.setName("info");
+    info.setApplicationId(applicationId);
+    List<FieldChange> changes = typesWithFieldChanges.contains(type) ? List.of(new FieldChange("/someField", "oldValue", "newValue")) : List.of();
+    return new ChangeHistoryItem(
+      3,
+      info,
+      type,
+      null,
+      ZonedDateTime.now(TimeUtil.HelsinkiZoneId),
+      changes
+    );
   }
 }
