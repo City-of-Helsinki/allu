@@ -53,3 +53,5 @@ allu_ssh_key_file: /servicehome/allu_keys/allu_id_rsa
 supervision_api_basepath: /supervision-api
 
 cityDistricts_update_cronstring: "0 30 0 * * SUN"
+
+anonymization_update_cronstring: "0 0 3 * * *"
