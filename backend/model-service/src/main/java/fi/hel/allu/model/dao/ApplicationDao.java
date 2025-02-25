@@ -24,6 +24,7 @@ import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,8 +132,14 @@ public class ApplicationDao {
   public Page<Application> findAll(Pageable pageRequest) {
     long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    QueryResults<Application> queryResults = queryFactory.select(applicationBean).from(application)
-        .orderBy(application.id.asc()).offset(offset).limit(count).fetchResults();
+    QueryResults<Application> queryResults = queryFactory
+      .select(applicationBean)
+      .from(application)
+      .where(application.status.ne(StatusType.ANONYMIZED))
+      .orderBy(application.id.asc())
+      .offset(offset)
+      .limit(count)
+      .fetchResults();
     return new PageImpl<>(populateDependencies(queryResults.getResults()), pageRequest, queryResults.getTotal());
   }
 
