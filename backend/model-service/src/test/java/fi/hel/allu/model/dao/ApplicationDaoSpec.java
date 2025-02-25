@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.greghaskins.spectrum.Spectrum;
 import com.greghaskins.spectrum.Variable;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
@@ -117,21 +118,38 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
     describe("ApplicationDao.findAll", () -> {
       beforeEach(() -> {
         for (int i = 0; i < 15; ++i) {
-          application = applicationDao.insert(testCommon.dummyOutdoorApplication("Dummy " + i, "Handler " + i));
+          application = applicationDao.insert(testCommon.dummyOutdoorApplication("Dummy " + i, "Handler I" + i));
+          assertNotNull(application.getId());
+        }
+        for (int i = 0; i < 5; ++i) {
+          application = testCommon.dummyOutdoorApplication("Dummy ANONYMIZED " + i, "Handler II" + i);
+          application.setStatus(StatusType.ANONYMIZED);
+          application = applicationDao.insert(application);
           assertNotNull(application.getId());
         }
       });
 
-      it("Can fetch 5 applications in ascendind ID order", () -> {
+      it("Can fetch 5 applications in ascending ID order", () -> {
         Page<Application> page = applicationDao.findAll(PageRequest.of(1, 5));
         assertEquals(5, page.getSize());
         List<Application> elements = page.getContent();
         assertEquals(5, elements.size());
         int prevId = Integer.MIN_VALUE;
-        for (int i = 0; i < elements.size(); ++i) {
-          int id = elements.get(i).getId();
+        for (Application element : elements) {
+          int id = element.getId();
           assertTrue(prevId < id);
           prevId = id;
+        }
+      });
+
+      it("Can fetch all applications excluding applications with status ANONYMIZED", () -> {
+        Page<Application> page = applicationDao.findAll(PageRequest.of(0, 100));
+        assertEquals(100, page.getSize());
+        List<Application> elements = page.getContent();
+        for (Application element : elements) {
+          StatusType unexpected = StatusType.ANONYMIZED;
+          StatusType actual = element.getStatus();
+          assertNotEquals(unexpected, actual);
         }
       });
     });
