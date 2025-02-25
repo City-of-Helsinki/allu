@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.OptionalUtil;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
@@ -475,6 +476,11 @@ public class ApplicationService {
 
   @Transactional
   public void anonymizeApplications(List<Integer> applicationIds) {
+    ChangeHistoryItem change = new ChangeHistoryItem();
+    change.setChangeType(ChangeType.STATUS_CHANGED);
+    change.setChangeSpecifier(StatusType.ANONYMIZED.name());
+    change.setChangeTime(ZonedDateTime.now());
+    change.setUserId(3);
     for (Integer id : applicationIds) {
       removeTags(id);
       distributionEntryDao.deleteByApplication(id);
@@ -482,14 +488,15 @@ public class ApplicationService {
       if (app.getType() == ApplicationType.CABLE_REPORT)
         removeAdditionalInfos(app);
       removeAttachments(app);
+      historyDao.addApplicationChange(app.getId(), change);
     }
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     locationDao.removeAdditionalInfoForApplications(applicationIds);
-    applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
     decisionDao.removeDecisions(applicationIds);
     supervisionTaskDao.anonymizeSupervisionTasks(applicationIds);
     commentDao.deleteCommentsForApplications(applicationIds);
     historyDao.anonymizeHistoryFor(applicationIds);
+    applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
     applicationDao.removeFromAnonymizableApplication(applicationIds);
   }
 

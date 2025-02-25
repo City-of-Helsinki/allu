@@ -68,6 +68,17 @@ public class AnonymizationTest {
   }
 
   @Test
+  public void shouldHaveStatusChangeToAnonymizedInHistory() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+
+    applicationService.anonymizeApplications(List.of(app1.getId()));
+
+    List<ChangeHistoryItem> app1History = historyDao.getApplicationHistory(List.of(app1.getId()));
+    assertEquals("STATUS_CHANGED", app1History.get(0).getChangeType().toString());
+    assertEquals("ANONYMIZED", app1History.get(0).getChangeSpecifier());
+  }
+
+  @Test
   public void shouldRemoveAllTags() {
     Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
     app1.setApplicationTags(List.of(
@@ -441,10 +452,10 @@ public class AnonymizationTest {
     applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
 
     List<ChangeHistoryItem> app1History = historyDao.getApplicationHistory(List.of(app1.getId()));
-    assertEquals(4, app1History.size());
+    assertEquals(5, app1History.size());
     for (ChangeHistoryItem change : app1History) assert(remainingChanges.contains(change.getChangeType()));
     List<ChangeHistoryItem> app2History = historyDao.getApplicationHistory(List.of(app2.getId()));
-    assertEquals(5, app2History.size());
+    assertEquals(6, app2History.size());
     for (ChangeHistoryItem change : app2History) assert(remainingChanges.contains(change.getChangeType()));
   }
 
