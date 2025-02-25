@@ -6,6 +6,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import java.nio.charset.StandardCharsets;
@@ -48,6 +49,8 @@ public class AnonymizationTest {
   private CommentDao commentDao;
   @Autowired
   private HistoryDao historyDao;
+  @Autowired
+  private UserDao userDao;
 
   private final Geometry testGeometry = polygon(3879, ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
 
@@ -507,5 +510,46 @@ public class AnonymizationTest {
     List<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications();
     assertEquals(1, anonymizable.size());
     assertEquals(app2.getId(), anonymizable.get(0).getId());
+  }
+
+  @Test
+  public void shouldSetAnonymizationUserToRemainingChangeHistory() {
+    List<ChangeType> app1Changes = List.of(
+      ChangeType.CREATED,
+      ChangeType.STATUS_CHANGED,
+      ChangeType.CONTENTS_CHANGED,
+      ChangeType.REPLACED,
+      ChangeType.CUSTOMER_CHANGED,
+      ChangeType.CONTACT_CHANGED,
+      ChangeType.LOCATION_CHANGED,
+      ChangeType.OWNER_CHANGED,
+      ChangeType.CONTRACT_STATUS_CHANGED
+    );
+    List<ChangeType> app2Changes = List.of(
+      ChangeType.COMMENT_ADDED,
+      ChangeType.COMMENT_REMOVED,
+      ChangeType.ATTACHMENT_ADDED,
+      ChangeType.ATTACHMENT_REMOVED,
+      ChangeType.SUPERVISION_ADDED,
+      ChangeType.SUPERVISION_APPROVED,
+      ChangeType.SUPERVISION_REJECTED,
+      ChangeType.SUPERVISION_REMOVED,
+      ChangeType.SUPERVISION_UPDATED
+    );
+
+    User anonymizationUser = userDao.findAnonymizationUser();
+
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Application2", "Client2"), 3);
+    // just add random changes without regard to them making sense
+    for (ChangeType app1Change : app1Changes) historyDao.addApplicationChange(app1.getId(), createChangeHistoryItem(app1.getApplicationId(), app1Change));
+    for (ChangeType app2Change : app2Changes) historyDao.addApplicationChange(app2.getId(), createChangeHistoryItem(app2.getApplicationId(), app2Change));
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app2.getId()));
+
+    List<ChangeHistoryItem> app1History = historyDao.getApplicationHistory(List.of(app1.getId()));
+    for (ChangeHistoryItem change : app1History) assertEquals(anonymizationUser.getId(), change.getUserId());
+    List<ChangeHistoryItem> app2History = historyDao.getApplicationHistory(List.of(app2.getId()));
+    for (ChangeHistoryItem change : app2History) assertEquals(anonymizationUser.getId(), change.getUserId());
   }
 }

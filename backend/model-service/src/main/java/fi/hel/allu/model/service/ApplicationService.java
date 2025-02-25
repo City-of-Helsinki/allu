@@ -476,11 +476,12 @@ public class ApplicationService {
 
   @Transactional
   public void anonymizeApplications(List<Integer> applicationIds) {
+    User anonUser = userDao.findAnonymizationUser();
     ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.STATUS_CHANGED);
     change.setChangeSpecifier(StatusType.ANONYMIZED.name());
     change.setChangeTime(ZonedDateTime.now());
-    change.setUserId(3);
+    change.setUserId(anonUser.getId());
 
     for (Integer id : applicationIds) {
       removeTags(id);

@@ -101,6 +101,11 @@ public class UserDao {
     return Optional.ofNullable(user);
   }
 
+  @Transactional
+  public User findAnonymizationUser() {
+    return findByUserName("alluanon").get();
+  }
+
   @Transactional(readOnly = true)
   public List<User> findAll() {
     List<User> users = queryFactory.select(userBean).from(QUser.user)
