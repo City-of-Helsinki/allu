@@ -481,6 +481,7 @@ public class ApplicationService {
     change.setChangeSpecifier(StatusType.ANONYMIZED.name());
     change.setChangeTime(ZonedDateTime.now());
     change.setUserId(3);
+
     for (Integer id : applicationIds) {
       removeTags(id);
       distributionEntryDao.deleteByApplication(id);
@@ -490,6 +491,7 @@ public class ApplicationService {
       removeAttachments(app);
       historyDao.addApplicationChange(app.getId(), change);
     }
+    applicationDao.clearApplicationNames(applicationIds);
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     locationDao.removeAdditionalInfoForApplications(applicationIds);
     decisionDao.removeDecisions(applicationIds);

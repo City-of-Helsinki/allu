@@ -7,6 +7,7 @@ import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.junit.Assert;
@@ -47,6 +48,8 @@ public class ApplicationDaoTest {
   private SQLQueryFactory queryFactory;
 
   DistributionEntry testDistributionEntry;
+  @Autowired
+  private ApplicationService applicationService;
 
   @Before
   public void init() throws Exception {
@@ -628,5 +631,20 @@ public class ApplicationDaoTest {
     Application savedApp2 = applicationDao.findById(app2.getId());
     assertEquals(0, savedApp1.getCustomersWithContacts().size());
     assertEquals(1, savedApp2.getCustomersWithContacts().size());
+  }
+
+  @Test
+  public void testClearApplicationNames() {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1.setName("Test");
+    app1 = applicationService.insert(app1, 3);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2.setName("Dummy");
+    app2 = applicationService.insert(app2, 3);
+
+    applicationDao.clearApplicationNames(List.of(app1.getId()));
+
+    assertEquals("", applicationDao.findById(app1.getId()).getName());
+    assertEquals("Dummy", applicationDao.findById(app2.getId()).getName());
   }
 }

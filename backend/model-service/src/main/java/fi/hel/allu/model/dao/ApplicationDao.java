@@ -377,6 +377,10 @@ public class ApplicationDao {
     attachmentDao.deleteUnreferencedAttachments();
   }
 
+  @Transactional
+  public void clearApplicationNames(List<Integer> applicationIds) {
+    queryFactory.update(application).set(application.name, "").where(application.id.in(applicationIds)).execute();
+  }
 
   /**
    * Updates owner of given applications.

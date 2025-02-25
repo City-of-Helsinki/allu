@@ -79,6 +79,18 @@ public class AnonymizationTest {
   }
 
   @Test
+  public void shouldSetApplicationNameToEmpty() {
+    Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
+    app1.setName("Dummy");
+    app1 = applicationService.insert(app1, 3);
+
+    applicationService.anonymizeApplications(List.of(app1.getId()));
+
+    Application anonApp = applicationService.findById(app1.getId());
+    assertEquals("", anonApp.getName());
+  }
+
+  @Test
   public void shouldRemoveAllTags() {
     Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
     app1.setApplicationTags(List.of(
