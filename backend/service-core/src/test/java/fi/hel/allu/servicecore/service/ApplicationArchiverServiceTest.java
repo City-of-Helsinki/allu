@@ -251,7 +251,7 @@ public class ApplicationArchiverServiceTest {
   }
 
   @Test
-  public void shouldWorkWhenAnonymizingIfValidityTimeIsNull() {
+  public void shouldAnonymizeWhenValidityIsNullAndOtherRequirementsFulfilled() {
     when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(createAnonymizableCableReportsWithNullValidity());
     when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
 
@@ -352,7 +352,7 @@ public class ApplicationArchiverServiceTest {
 
   private List<Application> createAnonymizableCableReportsWithNullValidity() {
     List<Application> cableReports = createAnonymizableCableReports();
-    CableReport extension = (CableReport)cableReports.get(3).getExtension();
+    CableReport extension = (CableReport)cableReports.get(2).getExtension();
     extension.setValidityTime(null);
     return cableReports;
   }
