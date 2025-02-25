@@ -250,6 +250,16 @@ public class ApplicationArchiverServiceTest {
     verify(applicationServiceComposer, times(1)).addToAnonymizableApplications(eq(List.of(1,3)));
   }
 
+  @Test
+  public void shouldWorkWhenAnonymizingIfValidityTimeIsNull() {
+    when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(createAnonymizableCableReportsWithNullValidity());
+    when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
+
+    archiverService.checkForAnonymizableApplications();
+
+    verify(applicationServiceComposer, times(1)).addToAnonymizableApplications(eq(List.of(1,3)));
+  }
+
   private void createApplication() {
     applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.FINISHED);
@@ -338,5 +348,12 @@ public class ApplicationArchiverServiceTest {
     cableReport4.setExtension(extension4);
 
     return List.of(cableReport1, cableReport2, cableReport3, cableReport4);
+  }
+
+  private List<Application> createAnonymizableCableReportsWithNullValidity() {
+    List<Application> cableReports = createAnonymizableCableReports();
+    CableReport extension = (CableReport)cableReports.get(3).getExtension();
+    extension.setValidityTime(null);
+    return cableReports;
   }
 }

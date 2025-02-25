@@ -262,6 +262,7 @@ public class ApplicationArchiverService {
       .filter(app -> app.getType() == ApplicationType.CABLE_REPORT)
       .filter(app -> app.getExtension() != null)
       .filter(app -> app.getExtension() instanceof CableReport)
+      .filter(app -> ((CableReport) app.getExtension()).getValidityTime() != null)
       .filter(app -> ((CableReport) app.getExtension()).getValidityTime().isBefore(ZonedDateTime.now().minusYears(2)))
       .filter(app -> !cableReportAssociatedWithActiveExcavationAnnouncement(app))
       .map(Application::getId)
