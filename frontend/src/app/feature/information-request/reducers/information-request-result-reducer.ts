@@ -135,6 +135,16 @@ export function reducer(state: State = initialState, action: InformationRequestR
       return initialState;
     }
 
+    case InformationRequestResultActionType.UpdateCustomerReference: {
+      return {
+        ...state,
+        application: {
+          ...state.application,
+          customerReference: action.payload
+        }
+      };
+    }
+
     default: {
       return {
         ...state

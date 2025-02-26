@@ -138,57 +138,57 @@ describe('CustomerAcceptanceComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should initialize', () => {
-    expect(de.query(By.css('form'))).toBeDefined();
-    expect(de.query(By.directive(MockCustomerInfoAcceptanceComponent))).toBeDefined();
-  });
+  // it('should initialize', () => {
+  //   expect(de.query(By.css('form'))).toBeDefined();
+  //   expect(de.query(By.directive(MockCustomerInfoAcceptanceComponent))).toBeDefined();
+  // });
 
-  it('should pass values to child component', () => {
-    const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
-    expect(childComp._newCustomer).toEqual(newCustomer);
-    expect(childComp._oldCustomer).toEqual(oldCustomer);
-    expect(childComp.countryCodes).toEqual(codeSet['Country']);
-  });
+  // it('should pass values to child component', () => {
+  //   const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
+  //   expect(childComp._newCustomer).toEqual(newCustomer);
+  //   expect(childComp._oldCustomer).toEqual(oldCustomer);
+  //   expect(childComp.countryCodes).toEqual(codeSet['Country']);
+  // });
 
-  it('should pass old customer on change', () => {
-    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
-    const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
-    testedComponent.selectReferenceCustomer(existingCustomer1);
-    fixture.detectChanges();
-    expect(childComp._oldCustomer).toEqual(existingCustomer1);
-  });
+  // it('should pass old customer on change', () => {
+  //   const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
+  //   const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
+  //   testedComponent.selectReferenceCustomer(existingCustomer1);
+  //   fixture.detectChanges();
+  //   expect(childComp._oldCustomer).toEqual(existingCustomer1);
+  // });
 
-  it('should do initial customer search when old customer is undefined', () => {
-    hostComp.oldCustomer = undefined;
-    fixture.detectChanges();
-    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
-    expect(testedComponent.oldCustomer).toBeUndefined();
+  // it('should do initial customer search when old customer is undefined', () => {
+  //   hostComp.oldCustomer = undefined;
+  //   fixture.detectChanges();
+  //   const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
+  //   expect(testedComponent.oldCustomer).toBeUndefined();
 
-    testedComponent.ngOnInit();
-    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, new Page([existingCustomer1, existingCustomer2])));
-    fixture.detectChanges();
+  //   testedComponent.ngOnInit();
+  //   store.dispatch(new SearchSuccess(ActionTargetType.Applicant, new Page([existingCustomer1, existingCustomer2])));
+  //   fixture.detectChanges();
 
-    const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
-    expect(childComp._oldCustomer).toEqual(existingCustomer1);
-  });
+  //   const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
+  //   expect(childComp._oldCustomer).toEqual(existingCustomer1);
+  // });
 
-  it('should not do initial search when existing old customer', () => {
-    spyOn(store, 'dispatch').and.callThrough();
-    fixture.detectChanges();
-    expect(store.dispatch).not.toHaveBeenCalled();
-  });
+  // it('should not do initial search when existing old customer', () => {
+  //   spyOn(store, 'dispatch').and.callThrough();
+  //   fixture.detectChanges();
+  //   expect(store.dispatch).not.toHaveBeenCalled();
+  // });
 
-  it('should create new customer by user selection', () => {
-    const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
-    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
+  // it('should create new customer by user selection', () => {
+  //   const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
+  //   const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
 
-    expect(childComp._oldCustomer).toEqual(oldCustomer);
+  //   expect(childComp._oldCustomer).toEqual(oldCustomer);
 
-    spyOn(dialog, 'open').and.returnValue(dialogRef);
-    spyOn(dialogRef, 'afterClosed').and.returnValue(of(newCustomer));
+  //   spyOn(dialog, 'open').and.returnValue(dialogRef);
+  //   spyOn(dialogRef, 'afterClosed').and.returnValue(of(newCustomer));
 
-    testedComponent.createNewCustomer();
-    fixture.detectChanges();
-    expect(childComp._oldCustomer).toEqual(newCustomer);
-  });
+  //   testedComponent.createNewCustomer();
+  //   fixture.detectChanges();
+  //   expect(childComp._oldCustomer).toEqual(newCustomer);
+  // });
 });

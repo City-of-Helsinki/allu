@@ -670,7 +670,8 @@ export const translations = {
       existingInfo: 'Nykyiset tiedot',
       providedInfo: 'Tarjotut tiedot',
       showRequestedInfo: 'Näytä pyydetyt tiedot',
-      discard: 'Hylkää tietopäivitys'
+      discard: 'Hylkää tietopäivitys',
+      otherBillingTitle: 'Muut laskutustiedot'
     },
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
@@ -831,6 +832,7 @@ export const translations = {
     handledByRepresentative: 'Asiaa hoitaa asiamies',
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     sapCustomerNumber: 'Sap-numero',
+    customerReference: 'Asiakkaan viite',
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
     invoicingOnly: 'Vain laskutusasiakas',
     projectIdentifierPrefix: 'Projektitunnuksen alkuosa',
