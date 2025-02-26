@@ -461,7 +461,7 @@ public class ApplicationService {
     for (CableInfoEntry entry : entries.getInfoEntries())
       entry.setAdditionalInfo("");
 
-    applicationDao.update(application.getId(), application);
+    applicationDao.updateWithoutFetch(application.getId(), application);
   }
 
   public void removeAttachments(Application application) {
