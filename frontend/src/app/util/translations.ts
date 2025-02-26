@@ -669,7 +669,8 @@ export const translations = {
       existingInfo: 'Nykyiset tiedot',
       providedInfo: 'Tarjotut tiedot',
       showRequestedInfo: 'Näytä pyydetyt tiedot',
-      discard: 'Hylkää tietopäivitys'
+      discard: 'Hylkää tietopäivitys',
+      otherBillingTitle: 'Muut laskutustiedot'
     },
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',

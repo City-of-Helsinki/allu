@@ -26,13 +26,16 @@ import {
 } from '@feature/information-request/acceptance/customer/customer-acceptance-config';
 import {findTranslation} from '@util/translations';
 import {CONFIRM_DIALOG_MODAL_CONFIG, ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
-import { FormControl } from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {FieldDescription, SelectFieldType} from '../field-select/field-description';
+import {FieldSelectComponent} from '../field-select/field-select.component';
+import { Some } from '@app/util/option';
+import { UpdateCustomerReference } from '@feature/information-request/actions/information-request-result-actions';
 
 @Component({
   selector: 'customer-acceptance',
   templateUrl: './customer-acceptance.component.html',
-  styleUrls: ['./customer-acceptance.scss'],
+  styleUrls: ['./customer-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
@@ -44,10 +47,10 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
   @Input() hideExisting = false;
-  @Input() newCustomerReference: string;
   @Input() oldCustomerReference: string;
-
-
+  @Input() newCustomerReference: string;
+  @ViewChild('oldValuesSelect') oldValuesSelect: FieldSelectComponent;
+  @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
 
   @ViewChild(CustomerInfoAcceptanceComponent, { static: true }) infoAcceptance: CustomerInfoAcceptanceComponent;
 
@@ -69,7 +72,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   private config: CustomerAcceptanceConfig;
 
-  referenceFieldsControl: FormControl = new FormControl(['customerReference']);
+  selectionForm: FormGroup;
   referenceFieldDescriptions: FieldDescription[] = [
     new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
   ];
@@ -79,7 +82,12 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   constructor(
     protected fb: UntypedFormBuilder,
     protected store: Store<fromRoot.State>,
-    protected dialog: MatDialog) {}
+    protected dialog: MatDialog) {
+    this.selectionForm = this.fb.group({
+      oldValues: [[]],
+      newValues: [[]]
+    });
+  }
 
   ngOnInit(): void {
     this.config = acceptanceConfig[this.fieldKey];
@@ -114,9 +122,29 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       customerReference: this.newCustomerReference || ''
     };
 
-    if (this.oldCustomerReference || this.newCustomerReference) {
-      this.referenceFieldsControl.setValue(['customerReference']);
+    // Set initial selection of old value
+    if (this.oldCustomerReference) {
+      this.selectionForm.patchValue({
+        oldValues: ['customerReference']
+      });
     }
+
+    // Handle selection changes
+    this.selectionForm.get('oldValues').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(oldValues => {
+      if (oldValues && oldValues.length) {
+        this.onOldValuesSelected(oldValues);
+      }
+    });
+
+    this.selectionForm.get('newValues').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(newValues => {
+      if (newValues && newValues.length) {
+        this.onNewValuesSelected(newValues);
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -245,5 +273,25 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     } else {
       return of(true);
     }
+  }
+
+  onOldValuesSelected(fields: string[]): void {
+    if (fields.includes('customerReference')) {
+      this.updateApplicationReference(this.oldCustomerReference);
+      Some(this.newValuesSelect).do(select => select.deselect('customerReference'));
+    }
+    this.form.updateValueAndValidity();
+  }
+
+  onNewValuesSelected(fields: string[]): void {
+    if (fields.includes('customerReference')) {
+      this.updateApplicationReference(this.newCustomerReference);
+      Some(this.oldValuesSelect).do(select => select.deselect('customerReference'));
+    }
+    this.form.updateValueAndValidity();
+  }
+
+  private updateApplicationReference(reference: string): void {
+    this.store.dispatch(new UpdateCustomerReference(reference));
   }
 }

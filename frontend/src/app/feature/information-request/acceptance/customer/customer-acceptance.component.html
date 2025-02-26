@@ -56,25 +56,30 @@
 </customer-info-acceptance>
 
 <div class="reference-section">
+  <form [formGroup]="selectionForm">
     <h2 mat-dialog-title>
-      Asiakkaan viite
+      {{'informationRequest.acceptance.otherBillingTitle' | translation}}
     </h2>
-
-          <div class="section-container">
-            <div class="section-content">
-              <field-select
-                #oldValuesSelect
-                [descriptions]="referenceFieldDescriptions"
-                [fieldValues]="referenceFieldValues"
-                [formControl]="referenceFieldsControl">
-              </field-select>
-              <div class="section-content">
-                <field-select
-                  #newValuesSelect
-                  [descriptions]="referenceFieldDescriptions"
-                  [fieldValues]="referenceComparedValues"
-                  [formControl]="referenceFieldsControl">
-                </field-select>
-              </div>
+    <div class="section-container">
+      <div class="section-content">
+        <field-select
+          #oldValuesSelect
+          [id]="'reference-old'"
+          [descriptions]="referenceFieldDescriptions"
+          [fieldValues]="referenceFieldValues"
+          formControlName="oldValues">
+        </field-select>
+      </div>
+      <div class="section-content">
+        <field-select
+          #newValuesSelect
+          [id]="'reference-new'"
+          [descriptions]="referenceFieldDescriptions"
+          [fieldValues]="referenceComparedValues"
+          [comparedValues]="referenceFieldValues"
+          formControlName="newValues">
+        </field-select>
+      </div>
     </div>
+  </form>
 </div>

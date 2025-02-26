@@ -20,7 +20,8 @@ export enum InformationRequestResultActionType {
   SetLocations = '[InformationRequestResult] Set locations',
   SetLocation = '[InformationRequestResult] Set single location',
   Save = '[InformationRequestResult] Save result of information request',
-  SaveSuccess = '[InformationRequestResult] Save result of information request success'
+  SaveSuccess = '[InformationRequestResult] Save result of information request success',
+  UpdateCustomerReference = '[InformationRequestResult] Update Customer Reference'
 }
 
 export class SetApplication implements Action {
@@ -73,6 +74,11 @@ export class SaveSuccess implements Action {
   constructor(public payload: InformationRequestResult) {}
 }
 
+export class UpdateCustomerReference implements Action {
+  readonly type = InformationRequestResultActionType.UpdateCustomerReference;
+  constructor(public payload: string) {}
+}
+
 export type InformationRequestResultActions =
   | SetApplication
   | SetCustomer
@@ -83,4 +89,5 @@ export type InformationRequestResultActions =
   | SetLocations
   | SetLocation
   | Save
-  | SaveSuccess;
+  | SaveSuccess
+  | UpdateCustomerReference;
