@@ -51,6 +51,8 @@ public class AnonymizationTest {
   private HistoryDao historyDao;
   @Autowired
   private UserDao userDao;
+  @Autowired
+  private ApplicationDao applicationDao;
 
   private final Geometry testGeometry = polygon(3879, ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
 
@@ -551,5 +553,19 @@ public class AnonymizationTest {
     for (ChangeHistoryItem change : app1History) assertEquals(anonymizationUser.getId(), change.getUserId());
     List<ChangeHistoryItem> app2History = historyDao.getApplicationHistory(List.of(app2.getId()));
     for (ChangeHistoryItem change : app2History) assertEquals(anonymizationUser.getId(), change.getUserId());
+  }
+
+  @Test
+  public void shouldWorkWithReplacedApplication() {
+    Application app1 = testCommon.dummyCableReportApplication("Application1", "Client1");
+    CableReport ext = (CableReport)app1.getExtension();
+    CableInfoEntry entry1 = new CableInfoEntry();
+    entry1.setType(DefaultTextType.ELECTRICITY);
+    entry1.setAdditionalInfo("Beware for electricity");
+    ext.setInfoEntries(List.of(entry1));
+    app1 = applicationService.insert(app1, 3);
+    applicationDao.updateStatus(app1.getId(), StatusType.REPLACED);
+
+    applicationService.anonymizeApplications(List.of(app1.getId()));
   }
 }

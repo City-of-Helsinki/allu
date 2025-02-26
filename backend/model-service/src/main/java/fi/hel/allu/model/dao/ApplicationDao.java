@@ -502,20 +502,25 @@ public class ApplicationDao {
    * Update application. All other fields are taken from appl, but {@link #UPDATE_READ_ONLY_FIELDS}
    */
   @Transactional
-  public Application update(int id, Application appl) {
+  public void updateWithoutFetch(int id, Application appl) {
     appl.setId(id);
     Integer rowVersion = appl.getVersion();
     appl.setVersion(rowVersion + 1);
     long changed = queryFactory.update(application)
-        .populate(appl,
-            new ExcludingMapper(WITH_NULL_BINDINGS,
-                UPDATE_READ_ONLY_FIELDS))
-        .where(application.id.eq(id), application.version.eq(rowVersion)).execute();
+      .populate(appl,
+        new ExcludingMapper(WITH_NULL_BINDINGS,
+          UPDATE_READ_ONLY_FIELDS))
+      .where(application.id.eq(id), application.version.eq(rowVersion)).execute();
     if (changed == 0) {
       throw new OptimisticLockException("application.stale");
     }
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
+  }
+
+  @Transactional
+  public Application update(int id, Application appl) {
+    updateWithoutFetch(id, appl);
     Application application = findByIds(Collections.singletonList(id)).get(0);
     return populateTags(application);
   }
