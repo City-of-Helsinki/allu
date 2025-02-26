@@ -523,7 +523,7 @@ public class AnonymizationTest {
     Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Application2", "Client2"), 3);
     historyDao.addApplicationChange(app2.getId(), createChangeHistoryItem(app2.getApplicationId(), ChangeType.CREATED));
 
-    applicationService.addToAnonymizableApplications(List.of(app1.getId(), app2.getId()));
+    applicationService.resetAnonymizableApplications(List.of(app1.getId(), app2.getId()));
     applicationService.anonymizeApplications(List.of(app1.getId()));
 
     List<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications();

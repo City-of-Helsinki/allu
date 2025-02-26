@@ -1416,8 +1416,8 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/potentiallyanonymizable");
   }
 
-  public String getAddToAnonymizableApplicationsUrl() {
-    return getModelServiceUrl("/applications/addtoanonymizable");
+  public String getResetAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/resetanonymizable");
   }
 
   /**

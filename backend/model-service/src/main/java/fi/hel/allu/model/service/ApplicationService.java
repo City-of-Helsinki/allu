@@ -446,8 +446,8 @@ public class ApplicationService {
     return applicationDao.fetchPotentiallyAnonymizableApplications();
   }
 
-  public void addToAnonymizableApplications(List<Integer> applicationsIds) {
-    applicationDao.insertToAnonymizableApplication(applicationsIds);
+  public void resetAnonymizableApplications(List<Integer> applicationsIds) {
+    applicationDao.resetAnonymizableApplication(applicationsIds);
   }
 
   public List<Integer> checkAnonymizability(List<Integer> applicationIds) {

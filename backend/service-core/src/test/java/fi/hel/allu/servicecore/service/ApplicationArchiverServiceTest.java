@@ -1,6 +1,5 @@
 package fi.hel.allu.servicecore.service;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -247,7 +246,7 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.checkForAnonymizableApplications();
 
-    verify(applicationServiceComposer, times(1)).addToAnonymizableApplications(eq(List.of(1,3)));
+    verify(applicationServiceComposer, times(1)).resetAnonymizableApplications(eq(List.of(1,3)));
   }
 
   @Test
@@ -257,7 +256,17 @@ public class ApplicationArchiverServiceTest {
 
     archiverService.checkForAnonymizableApplications();
 
-    verify(applicationServiceComposer, times(1)).addToAnonymizableApplications(eq(List.of(1,3)));
+    verify(applicationServiceComposer, times(1)).resetAnonymizableApplications(eq(List.of(1,3)));
+  }
+
+  @Test
+  public void shouldCallResetAnonmizableApplicationsEvenWithEmptyApplicationList() {
+    when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(List.of());
+    // Mockito complained about mocking fetchActiveExcavationAnnouncements() when it's never actually called so removed it
+
+    archiverService.checkForAnonymizableApplications();
+
+    verify(applicationServiceComposer, times(1)).resetAnonymizableApplications(eq(List.of()));
   }
 
   private void createApplication() {

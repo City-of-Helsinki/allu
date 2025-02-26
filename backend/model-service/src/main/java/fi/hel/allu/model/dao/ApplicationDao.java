@@ -193,18 +193,25 @@ public class ApplicationDao {
 
   @Transactional(readOnly = true)
   public List<Application> fetchPotentiallyAnonymizableApplications() {
-    SubQueryExpression<Integer> alreadyFounds = select(anonymizableApplication.applicationId).from(anonymizableApplication);
-    BooleanExpression whereCondition = application.type.eq(ApplicationType.CABLE_REPORT);
-    whereCondition = whereCondition.and(application.endTime.before(ZonedDateTime.now().minusYears(2)));
-    whereCondition = whereCondition.and(application.id.notIn(alreadyFounds));
-    return queryFactory.select(applicationBean).from(application).where(whereCondition).fetch();
+    return queryFactory
+      .select(applicationBean)
+      .from(application)
+      .where(
+        application.type.eq(ApplicationType.CABLE_REPORT)
+        .and(application.endTime.before(ZonedDateTime.now().minusYears(2)))
+        .and(application.status.ne(StatusType.ANONYMIZED))
+      ).fetch();
   }
 
   @Transactional
-  public void insertToAnonymizableApplication(List<Integer> applicationIds) {
-    SQLInsertClause insertQuery = queryFactory.insert(anonymizableApplication);
-    for (Integer applicationId : applicationIds) insertQuery.set(anonymizableApplication.applicationId, applicationId).addBatch();
-    insertQuery.execute();
+  public void resetAnonymizableApplication(List<Integer> applicationIds) {
+    queryFactory.delete(anonymizableApplication).execute();
+    if (!applicationIds.isEmpty()) {
+      SQLInsertClause insertQuery = queryFactory.insert(anonymizableApplication);
+      for (Integer applicationId : applicationIds)
+        insertQuery.set(anonymizableApplication.applicationId, applicationId).addBatch();
+      insertQuery.execute();
+    }
   }
 
   @Transactional(readOnly = true)

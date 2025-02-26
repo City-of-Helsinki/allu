@@ -459,26 +459,34 @@ public class ApplicationDaoTest {
     cableReport2.setEndTime(ZonedDateTime.now().minusYears(1).minusMonths(6));
     cableReport2 = applicationDao.insert(cableReport2);
 
-    // long enough ago but already found
+    // long enough ago but already found - we want this too
     Application cableReport3 = testCommon.dummyCableReportApplication("Cable report3", "Reporter3");
     cableReport3.setStatus(StatusType.DECISION);
     cableReport3.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
     cableReport3 = applicationDao.insert(cableReport3);
-    applicationDao.insertToAnonymizableApplication(List.of(cableReport3.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(cableReport3.getId()));
+
+    // long enough ago but already anonymized
+    Application cableReport4 = testCommon.dummyCableReportApplication("Cable report4", "Reporter4");
+    cableReport4.setStatus(StatusType.ANONYMIZED);
+    cableReport4.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    cableReport4 = applicationDao.insert(cableReport4);
 
     List<Application> potentials = applicationDao.fetchPotentiallyAnonymizableApplications();
 
-    assertEquals(1, potentials.size());
+    assertEquals(2, potentials.size());
+    List<Integer> potentialIds = potentials.stream().map(Application::getId).toList();
     assertEquals(potentials.get(0).getId(), cableReport1.getId());
+    assertTrue(potentialIds.containsAll(List.of(cableReport1.getId(), cableReport3.getId())));
   }
 
   @Test
-  public void testInsertToAnonymizableApplication() {
+  public void testResetAnonymizableApplication() {
     Integer app1 = testCommon.insertApplication("Outdoor1", "Customer1");
     Integer app2 = testCommon.insertApplication("Outdoor2", "Customer2");
     Integer app3 = testCommon.insertApplication("Outdoor3", "Customer3");
 
-    applicationDao.insertToAnonymizableApplication(List.of(app1, app2, app3));
+    applicationDao.resetAnonymizableApplication(List.of(app1, app2, app3));
 
     List<Integer> applicationIds = queryFactory.select(anonymizableApplication.applicationId).from(anonymizableApplication).fetch();
 
@@ -504,7 +512,7 @@ public class ApplicationDaoTest {
     app2 = applicationDao.insert(app2);
 
     List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
-    applicationDao.insertToAnonymizableApplication(ids);
+    applicationDao.resetAnonymizableApplication(ids);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
     testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
 
@@ -529,7 +537,7 @@ public class ApplicationDaoTest {
     Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
     app1 = applicationDao.insert(app1);
 
-    applicationDao.insertToAnonymizableApplication(List.of(app1.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId()));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now().minusDays(30));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", ZonedDateTime.now());
 
@@ -554,7 +562,7 @@ public class ApplicationDaoTest {
     app1 = applicationDao.insert(app1);
 
     ZonedDateTime time = ZonedDateTime.now();
-    applicationDao.insertToAnonymizableApplication(List.of(app1.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId()));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.COMMENT_ADDED, "", "", time);
@@ -576,7 +584,7 @@ public class ApplicationDaoTest {
     app1 = applicationDao.insert(app1);
     Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
     app2 = applicationDao.insert(app2);
-    applicationDao.insertToAnonymizableApplication(List.of(app1.getId(), app2.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId(), app2.getId()));
 
     List<Integer> result = applicationDao.findNonanonymizableOf(List.of(app1.getId(), app2.getId()));
     assertEquals(0, result.size());
@@ -588,7 +596,7 @@ public class ApplicationDaoTest {
     app1 = applicationDao.insert(app1);
     Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
     app2 = applicationDao.insert(app2);
-    applicationDao.insertToAnonymizableApplication(List.of(app1.getId(), app2.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId(), app2.getId()));
 
     int invalidId = app1.getId() + app2.getId();
     List<Integer> result = applicationDao.findNonanonymizableOf(List.of(app2.getId(), app1.getId() + app2.getId()));
@@ -676,4 +684,8 @@ public class ApplicationDaoTest {
     assertEquals(testUser.getId(), anonApp2.getDecisionMaker());
   }
 
+  @Test
+  public void testResetAnonymizableApplicationsShouldWorkWithEmptyArray() {
+    applicationDao.resetAnonymizableApplication(List.of());
+  }
 }
