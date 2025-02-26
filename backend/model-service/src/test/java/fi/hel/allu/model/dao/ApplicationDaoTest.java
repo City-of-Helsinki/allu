@@ -7,6 +7,7 @@ import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 
@@ -50,6 +51,8 @@ public class ApplicationDaoTest {
   DistributionEntry testDistributionEntry;
   @Autowired
   private ApplicationService applicationService;
+  @Autowired
+  private UserDao userDao;
 
   @Before
   public void init() throws Exception {
@@ -647,4 +650,30 @@ public class ApplicationDaoTest {
     assertEquals("", applicationDao.findById(app1.getId()).getName());
     assertEquals("Dummy", applicationDao.findById(app2.getId()).getName());
   }
+
+  @Test
+  public void testAnonymizeHandlerAndDecisionMakerWithUser() {
+    User testUser = testCommon.insertUser("test");
+    User anonUser = userDao.findAnonymizationUser();
+
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1.setHandler(testUser.getId());
+    app1.setDecisionMaker(testUser.getId());
+    app1 = applicationService.insert(app1, 3);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2.setHandler(testUser.getId());
+    app2.setDecisionMaker(testUser.getId());
+    app2 = applicationService.insert(app2, 3);
+
+    applicationDao.anonymizeApplicationHandlersAndDecisionMakersWithUser(List.of(app1.getId()), anonUser.getId());
+
+    Application anonApp1 = applicationDao.findById(app1.getId());
+    Application anonApp2 = applicationDao.findById(app2.getId());
+
+    assertEquals(anonUser.getId(), anonApp1.getHandler());
+    assertEquals(anonUser.getId(), anonApp1.getDecisionMaker());
+    assertEquals(testUser.getId(), anonApp2.getHandler());
+    assertEquals(testUser.getId(), anonApp2.getDecisionMaker());
+  }
+
 }

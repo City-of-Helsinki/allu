@@ -382,6 +382,15 @@ public class ApplicationDao {
     queryFactory.update(application).set(application.name, "").where(application.id.in(applicationIds)).execute();
   }
 
+  @Transactional
+  public void anonymizeApplicationHandlersAndDecisionMakersWithUser(List<Integer> applicationIds, int userId) {
+    queryFactory.update(application)
+      .set(application.handler, userId)
+      .set(application.decisionMaker, userId)
+      .where(application.id.in(applicationIds))
+      .execute();
+  }
+
   /**
    * Updates owner of given applications.
    *
