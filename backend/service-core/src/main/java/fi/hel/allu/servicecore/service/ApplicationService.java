@@ -430,8 +430,8 @@ public class ApplicationService {
       HttpMethod.GET, null, typeRef).getBody();
   }
 
-  public void addToAnonymizableApplications(List<Integer> applicationIds) {
-    restTemplate.exchange(applicationProperties.getAddToAnonymizableApplicationsUrl(),
+  public void resetAnonymizableApplications(List<Integer> applicationIds) {
+    restTemplate.exchange(applicationProperties.getResetAnonymizableApplicationsUrl(),
       HttpMethod.PATCH, new HttpEntity<>(applicationIds), Void.class);
   }
 

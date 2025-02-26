@@ -272,7 +272,7 @@ public class ApplicationControllerTest {
     Application app2 = testCommon.dummyOutdoorApplication("Test Application2", "Owner2");
     Application app2Result = insertApplication(app2);
 
-    wtc.perform(patch("/applications/addtoanonymizable").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json")).andExpect(status().isOk()).andReturn();
+    wtc.perform(patch("/applications/resetanonymizable").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json")).andExpect(status().isOk()).andReturn();
 
     ResultActions resultActions = wtc.perform(post("/applications/checkanonymizability").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json"))
       .andExpect(status().isOk());
@@ -287,7 +287,7 @@ public class ApplicationControllerTest {
     Application app2 = testCommon.dummyOutdoorApplication("Test Application2", "Owner2");
     Application app2Result = insertApplication(app2);
 
-    wtc.perform(patch("/applications/addtoanonymizable").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json")).andExpect(status().isOk()).andReturn();
+    wtc.perform(patch("/applications/resetanonymizable").content("[" + app1Result.getId() + "," + app2Result.getId() + "]").contentType("application/json")).andExpect(status().isOk()).andReturn();
 
     ResultActions resultActions = wtc.perform(post("/applications/checkanonymizability").content("[" + app2Result.getId() + "," + (app1Result.getId() + app2Result.getId()) + "]").contentType("application/json"))
       .andExpect(status().isOk());

@@ -417,9 +417,9 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.findPotentiallyAnonymizableApplications(), HttpStatus.OK);
   }
 
-  @PatchMapping(value = "/addtoanonymizable")
-  public ResponseEntity<List<Application>> addToAnonymizableApplications(@RequestBody List<Integer> applicationsIds) {
-    applicationService.addToAnonymizableApplications(applicationsIds);
+  @PatchMapping(value = "/resetanonymizable")
+  public ResponseEntity<List<Application>> resetAnonymizableApplications(@RequestBody List<Integer> applicationsIds) {
+    applicationService.resetAnonymizableApplications(applicationsIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

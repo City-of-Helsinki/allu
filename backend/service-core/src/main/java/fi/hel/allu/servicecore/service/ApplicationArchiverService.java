@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.*;
@@ -11,7 +10,6 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableReport;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.CableReportJson;
-import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -114,8 +112,8 @@ public class ApplicationArchiverService {
     return applicationServiceComposer.fetchPotentiallyAnonymizableApplications();
   }
 
-  private void addToAnonymizableApplications(List<Integer> applicationIds) {
-    applicationServiceComposer.addToAnonymizableApplications(applicationIds);
+  private void resetAnonymizableApplications(List<Integer> applicationIds) {
+    applicationServiceComposer.resetAnonymizableApplications(applicationIds);
   }
 
   /**
@@ -270,7 +268,7 @@ public class ApplicationArchiverService {
       .map(Application::getId)
       .toList();
 
-    if (anonymizeIds.size() > 0) addToAnonymizableApplications(anonymizeIds);
+    resetAnonymizableApplications(anonymizeIds);
 
     // these might have been fetched in cableReportAssociatedWithActiveExcavationAnnouncement(), release them now
     activeExcavationAnnouncements = null;

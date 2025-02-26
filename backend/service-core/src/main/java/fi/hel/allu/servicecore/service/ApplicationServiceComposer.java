@@ -600,8 +600,8 @@ public class ApplicationServiceComposer {
     return applicationService.fetchPotentiallyAnonymizableApplications();
   }
 
-  public void addToAnonymizableApplications(List<Integer> applicationIds) {
-    applicationService.addToAnonymizableApplications(applicationIds);
+  public void resetAnonymizableApplications(List<Integer> applicationIds) {
+    applicationService.resetAnonymizableApplications(applicationIds);
   }
 
   public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {
