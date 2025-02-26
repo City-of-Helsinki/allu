@@ -1966,7 +1966,8 @@ export const translations = {
           CANCELLED: 'Hakemus peruttu',
           REPLACED: 'Hakemus korvattu',
           ARCHIVED: 'Hakemus arkistoitu',
-          TERMINATED: 'Hakemus irtisanottu'
+          TERMINATED: 'Hakemus irtisanottu',
+          ANONYMIZED: 'Hakemus anonymisoitu'
         },
         CONTRACT_STATUS_CHANGED: {
           APPROVED: 'Sopimus hyväksytty',
