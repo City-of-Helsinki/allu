@@ -96,6 +96,23 @@ public class AnonymizationTest {
   }
 
   @Test
+  public void shouldAnonymizeHandlerAndDecisionMaker() {
+    Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
+    app1.setHandler(3);
+    app1.setDecisionMaker(3);
+    app1 = applicationService.insert(app1, 3);
+
+    User anonUser = userDao.findAnonymizationUser();
+
+    applicationService.anonymizeApplications(List.of(app1.getId()));
+
+    Application anonApp = applicationService.findById(app1.getId());
+
+    assertEquals(anonUser.getId(), anonApp.getHandler());
+    assertEquals(anonUser.getId(), anonApp.getDecisionMaker());
+  }
+
+  @Test
   public void shouldRemoveAllTags() {
     Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
     app1.setApplicationTags(List.of(

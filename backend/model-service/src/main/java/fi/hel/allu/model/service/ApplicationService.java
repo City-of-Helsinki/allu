@@ -493,6 +493,7 @@ public class ApplicationService {
       historyDao.addApplicationChange(app.getId(), change);
     }
     applicationDao.clearApplicationNames(applicationIds);
+    applicationDao.anonymizeApplicationHandlersAndDecisionMakersWithUser(applicationIds, anonUser.getId());
     applicationDao.removeAllCustomersWithContacts(applicationIds);
     locationDao.removeAdditionalInfoForApplications(applicationIds);
     decisionDao.removeDecisions(applicationIds);
