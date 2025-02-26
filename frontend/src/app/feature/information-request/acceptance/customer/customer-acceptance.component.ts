@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
@@ -26,11 +26,13 @@ import {
 } from '@feature/information-request/acceptance/customer/customer-acceptance-config';
 import {findTranslation} from '@util/translations';
 import {CONFIRM_DIALOG_MODAL_CONFIG, ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import { FormControl } from '@angular/forms';
+import {FieldDescription, SelectFieldType} from '../field-select/field-description';
 
 @Component({
   selector: 'customer-acceptance',
   templateUrl: './customer-acceptance.component.html',
-  styleUrls: [],
+  styleUrls: ['./customer-acceptance.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
@@ -42,6 +44,10 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
   @Input() hideExisting = false;
+  @Input() newCustomerReference: string;
+  @Input() oldCustomerReference: string;
+
+
 
   @ViewChild(CustomerInfoAcceptanceComponent, { static: true }) infoAcceptance: CustomerInfoAcceptanceComponent;
 
@@ -62,6 +68,13 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   protected destroy = new Subject<boolean>();
 
   private config: CustomerAcceptanceConfig;
+
+  referenceFieldsControl: FormControl = new FormControl(['customerReference']);
+  referenceFieldDescriptions: FieldDescription[] = [
+    new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
+  ];
+  referenceFieldValues: any = {};
+  referenceComparedValues: any = {};
 
   constructor(
     protected fb: UntypedFormBuilder,
@@ -92,6 +105,29 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
     this.initialSearch();
     this.init();
+
+    this.referenceFieldValues = {
+      customerReference: this.oldCustomerReference || ''
+    };
+
+    this.referenceComparedValues = {
+      customerReference: this.newCustomerReference || ''
+    };
+
+    if (this.oldCustomerReference || this.newCustomerReference) {
+      this.referenceFieldsControl.setValue(['customerReference']);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.oldCustomerReference || changes.newCustomerReference) {
+      this.referenceFieldValues = {
+        customerReference: this.oldCustomerReference || ''
+      };
+      this.referenceComparedValues = {
+        customerReference: this.newCustomerReference || ''
+      };
+    }
   }
 
   init(): void {

@@ -85,7 +85,10 @@
               [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
               [readonly]="readonly"
               [fieldKey]="field"
-              [hideExisting]="hideExisting"></customer-acceptance>
+              [hideExisting]="hideExisting"
+              [newCustomerReference]="newInfo?.customerReference"
+              [oldCustomerReference]="oldInfo?.customerReference"
+              ></customer-acceptance>
           </ng-container>
 
           <attachments-acceptance

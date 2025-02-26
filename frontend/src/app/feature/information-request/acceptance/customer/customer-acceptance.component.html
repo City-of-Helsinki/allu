@@ -6,6 +6,7 @@
   [readonly]="readonly"
   [hideExisting]="hideExisting"
   (customerChanges)="customerChanges($event)">
+
   <div class="left-header">
     <h2 mat-dialog-title>
       {{['informationRequest.field', fieldKey] | translation}}
@@ -53,3 +54,27 @@
     </p>
   </div>
 </customer-info-acceptance>
+
+<div class="reference-section">
+    <h2 mat-dialog-title>
+      Asiakkaan viite
+    </h2>
+
+          <div class="section-container">
+            <div class="section-content">
+              <field-select
+                #oldValuesSelect
+                [descriptions]="referenceFieldDescriptions"
+                [fieldValues]="referenceFieldValues"
+                [formControl]="referenceFieldsControl">
+              </field-select>
+              <div class="section-content">
+                <field-select
+                  #newValuesSelect
+                  [descriptions]="referenceFieldDescriptions"
+                  [fieldValues]="referenceComparedValues"
+                  [formControl]="referenceFieldsControl">
+                </field-select>
+              </div>
+    </div>
+</div>

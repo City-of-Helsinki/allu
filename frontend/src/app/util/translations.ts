@@ -830,6 +830,7 @@ export const translations = {
     handledByRepresentative: 'Asiaa hoitaa asiamies',
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     sapCustomerNumber: 'Sap-numero',
+    customerReference: 'Asiakkaan viite',
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
     invoicingOnly: 'Vain laskutusasiakas',
     projectIdentifierPrefix: 'Projektitunnuksen alkuosa',
