@@ -49,6 +49,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() hideExisting = false;
   @Input() oldCustomerReference: string;
   @Input() newCustomerReference: string;
+  @Input() showCustomerReference: boolean;
   @ViewChild('oldValuesSelect') oldValuesSelect: FieldSelectComponent;
   @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
 
