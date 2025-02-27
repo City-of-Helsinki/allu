@@ -1,4 +1,4 @@
-import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/internal/operators';
@@ -61,13 +61,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
               projectService: ProjectService,
               store: Store<fromRoot.State>,
               private dialog: MatDialog,
-              private configurationHelper: ConfigurationHelperService,
-              private cdr: ChangeDetectorRef) {
+              private configurationHelper: ConfigurationHelperService) {
     super(fb, route, applicationStore, applicationService, notification, router, projectService, store);
-  }
-
-  ngAfterViewInit(): void {
-    this.cdr.detectChanges();
   }
 
   onValidityEndTimePickerClick(picker: MatDatepicker<Date>): void {
