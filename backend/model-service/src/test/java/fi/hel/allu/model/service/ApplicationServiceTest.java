@@ -258,4 +258,34 @@ public class ApplicationServiceTest {
     assertTrue(result.isEmpty());
     verify(applicationDao, times(1)).findAnonymizableApplications();
   }
+
+  @Test
+  public void testFindApplicationsReplacedBy() {
+    when (applicationDao.findAnonymizableApplicationsReplacedBy(any())).thenReturn(List.of(1, 2 ,3)).thenReturn(List.of(4,5)).thenReturn(List.of());
+
+    List<Integer> result = applicationService.findApplicationsReplacedBy(List.of(23, 42));
+
+    assertEquals(5, result.size());
+    assertTrue(result.containsAll(List.of(1, 2, 3, 4, 5)));
+  }
+
+  @Test
+  public void testFindApplicationsReplacing() {
+    when (applicationDao.findAnonymizableApplicationsReplacing(any())).thenReturn(List.of(1, 2 ,3)).thenReturn(List.of(4,5)).thenReturn(List.of());
+
+    List<Integer> result = applicationService.findApplicationsReplacing(List.of(23, 42));
+
+    assertEquals(5, result.size());
+    assertTrue(result.containsAll(List.of(1, 2, 3, 4, 5)));
+  }
+
+  @Test
+  public void testIncludeReplacedApplications() {
+    when (applicationDao.findAnonymizableApplicationsReplacedBy(any())).thenReturn(List.of(1, 2 ,3)).thenReturn(List.of(4,5)).thenReturn(List.of());
+    when (applicationDao.findAnonymizableApplicationsReplacing(any())).thenReturn(List.of(6, 7 ,8)).thenReturn(List.of(9,10)).thenReturn(List.of());
+
+    List<Integer> result = applicationService.includeReplacedApplications(List.of(23, 42));
+    assertEquals(12, result.size());
+    assertTrue(result.containsAll(List.of(23, 42, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
+  }
 }
