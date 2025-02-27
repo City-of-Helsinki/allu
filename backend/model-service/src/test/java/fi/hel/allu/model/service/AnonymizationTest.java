@@ -585,4 +585,73 @@ public class AnonymizationTest {
 
     applicationService.anonymizeApplications(List.of(app1.getId()));
   }
+
+  @Test
+  public void shouldAnonymizeReplacementChains() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
+    Application app2 = testCommon.dummyCableReportApplication("Application2", "Client2");
+    app2.setReplacedByApplicationId(app1.getId());
+    app2 = applicationService.insert(app2, 3);
+    Application app3 = testCommon.dummyCableReportApplication("Application3", "Client3");
+    app3.setReplacedByApplicationId(app2.getId());
+    app3 = applicationService.insert(app3, 3);
+
+    Application app6 = applicationService.insert(testCommon.dummyShortTermRentalApplication("Application6", "Client6"), 3);
+    Application app4 = testCommon.dummyCableReportApplication("Application4", "Client4");
+    app4.setReplacedByApplicationId(app6.getId());
+    app4 = applicationService.insert(app4, 3);
+    Application app5 = testCommon.dummyCableReportApplication("Application5", "Client5");
+    app5.setReplacesApplicationId(app6.getId());
+    app5 = applicationService.insert(app5, 3);
+
+    Application app14 = applicationService.insert(testCommon.dummyCableReportApplication("Application14", "Client14"), 3);
+    Application app15 = testCommon.dummyCableReportApplication("Application15", "Client15");
+    app15.setReplacesApplicationId(app14.getId());
+    app15 = applicationService.insert(app15, 3);
+    Application app13 = testCommon.dummyCableReportApplication("Application13", "Client13");
+    app13.setReplacedByApplicationId(app14.getId());
+    app13 = applicationService.insert(app13, 3);
+    Application app12 = testCommon.dummyCableReportApplication("Application12", "Client12");
+    app12.setReplacedByApplicationId(app13.getId());
+    app12 = applicationService.insert(app12, 3);
+    Application app11 = testCommon.dummyCableReportApplication("Application11", "Client11");
+    app11.setReplacedByApplicationId(app12.getId());
+    app11 = applicationService.insert(app11, 3);
+
+    applicationDao.resetAnonymizableApplication(List.of(
+      app1.getId(), app2.getId(), app3.getId(),
+      app4.getId(), app5.getId(), app6.getId(),
+      app11.getId(), app13.getId(), app14.getId(), app15.getId()
+    ));
+
+    applicationService.anonymizeApplications(List.of(app1.getId(), app6.getId(), app14.getId()));
+
+    // should have followed the replacement chain up
+    Application anonApp1 = applicationService.findById(app1.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp1.getStatus());
+    Application anonApp2 = applicationService.findById(app2.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp2.getStatus());
+    Application anonApp3 = applicationService.findById(app3.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp3.getStatus());
+
+    // should have followed the replacement chain up and down
+    Application anonApp4 = applicationService.findById(app4.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp4.getStatus());
+    Application anonApp5 = applicationService.findById(app5.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp5.getStatus());
+    Application anonApp6 = applicationService.findById(app6.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp6.getStatus());
+
+    // should have cut the replacement chain at app12 which is not in anonymizable applications
+    Application anonApp11 = applicationService.findById(app11.getId());
+    assertNotEquals(StatusType.ANONYMIZED, anonApp11.getStatus());
+    Application anonApp12 = applicationService.findById(app12.getId());
+    assertNotEquals(StatusType.ANONYMIZED, anonApp12.getStatus());
+    Application anonApp13 = applicationService.findById(app13.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp13.getStatus());
+    Application anonApp14 = applicationService.findById(app14.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp14.getStatus());
+    Application anonApp15 = applicationService.findById(app15.getId());
+    assertEquals(StatusType.ANONYMIZED, anonApp15.getStatus());
+  }
 }

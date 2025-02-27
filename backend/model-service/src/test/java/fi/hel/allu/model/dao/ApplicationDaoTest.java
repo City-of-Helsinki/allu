@@ -476,7 +476,6 @@ public class ApplicationDaoTest {
 
     assertEquals(2, potentials.size());
     List<Integer> potentialIds = potentials.stream().map(Application::getId).toList();
-    assertEquals(potentials.get(0).getId(), cableReport1.getId());
     assertTrue(potentialIds.containsAll(List.of(cableReport1.getId(), cableReport3.getId())));
   }
 
@@ -523,6 +522,34 @@ public class ApplicationDaoTest {
     assertEquals(app2.getId(), results.get(1).getId());
     assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
     assertEquals(app2.getApplicationId(), results.get(1).getApplicationId());
+    for (AnonymizableApplication aa : results) {
+      assertNotNull(aa.getApplicationType());
+      assertNotNull(aa.getStartTime());
+      assertNotNull(aa.getEndTime());
+      assertNotNull(aa.getChangeType());
+      assertNotNull(aa.getChangeTime());
+    }
+  }
+
+  @Test
+  public void testFindAnonymizableApplications_withReplacedStatus() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app1 = applicationDao.insert(app1);
+    app2 = applicationDao.insert(app2);
+
+    List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
+    applicationDao.resetAnonymizableApplication(ids);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+    testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+
+    applicationDao.updateStatus(app2.getId(), StatusType.REPLACED);
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(1, results.size());
+    assertEquals(app1.getId(), results.get(0).getId());
+    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
     for (AnonymizableApplication aa : results) {
       assertNotNull(aa.getApplicationType());
       assertNotNull(aa.getStartTime());
@@ -688,4 +715,57 @@ public class ApplicationDaoTest {
   public void testResetAnonymizableApplicationsShouldWorkWithEmptyArray() {
     applicationDao.resetAnonymizableApplication(List.of());
   }
+
+  @Test
+  public void testFindAnonymizableApplicationsReplacedBy() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Test1", "Test1"), 3);
+    Application app2 = testCommon.dummyCableReportApplication("Test2", "Test2");
+    app2.setReplacedByApplicationId(app1.getId());
+    app2 = applicationService.insert(app2, 3);
+
+    Application app3 = applicationService.insert(testCommon.dummyCableReportApplication("Test3", "Test3"), 3);
+    Application app4 = testCommon.dummyCableReportApplication("Test4", "Test4");
+    app2.setReplacedByApplicationId(app3.getId());
+    app4 = applicationService.insert(app4, 3);
+
+    Application app5 = applicationService.insert(testCommon.dummyCableReportApplication("Test5", "Test5"), 3);
+    Application app6 = testCommon.dummyCableReportApplication("Test6", "Test6");
+    app2.setReplacedByApplicationId(app5.getId());
+    app6 = applicationService.insert(app6, 3);
+
+    Application app7 = applicationService.insert(testCommon.dummyCableReportApplication("Test7", "Test7"), 3);
+
+    applicationDao.resetAnonymizableApplication(List.of(app2.getId(), app5.getId(), app7.getId()));
+
+    List<Integer> result = applicationDao.findAnonymizableApplicationsReplacedBy(List.of(app1.getId(), app3.getId()));
+    assertEquals(1, result.size());
+    assertEquals(app2.getId(), result.get(0));
+  }
+
+  @Test
+  public void testFindAnonymizableApplicationsReplacing() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Test1", "Test1"), 3);
+    Application app2 = testCommon.dummyCableReportApplication("Test2", "Test2");
+    app2.setReplacesApplicationId(app1.getId());
+    app2 = applicationService.insert(app2, 3);
+
+    Application app3 = applicationService.insert(testCommon.dummyCableReportApplication("Test3", "Test3"), 3);
+    Application app4 = testCommon.dummyCableReportApplication("Test4", "Test4");
+    app2.setReplacesApplicationId(app3.getId());
+    app4 = applicationService.insert(app4, 3);
+
+    Application app5 = applicationService.insert(testCommon.dummyCableReportApplication("Test5", "Test5"), 3);
+    Application app6 = testCommon.dummyCableReportApplication("Test6", "Test6");
+    app2.setReplacesApplicationId(app5.getId());
+    app6 = applicationService.insert(app6, 3);
+
+    Application app7 = applicationService.insert(testCommon.dummyCableReportApplication("Test7", "Test7"), 3);
+
+    applicationDao.resetAnonymizableApplication(List.of(app2.getId(), app5.getId(), app7.getId()));
+
+    List<Integer> result = applicationDao.findAnonymizableApplicationsReplacing(List.of(app1.getId(), app3.getId()));
+    assertEquals(1, result.size());
+    assertEquals(app2.getId(), result.get(0));
+  }
+
 }

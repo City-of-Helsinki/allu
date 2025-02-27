@@ -231,6 +231,24 @@ public class ApplicationDao {
     queryFactory.delete(anonymizableApplication).where(anonymizableApplication.applicationId.in(applicationIds)).execute();
   }
 
+  @Transactional
+  public List<Integer> findAnonymizableApplicationsReplacedBy(List<Integer> applicationIds) {
+    return queryFactory.select(application.id)
+      .from(application)
+      .join(anonymizableApplication).on(application.id.eq(anonymizableApplication.applicationId))
+      .where(application.replacedByApplicationId.in(applicationIds))
+      .fetch();
+  }
+
+  @Transactional
+  public List<Integer> findAnonymizableApplicationsReplacing(List<Integer> applicationIds) {
+    return queryFactory.select(application.id)
+      .from(application)
+      .join(anonymizableApplication).on(application.id.eq(anonymizableApplication.applicationId))
+      .where(application.replacesApplicationId.in(applicationIds))
+      .fetch();
+  }
+
   @Transactional(readOnly = true)
   public List<Integer> findFinishedNotes() {
     ZonedDateTime now = ZonedDateTime.now();
@@ -1191,6 +1209,7 @@ public class ApplicationDao {
       .join(a).on(aa.applicationId.eq(a.id))
       .join(ch).on(aa.applicationId.eq(ch.applicationId)
         .and(ch.changeTime.eq(latestChangeTime)))
+      .where(a.status.ne(StatusType.REPLACED))
       .fetch();
 
     // Use Set to follow IDs which are already processed and remove them from the list

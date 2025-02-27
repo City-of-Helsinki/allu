@@ -474,14 +474,37 @@ public class ApplicationService {
     }
   }
 
+  @SafeVarargs
+  private List<Integer> combineLists(List<Integer>... lists) {
+    return Arrays.stream(lists).flatMap(Collection::stream).toList();
+  }
+
+  List<Integer> findApplicationsReplacedBy(List<Integer> applicationIds) {
+    if (applicationIds.isEmpty()) return List.of();
+    List<Integer> replacedApplications = applicationDao.findAnonymizableApplicationsReplacedBy(applicationIds);
+    return combineLists(replacedApplications, findApplicationsReplacedBy(replacedApplications));
+  }
+
+  List<Integer> findApplicationsReplacing(List<Integer> applicationIds) {
+    if (applicationIds.isEmpty()) return List.of();
+    List<Integer> replacingApplications = applicationDao.findAnonymizableApplicationsReplacing(applicationIds);
+    return combineLists(replacingApplications, findApplicationsReplacing(replacingApplications));
+  }
+
+  List<Integer> includeReplacedApplications(List<Integer> applicationIds) {
+    return combineLists(applicationIds, findApplicationsReplacedBy(applicationIds), findApplicationsReplacing(applicationIds));
+  }
+
   @Transactional
-  public void anonymizeApplications(List<Integer> applicationIds) {
+  public void anonymizeApplications(List<Integer> originalApplicationIds) {
     User anonUser = userDao.findAnonymizationUser();
     ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.STATUS_CHANGED);
     change.setChangeSpecifier(StatusType.ANONYMIZED.name());
     change.setChangeTime(ZonedDateTime.now());
     change.setUserId(anonUser.getId());
+
+    List<Integer> applicationIds = includeReplacedApplications(originalApplicationIds);
 
     for (Integer id : applicationIds) {
       removeTags(id);
