@@ -55,7 +55,7 @@
   </div>
 </customer-info-acceptance>
 
-<div class="reference-section">
+<div class="reference-section" *ngIf="showCustomerReference">
   <form [formGroup]="selectionForm">
     <h2 mat-dialog-title>
       {{'informationRequest.acceptance.otherBillingTitle' | translation}}
