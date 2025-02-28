@@ -240,10 +240,10 @@ public class ApplicationDao {
 
   @Transactional
   public List<Integer> findAnonymizableApplicationsReplacedBy(List<Integer> applicationIds) {
-    return queryFactory.select(application.id)
+    return queryFactory.select(application.replacesApplicationId)
       .from(application)
-      .join(anonymizableApplication).on(application.id.eq(anonymizableApplication.applicationId))
-      .where(application.replacedByApplicationId.in(applicationIds))
+      .join(anonymizableApplication).on(application.replacesApplicationId.eq(anonymizableApplication.applicationId))
+      .where(application.id.in(applicationIds))
       .fetch();
   }
 
@@ -1227,5 +1227,9 @@ public class ApplicationDao {
     applications.removeIf(application -> !seenIds.add(application.getId()));
 
     return applications;
+  }
+
+  public List<Integer> findAnonymizableApplicationIds() {
+    return queryFactory.select(anonymizableApplication.applicationId).from(anonymizableApplication).fetch();
   }
 }

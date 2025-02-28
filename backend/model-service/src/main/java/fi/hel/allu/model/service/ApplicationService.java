@@ -479,20 +479,27 @@ public class ApplicationService {
     return Arrays.stream(lists).flatMap(Collection::stream).toList();
   }
 
-  List<Integer> findApplicationsReplacedBy(List<Integer> applicationIds) {
-    if (applicationIds.isEmpty()) return List.of();
-    List<Integer> replacedApplications = applicationDao.findAnonymizableApplicationsReplacedBy(applicationIds);
-    return combineLists(replacedApplications, findApplicationsReplacedBy(replacedApplications));
-  }
-
   List<Integer> findApplicationsReplacing(List<Integer> applicationIds) {
     if (applicationIds.isEmpty()) return List.of();
     List<Integer> replacingApplications = applicationDao.findAnonymizableApplicationsReplacing(applicationIds);
     return combineLists(replacingApplications, findApplicationsReplacing(replacingApplications));
   }
 
+  int findUltimateAnonymizableAncestorOf(int applicationId, List<Integer> anonymizables) {
+    Application currentApplication = findById(applicationId);
+    while (currentApplication.getReplacesApplicationId() != null && anonymizables.contains(currentApplication.getReplacesApplicationId()))
+      currentApplication = findById(currentApplication.getReplacesApplicationId());
+    return currentApplication.getId();
+  }
+
+  List<Integer> findUltimateAnonymizableAncestorsOf(List<Integer> applicationIds) {
+    List<Integer> anonymizables = applicationDao.findAnonymizableApplicationIds();
+    return applicationIds.stream().map(id -> findUltimateAnonymizableAncestorOf(id, anonymizables)).toList();
+  }
+
   List<Integer> includeReplacedApplications(List<Integer> applicationIds) {
-    return combineLists(applicationIds, findApplicationsReplacedBy(applicationIds), findApplicationsReplacing(applicationIds));
+    List<Integer> ancestors = findUltimateAnonymizableAncestorsOf(applicationIds);
+    return combineLists(ancestors, findApplicationsReplacing(ancestors));
   }
 
   @Transactional

@@ -588,35 +588,19 @@ public class AnonymizationTest {
 
   @Test
   public void shouldAnonymizeReplacementChains() {
-    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Client1"), 3);
-    Application app2 = testCommon.dummyCableReportApplication("Application2", "Client2");
-    app2.setReplacedByApplicationId(app1.getId());
-    app2 = applicationService.insert(app2, 3);
-    Application app3 = testCommon.dummyCableReportApplication("Application3", "Client3");
-    app3.setReplacedByApplicationId(app2.getId());
-    app3 = applicationService.insert(app3, 3);
+    Application app3 = applicationService.insert(testCommon.dummyCableReportApplication("Application3", "Client3"), 3);
+    Application app2 = createReplacing(app3, 2);
+    Application app1 = createReplacing(app2, 1);
 
-    Application app6 = applicationService.insert(testCommon.dummyShortTermRentalApplication("Application6", "Client6"), 3);
-    Application app4 = testCommon.dummyCableReportApplication("Application4", "Client4");
-    app4.setReplacedByApplicationId(app6.getId());
-    app4 = applicationService.insert(app4, 3);
-    Application app5 = testCommon.dummyCableReportApplication("Application5", "Client5");
-    app5.setReplacesApplicationId(app6.getId());
-    app5 = applicationService.insert(app5, 3);
+    Application app4 = applicationService.insert(testCommon.dummyShortTermRentalApplication("Application4", "Client4"), 3);
+    Application app6 = createReplacing(app4, 6);
+    Application app5 = createReplacing(app6, 5);
 
-    Application app14 = applicationService.insert(testCommon.dummyCableReportApplication("Application14", "Client14"), 3);
-    Application app15 = testCommon.dummyCableReportApplication("Application15", "Client15");
-    app15.setReplacesApplicationId(app14.getId());
-    app15 = applicationService.insert(app15, 3);
-    Application app13 = testCommon.dummyCableReportApplication("Application13", "Client13");
-    app13.setReplacedByApplicationId(app14.getId());
-    app13 = applicationService.insert(app13, 3);
-    Application app12 = testCommon.dummyCableReportApplication("Application12", "Client12");
-    app12.setReplacedByApplicationId(app13.getId());
-    app12 = applicationService.insert(app12, 3);
-    Application app11 = testCommon.dummyCableReportApplication("Application11", "Client11");
-    app11.setReplacedByApplicationId(app12.getId());
-    app11 = applicationService.insert(app11, 3);
+    Application app11 = applicationService.insert(testCommon.dummyCableReportApplication("Application11", "Client11"), 3);
+    Application app12 = createReplacing(app11, 12);
+    Application app13 = createReplacing(app12, 13);
+    Application app14 = createReplacing(app13, 14);
+    Application app15 = createReplacing(app14, 15);
 
     applicationDao.resetAnonymizableApplication(List.of(
       app1.getId(), app2.getId(), app3.getId(),
@@ -653,5 +637,35 @@ public class AnonymizationTest {
     assertEquals(StatusType.ANONYMIZED, anonApp14.getStatus());
     Application anonApp15 = applicationService.findById(app15.getId());
     assertEquals(StatusType.ANONYMIZED, anonApp15.getStatus());
+  }
+
+  @Test
+  public void shouldAnonymizeReplacementTrees() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Application1", "Test1"), 3);
+    Application app2 = createReplacing(app1, 2);
+    Application app3 = createReplacing(app2, 3);
+    Application app4 = createReplacing(app3, 4);
+    Application app5 = createReplacing(app4, 5);
+    Application app6 = createReplacing(app3, 6);
+    Application app7 = createReplacing(app6, 7);
+    Application app8 = createReplacing(app7, 8);
+
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId(), app3.getId(), app4.getId(), app5.getId(), app6.getId(), app8.getId()));
+
+    applicationService.anonymizeApplications(List.of(app4.getId()));
+    assertNotEquals(StatusType.ANONYMIZED, applicationService.findById(app1.getId()).getStatus());
+    assertNotEquals(StatusType.ANONYMIZED, applicationService.findById(app2.getId()).getStatus());
+    assertEquals(StatusType.ANONYMIZED, applicationService.findById(app3.getId()).getStatus());
+    assertEquals(StatusType.ANONYMIZED, applicationService.findById(app4.getId()).getStatus());
+    assertEquals(StatusType.ANONYMIZED, applicationService.findById(app5.getId()).getStatus());
+    assertEquals(StatusType.ANONYMIZED, applicationService.findById(app6.getId()).getStatus());
+    assertNotEquals(StatusType.ANONYMIZED, applicationService.findById(app7.getId()).getStatus());
+    assertNotEquals(StatusType.ANONYMIZED, applicationService.findById(app8.getId()).getStatus());
+  }
+
+  private Application createReplacing(Application replaced, int serial) {
+    Application app = testCommon.dummyCableReportApplication("Application" + serial, "Test" + serial);
+    app.setReplacesApplicationId(replaced.getId());
+    return applicationService.insert(app, 3);
   }
 }

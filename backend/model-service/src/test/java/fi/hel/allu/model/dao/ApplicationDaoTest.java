@@ -718,20 +718,20 @@ public class ApplicationDaoTest {
 
   @Test
   public void testFindAnonymizableApplicationsReplacedBy() {
-    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Test1", "Test1"), 3);
-    Application app2 = testCommon.dummyCableReportApplication("Test2", "Test2");
-    app2.setReplacedByApplicationId(app1.getId());
-    app2 = applicationService.insert(app2, 3);
+    Application app1 = testCommon.dummyCableReportApplication("Test1", "Test1");
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Test2", "Test2"), 3);
+    app1.setReplacesApplicationId(app2.getId());
+    app1 = applicationService.insert(app1, 3);
 
-    Application app3 = applicationService.insert(testCommon.dummyCableReportApplication("Test3", "Test3"), 3);
-    Application app4 = testCommon.dummyCableReportApplication("Test4", "Test4");
-    app2.setReplacedByApplicationId(app3.getId());
-    app4 = applicationService.insert(app4, 3);
+    Application app3 = testCommon.dummyCableReportApplication("Test3", "Test3");
+    Application app4 = applicationService.insert(testCommon.dummyCableReportApplication("Test4", "Test4"), 3);
+    app3.setReplacesApplicationId(app4.getId());
+    app3 = applicationService.insert(app3, 3);
 
-    Application app5 = applicationService.insert(testCommon.dummyCableReportApplication("Test5", "Test5"), 3);
-    Application app6 = testCommon.dummyCableReportApplication("Test6", "Test6");
-    app2.setReplacedByApplicationId(app5.getId());
-    app6 = applicationService.insert(app6, 3);
+    Application app5 = testCommon.dummyCableReportApplication("Test5", "Test5");
+    Application app6 = applicationService.insert(testCommon.dummyCableReportApplication("Test6", "Test6"), 3);
+    app5.setReplacesApplicationId(app5.getId());
+    app5 = applicationService.insert(app5, 3);
 
     Application app7 = applicationService.insert(testCommon.dummyCableReportApplication("Test7", "Test7"), 3);
 
