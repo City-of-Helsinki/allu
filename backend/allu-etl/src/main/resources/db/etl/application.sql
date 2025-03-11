@@ -53,6 +53,7 @@ SELECT
         WHEN a.status = 'ARCHIVED' THEN 'Arkistoitu'
         WHEN a.status = 'NOTE' THEN 'Muistiinpano'
         WHEN a.status = 'TERMINATED' THEN 'Irtisanottu'
+        WHEN a.status = 'ANONYMIZED' THEN 'Anonymisoitu'
         ELSE 'NA'
     END AS tila,
     CASE
