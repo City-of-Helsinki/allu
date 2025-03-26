@@ -747,11 +747,12 @@ public class ApplicationService {
   }
 
   /**
-   * Find anonymizable/"deletable" applications
+   * Find anonymizable/"deletable" applications, with paging support
+   * @param pageable page request for the search
    * @return list of anonymizable/"deletable" applications
    */
   @Transactional(readOnly = true)
-  public List<AnonymizableApplication> getAnonymizableApplications() {
-    return applicationDao.findAnonymizableApplications();
+  public Page<AnonymizableApplication> getAnonymizableApplications(Pageable pageable) {
+    return applicationDao.findAnonymizableApplications(pageable);
   }
 }
