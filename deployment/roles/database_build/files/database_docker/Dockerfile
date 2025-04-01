@@ -1,4 +1,4 @@
-FROM postgis/postgis:14-3.5-alpine
+FROM postgis/postgis:17-3.5-alpine
 #uses alpine version 3.21
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/main" >> /etc/apk/repositories
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community" >> /etc/apk/repositories
