@@ -15,9 +15,15 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.event.ApplicationEventDispatcher;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +35,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -72,10 +77,11 @@ public class ApplicationService {
     this.applicationEventDispatcher = applicationEventDispatcher;
   }
 
-
   void setApplicationProperties(ApplicationProperties applicationProperties) {
     this.applicationProperties = applicationProperties;
   }
+
+  Logger log = LoggerFactory.getLogger(ApplicationService.class);
 
   /**
    * Find given application details.
@@ -686,17 +692,16 @@ public class ApplicationService {
 
   /**
    * Get list of anonymizable/"deletable" applications by calling model-service endpoint. Data is retrieved from model-service's database.
-   * @return list of anonymizable/"deletable" applications
+   * @return list of anonymizable/"deletable" applications with paging
    */
-  public List<AnonymizableApplicationJson> getAnonymizableApplications() {
-    ResponseEntity<AnonymizableApplication[]> re = restTemplate.getForEntity(applicationProperties.getAnonymizableApplicationsUrl(), AnonymizableApplication[].class);
-    AnonymizableApplication[] body = re.getBody();
-    if (body != null) {
-      return Arrays.stream(body)
-        .map(ApplicationMapper::mapToAnonymizableApplicationJson)
-        .collect(Collectors.toList());
-    } else {
-      return Collections.emptyList();
-    }
+  public Page<AnonymizableApplicationJson> getAnonymizableApplications(Pageable pageable) {
+    URI url = PageRequestBuilder.fromUriString(applicationProperties.getAnonymizableApplicationsUrl(), pageable);
+    ResponseEntity<RestResponsePage<AnonymizableApplicationJson>> response = restTemplate.exchange(
+      url,
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<RestResponsePage<AnonymizableApplicationJson>>() {}
+    );
+    return response.getBody();
   }
 }
