@@ -1,5 +1,7 @@
 package fi.hel.allu.model.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +23,8 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.model.domain.*;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -230,13 +234,14 @@ public class ApplicationServiceTest {
       new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, null, changeTime)
     );
 
-    when(applicationDao.findAnonymizableApplications()).thenReturn(mockApplications);
+    Pageable pageable = PageRequest.of(0, 10);
+    when(applicationDao.findAnonymizableApplications(any())).thenReturn(new PageImpl<>(mockApplications, pageable, 2));
 
-    List<AnonymizableApplication> results = applicationService.getAnonymizableApplications();
+    Page<AnonymizableApplication> results = applicationService.getAnonymizableApplications(pageable);
 
-    assertEquals(2, results.size());
-    for (int i = 0; i < results.size(); i++) {
-      AnonymizableApplication aa = results.get(i);
+    assertEquals(2, results.getContent().size());
+    for (int i = 0; i < results.getContent().size(); i++) {
+      AnonymizableApplication aa = results.getContent().get(i);
       assertEquals(i + 1, aa.getId().intValue());
       assertEquals("APP00" + (i + 1), aa.getApplicationId());
       assertEquals(i == 0 ? ApplicationType.EXCAVATION_ANNOUNCEMENT : ApplicationType.AREA_RENTAL, aa.getApplicationType());
@@ -246,17 +251,7 @@ public class ApplicationServiceTest {
       assertEquals(changeTime, aa.getChangeTime());
     }
 
-    verify(applicationDao, times(1)).findAnonymizableApplications();
-  }
-
-  @Test
-  public void testGetAnonymizableApplications_emptyList() {
-    when(applicationDao.findAnonymizableApplications()).thenReturn(List.of());
-
-    List<AnonymizableApplication> result = applicationService.getAnonymizableApplications();
-
-    assertTrue(result.isEmpty());
-    verify(applicationDao, times(1)).findAnonymizableApplications();
+    verify(applicationDao, times(1)).findAnonymizableApplications(pageable);
   }
 
   @Test

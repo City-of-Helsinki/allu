@@ -19,6 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -526,9 +529,11 @@ public class AnonymizationTest {
     applicationService.resetAnonymizableApplications(List.of(app1.getId(), app2.getId()));
     applicationService.anonymizeApplications(List.of(app1.getId()));
 
-    List<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications();
-    assertEquals(1, anonymizable.size());
-    assertEquals(app2.getId(), anonymizable.get(0).getId());
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications(pageable);
+    assertEquals(1, anonymizable.getContent().size());
+    assertEquals(app2.getId(), anonymizable.getContent().get(0).getId());
   }
 
   @Test

@@ -18,6 +18,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -515,14 +518,16 @@ public class ApplicationDaoTest {
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
     testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
 
-    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+    Pageable pageable = PageRequest.of(0, 10);
 
-    assertEquals(2, results.size());
-    assertEquals(app1.getId(), results.get(0).getId());
-    assertEquals(app2.getId(), results.get(1).getId());
-    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
-    assertEquals(app2.getApplicationId(), results.get(1).getApplicationId());
-    for (AnonymizableApplication aa : results) {
+    Page<AnonymizableApplication> results = applicationDao.findAnonymizableApplications(pageable);
+
+    assertEquals(2, results.getContent().size());
+    assertEquals(app1.getId(), results.getContent().get(0).getId());
+    assertEquals(app2.getId(), results.getContent().get(1).getId());
+    assertEquals(app1.getApplicationId(), results.getContent().get(0).getApplicationId());
+    assertEquals(app2.getApplicationId(), results.getContent().get(1).getApplicationId());
+    for (AnonymizableApplication aa : results.getContent()) {
       assertNotNull(aa.getApplicationType());
       assertNotNull(aa.getStartTime());
       assertNotNull(aa.getEndTime());
@@ -545,12 +550,14 @@ public class ApplicationDaoTest {
 
     applicationDao.updateStatus(app2.getId(), StatusType.REPLACED);
 
-    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+    Pageable pageable = PageRequest.of(0, 10);
 
-    assertEquals(1, results.size());
-    assertEquals(app1.getId(), results.get(0).getId());
-    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
-    for (AnonymizableApplication aa : results) {
+    Page<AnonymizableApplication> results = applicationDao.findAnonymizableApplications(pageable);
+
+    assertEquals(1, results.getContent().size());
+    assertEquals(app1.getId(), results.getContent().get(0).getId());
+    assertEquals(app1.getApplicationId(), results.getContent().get(0).getApplicationId());
+    for (AnonymizableApplication aa : results.getContent()) {
       assertNotNull(aa.getApplicationType());
       assertNotNull(aa.getStartTime());
       assertNotNull(aa.getEndTime());
@@ -568,18 +575,20 @@ public class ApplicationDaoTest {
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now().minusDays(30));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", ZonedDateTime.now());
 
-    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+    Pageable pageable = PageRequest.of(0, 10);
 
-    assertEquals(1, results.size());
-    assertEquals(app1.getId(), results.get(0).getId());
-    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
-    assertNotNull(results.get(0).getApplicationType());
-    assertNotNull(results.get(0).getStartTime());
-    assertNotNull(results.get(0).getEndTime());
-    assertEquals(ChangeType.STATUS_CHANGED, results.get(0).getChangeType());
+    Page<AnonymizableApplication> results = applicationDao.findAnonymizableApplications(pageable);
+
+    assertEquals(1, results.getContent().size());
+    assertEquals(app1.getId(), results.getContent().get(0).getId());
+    assertEquals(app1.getApplicationId(), results.getContent().get(0).getApplicationId());
+    assertNotNull(results.getContent().get(0).getApplicationType());
+    assertNotNull(results.getContent().get(0).getStartTime());
+    assertNotNull(results.getContent().get(0).getEndTime());
+    assertEquals(ChangeType.STATUS_CHANGED, results.getContent().get(0).getChangeType());
 
     LocalDate today = LocalDate.now();
-    LocalDate latestChangeTime = results.get(0).getChangeTime().toLocalDate();
+    LocalDate latestChangeTime = results.getContent().get(0).getChangeTime().toLocalDate();
     assertEquals(today, latestChangeTime);
   }
 
@@ -594,15 +603,18 @@ public class ApplicationDaoTest {
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.COMMENT_ADDED, "", "", time);
 
-    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+    Pageable pageable = PageRequest.of(0, 10);
 
-    assertEquals(1, results.size());
+    Page<AnonymizableApplication> results = applicationDao.findAnonymizableApplications(pageable);
+
+    assertEquals(1, results.getContent().size());
   }
 
   @Test
   public void testFindAnonymizableApplications_withNoData() {
-    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
-    assertTrue(results.isEmpty());
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<AnonymizableApplication> results = applicationDao.findAnonymizableApplications(pageable);
+    assertTrue(results.getContent().isEmpty());
   }
 
   @Test

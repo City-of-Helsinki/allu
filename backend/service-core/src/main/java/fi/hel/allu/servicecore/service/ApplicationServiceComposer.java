@@ -706,7 +706,12 @@ public class ApplicationServiceComposer {
     return getApplicationStatus(applicationId).getType();
   }
 
-  public List<AnonymizableApplicationJson> getAnonymizableApplications() {
-    return applicationService.getAnonymizableApplications();
+  /**
+   * Get anonymizable/"deletable" applications with paging support
+   * @param pageable page request for the search
+   * @return list of anonymizable/"deletable" applications with paging
+   */
+  public Page<AnonymizableApplicationJson> getAnonymizableApplications(Pageable pageable) {
+    return applicationService.getAnonymizableApplications(pageable);
   }
 }
