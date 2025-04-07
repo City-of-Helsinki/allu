@@ -84,13 +84,18 @@ public class ApplicationController {
   }
 
   /**
-   * Get anonymizable/"deletable" applications
-   * @return list of anonymizable/"deletable" applications
+   * Get anonymizable/"deletable" applications with paging support
+   * @param pageable page request for the search
+   * @return list of anonymizable/"deletable" applications with paging
    */
   @GetMapping(value = "/anonymizable")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-  public ResponseEntity<List<AnonymizableApplicationJson>> getAnonymizableApplications() {
-    return new ResponseEntity<>(applicationServiceComposer.getAnonymizableApplications(), HttpStatus.OK);
+  public ResponseEntity<Page<AnonymizableApplicationJson>> getAnonymizableApplications(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+    Pageable pageable
+  ) {
+    Page<AnonymizableApplicationJson> result = applicationServiceComposer.getAnonymizableApplications(pageable);
+    return ResponseEntity.ok(result);
   }
 
   /**
