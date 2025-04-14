@@ -528,11 +528,15 @@ public class ApplicationController {
   }
 
   /**
-   * Get anonymizable/"deletable" applications
+   * Get anonymizable/"deletable" applications, with paging support
+   * @param pageable page request for the search
    * @return list of anonymizable/"deletable" applications
    */
-  @GetMapping(value = "/anonymizable")
-  public ResponseEntity<List<AnonymizableApplication>> getAnonymizableApplications() {
-    return ResponseEntity.ok(applicationService.getAnonymizableApplications());
+  @GetMapping("/anonymizable")
+  public ResponseEntity<Page<AnonymizableApplication>> getAnonymizableApplications(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+    Pageable pageable) {
+    Page<AnonymizableApplication> applications = applicationService.getAnonymizableApplications(pageable);
+    return ResponseEntity.ok().body(applications);
   }
 }
