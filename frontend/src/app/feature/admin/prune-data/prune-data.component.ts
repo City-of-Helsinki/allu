@@ -12,6 +12,8 @@ import { map, switchMap, takeUntil, take, filter, first } from 'rxjs/operators';
 import { MatSort, Sort } from '@angular/material/sort';
 import * as PruneDataActions from './store/prune-data.actions';
 import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility, selectDeleteInProgress } from './store/prune-data.selectors';
+import {MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+
 
 interface ColumnConfig {
   columns: string[];
@@ -48,6 +50,11 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  pageSize = 10;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  pageIndex = 0;
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -68,7 +75,19 @@ export class PruneDataComponent implements OnInit, OnDestroy {
       this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
     });
 
-    console.log('this.deleteInrpgos', this.deleteInProgress)
+    this.filteredDataSource$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(data => {
+      if (this.paginator) {
+        const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+        const endIndex = startIndex + this.paginator.pageSize;
+        this.store.dispatch(PruneDataActions.updatePagination({
+          pageIndex: this.paginator.pageIndex,
+          pageSize: this.paginator.pageSize,
+          data: data.slice(startIndex, endIndex)
+        }));
+      }
+    })
   }
 
   ngOnDestroy(): void {
@@ -139,6 +158,11 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     this.selectedIds$.pipe(first()).subscribe((ids) => {
       this.store.dispatch(PruneDataActions.deleteData({ids}))
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
   }
 
 }
