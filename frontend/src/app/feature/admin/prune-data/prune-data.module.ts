@@ -12,6 +12,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { PruneDataEffects } from './store/prune-data.effects';
 import { PruneDataComponent } from './prune-data.component';
 import { pruneDataReducer } from './store/prune-data.reducer';
+import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { pruneDataReducer } from './store/prune-data.reducer';
     AlluCommonModule,
     StoreModule.forFeature('pruneData', pruneDataReducer),
     EffectsModule.forFeature([PruneDataEffects]),
+    MatPaginatorModule
   ],
   exports: [
     PruneDataComponent

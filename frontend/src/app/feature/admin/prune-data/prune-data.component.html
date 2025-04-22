@@ -79,7 +79,13 @@
       </div>
     </div>
   </div>
-  
+  <mat-paginator #paginator
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageIndex]="pageIndex"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
   <mat-tab-nav-panel #tabPanel>
   </mat-tab-nav-panel>
 

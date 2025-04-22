@@ -59,3 +59,8 @@ export const deleteModalVisibility = createAction(
   '[PruneData] Table Sort Reset',
   props<{ show: boolean }>()
 );
+
+export const updatePagination = createAction(
+  '[PruneData] Update Pagination',
+  props<{ pageIndex: number; pageSize: number; data: PruneDataItem[] }>()
+)
