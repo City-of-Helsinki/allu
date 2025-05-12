@@ -43,3 +43,5 @@ customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
 customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 
 supervision_api_basepath: /supervision-api
+
+anonymization_update_cronstring: "0 0 3 * * *"

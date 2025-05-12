@@ -21,6 +21,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,6 +59,9 @@ public class ApplicationService {
       ApplicationEventDispatcher applicationEventDispatcher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    // Needed for PATCH support
+    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+    restTemplate.setRequestFactory(requestFactory);
     this.applicationMapper = applicationMapper;
     this.userService = userService;
     this.personAuditLogService = personAuditLogService;
@@ -222,6 +226,30 @@ public class ApplicationService {
     return setInvoicingPeriods(application);
   }
 
+  /**
+   * Check that all given applications have previously been marked as anonymizable
+   *
+   * @param applicationIds list of application IDs to check
+   *
+   * @return true if all given applications are anonymizable, otherwise false
+   */
+  boolean checkApplicationAnonymizability(List<Integer> applicationIds) {
+    ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
+    List<Integer> nonanonymizableApplicationIds =
+      restTemplate.exchange(applicationProperties.getApplicationAnonymizabilityCheckUrl(), HttpMethod.POST, new HttpEntity<>(applicationIds), typeRef).getBody();
+
+    return nonanonymizableApplicationIds == null || nonanonymizableApplicationIds.isEmpty();
+  }
+
+  /**
+   * Anonymize given applications
+   *
+   * @param applicationIds list of application IDs to anonymize
+   */
+  void anonymizeApplications(List<Integer> applicationIds) {
+    restTemplate.exchange(applicationProperties.getAnonymizeApplicationsUrl(),
+      HttpMethod.PATCH, new HttpEntity<>(applicationIds), Void.class);
+  }
 
   /**
    * Delete a note from model-service's database.
@@ -394,6 +422,17 @@ public class ApplicationService {
     ParameterizedTypeReference<List<Application>> typeRef = new ParameterizedTypeReference<List<Application>>() {};
     return restTemplate.exchange(applicationProperties.getActiveExcavationAnnouncementsUrl(),
       HttpMethod.GET, null, typeRef).getBody();
+  }
+
+  public List<Application> fetchPotentiallyAnonymizableApplications() {
+    ParameterizedTypeReference<List<Application>> typeRef = new ParameterizedTypeReference<List<Application>>() {};
+    return restTemplate.exchange(applicationProperties.getFetchPotentiallyAnonymizableApplicationsUrl(),
+      HttpMethod.GET, null, typeRef).getBody();
+  }
+
+  public void resetAnonymizableApplications(List<Integer> applicationIds) {
+    restTemplate.exchange(applicationProperties.getResetAnonymizableApplicationsUrl(),
+      HttpMethod.PATCH, new HttpEntity<>(applicationIds), Void.class);
   }
 
   public List<Integer> findFinishedNotes() {

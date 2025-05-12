@@ -227,6 +227,22 @@ public class ApplicationProperties {
   }
 
   /**
+   *
+   * @return url to check whether applications are currently anonymizable
+   */
+  public String getApplicationAnonymizabilityCheckUrl() {
+    return getModelServiceUrl("/applications/checkanonymizability");
+  }
+
+  /**
+   *
+   * @return url to anonymize given applications
+   */
+  public String getAnonymizeApplicationsUrl() {
+    return getModelServiceUrl("/applications/anonymize");
+  }
+
+  /**
    * @return url to delete a note in model service.
    */
   public String getNoteDeleteUrl() {
@@ -1394,6 +1410,14 @@ public class ApplicationProperties {
    */
   public String getActiveExcavationAnnouncementsUrl() {
     return getModelServiceUrl("/applications/activeexcavationannouncements");
+  }
+
+  public String getFetchPotentiallyAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/potentiallyanonymizable");
+  }
+
+  public String getResetAnonymizableApplicationsUrl() {
+    return getModelServiceUrl("/applications/resetanonymizable");
   }
 
   /**

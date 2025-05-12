@@ -53,6 +53,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   updatedFields: InformationRequestFieldKey[];
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
   hasLocationChanges: boolean;
+  invoicingCustomerUpdated: boolean;
   applicationTypeBillable: boolean;
   requestDataAvailable = false;
   showRequest = true;
@@ -76,6 +77,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
       this.newInfo = this.data.newInfo;
       this.updatedFields = this.data.updatedFields;
       this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
+      this.invoicingCustomerUpdated = this.updatedFields.includes(InformationRequestFieldKey["INVOICING_CUSTOMER"]);
 
       if (this.data.informationRequest) {
         this.requestDataAvailable = this.data.informationRequest.fields.length > 0;

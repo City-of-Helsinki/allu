@@ -19,9 +19,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractWfsPaymentDataService {
 
   protected static final String UNDEFINED = "undefined";
+  private static final String PROPERTYNAME = "<ogc:PropertyName>%s</ogc:PropertyName>";
   private static final String COORDINATES = "<coordinates>";
   private static final String REQUEST =
     "<wfs:GetFeature xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
@@ -37,7 +41,7 @@ public abstract class AbstractWfsPaymentDataService {
         "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +
         "xmlns:ogc=\"http://www.opengis.net/ogc\" service=\"WFS\" version=\"1.0.0\">" +
         "<wfs:Query typeName=\"helsinki:%s\">" +
-          "<ogc:PropertyName>%s</ogc:PropertyName>" +
+          PROPERTYNAME +
           "<ogc:Filter>" +
             "<ogc:Intersects>" +
               "<ogc:PropertyName>geom</ogc:PropertyName>" +
@@ -55,8 +59,10 @@ public abstract class AbstractWfsPaymentDataService {
         "</wfs:Query>" +
       "</wfs:GetFeature>";
 
+  private static final int WFS_QUERY_RETRIES = 5;
   private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
-  private static final LocalDateTime NEW_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
+  protected static final LocalDateTime POST_2022_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
+  protected static final LocalDateTime POST_2025_PAYMENT_DATE = LocalDateTime.of(2025, 2, 28, 23, 59, 0, 0);
   private final ApplicationProperties applicationProperties;
   private final AsyncWfsRestTemplate restTemplate;
 
@@ -65,11 +71,13 @@ public abstract class AbstractWfsPaymentDataService {
     this.restTemplate = restTemplate;
   }
 
-  protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson);
+  protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location);
 
-  protected abstract String getFeatureTypeName();
+  protected abstract String getFeatureTypeNamePre2022();
 
-  protected abstract String getFeatureTypeNameNew();
+  protected abstract String getFeatureTypeNamePost2022();
+
+  protected abstract String getFeatureTypeNamePost2025();
 
   protected abstract String getFeaturePropertyName();
 
@@ -77,30 +85,34 @@ public abstract class AbstractWfsPaymentDataService {
     final List<String> coordinateArray = getCoordinates(location);
     final List<String> requests = coordinateArray.stream()
       .map(c -> getRequest(applicationJson).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
-    try {
-      final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
-      final List<String> responses = collectResponses(responseFutures);
-      return parseResult(responses, applicationJson);
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      return UNDEFINED;
+    for (int retry = 0; retry < WFS_QUERY_RETRIES; retry++){
+      try {
+        final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
+        final List<String> responses = collectResponses(responseFutures);
+        return parseResult(responses, applicationJson, location);
+      } catch (Exception e) {
+        logger.error("WFS request threw exception on retry #" + retry + ": " + e.getMessage(), e);
+      }
     }
+    return UNDEFINED;
   }
 
   private String getRequest(StartTimeInterface startTime) {
-    if (isNewExcavationPayment(startTime)) {
-      return String.format(REQUEST, getFeatureTypeNameNew(), getFeaturePropertyName());
-    }
-    return String.format(REQUEST, getFeatureTypeName(), getFeaturePropertyName());
+    // remove PropertyName element from post-2025 requests
+    if (startTime.getStartTime() != null && startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
+      return String.format(REQUEST.replaceFirst(PROPERTYNAME, ""), getFeatureTypenameFor(startTime));
+    else return String.format(REQUEST, getFeatureTypenameFor(startTime), getFeaturePropertyName());
   }
 
-  protected boolean isNewExcavationPayment(StartTimeInterface startTime) {
-    if (startTime.getStartTime() == null) {
-      return false;
-    }
+  protected String getFeatureTypenameFor(StartTimeInterface startTime) {
+    if (startTime.getStartTime() == null)
+      return getFeatureTypeNamePre2022();
+
     ZonedDateTime startTimeHelsinkiZone = startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
 
-    return startTimeHelsinkiZone.isAfter(ZonedDateTime.of(NEW_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId))) return getFeatureTypeNamePost2025();
+    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2022_PAYMENT_DATE, TimeUtil.HelsinkiZoneId))) return getFeatureTypeNamePost2022();
+    return getFeatureTypeNamePre2022();
   }
 
   private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {

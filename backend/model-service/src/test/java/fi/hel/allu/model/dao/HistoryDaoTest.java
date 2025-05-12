@@ -5,6 +5,8 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
+import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,9 +32,13 @@ public class HistoryDaoTest {
 
   @Autowired
   HistoryDao historyDao;
+  @Autowired
+  UserDao userDao;
 
   @Autowired
   TestCommon testCommon;
+  @Autowired
+  private ApplicationService applicationService;
 
   @Before
   public void setUp() throws Exception {
@@ -70,4 +76,47 @@ public class HistoryDaoTest {
     assertEquals(ChangeType.CREATED, changes.get(2).getChangeType());
   }
 
+  @Test
+  public void testHistoryAnonymization() {
+    int app1 = testCommon.insertApplication("Test Application1", "Test Handler1");
+    int app2 = testCommon.insertApplication("Test Application2", "Test Handler2");
+    int userId = testCommon.insertUser("Test User").getId();
+    testCommon.insertUser("alluanon");
+    User anonUser = userDao.findAnonymizationUser();
+
+    List<FieldChange> changeList = Arrays.asList(
+      new FieldChange("/foo", "oldFoo", "newFoo"),
+      new FieldChange("/bar", "oldBar", "newBar")
+    );
+
+    historyDao.addApplicationChange(app1,
+      new ChangeHistoryItem(userId, null, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
+        changeList));
+    historyDao.addApplicationChange(app1,
+      new ChangeHistoryItem(userId, null, ChangeType.STATUS_CHANGED, null, ZonedDateTime.now(),null));
+    historyDao.addApplicationChange(app2,
+      new ChangeHistoryItem(userId, null, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
+        changeList));
+    historyDao.addApplicationChange(app2,
+      new ChangeHistoryItem(userId, null, ChangeType.STATUS_CHANGED, null, ZonedDateTime.now(),null));
+
+    historyDao.anonymizeHistoryFor(List.of(app1));
+
+    List<ChangeHistoryItem> app1History = historyDao.getApplicationHistory(app1);
+    List<ChangeHistoryItem> app2History = historyDao.getApplicationHistory(app2);
+    assertEquals(1, app1History.size());
+    assertEquals(ChangeType.STATUS_CHANGED, app1History.get(0).getChangeType());
+    assertEquals(anonUser.getId(), app1History.get(0).getUserId());
+    assertEquals(2, app2History.size());
+    assertEquals(ChangeType.STATUS_CHANGED, app2History.get(0).getChangeType());
+    assertEquals(userId, (int)app2History.get(0).getUserId());
+    assertEquals(userId, (int)app2History.get(1).getUserId());
+    assertEquals(ChangeType.CONTENTS_CHANGED, app2History.get(1).getChangeType());
+    assertEquals("/foo", app2History.get(1).getFieldChanges().get(0).getFieldName());
+    assertEquals("oldFoo", app2History.get(1).getFieldChanges().get(0).getOldValue());
+    assertEquals("newFoo", app2History.get(1).getFieldChanges().get(0).getNewValue());
+    assertEquals("/bar", app2History.get(1).getFieldChanges().get(1).getFieldName());
+    assertEquals("oldBar", app2History.get(1).getFieldChanges().get(1).getOldValue());
+    assertEquals("newBar", app2History.get(1).getFieldChanges().get(1).getNewValue());
+  }
 }

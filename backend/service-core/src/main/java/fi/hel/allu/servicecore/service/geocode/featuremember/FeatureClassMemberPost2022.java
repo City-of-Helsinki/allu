@@ -5,7 +5,7 @@ import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class FeatureNewClassMember implements FeatureClassMember {
+public class FeatureClassMemberPost2022 implements FeatureClassMember {
 
   @XmlElement(name = "Katutoiden_maksuluokat_2022", namespace = VariablesUtils.HELSINKI_NAMESPACE)
   public PaymentLevelClass paymentLevelClass;

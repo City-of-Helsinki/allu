@@ -1,10 +1,14 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.junit.Assert;
@@ -23,6 +27,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static fi.hel.allu.QAnonymizableApplication.anonymizableApplication;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,7 +45,14 @@ public class ApplicationDaoTest {
   @Autowired
   private DistributionEntryDao distributionEntryDao;
 
+  @Autowired
+  private SQLQueryFactory queryFactory;
+
   DistributionEntry testDistributionEntry;
+  @Autowired
+  private ApplicationService applicationService;
+  @Autowired
+  private UserDao userDao;
 
   @Before
   public void init() throws Exception {
@@ -158,6 +170,28 @@ public class ApplicationDaoTest {
     Application applOut = applicationDao.insert(application);
     Application updated = applicationDao.updateStatus(applOut.getId(), StatusType.CANCELLED);
     assertEquals(StatusType.CANCELLED, updated.getStatus());
+  }
+
+  @Test
+  public void testUpdateStatusThrows() {
+    NoSuchEntityException exc = assertThrows(
+      NoSuchEntityException.class,
+      () -> applicationDao.updateStatus(9999999, StatusType.CANCELLED)
+    );
+
+    assertEquals("application.update.notFound", exc.getMessage());
+    assertEquals("9999999", exc.getMissingEntityId());
+  }
+
+  @Test
+  public void testUpdateStatuses() {
+    Application application1 = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
+    Application appl1Out = applicationDao.insert(application1);
+    Application application2 = testCommon.dummyOutdoorApplication("Test Application2", "Test Owner2");
+    Application appl2Out = applicationDao.insert(application2);
+    applicationDao.updateStatuses(List.of(appl1Out.getId(), appl2Out.getId()), StatusType.CANCELLED);
+    assertEquals(StatusType.CANCELLED, applicationDao.findById(appl1Out.getId()).getStatus());
+    assertEquals(StatusType.CANCELLED, applicationDao.findById(appl2Out.getId()).getStatus());
   }
 
   @Test
@@ -401,6 +435,66 @@ public class ApplicationDaoTest {
     }
   }
 
+  @Test
+  public void testFetchPotentiallyAnonymizableApplications() {
+
+    // wrong types of applications
+    Application outdoor = testCommon.dummyOutdoorApplication("Outdoor application", "Outsider");
+    outdoor.setStatus(StatusType.HANDLING);
+    outdoor = applicationDao.insert(outdoor);
+
+    Application areaRental = testCommon.dummyAreaRentalApplication("Area rental", "Renter");
+    areaRental.setStatus(StatusType.DECISION);
+    areaRental = applicationDao.insert(areaRental);
+
+    // long enough ago and not already found - we want to get this one from the query
+    Application cableReport1 = testCommon.dummyCableReportApplication("Cable report1", "Reporter1");
+    cableReport1.setStatus(StatusType.DECISION);
+    cableReport1.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    cableReport1 = applicationDao.insert(cableReport1);
+
+    // not long enough ago
+    Application cableReport2 = testCommon.dummyCableReportApplication("Cable report2", "Reporter2");
+    cableReport2.setStatus(StatusType.DECISION);
+    cableReport2.setEndTime(ZonedDateTime.now().minusYears(1).minusMonths(6));
+    cableReport2 = applicationDao.insert(cableReport2);
+
+    // long enough ago but already found - we want this too
+    Application cableReport3 = testCommon.dummyCableReportApplication("Cable report3", "Reporter3");
+    cableReport3.setStatus(StatusType.DECISION);
+    cableReport3.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    cableReport3 = applicationDao.insert(cableReport3);
+    applicationDao.resetAnonymizableApplication(List.of(cableReport3.getId()));
+
+    // long enough ago but already anonymized
+    Application cableReport4 = testCommon.dummyCableReportApplication("Cable report4", "Reporter4");
+    cableReport4.setStatus(StatusType.ANONYMIZED);
+    cableReport4.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    cableReport4 = applicationDao.insert(cableReport4);
+
+    List<Application> potentials = applicationDao.fetchPotentiallyAnonymizableApplications();
+
+    assertEquals(2, potentials.size());
+    List<Integer> potentialIds = potentials.stream().map(Application::getId).toList();
+    assertTrue(potentialIds.containsAll(List.of(cableReport1.getId(), cableReport3.getId())));
+  }
+
+  @Test
+  public void testResetAnonymizableApplication() {
+    Integer app1 = testCommon.insertApplication("Outdoor1", "Customer1");
+    Integer app2 = testCommon.insertApplication("Outdoor2", "Customer2");
+    Integer app3 = testCommon.insertApplication("Outdoor3", "Customer3");
+
+    applicationDao.resetAnonymizableApplication(List.of(app1, app2, app3));
+
+    List<Integer> applicationIds = queryFactory.select(anonymizableApplication.applicationId).from(anonymizableApplication).fetch();
+
+    assertEquals(3, applicationIds.size());
+    assert(applicationIds.contains(app1));
+    assert(applicationIds.contains(app2));
+    assert(applicationIds.contains(app3));
+  }
+
   private ApplicationTag createApplicationTag(ApplicationTagType applicationTagType) {
     ApplicationTag applicationTag = new ApplicationTag();
     applicationTag.setAddedBy(1);
@@ -417,7 +511,7 @@ public class ApplicationDaoTest {
     app2 = applicationDao.insert(app2);
 
     List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
-    testCommon.insertDummyAnonymizableApplicationIds(ids);
+    applicationDao.resetAnonymizableApplication(ids);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
     testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
 
@@ -438,11 +532,39 @@ public class ApplicationDaoTest {
   }
 
   @Test
+  public void testFindAnonymizableApplications_withReplacedStatus() throws SQLException {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app1 = applicationDao.insert(app1);
+    app2 = applicationDao.insert(app2);
+
+    List<Integer> ids = Arrays.asList(app1.getId(), app2.getId());
+    applicationDao.resetAnonymizableApplication(ids);
+    testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+    testCommon.insertDummyApplicationHistoryChange(1, app2.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now());
+
+    applicationDao.updateStatus(app2.getId(), StatusType.REPLACED);
+
+    List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
+
+    assertEquals(1, results.size());
+    assertEquals(app1.getId(), results.get(0).getId());
+    assertEquals(app1.getApplicationId(), results.get(0).getApplicationId());
+    for (AnonymizableApplication aa : results) {
+      assertNotNull(aa.getApplicationType());
+      assertNotNull(aa.getStartTime());
+      assertNotNull(aa.getEndTime());
+      assertNotNull(aa.getChangeType());
+      assertNotNull(aa.getChangeTime());
+    }
+  }
+
+  @Test
   public void testFindAnonymizableApplications_withLatestChangeTime() throws SQLException {
     Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
     app1 = applicationDao.insert(app1);
 
-    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId()));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", ZonedDateTime.now().minusDays(30));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", ZonedDateTime.now());
 
@@ -467,7 +589,7 @@ public class ApplicationDaoTest {
     app1 = applicationDao.insert(app1);
 
     ZonedDateTime time = ZonedDateTime.now();
-    testCommon.insertDummyAnonymizableApplicationIds(Collections.singletonList(app1.getId()));
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId()));
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.APPLICATION_ADDED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.STATUS_CHANGED, "", "", time);
     testCommon.insertDummyApplicationHistoryChange(1, app1.getId(), ChangeType.COMMENT_ADDED, "", "", time);
@@ -482,4 +604,168 @@ public class ApplicationDaoTest {
     List<AnonymizableApplication> results = applicationDao.findAnonymizableApplications();
     assertTrue(results.isEmpty());
   }
+
+  @Test
+  public void testNonanonymizableOfWithValid() {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2 = applicationDao.insert(app2);
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId(), app2.getId()));
+
+    List<Integer> result = applicationDao.findNonanonymizableOf(List.of(app1.getId(), app2.getId()));
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  public void testNonanonymizableOfWithInvalid() {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1 = applicationDao.insert(app1);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2 = applicationDao.insert(app2);
+    applicationDao.resetAnonymizableApplication(List.of(app1.getId(), app2.getId()));
+
+    int invalidId = app1.getId() + app2.getId();
+    List<Integer> result = applicationDao.findNonanonymizableOf(List.of(app2.getId(), app1.getId() + app2.getId()));
+
+    assertEquals(1, result.size());
+    int returnedId = result.get(0);
+    assertEquals(invalidId, returnedId);
+  }
+
+  @Test
+  public void testRemoveAllCustomersWithContacts() {
+    Customer testCustomer = testCommon.insertPerson();
+    Contact testContact = testCommon.insertContact(testCustomer.getId());
+
+    Application app1 = testCommon.dummyExcavationAnnouncementApplication("Application1", "Client1");
+    app1.setCustomersWithContacts(List.of(
+      new CustomerWithContacts(
+        CustomerRoleType.APPLICANT,
+        testCustomer,
+        List.of(testContact)
+      ),
+      new CustomerWithContacts(
+        CustomerRoleType.CONTRACTOR,
+        testCustomer,
+        List.of(testContact)
+      )
+    ));
+    app1 = applicationDao.insert(app1);
+
+    Application app2 = testCommon.dummyExcavationAnnouncementApplication("Application2", "Client2");
+    app2.setCustomersWithContacts(List.of(
+      new CustomerWithContacts(
+        CustomerRoleType.APPLICANT,
+        testCustomer,
+        List.of(testContact)
+      )
+    ));
+    app2 = applicationDao.insert(app2);
+
+    applicationDao.removeAllCustomersWithContacts(List.of(app1.getId()));
+
+    Application savedApp1 = applicationDao.findById(app1.getId());
+    Application savedApp2 = applicationDao.findById(app2.getId());
+    assertEquals(0, savedApp1.getCustomersWithContacts().size());
+    assertEquals(1, savedApp2.getCustomersWithContacts().size());
+  }
+
+  @Test
+  public void testClearApplicationNames() {
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1.setName("Test");
+    app1 = applicationService.insert(app1, 3);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2.setName("Dummy");
+    app2 = applicationService.insert(app2, 3);
+
+    applicationDao.clearApplicationNames(List.of(app1.getId()));
+
+    assertEquals("", applicationDao.findById(app1.getId()).getName());
+    assertEquals("Dummy", applicationDao.findById(app2.getId()).getName());
+  }
+
+  @Test
+  public void testAnonymizeHandlerAndDecisionMakerWithUser() {
+    User testUser = testCommon.insertUser("test");
+    User anonUser = userDao.findAnonymizationUser();
+
+    Application app1 = testCommon.dummyOutdoorApplication("app1", "owner1");
+    app1.setHandler(testUser.getId());
+    app1.setDecisionMaker(testUser.getId());
+    app1 = applicationService.insert(app1, 3);
+    Application app2 = testCommon.dummyOutdoorApplication("app2", "owner2");
+    app2.setHandler(testUser.getId());
+    app2.setDecisionMaker(testUser.getId());
+    app2 = applicationService.insert(app2, 3);
+
+    applicationDao.anonymizeApplicationHandlersAndDecisionMakersWithUser(List.of(app1.getId()), anonUser.getId());
+
+    Application anonApp1 = applicationDao.findById(app1.getId());
+    Application anonApp2 = applicationDao.findById(app2.getId());
+
+    assertEquals(anonUser.getId(), anonApp1.getHandler());
+    assertEquals(anonUser.getId(), anonApp1.getDecisionMaker());
+    assertEquals(testUser.getId(), anonApp2.getHandler());
+    assertEquals(testUser.getId(), anonApp2.getDecisionMaker());
+  }
+
+  @Test
+  public void testResetAnonymizableApplicationsShouldWorkWithEmptyArray() {
+    applicationDao.resetAnonymizableApplication(List.of());
+  }
+
+  @Test
+  public void testFindAnonymizableApplicationsReplacedBy() {
+    Application app1 = testCommon.dummyCableReportApplication("Test1", "Test1");
+    Application app2 = applicationService.insert(testCommon.dummyCableReportApplication("Test2", "Test2"), 3);
+    app1.setReplacesApplicationId(app2.getId());
+    app1 = applicationService.insert(app1, 3);
+
+    Application app3 = testCommon.dummyCableReportApplication("Test3", "Test3");
+    Application app4 = applicationService.insert(testCommon.dummyCableReportApplication("Test4", "Test4"), 3);
+    app3.setReplacesApplicationId(app4.getId());
+    app3 = applicationService.insert(app3, 3);
+
+    Application app5 = testCommon.dummyCableReportApplication("Test5", "Test5");
+    Application app6 = applicationService.insert(testCommon.dummyCableReportApplication("Test6", "Test6"), 3);
+    app5.setReplacesApplicationId(app5.getId());
+    app5 = applicationService.insert(app5, 3);
+
+    Application app7 = applicationService.insert(testCommon.dummyCableReportApplication("Test7", "Test7"), 3);
+
+    applicationDao.resetAnonymizableApplication(List.of(app2.getId(), app5.getId(), app7.getId()));
+
+    List<Integer> result = applicationDao.findAnonymizableApplicationsReplacedBy(List.of(app1.getId(), app3.getId()));
+    assertEquals(1, result.size());
+    assertEquals(app2.getId(), result.get(0));
+  }
+
+  @Test
+  public void testFindAnonymizableApplicationsReplacing() {
+    Application app1 = applicationService.insert(testCommon.dummyCableReportApplication("Test1", "Test1"), 3);
+    Application app2 = testCommon.dummyCableReportApplication("Test2", "Test2");
+    app2.setReplacesApplicationId(app1.getId());
+    app2 = applicationService.insert(app2, 3);
+
+    Application app3 = applicationService.insert(testCommon.dummyCableReportApplication("Test3", "Test3"), 3);
+    Application app4 = testCommon.dummyCableReportApplication("Test4", "Test4");
+    app2.setReplacesApplicationId(app3.getId());
+    app4 = applicationService.insert(app4, 3);
+
+    Application app5 = applicationService.insert(testCommon.dummyCableReportApplication("Test5", "Test5"), 3);
+    Application app6 = testCommon.dummyCableReportApplication("Test6", "Test6");
+    app2.setReplacesApplicationId(app5.getId());
+    app6 = applicationService.insert(app6, 3);
+
+    Application app7 = applicationService.insert(testCommon.dummyCableReportApplication("Test7", "Test7"), 3);
+
+    applicationDao.resetAnonymizableApplication(List.of(app2.getId(), app5.getId(), app7.getId()));
+
+    List<Integer> result = applicationDao.findAnonymizableApplicationsReplacing(List.of(app1.getId(), app3.getId()));
+    assertEquals(1, result.size());
+    assertEquals(app2.getId(), result.get(0));
+  }
+
 }

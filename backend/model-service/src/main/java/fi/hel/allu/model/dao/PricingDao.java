@@ -1,8 +1,12 @@
 package fi.hel.allu.model.dao;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,13 +54,14 @@ public class PricingDao {
   }
 
   @Transactional(readOnly = true)
-  public int findValue(ApplicationType type, PricingKey key, String paymentClass) {
+  public int findValue(ApplicationType type, PricingKey key, String paymentClass, ZonedDateTime startTime) {
     final Integer value = queryFactory
         .select(pricing.value)
         .from(pricing)
         .where(pricing.applicationType.eq(type)
-            .and(pricing.key.eq(key.name()))
-            .and(pricing.paymentClass.eq(paymentClass)))
+          .and(pricing.key.eq(key.name()))
+          .and(pricing.paymentClass.eq(paymentClass))
+          .and(Expressions.booleanTemplate("validity @> {0}::date", startTime.toLocalDate())))
         .fetchFirst();
     if (value == null) {
       throw new NoSuchEntityException("pricing.notFound");
@@ -65,12 +70,13 @@ public class PricingDao {
   }
 
   @Transactional(readOnly = true)
-  public int findValue(ApplicationType type, PricingKey key) {
+  public int findValue(ApplicationType type, PricingKey key, ZonedDateTime startTime) {
     final Integer value = queryFactory
         .select(pricing.value)
         .from(pricing)
         .where(pricing.applicationType.eq(type)
-            .and(pricing.key.eq(key.name())))
+          .and(pricing.key.eq(key.name()))
+          .and(Expressions.booleanTemplate("validity @> {0}::date", startTime.toLocalDate())))
         .fetchFirst();
     if (value == null) {
       throw new NoSuchEntityException("pricing.notFound");
@@ -80,7 +86,9 @@ public class PricingDao {
 
   @Transactional(readOnly = true)
   public List<String> getPaymentClasses(ApplicationType type, ApplicationKind kind) {
-    BooleanExpression condition = pricing.applicationType.eq(type).and(pricing.paymentClass.isNotNull());
+    BooleanExpression condition = pricing.applicationType.eq(type)
+      .and(pricing.paymentClass.isNotNull());
+
     if (type == ApplicationType.SHORT_TERM_RENTAL) {
       // Short term rentals have kind specific payment classes
       condition = condition.and(pricing.key.eq(kind.name()));

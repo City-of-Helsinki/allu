@@ -34,7 +34,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String parseResult(List<String> responses, ApplicationJson applicationJson) {
+  protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
     return responses.stream()
         .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneXml.class))
         .filter(p -> p.featureMember != null)
@@ -46,7 +46,7 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String getFeatureTypeName() {
+  protected String getFeatureTypeNamePre2022() {
     return FEATURE_TYPE_NAME;
   }
 
@@ -56,7 +56,13 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   }
 
   @Override
-  protected String getFeatureTypeNameNew() {
-    return getFeatureTypeName();
+  protected String getFeatureTypeNamePost2022() {
+    return getFeatureTypeNamePre2022();
   }
+
+  @Override
+  protected String getFeatureTypeNamePost2025() {
+    return getFeatureTypeNamePre2022();
+  }
+
 }

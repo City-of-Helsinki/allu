@@ -14,6 +14,7 @@ export const kindsWithPaymentTariff: ApplicationKind[] = [
   ApplicationKind.PARKLET
 ];
 
+export const defaultPaymentTariffs2025 = ['1', '2', '3', '4', '5'];
 export const defaultPaymentTariffs = ['1', '2', '3', '4a', '4b'];
 export const terraceAndParkletPaymentTariffs = ['1', '2'];
 
@@ -22,10 +23,19 @@ export function needsPaymentTariff(applicationType: ApplicationType, kinds: Appl
     || ArrayUtil.anyMatch(kindsWithPaymentTariff, kinds);
 }
 
-export function getPaymentTariffs(kinds: ApplicationKind[] = []): string[] {
-  if (ArrayUtil.anyMatch(kindsWithPaymentTariff, kinds)) {
-    return terraceAndParkletPaymentTariffs;
+export function getPaymentTariffs(kinds: ApplicationKind[] = [], dateOverride: boolean = false): string[] {
+  if (dateOverride) {
+    if (ArrayUtil.anyMatch(kindsWithPaymentTariff, kinds)) {
+      return terraceAndParkletPaymentTariffs;
+    } else {
+      return defaultPaymentTariffs2025;
+    }
   } else {
-    return defaultPaymentTariffs;
+    if (ArrayUtil.anyMatch(kindsWithPaymentTariff, kinds)) {
+      return terraceAndParkletPaymentTariffs;
+    } else {
+      return defaultPaymentTariffs;
+    }
   }
+
 }

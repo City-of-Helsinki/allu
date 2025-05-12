@@ -7,9 +7,9 @@ import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CableReport;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.CableReportJson;
-import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -106,6 +106,14 @@ public class ApplicationArchiverService {
 
   private List<Application> fetchActiveExcavationAnnouncements() {
     return applicationServiceComposer.fetchActiveExcavationAnnouncements();
+  }
+
+  private List<Application> fetchPotentiallyAnonymizableApplications() {
+    return applicationServiceComposer.fetchPotentiallyAnonymizableApplications();
+  }
+
+  private void resetAnonymizableApplications(List<Integer> applicationIds) {
+    applicationServiceComposer.resetAnonymizableApplications(applicationIds);
   }
 
   /**
@@ -225,16 +233,44 @@ public class ApplicationArchiverService {
         && taskType.equals(t.getType()));
   }
 
+  private boolean cableReportAssociatedWithActiveExcavationAnnouncement(Application application) {
+    return cableReportAssociatedWithActiveExcavationAnnouncement(application.getType(), application.getApplicationId());
+  }
+
   private boolean cableReportAssociatedWithActiveExcavationAnnouncement(ApplicationJson application) {
-    if (application.getType() != ApplicationType.CABLE_REPORT) return false;
+    return cableReportAssociatedWithActiveExcavationAnnouncement(application.getType(), application.getApplicationId());
+  }
+
+  private boolean cableReportAssociatedWithActiveExcavationAnnouncement(ApplicationType applicationType, String applicationId) {
+    if (applicationType != ApplicationType.CABLE_REPORT) return false;
     if (activeExcavationAnnouncements == null) activeExcavationAnnouncements = fetchActiveExcavationAnnouncements();
     for (Application excavationAnnouncement : activeExcavationAnnouncements) {
       if (excavationAnnouncement.getExtension() != null && excavationAnnouncement.getExtension() instanceof ExcavationAnnouncement extension) {
-          if (extension.getCableReports() != null && extension.getCableReports().contains(application.getApplicationId())) {
+          if (extension.getCableReports() != null && extension.getCableReports().contains(applicationId)) {
             return true;
           }
       }
     }
     return false;
+  }
+  public void checkForAnonymizableApplications() {
+    List<Integer> anonymizeIds =
+      fetchPotentiallyAnonymizableApplications().stream()
+      // cable reports are all we know how to handle for now, let's be sure although DB should return only them currently
+      .filter(app -> app.getType() == ApplicationType.CABLE_REPORT)
+      .filter(app -> app.getExtension() != null)
+      .filter(app -> app.getExtension() instanceof CableReport)
+      .filter(app ->
+        ((CableReport) app.getExtension()).getValidityTime() == null ||
+        ((CableReport) app.getExtension()).getValidityTime().isBefore(ZonedDateTime.now().minusYears(2))
+      )
+      .filter(app -> !cableReportAssociatedWithActiveExcavationAnnouncement(app))
+      .map(Application::getId)
+      .toList();
+
+    resetAnonymizableApplications(anonymizeIds);
+
+    // these might have been fetched in cableReportAssociatedWithActiveExcavationAnnouncement(), release them now
+    activeExcavationAnnouncements = null;
   }
 }

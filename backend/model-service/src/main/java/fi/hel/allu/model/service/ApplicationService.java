@@ -3,8 +3,9 @@ package fi.hel.allu.model.service;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.OptionalUtil;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,6 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 
@@ -45,12 +43,20 @@ public class ApplicationService {
   private final UserDao userDao;
   private final InvoicingPeriodService invoicingPeriodService;
   private final InvoiceRecipientDao invoiceRecipientDao;
+  private final DistributionEntryDao distributionEntryDao;
+  private final LocationDao locationDao;
+  private final DecisionDao decisionDao;
+  private final AttachmentDao attachmentDao;
+  private final SupervisionTaskDao supervisionTaskDao;
+  private final CommentDao commentDao;
+  private final HistoryDao historyDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
-    LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
-    InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao) {
+                            ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
+                            LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
+                            InvoicingPeriodService invoicingPeriodService, InvoiceRecipientDao invoiceRecipientDao, DistributionEntryDao distributionEntryDao,
+                            LocationDao locationDao, DecisionDao decisionDao, AttachmentDao attachmentDao, SupervisionTaskDao supervisionTaskDao, CommentDao commentDao, HistoryDao historyDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -61,6 +67,13 @@ public class ApplicationService {
     this.userDao = userDao;
     this.invoicingPeriodService = invoicingPeriodService;
     this.invoiceRecipientDao = invoiceRecipientDao;
+    this.distributionEntryDao = distributionEntryDao;
+    this.locationDao = locationDao;
+    this.decisionDao = decisionDao;
+    this.attachmentDao = attachmentDao;
+    this.supervisionTaskDao = supervisionTaskDao;
+    this.commentDao = commentDao;
+    this.historyDao = historyDao;
   }
 
   /**
@@ -427,6 +440,98 @@ public class ApplicationService {
 
   public List<Application> findActiveExcavationAnnouncements() {
     return applicationDao.findActiveExcavationAnnouncements();
+  }
+
+  public List<Application> findPotentiallyAnonymizableApplications() {
+    return applicationDao.fetchPotentiallyAnonymizableApplications();
+  }
+
+  public void resetAnonymizableApplications(List<Integer> applicationsIds) {
+    applicationDao.resetAnonymizableApplication(applicationsIds);
+  }
+
+  public List<Integer> checkAnonymizability(List<Integer> applicationIds) {
+    return applicationDao.findNonanonymizableOf(applicationIds);
+  }
+
+  public void removeAdditionalInfos(Application application) {
+    CableReport entries = (CableReport)application.getExtension();
+    if (entries == null || entries.getInfoEntries() == null) return;
+
+    for (CableInfoEntry entry : entries.getInfoEntries())
+      entry.setAdditionalInfo("");
+
+    applicationDao.updateWithoutFetch(application.getId(), application);
+  }
+
+  public void removeAttachments(Application application) {
+    List<AttachmentInfo> attachments = attachmentDao.findByApplication(application.getId());
+
+    for (AttachmentInfo info : attachments) {
+      if (info.getType().isDefaultAttachment())
+        attachmentDao.removeLinkApplicationToAttachment(application.getId(), info.getId());
+      else attachmentDao.delete(application.getId(), info.getId());
+    }
+  }
+
+  @SafeVarargs
+  private List<Integer> combineLists(List<Integer>... lists) {
+    return Arrays.stream(lists).flatMap(Collection::stream).toList();
+  }
+
+  List<Integer> findApplicationsReplacing(List<Integer> applicationIds) {
+    if (applicationIds.isEmpty()) return List.of();
+    List<Integer> replacingApplications = applicationDao.findAnonymizableApplicationsReplacing(applicationIds);
+    return combineLists(replacingApplications, findApplicationsReplacing(replacingApplications));
+  }
+
+  int findUltimateAnonymizableAncestorOf(int applicationId, List<Integer> anonymizables) {
+    Application currentApplication = findById(applicationId);
+    while (currentApplication.getReplacesApplicationId() != null && anonymizables.contains(currentApplication.getReplacesApplicationId()))
+      currentApplication = findById(currentApplication.getReplacesApplicationId());
+    return currentApplication.getId();
+  }
+
+  List<Integer> findUltimateAnonymizableAncestorsOf(List<Integer> applicationIds) {
+    List<Integer> anonymizables = applicationDao.findAnonymizableApplicationIds();
+    return applicationIds.stream().map(id -> findUltimateAnonymizableAncestorOf(id, anonymizables)).toList();
+  }
+
+  List<Integer> includeReplacedApplications(List<Integer> applicationIds) {
+    List<Integer> ancestors = findUltimateAnonymizableAncestorsOf(applicationIds);
+    return combineLists(ancestors, findApplicationsReplacing(ancestors));
+  }
+
+  @Transactional
+  public void anonymizeApplications(List<Integer> originalApplicationIds) {
+    User anonUser = userDao.findAnonymizationUser();
+    ChangeHistoryItem change = new ChangeHistoryItem();
+    change.setChangeType(ChangeType.STATUS_CHANGED);
+    change.setChangeSpecifier(StatusType.ANONYMIZED.name());
+    change.setChangeTime(ZonedDateTime.now());
+    change.setUserId(anonUser.getId());
+
+    List<Integer> applicationIds = includeReplacedApplications(originalApplicationIds);
+
+    for (Integer id : applicationIds) {
+      removeTags(id);
+      distributionEntryDao.deleteByApplication(id);
+      Application app = applicationDao.findById(id);
+      if (app.getType() == ApplicationType.CABLE_REPORT)
+        removeAdditionalInfos(app);
+      removeAttachments(app);
+      historyDao.addApplicationChange(app.getId(), change);
+    }
+    applicationDao.clearApplicationNames(applicationIds);
+    applicationDao.anonymizeApplicationHandlersAndDecisionMakersWithUser(applicationIds, anonUser.getId());
+    applicationDao.removeAllCustomersWithContacts(applicationIds);
+    locationDao.removeAdditionalInfoForApplications(applicationIds);
+    decisionDao.removeDecisions(applicationIds);
+    supervisionTaskDao.anonymizeSupervisionTasks(applicationIds);
+    commentDao.deleteCommentsForApplications(applicationIds);
+    historyDao.anonymizeHistoryFor(applicationIds);
+    applicationDao.updateStatuses(applicationIds, StatusType.ANONYMIZED);
+    applicationDao.removeFromAnonymizableApplication(applicationIds);
   }
 
   @Transactional(readOnly = true)

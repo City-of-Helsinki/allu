@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CableReport;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.*;
 import org.junit.Before;
@@ -238,6 +239,36 @@ public class ApplicationArchiverServiceTest {
       .changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
   }
 
+  @Test
+  public void shouldAnonymizeSuitableCableReports() {
+    when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(createAnonymizableCableReports());
+    when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
+
+    archiverService.checkForAnonymizableApplications();
+
+    verify(applicationServiceComposer, times(1)).resetAnonymizableApplications(eq(List.of(1,3)));
+  }
+
+  @Test
+  public void shouldAnonymizeWhenValidityIsNullAndOtherRequirementsFulfilled() {
+    when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(createAnonymizableCableReportsWithNullValidity());
+    when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());
+
+    archiverService.checkForAnonymizableApplications();
+
+    verify(applicationServiceComposer, times(1)).resetAnonymizableApplications(eq(List.of(1,3)));
+  }
+
+  @Test
+  public void shouldCallResetAnonmizableApplicationsEvenWithEmptyApplicationList() {
+    when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(List.of());
+    // Mockito complained about mocking fetchActiveExcavationAnnouncements() when it's never actually called so removed it
+
+    archiverService.checkForAnonymizableApplications();
+
+    verify(applicationServiceComposer, times(1)).resetAnonymizableApplications(eq(List.of()));
+  }
+
   private void createApplication() {
     applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.FINISHED);
@@ -282,5 +313,56 @@ public class ApplicationArchiverServiceTest {
     excavationAnnouncement3.setExtension(extensionJson3);
 
     return List.of(excavationAnnouncement1, excavationAnnouncement2, excavationAnnouncement3);
+  }
+
+  private List<Application> createAnonymizableCableReports() {
+    Application cableReport1 = new Application();
+    cableReport1.setType(ApplicationType.CABLE_REPORT);
+    cableReport1.setId(1);
+    cableReport1.setApplicationId("JS240000001");
+    cableReport1.setStatus(StatusType.DECISION);
+    cableReport1.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(6));
+    CableReport extension1 = new CableReport();
+    extension1.setValidityTime(ZonedDateTime.now().minusYears(2).minusMonths(5));
+    cableReport1.setExtension(extension1);
+
+    Application cableReport2 = new Application();
+    cableReport2.setType(ApplicationType.CABLE_REPORT);
+    cableReport2.setId(2);
+    cableReport2.setApplicationId("JS240000002");
+    cableReport2.setStatus(StatusType.DECISION);
+    cableReport2.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(1));
+    CableReport extension2 = new CableReport();
+    extension2.setValidityTime(ZonedDateTime.now().minusYears(1).minusMonths(11));
+    cableReport2.setExtension(extension2);
+
+    Application cableReport3 = new Application();
+    cableReport3.setType(ApplicationType.CABLE_REPORT);
+    cableReport3.setId(3);
+    cableReport3.setApplicationId("JS240000003");
+    cableReport3.setStatus(StatusType.DECISION);
+    cableReport3.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(3));
+    CableReport extension3 = new CableReport();
+    extension3.setValidityTime(ZonedDateTime.now().minusYears(2).minusMonths(2));
+    cableReport3.setExtension(extension3);
+
+    Application cableReport4 = new Application();
+    cableReport4.setType(ApplicationType.CABLE_REPORT);
+    cableReport4.setId(4);
+    cableReport4.setApplicationId("JS2400701");
+    cableReport4.setStatus(StatusType.DECISION);
+    cableReport4.setEndTime(ZonedDateTime.now().minusYears(2).minusMonths(5));
+    CableReport extension4 = new CableReport();
+    extension4.setValidityTime(ZonedDateTime.now().minusYears(2).minusMonths(3));
+    cableReport4.setExtension(extension4);
+
+    return List.of(cableReport1, cableReport2, cableReport3, cableReport4);
+  }
+
+  private List<Application> createAnonymizableCableReportsWithNullValidity() {
+    List<Application> cableReports = createAnonymizableCableReports();
+    CableReport extension = (CableReport)cableReports.get(2).getExtension();
+    extension.setValidityTime(null);
+    return cableReports;
   }
 }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
@@ -26,11 +26,16 @@ import {
 } from '@feature/information-request/acceptance/customer/customer-acceptance-config';
 import {findTranslation} from '@util/translations';
 import {CONFIRM_DIALOG_MODAL_CONFIG, ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import {FormGroup} from '@angular/forms';
+import {FieldDescription, SelectFieldType} from '../field-select/field-description';
+import {FieldSelectComponent} from '../field-select/field-select.component';
+import { Some } from '@app/util/option';
+import { UpdateCustomerReference } from '@feature/information-request/actions/information-request-result-actions';
 
 @Component({
   selector: 'customer-acceptance',
   templateUrl: './customer-acceptance.component.html',
-  styleUrls: [],
+  styleUrls: ['./customer-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
@@ -42,6 +47,11 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
   @Input() hideExisting = false;
+  @Input() oldCustomerReference: string;
+  @Input() newCustomerReference: string;
+  @Input() showCustomerReference: boolean;
+  @ViewChild('oldValuesSelect') oldValuesSelect: FieldSelectComponent;
+  @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
 
   @ViewChild(CustomerInfoAcceptanceComponent, { static: true }) infoAcceptance: CustomerInfoAcceptanceComponent;
 
@@ -63,10 +73,22 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   private config: CustomerAcceptanceConfig;
 
+  selectionForm: FormGroup;
+  referenceFieldDescriptions: FieldDescription[] = [
+    new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
+  ];
+  referenceFieldValues: any = {};
+  referenceComparedValues: any = {};
+
   constructor(
     protected fb: UntypedFormBuilder,
     protected store: Store<fromRoot.State>,
-    protected dialog: MatDialog) {}
+    protected dialog: MatDialog) {
+    this.selectionForm = this.fb.group({
+      oldValues: [[]],
+      newValues: [[]]
+    });
+  }
 
   ngOnInit(): void {
     this.config = acceptanceConfig[this.fieldKey];
@@ -92,6 +114,49 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
     this.initialSearch();
     this.init();
+
+    this.referenceFieldValues = {
+      customerReference: this.oldCustomerReference || ''
+    };
+
+    this.referenceComparedValues = {
+      customerReference: this.newCustomerReference || ''
+    };
+
+    // Set initial selection of old value
+    if (this.oldCustomerReference) {
+      this.selectionForm.patchValue({
+        oldValues: ['customerReference']
+      });
+    }
+
+    // Handle selection changes
+    this.selectionForm.get('oldValues').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(oldValues => {
+      if (oldValues && oldValues.length) {
+        this.onOldValuesSelected(oldValues);
+      }
+    });
+
+    this.selectionForm.get('newValues').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(newValues => {
+      if (newValues && newValues.length) {
+        this.onNewValuesSelected(newValues);
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.oldCustomerReference || changes.newCustomerReference) {
+      this.referenceFieldValues = {
+        customerReference: this.oldCustomerReference || ''
+      };
+      this.referenceComparedValues = {
+        customerReference: this.newCustomerReference || ''
+      };
+    }
   }
 
   init(): void {
@@ -209,5 +274,25 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     } else {
       return of(true);
     }
+  }
+
+  onOldValuesSelected(fields: string[]): void {
+    if (fields.includes('customerReference')) {
+      this.updateApplicationReference(this.oldCustomerReference);
+      Some(this.newValuesSelect).do(select => select.deselect('customerReference'));
+    }
+    this.form.updateValueAndValidity();
+  }
+
+  onNewValuesSelected(fields: string[]): void {
+    if (fields.includes('customerReference')) {
+      this.updateApplicationReference(this.newCustomerReference);
+      Some(this.oldValuesSelect).do(select => select.deselect('customerReference'));
+    }
+    this.form.updateValueAndValidity();
+  }
+
+  private updateApplicationReference(reference: string): void {
+    this.store.dispatch(new UpdateCustomerReference(reference));
   }
 }

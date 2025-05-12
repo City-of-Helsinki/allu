@@ -52,3 +52,5 @@ ui_baseurl: https://allu.kaupunkiymparisto.fi
 supervision_api_basepath: /supervision-api
 
 cityDistricts_update_cronstring: "0 30 0 * * SUN"
+
+anonymization_update_cronstring: "0 0 3 * * *"

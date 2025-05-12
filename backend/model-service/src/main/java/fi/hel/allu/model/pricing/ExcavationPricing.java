@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -32,6 +33,8 @@ public class ExcavationPricing extends Pricing {
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
 
+  private static final LocalDateTime POST_2025_PAYMENT_DATE = LocalDateTime.of(2025, 3, 1, 0, 0, 0, 0);
+
   public ExcavationPricing(Application application,
       WinterTimeService winterTimeService, PricingExplanator pricingExplanator, PricingDao pricingDao,
       List<InvoicingPeriod> invoicingPeriods) {
@@ -41,7 +44,7 @@ public class ExcavationPricing extends Pricing {
     this.pricingExplanator = pricingExplanator;
     this.pricingDao = pricingDao;
     this.invoicingPeriods = invoicingPeriods;
-    final int handlingFee = getHandlingFee(extension);
+    final int handlingFee = getHandlingFee(extension, application.getStartTime());
     setPriceInCents(handlingFee);
     addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, handlingFee,
         HANDLING_FEE_TEXT, handlingFee, getHandlingFeeExplanation(extension), getFirstOpenPeriodId());
@@ -64,10 +67,10 @@ public class ExcavationPricing extends Pricing {
   }
 
   @Override
-  public void addLocationPrice(Location location) {
+  public void addLocationPrice(Location location, ZonedDateTime startTime) {
     final String paymentClass = location.getEffectivePaymentTariff();
     final Integer locationKey = location.getLocationKey();
-    final int dailyFee = getDailyFee(location.getEffectiveArea(), paymentClass);
+    final int dailyFee = getDailyFee(location.getEffectiveArea(), paymentClass, startTime);
 
     final List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
@@ -78,13 +81,41 @@ public class ExcavationPricing extends Pricing {
     }
   }
 
-  private int getDailyFee(double locationArea, String paymentClass) {
+  protected boolean isPost2025ExcavationPayment(ZonedDateTime startTime) {
+    return startTime == null ?
+      false :
+      !startTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId).isBefore(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+  }
+
+  private int getDailyFee(double LocationArea, String paymentClass, ZonedDateTime startTime) {
+    return isPost2025ExcavationPayment(startTime) ?
+      getDailyFeePost2025(LocationArea, paymentClass, startTime) :
+      getDailyFeePre2025(LocationArea, paymentClass, startTime);
+  }
+
+  private int getDailyFeePre2025(double locationArea, String paymentClass, ZonedDateTime startTime) {
     if (locationArea < SMALL_AREA_LIMIT) {
-      return getPrice(PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
+      return getPrice(PricingKey.SMALL_AREA_DAILY_FEE, paymentClass, startTime);
     } else if (locationArea > LARGE_AREA_LIMIT) {
-      return getPrice(PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
+      return getPrice(PricingKey.LARGE_AREA_DAILY_FEE, paymentClass, startTime);
     } else {
-      return getPrice(PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
+      return getPrice(PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass, startTime);
+    }
+  }
+
+  private int getDailyFeePost2025(double locationArea, String paymentClass, ZonedDateTime startTime) {
+    if (locationArea < 60.0) {
+      return getPrice(PricingKey.LESS_THAN_60M2, paymentClass, startTime);
+    } else if (locationArea <= 120.0) {
+      return getPrice(PricingKey.FROM_60_TO_120M2, paymentClass, startTime);
+    } else if (locationArea <= 250.0) {
+      return getPrice(PricingKey.FROM_121_TO_250M2, paymentClass, startTime);
+    } else if (locationArea <= 500.0) {
+      return getPrice(PricingKey.FROM_251_TO_500M2, paymentClass, startTime);
+    } else if (locationArea <= 1000.0) {
+      return getPrice(PricingKey.FROM_501_TO_1000M2, paymentClass, startTime);
+    } else {
+      return getPrice(PricingKey.MORE_THAN_1000M2, paymentClass, startTime);
     }
   }
 
@@ -163,18 +194,18 @@ public class ExcavationPricing extends Pricing {
     }
   }
 
-  private int getPrice(PricingKey key, String paymentClass) {
+  private int getPrice(PricingKey key, String paymentClass, ZonedDateTime startTime) {
     if (paymentClass.equals(PriceUtil.UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
       return 0;
     }
-    return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, key, paymentClass);
+    return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, key, paymentClass, startTime);
   }
 
-  private int getHandlingFee(ExcavationAnnouncement excavationAnnouncement) {
+  private int getHandlingFee(ExcavationAnnouncement excavationAnnouncement, ZonedDateTime startTime) {
     if (Boolean.TRUE.equals(excavationAnnouncement.getSelfSupervision())) {
-      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE_SELF_SUPERVISION);
+      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE_SELF_SUPERVISION, startTime);
     } else {
-      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE);
+      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE, startTime);
     }
   }
 

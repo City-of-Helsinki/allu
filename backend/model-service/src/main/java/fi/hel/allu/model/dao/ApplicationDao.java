@@ -24,6 +24,7 @@ import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
+import static fi.hel.allu.QAnonymizableApplication.anonymizableApplication;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
@@ -62,7 +64,7 @@ public class ApplicationDao {
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
   private static final List<StatusType> INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES =
-      List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED);
+      List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED, StatusType.ANONYMIZED);
 
   private final SQLQueryFactory queryFactory;
   private final ApplicationSequenceDao applicationSequenceDao;
@@ -130,8 +132,14 @@ public class ApplicationDao {
   public Page<Application> findAll(Pageable pageRequest) {
     long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    QueryResults<Application> queryResults = queryFactory.select(applicationBean).from(application)
-        .orderBy(application.id.asc()).offset(offset).limit(count).fetchResults();
+    QueryResults<Application> queryResults = queryFactory
+      .select(applicationBean)
+      .from(application)
+      .where(application.status.ne(StatusType.ANONYMIZED))
+      .orderBy(application.id.asc())
+      .offset(offset)
+      .limit(count)
+      .fetchResults();
     return new PageImpl<>(populateDependencies(queryResults.getResults()), pageRequest, queryResults.getTotal());
   }
 
@@ -188,6 +196,64 @@ public class ApplicationDao {
     BooleanExpression whereCondition = application.type.eq(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     whereCondition = whereCondition.and(application.status.notIn(INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES));
     return queryFactory.select(applicationBean).from(application).where(whereCondition).fetch();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Application> fetchPotentiallyAnonymizableApplications() {
+    return queryFactory
+      .select(applicationBean)
+      .from(application)
+      .where(
+        application.type.eq(ApplicationType.CABLE_REPORT)
+        .and(application.endTime.before(ZonedDateTime.now().minusYears(2)))
+        .and(application.status.ne(StatusType.ANONYMIZED))
+      ).fetch();
+  }
+
+  @Transactional
+  public void resetAnonymizableApplication(List<Integer> applicationIds) {
+    queryFactory.delete(anonymizableApplication).execute();
+    if (!applicationIds.isEmpty()) {
+      SQLInsertClause insertQuery = queryFactory.insert(anonymizableApplication);
+      for (Integer applicationId : applicationIds)
+        insertQuery.set(anonymizableApplication.applicationId, applicationId).addBatch();
+      insertQuery.execute();
+    }
+  }
+
+  @Transactional(readOnly = true)
+  public List<Integer> findNonanonymizableOf(List<Integer> applicationIds) {
+    List<Integer> anonymizables =
+      queryFactory
+        .select(anonymizableApplication.applicationId)
+        .from(anonymizableApplication)
+        .where(anonymizableApplication.applicationId.in(applicationIds))
+        .fetch();
+
+    return applicationIds.stream().filter(id -> !anonymizables.contains(id)).toList();
+  }
+
+  @Transactional
+  public void removeFromAnonymizableApplication(List<Integer> applicationIds) {
+    queryFactory.delete(anonymizableApplication).where(anonymizableApplication.applicationId.in(applicationIds)).execute();
+  }
+
+  @Transactional
+  public List<Integer> findAnonymizableApplicationsReplacedBy(List<Integer> applicationIds) {
+    return queryFactory.select(application.replacesApplicationId)
+      .from(application)
+      .join(anonymizableApplication).on(application.replacesApplicationId.eq(anonymizableApplication.applicationId))
+      .where(application.id.in(applicationIds))
+      .fetch();
+  }
+
+  @Transactional
+  public List<Integer> findAnonymizableApplicationsReplacing(List<Integer> applicationIds) {
+    return queryFactory.select(application.id)
+      .from(application)
+      .join(anonymizableApplication).on(application.id.eq(anonymizableApplication.applicationId))
+      .where(application.replacesApplicationId.in(applicationIds))
+      .fetch();
   }
 
   @Transactional(readOnly = true)
@@ -343,6 +409,19 @@ public class ApplicationDao {
     attachmentDao.deleteUnreferencedAttachments();
   }
 
+  @Transactional
+  public void clearApplicationNames(List<Integer> applicationIds) {
+    queryFactory.update(application).set(application.name, "").where(application.id.in(applicationIds)).execute();
+  }
+
+  @Transactional
+  public void anonymizeApplicationHandlersAndDecisionMakersWithUser(List<Integer> applicationIds, int userId) {
+    queryFactory.update(application)
+      .set(application.handler, userId)
+      .set(application.decisionMaker, userId)
+      .where(application.id.in(applicationIds))
+      .execute();
+  }
 
   /**
    * Updates owner of given applications.
@@ -426,15 +505,20 @@ public class ApplicationDao {
    */
   @Transactional
   public Application updateStatus(int applicationId, StatusType status) {
-    int updated = (int) queryFactory
-        .update(application)
-        .set(application.status, status)
-        .where(application.id.eq(applicationId))
-        .execute();
-    if (updated != 1) {
-      throw new NoSuchEntityException("application.update.notFound", applicationId);
-    }
+    updateStatuses(List.of(applicationId), status);
     return findById(applicationId);
+  }
+
+  @Transactional
+  public void updateStatuses(List<Integer> applicationIds, StatusType status) {
+    int updated = (int) queryFactory
+      .update(application)
+      .set(application.status, status)
+      .where(application.id.in(applicationIds))
+      .execute();
+    if (updated != applicationIds.size()) {
+      throw new NoSuchEntityException("application.update.notFound", applicationIds.size() == 1 ? applicationIds.get(0) : 0);
+    }
   }
 
   /**
@@ -459,20 +543,25 @@ public class ApplicationDao {
    * Update application. All other fields are taken from appl, but {@link #UPDATE_READ_ONLY_FIELDS}
    */
   @Transactional
-  public Application update(int id, Application appl) {
+  public void updateWithoutFetch(int id, Application appl) {
     appl.setId(id);
     Integer rowVersion = appl.getVersion();
     appl.setVersion(rowVersion + 1);
     long changed = queryFactory.update(application)
-        .populate(appl,
-            new ExcludingMapper(WITH_NULL_BINDINGS,
-                UPDATE_READ_ONLY_FIELDS))
-        .where(application.id.eq(id), application.version.eq(rowVersion)).execute();
+      .populate(appl,
+        new ExcludingMapper(WITH_NULL_BINDINGS,
+          UPDATE_READ_ONLY_FIELDS))
+      .where(application.id.eq(id), application.version.eq(rowVersion)).execute();
     if (changed == 0) {
       throw new OptimisticLockException("application.stale");
     }
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
+  }
+
+  @Transactional
+  public Application update(int id, Application appl) {
+    updateWithoutFetch(id, appl);
     Application application = findByIds(Collections.singletonList(id)).get(0);
     return populateTags(application);
   }
@@ -732,6 +821,15 @@ public class ApplicationDao {
               .addBatch());
       inserts.executeWithKeys(contact.id);
     }
+  }
+
+  public void removeAllCustomersWithContacts(List<Integer> applicationIds) {
+    List<Integer> applicationCustomers = queryFactory.select(applicationCustomer.id)
+      .from(applicationCustomer)
+      .where(applicationCustomer.applicationId.in(applicationIds)).fetch();
+
+    queryFactory.delete(applicationCustomerContact).where(applicationCustomerContact.applicationCustomerId.in(applicationCustomers)).execute();
+    queryFactory.delete(applicationCustomer).where(applicationCustomer.id.in(applicationCustomers)).execute();
   }
 
   private boolean hasValidRecurringEndTime(Application application) {
@@ -1111,12 +1209,14 @@ public class ApplicationDao {
         a.startTime,
         a.endTime,
         ch.changeType,
+        ch.changeSpecifier,
         ch.changeTime
       ))
       .from(aa)
       .join(a).on(aa.applicationId.eq(a.id))
       .join(ch).on(aa.applicationId.eq(ch.applicationId)
         .and(ch.changeTime.eq(latestChangeTime)))
+      .where(a.status.ne(StatusType.REPLACED))
       .fetch();
 
     // Use Set to follow IDs which are already processed and remove them from the list
@@ -1127,5 +1227,9 @@ public class ApplicationDao {
     applications.removeIf(application -> !seenIds.add(application.getId()));
 
     return applications;
+  }
+
+  public List<Integer> findAnonymizableApplicationIds() {
+    return queryFactory.select(anonymizableApplication.applicationId).from(anonymizableApplication).fetch();
   }
 }

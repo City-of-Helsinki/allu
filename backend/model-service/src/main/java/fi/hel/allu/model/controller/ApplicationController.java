@@ -412,6 +412,28 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.findActiveExcavationAnnouncements(), HttpStatus.OK);
   }
 
+  @GetMapping(value = "/potentiallyanonymizable")
+  public ResponseEntity<List<Application>> findPotentiallyAnonymizableApplications() {
+    return new ResponseEntity<>(applicationService.findPotentiallyAnonymizableApplications(), HttpStatus.OK);
+  }
+
+  @PatchMapping(value = "/resetanonymizable")
+  public ResponseEntity<List<Application>> resetAnonymizableApplications(@RequestBody List<Integer> applicationsIds) {
+    applicationService.resetAnonymizableApplications(applicationsIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping(value = "/checkanonymizability")
+  public ResponseEntity<List<Integer>> checkAnonymizability(@RequestBody List<Integer> applicationIds) {
+    return new ResponseEntity<List<Integer>>(applicationService.checkAnonymizability(applicationIds), HttpStatus.OK);
+  }
+
+  @PatchMapping(value = "/anonymize")
+  public ResponseEntity<Void> anonymizeApplications(@RequestBody List<Integer> applicationIds) {
+    applicationService.anonymizeApplications(applicationIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   /**
    * Finds finished notes
    */

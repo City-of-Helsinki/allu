@@ -195,6 +195,14 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyCableReportApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
+    app.setType(ApplicationType.CABLE_REPORT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STREET_AND_GREEN, Collections.emptyList()));
+    app.setExtension(dummyCableReport());
+    return app;
+  }
+
   /**
    * Create a dummy outdoor applicationExtension.
    *
@@ -240,6 +248,11 @@ public class TestCommon {
     return excavationAnnouncement;
   }
 
+  public ApplicationExtension dummyCableReport() {
+    CableReport cableReport = new CableReport();
+    return cableReport;
+  }
+
   public ApplicationTag dummyTag(ApplicationTagType tagType) {
     ApplicationTag tag = new ApplicationTag();
     tag.setType(tagType);
@@ -278,18 +291,6 @@ public class TestCommon {
       formattedChangeTime
     );
     sqlRunner.runSql(sql);
-  }
-
-  public void insertDummyAnonymizableApplicationIds(List<Integer> ids) throws SQLException {
-    StringBuilder sql = new StringBuilder("insert into allu.anonymizable_application (application_id) VALUES ");
-    for (int i = 0; i < ids.size(); i++) {
-      sql.append("(").append(ids.get(i)).append(")");
-      if (i < ids.size() - 1) {
-        sql.append(", ");
-      }
-    }
-    sql.append(";");
-    sqlRunner.runSql(sql.toString());
   }
 
   /**

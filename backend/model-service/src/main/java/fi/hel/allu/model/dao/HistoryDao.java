@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.user.User;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,10 +41,26 @@ public class HistoryDao {
   @Autowired
   private SQLQueryFactory queryFactory;
 
+  @Autowired
+  private UserDao userDao;
+
   private final QBean<FieldChange> fieldChangeBean = bean(FieldChange.class,
       fieldChange.all());
   private final QBean<ChangeHistoryItem> changeHistoryBean = bean(ChangeHistoryItem.class, changeHistory.all());
 
+  private static final List<ChangeType> anonymizedChangeTypes = List.of(
+    ChangeType.CONTENTS_CHANGED,
+    ChangeType.APPLICATION_ADDED,
+    ChangeType.APPLICATION_REMOVED,
+    ChangeType.CUSTOMER_CHANGED,
+    ChangeType.CONTACT_CHANGED,
+    ChangeType.LOCATION_CHANGED,
+    ChangeType.OWNER_CHANGED,
+    ChangeType.COMMENT_ADDED,
+    ChangeType.COMMENT_REMOVED,
+    ChangeType.ATTACHMENT_ADDED,
+    ChangeType.ATTACHMENT_REMOVED
+  );
 
   /**
    * Get application's change history
@@ -286,6 +303,19 @@ public class HistoryDao {
     ChangeHistoryItem item = tuple.get(0, ChangeHistoryItem.class);
     item.setInfo(new ChangeHistoryItemInfo(applicationId));
     return item;
+  }
+
+  @Transactional
+  public void anonymizeHistoryFor(List<Integer> applicationIds) {
+    User anonUser = userDao.findAnonymizationUser();
+    List<Integer> changeIds =
+      queryFactory
+        .select(changeHistory.id)
+        .from(changeHistory)
+        .where(changeHistory.applicationId.in(applicationIds).and(changeHistory.changeType.in(anonymizedChangeTypes))).fetch();
+    queryFactory.delete(fieldChange).where(fieldChange.changeHistoryId.in(changeIds)).execute();
+    queryFactory.delete(changeHistory).where(changeHistory.id.in(changeIds)).execute();
+    queryFactory.update(changeHistory).where(changeHistory.applicationId.in(applicationIds)).set(changeHistory.userId, anonUser.getId()).execute();
   }
 
   public static class ExternalApplicationId {

@@ -1,0 +1,35 @@
+- name: Create cron job for refreshing materialized view tapahtumaraportti
+  cron:
+    name: Refresh materialized view tapahtumaraportti
+    hour: 21
+    minute: 0
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_tapahtumaraportti\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view suoritteet
+  cron:
+    name: Refresh materialized view suoritteet
+    hour: 21
+    minute: 30
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_suoritteet\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view paatosmaarat
+  cron:
+    name: Refresh materialized view paatosmaarat
+    hour: 22
+    minute: 0
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_paatosmaarat\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root

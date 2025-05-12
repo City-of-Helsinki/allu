@@ -102,7 +102,8 @@ export const translations = {
       CANCELLED: 'Peruttu',
       REPLACED: 'Korvattu',
       ARCHIVED: 'Arkistoitu',
-      TERMINATED: 'Irtisanottu'
+      TERMINATED: 'Irtisanottu',
+      ANONYMIZED: 'Anonymisoitu'
     },
     statusChange: {
       PRE_RESERVED: 'Alustava varaus luotu',
@@ -669,7 +670,8 @@ export const translations = {
       existingInfo: 'Nykyiset tiedot',
       providedInfo: 'Tarjotut tiedot',
       showRequestedInfo: 'Näytä pyydetyt tiedot',
-      discard: 'Hylkää tietopäivitys'
+      discard: 'Hylkää tietopäivitys',
+      otherBillingTitle: 'Muut laskutustiedot'
     },
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
@@ -830,6 +832,7 @@ export const translations = {
     handledByRepresentative: 'Asiaa hoitaa asiamies',
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     sapCustomerNumber: 'Sap-numero',
+    customerReference: 'Asiakkaan viite',
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
     invoicingOnly: 'Vain laskutusasiakas',
     projectIdentifierPrefix: 'Projektitunnuksen alkuosa',
@@ -1965,7 +1968,8 @@ export const translations = {
           CANCELLED: 'Hakemus peruttu',
           REPLACED: 'Hakemus korvattu',
           ARCHIVED: 'Hakemus arkistoitu',
-          TERMINATED: 'Hakemus irtisanottu'
+          TERMINATED: 'Hakemus irtisanottu',
+          ANONYMIZED: 'Hakemus anonymisoitu'
         },
         CONTRACT_STATUS_CHANGED: {
           APPROVED: 'Sopimus hyväksytty',

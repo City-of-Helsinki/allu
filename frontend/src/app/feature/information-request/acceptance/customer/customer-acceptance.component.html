@@ -6,6 +6,7 @@
   [readonly]="readonly"
   [hideExisting]="hideExisting"
   (customerChanges)="customerChanges($event)">
+
   <div class="left-header">
     <h2 mat-dialog-title>
       {{['informationRequest.field', fieldKey] | translation}}
@@ -53,3 +54,32 @@
     </p>
   </div>
 </customer-info-acceptance>
+
+<div class="reference-section" *ngIf="showCustomerReference">
+  <form [formGroup]="selectionForm">
+    <h2 mat-dialog-title>
+      {{'informationRequest.acceptance.otherBillingTitle' | translation}}
+    </h2>
+    <div class="section-container">
+      <div class="section-content">
+        <field-select
+          #oldValuesSelect
+          [id]="'reference-old'"
+          [descriptions]="referenceFieldDescriptions"
+          [fieldValues]="referenceFieldValues"
+          formControlName="oldValues">
+        </field-select>
+      </div>
+      <div class="section-content">
+        <field-select
+          #newValuesSelect
+          [id]="'reference-new'"
+          [descriptions]="referenceFieldDescriptions"
+          [fieldValues]="referenceComparedValues"
+          [comparedValues]="referenceFieldValues"
+          formControlName="newValues">
+        </field-select>
+      </div>
+    </div>
+  </form>
+</div>

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +20,6 @@ import org.mockito.MockitoAnnotations;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 
 import static org.junit.Assert.*;
@@ -52,12 +49,27 @@ public class ApplicationServiceTest {
   private ApplicationService applicationService;
   @Mock
   private InvoiceRecipientDao invoiceRecipientDao;
+  @Mock
+  private DistributionEntryDao distributionEntryDao;
+  @Mock
+  private LocationDao locationDao;
+  @Mock
+  private DecisionDao decisionDao;
+  @Mock
+  private AttachmentDao attachmentDao;
+  @Mock
+  private SupervisionTaskDao supervisionTaskDao;
+  @Mock
+  private CommentDao commentDao;
+  @Mock
+  private HistoryDao historyDao;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
-        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, invoiceRecipientDao);
+        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, invoiceRecipientDao,
+        distributionEntryDao, locationDao, decisionDao, attachmentDao, supervisionTaskDao, commentDao, historyDao);
   }
 
   @Test
@@ -214,8 +226,8 @@ public class ApplicationServiceTest {
     ZonedDateTime changeTime = ZonedDateTime.parse("2024-11-27T12:31:01+02:00");
 
     List<AnonymizableApplication> mockApplications = List.of(
-      new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, changeTime),
-      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, changeTime)
+      new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, "foo", changeTime),
+      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, null, changeTime)
     );
 
     when(applicationDao.findAnonymizableApplications()).thenReturn(mockApplications);
@@ -245,5 +257,15 @@ public class ApplicationServiceTest {
 
     assertTrue(result.isEmpty());
     verify(applicationDao, times(1)).findAnonymizableApplications();
+  }
+
+  @Test
+  public void testFindApplicationsReplacing() {
+    when (applicationDao.findAnonymizableApplicationsReplacing(any())).thenReturn(List.of(1, 2 ,3)).thenReturn(List.of(4,5)).thenReturn(List.of());
+
+    List<Integer> result = applicationService.findApplicationsReplacing(List.of(23, 42));
+
+    assertEquals(5, result.size());
+    assertTrue(result.containsAll(List.of(1, 2, 3, 4, 5)));
   }
 }

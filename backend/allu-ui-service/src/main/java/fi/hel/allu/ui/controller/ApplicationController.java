@@ -78,7 +78,9 @@ public class ApplicationController {
   @PatchMapping(value = "/anonymize")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<Void> anonymizeApplicationsByIds(@RequestBody List<Integer> ids) {
-    return ResponseEntity.noContent().build();
+    if (applicationServiceComposer.anonymizeApplications(ids))
+      return new ResponseEntity<>(HttpStatus.OK);
+    else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
   }
 
   /**

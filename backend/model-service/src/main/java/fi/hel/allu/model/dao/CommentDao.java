@@ -156,4 +156,9 @@ public class CommentDao {
         .max(Comparator.comparing(Comment::getCreateTime))
         .orElse(null);
   }
+
+  @Transactional
+  public void deleteCommentsForApplications(List<Integer> applicationIds) {
+    queryFactory.delete(comment).where(comment.applicationId.in(applicationIds)).execute();
+  }
 }

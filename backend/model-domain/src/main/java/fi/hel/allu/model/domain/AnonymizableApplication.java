@@ -15,18 +15,20 @@ public class AnonymizableApplication {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ChangeType changeType;
+  private String changeSpecifier;
   private ZonedDateTime changeTime;
 
   public AnonymizableApplication() {
   }
 
-  public AnonymizableApplication(Integer id, String applicationId, ApplicationType applicationType, ZonedDateTime startTime, ZonedDateTime endTime, ChangeType changeType, ZonedDateTime changeTime) {
+  public AnonymizableApplication(Integer id, String applicationId, ApplicationType applicationType, ZonedDateTime startTime, ZonedDateTime endTime, ChangeType changeType, String changeSpecifier, ZonedDateTime changeTime) {
     this.id = id;
     this.applicationId = applicationId;
     this.applicationType = applicationType;
     this.startTime = startTime;
     this.endTime = endTime;
     this.changeType = changeType;
+    this.changeSpecifier = changeSpecifier;
     this.changeTime = changeTime;
   }
 
@@ -77,6 +79,10 @@ public class AnonymizableApplication {
   public void setChangeType(ChangeType changeType) {
     this.changeType = changeType;
   }
+
+  public String getChangeSpecifier() { return changeSpecifier; }
+
+  public void setChangeSpecifier(String changeSpecifier) { this.changeSpecifier = changeSpecifier; }
 
   public ZonedDateTime getChangeTime() {
     return changeTime;

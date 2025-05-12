@@ -648,6 +648,7 @@ public class ApplicationMapper {
       anonymizableApplication.getStartTime(),
       anonymizableApplication.getEndTime(),
       anonymizableApplication.getChangeType(),
+      anonymizableApplication.getChangeSpecifier(),
       anonymizableApplication.getChangeTime()
     );
   }

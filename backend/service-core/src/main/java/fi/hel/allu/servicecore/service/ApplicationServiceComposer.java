@@ -161,6 +161,20 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Anonymize given applications
+   *
+   * @param applicationIds list of application IDs that should be anonymized
+   *
+   * @return False (and nothing anonymized) if all given application IDs have not been marked
+   *         previously as ready for anonymization in the database, otherwise true
+   */
+  public boolean anonymizeApplications(List<Integer> applicationIds) {
+    if (!applicationService.checkApplicationAnonymizability(applicationIds)) return false;
+    applicationService.anonymizeApplications(applicationIds);
+    return true;
+  }
+
+  /**
    * Delete a note from model-service's and search-service's database.
    *
    * @param applicationId note application's database ID
@@ -580,6 +594,14 @@ public class ApplicationServiceComposer {
 
   public List<Application> fetchActiveExcavationAnnouncements() {
     return applicationService.findActiveExcavationAnnouncements();
+  }
+
+  public List<Application> fetchPotentiallyAnonymizableApplications() {
+    return applicationService.fetchPotentiallyAnonymizableApplications();
+  }
+
+  public void resetAnonymizableApplications(List<Integer> applicationIds) {
+    applicationService.resetAnonymizableApplications(applicationIds);
   }
 
   public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {
