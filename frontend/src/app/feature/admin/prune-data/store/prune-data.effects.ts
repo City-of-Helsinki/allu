@@ -24,10 +24,33 @@ export class PruneDataEffects {
       ofType(PruneDataActions.fetchAllData),
       switchMap(action => {
         const endpoint =
-          action.tab === 'user_data' ? this.userEndpoint : this.endpoint;
-        return this.http.get<PruneDataItem[]>(endpoint).pipe(
-          map(data => PruneDataActions.fetchAllDataSuccess({ data })),
-          catchError(error => of(PruneDataActions.fetchAllDataFailure({ error })))
+        action.tab === 'user_data' ? this.userEndpoint : this.endpoint;
+    
+        // pagination
+        const params: any = {};
+        if (action.page !== undefined) params.page = action.page;
+        if (action.size !== undefined) params.size = action.size;
+    
+         // sort
+        if (action.sortField && action.sortDirection) {
+          params.sort = `${action.sortField},${action.sortDirection}`;
+        }
+    
+        return this.http.get<any>(endpoint, { params }).pipe(
+          map(response => {
+            if (response.content) {
+              return PruneDataActions.fetchAllDataSuccess({ 
+                  data: response.content, 
+                  totalItems: response.totalElements 
+                });
+              } else {
+                  return PruneDataActions.fetchAllDataSuccess({ 
+                    data: response, 
+                    totalItems: response.length 
+                  });
+                }
+           }),
+            catchError(error => of(PruneDataActions.fetchAllDataFailure({ error })))
         );
       })
     )

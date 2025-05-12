@@ -14,6 +14,11 @@ export interface PruneDataState {
   selectedIds: number[];
   showDeleteModal: boolean;
   deleteInProgress: boolean;
+  totalItems: number;
+  pageIndex: number;
+  pageSize: number;
+  sortField: string | null;
+  sortDirection: string | null;
 }
     
 export const initialState: PruneDataState = {
@@ -25,6 +30,11 @@ export const initialState: PruneDataState = {
   selectedIds: [],
   showDeleteModal: false,
   deleteInProgress: false,
+  totalItems: 0,
+  pageIndex: 0,
+  pageSize: 10,
+  sortField: null,
+  sortDirection: null
 };
 
 export const pruneDataReducer = createReducer(
@@ -32,7 +42,8 @@ export const pruneDataReducer = createReducer(
   on(PruneDataActions.setCurrentTab, (state, { tab }) => ({
     ...state,
     currentTab: tab,
-    filteredData: filterDataByTab(state.allData, tab)
+    filteredData: filterDataByTab(state.allData, tab),
+    pageIndex: 0
   })),
   on(PruneDataActions.toggleSelectItem, (state, { id }) => ({
     ...state,
@@ -48,18 +59,24 @@ export const pruneDataReducer = createReducer(
       selectedIds: newSelectedIds
     };
   }),
-  on(PruneDataActions.fetchAllData, state => ({
+  on(PruneDataActions.fetchAllData, (state, {page, size, sortField, sortDirection}) => ({
     ...state,
     loading: true,
     error: null,
+    pageIndex: page !== undefined ? page : state.pageIndex,
+    pageSize: size !== undefined ? size : state.pageSize,
+    sortField: sortField !== undefined ? sortField : state.sortField,
+    sortDirection: sortDirection !== undefined ? sortDirection : state.sortDirection
   })),
-  on(PruneDataActions.fetchAllDataSuccess, (state, { data }) => {
+  on(PruneDataActions.fetchAllDataSuccess, (state, { data, totalItems }) => {
     const humanReadableData = makeDateTimesHumanReadable(data);
     return {
     ...state,
     loading: false,
     allData: humanReadableData,
-    filteredData: filterDataByTab(humanReadableData, state.currentTab)}
+    filteredData: humanReadableData,
+    totalItems: totalItems !== undefined ? totalItems : state.totalItems
+  }
   }),
   on(PruneDataActions.fetchAllDataFailure, (state, { error }) => ({
     ...state,
@@ -90,6 +107,8 @@ export const pruneDataReducer = createReducer(
   })),
   on(PruneDataActions.tableSortReset, (state) => ({
     ...state,
+    sortField: null,
+    sortDirection: null,
     filteredData: filterDataByTab(state.allData, state.currentTab)
   })),
   on(PruneDataActions.tableSortChange, (state, { data }) => ({

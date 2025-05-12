@@ -73,6 +73,10 @@
             </mat-cell>
           </ng-container>
 
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="6">Ei hakemuksia</td>
+          </tr>
+
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
         </mat-table>
@@ -80,10 +84,12 @@
     </div>
   </div>
   <mat-paginator #paginator
-    [pageSize]="pageSize"
-    [pageSizeOptions]="pageSizeOptions"
-    [pageIndex]="pageIndex"
+    [pageSize]="(pageSize$ | async) || 10"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    [pageIndex]="(pageIndex$ | async) || 0"
+    [length]="totalItems$ | async"
     (page)="onPageChange($event)"
+    [disabled]="(totalItems$ | async) === 0"
     aria-label="Select page">
   </mat-paginator>
   <mat-tab-nav-panel #tabPanel>

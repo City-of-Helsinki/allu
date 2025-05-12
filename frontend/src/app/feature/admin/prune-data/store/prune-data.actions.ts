@@ -17,14 +17,15 @@ export const toggleSelectItem = createAction(
 ); 
 
 export const fetchAllData = createAction(
-    '[PruneData] Fetch All Data',
-    props<{ tab: string }>()
-);
-
-export const fetchAllDataSuccess = createAction(
-    '[PruneData] Fetch All Data Success',
-    props<{ data: PruneDataItem[] }>()
-);
+  '[PruneData] Fetch All Data',
+  props<{ tab: string, page?: number, size?: number, sortField?: string, sortDirection?: string }>()
+  );
+  
+  
+  export const fetchAllDataSuccess = createAction(
+  '[PruneData] Fetch All Data Success',
+  props<{ data: PruneDataItem[], totalItems?: number }>()
+  );
 
 export const fetchAllDataFailure = createAction(
     '[PruneData] Fetch All Data Failure',
