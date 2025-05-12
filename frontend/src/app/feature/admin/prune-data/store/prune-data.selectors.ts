@@ -52,4 +52,33 @@ export const selectAllSelected = createSelector(
 export const selectSomeSelected = createSelector(
   selectSelectedIds,
   selectedIds => selectedIds.length > 0
+);
+
+export const selectTotalItems = createSelector(
+  selectPruneDataState,
+  state => state.totalItems
+);
+  
+  
+export const selectPageIndex = createSelector(
+  selectPruneDataState,
+  state => state.pageIndex
+);
+  
+  
+export const selectPageSize = createSelector(
+  selectPruneDataState,
+  state => state.pageSize
+);
+  
+  
+export const selectSortField = createSelector(
+  selectPruneDataState,
+  state => state.sortField
+);
+  
+  
+export const selectSortDirection = createSelector(
+  selectPruneDataState,
+  state => state.sortDirection
 ); 

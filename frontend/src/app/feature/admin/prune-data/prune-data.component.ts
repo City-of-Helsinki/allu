@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { map, switchMap, takeUntil, take, filter, first } from 'rxjs/operators';
 import { MatSort, Sort } from '@angular/material/sort';
 import * as PruneDataActions from './store/prune-data.actions';
-import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility, selectDeleteInProgress } from './store/prune-data.selectors';
+import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility, selectDeleteInProgress, selectTotalItems, selectPageIndex, selectPageSize } from './store/prune-data.selectors';
 import {MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
 
 
@@ -34,6 +34,9 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   selectedTab$ = this.store.select(selectCurrentTab);
   deleteModalVisible = this.store.select(selectDeleteModalVisibility);
   deleteInProgress = this.store.select(selectDeleteInProgress);
+  totalItems$ = this.store.select(selectTotalItems);
+  pageIndex$ = this.store.select(selectPageIndex);
+  pageSize$ = this.store.select(selectPageSize);
   tabs = pruneDataTabs;
 
   hasSelectedItems$ = this.selectedIds$.pipe(
@@ -52,10 +55,6 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  pageSize = 10;
-  pageSizeOptions: number[] = [5, 10, 25, 100];
-  pageIndex = 0;
-
   constructor(
     private store: Store<fromRoot.State>,
     private router: Router,
@@ -65,35 +64,41 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Initial data load
-    this.store.dispatch(PruneDataActions.fetchAllData({ tab: 'applications' }));
-
     // Handle tab changes
     this.currentTab$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(tab => {
-      this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(tab => {
+        this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
+        this.loadData(tab, 0, 10);
     });
-
-    this.filteredDataSource$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(data => {
+    
+    this.sort?.sortChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
       if (this.paginator) {
-        const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-        const endIndex = startIndex + this.paginator.pageSize;
-        this.store.dispatch(PruneDataActions.updatePagination({
-          pageIndex: this.paginator.pageIndex,
-          pageSize: this.paginator.pageSize,
-          data: data.slice(startIndex, endIndex)
-        }));
-      }
-    })
+          this.paginator.pageIndex = 0;
+          this.currentTab$.pipe(take(1)).subscribe(tab => {
+          this.loadData(tab, 0, this.paginator.pageSize);
+      });
+     }
+    });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  loadData(tab: string, page: number, size: number, sortField?: string, sortDirection?: string): void {
+    this.store.dispatch(PruneDataActions.fetchAllData({ 
+      tab, 
+      page, 
+      size,
+      sortField,
+      sortDirection
+      }));
+  }
+
 
   trackById(index: number, item: Application) {
     return item.id;
@@ -119,23 +124,19 @@ export class PruneDataComponent implements OnInit, OnDestroy {
 
   onSort(sort: Sort): void {
     const { active, direction } = sort;
-
+    
+    
     if (!direction) {
-      this.store.dispatch(PruneDataActions.tableSortReset());
+      this.currentTab$.pipe(take(1)).subscribe(tab => {
+        this.loadData(tab, 0, this.paginator.pageSize);
+      });
       return;
     }
 
-    this.filteredDataSource$
-    .pipe(take(1))
-    .subscribe((data) => {
-      const sortedData = [...data].sort((a, b) => {
-        const isAsc = direction === 'asc';
-        return this.compare(a[active], b[active], isAsc);
+    this.currentTab$.pipe(take(1)).subscribe(tab => {
+      this.loadData(tab, 0, this.paginator.pageSize, active, direction);
       });
-      
-      this.store.dispatch(PruneDataActions.tableSortChange({data: sortedData}));
-    });
-  }
+    }
 
   compare(a: any, b: any, isAsc: boolean): number {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
@@ -161,8 +162,9 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(event: PageEvent): void {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
+    this.currentTab$.pipe(take(1)).subscribe(tab => {
+    this.loadData(tab, event.pageIndex, event.pageSize);
+    });
   }
 
 }
