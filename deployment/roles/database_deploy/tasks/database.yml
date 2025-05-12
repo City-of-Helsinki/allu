@@ -4,7 +4,6 @@
   vars:
     database_name: model_service
     database_user: model_service
-    database_geo_user: kami_hki
     database_password: "{{ database_password_model_service }}"
     database_reporting_user: allu_reporting
     reporting_user_password: "{{ database_reporting_user_password }}"

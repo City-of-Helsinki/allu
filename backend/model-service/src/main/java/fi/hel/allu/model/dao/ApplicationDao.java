@@ -19,6 +19,7 @@ import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.OptimisticLockException;
 import fi.hel.allu.common.util.SupervisionDates;
+import fi.hel.allu.model.controller.Constants;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1190,12 +1191,22 @@ public class ApplicationDao {
   /**
    * Find anonymizable/"deletable" application data (ID, application ID, application type, start time, end time, change type and (latest) change time)
    * by application id found from anonymizable_application-table from database.
+   * Has paging support.
    * @return list of anonymizable/"deletable" applications
    */
-  public List<AnonymizableApplication> findAnonymizableApplications() {
+  public Page<AnonymizableApplication> findAnonymizableApplications(Pageable pageable) {
+    if (pageable == null) {
+      pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
+    }
+
     QAnonymizableApplication aa = QAnonymizableApplication.anonymizableApplication;
     QApplication a = QApplication.application;
     QChangeHistory ch = QChangeHistory.changeHistory;
+
+    long totalCount = queryFactory
+      .select(aa.count())
+      .from(aa)
+      .fetchOne();
 
     SubQueryExpression<ZonedDateTime> latestChangeTime = select(ch.changeTime.max())
       .from(ch)
@@ -1217,6 +1228,8 @@ public class ApplicationDao {
       .join(ch).on(aa.applicationId.eq(ch.applicationId)
         .and(ch.changeTime.eq(latestChangeTime)))
       .where(a.status.ne(StatusType.REPLACED))
+      .offset(pageable.getOffset())
+      .limit(pageable.getPageSize())
       .fetch();
 
     // Use Set to follow IDs which are already processed and remove them from the list
@@ -1226,7 +1239,7 @@ public class ApplicationDao {
     Set<Integer> seenIds = new HashSet<>();
     applications.removeIf(application -> !seenIds.add(application.getId()));
 
-    return applications;
+    return new PageImpl<>(applications, pageable, totalCount);
   }
 
   public List<Integer> findAnonymizableApplicationIds() {
