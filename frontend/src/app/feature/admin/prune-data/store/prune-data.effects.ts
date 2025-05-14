@@ -37,6 +37,8 @@ export class PruneDataEffects {
           params.sort = `${action.sortField},${action.sortDirection}`;
         }
     
+        params.type = action.tab;
+
         return this.http.get<any>(endpoint, { params }).pipe(
           map(response => {
             if (response.content) {
