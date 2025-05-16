@@ -74,7 +74,14 @@
           </ng-container>
 
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" colspan="6">Ei hakemuksia</td>
+            <td class="mat-cell" colspan="6">
+              <ng-container *ngIf="(currentTab$ | async) === 'user_data'; else noApplications">
+                Ei asiakkaita
+              </ng-container>
+              <ng-template #noApplications>
+                Ei hakemuksia
+              </ng-template>
+            </td>
           </tr>
 
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>

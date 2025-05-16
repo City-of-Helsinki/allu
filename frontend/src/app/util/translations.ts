@@ -2131,6 +2131,7 @@ export const translations = {
       endTime: 'Lopetusaika',
       changeTime: 'Muutettu',
       changeType: 'Muutos',
+      name: "Nimi"
     }
   },
   configuration: {
