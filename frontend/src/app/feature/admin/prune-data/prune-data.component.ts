@@ -41,8 +41,12 @@ export class PruneDataComponent implements OnInit, OnDestroy {
 
   hasSelectedItems$ = this.selectedIds$.pipe(
     map(selectedIds => selectedIds.length > 0))
+  
+  userColumns: string[] = ['selected', 'name'];
+  applicationColumns: string[] = ['selected', 'applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'];
 
-  displayedColumns: string[] = ['selected', 'applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'];
+
+  displayedColumns: string[] = [];
   currentTab$ = this.route.params.pipe(
     map(params => {
       const tab = params['tab'];
@@ -69,6 +73,8 @@ export class PruneDataComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(tab => {
         this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
+        if (tab == 'user_data') this.displayedColumns = this.userColumns;
+        if (tab != 'user_data') this.displayedColumns = this.applicationColumns;
         this.loadData(tab, 0, 10);
     });
     

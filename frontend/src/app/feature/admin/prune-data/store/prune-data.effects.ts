@@ -10,9 +10,8 @@ import { selectCurrentTab } from './prune-data.selectors';
 
 @Injectable()
 export class PruneDataEffects {
-  private fetchEndpoint = '/api/applications/anonymizable';
-  private anonymizeEndpoint = '/api/applications/anonymize';
-  private userEndpoint = '/api/anonymizable/user';
+  private applicationEndPoint = '/api/applications/anonymizable';
+  private userEndpoint = '/api/user/anonymizable';
 
   constructor(
     private actions$: Actions,
@@ -25,7 +24,7 @@ export class PruneDataEffects {
       ofType(PruneDataActions.fetchAllData),
       switchMap(action => {
         const endpoint =
-        action.tab === 'user_data' ? this.userEndpoint : this.fetchEndpoint;
+        action.tab === 'user_data' ? this.userEndpoint : this.applicationEndPoint;
     
         // pagination
         const params: any = {};
@@ -65,7 +64,7 @@ export class PruneDataEffects {
       withLatestFrom(this.store.select(selectCurrentTab)),
       mergeMap(([action, currentTab]) => {
         const endpoint =
-          currentTab === 'user_data' ? this.userEndpoint : this.anonymizeEndpoint;
+          currentTab === 'user_data' ? this.userEndpoint : this.applicationEndPoint;
         return this.http.patch<void>(`${endpoint}`, action.ids).pipe(
           map(() => PruneDataActions.deleteDataSuccess({ ids: action.ids })),
           catchError(error => of(PruneDataActions.deleteDataSuccess({ ids: action.ids })))
