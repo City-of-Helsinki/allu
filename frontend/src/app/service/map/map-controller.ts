@@ -511,7 +511,8 @@ export class MapController {
           );
           
           if (cutResult && cutResult.length > 0) {
-
+            // tässä vaiheessa pitäisi olla leikkaustulos jossa on polygoneja
+            // TODO tähän kohtaan automaattisesti poistettavaa
             // Find and remove the original feature from the edited items
             this.editedItems.eachLayer(layer => {
               const layerGeoJSON = (layer as any).toGeoJSON();
@@ -530,12 +531,12 @@ export class MapController {
               }
             });
             
-            this.notification.success('Feature cut successfully', 'The feature has been split into ' + cutResult.length + ' parts');
+            this.notification.success('Leikkaus onnistui');
             
             // Emit shape change event
             this.shapes$.next(new ShapeAdded(this.editedItems, false));
           } else {
-            this.notification.error('Cutting failed', 'No features resulted from the cut operation');
+            this.notification.error('Leikkaus epäonnistui', 'Ei muutoksia');
           }
           
           // Clean up event handlers
@@ -597,6 +598,7 @@ export class MapController {
 
       const turfLine = normalizedLine;
 
+      //TODO tässä kohtaa säädetään viivan paksuus
       const bufferedLine = turf.buffer(turfLine, 0.00001, {units: 'degrees'});
       
       const featurePolygon = normalizedFeature.geometry.type === 'Polygon' 
@@ -635,7 +637,6 @@ export class MapController {
     }
   }
   
-  // Helper method to normalize coordinates to consistent precision
   private normalizeCoordinates(geojson: any): any {
     const PRECISION = 9; // Adjust precision as needed
     
