@@ -1,0 +1,35 @@
+// Styling for map controls
+.map {
+  height: 500px;
+  width: 100%;
+  position: relative;
+}
+
+.leaflet-bar a.scissors-control {
+  background-color: white;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #f4f4f4;
+  }
+  
+  &.active {
+    background-color: #e6e6e6;
+  }
+  
+  svg {
+    fill: #333;
+  }
+}
+
+.map-loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 

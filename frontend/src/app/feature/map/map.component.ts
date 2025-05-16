@@ -26,7 +26,7 @@ import {FixedLocation} from '@model/common/fixed-location';
 @Component({
   selector: 'map',
   templateUrl: './map.component.html',
-  styleUrls: [],
+  styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -34,6 +34,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() edit = false;
   @Input() zoom = false;
   @Input() selection = false;
+  @Input() scissors = false;
   @Input() applicationId: number;
   @Input() projectId: number;
   @Input() showOnlyApplicationArea = false;
@@ -58,7 +59,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.roleChange(this.role);
     this.mapController.availableLayers = this.availableLayers;
 
-      this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
+    this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
   }
 
   /**
@@ -68,7 +69,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.mapController.init({
       draw: this.draw,
-      edit: this.edit,
+      edit: this.edit || this.scissors,
       zoom: this.zoom,
       selection: this.selection,
       showOnlyApplicationArea: this.showOnlyApplicationArea

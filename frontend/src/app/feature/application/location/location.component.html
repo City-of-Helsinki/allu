@@ -70,7 +70,7 @@
                     (searchChange)="onSearchChange($event)"
                     (addressChange)="onAddressChange($event)">Loading searchbar</searchbar>
                 </div>
-                <map *ngIf="displayMap" [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
+                <map *ngIf="displayMap" [zoom]="true" [draw]="true" [edit]="true" [selection]="true" [scissors]="true"
                      [applicationId]="application.id"
                      role="LOCATION"
                      (editedItemCountChanged)="editedItemCountChanged($event)"

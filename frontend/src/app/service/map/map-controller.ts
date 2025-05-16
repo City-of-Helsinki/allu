@@ -7,6 +7,8 @@ import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-tools';
 import '../../js/leaflet/draw-toolbar';
+import * as turf from '@turf/turf';
+import * as polygonClipping from 'polygon-clipping';
 
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {MapUtil} from './map.util';
@@ -26,8 +28,9 @@ import {MapLayer} from '@service/map/map-layer';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {Projection} from '@feature/map/projection';
+import {ScissorsControl} from './scissors-control';
 import GeoJSONOptions = L.GeoJSONOptions;
-import {LatLngBounds} from 'leaflet';
+
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -275,6 +278,18 @@ export class MapController {
       zoomOutTitle: translations.map.zoomOut
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
+    
+    // Add scissors control
+    if (this.config.edit) {
+      const scissorsControl = new ScissorsControl({
+        position: 'topright',
+        scissorsClickHandler: (e: MouseEvent) => {
+          this.activateScissorsTool();
+        }
+      });
+      scissorsControl.addTo(this.map);
+    }
+    
     L.Icon.Default['imagePath'] = '/assets/images/';
     this.setDynamicControls(this.mapStore.snapshot.drawingAllowed, editedItems);
   }
@@ -444,5 +459,223 @@ export class MapController {
   private setMapLayers(selected: MapLayer[], deselected: MapLayer[]): void {
     deselected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
     selected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
+  }
+
+  private activateScissorsTool(): void {
+    this.notification.info('Leikkaus työkalu aktivoidu', 'Klikkaa aluetta, jota haluat leikata');
+    
+    // Store the current editing state
+    const wasEditing = this.editing;
+    
+    // Disable other editing
+    this.editing = true;
+    
+    const clickHandler = (e: L.LeafletMouseEvent) => {
+      // Find features at click point
+      const intersecting = MapEventHandler.clickIntersects(e, this.map, [this.editedItems]);
+      
+      if (intersecting.length) {
+        this.notification.success('Alue valittu', 'piirrä leikkausviiva');
+        
+        const selectedFeature = intersecting[0];
+        
+        // Remove normal click handlers temporarily
+        this.map.off('click');
+        
+        const cuttingGroup = L.featureGroup().addTo(this.map);
+        
+        // Create a polyline draw handler for the cutting line
+        const lineDrawHandler = new L.Draw.Polyline(this.map as any, {
+          shapeOptions: {
+            color: '#ff0000',
+            weight: 3,
+            opacity: 0.7
+          },
+          showLength: false,
+          repeatMode: false
+        });
+        
+        lineDrawHandler.enable();
+        
+        const cutCreatedHandler = (e: any) => {
+          const cuttingLine = e.layer;
+          
+          cuttingGroup.addLayer(cuttingLine);
+          
+          const cutLineGeoJSON = (cuttingLine as any).toGeoJSON();
+          const featureGeoJSON = selectedFeature;
+          
+          const cutResult = this.calculateCut(
+            featureGeoJSON,
+            cutLineGeoJSON 
+          );
+          
+          if (cutResult && cutResult.length > 0) {
+
+            // Find and remove the original feature from the edited items
+            this.editedItems.eachLayer(layer => {
+              const layerGeoJSON = (layer as any).toGeoJSON();
+              
+            });
+            
+            // Add each of the new cut features back to the map
+            cutResult.forEach(cutFeature => {
+              const newLayer = L.geoJSON(cutFeature).getLayers()[0];
+              this.editedItems.addLayer(newLayer);
+              
+              // Show measurements for the new features if they're not points
+              const geometryType = cutFeature.geometry.type;
+              if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
+                (newLayer as any).showMeasurements(translations.map.measure);
+              }
+            });
+            
+            this.notification.success('Feature cut successfully', 'The feature has been split into ' + cutResult.length + ' parts');
+            
+            // Emit shape change event
+            this.shapes$.next(new ShapeAdded(this.editedItems, false));
+          } else {
+            this.notification.error('Cutting failed', 'No features resulted from the cut operation');
+          }
+          
+          // Clean up event handlers
+          this.map.off('draw:created', cutCreatedHandler);
+          
+          // Remove the temporary cutting line after a delay
+          setTimeout(() => {
+            cuttingGroup.clearLayers();
+            cuttingGroup.remove();
+            
+            // Re-enable normal
+            this.setupClickHandler();
+            this.editing = wasEditing;
+          }, 2000);
+        };
+        
+        // Add handler for when the line is created
+        this.map.once('draw:created', cutCreatedHandler);
+        
+        // Handle cancellation
+        this.map.once('draw:drawstop', () => {
+          setTimeout(() => {
+            if (cuttingGroup.getLayers().length === 0) {
+              cuttingGroup.remove();
+              this.setupClickHandler();
+              this.editing = wasEditing;
+              this.notification.info('Leikkaus keskeytetty', 'Ei muutosta');
+            }
+          }, 100);
+        });
+      } else {
+        this.notification.info('Ei valittua aluetta', 'paina aluetta, jota haluat leikata');
+        
+        // Clean up the click handler and restore editing state
+        this.map.off('click', clickHandler);
+        this.setupClickHandler();
+        this.editing = wasEditing;
+      }
+    };
+    
+    // Add the click handler
+    this.map.once('click', clickHandler);
+  }
+  
+  private calculateCut(
+    feature: any,
+    cuttingLine: any
+  ): any {    
+    try {
+      // Ensure we have valid inputs
+      if (!feature || !feature.geometry || !cuttingLine || !cuttingLine.geometry) {
+        console.error('Invalid input for cutting operation');
+        return [feature];
+      }
+
+      // Normalize coordinates to ensure consistent precision
+      const normalizedFeature = this.normalizeCoordinates(feature);
+      const normalizedLine = this.normalizeCoordinates(cuttingLine);
+
+      const turfLine = normalizedLine;
+
+      const bufferedLine = turf.buffer(turfLine, 0.00001, {units: 'degrees'});
+      
+      const featurePolygon = normalizedFeature.geometry.type === 'Polygon' 
+        ? [normalizedFeature.geometry.coordinates] 
+        : normalizedFeature.geometry.coordinates;
+
+      const clipPoly = bufferedLine.geometry.coordinates;
+      
+      const difference = polygonClipping.difference(
+        featurePolygon as polygonClipping.Polygon | polygonClipping.MultiPolygon,
+        clipPoly as polygonClipping.Polygon | polygonClipping.MultiPolygon
+      );
+      
+      // Convert the difference result back to GeoJSON features
+      const results = [];
+      
+      if (difference && difference.length > 0) {
+        difference.forEach(geom => {
+          // Create a new feature for each resulting polygon
+          const newFeature = JSON.parse(JSON.stringify(feature)); // Deep clone
+          
+          // Set the correct geometry type
+          newFeature.geometry.type = 'Polygon';
+          newFeature.geometry.coordinates = geom;
+          
+          results.push(newFeature);
+        });
+      }
+      
+      // If no results or error, return the original feature
+      return results.length > 0 ? results : [feature];
+    } catch (error) {
+      console.error('Error during polygon cutting:', error);
+      this.notification.error('Virhe leikkauksessa: ' + error.message);
+      return [feature]; // Return original feature if there's an error
+    }
+  }
+  
+  // Helper method to normalize coordinates to consistent precision
+  private normalizeCoordinates(geojson: any): any {
+    const PRECISION = 9; // Adjust precision as needed
+    
+    const normalized = JSON.parse(JSON.stringify(geojson)); // Deep clone
+    
+    // Function to normalize a single coordinate pair
+    const normalizeCoord = (coord: number[]): number[] => {
+      return [
+        parseFloat(coord[0].toFixed(PRECISION)),
+        parseFloat(coord[1].toFixed(PRECISION))
+      ];
+    };
+    
+    // Function to recursively process coordinates
+    const processCoordinates = (coords: any[]): any[] => {
+      if (coords.length === 0) return coords;
+      
+      // Check if we're at a coordinate pair (depth reached)
+      if (typeof coords[0] === 'number') {
+        return normalizeCoord(coords);
+      }
+      
+      // Otherwise process each element recursively
+      return coords.map(c => processCoordinates(c));
+    };
+    
+    // Process the geometry coordinates
+    if (normalized.geometry && normalized.geometry.coordinates) {
+      normalized.geometry.coordinates = processCoordinates(normalized.geometry.coordinates);
+    }
+    
+    return normalized;
+  }
+  
+  // Helper method to re-setup the standard click handler
+  private setupClickHandler(): void {
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      if (!(this.editing || this.deleting)) {
+        this.showTooltipOnClick(e);
+      }
+    });
   }
 }
