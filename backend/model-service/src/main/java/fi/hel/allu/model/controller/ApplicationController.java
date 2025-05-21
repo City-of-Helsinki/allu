@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.domain.DocumentSearchCriteria;
 import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -14,6 +15,7 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.ApplicationReplacementService;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -530,13 +532,16 @@ public class ApplicationController {
   /**
    * Get anonymizable/"deletable" applications, with paging support
    * @param pageable page request for the search
+   * @param type application type
    * @return list of anonymizable/"deletable" applications
    */
   @GetMapping("/anonymizable")
   public ResponseEntity<Page<AnonymizableApplication>> getAnonymizableApplications(
     @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
-    Pageable pageable) {
-    Page<AnonymizableApplication> applications = applicationService.getAnonymizableApplications(pageable);
+    Pageable pageable,
+    @Parameter(description = "Application type") @RequestParam(name = "type") ApplicationType type
+  ) {
+    Page<AnonymizableApplication> applications = applicationService.getAnonymizableApplications(pageable,type);
     return ResponseEntity.ok().body(applications);
   }
 }

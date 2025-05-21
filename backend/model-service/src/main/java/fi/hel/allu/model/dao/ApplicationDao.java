@@ -23,10 +23,7 @@ import fi.hel.allu.model.controller.Constants;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -1192,9 +1189,11 @@ public class ApplicationDao {
    * Find anonymizable/"deletable" application data (ID, application ID, application type, start time, end time, change type and (latest) change time)
    * by application id found from anonymizable_application-table from database.
    * Has paging support.
+   * @param pageable page request for the search
+   * @param type application type
    * @return list of anonymizable/"deletable" applications
    */
-  public Page<AnonymizableApplication> findAnonymizableApplications(Pageable pageable) {
+  public Page<AnonymizableApplication> findAnonymizableApplications(Pageable pageable, ApplicationType type) {
     if (pageable == null) {
       pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
     }
@@ -1206,6 +1205,8 @@ public class ApplicationDao {
     long totalCount = queryFactory
       .select(aa.count())
       .from(aa)
+      .join(a).on(aa.applicationId.eq(a.id))
+      .where(a.type.eq(type))
       .fetchOne();
 
     SubQueryExpression<ZonedDateTime> latestChangeTime = select(ch.changeTime.max())
@@ -1227,7 +1228,11 @@ public class ApplicationDao {
       .join(a).on(aa.applicationId.eq(a.id))
       .join(ch).on(aa.applicationId.eq(ch.applicationId)
         .and(ch.changeTime.eq(latestChangeTime)))
-      .where(a.status.ne(StatusType.REPLACED))
+      .where(
+        a.status.ne(StatusType.REPLACED)
+          .and(a.type.eq(type))
+      )
+      .orderBy(toOrderSpecifier(pageable.getSort()))
       .offset(pageable.getOffset())
       .limit(pageable.getPageSize())
       .fetch();
@@ -1240,6 +1245,28 @@ public class ApplicationDao {
     applications.removeIf(application -> !seenIds.add(application.getId()));
 
     return new PageImpl<>(applications, pageable, totalCount);
+  }
+
+  private OrderSpecifier<?> toOrderSpecifier(Sort sort) {
+    if (sort.isUnsorted()) {
+      return null;
+    }
+
+    QApplication a = QApplication.application;
+    QChangeHistory ch = QChangeHistory.changeHistory;
+
+    Sort.Order order = sort.iterator().next(); // Huomioi, että käytössä on vain 1 sort
+    String property = order.getProperty();
+    boolean isAsc = order.getDirection().isAscending();
+
+    return switch (property) {
+      case "applicationId" -> isAsc ? a.applicationId.asc() : a.applicationId.desc();
+      case "startTime" -> isAsc ? a.startTime.asc() : a.startTime.desc();
+      case "endTime" -> isAsc ? a.endTime.asc() : a.endTime.desc();
+      case "changeTime" -> isAsc ? ch.changeTime.asc() : ch.changeTime.desc();
+      case "changeType" -> isAsc ? ch.changeType.asc() : ch.changeType.desc();
+      default -> throw new IllegalArgumentException("Invalid sort property: " + property);
+    };
   }
 
   public List<Integer> findAnonymizableApplicationIds() {
