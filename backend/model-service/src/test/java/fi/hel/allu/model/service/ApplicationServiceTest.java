@@ -231,27 +231,28 @@ public class ApplicationServiceTest {
 
     List<AnonymizableApplication> mockApplications = List.of(
       new AnonymizableApplication(1, "APP001", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.CONTENTS_CHANGED, "foo", changeTime),
-      new AnonymizableApplication(2, "APP002", ApplicationType.AREA_RENTAL, startTime, endTime, ChangeType.STATUS_CHANGED, null, changeTime)
+      new AnonymizableApplication(2, "APP002", ApplicationType.EXCAVATION_ANNOUNCEMENT, startTime, endTime, ChangeType.STATUS_CHANGED, null, changeTime)
     );
 
+    ApplicationType type = ApplicationType.EXCAVATION_ANNOUNCEMENT;
     Pageable pageable = PageRequest.of(0, 10);
-    when(applicationDao.findAnonymizableApplications(any())).thenReturn(new PageImpl<>(mockApplications, pageable, 2));
+    when(applicationDao.findAnonymizableApplications(pageable, type)).thenReturn(new PageImpl<>(mockApplications, pageable, 2));
 
-    Page<AnonymizableApplication> results = applicationService.getAnonymizableApplications(pageable);
+    Page<AnonymizableApplication> results = applicationService.getAnonymizableApplications(pageable, type);
 
     assertEquals(2, results.getContent().size());
     for (int i = 0; i < results.getContent().size(); i++) {
       AnonymizableApplication aa = results.getContent().get(i);
       assertEquals(i + 1, aa.getId().intValue());
       assertEquals("APP00" + (i + 1), aa.getApplicationId());
-      assertEquals(i == 0 ? ApplicationType.EXCAVATION_ANNOUNCEMENT : ApplicationType.AREA_RENTAL, aa.getApplicationType());
+      assertEquals(ApplicationType.EXCAVATION_ANNOUNCEMENT, aa.getApplicationType());
       assertEquals(startTime, aa.getStartTime());
       assertEquals(endTime, aa.getEndTime());
       assertEquals(i == 0 ? ChangeType.CONTENTS_CHANGED : ChangeType.STATUS_CHANGED, aa.getChangeType());
       assertEquals(changeTime, aa.getChangeTime());
     }
 
-    verify(applicationDao, times(1)).findAnonymizableApplications(pageable);
+    verify(applicationDao, times(1)).findAnonymizableApplications(pageable, type);
   }
 
   @Test

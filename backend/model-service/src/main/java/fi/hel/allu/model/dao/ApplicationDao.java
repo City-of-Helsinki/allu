@@ -1194,13 +1194,13 @@ public class ApplicationDao {
    * @return list of anonymizable/"deletable" applications
    */
   public Page<AnonymizableApplication> findAnonymizableApplications(Pageable pageable, ApplicationType type) {
-    if (pageable == null) {
-      pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
-    }
-
     QAnonymizableApplication aa = QAnonymizableApplication.anonymizableApplication;
     QApplication a = QApplication.application;
     QChangeHistory ch = QChangeHistory.changeHistory;
+
+    if (pageable == null) {
+      pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
+    }
 
     long totalCount = queryFactory
       .select(aa.count())
@@ -1248,12 +1248,12 @@ public class ApplicationDao {
   }
 
   private OrderSpecifier<?> toOrderSpecifier(Sort sort) {
-    if (sort.isUnsorted()) {
-      return null;
-    }
-
     QApplication a = QApplication.application;
     QChangeHistory ch = QChangeHistory.changeHistory;
+
+    if (sort.isUnsorted()) {
+      return a.applicationId.asc();
+    }
 
     Sort.Order order = sort.iterator().next(); // Huomioi, että käytössä on vain 1 sort
     String property = order.getProperty();
