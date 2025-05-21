@@ -531,7 +531,7 @@ public class AnonymizationTest {
 
     Pageable pageable = PageRequest.of(0, 10);
 
-    Page<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications(pageable);
+    Page<AnonymizableApplication> anonymizable = applicationService.getAnonymizableApplications(pageable, ApplicationType.CABLE_REPORT);
     assertEquals(1, anonymizable.getContent().size());
     assertEquals(app2.getId(), anonymizable.getContent().get(0).getId());
   }

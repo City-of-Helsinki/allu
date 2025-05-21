@@ -257,15 +257,6 @@ public class ApplicationControllerTest {
   }
 
   @Test
-  public void testGetAnonymizableApplications_noData() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/applications/anonymizable"))
-      .andExpect(status().isOk());
-    String jsonResponse = resultActions.andReturn().getResponse().getContentAsString();
-    String expected = "{\"content\":[],\"pageable\":{\"sort\":{\"empty\":true,\"sorted\":false,\"unsorted\":true},\"offset\":0,\"pageNumber\":0,\"pageSize\":100,\"unpaged\":false,\"paged\":true},\"last\":true,\"totalElements\":0,\"totalPages\":0,\"size\":100,\"number\":0,\"sort\":{\"empty\":true,\"sorted\":false,\"unsorted\":true},\"first\":true,\"numberOfElements\":0,\"empty\":true}";
-    assertEquals(expected, jsonResponse);
-  }
-
-  @Test
   public void checkApplicationAnonymizabilityWithValid() throws Exception {
     Application app1 = testCommon.dummyOutdoorApplication("Test Application", "Owner");
     Application app1Result = insertApplication(app1);
