@@ -12,6 +12,7 @@ import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.InvoiceService;
 import fi.hel.allu.servicecore.validation.ApplicationGeometryValidator;
 import fi.hel.allu.ui.security.ApplicationSecurityService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -86,15 +87,17 @@ public class ApplicationController {
   /**
    * Get anonymizable/"deletable" applications with paging support
    * @param pageable page request for the search
+   * @param type application type
    * @return list of anonymizable/"deletable" applications with paging
    */
   @GetMapping(value = "/anonymizable")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<Page<AnonymizableApplicationJson>> getAnonymizableApplications(
     @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
-    Pageable pageable
+    Pageable pageable,
+    @Parameter(description = "Application type") @RequestParam("type") ApplicationType type
   ) {
-    Page<AnonymizableApplicationJson> result = applicationServiceComposer.getAnonymizableApplications(pageable);
+    Page<AnonymizableApplicationJson> result = applicationServiceComposer.getAnonymizableApplications(pageable, type);
     return ResponseEntity.ok(result);
   }
 

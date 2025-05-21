@@ -90,6 +90,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.CONFLICT, request);
   }
 
+  @ExceptionHandler({InvalidApplicationTypeException.class})
+  protected ResponseEntity<Object> handleInvalidApplicationType(RuntimeException e, WebRequest request) {
+    logger.warn(e.getMessage());
+    return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+  }
+
   @Override
   protected ResponseEntity<Object>
   handleMethodArgumentNotValid(MethodArgumentNotValidException e,

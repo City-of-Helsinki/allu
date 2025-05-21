@@ -1636,6 +1636,6 @@ public class ApplicationProperties {
    * @return url to fetch all anonymizable/"deletable" applications from model-service (database) with paging
    */
   public String getAnonymizableApplicationsUrl() {
-    return getModelServiceUrl("/applications/anonymizable?page={page}&size={size}");
+    return getModelServiceUrl("/applications/anonymizable?type={type}");
   }
 }
