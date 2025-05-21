@@ -692,10 +692,22 @@ public class ApplicationService {
 
   /**
    * Get list of anonymizable/"deletable" applications by calling model-service endpoint. Data is retrieved from model-service's database.
+   * @param pageable page request for the search
+   * @param type application type
    * @return list of anonymizable/"deletable" applications with paging
    */
-  public Page<AnonymizableApplicationJson> getAnonymizableApplications(Pageable pageable) {
-    URI url = PageRequestBuilder.fromUriString(applicationProperties.getAnonymizableApplicationsUrl(), pageable);
+  public Page<AnonymizableApplicationJson> getAnonymizableApplications(Pageable pageable, ApplicationType type) {
+    if (type == null) {
+      throw new IllegalArgumentException("ApplicationType cannot be null");
+    }
+
+    String baseUrl = applicationProperties.getAnonymizableApplicationsUrl();
+    baseUrl = UriComponentsBuilder.fromHttpUrl(baseUrl)
+      .buildAndExpand(type.name().toLowerCase())
+      .toUriString();
+
+    URI url = PageRequestBuilder.fromUriString(baseUrl, pageable);
+
     ResponseEntity<RestResponsePage<AnonymizableApplicationJson>> response = restTemplate.exchange(
       url,
       HttpMethod.GET,
