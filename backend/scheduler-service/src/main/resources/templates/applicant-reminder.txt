@@ -3,9 +3,7 @@ Hyvä asiakkaamme,
 Päätöksen ${idAndAddress} voimassaolo on päättymässä.
 Hakemukseenne merkitty päättymispäivä on ${endDate}.
 
-Tehkää ilmoitus https://www.hel.fi/static/hkr/luvat/ilmoituskaavake.pdf lisäajasta,
-työn valmistumisesta tai toiminnallisesta kunnosta osoitteeseen luvat@hel.fi.
-Luvan voimassaoloon liittyvät muutosilmoitukset tulee tehdä luvan voimassaoloaikana.
+Tehkää ilmoitus lisäajasta, työn valmistumisesta tai toiminnallisesta kunnosta järjestelmässä, jossa olette asioineet. Päätöksen voimassaoloon liittyvät muutosilmoitukset tulee tehdä päätöksen voimassaoloaikana.
 
 Jos olette jo toimittaneet ilmoituksen, tämä viesti on aiheeton ja se ei edellytä teiltä toimenpiteitä.
 
