@@ -126,24 +126,24 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "allu:build",
             "port": 3000,
-            "host": "localhost"
+            "host": "localhost",
+            "buildTarget": "allu:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "allu:build:production"
+              "buildTarget": "allu:build:production"
             },
             "hmr": {
               "hmr": true,
-              "browserTarget": "allu:build:hmr"
+              "buildTarget": "allu:build:hmr"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "allu:build"
+            "buildTarget": "allu:build"
           }
         },
         "test": {
