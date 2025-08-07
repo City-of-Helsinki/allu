@@ -15,8 +15,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "engines": {
-      "node": "12.x",
-      "npm": "6.x"
+      "node": "20.x",
+      "npm": "10.x"
     }
   },
   "private": true,
@@ -41,7 +41,7 @@
     "@ngrx/store-devtools": "^16.3.0",
     "@turf/area": "6.5.0",
     "@turf/bbox": "6.5.0",
-    "@turf/boolean-point-in-polygon":  "6.5.0",
+    "@turf/boolean-point-in-polygon": "6.5.0",
     "@turf/center": "6.5.0",
     "@turf/clean-coords": "6.5.0",
     "@turf/helpers": "6.5.0",
@@ -100,7 +100,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
-    "typescript": "4.9.5",
+    "typescript": "^5.1.6",
     "webpack-sources": "3.2.3"
   }
 }

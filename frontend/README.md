@@ -11,8 +11,8 @@ To build and deploy frontend, run `docker-compose up`.
 
 ### Without Docker
 #### Prerequisites
-- Node 12
-- Npm 6 (8 works too)
+- Node 20
+- Npm 10
 
 To build frontend, run `npm install` in this directory.
 
