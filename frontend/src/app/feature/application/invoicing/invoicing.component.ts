@@ -7,7 +7,7 @@ import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {Customer} from '@model/customer/customer';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {findTranslation} from '@util/translations';
@@ -28,7 +28,6 @@ import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
 import {ApplicationExtension} from '@model/application/type/application-extension';
-import {ApplicationType} from '@model/application/type/application-type';
 import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
 
 @Component({

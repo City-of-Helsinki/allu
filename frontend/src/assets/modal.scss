@@ -3,11 +3,11 @@
 @mixin modal-theme($theme) {
   $primary: map-get($theme, primary);
 
-  h1.mat-dialog-title {
+  h1.mat-mdc-dialog-title {
     color: mat.get-color-from-palette($primary, 500);
   }
 }
 
-.mat-dialog-actions button {
+.mat-mdc-dialog-actions button {
   margin: 0 5px;
 }

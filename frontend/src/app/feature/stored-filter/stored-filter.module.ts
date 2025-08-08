@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {StoredFilterComponent} from './stored-filter.component';
-import {StoredFilterService} from '../../service/stored-filter/stored-filter.service';
-import {MatLegacyMenuModule as MatMenuModule} from '@angular/material/legacy-menu';
+import {StoredFilterService} from '@service/stored-filter/stored-filter.service';
+import {MatMenuModule} from '@angular/material/menu';
 import {StoredFilterModalComponent} from './stored-filter-modal.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 
 @NgModule({
     imports: [

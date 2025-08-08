@@ -17,7 +17,7 @@ import {
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {filter, map, take} from 'rxjs/internal/operators';
 import {Store, select} from '@ngrx/store';
@@ -29,7 +29,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
 import {SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
-import {Observable, Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
 import {CommentType} from '@model/application/comment/comment-type';

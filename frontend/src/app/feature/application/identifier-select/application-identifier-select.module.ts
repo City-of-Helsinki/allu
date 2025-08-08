@@ -3,7 +3,7 @@ import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ApplicationIdentifierSelectComponent} from '@feature/application/identifier-select/application-identifier-select.component';
 import {ApplicationIdentifierListComponent} from '@feature/application/identifier-select/application-identifier-list.component';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {ApplicationIdentifiersComponent} from '@feature/application/identifier-select/application-identifiers.component';
 
 @NgModule({

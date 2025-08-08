@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
+import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlluCommonModule } from '@feature/common/allu-common.module';
 import { EffectsModule } from '@ngrx/effects';
 import { PruneDataEffects } from './store/prune-data.effects';
 import { PruneDataComponent } from './prune-data.component';
 import { pruneDataReducer } from './store/prune-data.reducer';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -35,4 +35,4 @@ import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/
     PruneDataComponent
   ]
 })
-export class PruneDataModule { } 
+export class PruneDataModule { }

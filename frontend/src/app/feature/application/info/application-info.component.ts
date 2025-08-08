@@ -1,11 +1,11 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {UrlUtil} from '@util/url.util';
 import {ActivatedRoute} from '@angular/router';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
-import {findTranslation} from '../../../util/translations';
+import {findTranslation} from '@util/translations';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

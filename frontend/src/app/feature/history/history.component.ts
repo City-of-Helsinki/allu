@@ -4,13 +4,13 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import * as fromProject from '../project/reducers';
 import * as fromApplication from '../application/reducers';
-import {ChangeHistoryItem} from '../../model/history/change-history-item';
-import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
+import {ChangeHistoryItem} from '@model/history/change-history-item';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {SetFieldsVisible} from './actions/history-actions';
 import {takeUntil} from 'rxjs/internal/operators';
-import {TimeUtil} from '../../util/time.util';
-import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/material/legacy-slide-toggle';
+import {TimeUtil} from '@util/time.util';
+import {StructureMeta} from '@model/application/meta/structure-meta';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'history',

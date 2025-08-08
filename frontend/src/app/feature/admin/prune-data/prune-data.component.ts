@@ -1,18 +1,29 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Application } from '@app/model/application/application';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Application} from '@app/model/application/application';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 
 import * as fromRoot from '@feature/allu/reducers';
-import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { pruneDataTabs } from './prune-data-tab';
-import { Router, ActivatedRoute } from '@angular/router';
-import { map, switchMap, takeUntil, take, filter, first } from 'rxjs/operators';
-import { MatSort, Sort } from '@angular/material/sort';
+import {Store} from '@ngrx/store';
+import {Subject} from 'rxjs';
+import {pruneDataTabs} from './prune-data-tab';
+import {ActivatedRoute, Router} from '@angular/router';
+import {filter, first, map, take, takeUntil} from 'rxjs/operators';
+import {MatSort, Sort} from '@angular/material/sort';
 import * as PruneDataActions from './store/prune-data.actions';
-import { selectAllSelected, selectPruneData, selectSomeSelected, selectSelectedIds, selectCurrentTab, selectFilteredData, selectDeleteModalVisibility, selectDeleteInProgress, selectTotalItems, selectPageIndex, selectPageSize } from './store/prune-data.selectors';
-import {MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent} from '@angular/material/legacy-paginator';
+import {
+  selectAllSelected,
+  selectCurrentTab,
+  selectDeleteInProgress,
+  selectDeleteModalVisibility,
+  selectFilteredData,
+  selectPageIndex,
+  selectPageSize,
+  selectSelectedIds,
+  selectSomeSelected,
+  selectTotalItems
+} from './store/prune-data.selectors';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 
 
 interface ColumnConfig {
@@ -26,8 +37,8 @@ interface ColumnConfig {
   styleUrls: ['./prune-data.component.scss']
 })
 export class PruneDataComponent implements OnInit, OnDestroy {
-  title = 'Tiedon poisto'
-  filteredDataSource$ = this.store.select(selectFilteredData)
+  title = 'Tiedon poisto';
+  filteredDataSource$ = this.store.select(selectFilteredData);
   someSelected$ = this.store.select(selectSomeSelected);
   allSelected$ = this.store.select(selectAllSelected);
   selectedIds$ = this.store.select(selectSelectedIds);
@@ -40,8 +51,8 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   tabs = pruneDataTabs;
 
   hasSelectedItems$ = this.selectedIds$.pipe(
-    map(selectedIds => selectedIds.length > 0))
-  
+    map(selectedIds => selectedIds.length > 0));
+
   userColumns: string[] = ['selected', 'name'];
   applicationColumns: string[] = ['selected', 'applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'];
 
@@ -49,8 +60,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [];
   currentTab$ = this.route.params.pipe(
     map(params => {
-      const tab = params['tab'];
-      return tab;
+      return params['tab'];
     })
   );
 
@@ -73,11 +83,11 @@ export class PruneDataComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(tab => {
         this.store.dispatch(PruneDataActions.setCurrentTab({ tab }));
-        if (tab == 'user_data') this.displayedColumns = this.userColumns;
-        if (tab != 'user_data') this.displayedColumns = this.applicationColumns;
+        if (tab === 'user_data') { this.displayedColumns = this.userColumns; }
+        if (tab !== 'user_data') { this.displayedColumns = this.applicationColumns; }
         this.loadData(tab, 0, 10);
     });
-    
+
     this.sort?.sortChange
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -96,9 +106,9 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
   loadData(tab: string, page: number, size: number, sortField?: string, sortDirection?: string): void {
-    this.store.dispatch(PruneDataActions.fetchAllData({ 
-      tab, 
-      page, 
+    this.store.dispatch(PruneDataActions.fetchAllData({
+      tab,
+      page,
       size,
       sortField,
       sortDirection
@@ -130,8 +140,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
 
   onSort(sort: Sort): void {
     const { active, direction } = sort;
-    
-    
+
     if (!direction) {
       this.currentTab$.pipe(take(1)).subscribe(tab => {
         this.loadData(tab, 0, this.paginator.pageSize);
@@ -163,7 +172,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
 
   handleDelete(): void {
     this.selectedIds$.pipe(first()).subscribe((ids) => {
-      this.store.dispatch(PruneDataActions.deleteData({ids}))
+      this.store.dispatch(PruneDataActions.deleteData({ids}));
     });
   }
 
@@ -172,5 +181,4 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     this.loadData(tab, event.pageIndex, event.pageSize);
     });
   }
-
 }
