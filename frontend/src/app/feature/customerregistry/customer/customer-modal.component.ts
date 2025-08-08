@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
-import {findTranslation} from '../../../util/translations';
+import {findTranslation} from '@util/translations';
 import {NotificationService} from '../../notification/notification.service';
-import {CustomerService} from '../../../service/customer/customer.service';
+import {CustomerService} from '@service/customer/customer.service';
 
 export const CUSTOMER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
 

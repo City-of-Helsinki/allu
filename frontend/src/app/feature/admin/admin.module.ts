@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatCardModule} from '@angular/material/card';
 import {MatExpansionModule} from '@angular/material/expansion';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
-import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';

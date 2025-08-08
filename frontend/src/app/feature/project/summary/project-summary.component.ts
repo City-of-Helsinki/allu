@@ -10,7 +10,7 @@ import {MapComponent} from '@feature/map/map.component';
 import {Comment} from '@model/application/comment/comment';
 import {filter, takeUntil, takeWhile} from 'rxjs/operators';
 import {ChangeHistoryItem} from '@model/history/change-history-item';
-import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/material/legacy-slide-toggle';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 import {ShowBasicInfo} from '../actions/project-actions';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 import {MapLayer} from '@service/map/map-layer';
@@ -73,7 +73,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
           this.store.dispatch(new SearchSuccess(ActionTargetType.Project, applications));
         }
       });
-    }, 0)
+    }, 0);
 
   }
 

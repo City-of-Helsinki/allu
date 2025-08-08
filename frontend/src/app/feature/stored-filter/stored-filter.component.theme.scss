@@ -16,7 +16,7 @@
     background: mat.get-color-from-palette($allu-primary, 50);
   }
 
-  .allu-menu-panel .allu-menu-item .mat-menu-item:hover {
+  .allu-menu-panel .allu-menu-item .mat-mdc-menu-item:hover {
     background: inherit;
   }
 }

@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {StoredFilterType} from '../../model/user/stored-filter-type';
-import {UserService} from '../../service/user/user-service';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {UserService} from '@service/user/user-service';
 import {Observable, Subject} from 'rxjs';
-import {StoredFilter} from '../../model/user/stored-filter';
+import {StoredFilter} from '@model/user/stored-filter';
 import {NotificationService} from '../notification/notification.service';
-import {User} from '../../model/user/user';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {User} from '@model/user/user';
+import {MatDialog} from '@angular/material/dialog';
 import {STORED_FILTER_MODAL_CONFIG, StoredFilterModalComponent} from './stored-filter-modal.component';
-import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {catchError, filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 
 @Component({

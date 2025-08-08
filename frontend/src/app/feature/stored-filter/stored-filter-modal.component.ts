@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
-import {StoredFilterType} from '../../model/user/stored-filter-type';
-import {StoredFilter} from '../../model/user/stored-filter';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {StoredFilter} from '@model/user/stored-filter';
 
 export const STORED_FILTER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
 

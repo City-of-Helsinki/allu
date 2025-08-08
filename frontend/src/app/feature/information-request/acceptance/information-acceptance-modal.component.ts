@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
@@ -17,7 +17,7 @@ import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequest} from '@model/information-request/information-request';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
-import {CloseRequest, LoadActiveRequest, LoadRequest} from '@feature/information-request/actions/information-request-actions';
+import {CloseRequest, LoadActiveRequest} from '@feature/information-request/actions/information-request-actions';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {map, switchMap, take} from 'rxjs/operators';
@@ -77,7 +77,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
       this.newInfo = this.data.newInfo;
       this.updatedFields = this.data.updatedFields;
       this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
-      this.invoicingCustomerUpdated = this.updatedFields.includes(InformationRequestFieldKey["INVOICING_CUSTOMER"]);
+      this.invoicingCustomerUpdated = this.updatedFields.includes(InformationRequestFieldKey['INVOICING_CUSTOMER']);
 
       if (this.data.informationRequest) {
         this.requestDataAvailable = this.data.informationRequest.fields.length > 0;

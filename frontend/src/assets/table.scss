@@ -7,7 +7,7 @@
     color: mat.get-color-from-palette($primary, 500);
   }
 
-  .allu-table-header.mat-header-row .mat-header-cell {
+  .allu-table-header.mat-mdc-header-row .mat-mdc-header-cell {
     color: mat.get-color-from-palette($primary, 500);
   }
 
@@ -20,7 +20,7 @@
     align-items: center;
 }
 
-.allu-table-header.mat-header-row .mat-header-cell {
+.allu-table-header.mat-mdc-header-row .mat-mdc-header-cell {
   font-size: 15px;
   font-weight: 700;
 }

@@ -1,10 +1,10 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
 import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
-import {Subject} from 'rxjs/index';
+import {Subject} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ApplicationStatus} from '@model/application/application-status';
 import {RequiredTasks} from '@model/application/required-tasks';

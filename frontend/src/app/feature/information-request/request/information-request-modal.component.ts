@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {InformationRequest} from '@model/information-request/information-request';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';

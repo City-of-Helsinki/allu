@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
-import {Deposit} from '../../../../model/application/invoice/deposit';
-import {EnumUtil} from '../../../../util/enum.util';
-import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Deposit} from '@model/application/invoice/deposit';
+import {EnumUtil} from '@util/enum.util';
+import {DepositStatusType} from '@model/application/invoice/deposit-status-type';
 
 export const DEPOSIT_MODAL_CONFIG = {
   width: '800PX',

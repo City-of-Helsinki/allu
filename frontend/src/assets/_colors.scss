@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 
-@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());
-@include mat.legacy-core();
+@include mat.typography-hierarchy(mat.define-typography-config());
+@include mat.core();
 
 $black-87-opacity: rgba(black, 0.87);
 $black-50-opacity: rgba(black, 0.50);

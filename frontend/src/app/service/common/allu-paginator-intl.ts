@@ -1,6 +1,6 @@
-import {MatLegacyPaginatorIntl as MatPaginatorIntl} from '@angular/material/legacy-paginator';
+import {MatPaginatorIntl} from '@angular/material/paginator';
 import {Injectable} from '@angular/core';
-import {findTranslation} from '../../util/translations';
+import {findTranslation} from '@util/translations';
 
 @Injectable()
 export class AlluPaginatorIntl extends MatPaginatorIntl {

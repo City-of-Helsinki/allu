@@ -11,7 +11,7 @@ import {
   QueryList,
   ViewEncapsulation
 } from '@angular/core';
-import {MatLegacyError as MatError} from '@angular/material/legacy-form-field';
+import {MatError} from '@angular/material/form-field';
 
 @Directive({
   selector: 'input[inputBoxInput], select[inputBoxInput], mat-select[inputBoxInput], button[inputBoxInput], textarea[inputBoxInput]'

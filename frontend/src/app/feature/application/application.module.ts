@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
-import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
-import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
+import {MatCardModule} from '@angular/material/card';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -41,7 +41,7 @@ import {InvoicingModule} from './invoicing/invoicing.module';
 import {RecurringComponent} from './info/recurring/recurring.component';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {SupervisionModule} from './supervision/supervision.module';
-import {ApplicationDraftService} from '../../service/application/application-draft.service';
+import {ApplicationDraftService} from '@service/application/application-draft.service';
 import {ApplicationCommentsComponent} from './comment/application-comments.component';
 import {StoreModule} from '@ngrx/store';
 import {reducersProvider, reducersToken} from './reducers';

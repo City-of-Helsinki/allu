@@ -4,7 +4,7 @@ import {ToolbarComponent} from './toolbar.component';
 import {NavbarComponent} from './navbar/navbar.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {ApplicationBasketModule} from '../project/application-basket/application-basket.module';
-import {MatLegacyChipsModule as MatChipsModule} from '@angular/material/legacy-chips';
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   imports: [

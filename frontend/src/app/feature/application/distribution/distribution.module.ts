@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyRadioModule as MatRadioModule} from '@angular/material/legacy-radio';
+import {MatRadioModule} from '@angular/material/radio';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {DistributionComponent} from './distribution.component';
 import {DistributionListComponent} from './distribution-list/distribution-list.component';

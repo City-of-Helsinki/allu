@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {EffectsModule} from '@ngrx/effects';
 import {InformationRequestEffects} from './effects/information-request-effects';
 import {InformationRequestService} from '@service/application/information-request.service';
-import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {InformationAcceptanceModalComponent} from './acceptance/information-acceptance-modal.component';

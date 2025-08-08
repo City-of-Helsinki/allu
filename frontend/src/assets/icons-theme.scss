@@ -12,7 +12,7 @@
     color: map-get($success, 500);
   }
 
-  .mat-icon-button[disabled][disabled] {
+  .mat-mdc-icon-button[disabled][disabled] {
     color: $disabled-text;
   }
 }
