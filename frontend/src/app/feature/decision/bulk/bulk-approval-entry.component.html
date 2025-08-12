@@ -14,7 +14,7 @@
     </ng-template>
   </div>
   <div fxFlex="none" *ngIf="entryStatus" class="entry-status">
-    <mat-spinner *ngIf="entryStatus.status==='PENDING'" diameter="24"></mat-spinner>
+    <mat-progress-spinner *ngIf="entryStatus.status==='PENDING'" diameter="24" mode="indeterminate"></mat-progress-spinner>
     <mat-icon *ngIf="entryStatus.status==='SUCCESS'" class="icon-middle icon-success">check_circle</mat-icon>
     <mat-icon *ngIf="entryStatus.status==='FAIL'" color="warn" class="icon-middle">error</mat-icon>
   </div>

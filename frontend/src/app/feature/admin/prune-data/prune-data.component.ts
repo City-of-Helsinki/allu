@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Application} from '@app/model/application/application';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 
@@ -116,7 +115,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
 
-  trackById(index: number, item: Application) {
+  trackById<T extends { id: number }>(index: number, item: T): number {
     return item.id;
   }
 

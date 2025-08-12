@@ -1,5 +1,5 @@
 <div *ngIf="loading; else areaList">
-  <mat-spinner></mat-spinner>
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>
 <ng-template #areaList>
   <mat-action-list>

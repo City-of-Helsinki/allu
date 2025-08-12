@@ -1,15 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 
-import {DefaultText} from '../../../model/application/cable-report/default-text';
-import {DefaultTextType} from '../../../model/application/default-text-type';
-import {translations} from '../../../util/translations';
-import {StringUtil} from '../../../util/string.util';
+import {DefaultText} from '@model/application/cable-report/default-text';
+import {DefaultTextType} from '@model/application/default-text-type';
+import {translations} from '@util/translations';
+import {StringUtil} from '@util/string.util';
 import {NotificationService} from '../../notification/notification.service';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {NumberUtil} from '../../../util/number.util';
-import {DefaultTextService} from '../../../service/application/default-text.service';
+import {ApplicationType} from '@model/application/type/application-type';
+import {NumberUtil} from '@util/number.util';
+import {DefaultTextService} from '@service/application/default-text.service';
 import {map} from 'rxjs/internal/operators';
 
 export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '800px'};

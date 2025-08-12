@@ -111,7 +111,7 @@
   <div fxFlex>
     <div class="mat-elevation-z8 data-table data-table-with-paging">
       <div class="loading-shade" *ngIf="dataSource.loading">
-        <mat-spinner></mat-spinner>
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
       </div>
       <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
         <ng-container matColumnDef="selected">

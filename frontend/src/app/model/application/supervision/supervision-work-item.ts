@@ -2,7 +2,7 @@ import {SupervisionTaskType} from './supervision-task-type';
 import {ApplicationStatus} from '../application-status';
 import {User} from '../../user/user';
 import {PostalAddress} from '../../common/postal-address';
-import {BackendUser} from '../../../service/backend-model/backend-user';
+import {BackendUser} from '@service/backend-model/backend-user';
 
 export class SupervisionWorkItem {
   constructor(

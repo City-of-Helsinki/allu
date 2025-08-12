@@ -11,7 +11,7 @@
 }
 
 .details-row {
-  min-height: 0px;
+  min-height: 0;
 }
 
 .status-text {
@@ -19,11 +19,11 @@
   color: mat.get-color-from-palette($allu-primary, 500);
 }
 
-.mat-cell:first-of-type .details-cell {
+.mat-mdc-cell:first-of-type .details-cell {
   padding-left: 42px;
 }
 
-.mat-cell:not(:first-of-type) .details-cell {
+.mat-mdc-cell:not(:first-of-type) .details-cell {
   padding-left: 2px;
 }
 
@@ -41,8 +41,8 @@
   color: mat.get-color-from-palette($allu-primary, 500);
 }
 
-.mat-chip.slim-chip {
-  margin: 0px 2px;
+.mat-mdc-chip.slim-chip {
+  margin: 0 2px;
   line-height: 1.43;
   font-size: 14px;
 }

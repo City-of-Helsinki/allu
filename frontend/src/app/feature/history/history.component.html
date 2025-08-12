@@ -1,6 +1,6 @@
 <allu-card class="full-width">
   <div class="centered-container" *ngIf="loading$ | async">
-    <mat-spinner></mat-spinner>
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
   <div fxLayout="row" fxLayoutAlign="space-between" class="history-header-row">
     <div fxFlex="auto">

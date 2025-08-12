@@ -17,7 +17,7 @@
         </mat-card-title>
         <mat-card-content>
           <div class="container-centered-container" *ngIf="customerLoading$ | async">
-            <mat-spinner></mat-spinner>
+            <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
           </div>
           <customer-info [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true" [excludeInvoicingOnlyCustomers]="false"
                          (customerChange)="invoiceRecipientChange($event)"></customer-info>

@@ -4,12 +4,12 @@ import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/f
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs/index';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CONTACT_MODAL_CONFIG, ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {NumberUtil} from '@util/number.util';
 import {isEqualWithSkip} from '@util/object.util';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';

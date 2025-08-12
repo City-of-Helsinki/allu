@@ -42,11 +42,11 @@
                 {{'prunedata.columns.' + column | translation}}
               </ng-template>
             </mat-header-cell>
-            
+
             <mat-cell *matCellDef="let row">
               <ng-container [ngSwitch]="column">
                 <ng-container *ngSwitchCase="'selected'">
-                  <mat-checkbox 
+                  <mat-checkbox
                     [checked]="isSelected(row.id) | async"
                     (change)="checkSingle(row.id)">
                   </mat-checkbox>
@@ -108,7 +108,7 @@
 
 <div *ngIf="deleteInProgress | async" class="deletion-modal">
   <div class="deletion-content">
-    <mat-spinner diameter="30"></mat-spinner>
+    <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
     <p>Tietoja anonymisoidaan</p>
   </div>
 </div>

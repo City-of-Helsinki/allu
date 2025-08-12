@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
-import {Comment} from '../../model/application/comment/comment';
+import {Comment} from '@model/application/comment/comment';
 import {CommentComponent} from './comment.component';
 
 @Component({

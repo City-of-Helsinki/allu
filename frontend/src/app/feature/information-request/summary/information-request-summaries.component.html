@@ -1,6 +1,6 @@
 <div>
   <div *ngIf="loading$ | async; else summaryList" class="centered-container">
-    <mat-spinner></mat-spinner>
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
 
   <ng-template #summaryList>

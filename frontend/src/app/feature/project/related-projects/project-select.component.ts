@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
-import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
+import {MatOption} from '@angular/material/core';
 import {debounceTime, takeUntil} from 'rxjs/internal/operators';
-import {Project} from '../../../model/project/project';
+import {Project} from '@model/project/project';
 
 @Component({
   selector: 'project-select',

@@ -1,7 +1,7 @@
 <allu-card>
   <mat-card-content>
     <div class="centered-container" *ngIf="loading">
-      <mat-spinner></mat-spinner>
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
     <ul class="comment-list">
       <li *ngFor="let comment of comments">
