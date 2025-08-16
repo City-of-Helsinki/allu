@@ -297,7 +297,7 @@
           Työmaajärjestelyjä sekä kaivutöiden ja liikennejärjestelyjen suorittamista koskevat tekniset ohjeet ja määräykset on annettu
           tässä päätöksessä sekä ohjeissa ”Yleisten alueiden käyttö, tilapäiset liikennejärjestelyt ja katutyöt” ja ”Tilapäiset
           liikennejärjestelyt katu- ja yleisillä alueilla”. Ohjeista lisätietoa Helsingin kaupungin nettisivuilla osoitteessa
-          https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/katutyoluvat/.
+          https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/kaduilla-ja-puistoissa-tehtavat-tyot.
         </p>
 
         <p class="space-above">
@@ -371,7 +371,7 @@
         </p>
 
         <p class="space-above">
-          2. Muutokset vuorauksenn tulee ilmoittaa etukäteen kirjallisena, jälkikäteen tehtyjä muutosilmoituksia
+          2. Muutokset vuoraukseen tulee ilmoittaa etukäteen kirjallisena, jälkikäteen tehtyjä muutosilmoituksia
           ei käsitellä.
         </p>
 

@@ -256,7 +256,7 @@
           <li>Työalue on ennallistettava hyväksytysti työtä edeltäneeseen kuntoon työajan kuluessa.</li>
           <li>Jos työn kesto muuttuu alkuperäiseen ilmoitukseen nähden, on työstä vastaavan ilmoitettava
             päivämäärämuutoksesta, valmistumisesta tai lisäaikatarpeesta kaupungille viimeistään seuraavana
-            arkipäivänä (https://www.hel.fi/static/hkr/luvat/ilmoituskaavake.pdf).</li>
+            arkipäivänä.</li>
           <li>Työstä vastaavan on ilmoitettava talvityökautena työalueen toiminnallisesta kunnosta kaupungille
             viimeistään seuraavana arkipäivänä. Jos ilmoitusta toiminnallisesta kunnosta ei tehdä, jatkuu
             alueenkäyttömaksun veloitus.</li>
@@ -277,7 +277,7 @@
           ja määräykset on annettu tässä päätöksessä sekä ohjeessa ” Kaivutyöt ja tilapäiset liikennejärjestelyt
           pääkaupunkiseudulla” ja ”Tilan varaaminen siirtokehotuskyltein”. Edellä mainituissa ohjeissa annettuja
           määräyksiä on noudatettava soveltuvin osin. Ohjeet löytyvät Helsingin kaupungin nettisivuilla osoitteessa
-          https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/kaduilla-ja-puistoissa-tehtavat-tyot
+          https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/kaduilla-ja-puistoissa-tehtavat-tyot
           kohdasta ”Noudata näitä työohjeita”.
         </p>
         <p class="space-above">

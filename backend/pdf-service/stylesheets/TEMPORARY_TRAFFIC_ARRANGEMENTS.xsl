@@ -177,7 +177,7 @@
           Liikennejärjestelyjen suorittamista koskevat tekniset ohjeet ja määräykset on annettu tässä päätöksessä
           sekä ohjeissa ”Yleisten alueiden käyttö, tilapäiset liikennejärjestelyt ja katutyöt” ja
           ”Tilapäiset liikennejärjestelyt katu- ja yleisillä alueilla”. Ohjeista lisätietoa Helsingin kaupungin
-          nettisivuilla osoitteessa https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/katutyoluvat/.
+          nettisivuilla osoitteessa https://www.hel.fi/fi/kaupunkiymparisto-ja-liikenne/tontit-ja-rakentamisen-luvat/tyomaan-luvat-ja-ohjeet/kaduilla-ja-puistoissa-tehtavat-tyot.
         </p>
       </section>
 
