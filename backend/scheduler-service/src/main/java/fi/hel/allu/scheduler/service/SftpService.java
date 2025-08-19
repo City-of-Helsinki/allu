@@ -20,6 +20,21 @@ public class SftpService {
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   /**
+   * Wrapper-class to control both Session and ChannelSftp.
+   */
+  private record SftpConnection(Session session, ChannelSftp channel) {
+
+    void disconnect() {
+      if (channel != null && channel.isConnected()) {
+        channel.disconnect();
+      }
+      if (session != null && session.isConnected()) {
+        session.disconnect();
+      }
+    }
+  }
+
+  /**
    * Uploads all files from given local directory to SFTP server directory. Moves
    * uploaded files to local archive directory.
    *
@@ -33,17 +48,19 @@ public class SftpService {
   public boolean uploadFiles(SFTPSettings sftpSettings, String localDirectory, String localArchiveDirectory,
                              String remoteDirectory) {
     logger.info("Start uploading sftp");
+    SftpConnection conn = null;
     try {
-      ChannelSftp channelSftp = createSession(sftpSettings);
+      conn = createSession(sftpSettings);
+      ChannelSftp channelSftp = conn.channel();
+
       File sourceDir = new File(localDirectory);
-      for (File file : Objects.requireNonNull(sourceDir.listFiles())){
-        if(file.isFile()) {
+      for (File file : Objects.requireNonNull(sourceDir.listFiles())) {
+        if (file.isFile()) {
           channelSftp.put(file.getAbsolutePath(), remoteDirectory + file.getName());
           Files.move(file, new File(localArchiveDirectory, file.getName()));
         }
       }
-      channelSftp.exit();
-    }  catch (JSchException e) {
+    } catch (JSchException e) {
       logger.error("Failed jsch", e);
       return false;
     } catch (SftpException e) {
@@ -52,6 +69,7 @@ public class SftpService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     } finally {
+      if (conn != null) conn.disconnect();
       logger.info("Uploading file through SFTP ended");
     }
     return true;
@@ -71,31 +89,35 @@ public class SftpService {
   public boolean downloadFiles(SFTPSettings sftpSettings, String remoteDirectory, String remoteArchiveDirectory,
                                String localDirectory) {
     logger.info("Start downloading sftp");
+    SftpConnection conn = null;
     try {
-      ChannelSftp channelSftp = createSession(sftpSettings);
+      conn = createSession(sftpSettings);
+      ChannelSftp channelSftp = conn.channel();
+
       List<String> list = channelSftp.ls(remoteDirectory).stream()
-          .filter(e -> !e.getAttrs().isDir())
-          .map(ChannelSftp.LsEntry::getFilename)
-          .collect(Collectors.toList());
-      for (String file : list){
-        channelSftp.get(remoteDirectory+file, localDirectory+"/"+file);
+        .filter(e -> !e.getAttrs().isDir())
+        .map(ChannelSftp.LsEntry::getFilename)
+        .collect(Collectors.toList());
+
+      for (String file : list) {
+        channelSftp.get(remoteDirectory + file, localDirectory + "/" + file);
         channelSftp.rename(channelSftp.getHome()+file, channelSftp.getHome() + remoteArchiveDirectory
-            + "/" + file);
+          + "/" + file);
       }
-      channelSftp.exit();
-    }  catch (JSchException e) {
+    } catch (JSchException e) {
       logger.error("Failed jsch", e);
       return false;
     } catch (SftpException e) {
       logger.error("Failed connection", e);
       return false;
-    }finally {
+    } finally {
+      if (conn != null) conn.disconnect();
       logger.info("Downloading file through SFTP ended");
     }
     return true;
   }
 
-  private ChannelSftp createSession(SFTPSettings sftpSettings) throws JSchException {
+  private SftpConnection createSession(SFTPSettings sftpSettings) throws JSchException {
     JSch jsch = new JSch();
     jsch.setKnownHosts(new ByteArrayInputStream(sftpSettings.getKnownHosts().getBytes()));
     Session jschSession = jsch.getSession(sftpSettings.getUser(), sftpSettings.getHost(), sftpSettings.getPort());
@@ -108,6 +130,6 @@ public class SftpService {
     logger.info("Is connected: {}", jschSession.isConnected());
     ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
     channelSftp.connect();
-    return channelSftp;
+    return new SftpConnection(jschSession, channelSftp);
   }
 }

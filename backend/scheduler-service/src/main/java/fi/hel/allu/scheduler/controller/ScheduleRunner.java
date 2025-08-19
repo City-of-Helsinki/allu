@@ -73,14 +73,26 @@ public class ScheduleRunner {
   @Scheduled(cron = "${invoice.cronstring}")
   public void sendInvoices() {
     if (invoicingService.isInvoiceSendingEnabled()) {
-      invoicingService.sendInvoices();
+      logger.info("Invoice sending job started.");
+      try {
+        invoicingService.sendInvoices();
+        logger.info("Invoice sending job completed successfully.");
+      } catch (Exception e) {
+        logger.error("Invoice sending job failed.", e);
+      }
     }
   }
 
   @Scheduled(cron = "${customer.update.cronstring}")
   public void updateCustomers() {
     if (sapCustomerService.isUpdateEnabled()) {
-      sapCustomerService.updateCustomers();
+      logger.info("Customer update job started.");
+      try {
+        sapCustomerService.updateCustomers();
+        logger.info("Customer update job completed successfully.");
+      } catch (Exception e) {
+        logger.error("Customer update job failed.", e);
+      }
     }
   }
 
