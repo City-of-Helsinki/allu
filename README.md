@@ -16,7 +16,7 @@ Governed public areas include:
 It is recommended to open Allu project into three projects when you develop: backend, frontend and deployment.
 
 ### Requirements
-- Node.js 16 or newer version
+- Node.js 16
 - Java 17
 - Maven 3.9.6 or newer version
   - add settings.xml file to path ~/.m2/. Example and artifactory credentials: https://helsinkisolutionoffice.atlassian.net/wiki/x/BwC72QE
