@@ -76,7 +76,7 @@ public class ScheduleRunner {
       logger.info("Invoice sending job started.");
       try {
         invoicingService.sendInvoices();
-        logger.info("Invoice sending job completed successfully.");
+        logger.info("Invoice sending job ended.");
       } catch (Exception e) {
         logger.error("Invoice sending job failed.", e);
       }
@@ -89,7 +89,7 @@ public class ScheduleRunner {
       logger.info("Customer update job started.");
       try {
         sapCustomerService.updateCustomers();
-        logger.info("Customer update job completed successfully.");
+        logger.info("Customer update job ended.");
       } catch (Exception e) {
         logger.error("Customer update job failed.", e);
       }

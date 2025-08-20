@@ -47,7 +47,7 @@ public class SftpService {
    */
   public boolean uploadFiles(SFTPSettings sftpSettings, String localDirectory, String localArchiveDirectory,
                              String remoteDirectory) {
-    logger.info("Start uploading sftp");
+    logger.info("Start uploading SFTP");
     SftpConnection conn = null;
     try {
       conn = createSession(sftpSettings);
@@ -64,7 +64,7 @@ public class SftpService {
       logger.error("Failed jsch", e);
       return false;
     } catch (SftpException e) {
-      logger.error("Failed connection", e);
+      logger.error("Failed SFTP connection", e);
       return false;
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -88,7 +88,7 @@ public class SftpService {
    */
   public boolean downloadFiles(SFTPSettings sftpSettings, String remoteDirectory, String remoteArchiveDirectory,
                                String localDirectory) {
-    logger.info("Start downloading sftp");
+    logger.info("Start downloading SFTP");
     SftpConnection conn = null;
     try {
       conn = createSession(sftpSettings);
@@ -108,7 +108,7 @@ public class SftpService {
       logger.error("Failed jsch", e);
       return false;
     } catch (SftpException e) {
-      logger.error("Failed connection", e);
+      logger.error("Failed SFTP connection", e);
       return false;
     } finally {
       if (conn != null) conn.disconnect();
