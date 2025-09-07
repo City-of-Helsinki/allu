@@ -14,14 +14,13 @@ export const toggleSelectAll = createAction(
 export const toggleSelectItem = createAction(
   '[Prune Data] Toggle Select Item',
   props<{ id: number, tab: string }>()
-); 
+);
 
 export const fetchAllData = createAction(
   '[PruneData] Fetch All Data',
   props<{ tab: string, page?: number, size?: number, sortField?: string, sortDirection?: string }>()
   );
-  
-  
+
   export const fetchAllDataSuccess = createAction(
   '[PruneData] Fetch All Data Success',
   props<{ data: PruneDataItem[], totalItems?: number }>()
@@ -31,7 +30,7 @@ export const fetchAllDataFailure = createAction(
     '[PruneData] Fetch All Data Failure',
     props<{ error: string }>()
   );
-  
+
 export const deleteData = createAction(
     '[PruneData] Delete Data',
     props<{ ids: number[] }>()
@@ -41,10 +40,10 @@ export const deleteDataSuccess = createAction(
     '[PruneData] Delete Data Success',
     props<{ ids: number[] }>()
 );
-  
+
 export const deleteDataFailure = createAction(
     '[PruneData] Delete Data Failure',
-    props<{ error: string }>()
+    props<{ ids: number[]; error: any }>()
 );
 
 export const tableSortChange = createAction(
@@ -64,4 +63,4 @@ export const deleteModalVisibility = createAction(
 export const updatePagination = createAction(
   '[PruneData] Update Pagination',
   props<{ pageIndex: number; pageSize: number; data: PruneDataItem[] }>()
-)
+);
