@@ -78,8 +78,8 @@ public class SapSpec {
               assertEquals(invoiceRow.getQuantity(), quantity, 0.000001);
             });
 
-            it("Has the pre-set order item number", () -> {
-              assertEquals("2831300000", lineItem.getOrderItemNumber());
+            it("Has the pre-set project number", () -> {
+              assertEquals("2830K002831300", lineItem.getWbsElement());
             });
 
             it("Has the requested material code", () -> {

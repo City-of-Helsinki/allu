@@ -32,7 +32,7 @@ public class AlluMapper {
   /*
    * Allu-specific constant values for various SAP fields:
    */
-  private static final String ALLU_ORDER_ITEM_NUMBER = "2831300000";
+  private static final String ALLU_PROJECT_NUMBER = "2830K002831300";
   private static final String ALLU_SENDER_ID = "ID341";
   // Civil law orders ("Yksityisoikeudellinen tilauslaji")
   private static final String ALLU_ORDER_TYPE_CIVIL = "ZTY1";
@@ -95,7 +95,7 @@ public class AlluMapper {
     storeExplanation(lineItem, invoiceRow.getExplanation());
     // Note: SAP's "Net price" is actually unit price
     lineItem.setNetPrice(String.format("%.02f", (double) invoiceRow.getUnitPrice() / 100));
-    lineItem.setOrderItemNumber(ALLU_ORDER_ITEM_NUMBER);
+    lineItem.setWbsElement(ALLU_PROJECT_NUMBER);
     lineItem.setQuantity(String.format("%.02f", invoiceRow.getQuantity()));
     lineItem.setUnit(mapToSapUnit(invoiceRow.getUnit()));
     lineItem.setMaterial(sapMaterial);
