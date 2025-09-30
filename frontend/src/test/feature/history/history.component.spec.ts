@@ -1,5 +1,5 @@
 import {Component, DebugElement, Input} from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {HistoryComponent} from '@feature/history/history.component';
 import {By} from '@angular/platform-browser';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
@@ -13,15 +13,12 @@ import {Load, LoadSuccess} from '@feature/history/actions/history-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {StructureMeta} from '@model/application/meta/structure-meta';
-import { MatLegacySpinner as MatSpinner } from '@angular/material/legacy-progress-spinner';
-import { MatLegacySlideToggle as MatSlideToggle } from '@angular/material/legacy-slide-toggle';
-import {FieldChange} from '@model/history/field-change';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 function createChangeHistoryItem(name: string, changeTime: Date): ChangeHistoryItem {
   const item = new ChangeHistoryItem();
   item.user = new User(1, 'userName');
-  const itemInfo = new ChangeHistoryItemInfo(1, name);
-  item.info = itemInfo;
+  item.info = new ChangeHistoryItemInfo(1, name);
   item.changeSpecifier = 'someSpecifier';
   item.changeType = 'changeType';
   item.changeTime = changeTime;
@@ -53,9 +50,11 @@ const changeHistory: ChangeHistoryItem[] = [
 @Component({
   selector: 'test-host',
   template: `
-    <history [targetType]="'Application'"></history>
+    <history [targetType]="ActionTargetType.Application"></history>
   `
-}) class MockHostComponent {}
+}) class MockHostComponent {
+  protected readonly ActionTargetType = ActionTargetType;
+}
 
 @Component({
   selector: 'history-item-group',
@@ -108,7 +107,7 @@ describe('HistoryComponent', () => {
   it('should show loading indicator when loading history', () => {
     store.dispatch(new Load(ActionTargetType.Application));
     fixture.detectChanges();
-    expect(de.query(By.directive(MatSpinner))).toBeDefined();
+    expect(de.query(By.directive(MatProgressSpinner))).toBeDefined();
   });
 
   it('should show grouped history items by time period', () => {

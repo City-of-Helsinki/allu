@@ -1,12 +1,13 @@
 import {Component, DebugElement, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {UntypedFormGroup, FormsModule} from '@angular/forms';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {AlluCommonModule} from '../../../app/feature/common/allu-common.module';
-import {CommentListComponent} from '../../../app/feature/comment/comment-list.component';
-import {CommentType} from '../../../app/model/application/comment/comment-type';
-import {Comment} from '../../../app/model/application/comment/comment';
-import {BehaviorSubject} from 'rxjs/index';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {CommentListComponent} from '@feature/comment/comment-list.component';
+import {CommentType} from '@model/application/comment/comment-type';
+import {Comment} from '@model/application/comment/comment';
+import {BehaviorSubject} from 'rxjs';
 
 const COMMENT_ONE = new Comment(
   1,
@@ -24,14 +25,15 @@ const COMMENT_TWO = new Comment(
 
 @Component({
   selector: 'parent',
-  template: `<comment-list [comments]="comments$.asObservable() | async"
-                       (save)="save($event)"
-                       (remove)="remove($event)"></comment-list>`
+  template: `<comment-list [comments]="comments$ | async"
+                           (save)="save($event)"
+                           (remove)="remove($event)"></comment-list>`
 })
 class MockParentComponent {
   comments$ = new BehaviorSubject<Comment[]>([]);
 
-  @ViewChild(CommentListComponent, {static: true}) commentsComponent: CommentListComponent;
+  @ViewChild(CommentListComponent, { static: true })
+  commentsComponent!: CommentListComponent;
 
   save(comment: Comment): void {}
   remove(comment: Comment): void {}
@@ -57,14 +59,17 @@ describe('CommentListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, FormsModule],
+      imports: [
+        CommonModule,
+        FormsModule,
+        AlluCommonModule
+      ],
       declarations: [
         MockParentComponent,
         CommentListComponent,
         MockCommentComponent
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -77,28 +82,25 @@ describe('CommentListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should show comments', () => {
-    parentComp.comments$.next([COMMENT_ONE, COMMENT_TWO]);
-    fixture.detectChanges();
-    fixture.whenStable().then(val => {
-      expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
-    });
+  it('should show comments', async () => {
+    await fixture.whenStable();
+    expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
   });
 
   it('should re-emit save', fakeAsync(() => {
     spyOn(parentComp, 'save');
     const commentComp = comp.children.first;
-    const comment = new Comment(1);
-    commentComp.onSave.emit(new Comment(1));
-    expect(parentComp.save).toHaveBeenCalledWith(comment);
+    const emittedComment = new Comment(1);
+    commentComp.onSave.emit(emittedComment);
+    expect(parentComp.save).toHaveBeenCalledWith(emittedComment);
   }));
 
   it('should re-emit remove', () => {
     spyOn(parentComp, 'remove');
     const commentComp = comp.children.first;
-    const comment = new Comment(1);
-    commentComp.onRemove.emit(new Comment(1));
-    expect(parentComp.remove).toHaveBeenCalledWith(comment);
+    const emittedComment = new Comment(1);
+    commentComp.onRemove.emit(emittedComment);
+    expect(parentComp.remove).toHaveBeenCalledWith(emittedComment);
   });
 
   it('should tell if any of the comments are marked as dirty', () => {

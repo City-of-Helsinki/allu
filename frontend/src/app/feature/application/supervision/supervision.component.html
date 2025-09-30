@@ -13,9 +13,9 @@
 
   <ul *ngIf="application$ | async as application">
     <div class="centered-container" *ngIf="loading$ | async">
-      <mat-spinner></mat-spinner>
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
-    <li *ngFor="let task of supervisionTasks.controls; let i = index;">
+    <li *ngFor="let task of supervisionTaskForms; let i = index;">
       <div fxLayout="row" fxLayout.sm="column">
         <div fxFlex="100%">
           <supervision-task
@@ -23,7 +23,8 @@
             [application]="application"
             [supervisors]="supervisors"
             [hasDisablingTags]="hasDisablingTags$ | async"
-            (onRemove)="remove(i)"></supervision-task>
+            (onRemove)="remove(i)">
+          </supervision-task>
         </div>
       </div>
     </li>

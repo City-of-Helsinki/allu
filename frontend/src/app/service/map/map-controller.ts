@@ -27,7 +27,6 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {Projection} from '@feature/map/projection';
 import GeoJSONOptions = L.GeoJSONOptions;
-import {LatLngBounds} from 'leaflet';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',

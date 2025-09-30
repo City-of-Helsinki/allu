@@ -8,11 +8,10 @@ import {UntypedFormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '@feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '@model/common/page';
-import {ActivatedRoute} from '@angular/router';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {ActivatedRoute, provideRouter} from '@angular/router';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
-import {RouterTestingModule} from '@angular/router/testing';
+import {MatTableModule} from '@angular/material/table';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
@@ -39,7 +38,6 @@ describe('SupervisionWorkqueueContentComponent', () => {
       imports: [
         ReactiveFormsModule,
         AlluCommonModule,
-        RouterTestingModule.withRoutes([]),
         MatTableModule,
         MatSortModule,
         MatPaginatorModule,
@@ -53,6 +51,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
         WorkQueueContentComponent
       ],
       providers: [
+        provideRouter([]),
         UntypedFormBuilder,
         {provide: ActivatedRoute, useValue: new ActivatedRouteMock()},
         {provide: StoredFilterStore, useClass: StoredFilterStoreMock}

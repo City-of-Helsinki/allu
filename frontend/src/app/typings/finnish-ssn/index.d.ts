@@ -11,6 +11,6 @@ declare class FinnishSSN {
 export = FinnishSSN;
 */
 
-declare module 'finnishSsn' {
+declare module 'finnish-ssn' {
   export function validate(ssn: string): boolean;
 }

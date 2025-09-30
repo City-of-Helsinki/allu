@@ -1,16 +1,15 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {UserListComponent} from '@feature/admin/user/user-list.component';
-import {Router} from '@angular/router';
+import {Router, provideRouter} from '@angular/router';
 import {UserServiceMock} from 'test/mocks';
 import {UserService} from '@service/user/user-service';
 import {Store, StoreModule} from '@ngrx/store';
-import {RouterTestingModule} from '@angular/router/testing';
 import {DebugElement, LOCALE_ID} from '@angular/core';
 import {By} from '@angular/platform-browser';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {User} from '@model/user/user';
 import {of} from 'rxjs/internal/observable/of';
 import * as fromRoot from '@feature/allu/reducers';
@@ -36,7 +35,6 @@ describe('UserListComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,
-        RouterTestingModule.withRoutes([]),
         StoreModule.forRoot(fromRoot.reducers),
         MatTableModule,
         MatPaginatorModule,
@@ -47,6 +45,7 @@ describe('UserListComponent', () => {
         UserListComponent
       ],
       providers: [
+        provideRouter([]),
         {provide: UserService, useClass: UserServiceMock},
         {provide: LOCALE_ID, useValue: 'fi'}
       ]

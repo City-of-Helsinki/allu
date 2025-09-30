@@ -2,7 +2,7 @@ import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {By} from '@angular/platform-browser';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 import {InformationRequestSummaryComponent} from '@feature/information-request/summary/information-request-summary.component';
@@ -11,8 +11,7 @@ import {Store, StoreModule} from '@ngrx/store';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {getButtonWithText} from 'test/selector-helpers';
 import {findTranslation} from '@util/translations';
-import {RouterTestingModule} from '@angular/router/testing';
-import {Router} from '@angular/router';
+import {Router, provideRouter} from '@angular/router';
 import {Location} from '@angular/common';
 import {MockRoutedComponent} from 'test/mocks';
 import * as fromRoot from '@feature/allu/reducers';
@@ -44,15 +43,17 @@ describe('InformationRequestSummary', () => {
         MatDialogModule,
         AlluCommonModule,
         StoreModule.forRoot({}),
-        RouterTestingModule.withRoutes([
-          { path: 'information_request', component: MockRoutedComponent }
-        ]),
         NoopAnimationsModule
       ],
       declarations: [
         MockHostComponent,
         MockRoutedComponent,
         InformationRequestSummaryComponent
+      ],
+      providers: [
+        provideRouter([
+          { path: 'information_request', component: MockRoutedComponent }
+        ])
       ],
       schemas: [ NO_ERRORS_SCHEMA ]
     }).compileComponents();

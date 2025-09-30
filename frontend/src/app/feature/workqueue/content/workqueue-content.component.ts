@@ -5,7 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ApplicationWorkItemDatasource} from './application-work-item-datasource';
-import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
+import {Application} from '@model/application/application';
 import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 import {Sort} from '@model/common/sort';
 import {StoredFilterType} from '@model/user/stored-filter-type';
@@ -104,7 +104,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     return this.store.select(fromRoot.getCityDistrictName(id));
   }
 
-  trackById(index: number, item: SupervisionWorkItem) {
+  trackById(index: number, item: Application) {
     return item.id;
   }
 

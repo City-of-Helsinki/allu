@@ -5,7 +5,7 @@ import {By} from '@angular/platform-browser';
 import {Feature, GeometryObject, Point} from 'geojson';
 import {UserAreasComponent} from '@feature/application/location/user-areas/user-areas.component';
 import {Subject} from 'rxjs/internal/Subject';
-import {getElementText, getMatIconButton} from 'test/selector-helpers';
+import {getElementText} from 'test/selector-helpers';
 
 @Component({
   selector: 'parent',
@@ -51,7 +51,7 @@ describe('UserAreasComponent', () => {
   it('should show loading when loading', () => {
     parentComp.loading$.next(true);
     fixture.detectChanges();
-    expect(de.query(By.css('.mat-spinner'))).toBeDefined();
+    expect(de.query(By.css('.mat-progress-spinner'))).toBeDefined();
     expect(de.queryAll(By.css('.mat-list-item')).length).toEqual(0);
   });
 

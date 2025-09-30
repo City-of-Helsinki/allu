@@ -95,7 +95,7 @@
           </ng-container>
 
           <ng-container matColumnDef="active">
-            <mat-header-cell *matHeaderCellDef mat-sort-header disabled>{{'project.state' | translation}}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="true">{{'project.state' | translation}}</mat-header-cell>
             <mat-cell *matCellDef="let row">{{['project.active', row.active] | translation}}</mat-cell>
           </ng-container>
 
@@ -123,3 +123,4 @@
       </div>
     </div>
   </div>
+</div>

@@ -9,19 +9,18 @@ import * as fromCodeSet from '@feature/allu/reducers/code-set-reducer';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {SearchSuccess} from '@feature/customerregistry/actions/customer-search-actions';
 import * as CodeSetAction from '@feature/allu/actions/code-set-actions';
-import {By} from '@angular/platform-browser';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {CustomerService} from '@service/customer/customer.service';
 import {CustomerServiceMock, MatDialogMock, MatDialogRefMock, NotificationServiceMock} from '../../../mocks';
 import {NotificationService} from '@feature/notification/notification.service';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
-import {of} from 'rxjs';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 import {CustomerType} from '@model/customer/customer-type';
 import {Page} from '@model/common/page';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 
 @Component({
   selector: 'host',
@@ -31,7 +30,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
         [parentForm]="form"
         [oldCustomer]="oldCustomer"
         [newCustomer]="newCustomer"
-        fieldKey="CUSTOMER"></customer-acceptance>
+        [fieldKey]="InformationRequestFieldKey.CUSTOMER"></customer-acceptance>
     </form>`
 })
 class MockHostComponent {
@@ -42,6 +41,8 @@ class MockHostComponent {
   constructor(fb: UntypedFormBuilder) {
     this.form = fb.group({});
   }
+
+  protected readonly InformationRequestFieldKey = InformationRequestFieldKey;
 }
 
 @Component({

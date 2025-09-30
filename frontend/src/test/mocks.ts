@@ -1,25 +1,23 @@
 import { Component, Directive, TemplateRef, Injectable } from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
-import {Application} from '../app/model/application/application';
-import {Location} from '../app/model/common/location';
-import {ApplicationStatus} from '../app/model/application/application-status';
-import {StatusChangeInfo} from '../app/model/application/status-change-info';
-import {Contact} from '../app/model/customer/contact';
-import {User} from '../app/model/user/user';
-import {RoleType} from '../app/model/user/role-type';
+import {Application} from '@model/application/application';
+import {Location} from '@model/common/location';
+import {ApplicationStatus} from '@model/application/application-status';
+import {StatusChangeInfo} from '@model/application/status-change-info';
+import {Contact} from '@model/customer/contact';
+import {User} from '@model/user/user';
+import {RoleType} from '@model/user/role-type';
 import {NavigationExtras, UrlTree} from '@angular/router';
-import {ChargeBasisEntry} from '../app/model/application/invoice/charge-basis-entry';
-import {CurrentUser} from '../app/service/user/current-user';
-import {ApplicationState} from '../app/service/application/application-store';
-import {Comment} from '../app/model/application/comment/comment';
-import {ApplicationType} from '../app/model/application/type/application-type';
-import {CityDistrict} from '../app/model/common/city-district';
-import {ErrorInfo} from '../app/service/error/error-info';
-import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs/index';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {CurrentUser} from '@service/user/current-user';
+import {ApplicationState} from '@service/application/application-store';
+import {Comment} from '@model/application/comment/comment';
+import {ApplicationType} from '@model/application/type/application-type';
+import {CityDistrict} from '@model/common/city-district';
+import {ErrorInfo} from '@service/error/error-info';
+import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs';
 import {map} from 'rxjs/internal/operators';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
-import {ComponentType} from '@angular/cdk/portal';
-import {MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 
 /**
  * Mock for application state
@@ -39,7 +37,11 @@ export class ApplicationStoreMock {
   }
 
   get snapshot(): ApplicationState {
-    return {application: this.application$.getValue(), applicationCopy: this.applicationCopy$.getValue(), replacedDisableRemoveButton: false};
+    return {
+      application: this.application$.getValue(),
+      applicationCopy: this.applicationCopy$.getValue(),
+      replacedDisableRemoveButton: false
+    };
   }
 
   get application() {
@@ -195,7 +197,9 @@ export class ActivatedRouteMock {
 
 @Component({
   selector: 'mock-routed',
-  template: `<div>empty</div>`
+  standalone: true,
+  template: `
+    <div>empty</div>`
 })
 export class MockRoutedComponent {}
 

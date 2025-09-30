@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormArray, UntypedFormBuilder, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {FormUtil} from '@util/form.util';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
@@ -91,5 +91,9 @@ export class SupervisionComponent implements OnInit, OnDestroy {
 
   remove(index: number): void {
     this.supervisionTasks.removeAt(index);
+  }
+
+  get supervisionTaskForms(): UntypedFormGroup[] {
+    return this.supervisionTasks.controls as UntypedFormGroup[];
   }
 }

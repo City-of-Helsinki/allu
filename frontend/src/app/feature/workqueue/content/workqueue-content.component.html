@@ -1,9 +1,9 @@
 <div class="mat-elevation-z8 data-table data-table-with-paging">
   <div class="loading-shade" *ngIf="dataSource.loading">
-    <mat-spinner></mat-spinner>
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
 
-  <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort [trackBy]="trackById">
+  <mat-table #table [dataSource]="dataSource" [multiTemplateDataRows]="true" matSort [trackBy]="trackById">
     <ng-container matColumnDef="selected">
       <mat-header-cell *matHeaderCellDef class="mat-cell-selection">
         <div>
@@ -119,14 +119,14 @@
              class="details-cell"
              *ngIf="row.applicationTags?.length">
           <div fxFlex>
-            <mat-chip-list>
-              <mat-chip *ngFor="let tag of row.applicationTags"
+            <mat-chip-listbox>
+              <mat-chip-option *ngFor="let tag of row.applicationTags"
                         [selected]="tagSelected(tag.type) | async"
                         class="accent-chip slim-chip"
                         color="accent">
                 {{['application.tag.type', tag.type] | translation}}
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </div>
         </div>
       </mat-cell>

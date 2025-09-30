@@ -5,14 +5,14 @@ import {Component, DebugElement} from '@angular/core';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../mocks';
 import {CurrentUser} from '@service/user/current-user';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {FormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {OwnerModalModule} from '@feature/common/ownerModal/owner-modal.module';
 import {getButtonWithText} from '../../selector-helpers';
 import {Page} from '@model/common/page';
-import {RouterTestingModule} from '@angular/router/testing';
+import {provideRouter} from '@angular/router';
 import {UserService} from '@service/user/user-service';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromSupervisionWorkQueue from '@feature/supervision-workqueue/reducers';
@@ -52,7 +52,6 @@ describe('SupervisionWorkqueueComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
-        RouterTestingModule,
         AlluCommonModule,
         OwnerModalModule,
         StoreModule.forRoot({
@@ -66,6 +65,7 @@ describe('SupervisionWorkqueueComponent', () => {
         MockWorkqueueFilterComponent
       ],
       providers: [
+        provideRouter([]),
         {provide: CurrentUser, useValue: currentUserMock},
         {provide: UserService, useClass: UserServiceMock},
         MatDialog

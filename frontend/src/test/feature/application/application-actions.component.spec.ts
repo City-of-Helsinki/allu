@@ -13,18 +13,17 @@ import {
   UserServiceMock
 } from '../../mocks';
 import {ApplicationStore} from '@service/application/application-store';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, provideRouter} from '@angular/router';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {getButtonWithText} from '../../selector-helpers';
 import {findTranslation} from '@util/translations';
-import {RouterTestingModule} from '@angular/router/testing';
 import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {Location} from '@model/common/location';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {User} from '@model/user/user';
-import {EMPTY, Observable, of} from 'rxjs/index';
+import {EMPTY, Observable, of} from 'rxjs';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
 import {NotificationService} from '@feature/notification/notification.service';
@@ -32,7 +31,7 @@ import {ShortTermRental} from '@app/model/application/short-term-rental/short-te
 import {TerminationService} from '@feature/decision/termination/termination-service';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
 import {AttachmentType} from '@model/application/attachment/attachment-type';
-import {reducers as applicationReducers} from '@feature/application/reducers'
+import {reducers as applicationReducers} from '@feature/application/reducers';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -83,25 +82,32 @@ describe('ApplicationActionsComponent', () => {
         AlluCommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterTestingModule.withRoutes([]),
-        StoreModule.forRoot({application: applicationReducers.application, replacedDisableRemoveButton: applicationReducers.replacedDisableRemoveButton}),
+        StoreModule.forRoot({
+          application: applicationReducers.application,
+          replacedDisableRemoveButton: applicationReducers.replacedDisableRemoveButton
+        }),
       ],
       declarations: [
         TestHostComponent,
         ApplicationActionsComponent
       ],
       providers: [
-        {provide: Router, useClass: RouterMock},
-        {provide: ActivatedRoute, useValue: {}},
-        {provide: ApplicationStore, useClass: ApplicationStoreMock},
-        {provide: MatDialog, useClass: MatDialogMock},
-        {provide: UserService, useClass: UserServiceMock},
-        {provide: NotificationService, useClass: NotificationServiceMock},
-        {provide: TerminationService, useClass: TerminationServiceMock},
-        {provide: TerminationModalService, useValue: {}}
+        provideRouter([]),
+        { provide: Router, useClass: RouterMock },
+        { provide: ActivatedRoute, useValue: {} },
+        { provide: ApplicationStore, useClass: ApplicationStoreMock },
+        { provide: MatDialog, useClass: MatDialogMock },
+        { provide: UserService, useClass: UserServiceMock },
+        { provide: NotificationService, useClass: NotificationServiceMock },
+        { provide: TerminationService, useClass: TerminationServiceMock },
+        { provide: TerminationModalService, useValue: {} }
       ]
-    }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-    .compileComponents();
+    })
+      .overrideDirective(
+        AvailableToDirective,
+        availableToDirectiveMockMeta(currentUserMock)
+      )
+      .compileComponents();
   }));
 
   beforeEach(() => {

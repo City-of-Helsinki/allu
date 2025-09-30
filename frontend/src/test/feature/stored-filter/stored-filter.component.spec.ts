@@ -1,16 +1,16 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
-import {StoredFilterType} from '../../../app/model/user/stored-filter-type';
-import {StoredFilter} from '../../../app/model/user/stored-filter';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {StoredFilter} from '@model/user/stored-filter';
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {NotificationServiceMock, UserServiceMock} from '../../mocks';
-import {StoredFilterComponent} from '../../../app/feature/stored-filter/stored-filter.component';
-import {UserService} from '../../../app/service/user/user-service';
-import {StoredFilterModule} from '../../../app/feature/stored-filter/stored-filter.module';
+import {StoredFilterComponent} from '@feature/stored-filter/stored-filter.component';
+import {UserService} from '@service/user/user-service';
+import {StoredFilterModule} from '@feature/stored-filter/stored-filter.module';
 import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
-import {StoredFilterStore} from '../../../app/service/stored-filter/stored-filter-store';
-import {NotificationService} from '../../../app/feature/notification/notification.service';
-import {Observable, of, Subject} from 'rxjs/index';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import {NotificationService} from '@feature/notification/notification.service';
+import {Observable, of, Subject} from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const filters = [

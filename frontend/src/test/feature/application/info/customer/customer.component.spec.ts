@@ -1,24 +1,24 @@
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatCardModule} from '@angular/material/card';
 
-import {CustomerComponent} from '../../../../../app/feature/application/info/customer/customer.component';
-import {AlluCommonModule} from '../../../../../app/feature/common/allu-common.module';
-import {CustomerInfoComponent} from '../../../../../app/feature/customerregistry/customer/customer-info.component';
-import {Customer} from '../../../../../app/model/customer/customer';
-import {CustomerWithContacts} from '../../../../../app/model/customer/customer-with-contacts';
-import {CustomerRoleType} from '../../../../../app/model/customer/customer-role-type';
+import {CustomerComponent} from '@feature/application/info/customer/customer.component';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {CustomerInfoComponent} from '@feature/customerregistry/customer/customer-info.component';
+import {Customer} from '@model/customer/customer';
+import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {Component, Input} from '@angular/core';
-import {Contact} from '../../../../../app/model/customer/contact';
+import {Contact} from '@model/customer/contact';
 import {CurrentUserMock, CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
-import {CustomerService} from '../../../../../app/service/customer/customer.service';
-import {CodeSetService} from '../../../../../app/service/codeset/codeset.service';
-import {CodeSet} from '../../../../../app/model/codeset/codeset';
-import {Observable, of} from 'rxjs/index';
+import {CustomerService} from '@service/customer/customer.service';
+import {CodeSetService} from '@service/codeset/codeset.service';
+import {CodeSet} from '@model/codeset/codeset';
+import {Observable, of} from 'rxjs';
 import {NotificationService} from '@feature/notification/notification.service';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
-import {RouterTestingModule} from '@angular/router/testing';
+import {provideRouter} from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CurrentUser } from '@app/service/user/current-user';
 
@@ -83,7 +83,6 @@ describe('CustomerComponent', () => {
         AlluCommonModule,
         ReactiveFormsModule,
         MatCardModule,
-        RouterTestingModule.withRoutes([]),
         NoopAnimationsModule
       ],
       declarations: [
@@ -93,6 +92,7 @@ describe('CustomerComponent', () => {
         CustomerOptionContentComponent
       ],
       providers: [
+        provideRouter([]),
         {provide: UntypedFormBuilder, useValue: new UntypedFormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock},
@@ -117,7 +117,7 @@ describe('CustomerComponent', () => {
   it('should show header text from input', fakeAsync(() => {
     fixture.detectChanges();
     page.addPageElements();
-    console.log('page.cardTitle.textContent', page.cardTitle.textContent)
+    console.log('page.cardTitle.textContent', page.cardTitle.textContent);
     expect(page.cardTitle.textContent).toContain(headerText);
   }));
 
