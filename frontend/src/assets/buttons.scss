@@ -2,12 +2,12 @@
 
 @mixin buttons-theme($theme) {
   $primary: map-get($theme, primary);
-
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   .mat-button-toggle-checked {
     background: mat.get-color-from-palette($primary, 500) !important;
     color: rgba(black, 0.87) !important;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   .mat-button-toggle-disabled.mat-button-toggle-checked {
     background: mat.get-color-from-palette($primary, 300) !important;
 
@@ -22,13 +22,15 @@
 }
 
 @mixin toggle-buttons-theme($theme) {
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   .icon-button-toggle-group.mat-button-toggle-group {
     box-shadow: none;
-
+    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     .mat-button-toggle-checked {
       background: none;
     }
-
+    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     .mat-button-toggle-checked label {
       color: black;
     }
@@ -36,7 +38,7 @@
 }
 
 
-.mat-icon-button.align-with-text {
+.mat-mdc-icon-button.align-with-text {
   top: -4px;
 }
 
@@ -53,7 +55,7 @@ button > .button-content-clipped {
   overflow: hidden;
 }
 
-.mat-icon-button.mat-icon-button-18 {
+.mat-mdc-icon-button.mat-icon-button-18 {
   width: 24px;
   height: 24px;
   line-height: 24px;
@@ -77,7 +79,10 @@ button.button-link {
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
 .icon-button-toggle-group.mat-button-toggle-group {
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   .mat-button-toggle-checked label .mat-icon {
     font-weight: bold;
   }

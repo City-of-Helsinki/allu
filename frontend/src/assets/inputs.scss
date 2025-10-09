@@ -1,13 +1,16 @@
 @use '@angular/material' as mat;
 
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 .mat-select-placeholder.mat-floating-placeholder {
   transform: translate3d(0,0,0) scale(.75);
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
 .checkbox-matching-height .mat-checkbox-layout .mat-checkbox-label {
   line-height: 42px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
 .mat-checkbox-margin label.mat-checkbox-layout {
   margin-bottom: 0.2rem;
 }
@@ -31,18 +34,19 @@
   :-ms-input-placeholder {
     color: mat.get-color-from-palette($primary, 300);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
   .mat-form-field-label,
   .mat-select-placeholder {
     color: mat.get-color-from-palette($primary, 300);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
   input[disabled] + .mat-form-field-labelwrapper .mat-form-field-label,
   .mat-select-disabled .mat-select-placeholder {
     color: mat.get-color-from-palette($primary, 200);
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .mat-select-disabled .mat-select-value,
 .mat-form-field-label,
 .mat-input-element:disabled,
@@ -57,26 +61,28 @@
 @mixin checkbox-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
     background-color: mat.get-color-from-palette($accent, 200);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-checked .mat-checkbox-frame {
     border-color: mat.get-color-from-palette($accent, 200);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-label {
     color: rgba(black, 0.87);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-disabled .mat-checkbox-label {
     color: $black-38-opacity;
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
 .mat-autocomplete-panel {
-  .mat-option:hover:not(.mat-option-disabled),
+  .mat-mdc-option:hover:not(.mat-option-disabled),
   .mat-option.mat-active:not(.mat-option-disabled),
   .mat-option:focus:not(.mat-option-disabled) {
     background-color: mat.get-color-from-palette($allu-primary, 200);
@@ -87,15 +93,18 @@ td.mat-calendar-body-cell:hover {
   cursor: pointer;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .form-group .has-warning.ng-dirty:not(.ng-invalid) label.mat-form-field-label,
 .form-group .has-warning.ng-touched:not(.ng-invalid) label.mat-form-field-label {
   color: mat.get-color-from-palette($allu-accent, 700);
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .form-group .has-warning:not(.ng-invalid) .mat-form-field-underline {
   border-color: mat.get-color-from-palette($allu-accent, 700);
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .form-group .has-warning:not(.ng-invalid) .mat-form-field-ripple {
   background-color: mat.get-color-from-palette($allu-accent, 700);
 }
@@ -111,11 +120,12 @@ td.mat-calendar-body-cell:hover {
   margin: 0;
 }
 
-.mat-form-field.input-no-underline .mat-form-field-underline {
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+.mat-mdc-form-field.input-no-underline .mat-form-field-underline {
   display: none;
 }
 
-textarea.mat-input-element.mat-autosize {
+textarea.mat-mdc-input-element.mat-autosize {
   padding: 0px 0;
   margin: 4px 0;
 }

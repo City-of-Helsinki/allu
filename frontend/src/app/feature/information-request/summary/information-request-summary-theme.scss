@@ -9,19 +9,19 @@
     background: mat.get-color-from-palette($primary, 50);
     color: mat.get-color-from-palette($primary, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   information-request-status .mat-progress-bar-background {
     fill: transparent;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .active .mat-progress-bar-fill::after {
     background-color: mat.get-color-from-palette($accent, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .active .mat-progress-bar-buffer {
     background: mat.get-color-from-palette($accent, 500, 0.5);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .closed .mat-progress-bar-fill::after {
     background-color: map-get($basic, 500);
   }

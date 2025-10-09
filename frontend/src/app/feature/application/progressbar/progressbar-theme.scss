@@ -9,35 +9,35 @@
     background: mat.get-color-from-palette($primary, 50);
     color: mat.get-color-from-palette($primary, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   progressbar .mat-progress-bar-background {
     fill: transparent;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .pending .mat-progress-bar-fill::after {
     background-color: mat.get-color-from-palette($accent, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .pending .mat-progress-bar-buffer {
     background: mat.get-color-from-palette($accent, 500, 0.5);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .decision .mat-progress-bar-fill::after {
     background: map-get($success, 200);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .finished .mat-progress-bar-fill::after {
     background: map-get($success, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .rejected .mat-progress-bar-fill::after {
     background-color: mat.get-color-from-palette($warn, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .cancelled .mat-progress-bar-fill::after {
     background-color: mat.get-color-from-palette($warn, 500, 0.5);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
   .history .mat-progress-bar-fill::after {
     background-color: map-get($basic, 500);
   }

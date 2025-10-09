@@ -40,8 +40,9 @@ nav.nav-bar-secondary {
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .labels-solid .mat-tab-label,
-.labels-solid .mat-tab-link {
+.labels-solid .mat-mdc-tab-link {
   margin: 2px 5px 0;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -49,17 +50,19 @@ nav.nav-bar-secondary {
   font-weight: bold !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .labels-end .mat-tab-labels,
-.labels-end .mat-tab-links {
+.labels-end .mat-mdc-tab-links {
   justify-content: flex-end;
   padding-right:10%;
 
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .labels-end .mat-tab-list {
   max-width: 95vw;
 }
 
-.mat-tab-links {
+.mat-mdc-tab-links {
   display: flex;
 }

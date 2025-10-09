@@ -39,7 +39,7 @@
 @import 'ngx-toastr/toastr';
 
 // Theme components
-@include mat.all-legacy-component-themes($allu-theme);
+@include mat.all-component-themes($allu-theme);
 @include allu-common-theme($allu-theme, $black-87-opacity);
 @include allu-icons-theme($allu-theme, $black-50-opacity, $allu-success);
 @include allu-list-theme($allu-theme);
@@ -194,6 +194,7 @@ button.btn-huge {
   text-align: center;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
 mat-dialog-container {
   background: white;
   overflow: visible !important;
@@ -217,6 +218,7 @@ input:-webkit-autofill:active {
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 .error-overflow .mat-form-field-subscript-wrapper {
   overflow: visible;
 }
@@ -225,6 +227,7 @@ input:-webkit-autofill:active {
   font-weight: bold;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
 .input-field-checkbox .mat-checkbox-layout {
   margin: 8px 0;
   padding-bottom: 1.25em;
@@ -300,7 +303,7 @@ ul.card-list {
   .item-bar-content {
     box-sizing: border-box;
     width: 100%;
-    padding: 10px 0px;
+    padding: 10px 0;
   }
 
   .item-bar-content > span {
@@ -326,23 +329,26 @@ ul.card-list {
   letter-spacing: normal;
 }
 
-.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-accent {
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+.mat-mdc-chip.mat-chip-selected:not(.mat-mdc-basic-chip).mat-accent {
   @extend .allu-chip;
   color: mat.get-contrast-color-from-palette($allu-accent, 800);
   font-weight: bold;
   letter-spacing: 1.5px;
 }
 
-.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary {
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+.mat-mdc-chip.mat-chip-selected:not(.mat-mdc-basic-chip).mat-primary {
   @extend .allu-chip;
   color: mat.get-contrast-color-from-palette($allu-primary, 500);
 }
 
-.mat-chip:not(.mat-basic-chip).slim-chip {
+.mat-mdc-chip:not(.mat-mdc-basic-chip).slim-chip {
   padding: 0px 12px;
 }
 
-.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary.chip-outline {
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+.mat-mdc-chip.mat-chip-selected:not(.mat-mdc-basic-chip).mat-primary.chip-outline {
   color: mat.get-color-from-palette($allu-primary, 500);
   background-color: transparent;
   border: 2px solid mat.get-color-from-palette($allu-primary, 500);

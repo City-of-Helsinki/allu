@@ -1,15 +1,16 @@
-.mat-form-field.form-field-100 {
+.mat-mdc-form-field.form-field-100 {
   width: 100%
 }
 
-.mat-form-field.form-field-50 {
+.mat-mdc-form-field.form-field-50 {
   width: 50%;
 }
 
-.mat-form-field.form-field-33 {
+.mat-mdc-form-field.form-field-33 {
   width: 33%;
 }
 
-.mat-form-field.form-field-dense .mat-form-field-wrapper {
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+.mat-mdc-form-field.form-field-dense .mat-form-field-wrapper {
   margin-bottom: -1.25em;
 }

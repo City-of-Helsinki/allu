@@ -2,6 +2,7 @@
   padding: 5px 0;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .radio-group-item .mat-form-field-wrapper {
   margin: 0;
 }
@@ -12,7 +13,7 @@
   margin: 15px 0;
 }
 
-.vertical-radio-group .mat-radio-button {
+.vertical-radio-group .mat-mdc-radio-button {
   margin: 5px 0;
 }
 
@@ -22,7 +23,7 @@
   align-items: center;
 }
 
-.horizontal-radio-group .mat-radio-button:not(:first-of-type) {
+.horizontal-radio-group .mat-mdc-radio-button:not(:first-of-type) {
   margin-left: 10px;
 }
 

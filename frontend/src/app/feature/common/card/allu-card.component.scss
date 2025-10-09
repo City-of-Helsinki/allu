@@ -4,7 +4,7 @@
 
 :host mat-card ::ng-deep {
   border-radius: 6px;
-
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
   mat-card-content {
     label.info-label {
       display: inline-block;
@@ -25,18 +25,18 @@
       height: 3rem;
     }
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
   mat-card-content.bordered {
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #ddd;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
   mat-card-footer.footer-min-height {
     min-height: 56px;
   }
 }
 
-:host mat-card.mat-card ::ng-deep {
+:host mat-card.mat-mdc-card ::ng-deep {
   .mat-divider {
     position: relative;
   }
@@ -47,6 +47,7 @@
 }
 
 :host(.full-width) ::ng-deep {
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
   mat-card {
     padding: 24px 0;
 
@@ -58,6 +59,8 @@
 }
 
 :host(.slim-card) ::ng-deep {
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
   mat-card {
     display: flex;
     flex-direction: row;
@@ -66,11 +69,11 @@
     line-height: 3rem;
     background-color: #fff;
     border-bottom: 1px solid #ddd;
-
+    /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
     mat-card-content {
       width: 100%;
     }
-
+    /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
     mat-card-content.card-content {
       display: flex;
       flex-direction: row;
@@ -86,11 +89,11 @@
     .card-item-align-right {
       margin-left: auto;
     }
-
+    /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
     mat-card-title {
       white-space: nowrap;
       margin-right: 18px;
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
   }
 }

@@ -11,16 +11,16 @@
   background-color: $allu-chip-dark;
   border-width: 0px;
   text-align: center;
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-inner-container {
     display: none;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-layout {
     padding: 8px 12px;
     width: 100%;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   .mat-checkbox-layout .mat-checkbox-label {
     color: mat.get-contrast-color-from-palette($allu-primary, 500);
     text-align: center;

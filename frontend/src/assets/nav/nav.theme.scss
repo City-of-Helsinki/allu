@@ -3,15 +3,15 @@
 @mixin nav-primary-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
-
+  /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
   .labels-solid .mat-tab-label,
-  .labels-solid .mat-tab-link {
+  .labels-solid .mat-mdc-tab-link {
     background-color: mat.get-color-from-palette($primary, 200);
     color: mat.get-contrast-color-from-palette($primary, 500);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
   .labels-solid .mat-tab-label.mat-tab-label-active,
-  .labels-solid .mat-tab-link.mat-tab-label-active {
+  .labels-solid .mat-mdc-tab-link.mat-tab-label-active {
     background-color: white;
     color: mat.get-color-from-palette($primary, 500);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);

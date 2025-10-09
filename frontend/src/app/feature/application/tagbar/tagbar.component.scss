@@ -4,6 +4,7 @@
     white-space: nowrap;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
 mat-chip {
   height: 30px;
 }
