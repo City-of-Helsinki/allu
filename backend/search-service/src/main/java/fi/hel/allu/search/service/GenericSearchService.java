@@ -19,6 +19,7 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -819,49 +820,89 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }
 
     private void executeBulk(List<DocWriteRequest<?>> requests, RefreshPolicy refreshPolicy) {
-        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
-                (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
-        BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, new BulkProcessorListener(refreshPolicy));
-        builder.setBulkActions(1000);
-        builder.setConcurrentRequests(1);
-        builder.setBulkSize(new ByteSizeValue(-1));
-        BulkRequest bulkRequest = new BulkRequest();
-        bulkRequest.setRefreshPolicy(refreshPolicy);
-        bulkRequest.add(requests);
-        BulkProcessor bulkProcessor = builder.build();
-        requests.forEach(bulkProcessor::add);
-        try {
-            bulkProcessor.awaitClose(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            throw new SearchException(e);
+      if (requests == null || requests.isEmpty()) {
+        logger.warn("No requests to index — skipping bulk operation.");
+        return;
+      }
+
+      long startTime = System.nanoTime();
+      logger.info("Starting bulk indexing: {} documents, refreshPolicy={}, bulkActions=1000, concurrentRequests=1",
+        requests.size(), refreshPolicy);
+
+      BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
+              (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
+      BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, new BulkProcessorListener(refreshPolicy));
+      builder.setBulkActions(1000);
+      builder.setConcurrentRequests(1);
+      builder.setBulkSize(new ByteSizeValue(-1));
+      BulkRequest bulkRequest = new BulkRequest();
+      bulkRequest.setRefreshPolicy(refreshPolicy);
+      bulkRequest.add(requests);
+      BulkProcessor bulkProcessor = builder.build();
+      requests.forEach(bulkProcessor::add);
+
+      try {
+        boolean finished = bulkProcessor.awaitClose(10, TimeUnit.MINUTES);
+        long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+        if (finished) {
+          logger.info("Bulk indexing completed successfully in {} ms ({} docs total, refreshPolicy={})",
+            durationMs, requests.size(), refreshPolicy);
+        } else {
+          logger.warn("Bulk indexing did not complete within timeout (15 min) – some requests may be pending! Elapsed time: {} ms",
+            durationMs);
         }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        logger.error("Bulk indexing interrupted after processing {} documents", requests.size(), e);
+        throw new SearchException(e);
+      }
     }
 
-    private static class BulkProcessorListener implements BulkProcessor.Listener {
+    private record BulkProcessorListener(RefreshPolicy refreshPolicy) implements BulkProcessor.Listener {
 
-        private final RefreshPolicy refreshPolicy;
-
-        private BulkProcessorListener(RefreshPolicy refreshPolicy) {
-            this.refreshPolicy = refreshPolicy;
-        }
-
-        @Override
-        public void beforeBulk(long executionId, BulkRequest request) {
-            if (refreshPolicy != null) {
-                request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
-            }
-        }
-
-        @Override
-        public void afterBulk(long executionId, BulkRequest request, Throwable t) {
-            logger.error("Bulk operation failed", t);
-        }
-
-        @Override
-        public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-            logger.debug("Bulk execution completed [ {} ]. Took (ms): {}. Failures: {}. Count: {}",
-                         executionId, response.getIngestTookInMillis(), response.hasFailures(),
-                         response.getItems().length);
-        }
+    @Override
+    public void beforeBulk(long executionId, BulkRequest request) {
+      logger.debug("Starting bulk [{}] with {} actions (refreshPolicy={})",
+        executionId, request.numberOfActions(), refreshPolicy);
+      if (refreshPolicy != null) {
+        request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
+      }
     }
+
+    @Override
+    public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+      logger.error("Bulk [{}] failed after {} actions", executionId, request.numberOfActions(), failure);
+    }
+
+    @Override
+    public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+      long tookMs = response.getTook() != null ? response.getTook().getMillis() : -1;
+      int itemCount = response.getItems().length;
+      boolean hasFailures = response.hasFailures();
+      long failCount = Arrays.stream(response.getItems())
+        .filter(BulkItemResponse::isFailed)
+        .count();
+
+      double docsPerSec = tookMs > 0 ? (itemCount / (tookMs / 1000.0)) : 0.0;
+
+      if (hasFailures) {
+        logger.warn("Bulk [{}] completed in {} ms with {} failed items out of {} (refreshPolicy={}, {} docs/s)",
+          executionId, tookMs, failCount, itemCount, refreshPolicy, String.format("%.1f", docsPerSec));
+
+        // Optional: detailed failure info at debug level to avoid flooding logs
+        if (logger.isDebugEnabled()) {
+          Arrays.stream(response.getItems())
+            .filter(BulkItemResponse::isFailed)
+            .limit(5)
+            .forEach(item ->
+              logger.debug("Failure in bulk [{}]: index={}, id={}, cause={}",
+                executionId, item.getIndex(), item.getId(),
+                item.getFailureMessage()));
+        }
+      } else {
+        logger.debug("Bulk [{}] succeeded in {} ms ({} actions, refreshPolicy={}, {} docs/s)",
+          executionId, tookMs, itemCount, refreshPolicy, String.format("%.1f", docsPerSec));
+      }
+    }
+  }
 }
