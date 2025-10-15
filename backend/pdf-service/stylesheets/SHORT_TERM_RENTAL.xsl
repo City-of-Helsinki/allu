@@ -148,7 +148,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               <p>
                 <!-- [Hinta] -->
                 <xsl:value-of select="data/totalRent"/>
-                <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
+                <!-- alv 25,5 % tai alv 0 %, riippuen asiakkaasta -->
                  + ALV <xsl:value-of select="data/vatPercentage"/> %
               </p>
             </xsl:when>
@@ -159,8 +159,15 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </p>
             </xsl:otherwise>
           </xsl:choose>
-          <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.5.2018 § 238
-            tai 15.1.2019 § 15 tai 1.2.2022 § 51.</p>
+          <xsl:choose>
+            <xsl:when test="data/eventNature = 'Lyhytaikainen maanvuokraus, Liikkuva myynti/myyntiautot ja -vaunut'">
+              <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 20.5.2025 § 307.</p>
+            </xsl:when>
+            <xsl:otherwise>
+              <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.5.2018 § 238
+                tai 15.1.2019 § 15 tai 1.2.2022 § 51.</p>
+            </xsl:otherwise>
+          </xsl:choose>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
             <p class="space-above">Lasku lähetetään erikseen.</p>

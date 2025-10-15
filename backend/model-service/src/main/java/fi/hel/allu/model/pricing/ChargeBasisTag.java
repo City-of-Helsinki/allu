@@ -135,6 +135,10 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.STROth);
   }
 
+  public static ChargeBasisTag ShortTermRentalMobileSales() {
+    return new ChargeBasisTag(TagText.STRMS);
+  }
+
   public static ChargeBasisTag ShortTermRentalPromotionOrSales() {
     return new ChargeBasisTag(TagText.STRPOS);
   }
@@ -254,6 +258,8 @@ private enum TagText {
     // Short term rental, Winter terrace
     STWT,
     // Short term rental, Parklet
+    STRMS,
+    // Short term rental, Mobile sales
     STPa,
     // Area Usage
     ArUs,

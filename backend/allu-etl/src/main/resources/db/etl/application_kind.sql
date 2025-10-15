@@ -21,6 +21,7 @@ WITH hakemuslajit (en, fi) AS (
         ('SUMMER_TERRACE', 'Kesäterassi'),
         ('WINTER_TERRACE', 'Talviterassi'),
         ('PARKLET', 'Parklet'),
+        ('MOBILE_SALES', 'Liikkuva myynti/myyntiautot ja -vaunut'),
         ('STREET_AND_GREEN', 'Katu- ja vihertyöt'),
         ('WATER_AND_SEWAGE', 'Vesi / viemäri'),
         ('ELECTRICITY', 'Sähkö'),
