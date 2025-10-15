@@ -199,6 +199,7 @@ export const translations = {
       SUMMER_TERRACE: 'Kesäterassi',
       WINTER_TERRACE: 'Talviterassi',
       PARKLET: 'Parklet',
+      MOBILE_SALES: 'Liikkuva myynti/myyntiautot ja -vaunut',
       OTHER: 'Muu'
     },
     specifier: {
