@@ -283,7 +283,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </xsl:for-each>
       </section>
 
-      <xsl:if test="data/distributionNames">
+      <xsl:if test="data/distributionNames and data/anonymizedDocument = 'false'">
         <section class="unboxed avoid-pb">
           <h2>Päätöksen jakelu</h2>
           <!--  [Lista päätöksen jakelusta] -->
@@ -292,7 +292,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </xsl:for-each>
         </section>
       </xsl:if>
-
     </div>
   </body>
 </html>
