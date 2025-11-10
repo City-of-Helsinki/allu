@@ -9,7 +9,6 @@ import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.ui.service.CustomerExportService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -35,12 +34,17 @@ public class CustomerController {
 
   private static final String CUSTOMER_EXPORT_FILENAME = "allu_customers_";
 
-  @Autowired
-  CustomerService customerService;
-  @Autowired
-  ContactService contactService;
-  @Autowired
-  CustomerExportService customerExportService;
+  private final CustomerService customerService;
+  private final ContactService contactService;
+  private final CustomerExportService customerExportService;
+
+  public CustomerController(CustomerService customerService,
+                            ContactService contactService,
+                            CustomerExportService customerExportService) {
+    this.customerService = customerService;
+    this.contactService = contactService;
+    this.customerExportService = customerExportService;
+  }
 
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
