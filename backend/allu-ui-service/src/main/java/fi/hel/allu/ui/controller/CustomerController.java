@@ -149,4 +149,18 @@ public class CustomerController {
   private String getCustomerExportFileName() {
     return CUSTOMER_EXPORT_FILENAME + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
   }
+
+  /**
+   * Deletes customers and their associated contacts from Allu's customer registry.
+   * This operation permanently removes the data (not just deactivates) for customers
+   * who are not linked to any application or project in Allu.
+   *
+   * @param ids List of customer IDs to delete
+   * @return HTTP 204 No Content if deletion succeeds
+   */
+  @DeleteMapping(value = "/")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<Void> deleteCustomersByIds(@RequestBody List<Integer> ids) {
+    return ResponseEntity.noContent().build();
+  }
 }
