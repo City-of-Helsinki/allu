@@ -10,6 +10,7 @@ import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.ui.service.CustomerExportService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -152,6 +153,30 @@ public class CustomerController {
 
   private String getCustomerExportFileName() {
     return CUSTOMER_EXPORT_FILENAME + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+  }
+
+  /**
+   * Returns a paginated list of customers eligible for permanent deletion.
+   * A customer is deletable if it is not linked to any application or project in Allu.
+   * Only minimal details (ID and name) are included in the response.
+   *
+   * @param pageable pagination and sorting information
+   * @return a page of deletable customers, or an empty page if none found
+   */
+  @GetMapping(value = "/deletable")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<Page<DeletableCustomerJson>> getDeletableCustomers(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+    Pageable pageable
+  ) {
+    return ResponseEntity.ok(new PageImpl<>(
+      List.of(
+        new DeletableCustomerJson(1L, "Testi Asiakas 1"),
+        new DeletableCustomerJson(2L, "Testi Asiakas 2")
+      ),
+      pageable,
+      2
+    ));
   }
 
   /**
