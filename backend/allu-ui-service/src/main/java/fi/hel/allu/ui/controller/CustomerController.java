@@ -156,8 +156,7 @@ public class CustomerController {
 
   /**
    * Deletes customers and their associated contacts from Allu's customer registry.
-   * This operation permanently removes the data (not just deactivates) for customers
-   * who are not linked to any application or project in Allu.
+   * This operation permanently removes the data (not just deactivates) for customers.
    *
    * @param ids List of customer IDs to delete
    * @return HTTP 204 No Content if deletion succeeds
