@@ -183,11 +183,13 @@ public class CustomerController {
     } else {
       return ResponseEntity.ok(new PageImpl<>(
         List.of(
+          new CustomerSummaryRecord(1L, "Testi Asiakas 1 (poistettava)"),
+          new CustomerSummaryRecord(2L, "Testi Asiakas 2 (poistettava)"),
           new CustomerSummaryRecord(3L, "Testi Asiakas 3"),
           new CustomerSummaryRecord(4L, "Testi Asiakas 4")
         ),
         pageable,
-        2
+        4
       ));
     }
   }
