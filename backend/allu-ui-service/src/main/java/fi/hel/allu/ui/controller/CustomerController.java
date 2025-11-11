@@ -6,6 +6,7 @@ import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.CustomerSummaryRecord;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.ui.service.CustomerExportService;
@@ -156,27 +157,39 @@ public class CustomerController {
   }
 
   /**
-   * Returns a paginated list of customers eligible for permanent deletion.
+   * Returns a paginated list of all customers or customers eligible for permanent deletion.
    * A customer is deletable if it is not linked to any application or project in Allu.
    * Only minimal details (ID and name) are included in the response.
    *
+   * @param deletable if true, return deletable customers, otherwise return all customers
    * @param pageable pagination and sorting information
-   * @return a page of deletable customers, or an empty page if none found
+   * @return a page of customers matching the criteria; empty page if none found
    */
-  @GetMapping(value = "/deletable")
+  @GetMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-  public ResponseEntity<Page<DeletableCustomerJson>> getDeletableCustomers(
-    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
-    Pageable pageable
+  public ResponseEntity<Page<CustomerSummaryRecord>> getCustomers(
+    @RequestParam(value = "deletable", required = false) Boolean deletable,
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageable
   ) {
-    return ResponseEntity.ok(new PageImpl<>(
-      List.of(
-        new DeletableCustomerJson(1L, "Testi Asiakas 1"),
-        new DeletableCustomerJson(2L, "Testi Asiakas 2")
-      ),
-      pageable,
-      2
-    ));
+    if (Boolean.TRUE.equals(deletable)) {
+      return ResponseEntity.ok(new PageImpl<>(
+        List.of(
+          new CustomerSummaryRecord(1L, "Testi Asiakas 1 (poistettava)"),
+          new CustomerSummaryRecord(2L, "Testi Asiakas 2 (poistettava)")
+        ),
+        pageable,
+        2
+      ));
+    } else {
+      return ResponseEntity.ok(new PageImpl<>(
+        List.of(
+          new CustomerSummaryRecord(3L, "Testi Asiakas 3"),
+          new CustomerSummaryRecord(4L, "Testi Asiakas 4")
+        ),
+        pageable,
+        2
+      ));
+    }
   }
 
   /**
