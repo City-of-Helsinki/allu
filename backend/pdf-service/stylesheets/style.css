@@ -1,38 +1,230 @@
-html,
+/* -----------------------------------------------------
+   GLOBAL / TYPOGRAPHY
+   ----------------------------------------------------- */
 button,
 input,
 select,
 textarea {
-  color: #222; }
-
-img {
-  width: 100%; }
+  color: #222;
+}
 
 html {
-  font-family: Arial; }
+  font-family: Arial, sans-serif;
+  color: #222;
+}
 
-h1 {
-  font-size: 11pt; }
-
-h2 {
-  font-size: 10pt; }
+h1, h2, h3 {
+  font-size: 11pt;
+}
 
 h3 {
-  font-size: 10pt;
-  margin-left: 25pt;}
+  margin-left: 25pt;
+}
+
+h3.ml-0 {
+  margin-left: 0;
+}
+
+h1.fs-16 {
+  font-size: 16pt;
+}
 
 p, li {
-  font-size: 10pt; }
+  font-size: 10pt;
+}
+
+p.small {
+  font-size: 8pt;
+}
+
+h1.underlined, h2.underlined {
+  text-decoration: underline;
+}
+
+div.indented {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 100pt;
+}
+
+div.indented-charge-info {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 40pt;
+  width: 600pt;
+}
+
+p.bolded {
+  font-weight: bold;
+}
+
+p.indented {
+  display: block;
+  vertical-align: top;
+  margin-left: 50pt;
+}
+
+p.signature {
+  border-bottom-style: solid;
+  border-bottom-width: thin;
+  margin-top: 3em;
+  margin-bottom: 4em;
+}
+
+img {
+  width: 100%;
+}
+
+img.checkbox {
+  width: 22px;
+  height: 22px;
+  float: left;
+  margin-right: 5px;
+}
 
 hr {
   width: 100%;
-  margin-bottom: 5px; }
+  margin-bottom: 5px;
+}
 
+
+/* -----------------------------------------------------
+   UTILITY CLASSES
+   ----------------------------------------------------- */
+.new-page {
+  page-break-before: always;
+}
+
+.avoid-pb {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.children-avoid-pb > * {
+  page-break-inside: avoid;
+}
+
+.padded-header {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pt-10 {
+  padding-top: 10pt;
+}
+
+.pb-0 {
+  padding-bottom: 0;
+}
+
+.pb-5 {
+  padding-bottom: 5pt;
+}
+
+.pb-10 {
+  padding-bottom: 10pt;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.indent-50 {
+  display: block;
+  vertical-align: top;
+  margin-left: 50pt;
+}
+
+
+/* -----------------------------------------------------
+   LISTS
+   ----------------------------------------------------- */
+.body ol.numbered-list, ul.bulleted-list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.body ul.align-with-p {
+  margin-left: 50pt;
+  padding-left: 0.8em;
+}
+
+.body ul.no-bullets {
+  list-style-type: none;
+  padding: 0;
+}
+
+.body ul.mt-0, .body li.mt-0 {
+  margin-top: 0;
+}
+
+.body li {
+  margin-top: 10pt;
+}
+
+
+/* -----------------------------------------------------
+   TABLES
+   ----------------------------------------------------- */
+.area-table, .area-table tr, .area-table th, .area-table td {
+  border: 0.5px solid black;
+  border-collapse: collapse;
+  padding: 3px;
+  font-size: 7pt;
+  text-align: center;
+  page-break-inside: avoid;
+}
+
+.area-table {
+  width: 100%;
+}
+
+.contact-table {
+  width: auto;
+  border-collapse: collapse;
+  font-size: 10pt;
+  display: block;
+}
+
+.contact-table, .contact-table tr, .contact-table td {
+  border: none;
+  padding: 1pt;
+  vertical-align: top;
+  word-wrap: break-word;
+  white-space: pre-line;
+  page-break-inside: avoid;
+}
+
+tr.finished {
+  background-color: #c6cbd3;
+}
+
+tr.unfinished {
+  background-color: white;
+}
+
+tr.fat-border {
+  border-top: 1px solid black;
+}
+
+tr.thin-border {
+  border-top: 0.5px solid black;
+}
+
+td.info {
+  text-align: left;
+}
+
+
+/* -----------------------------------------------------
+   HEADER
+   ----------------------------------------------------- */
 .header {
   margin-left: 10px;
   margin-right: 10px;
   margin-top: 30px;
-  padding: 10px 0px;
+  padding: 10px 0;
   float: left;
   width: 95%;
 }
@@ -75,7 +267,7 @@ hr {
   font-style: normal;
   position: fixed;
   top: 40px;
-  right: 0px;
+  right: 0;
   font-size: 9pt;
 }
 
@@ -90,7 +282,7 @@ hr {
 }
 
 .header .half-right .id table td {
-  padding: 0px;
+  padding: 0;
 }
 
 .header .half-right .id table td.c1 {
@@ -102,6 +294,10 @@ hr {
   font-size: 8pt;
 }
 
+
+/* -----------------------------------------------------
+   BODY LAYOUT
+   ----------------------------------------------------- */
 .body .unboxed {
   margin-bottom: 10pt;
 }
@@ -112,14 +308,9 @@ hr {
   margin: 14pt 0;
 }
 
-.body h1, .body h2, .body p, .body ul {
-  margin-bottom: 0px;
-  margin-top: 0px;
-}
-
-.padded-header {
-  padding-top: 10px;
-  padding-bottom: 10px;
+.body h1, .body h2, .body p {
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 .body p.space-above {
@@ -130,13 +321,9 @@ hr {
   margin-bottom: 10pt;
 }
 
-.body li {
-  margin-top: 2pt;
-}
-
 .body hr {
   border-style: none;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .body hr.signature {
@@ -176,75 +363,6 @@ hr {
   display: inline-block;
   vertical-align: top;
   width: 25%;
-}
-
-p.indented {
-  display: block;
-  vertical-align: top;
-  margin-left: 50pt;
-}
-
-p.small {
-  font-size: 8pt;
-}
-
-p.signature {
-  border-bottom-style: solid;
-  border-bottom-width: thin;
-  margin-top: 3em;
-  margin-bottom: 4em;
-}
-
-div.indented {
-  display: inline-block;
-  vertical-align: top;
-  margin-left: 100pt;
-}
-
-div.indented-charge-info {
-  display: inline-block;
-  vertical-align: top;
-  margin-left: 40pt;
-  width: 600pt;
-}
-
-img.checkbox {
-  width: 22px;
-  heigth: 22px;
-  float: left;
-  margin-right: 5px;
-}
-
-.area-table, .area-table tr, .area-table th, .area-table td {
-  border: 0.5px solid black;
-  border-collapse: collapse;
-  padding: 3px;
-  font-size: 7pt;
-  text-align: center;
-}
-
-.area-table {
-  width: 100%;
-}
-
-tr.finished {
-  background-color: #c6cbd3;
-}
-
-tr.unfinished {
-  background-color: white;
-}
-
-tr.fat-border {
-  border-top: 1px solid black;
-}
-
-tr.thin-border {
-  border-top: 0.5px solid black;
-}
-
-td.info {
-  text-align: left;
 }
 
 .body .charge-info {
@@ -299,22 +417,10 @@ td.info {
   border-top: 1.5pt solid;
 }
 
-h2.new-page {
-  page-break-before: always;
-}
 
-section.new-page {
-  page-break-before: always;
-}
-
-.avoid-pb {
-  page-break-inside: avoid;
-}
-
-.children-avoid-pb > * {
-  page-break-inside: avoid;
-}
-
+/* -----------------------------------------------------
+   FOOTER
+   ----------------------------------------------------- */
 .footer {
   padding-bottom: 30px;
   width: 100%;
@@ -357,6 +463,5 @@ section.new-page {
   border-left: white;
   border-right: white;
   border-bottom: white;
-  padding-bottom: 20px; }
-
-/*# sourceMappingURL=style.css.map */
+  padding-bottom: 20px;
+}
