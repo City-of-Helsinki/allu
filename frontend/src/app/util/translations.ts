@@ -1482,13 +1482,18 @@ export const translations = {
           clearAll: {
             title: 'Poista kaikki',
             text: 'Poista kaikki'
+          },
+          cut: {
+            title: 'Leikkaa kuvio',
+            text: 'Leikkaa'
           }
         },
         buttons: {
           edit: 'Muokkaa kuvioita.',
           editDisabled: 'Ei muokattavia kuvioita.',
           remove: 'Poista kuvioita.',
-          removeDisabled: 'Ei poistettavia kuvioita.'
+          removeDisabled: 'Ei poistettavia kuvioita.',
+          scissors: 'Leikkaa kuvio osiin.'
         }
       },
       handlers: {
@@ -1517,6 +1522,16 @@ export const translations = {
     },
     layers: {
       placeholder: 'Taustakartat'
+    },
+    notifications: {
+      areaSelected: 'Alue valittu',
+      couldNotSelectAreaToCut: 'Ei voitu valita leikattavaa aluetta',
+      cuttingUnsuccessful: 'Leikkaus epäonnistui',
+      drawCuttingLine: 'Piirrä leikkausviiva',
+      intersectingAreasInSelectedPoint: 'Valittu kohta käsittää useita päällekäisiä alueita',
+      selectArea: 'Paina aluetta, jonka haluat leikata',
+      noChanges: 'Ei muutoksia',
+      noSelectedArea: 'Ei valittua aluetta'
     }
   },
   mapsearch: {

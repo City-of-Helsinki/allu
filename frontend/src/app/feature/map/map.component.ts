@@ -26,7 +26,7 @@ import {FixedLocation} from '@model/common/fixed-location';
 @Component({
   selector: 'map',
   templateUrl: './map.component.html',
-  styleUrls: [],
+  styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -58,7 +58,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.roleChange(this.role);
     this.mapController.availableLayers = this.availableLayers;
 
-      this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
+    this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
   }
 
   /**
