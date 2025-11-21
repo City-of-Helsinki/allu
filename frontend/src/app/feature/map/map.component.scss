@@ -1,0 +1,14 @@
+:host ::ng-deep {
+  .scissors-button {
+    padding: 5px;
+  }
+
+  .scissors-actions {
+    position: absolute;
+    display: block;
+  }
+
+  .scissors-actions a {
+    width: 100%;
+  }
+}
