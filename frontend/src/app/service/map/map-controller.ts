@@ -26,8 +26,9 @@ import {MapLayer} from '@service/map/map-layer';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {Projection} from '@feature/map/projection';
+import {State as ScissorsState, ScissorsControl} from './scissors-control';
 import GeoJSONOptions = L.GeoJSONOptions;
-import {LatLngBounds} from 'leaflet';
+
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -60,6 +61,7 @@ export class MapController {
   private config: MapControllerConfig;
   private _allLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
   private _selectedLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
+  private scissorsControl: ScissorsControl;
 
   constructor(private mapUtil: MapUtil,
               private projection: Projection,
@@ -275,6 +277,19 @@ export class MapController {
       zoomOutTitle: translations.map.zoomOut
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
+
+    if (this.config.edit) {
+      // Add scissors control
+      this.scissorsControl = new ScissorsControl(
+        { position: 'topright' },
+        this.editedItems,
+        this.notification,
+        this.shapes$,
+        this.intersectEventHandler
+      );
+      this.scissorsControl.addTo(this.map);
+    }
+
     L.Icon.Default['imagePath'] = '/assets/images/';
     this.setDynamicControls(this.mapStore.snapshot.drawingAllowed, editedItems);
   }
@@ -294,6 +309,11 @@ export class MapController {
       worldCopyJump: false
     };
     return L.map('map', mapOption);
+  }
+
+  private intersectEventHandler(this: NotificationService,
+                                e: L.LeafletEvent): void {
+    this.error(translations.map.areasIntersect, undefined, false);
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
@@ -335,12 +355,12 @@ export class MapController {
       }
     });
 
-    this.map.on(L.Draw.Event.INTERSECTS, (e: any) => {
-      this.notification.error(translations.map.areasIntersect, undefined, false);
-    });
+    this.map.on(
+      L.Draw.Event.INTERSECTS, this.intersectEventHandler, this.notification
+    );
 
     this.map.on('click', (e: L.LeafletMouseEvent) => {
-      if (!(this.editing || this.deleting)) {
+      if (!(this.editing || this.deleting || this.scissorsControl.getState() !== ScissorsState.Inactive)) {
         self.showTooltipOnClick(e);
       }
     });
