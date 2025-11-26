@@ -19,10 +19,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   </head>
   <body>
     <div class="body">
-
       <div class="unboxed">
         <section class="half-left">
-          <h2>Päätöksen hakija</h2>
+          <h1>Päätöksen hakija</h1>
           <!-- <p>[Hakijan nimi], [Y-tunnus]</p>
                  <p>[Osoite, postinumero, toimipaikka]</p>
             <p>  [Sähköpostiosoite, puhelin]</p> -->
@@ -33,7 +32,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
         <section class="half-right">
           <xsl:if test="data/customerContactLines != '' and data/anonymizedDocument = 'false'">
-            <h2>Yhteyshenkilö</h2>
+            <h1>Yhteyshenkilö</h1>
             <!-- <p>[Yhteyshenkilön nimi]</p>
                  <p>[Sähköpostiosoite, puhelin]</p> -->
              <xsl:for-each select="data/customerContactLines">
@@ -46,7 +45,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:if test="data/representativeAddressLines != ''">
         <div class="unboxed">
           <section class="half-left">
-            <h2>Asiamies</h2>
+            <h1>Asiamies</h1>
             <p>
               <xsl:for-each select="data/representativeAddressLines">
                 <xsl:value-of select="." /><br/>
@@ -55,7 +54,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </section>
           <section class="half-right">
             <xsl:if test="data/representativeContactLines != '' and data/anonymizedDocument = 'false'">
-              <h2>Yhteyshenkilö</h2>
+              <h1>Yhteyshenkilö</h1>
               <p>
                 <xsl:for-each select="data/representativeContactLines">
                   <xsl:value-of select="."/><br/>
@@ -68,7 +67,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed">
         <section class="half-left">
-          <h2>Kohde</h2>
+          <h1>Kohde</h1>
           <p>
             <!-- Käytetään vuokrattavaa paikkaa ja lohkoa, jos joku
                  pudotusvalikossa määritetty paikka;
@@ -77,7 +76,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <xsl:value-of select="data/siteAddressLine"/>
           </p>
           <xsl:if test="data/siteAdditionalInfo != ''">
-            <p class="space-above">
+            <p class="pt-10">
               <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
               <!-- [Lisätietoja paikasta] -->
               <xsl:value-of select="data/siteAdditionalInfo"/>
@@ -85,14 +84,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </xsl:if>
           <!-- Ei tarvita, jos banderolli: -->
           <xsl:if test="data/siteArea != '' and data/siteArea != 0">
-            <p class="space-above">
+            <p class="pt-10">
                Pinta-ala: <xsl:value-of select="data/siteArea" /> m<sup>2</sup><!-- [Alueen pinta-ala] -->
             </p>
           </xsl:if>
         </section>
 
         <section class="half-right">
-          <h2>Vuokra-aika</h2>
+          <h1>Vuokra-aika</h1>
 
           <p class="text-flow">
             <!-- [Varauksen alkupäivämäärä] -->
@@ -126,23 +125,23 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed">
         <section class="half-left">
-          <h2>Vuokrauksen tarkoitus</h2>
+          <h1>Vuokrauksen tarkoitus</h1>
           <p>
             <!-- [Hakemuksen tyyppi ja laji]  -->
             <xsl:value-of select="data/eventNature"/>
           </p>
-          <p class="space-above">
+          <p class="pt-10">
             <!-- [Vuokrauksen nimi]  -->
             <xsl:value-of select="data/eventName"/>
           </p>
-          <p class="space-above">
+          <p class="pt-10">
             <!--  [Vuokrauksen kuvaus]  -->
             <xsl:value-of select="data/eventDescription"/>
           </p>
         </section>
 
         <section class="half-right">
-          <h2>Vuokra</h2>
+          <h1>Vuokra</h1>
           <xsl:choose>
             <xsl:when test="data/notBillable = 'false'">
               <p>
@@ -154,30 +153,30 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </xsl:when>
             <xsl:otherwise>
               <p>Korvauksetta.</p>
-              <p class="space-above">
+              <p class="pt-10">
                 Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
               </p>
             </xsl:otherwise>
           </xsl:choose>
           <xsl:choose>
             <xsl:when test="data/eventNature = 'Lyhytaikainen maanvuokraus, Liikkuva myynti/myyntiautot ja -vaunut'">
-              <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 20.5.2025 § 307.</p>
+              <p class="pt-10">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 20.5.2025 § 307.</p>
             </xsl:when>
             <xsl:otherwise>
-              <p class="space-above">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.5.2018 § 238
+              <p class="pt-10">Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.5.2018 § 238
                 tai 15.1.2019 § 15 tai 1.2.2022 § 51.</p>
             </xsl:otherwise>
           </xsl:choose>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
-            <p class="space-above">Lasku lähetetään erikseen.</p>
+            <p class="pt-10">Lasku lähetetään erikseen.</p>
           </xsl:if>
         </section>
       </div>
 
       <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
         <section class="unboxed">
-          <h2>Vuokran erittely</h2>
+          <h1>Vuokran erittely</h1>
 
           <div class="charge-info">
             <xsl:for-each select="data/chargeInfoEntries">
@@ -214,13 +213,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </xsl:if>
 
       <section class="unboxed">
-        <h2>Ehdot</h2>
+        <h1>Ehdot</h1>
         <p>Liitteenä olevia ehtoja on noudatettava.</p>
 
         <xsl:if test="data/additionalConditions">
           <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen
                tekstikenttään lisäehtoja. -->
-          <p class="space-above">
+          <p class="pt-10">
             Lisäksi on noudatettava seuraavia ehtoja:
           </p>
           <xsl:for-each select="data/additionalConditions">
@@ -236,7 +235,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </section>
 
       <section class="unboxed avoid-pb">
-        <h2>Päätös</h2>
+        <h1>Päätös</h1>
         <p>
           Hakija on hakenut oikeutta alueen käyttöön, toimittanut
           hakemuksen liitteineen asukas- ja yrityspalveluihin ja
@@ -244,13 +243,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           ohjeistukseen sekä sopimusehtoihin.
         </p>
 
-        <p class="space-above">Alueiden käyttö ja –valvontayksikön tapahtumat ja maanvuokraus –tiimin tiimipäällikkö
+        <p class="pt-10">Alueiden käyttö ja –valvontayksikön tapahtumat ja maanvuokraus –tiimin tiimipäällikkö
           päätti myöntää luvan hakijalle haetun alueen käyttämiseen yllä olevin ehdoin.</p>
 
-        <p class="space-above">Tämä päätös on sähköisesti
+        <p class="pt-10">Tämä päätös on sähköisesti
           allekirjoitettu.</p>
 
-        <p class="space-above">
+        <p class="pt-10">
           <!-- [aikaleima], [päättäjän työnimike], [päättäjän nimi] -->
           <xsl:value-of select="data/decisionTimestamp"/>,
           <xsl:value-of select="data/deciderTitle"/>,
@@ -260,13 +259,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed avoid-pb">
         <section class="half-left">
-          <h2>Lisätiedot</h2>
+          <h1>Lisätiedot</h1>
           <p>Alueidenkäyttö ja -valvontayksikkö</p>
           <p>ulkoilma@hel.fi</p>
         </section>
 
         <section class="half-right">
-          <h2>Käsittelijä</h2>
+          <h1>Käsittelijä</h1>
           <p>
             <!--  [titteli, tarkastajan nimi] -->
             <xsl:value-of select="data/handlerTitle"/>,
@@ -276,7 +275,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </div>
 
       <section class="unboxed avoid-pb">
-        <h2>Liitteet</h2>
+        <h1>Liitteet</h1>
         <!--  [Lista liitteiden nimistä] -->
         <xsl:for-each select="data/attachmentNames">
           <p><xsl:value-of select="." /></p>
@@ -285,13 +284,127 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <xsl:if test="data/distributionNames and data/anonymizedDocument = 'false'">
         <section class="unboxed avoid-pb">
-          <h2>Päätöksen jakelu</h2>
+          <h1>Päätöksen jakelu</h1>
           <!--  [Lista päätöksen jakelusta] -->
           <xsl:for-each select="data/distributionNames">
             <p><xsl:value-of select="." /></p>
           </xsl:for-each>
         </section>
       </xsl:if>
+
+      <!-- Muutoksenhakuohjeet -->
+      <section class="new-page">
+        <h1>MUUTOKSENHAKUOHJEET</h1>
+        <h2 class="pt-10">OHJEET OIKAISUVAATIMUKSEN TEKEMISEKSI</h2>
+        <div class="indent-50">
+          <p class="pt-10 indent-50">
+            Tähän päätökseen tyytymätön voi tehdä kirjallisen oikaisuvaatimuksen.
+            Päätökseen ei saa hakea muutosta valittamalla tuomioistuimeen.
+          </p>
+        </div>
+
+        <div class="indent-50">
+          <h3 class="ml-0">Oikaisuvaatimusoikeus</h3>
+          <p class="indent-50">Oikaisuvaatimuksen saa tehdä</p>
+          <ul class="align-with-p">
+            <li class="mt-0">
+              se, johon päätös on kohdistettu tai jonka oikeuteen, velvollisuuteen
+              tai etuun päätös välittömästi vaikuttaa (asianosainen)
+            </li>
+            <li class="mt-0">kunnan jäsen.</li>
+          </ul>
+        </div>
+
+        <div class="indent-50">
+          <h3 class="ml-0">Oikaisuvaatimusaika</h3>
+          <p class="indented">Oikaisuvaatimus on tehtävä 14 päivän kuluessa päätöksen tiedoksisaannista.</p>
+          <p class="pt-10 indent-50">
+            Oikaisuvaatimuksen on saavuttava Helsingin kaupungin kirjaamoon
+            määräajan viimeisenä päivänä ennen kirjaamon aukioloajan päättymistä.
+          </p>
+          <p class="pt-10 indent-50">
+            Mikäli päätös on annettu tiedoksi postitse, asianosaisen katsotaan saaneen päätöksestä tiedon,
+            jollei muuta näytetä, seitsemän päivän kuluttua kirjeen
+            lähettämisestä. Kunnan jäsenen katsotaan saaneen päätöksestä tiedon, kun pöytäkirja on asetettu yleisesti nähtäväksi.
+          </p>
+          <p class="pt-10 indent-50">
+            Mikäli päätös on annettu tiedoksi sähköisenä viestinä, asianosaisen
+            katsotaan saaneen päätöksestä tiedon, jollei muuta näytetä, kolmen
+            päivän kuluttua viestin lähettämisestä.
+          </p>
+          <p class="pt-10 indent-50">
+            Tiedoksisaantipäivää ei lueta oikaisuvaatimusaikaan. Jos oikaisuvaatimusajan viimeinen päivä on pyhäpäivä, itsenäisyyspäivä, vapunpäivä,
+            joulu- tai juhannusaatto tai arkilauantai, saa oikaisuvaatimuksen tehdä
+            ensimmäisenä arkipäivänä sen jälkeen.
+          </p>
+        </div>
+
+        <div class="indent-50">
+          <h3 class="ml-0">Oikaisuvaatimusviranomainen</h3>
+          <p class="indent-50">
+            Viranomainen, jolle oikaisuvaatimus tehdään, on Helsingin kaupungin
+            kaupunkiympäristölautakunta.
+          </p>
+          <p class="pt-10 indent-50">Oikaisuvaatimusviranomaisen asiointiosoite on seuraava:</p>
+          <table class="contact-table indent-50">
+            <tr>
+              <td>Sähköpostiosoite:</td>
+              <td>helsinki.kirjaamo@hel.fi</td>
+            </tr>
+            <tr>
+              <td>Postiosoite:</td>
+              <td>PL 10
+                00099 HELSINGIN KAUPUNKI
+              </td>
+            </tr>
+            <tr>
+              <td>Faksinumero:</td>
+              <td>(09) 655 783</td>
+            </tr>
+            <tr>
+              <td>Käyntiosoite:</td>
+              <td>Pohjoisesplanadi 11–13</td>
+            </tr>
+            <tr>
+              <td>Puhelinnumero:</td>
+              <td>(09) 310 13700 (Yleishallinto)</td>
+            </tr>
+          </table>
+          <p class="pt-10 indent-50">Kirjaamon aukioloaika on maanantaista perjantaihin klo 08.15–16.00.</p>
+        </div>
+
+        <div class="indent-50 avoid-pb">
+          <h3 class="ml-0">Oikaisuvaatimuksen muoto ja sisältö</h3>
+          <p class="indent-50">
+            Oikaisuvaatimus on tehtävä kirjallisena. Myös sähköinen asiakirja täyttää
+            vaatimuksen kirjallisesta muodosta.
+          </p>
+          <p class="pt-10 indent-50">Oikaisuvaatimuksessa on ilmoitettava</p>
+          <ul class="mb-0 align-with-p">
+            <li class="mt-0">päätös, johon oikaisuvaatimus kohdistuu</li>
+            <li class="mt-0">miten päätöstä halutaan oikaistavaks</li>
+            <li class="mt-0">millä perusteella päätöstä halutaan oikaistavaksi</li>
+            <li class="mt-0">oikaisuvaatimuksen tekijä</li>
+            <li class="mt-0">millä perusteella oikaisuvaatimuksen tekijä on oikeutettu tekemään vaatimuksen</li>
+            <li class="mt-0">oikaisuvaatimuksen tekijän yhteystiedot</li>
+          </ul>
+        </div>
+
+        <div class="indent-50">
+          <h3 class="ml-0">Tietopyynnöt</h3>
+          <p class="indent-50">
+            Päätöstä koskevia otteita ja liitteitä lähetetään pyynnöstä.
+            Asiakirjoja voi tilata:
+          </p>
+          <ul class="mt-0 mb-0 indent-50 no-bullets">
+            <li class="mt-0">Kaupunkiympäristön toimiala</li>
+            <li class="mt-0">Alueidenkäyttö ja -valvonta</li>
+            <li class="mt-0">Sörnäistenkatu 1</li>
+            <li class="mt-0">00580 HELSINKI</li>
+            <li class="mt-0">tai hkr.ulkoilma@hel.fi</li>
+          </ul>
+        </div>
+      </section>
     </div>
   </body>
 </html>
