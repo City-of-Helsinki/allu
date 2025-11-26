@@ -11,7 +11,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:attribute name="href">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
-    </xsl:element> 
+    </xsl:element>
     <link rel="stylesheet" href="style.css" />
     <script type="text/javascript">
       <![CDATA[
@@ -34,7 +34,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </div>
       <div class="department">
         <p>Kaupunkiympäristö</p>
-        <p>Alueidenkäyttö ja -valvonta</p>
+        <p>Alueiden käyttö ja valvonta -yksikkö</p>
         <p>ulkoilma@hel.fi</p>
       </div>
       <div class="half-right">
