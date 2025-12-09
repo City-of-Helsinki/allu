@@ -3,9 +3,9 @@ ENV NODE_ENV=dev
 
 WORKDIR /allu-frontend
 
-COPY ["package.json", "./"]
+COPY ["package.json", "package-lock.json", "./"]
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
