@@ -279,13 +279,22 @@ export class MapController {
     L.control.scale().addTo(this.map);
 
     if (this.config.edit) {
+      const toggleEventHandlers = (action: 'on' | 'off') => {
+        this.map[action](
+          L.Draw.Event.INTERSECTS,
+          this.intersectEventHandler,
+          this.notification
+        );
+        this.map[action]('click', this.showTooltipOnClick, this);
+      };
       // Add scissors control
       this.scissorsControl = new ScissorsControl(
         { position: 'topright' },
         this.editedItems,
         this.notification,
         this.shapes$,
-        this.intersectEventHandler
+        { enable: () => toggleEventHandlers('on'),
+          disable: () => toggleEventHandlers('off') }
       );
       this.scissorsControl.addTo(this.map);
     }
@@ -359,11 +368,7 @@ export class MapController {
       L.Draw.Event.INTERSECTS, this.intersectEventHandler, this.notification
     );
 
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      if (!(this.editing || this.deleting || this.scissorsControl.getState() !== ScissorsState.Inactive)) {
-        self.showTooltipOnClick(e);
-      }
-    });
+    this.map.on('click', this.showTooltipOnClick, this);
 
     this.map.on('draw:editvertex ', (e: any) => {
       if (e.poly.intersects()) {
@@ -409,12 +414,16 @@ export class MapController {
   }
 
   private showTooltipOnClick(e: L.LeafletMouseEvent): void {
-    const intersecting = MapEventHandler.clickIntersects(e, this.map, this.mapLayerService.clickableLayers);
-    if (intersecting.length) {
-      L.popup({className: 'allu-map-popup'})
-        .setLatLng(e.latlng)
-        .setContent(this.popupService.create(intersecting))
-        .openOn(this.map);
+    if (!(this.editing || this.deleting)) {
+      const intersecting = MapEventHandler.clickIntersects(
+        e, this.map, this.mapLayerService.clickableLayers
+      );
+      if (intersecting.length) {
+        L.popup({className: 'allu-map-popup'})
+          .setLatLng(e.latlng)
+          .setContent(this.popupService.create(intersecting))
+          .openOn(this.map);
+      }
     }
   }
 
