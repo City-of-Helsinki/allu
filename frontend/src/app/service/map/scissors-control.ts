@@ -56,6 +56,21 @@ export enum State {
 }
 
 /**
+ * Callback functions for enabling/disabling `map-controller` event handlers.
+ */
+interface EventHandlerCallbacks {
+  // Temporarily disable Leaflet event handlers for the time of cutting:
+  // - Intersection event handler
+  //   - Disabling this allows the user to draw a complex cutting line
+  //     (e.g., a zig-zag) without triggering intersection errors.
+  // - Tooltip popup handler
+  //   - Disable this so that tooltip popups are not shown during cutting.
+  disable: () => void;
+  // Re-enables the disabled event handlers.
+  enable: () => void;
+}
+
+/**
  * A custom Leaflet control for cutting polygons on the map. The control
  * provides a user interface for selecting a polygon, drawing a cutting line,
  * and then splitting the selected polygon into multiple new polygons.
@@ -82,14 +97,14 @@ export class ScissorsControl extends L.Control {
    *        the user.
    * @param shapes$ A subject that emits an event when a shape is added or
    *        modified.
-   * @param intersectEventHandler An event handler for when a drawn shape
-   *        intersects with another.
+   * @param eventHandlerCallbacks Callback functions for enabling/disabling
+   *        `map-controller` event handlers.
    */
   constructor(options: L.ControlOptions = { position: 'topright' },
               private editedItems: L.FeatureGroup,
               private notification: NotificationService,
               private shapes$: Subject<ShapeAdded>,
-              private intersectEventHandler: (e: L.LeafletEvent) => void) {
+              private eventHandlerCallbacks: EventHandlerCallbacks) {
     super(options);
     this.options = options;
   }
@@ -186,12 +201,7 @@ export class ScissorsControl extends L.Control {
       // active Leaflet Draw/Edit tools.
       this.triggerEscKey();
 
-      // Temporarily disable the intersection event handler to allow the user
-      // to draw a complex cutting line (e.g., a zig-zag) without triggering
-      // intersection errors.
-      this.map.off(
-        L.Draw.Event.INTERSECTS, this.intersectEventHandler, this.notification
-      );
+      this.eventHandlerCallbacks.disable();
 
       // Display the "Cancel" action button.
       this.toolActionButtons.appendChild(this.cancelButton);
@@ -215,11 +225,7 @@ export class ScissorsControl extends L.Control {
     this.map.off('click', this.selectFeatureHandler, this);
     this.map.off('draw:created', this.cutCreatedHandler, this);
 
-    // Re-enable the intersection event handler that was disabled on tool
-    // activation.
-    this.map.on(
-      L.Draw.Event.INTERSECTS, this.intersectEventHandler, this.notification
-    );
+    this.eventHandlerCallbacks.enable();
 
     // Disable the cutting line draw handler and clear any partially drawn
     // lines.
