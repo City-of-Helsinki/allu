@@ -6,8 +6,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,12 +33,14 @@ import fi.hel.allu.model.service.event.CustomerUpdateEvent;
 @Service
 public class CustomerService {
 
-  private ObjectComparer objectComparer;
-  private CustomerDao customerDao;
-  private ContactDao contactDao;
-  private HistoryDao historyDao;
+  private final ObjectComparer objectComparer;
+  private final CustomerDao customerDao;
+  private final ContactDao contactDao;
+  private final HistoryDao historyDao;
   private final UserDao userDao;
-  private ApplicationEventPublisher customerUpdateEventPublisher;
+  private final ApplicationEventPublisher customerUpdateEventPublisher;
+
+  private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
   @Autowired
   public CustomerService(CustomerDao customerDao, ContactDao contactDao, HistoryDao historyDao, UserDao userDao, ApplicationEventPublisher customerUpdateEventPublisher) {
@@ -241,11 +246,47 @@ public class CustomerService {
           isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(), fieldChanges);
       historyDao.addCustomerChange(customerId, change);
     }
-
   }
 
   private boolean isExternalUser(Integer userId) {
     return userDao.findById(userId).map(u -> u.getUserName().equals(Constants.EXTERNAL_USER_USERNAME)).orElse(false);
   }
 
+  /**
+   * Finds customers that are eligible for permanent deletion and
+   * stores the given customers into the staging table of deletable customers.
+   *
+   * A customer is eligible if it has no references in application,
+   * project or invoice recipient relations.
+   */
+  @Transactional
+  public void checkAndStoreDeletableCustomers() {
+    logger.info("Checking for deletable customers");
+    List<DeletableCustomer> deletables = customerDao.findCustomersEligibleForDeletion();
+
+    logger.info("Storing deletable customers");
+    customerDao.storeCustomersEligibleForDeletion(deletables);
+
+    logger.info("Stored {} deletable customers", deletables.size());
+  }
+
+  /**
+   * Retrieves a paginated list of deletable customers from the database.
+   * The method operates in a read-only transactional context.
+   *
+   * @param pageable the pagination and sorting information
+   * @return a paginated list of deletable customers
+   */
+  @Transactional(readOnly = true)
+  public Page<DeletableCustomer> getDeletableCustomers(Pageable pageable) {
+    Page<DeletableCustomer> page =
+      customerDao.getDeletableCustomers(pageable);
+
+    logger.debug(
+      "Fetched deletable customers from database, totalElements={}",
+      page.getTotalElements()
+    );
+
+    return page;
+  }
 }

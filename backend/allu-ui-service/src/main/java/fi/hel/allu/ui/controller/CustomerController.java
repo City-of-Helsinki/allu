@@ -157,41 +157,20 @@ public class CustomerController {
   }
 
   /**
-   * Returns a paginated list of all customers or customers eligible for permanent deletion.
+   * Returns a paginated list of customers eligible for permanent deletion.
    * A customer is deletable if it is not linked to any application or project in Allu.
-   * Only minimal details (ID and name) are included in the response.
+   * Only minimal details (ID, SAP customer number, and name) are included in the response.
    *
-   * @param deletable if true, return deletable customers, otherwise return all customers
    * @param pageable pagination and sorting information
    * @return a page of customers matching the criteria; empty page if none found
    */
-  @GetMapping
+  @GetMapping(value = "/deletable")
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-  public ResponseEntity<Page<CustomerSummaryRecord>> getCustomers(
-    @RequestParam(value = "deletable", required = false) Boolean deletable,
+  public ResponseEntity<Page<CustomerSummaryRecord>> getDeletableCustomers(
     @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageable
   ) {
-    if (Boolean.TRUE.equals(deletable)) {
-      return ResponseEntity.ok(new PageImpl<>(
-        List.of(
-          new CustomerSummaryRecord(1L, "Testi Asiakas 1 (poistettava)"),
-          new CustomerSummaryRecord(2L, "Testi Asiakas 2 (poistettava)")
-        ),
-        pageable,
-        2
-      ));
-    } else {
-      return ResponseEntity.ok(new PageImpl<>(
-        List.of(
-          new CustomerSummaryRecord(1L, "Testi Asiakas 1 (poistettava)"),
-          new CustomerSummaryRecord(2L, "Testi Asiakas 2 (poistettava)"),
-          new CustomerSummaryRecord(3L, "Testi Asiakas 3"),
-          new CustomerSummaryRecord(4L, "Testi Asiakas 4")
-        ),
-        pageable,
-        4
-      ));
-    }
+    Page<CustomerSummaryRecord> result = customerService.getDeletableCustomers(pageable);
+    return ResponseEntity.ok(result);
   }
 
   /**

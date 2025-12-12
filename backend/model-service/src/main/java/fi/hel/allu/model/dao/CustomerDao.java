@@ -4,9 +4,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.sql.dml.SQLInsertClause;
+import fi.hel.allu.QApplication;
+import fi.hel.allu.QApplicationTag;
+import fi.hel.allu.QPostalAddress;
+import fi.hel.allu.model.controller.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +27,6 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
-import fi.hel.allu.QApplication;
-import fi.hel.allu.QApplicationTag;
-import fi.hel.allu.QPostalAddress;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -35,18 +38,29 @@ import fi.hel.allu.model.domain.*;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QCustomer.customer;
+import static fi.hel.allu.QDeletableCustomer.deletableCustomer;
 import static fi.hel.allu.QPostalAddress.postalAddress;
+import static fi.hel.allu.QProject.project;
 
 @Repository
 public class CustomerDao {
+
+  private final SQLQueryFactory queryFactory;
+  private final PostalAddressDao postalAddressDao;
+
   @Autowired
-  private SQLQueryFactory queryFactory;
-  @Autowired
-  PostalAddressDao postalAddressDao;
+  public CustomerDao(
+    SQLQueryFactory queryFactory,
+    PostalAddressDao postalAddressDao
+  ) {
+    this.queryFactory = queryFactory;
+    this.postalAddressDao = postalAddressDao;
+  }
 
   final QBean<Customer> customerBean = bean(Customer.class, customer.all());
   final QBean<Contact> contactBean = bean(Contact.class, contact.all());
@@ -279,4 +293,94 @@ public class CustomerDao {
     return findInvoiceRecipientIdsWithoutSapNumber().size();
   }
 
+  /**
+   * Retrieves a list of customers eligible for deletion. A customer is considered eligible for
+   * deletion if it is not associated with any applications, projects, or invoice recipients.
+   * This method uses database queries to fetch the relevant customers who meet the criteria from
+   * the customer table with some joins.
+   *
+   * @return a list of {@code DeletableCustomer} objects representing customers eligible for deletion.
+   *         If no customers meet the criteria, an empty list is returned.
+   */
+  public List<DeletableCustomer> findCustomersEligibleForDeletion() {
+    return queryFactory
+      .select(Projections.constructor(DeletableCustomer.class,
+        customer.id,
+        customer.sapCustomerNumber))
+      .from(customer)
+      .leftJoin(applicationCustomer)
+      .on(applicationCustomer.customerId.eq(customer.id))
+      .leftJoin(project)
+      .on(project.customerId.eq(customer.id))
+      .leftJoin(application)
+      .on(application.invoiceRecipientId.eq(customer.id))
+      .where(
+        applicationCustomer.customerId.isNull(),
+        project.customerId.isNull(),
+        application.invoiceRecipientId.isNull()
+      )
+      .fetch();
+  }
+
+  /**
+   * First resets the table by removing the data and then stores an
+   * updated list of customers eligible for deletion into the database.
+   * Each customer in the provided list is inserted into the appropriate storage
+   * for further processing or removal.
+   *
+   * @param deletables a list of {@code DeletableCustomer} objects representing customers
+   *                   that are eligible for deletion. The list must not be null
+   *                   and may contain zero or more customers.
+   */
+  public void storeCustomersEligibleForDeletion(List<DeletableCustomer> deletables) {
+    queryFactory.delete(deletableCustomer).execute();
+    if (!deletables.isEmpty()) {
+      SQLInsertClause insertQuery = queryFactory.insert(deletableCustomer);
+      for (DeletableCustomer dc : deletables) {
+        insertQuery
+          .set(deletableCustomer.customerId, dc.getCustomerId())
+          .set(deletableCustomer.sapCustomerNumber, dc.getSapCustomerNumber())
+          .addBatch();
+      }
+      insertQuery.execute();
+    }
+  }
+
+  /**
+   * Retrieves a paginated list of customers eligible for deletion. A customer is considered eligible for
+   * deletion if it meets specific criteria, such as not being associated with any dependent entities
+   * like applications, projects, or invoice recipients. This method performs a database query to fetch
+   * and construct the list of deletable customers from the deletable_customer table.
+   *
+   * @param pageable the pagination information, including page number and page size.
+   *                 If null, default pagination parameters are used.
+   * @return a {@code Page} containing {@code DeletableCustomer} objects that meet the criteria for deletion.
+   *         If no customers meet the criteria, an empty page is returned.
+   */
+  public Page<DeletableCustomer> getDeletableCustomers(Pageable pageable) {
+    if (pageable == null) {
+      pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
+    }
+
+    long totalCount = queryFactory
+      .select(deletableCustomer.customerId.count())
+      .from(deletableCustomer)
+      .fetchOne();
+
+    List<DeletableCustomer> deletables = queryFactory
+      .select(Projections.constructor(
+        DeletableCustomer.class,
+        deletableCustomer.customerId,
+        deletableCustomer.sapCustomerNumber,
+        customer.name
+      ))
+      .from(deletableCustomer)
+      .join(customer).on(deletableCustomer.customerId.eq(customer.id))
+      .orderBy(deletableCustomer.customerId.asc())
+      .offset(pageable.getOffset())
+      .limit(pageable.getPageSize())
+      .fetch();
+
+    return new PageImpl<>(deletables, pageable, totalCount);
+  }
 }
