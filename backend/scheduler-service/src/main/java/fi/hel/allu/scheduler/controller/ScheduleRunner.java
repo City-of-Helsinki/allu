@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * The launcher class. Scheduled tasks are collected here.
  */
@@ -31,14 +30,19 @@ public class ScheduleRunner {
   private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
   private final CityDistrictUpdaterService cityDistrictUpdaterService;
   private final ApplicationProperties applicationProperties;
+  private final CustomerService customerService;
 
   @Autowired
-  public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
-      SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
-      SearchSynchService searchSynchService,
-      ApplicationStatusUpdaterService applicationStatusUpdaterService,
-      CityDistrictUpdaterService cityDistrictUpdaterService,
-      ApplicationProperties applicationProperties
+  public ScheduleRunner(
+    ApplicantReminderService applicantReminderService,
+    InvoicingService invoicingService,
+    SapCustomerService sapCustomerService,
+    SapCustomerNotificationService sapCustomerNotificationService,
+    SearchSynchService searchSynchService,
+    ApplicationStatusUpdaterService applicationStatusUpdaterService,
+    CityDistrictUpdaterService cityDistrictUpdaterService,
+    ApplicationProperties applicationProperties,
+    CustomerService customerService
       ) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
@@ -48,6 +52,7 @@ public class ScheduleRunner {
     this.applicationStatusUpdaterService = applicationStatusUpdaterService;
     this.cityDistrictUpdaterService = cityDistrictUpdaterService;
     this.applicationProperties = applicationProperties;
+    this.customerService = customerService;
   }
 
   @EventListener(ApplicationReadyEvent.class)
@@ -120,5 +125,24 @@ public class ScheduleRunner {
   @Scheduled(cron = "${anonymization.update.cronstring}")
   public void checkAnonymizableApplications() {
     applicationStatusUpdaterService.checkAnonymizableApplications();
+  }
+
+  /**
+   * Scheduled method that identifies and stores deletable customers.
+   *
+   * This method is triggered at fixed intervals defined by the cron expression provided
+   * in the configuration property 'deletable.customer.scan.cronstring'. The purpose of
+   * this method is to scan for customers eligible for deletion and store them for further
+   * processing. The actual logic is delegated to the corresponding service.
+   */
+  @Scheduled(cron = "${deletable.customer.scan.cronstring}")
+  public void checkAndStoreDeletableCustomers() {
+    logger.info("Deletable customer scan started");
+    try {
+      customerService.checkAndStoreDeletableCustomers();
+      logger.info("Deletable customer scan completed");
+    } catch (Exception e) {
+      logger.error("Deletable customer scan failed", e);
+    }
   }
 }

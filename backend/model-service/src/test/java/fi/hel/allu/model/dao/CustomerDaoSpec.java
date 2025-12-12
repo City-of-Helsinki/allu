@@ -1,7 +1,9 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ public class CustomerDaoSpec extends SpeccyTestBase {
   @Autowired
   ContactDao contactDao;
   @Autowired
+  ProjectDao projectDao;
+  @Autowired
   TestCommon testCommon;
 
   private Customer testCustomer;
@@ -43,7 +47,6 @@ public class CustomerDaoSpec extends SpeccyTestBase {
   private Contact insertedContact;
   private Application insertedApplication;
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
-
 
   {
     // transaction setup is done in SpeccyTestBase
@@ -198,6 +201,112 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertTrue(prevId < id);
           prevId = id;
         }
+      });
+    });
+
+    describe("findCustomersEligibleForDeletion", () -> {
+      it("returns customer with no applications, projects or invoice references", () -> {
+        Customer customer = customerDao.insert(testCustomer);
+
+        List<DeletableCustomer> result =
+          customerDao.findCustomersEligibleForDeletion();
+
+        assertEquals(1, result.size());
+        assertEquals(customer.getId(), result.get(0).getCustomerId());
+      });
+
+      it("does not return customer linked to application", () -> {
+        Customer customer = customerDao.insert(testCustomer);
+
+        Application app = testCommon.dummyOutdoorApplication("App", "Owner", customer);
+        applicationDao.insert(app);
+
+        List<DeletableCustomer> result =
+          customerDao.findCustomersEligibleForDeletion();
+
+        assertTrue(result.isEmpty());
+      });
+
+      it("does not return customer linked to project", () -> {
+        Customer customer = customerDao.insert(testCustomer);
+
+        Project project = new Project();
+        project.setName("Test project");
+        project.setCustomerId(customer.getId());
+        project.setContactId(testCommon.insertContact(customer.getId()).getId());
+        project.setStartTime(ZonedDateTime.now());
+        project.setIdentifier("P1");
+        project.setCreatorId(testCommon.insertUser("user").getId());
+
+        projectDao.insert(project);
+
+        List<DeletableCustomer> result =
+          customerDao.findCustomersEligibleForDeletion();
+
+        assertTrue(result.isEmpty());
+      });
+
+      it("does not return customer used as invoice recipient", () -> {
+        Customer customer = customerDao.insert(testCustomer);
+
+        Application app = testCommon.dummyOutdoorApplication("App", "Owner");
+        app.setInvoiceRecipientId(customer.getId());
+        applicationDao.insert(app);
+
+        List<DeletableCustomer> result =
+          customerDao.findCustomersEligibleForDeletion();
+
+        assertTrue(result.isEmpty());
+      });
+    });
+
+    describe("getDeletableCustomers", () -> {
+      it("stores and gets deletable customers into/from database", () -> {
+        Customer c1 = customerDao.insert(dummyCustomer(1));
+        Customer c2 = customerDao.insert(dummyCustomer(2));
+
+        DeletableCustomer dc1 =
+          new DeletableCustomer(c1.getId(), c1.getSapCustomerNumber());
+        DeletableCustomer dc2 =
+          new DeletableCustomer(c2.getId(), c2.getSapCustomerNumber());
+
+        customerDao.storeCustomersEligibleForDeletion(Arrays.asList(dc1, dc2));
+
+        List<DeletableCustomer> stored =
+          customerDao.getDeletableCustomers(PageRequest.of(0, 10)).getContent();
+
+        assertEquals(2, stored.size());
+      });
+
+      it("returns paged deletable customers", () -> {
+        List<DeletableCustomer> deletables = IntStream.range(0, 5)
+          .mapToObj(i -> {
+            Customer c = customerDao.insert(dummyCustomer(i));
+            return new DeletableCustomer(c.getId(), c.getSapCustomerNumber());
+          })
+          .collect(Collectors.toList());
+
+        customerDao.storeCustomersEligibleForDeletion(deletables);
+
+        Page<DeletableCustomer> page =
+          customerDao.getDeletableCustomers(PageRequest.of(1, 2));
+
+        assertEquals(5, page.getTotalElements());
+        assertEquals(2, page.getContent().size());
+      });
+
+      it("uses default pageable when pageable is null", () -> {
+        Customer c = customerDao.insert(dummyCustomer(1));
+        customerDao.storeCustomersEligibleForDeletion(
+          Collections.singletonList(
+            new DeletableCustomer(c.getId(), c.getSapCustomerNumber())
+          )
+        );
+
+        Page<DeletableCustomer> page =
+          customerDao.getDeletableCustomers(null);
+
+        assertEquals(1, page.getTotalElements());
       });
     });
   }
