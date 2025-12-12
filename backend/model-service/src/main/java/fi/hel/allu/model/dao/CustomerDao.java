@@ -4,9 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import fi.hel.allu.model.controller.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -320,5 +322,30 @@ public class CustomerDao {
 
   public void storeCustomersEligibleForDeletion(List<DeletableCustomer> deletables) {
     queryFactory.insert(deletableCustomer).populate(deletables).execute();
+  }
+
+  public Page<DeletableCustomer> getDeletableCustomers(Pageable pageable) {
+    if (pageable == null) {
+      pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
+    }
+
+    long totalCount = queryFactory
+      .selectFrom(deletableCustomer)
+      .fetchCount();
+
+    List<DeletableCustomer> deletables = queryFactory
+      .select(Projections.constructor(
+        DeletableCustomer.class,
+        deletableCustomer.customerId,
+        deletableCustomer.sapCustomerNumber,
+        customer.name
+      ))
+      .from(deletableCustomer)
+      .join(customer).on(deletableCustomer.customerId.eq(customer.id))
+      .offset(pageable.getOffset())
+      .limit(pageable.getPageSize())
+      .fetch();
+
+    return new PageImpl<>(deletables, pageable, totalCount);
   }
 }

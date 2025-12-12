@@ -21,12 +21,20 @@ import java.util.Map;
 @RequestMapping("/customers")
 public class CustomerController {
 
+  private final CustomerService customerService;
+  private final ApplicationService applicationService;
+  private final CustomerUpdateLogDao customerUpdateLogDao;
+
   @Autowired
-  private CustomerService customerService;
-  @Autowired
-  private ApplicationService applicationService;
-  @Autowired
-  private CustomerUpdateLogDao customerUpdateLogDao;
+  public CustomerController(
+      CustomerService customerService,
+      ApplicationService applicationService,
+      CustomerUpdateLogDao customerUpdateLogDao
+  ) {
+    this.customerService = customerService;
+    this.applicationService = applicationService;
+    this.customerUpdateLogDao = customerUpdateLogDao;
+  }
 
   /**
    * Find a customer by database ID
@@ -167,5 +175,12 @@ public class CustomerController {
     List<DeletableCustomer> deletables = customerService.findCustomersEligibleForDeletion();
     customerService.storeCustomersEligibleForDeletion(deletables);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @GetMapping(value = "/deletable")
+  public ResponseEntity<Page<DeletableCustomer>> getDeletableCustomers(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageable
+  ) {
+    return ResponseEntity.ok(customerService.getDeletableCustomers(pageable));
   }
 }

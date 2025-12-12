@@ -270,4 +270,10 @@ public class CustomerService {
     logger.info("Storing deletable customers");
     customerDao.storeCustomersEligibleForDeletion(deletables);
   }
+
+  @Transactional(readOnly = true)
+  public Page<DeletableCustomer> getDeletableCustomers(Pageable pageable) {
+    //TODO; tuplatarkistus"vipu" poistettavia asiakkaita varten?
+    return customerDao.getDeletableCustomers(pageable);
+  }
 }

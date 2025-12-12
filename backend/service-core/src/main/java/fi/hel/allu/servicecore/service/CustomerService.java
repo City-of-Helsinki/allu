@@ -1,8 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -18,10 +22,6 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
@@ -270,4 +270,25 @@ public class CustomerService {
     restTemplate.put(applicationProperties.getCustomerUpdateLogProcessedUrl(), logIds);
   }
 
+  /**
+   * Get customers that are eligible for permanent deletion by calling model-service endpoint.
+   * Data is retrieved from the model-service's database.
+   * A customer is deletable if it (and its related contacts) is not linked to any application or project in Allu.
+   *
+   * @param pageable page request for the search
+   * @return list of customers eligible for permanent deletion
+   */
+  public Page<CustomerSummaryRecord> getDeletableCustomers(Pageable pageable) {
+    String baseUrl = applicationProperties.getDeletableCustomersUrl();
+    URI url = PageRequestBuilder.fromUriString(baseUrl, pageable);
+
+    ResponseEntity<RestResponsePage<CustomerSummaryRecord>> response = restTemplate.exchange(
+      url,
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<RestResponsePage<CustomerSummaryRecord>>() {}
+    );
+
+    return response.getBody();
+  }
 }
