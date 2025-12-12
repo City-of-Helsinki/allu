@@ -162,5 +162,10 @@ public class CustomerController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-
+  @PostMapping(value = "/check-and-store-deletable")
+  public ResponseEntity<Void> checkAndStoreDeletableCustomers() {
+    List<DeletableCustomer> deletables = customerService.findCustomersEligibleForDeletion();
+    customerService.storeCustomersEligibleForDeletion(deletables);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

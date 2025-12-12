@@ -1,11 +1,14 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -30,12 +33,14 @@ import fi.hel.allu.model.service.event.CustomerUpdateEvent;
 @Service
 public class CustomerService {
 
-  private ObjectComparer objectComparer;
-  private CustomerDao customerDao;
-  private ContactDao contactDao;
-  private HistoryDao historyDao;
+  private final ObjectComparer objectComparer;
+  private final CustomerDao customerDao;
+  private final ContactDao contactDao;
+  private final HistoryDao historyDao;
   private final UserDao userDao;
-  private ApplicationEventPublisher customerUpdateEventPublisher;
+  private final ApplicationEventPublisher customerUpdateEventPublisher;
+
+  private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
   @Autowired
   public CustomerService(CustomerDao customerDao, ContactDao contactDao, HistoryDao historyDao, UserDao userDao, ApplicationEventPublisher customerUpdateEventPublisher) {
@@ -241,11 +246,28 @@ public class CustomerService {
           isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(), fieldChanges);
       historyDao.addCustomerChange(customerId, change);
     }
-
   }
 
   private boolean isExternalUser(Integer userId) {
     return userDao.findById(userId).map(u -> u.getUserName().equals(Constants.EXTERNAL_USER_USERNAME)).orElse(false);
   }
 
+  public List<DeletableCustomer> findCustomersEligibleForDeletion() {
+    logger.info("Checking for deletable customers");
+    List<DeletableCustomer> candidates = customerDao.findCustomersEligibleForDeletion();
+    List<DeletableCustomer> deletables = new ArrayList<>();
+
+    for (DeletableCustomer c : candidates) {
+      //TODO; etsi asiakkaan kontaktit?
+      //TODO; tarkista kontaktien linkitykset?
+      //TODO; tallenna kontaktit tauluun myös - oma kenttä id-listalle vai miten?
+    }
+
+    return deletables;
+  }
+
+  public void storeCustomersEligibleForDeletion(List<DeletableCustomer> deletables) {
+    logger.info("Storing deletable customers");
+    customerDao.storeCustomersEligibleForDeletion(deletables);
+  }
 }

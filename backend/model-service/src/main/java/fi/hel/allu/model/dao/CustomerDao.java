@@ -35,18 +35,29 @@ import fi.hel.allu.model.domain.*;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QCustomer.customer;
+import static fi.hel.allu.QDeletableCustomer.deletableCustomer;
 import static fi.hel.allu.QPostalAddress.postalAddress;
+import static fi.hel.allu.QProject.project;
 
 @Repository
 public class CustomerDao {
+
+  private final SQLQueryFactory queryFactory;
+  private final PostalAddressDao postalAddressDao;
+
   @Autowired
-  private SQLQueryFactory queryFactory;
-  @Autowired
-  PostalAddressDao postalAddressDao;
+  public CustomerDao(
+    SQLQueryFactory queryFactory,
+    PostalAddressDao postalAddressDao
+  ) {
+    this.queryFactory = queryFactory;
+    this.postalAddressDao = postalAddressDao;
+  }
 
   final QBean<Customer> customerBean = bean(Customer.class, customer.all());
   final QBean<Contact> contactBean = bean(Contact.class, contact.all());
@@ -279,4 +290,35 @@ public class CustomerDao {
     return findInvoiceRecipientIdsWithoutSapNumber().size();
   }
 
+  public List<DeletableCustomer> findCustomersEligibleForDeletion() {
+    return queryFactory
+      .select(Projections.constructor(DeletableCustomer.class,
+        customer.id,
+        customer.sapCustomerNumber))
+      .from(customer)
+      .leftJoin(applicationCustomer)
+        .on(applicationCustomer.customerId.eq(customer.id))
+      .leftJoin(project)
+        .on(project.customerId.eq(customer.id))
+      .leftJoin(application)
+        .on(application.invoiceRecipientId.eq(customer.id))
+      .where(
+        applicationCustomer.customerId.isNull(),
+        project.customerId.isNull(),
+        application.invoiceRecipientId.isNull()
+      )
+      .fetch();
+  }
+
+  public List<Integer> findContactsByCustomerId(Integer customerId) {
+    return queryFactory
+      .select(contact.id)
+      .from(contact)
+      .where(contact.customerId.eq(customerId))
+      .fetch();
+  }
+
+  public void storeCustomersEligibleForDeletion(List<DeletableCustomer> deletables) {
+    queryFactory.insert(deletableCustomer).populate(deletables).execute();
+  }
 }

@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * The launcher class. Scheduled tasks are collected here.
  */
@@ -31,14 +30,19 @@ public class ScheduleRunner {
   private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
   private final CityDistrictUpdaterService cityDistrictUpdaterService;
   private final ApplicationProperties applicationProperties;
+  private final CustomerService customerService;
 
   @Autowired
-  public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
-      SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
-      SearchSynchService searchSynchService,
-      ApplicationStatusUpdaterService applicationStatusUpdaterService,
-      CityDistrictUpdaterService cityDistrictUpdaterService,
-      ApplicationProperties applicationProperties
+  public ScheduleRunner(
+    ApplicantReminderService applicantReminderService,
+    InvoicingService invoicingService,
+    SapCustomerService sapCustomerService,
+    SapCustomerNotificationService sapCustomerNotificationService,
+    SearchSynchService searchSynchService,
+    ApplicationStatusUpdaterService applicationStatusUpdaterService,
+    CityDistrictUpdaterService cityDistrictUpdaterService,
+    ApplicationProperties applicationProperties,
+    CustomerService customerService
       ) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
@@ -48,6 +52,7 @@ public class ScheduleRunner {
     this.applicationStatusUpdaterService = applicationStatusUpdaterService;
     this.cityDistrictUpdaterService = cityDistrictUpdaterService;
     this.applicationProperties = applicationProperties;
+    this.customerService = customerService;
   }
 
   @EventListener(ApplicationReadyEvent.class)
@@ -120,5 +125,11 @@ public class ScheduleRunner {
   @Scheduled(cron = "${anonymization.update.cronstring}")
   public void checkAnonymizableApplications() {
     applicationStatusUpdaterService.checkAnonymizableApplications();
+  }
+
+  @Scheduled(cron = "${deletable.customer.scan.cronstring}")
+  public void checkAndStoreDeletableCustomers() {
+    logger.info("Deletable customers search and store cron started");
+    customerService.checkAndStoreDeletableCustomers();
   }
 }
