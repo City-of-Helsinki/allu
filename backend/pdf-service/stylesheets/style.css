@@ -87,6 +87,14 @@ hr {
   margin-bottom: 5px;
 }
 
+section.justify {
+  /*max-width: 480pt;*/
+  /*margin-left: 40pt;*/
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 1.35;
+}
+
 
 /* -----------------------------------------------------
    UTILITY CLASSES

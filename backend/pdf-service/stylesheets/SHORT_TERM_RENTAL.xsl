@@ -238,12 +238,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <h1>Päätös</h1>
         <p>
           Hakija on hakenut oikeutta alueen käyttöön, toimittanut
-          hakemuksen liitteineen asukas- ja yrityspalveluihin ja
+          hakemuksen liitteineen kaupunkitilan käyttö ja maanvuokraus –yksikköön ja
           ilmoittanut sitoutuvansa alueen käyttöä koskevaan
           ohjeistukseen sekä sopimusehtoihin.
         </p>
 
-        <p class="pt-10">Alueiden käyttö ja –valvontayksikön tapahtumat ja maanvuokraus –tiimin tiimipäällikkö
+        <p class="pt-10">Allekirjoittanut viranhaltija
           päätti myöntää luvan hakijalle haetun alueen käyttämiseen yllä olevin ehdoin.</p>
 
         <p class="pt-10">Tämä päätös on sähköisesti
@@ -260,8 +260,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="unboxed avoid-pb">
         <section class="half-left">
           <h1>Lisätiedot</h1>
-          <p>Alueidenkäyttö ja -valvontayksikkö</p>
-          <p>ulkoilma@hel.fi</p>
+          <p>Kaupunkitilan käyttö ja maanvuokraus –yksikkö</p>
         </section>
 
         <section class="half-right">
@@ -270,6 +269,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <!--  [titteli, tarkastajan nimi] -->
             <xsl:value-of select="data/handlerTitle"/>,
             <xsl:value-of select="data/handlerName"/>
+          </p>
+          <p>
+            <xsl:value-of select="data/handlerEmail"/>
           </p>
         </section>
       </div>
@@ -392,17 +394,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
         <div class="indent-50">
           <h3 class="ml-0">Tietopyynnöt</h3>
-          <p class="indent-50">
-            Päätöstä koskevia otteita ja liitteitä lähetetään pyynnöstä.
-            Asiakirjoja voi tilata:
-          </p>
-          <ul class="mt-0 mb-0 indent-50 no-bullets">
-            <li class="mt-0">Kaupunkiympäristön toimiala</li>
-            <li class="mt-0">Alueidenkäyttö ja -valvonta</li>
-            <li class="mt-0">Sörnäistenkatu 1</li>
-            <li class="mt-0">00580 HELSINKI</li>
-            <li class="mt-0">tai hkr.ulkoilma@hel.fi</li>
-          </ul>
+          <p class="indent-50">Päätöstä koskevia otteita ja liitteitä lähetetään pyynnöstä. Asiakirjoja voi tilata Helsingin kaupungin kirjaamosta.</p>
         </div>
       </section>
     </div>

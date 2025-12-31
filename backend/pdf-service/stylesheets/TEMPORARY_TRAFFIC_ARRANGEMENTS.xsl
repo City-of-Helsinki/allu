@@ -151,7 +151,7 @@
         <h1>Liikennejärjestelyjä koskevat määräykset</h1>
         <p>
           Tämä päätösosa perustuu tieliikennelain (729/2018) 187 § ja 188 §:ään. Päätösosassa käydään
-          läpi liikennejärjestelyjä koskevat yleiset määräykset, jotka velvoittavat työstä vastaavaa,
+          läpi liikennejärjestelyjä koskevat määräykset, jotka velvoittavat työstä vastaavaa,
           rakennuttajaa ja työn suorittajaa.
         </p>
         <p class="pt-10">
@@ -168,8 +168,7 @@
 
       <!-- Yleiset määräykset -->
       <section class="unboxed">
-        <h1>Yleiset määräykset</h1>
-        <h2 class="pt-10 mb-0">Liikennejärjestelyjä koskevat yleiset määräykset</h2>
+        <h1 class="pt-10 mb-0">Liikennejärjestelyjä koskevat yleiset määräykset</h1>
         <p>
           Tämä päätösosa perustuu tieliikennelain
           (729/2018) 187 § ja 188 §:ään. Päätösosassa käydään läpi liikennejärjestelyjä koskevat yleiset
@@ -370,7 +369,7 @@
           <p class="pt-10">Oikaisuvaatimuksessa on ilmoitettava</p>
           <ul class="mt-0 mb-0">
             <li class="mt-0">päätös, johon oikaisuvaatimus kohdistuu</li>
-            <li class="mt-0">miten päätöstä halutaan oikaistavaks</li>
+            <li class="mt-0">miten päätöstä halutaan oikaistavaksi</li>
             <li class="mt-0">millä perusteella päätöstä halutaan oikaistavaksi</li>
             <li class="mt-0">oikaisuvaatimuksen tekijä</li>
             <li class="mt-0">millä perusteella oikaisuvaatimuksen tekijä on oikeutettu tekemään vaatimuksen</li>
