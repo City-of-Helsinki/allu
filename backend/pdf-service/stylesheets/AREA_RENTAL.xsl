@@ -129,7 +129,7 @@
         <h2>Liikennejärjestelyjä koskevat määräykset</h2>
         <p class="pb-10">
           Tämä päätösosa perustuu tieliikennelain (729/2018) 187 § ja 188 §:ään. Päätösosassa käydään
-          läpi liikennejärjestelyjä koskevat yleiset määräykset, jotka velvoittavat työstä vastaavaa,
+          läpi liikennejärjestelyjä koskevat määräykset, jotka velvoittavat työstä vastaavaa,
           rakennuttajaa ja työn suorittajaa.
         </p>
         <xsl:for-each select="data/trafficArrangements">
@@ -204,7 +204,7 @@
           <h3 class="mb-0 ml-0">Työtä koskevat yleiset määräykset</h3>
           <p>
             Tämä päätösosa perustuu kadun ja eräiden yleisten alueiden kunnossa- ja puhtaanapidosta
-            annetun lain (669/1978) 14 a § ja 14 b §:ään. Päätösosassa käydään läpi työtä koskevat
+            annetun lain (669/1978) 14 a § ja 14 b §:ään. Päätösosassa käydään läpi työtä koskevat yleiset
             määräykset, jotka velvoittavat työstä vastaavaa, rakennuttajaa ja työn suorittajaa.
           </p>
         </div>
@@ -570,7 +570,7 @@
           <p class="pt-10">Oikaisuvaatimuksessa on ilmoitettava</p>
           <ul class="mt-0 mb-0">
             <li class="mt-0">päätös, johon oikaisuvaatimus kohdistuu</li>
-            <li class="mt-0">miten päätöstä halutaan oikaistavaks</li>
+            <li class="mt-0">miten päätöstä halutaan oikaistavaksi</li>
             <li class="mt-0">millä perusteella päätöstä halutaan oikaistavaksi</li>
             <li class="mt-0">oikaisuvaatimuksen tekijä</li>
             <li class="mt-0">millä perusteella oikaisuvaatimuksen tekijä on oikeutettu tekemään vaatimuksen</li>
@@ -597,8 +597,8 @@
           <p class="pt-10">
             Maksuvelvollisella on oikeus tehdä 14 päivän kuluessa laskun saamisesta kirjallinen
             muistutus maksun perimisestä päättävälle kunnan viranomaiselle. Muistutus
-            osoitetaan Helsingin kaupungin kaupunkiympäristön toimialan alueiden käyttö ja
-            valvonta -yksikön päällikölle. Asiointiosoite on seuraava:
+            osoitetaan Helsingin kaupungin kaupunkiympäristön toimialan yleisten alueiden valvonta ja infraluvat
+            -yksikön päällikölle. Asiointiosoite on seuraava:
           </p>
           <table class="contact-table">
             <tr>
@@ -611,7 +611,7 @@
             </tr>
             <tr>
               <td>Postiosoite:</td>
-              <td>Helsingin kaupungin kaupunkiympäristön toimiala, alueiden käyttö ja valvonta -yksikkö
+              <td>Helsingin kaupungin kaupunkiympäristön toimiala, yleisten alueiden valvonta ja infraluvat -yksikkö
                 Helsingin kaupungin kirjaamo
                 PL 10
                 00099 HELSINGIN KAUPUNKI

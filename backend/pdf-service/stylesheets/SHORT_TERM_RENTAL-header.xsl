@@ -34,8 +34,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </div>
       <div class="department">
         <p>Kaupunkiympäristö</p>
-        <p>Alueiden käyttö ja valvonta -yksikkö</p>
-        <p>ulkoilma@hel.fi</p>
+        <p>Kaupunkitilan käyttö ja maanvuokraus<br/>
+          –yksikkö</p>
       </div>
       <div class="half-right">
         <h1>Vuokrauspäätös</h1>

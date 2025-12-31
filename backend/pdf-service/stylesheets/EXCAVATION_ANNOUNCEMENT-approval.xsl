@@ -245,12 +245,38 @@
       <section class="unboxed new-page">
         <h2>Muutoksenhaku</h2>
         <p class="space-above">
-          Kunnan antamien määräysten lainmukaisuuden ratkaiseminen osoitetaan rakennusvalvontapalveluun.
-          Muutoksenhaku kunnan antamiin päätöksiin osoitetaan kaupunkiympäristö lautakunnalle, sähköposti
-          helsinki.kirjaamo@hel.fi. Ennen varsinaisen valituksen tekemistä maksuvelvollisen tulee tehdä kirjallinen
-          muistutus maksun perimisestä päättävälle kunnan viranomaiselle 14 päivän kuluessa maksulipun (lasku)
-          saamisesta.
+          Maksuvelvollisella on oikeus tehdä 14 päivän kuluessa laskun saamisesta kirjallinen muistutus maksun
+          perimisestä päättävälle kunnan viranomaiselle. Muistutus osoitetaan Helsingin kaupungin
+          kaupunkiympäristön toimialan yleisten alueiden valvonta ja infraluvat -yksikön päällikölle.
+          Asiointiosoite on seuraava:
         </p>
+        <table class="contact-table">
+          <tr>
+            <td>Sähköpostiosoite:</td>
+            <td>luvat@hel.fi</td>
+          </tr>
+          <tr>
+            <td>Suojattu sähköposti:</td>
+            <td>https://securemail.hel.fi/ (käytäthän aina suojattua sähköpostia, kun lähetät henkilökohtaisia tietojasi)</td>
+          </tr>
+          <tr>
+            <td>Postiosoite:</td>
+            <td>Helsingin kaupungin kaupunkiympäristön toimiala, yleisten alueiden valvonta ja infraluvat -yksikkö
+              Helsingin kaupungin kirjaamo
+              PL 10
+              00099 HELSINGIN KAUPUNKI
+            </td>
+          </tr>
+          <tr>
+            <td>Käyntiosoite:</td>
+            <td>Pohjoisesplanadi 11–13</td>
+          </tr>
+          <tr>
+            <td>Puhelinnumero:</td>
+            <td>09 310 13700</td>
+          </tr>
+        </table>
+        <p class="pt-10">Kirjaamon aukioloaika on maanantaista perjantaihin klo 08.15–16.00.</p>
       </section>
 
       <xsl:if test="data/deciderName != ''">
