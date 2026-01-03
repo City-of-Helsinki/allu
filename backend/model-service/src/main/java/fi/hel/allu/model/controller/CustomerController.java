@@ -21,12 +21,20 @@ import java.util.Map;
 @RequestMapping("/customers")
 public class CustomerController {
 
+  private final CustomerService customerService;
+  private final ApplicationService applicationService;
+  private final CustomerUpdateLogDao customerUpdateLogDao;
+
   @Autowired
-  private CustomerService customerService;
-  @Autowired
-  private ApplicationService applicationService;
-  @Autowired
-  private CustomerUpdateLogDao customerUpdateLogDao;
+  public CustomerController(
+      CustomerService customerService,
+      ApplicationService applicationService,
+      CustomerUpdateLogDao customerUpdateLogDao
+  ) {
+    this.customerService = customerService;
+    this.applicationService = applicationService;
+    this.customerUpdateLogDao = customerUpdateLogDao;
+  }
 
   /**
    * Find a customer by database ID
@@ -162,5 +170,36 @@ public class CustomerController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Endpoint that triggers a scan for customers eligible for permanent deletion.
+   *
+   * Customers are considered eligible if they are not referenced by any
+   * application or project in the system.
+   *
+   * The resulting customers are stored in a staging table for later review
+   * and deletion.
+   *
+   * @return HTTP 200 if the operation completes successfully
+   */
+  @PostMapping(value = "/check-and-store-deletable")
+  public ResponseEntity<Void> checkAndStoreDeletableCustomers() {
+    customerService.checkAndStoreDeletableCustomers();
+    return ResponseEntity.ok().build();
+  }
 
+  /**
+   * Retrieves a paginated list of deletable customers.
+   *
+   * Deletable customers are those that are eligible for permanent removal from the system,
+   * typically because they are not referenced by any application or project in the system.
+   *
+   * @param pageable pagination and sorting information for the query, including page number and size
+   * @return a paginated list of deletable customers wrapped in a ResponseEntity
+   */
+  @GetMapping(value = "/deletable")
+  public ResponseEntity<Page<DeletableCustomer>> getDeletableCustomers(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageable
+  ) {
+    return ResponseEntity.ok(customerService.getDeletableCustomers(pageable));
+  }
 }

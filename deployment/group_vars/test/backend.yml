@@ -45,3 +45,5 @@ customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 supervision_api_basepath: /supervision-api
 
 anonymization_update_cronstring: "0 0 3 * * *"
+
+deletable_customer_scan_cronstring: "0 0 3 * * *"
