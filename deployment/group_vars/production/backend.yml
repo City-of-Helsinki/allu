@@ -25,19 +25,19 @@ applicantreminder_cronstring: "0 0 1 * * MON-FRI"
 invoice_cronstring: "0 0 7 * * *"
 invoice_sending_enabled: true
 
-sap_ftp_invoice_host: 137.163.136.62
+sap_ftp_invoice_host: 137.163.56.21
 sap_ftp_invoice_port: 22
 sap_ftp_invoice_directory: /
 
 invoice_archivedir: /home/allu/scheduler-service/sap/invoice-archive
 
 # Customer update SFTP configuration
-sap_ftp_customer_host: 137.163.136.62
+sap_ftp_customer_host: 137.163.56.21
 sap_ftp_customer_port: 22
 sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
-sftp_known_host: "|1|qFBZzn46HdNHCvCGv533+fbsrE8=|gTl+ddIZqk/Lf3KdLJnE+PHloOA= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAv9wWO9fmH/WsXq2WhqOBVGSJays/sKbRmCrkdVV36l5vUumKLJv33bihpff4qLCJrMjzblCuMe6pFGSZgLvNaUOJq/jdLMPzs3McV5+3QOT8PeO7Wc+f0GLL83abv2cye3b85HFT+3gPF1OfdUJ994LokKGh25oJYUxDQM9GGkk="
+sftp_known_host: "|1|7QYNuletxHamissjdLDgDlUUhes=|PBpLmWzfd0DrJRK300onli6vdqA= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFHwIZDwHdwut53QXdacGt7+CGTK5J6TbHO/ghxsnKMT"
 
 # Customer update configuration
 customer_update_enabled: true
