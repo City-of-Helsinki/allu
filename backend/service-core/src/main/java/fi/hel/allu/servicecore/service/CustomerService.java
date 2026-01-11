@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.DeleteIdsResult;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
@@ -61,7 +61,6 @@ public class CustomerService {
     this.personAuditLogService = personAuditLogService;
     this.changeHistoryMapper = changeHistoryMapper;
   }
-
 
   /**
    * Create a new customer. Customer id must null to create a new customer.
@@ -299,5 +298,23 @@ public class CustomerService {
       null,
       new ParameterizedTypeReference<RestResponsePage<CustomerSummaryRecord>>() {}
     ).getBody();
+  }
+
+  /**
+   * Delete customers and their associated contacts by calling model-service endpoint.
+   *
+   * @param ids List of customer IDs to delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
+   */
+  public DeleteIdsResult deleteCustomers(List<Integer> ids) {
+    ResponseEntity<DeleteIdsResult> response =
+      restTemplate.exchange(
+        applicationProperties.getDeleteCustomersUrl(),
+        HttpMethod.DELETE,
+        new HttpEntity<>(ids),
+        DeleteIdsResult.class
+      );
+
+    return response.getBody();
   }
 }

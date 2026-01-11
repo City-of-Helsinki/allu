@@ -43,6 +43,7 @@ import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QCustomer.customer;
+import static fi.hel.allu.QCustomerArchive.customerArchive;
 import static fi.hel.allu.QDeletableCustomer.deletableCustomer;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QProject.project;
@@ -382,5 +383,109 @@ public class CustomerDao {
       .fetch();
 
     return new PageImpl<>(deletables, pageable, totalCount);
+  }
+
+  /**
+   * Retrieves a list of customer IDs from the provided list that is considered non-deletable.
+   * A customer is determined to be non-deletable if it is associated with an application,
+   * project, or designated as an invoice recipient.
+   *
+   * @param ids a list of customer IDs to evaluate for non-deletable status.
+   *            The list must not be null and may contain zero or more IDs.
+   * @return a list of non-deletable customer IDs. If no customers in the input list are
+   *         deemed non-deletable, an empty list is returned.
+   */
+  public List<Integer> findNonDeletableCustomerIds(List<Integer> ids) {
+    if (ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    return queryFactory
+      .select(customer.id)
+      .from(customer)
+      .leftJoin(applicationCustomer)
+      .on(applicationCustomer.customerId.eq(customer.id))
+      .leftJoin(project)
+      .on(project.customerId.eq(customer.id))
+      .leftJoin(application)
+      .on(application.invoiceRecipientId.eq(customer.id))
+      .where(
+        customer.id.in(ids),
+        applicationCustomer.customerId.isNotNull()
+          .or(project.customerId.isNotNull())
+          .or(application.invoiceRecipientId.isNotNull())
+      )
+      .distinct()
+      .fetch();
+  }
+
+  /**
+   * Archives customers by moving their information into a customer archive table.
+   * The method retrieves the customer data identified by the provided set of IDs
+   * and inserts the relevant fields into the archive.
+   *
+   * @param ids a set of customer IDs to be archived. The set must not be null and
+   *            may contain zero or more IDs. Each ID corresponds to a customer
+   *            whose information will be archived.
+   */
+  public void archiveCustomers(Set<Integer> ids) {
+    queryFactory.insert(customerArchive)
+      .columns(customerArchive.customerId,
+        customerArchive.sapCustomerNumber)
+      .select(
+        queryFactory.select(
+            customer.id,
+            customer.sapCustomerNumber
+          )
+          .from(customer)
+          .where(customer.id.in(ids))
+      )
+      .execute();
+  }
+
+  /**
+   * Retrieves the total of archived customers from the customer archive table.
+   * @return the total number of archived customers.
+   */
+  public long getArchivedCustomerCount() {
+    return queryFactory
+      .select(customerArchive.customerId.countDistinct())
+      .from(customerArchive)
+      .fetchOne();
+  }
+
+  /**
+   * Deletes customers from the customer table based on the provided set of IDs.
+   *
+   * @param ids a set of customer IDs to be deleted.
+   * @return the number of customers deleted.
+   */
+  public long deleteCustomers(Set<Integer> ids) {
+    if (ids.isEmpty()) {
+      return 0;
+    }
+
+    return queryFactory
+      .delete(customer)
+      .where(customer.id.in(ids))
+      .execute();
+  }
+
+  /**
+   * Deletes records from the deletable customers table based on the provided set of customer IDs.
+   *
+   * @param customerIds a set of customer IDs to be deleted. The set must not be null
+   *                    and may contain zero or more IDs. If the set is empty, no deletion occurs.
+   * @return the number of records deleted from the deletable customers table.
+   */
+  public long deleteFromDeletableCustomers(Set<Integer> customerIds) {
+    if (customerIds.isEmpty()) {
+      return 0;
+    }
+
+    return queryFactory
+      .delete(deletableCustomer)
+      .where(deletableCustomer.customerId.in(customerIds))
+      .execute();
   }
 }

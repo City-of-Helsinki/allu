@@ -202,4 +202,18 @@ public class CustomerController {
   ) {
     return ResponseEntity.ok(customerService.getDeletableCustomers(pageable));
   }
+
+  /**
+   * Deletes customers and their associated contacts from Allu's customer registry.
+   * This operation permanently removes the data (not just deactivates) for customers.
+   * Customer id and associated SAP number are archived to a separate table after removal.
+   *
+   * @param ids List of customer IDs to delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
+   */
+  @DeleteMapping("/")
+  public ResponseEntity<DeleteIdsResult> deleteCustomers(@RequestBody List<Integer> ids) {
+    DeleteIdsResult result = customerService.deleteCustomersAndAssociatedContacts(ids);
+    return ResponseEntity.ok(result);
+  }
 }
