@@ -392,6 +392,40 @@ public class CustomerDao {
   }
 
   /**
+   * Retrieves a list of customer IDs from the provided list that is considered non-deletable.
+   * A customer is determined to be non-deletable if it is associated with an application,
+   * project, or designated as an invoice recipient.
+   *
+   * @param ids a list of customer IDs to evaluate for non-deletable status.
+   *            The list must not be null and may contain zero or more IDs.
+   * @return a list of non-deletable customer IDs. If no customers in the input list are
+   *         deemed non-deletable, an empty list is returned.
+   */
+  public List<Integer> findNonDeletableCustomerIds(List<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    return queryFactory
+      .select(customer.id)
+      .from(customer)
+      .leftJoin(applicationCustomer)
+      .on(applicationCustomer.customerId.eq(customer.id))
+      .leftJoin(project)
+      .on(project.customerId.eq(customer.id))
+      .leftJoin(application)
+      .on(application.invoiceRecipientId.eq(customer.id))
+      .where(
+        customer.id.in(ids),
+        applicationCustomer.customerId.isNotNull()
+          .or(project.customerId.isNotNull())
+          .or(application.invoiceRecipientId.isNotNull())
+      )
+      .distinct()
+      .fetch();
+  }
+
+  /**
    * Archives customers by moving their information into a customer archive table.
    * The method retrieves the customer data identified by the provided set of IDs
    * and inserts the relevant fields into the archive.
@@ -418,6 +452,53 @@ public class CustomerDao {
           .from(customer)
           .where(customer.id.in(ids))
       )
+      .execute();
+  }
+
+  /**
+   * Retrieves the total of archived customers from the customer archive table.
+   * @return the total number of archived customers.
+   */
+  public long getArchivedCustomerCount() {
+    return queryFactory
+      .select(customerArchive.customerId.countDistinct())
+      .from(customerArchive)
+      .fetchOne();
+  }
+
+  /**
+   * Performs a soft delete operation on customers by setting their "isActive" attribute to false.
+   * This method updates the status of the customers with the specified IDs in the database.
+   *
+   * @param ids a list of contact IDs to be soft deleted; must not be null or empty
+   * @return the number of customers that were successfully updated as part of the soft delete operation
+   */
+  public long softDeleteCustomers(Set<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return 0;
+    }
+
+    return queryFactory
+      .update(customer)
+      .set(customer.isActive, false)
+      .where(customer.id.in(ids))
+      .execute();
+  }
+
+  /**
+   * Deletes customers from the customer table based on the provided set of IDs.
+   *
+   * @param ids a set of customer IDs to be deleted.
+   * @return the number of customers deleted.
+   */
+  public long deleteCustomers(Set<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return 0;
+    }
+
+    return queryFactory
+      .delete(customer)
+      .where(customer.id.in(ids))
       .execute();
   }
 

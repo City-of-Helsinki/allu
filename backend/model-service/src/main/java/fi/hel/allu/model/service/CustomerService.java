@@ -1,8 +1,10 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -269,6 +271,54 @@ public class CustomerService {
     );
 
     return page;
+  }
+
+  /**
+   * Soft deletes the specified customers and their associated contacts from the system.
+   * This operation updates the is_active flag to false for customers and contacts.
+   * Non-deletable customers are excluded.
+   *
+   * @param ids the list of customer IDs to be soft deleted
+   * @return a DeleteIdsResult object containing the IDs of successfully "deleted" customers
+   *         and the IDs of customers that could not be "deleted"
+   */
+  @Transactional
+  public DeleteIdsResult softDeleteCustomersAndContacts(List<Integer> ids) {
+    List<Integer> nonDeletableIds = customerDao.findNonDeletableCustomerIds(ids);
+
+    Set<Integer> deletableIds = new HashSet<>(ids);
+    nonDeletableIds.forEach(deletableIds::remove);
+
+    if (!deletableIds.isEmpty()) {
+      // Get associated contacts
+      List<Integer> contactIds = contactDao.findDeletableContactIdsByCustomerIds(deletableIds);
+
+      // Soft delete associated contacts (FK-safe)
+      if (!contactIds.isEmpty()) {
+        long deletedContacts = contactDao.softDeleteContactsByIds(contactIds);
+        if (deletedContacts != contactIds.size()) {
+          logger.error("Contact deletion mismatch: expected={}, actual={}",
+            contactIds.size(), deletedContacts);
+        }
+        logger.debug("Soft deleted {} contacts", deletedContacts);
+      }
+
+      // Soft delete customers
+      long deletedCustomers = customerDao.softDeleteCustomers(deletableIds);
+      if (deletedCustomers != deletableIds.size()) {
+        logger.error(
+          "Deletion mismatch. Expected={}, actual={}",
+          deletableIds.size(), deletedCustomers
+        );
+      }
+      logger.debug("Soft deleted {} customers table", deletedCustomers);
+    }
+
+    if (!nonDeletableIds.isEmpty()) {
+      logger.warn("Some customers were not soft deleted because they became linked to an application or project: {}", nonDeletableIds);
+    }
+
+    return new DeleteIdsResult(deletableIds, nonDeletableIds);
   }
 
   @Transactional(readOnly = true)

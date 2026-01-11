@@ -1645,4 +1645,8 @@ public class ApplicationProperties {
   public String getDeletableCustomersUrl() {
     return getModelServiceUrl("/customers/deletable");
   }
+
+  public String getDeleteCustomersUrl() {
+    return getModelServiceUrl("/customers");
+  }
 }
