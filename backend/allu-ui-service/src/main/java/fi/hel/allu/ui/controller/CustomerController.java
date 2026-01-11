@@ -2,20 +2,16 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.CustomerSummaryRecord;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.ui.service.CustomerExportService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -174,15 +170,19 @@ public class CustomerController {
   }
 
   /**
-   * Deletes customers and their associated contacts from Allu's customer registry.
-   * This operation permanently removes the data (not just deactivates) for customers.
+   * Soft deletes customers and their associated contacts from Allu's customer registry.
+   * This operation updates the is_active flag to false for customers and contacts.
    *
-   * @param ids List of customer IDs to delete
-   * @return HTTP 204 No Content if deletion succeeds
+   * @param ids List of customer IDs to soft delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
    */
-  @DeleteMapping(value = "/")
+  @DeleteMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-  public ResponseEntity<Void> deleteCustomersByIds(@RequestBody List<Integer> ids) {
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<DeleteIdsResult> softDeleteCustomersByIds(@RequestBody List<Integer> ids) {
+    DeleteIdsResult result = customerService.softDeleteCustomers(ids);
+    // Always return 200 OK — the body communicates the full outcome via deletedIds and skippedIds.
+    // Skipped IDs are an expected, normal outcome of the business rule (customer became linked
+    // to an application between the listing and the delete request), not an error or conflict.
+    return ResponseEntity.ok(result);
   }
 }

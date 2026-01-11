@@ -187,6 +187,19 @@ public class CustomerController {
   }
 
   /**
+   * Soft deletes customers and their associated contacts from Allu's customer registry.
+   * This operation updates the is_active flag to false for customers and contacts.
+   *
+   * @param ids List of customer IDs to soft delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
+   */
+  @DeleteMapping
+  public ResponseEntity<DeleteIdsResult> softDeleteCustomers(@RequestBody List<Integer> ids) {
+    DeleteIdsResult result = customerService.softDeleteCustomersAndContacts(ids);
+    return ResponseEntity.ok(result);
+  }
+
+  /**
    * This endpoint is used to fetch SAP customers whose status has been archived
    * but has not yet been marked as notified (no email notification sent).
    *
