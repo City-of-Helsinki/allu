@@ -2,6 +2,9 @@
   <h1> {{ title }} </h1>
 
   <div class="delete-button-row">
+    <span *ngIf="hasSelectedItems$ | async" class="selected-count">
+      {{ (selectedIds$ | async)?.length }} valittu
+    </span>
     <button *ngIf="hasSelectedItems$ | async" mat-raised-button type="button" color="primary" (click)="deleteSelected()">
       Poista valitut
     </button>
@@ -47,14 +50,27 @@
               <ng-container [ngSwitch]="column">
                 <ng-container *ngSwitchCase="'selected'">
                   <mat-checkbox 
-                    [checked]="isSelected(row.id) | async"
-                    (change)="checkSingle(row.id)">
+                    [checked]="isSelected(getRowId(row)) | async"
+                    (change)="checkSingle(getRowId(row))">
                   </mat-checkbox>
                 </ng-container>
                 <ng-container *ngSwitchCase="'applicationId'">
                       <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
                         {{row.applicationId}}
                       </a>
+                </ng-container>
+                <ng-container *ngSwitchCase="'type'">
+                  {{ ['customer.type', row.type, 'name'] | translation }}
+                </ng-container>
+                <ng-container *ngSwitchCase="'name'">
+                  <a class="row-details-link" [routerLink]="['/customers', row.id]">
+                    <ng-container *ngIf="row.type !== 'PERSON'; else personPlaceholder">
+                      {{ row.name }}
+                    </ng-container>
+                    <ng-template #personPlaceholder>
+                      (Nimi piilotettu)
+                    </ng-template>
+                  </a>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   <ng-container *ngIf="column === 'changeType'; else regularContent">
