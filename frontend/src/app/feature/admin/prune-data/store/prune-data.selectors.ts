@@ -46,12 +46,20 @@ export const selectDeleteInProgress = createSelector(
 export const selectAllSelected = createSelector(
   selectFilteredData,
   selectSelectedIds,
-  (items, selectedIds) => items.length > 0 && items.length === selectedIds.length
+  (items, selectedIds) => {
+    if (items.length === 0) return false;
+    const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
+    return pageIds.every(id => selectedIds.includes(id));
+  }
 );
 
 export const selectSomeSelected = createSelector(
+  selectFilteredData,
   selectSelectedIds,
-  selectedIds => selectedIds.length > 0
+  (items, selectedIds) => {
+    const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
+    return pageIds.some(id => selectedIds.includes(id));
+  }
 );
 
 export const selectTotalItems = createSelector(

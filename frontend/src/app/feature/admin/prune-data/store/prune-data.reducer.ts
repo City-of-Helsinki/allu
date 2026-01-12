@@ -52,8 +52,20 @@ export const pruneDataReducer = createReducer(
       : [...state.selectedIds, id]
   })),
   on(PruneDataActions.toggleSelectAll, (state) => {
-    const allIds = state.filteredData.map(item => item.id);
-    const newSelectedIds = state.selectedIds.length === allIds.length ? [] : allIds;
+    const pageIds = state.filteredData.map(item => getItemId(item));
+    const allPageItemsSelected = pageIds.every(id => state.selectedIds.includes(id));
+    
+    let newSelectedIds: number[];
+    if (allPageItemsSelected) {
+      // Deselect only current page items
+      newSelectedIds = state.selectedIds.filter(id => !pageIds.includes(id));
+    } else {
+      // Add current page items to selection (keep existing selections from other pages)
+      const existingIds = new Set(state.selectedIds);
+      pageIds.forEach(id => existingIds.add(id));
+      newSelectedIds = Array.from(existingIds);
+    }
+    
     return {
       ...state,
       selectedIds: newSelectedIds
@@ -127,7 +139,7 @@ function filterDataByTab(data: PruneDataItem[], tab: string | null): PruneDataIt
 }
 
 function removeDeleted(data: PruneDataItem[], ids: number[]): PruneDataItem[] {
-  return data.filter(item => !ids.includes(item.id));
+  return data.filter(item => !ids.includes(getItemId(item)));
 }
 
 function makeDateTimesHumanReadable(data: PruneDataItem[]) {
@@ -137,4 +149,8 @@ function makeDateTimesHumanReadable(data: PruneDataItem[]) {
     endTime: moment(d.endTime).format('DD.MM.YYYY'),
     changeTime: moment(d.changeTime).format('DD.MM.YYYY - HH:mm')
   }));
+}
+
+function getItemId(item: any): number {
+  return item.id ?? item.customerId;
 }
