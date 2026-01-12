@@ -181,7 +181,7 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<DeleteIdsResult> deleteCustomersByIds(@RequestBody List<Integer> ids) {
     DeleteIdsResult result = customerService.deleteCustomers(ids);
-    if (!result.getSkippedIds().isEmpty()) {
+    if (!result.skippedIds().isEmpty()) {
       // Partial success
       //
       // NOTE ABOUT SECURITY WARNING:
