@@ -37,7 +37,7 @@ sap_ftp_customer_port: 22
 sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
-sftp_known_host: "|1|7QYNuletxHamissjdLDgDlUUhes=|PBpLmWzfd0DrJRK300onli6vdqA= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFHwIZDwHdwut53QXdacGt7+CGTK5J6TbHO/ghxsnKMT"
+sftp_known_host: "|1|IZsaba5vYYbteth2CP+/iuVHTe4=|fchZ14IkU2vZFzsHDDfoXDnYZUw= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFHwIZDwHdwut53QXdacGt7+CGTK5J6TbHO/ghxsnKMT"
 
 # Customer update configuration
 customer_update_enabled: true
