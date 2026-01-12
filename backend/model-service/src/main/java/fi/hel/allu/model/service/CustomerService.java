@@ -325,8 +325,10 @@ public class CustomerService {
       // Archive customers
       customerDao.archiveCustomers(deletableIds);
 
-      // Remove from deletable_customer
-      long deletableRowsRemoved = customerDao.deleteFromDeletableCustomers(deletableIds);
+      // Remove from deletable_customer table
+      // Use IDs sent from the UI/user to hide the customers from the UI table
+      // Daily deletable customer search will re-populate the table again if non-deletable customers were removed/hidden
+      long deletableRowsRemoved = customerDao.deleteFromDeletableCustomers(ids);
       logger.debug("Deleted {} rows from deletable customer table", deletableRowsRemoved);
 
       // Delete customers

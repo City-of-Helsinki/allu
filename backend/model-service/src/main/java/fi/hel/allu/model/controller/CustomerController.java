@@ -211,7 +211,7 @@ public class CustomerController {
    * @param ids List of customer IDs to delete
    * @return Result of the deletion operation, including deleted and skipped IDs
    */
-  @DeleteMapping("/")
+  @DeleteMapping
   public ResponseEntity<DeleteIdsResult> deleteCustomers(@RequestBody List<Integer> ids) {
     DeleteIdsResult result = customerService.deleteCustomersAndAssociatedContacts(ids);
     return ResponseEntity.ok(result);

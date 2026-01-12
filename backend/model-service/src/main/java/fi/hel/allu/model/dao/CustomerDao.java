@@ -478,7 +478,7 @@ public class CustomerDao {
    *                    and may contain zero or more IDs. If the set is empty, no deletion occurs.
    * @return the number of records deleted from the deletable customers table.
    */
-  public long deleteFromDeletableCustomers(Set<Integer> customerIds) {
+  public long deleteFromDeletableCustomers(List<Integer> customerIds) {
     if (customerIds.isEmpty()) {
       return 0;
     }
