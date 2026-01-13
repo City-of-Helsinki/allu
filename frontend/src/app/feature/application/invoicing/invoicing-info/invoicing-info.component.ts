@@ -44,6 +44,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   recipientForm: UntypedFormGroup;
   showDeposit: boolean;
   showInvoicingDate: boolean;
+  showMajorDisturbance: boolean;
   applicationType: ApplicationType;
   customerLoading$: Observable<boolean>;
 
@@ -156,6 +157,8 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       this.showInvoicingDate = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type)
       && !ArrayUtil.anyMatch(terraceKinds, app.kinds);
       this.applicationType = app.type;
+      this.showMajorDisturbance = app.type === ApplicationType.AREA_RENTAL
+        && TimeUtil.isBefore(app.startTime, new Date('2026-03-01'), 'day');
 
       this.initForExtension(app.extension);
     });
