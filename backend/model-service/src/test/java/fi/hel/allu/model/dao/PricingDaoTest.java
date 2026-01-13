@@ -104,7 +104,7 @@ public class PricingDaoTest {
   public void testGetPaymentClassesForUnionResult() {
     List<String> expectedResult = List.of("1", "2", "3", "4", "4a", "4b", "5");
 
-    insertPricings();
+    insertExcavationPricings();
 
     List<String> result = pricingDao.getPaymentClasses(ApplicationType.EXCAVATION_ANNOUNCEMENT, null);
     assertEquals(expectedResult.size(), result.size());
@@ -114,7 +114,7 @@ public class PricingDaoTest {
 
   @Test
   public void testWithValidityDateWithoutPaymentClass() {
-    insertPricings();
+    insertExcavationPricings();
 
     ZonedDateTime februaryDate = ZonedDateTime.of(2025, 2, 14, 12, 0, 0, 0, TimeUtil.HelsinkiZoneId);
     ZonedDateTime marchDate = ZonedDateTime.of(2025, 3, 10, 10, 27, 15, 0, TimeUtil.HelsinkiZoneId);
@@ -128,49 +128,153 @@ public class PricingDaoTest {
 
   @Test
   public void testWithValidityDateWithPaymentClass () {
-    insertPricings();
+    insertExcavationPricings();
 
-    ZonedDateTime februaryDate = ZonedDateTime.of(2025, 2, 14, 12, 0, 0, 0, TimeUtil.HelsinkiZoneId);
-    ZonedDateTime marchDate = ZonedDateTime.of(2025, 3, 10, 10, 27, 15, 0, TimeUtil.HelsinkiZoneId);
+    ZonedDateTime februaryDate = ZonedDateTime.of(2025, 2, 28, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
+    ZonedDateTime marchDate = ZonedDateTime.of(2025, 3, 1, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
 
     assertEquals(7500, pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.MEDIUM_AREA_DAILY_FEE, "3", februaryDate));
     assertEquals(9000, pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.FROM_121_TO_250M2, "3", marchDate));
   }
 
-  private void insertPricings() {
+  @Test
+  public void testExcavationNewPricesAfterMarch2026() {
+    insertExcavationPricings();
 
+    ZonedDateTime date = ZonedDateTime.of(2026, 3, 1, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
+
+    // < 60 m²
+    assertEquals(12000, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.LESS_THAN_60M2,
+      "1",
+      date));
+
+    assertEquals(1500, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.LESS_THAN_60M2,
+      "5",
+      date));
+
+    // 121–250 m²
+    assertEquals(20300, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.FROM_121_TO_250M2,
+      "1",
+      date));
+
+    assertEquals(2500, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.FROM_121_TO_250M2,
+      "5",
+      date));
+
+    // > 1000 m²
+    assertEquals(44600, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.MORE_THAN_1000M2,
+      "1",
+      date));
+
+    assertEquals(5600, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.MORE_THAN_1000M2,
+      "5",
+      date));
+  }
+
+  @Test
+  public void testExcavationHandlingFeesAfterMarch2026() {
+    insertExcavationPricings();
+
+    ZonedDateTime date = ZonedDateTime.of(2026, 3, 1, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
+
+    assertEquals(24000, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.HANDLING_FEE_LT_6_MONTHS,
+      date));
+
+    assertEquals(40000, pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      PricingKey.HANDLING_FEE_GE_6_MONTHS,
+      date));
+  }
+
+  private void insertExcavationPricings() {
     // wasn't able to figure out how to insert Postgres dateranges with QueryDSL
-
-    List<String> oldClasses = List.of("1", "2", "3", "4a", "4b");
-    List<String> newClasses = List.of("1", "2", "3", "4", "5");
-
-    String insertBody = "INSERT INTO allu.pricing (application_type, key, payment_class, value, validity) VALUES (";
-    String excavationBody = insertBody + "'" + ApplicationType.EXCAVATION_ANNOUNCEMENT.toString() + "', '";
-    String excavationOldBody = excavationBody + PricingKey.MEDIUM_AREA_DAILY_FEE.toString() + "', '";
-    String excavationNewBody = excavationBody + PricingKey.FROM_121_TO_250M2.toString() + "', '";
-    String areaRentalBody = insertBody + "'" + ApplicationType.AREA_RENTAL.toString() + "', '";
-    String areaRentalUnitPriceBody = areaRentalBody + PricingKey.UNIT_PRICE.toString() + "', '";
-    String oldValidity = "daterange(NULL, '2025-02-28', '(]')";
-    String newValidity = "daterange('2025-03-01', NULL, '[)')";
-
     try {
-      for (int i = 0; i < oldClasses.size(); i++) {
-        String insertQuery = excavationOldBody + oldClasses.get(i) + "', " + (i + 1) * 2500 + ", " + oldValidity + ")";
-        System.out.println(insertQuery);
-        sqlRunner.runSql(insertQuery);
-      }
-      for (int i = 0; i < newClasses.size(); i++) {
-        String insertQuery = excavationNewBody + newClasses.get(i) + "', " + (i + 1) * 3000 + ", " + newValidity + ")";
-        System.out.println(insertQuery);
-        sqlRunner.runSql(insertQuery);
-      }
-
-      sqlRunner.runSql(areaRentalBody + PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE.toString() + "', NULL, 28000, " + oldValidity + ')');
-      sqlRunner.runSql(areaRentalBody + PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE.toString() + "', NULL, 30000, " + newValidity + ')');
-      sqlRunner.runSql(areaRentalBody + PricingKey.MINOR_DISTURBANCE_HANDLING_FEE.toString() + "', NULL, 10000, daterange(NULL, NULL,'()'))");
+      insertAreaRentalPricings();
+      insertExcavationPricingsUntilMarch2025();
+      insertExcavationPricingsUntilMarch2026();
+      insertExcavationPricingsFromMarch2026();
     }
     catch (SQLException e) {
-      System.out.println("Caught SQLException: " + e.getMessage());
+      fail("Caught SQLException: " + e.getMessage());
     }
+  }
+
+  private void insertAreaRentalPricings() throws SQLException {
+    String base = "INSERT INTO allu.pricing (application_type, key, payment_class, value, validity) VALUES ";
+
+    String oldValidity = "daterange(NULL, '2025-02-28', '(]')";
+    String newValidity = "daterange('2025-03-01', '2026-03-01', '[)')";
+
+    // MAJOR disturbance
+    sqlRunner.runSql(base + "('AREA_RENTAL','MAJOR_DISTURBANCE_HANDLING_FEE',NULL,28000," + oldValidity + ")");
+    sqlRunner.runSql(base + "('AREA_RENTAL','MAJOR_DISTURBANCE_HANDLING_FEE',NULL,30000," + newValidity + ")");
+
+    // MINOR disturbance – voimassa aina
+    sqlRunner.runSql(base + "('AREA_RENTAL','MINOR_DISTURBANCE_HANDLING_FEE',NULL,10000,daterange(NULL,NULL,'()'))");
+  }
+
+
+  private void insertExcavationPricingsUntilMarch2025() throws SQLException {
+    String base = "INSERT INTO allu.pricing (application_type, key, payment_class, value, validity) VALUES ";
+    String validity = "daterange(NULL, '2025-02-28', '(]')";
+
+    List<String> classes = List.of("1", "2", "3", "4a", "4b");
+
+    for (int i = 0; i < classes.size(); i++) {
+      String insert = base +
+        "('EXCAVATION_ANNOUNCEMENT','MEDIUM_AREA_DAILY_FEE','" +
+        classes.get(i) + "'," + (i + 1) * 2500 + "," + validity + ")";
+      System.out.println(insert);
+      sqlRunner.runSql(insert);
+    }
+
+    // Vanha HANDLING_FEE ennen 1.3.2026
+    sqlRunner.runSql(base + "('EXCAVATION_ANNOUNCEMENT','HANDLING_FEE',NULL,30000," + validity + ")");
+  }
+
+  private void insertExcavationPricingsUntilMarch2026() throws SQLException {
+    String base = "INSERT INTO allu.pricing (application_type, key, payment_class, value, validity) VALUES ";
+    String validity = "daterange('2025-03-01', '2026-02-28', '[]')";
+
+    List<String> classes = List.of("1","2","3","4","5");
+
+    for (int i = 0; i < classes.size(); i++) {
+      String insert = base +
+        "('EXCAVATION_ANNOUNCEMENT','FROM_121_TO_250M2','" +
+        classes.get(i) + "'," + (i + 1) * 3000 + "," + validity + ")";
+      System.out.println(insert);
+      sqlRunner.runSql(insert);
+    }
+
+    // Vanha HANDLING_FEE ennen 1.3.2026
+    sqlRunner.runSql(base + "('EXCAVATION_ANNOUNCEMENT','HANDLING_FEE',NULL,30000," + validity + ")");
+  }
+
+  private void insertExcavationPricingsFromMarch2026() throws SQLException {
+    String base = "INSERT INTO allu.pricing (key, payment_class, value, application_type, validity) VALUES ";
+    String validity = "daterange('2026-03-01', NULL, '[]')";
+
+    sqlRunner.runSql(base + "('LESS_THAN_60M2','1',12000,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('LESS_THAN_60M2','5',1500,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('FROM_121_TO_250M2','1',20300,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('FROM_121_TO_250M2','5',2500,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('MORE_THAN_1000M2','1',44600,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('MORE_THAN_1000M2','5',5600,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('HANDLING_FEE_LT_6_MONTHS',NULL,24000,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
+    sqlRunner.runSql(base + "('HANDLING_FEE_GE_6_MONTHS',NULL,40000,'EXCAVATION_ANNOUNCEMENT'," + validity + ")");
   }
 }
