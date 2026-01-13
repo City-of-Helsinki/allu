@@ -11,8 +11,8 @@ import { selectCurrentTab } from './prune-data.selectors';
 export class PruneDataEffects {
   private applicationsAnonymizableEndpoint  = '/api/applications/anonymizable';
   private applicationsAnonymizeEndpoint  = '/api/applications/anonymize';
-  private usersAnonymizableEndpoint  = '/api/user/anonymizable';
-  private usersAnonymizeEndpoint  = '/api/user/anonymize';
+  private customersEndpoint = '/api/customers';
+  private customersDeletableEndpoint = '/api/customers/deletable';
 
   constructor(
     private actions$: Actions,
@@ -25,7 +25,7 @@ export class PruneDataEffects {
       ofType(PruneDataActions.fetchAllData),
       switchMap(action => {
         const endpoint =
-        action.tab === 'user_data' ? this.usersAnonymizableEndpoint : this.applicationsAnonymizableEndpoint;
+        action.tab === 'user_data' ? this.customersDeletableEndpoint : this.applicationsAnonymizableEndpoint;
 
         // pagination
         const params: any = {};
@@ -37,7 +37,9 @@ export class PruneDataEffects {
           params.sort = `${action.sortField},${action.sortDirection}`;
         }
 
-        params.type = action.tab;
+        if (action.tab !== 'user_data') {
+          params.type = action.tab;
+        }
 
         return this.http.get<any>(endpoint, { params }).pipe(
           map(response => {
@@ -65,8 +67,11 @@ export class PruneDataEffects {
       withLatestFrom(this.store.select(selectCurrentTab)),
       mergeMap(([action, currentTab]) => {
         const endpoint =
-          currentTab === 'user_data' ? this.usersAnonymizeEndpoint : this.applicationsAnonymizeEndpoint;
-        return this.http.patch<void>(`${endpoint}`, action.ids).pipe(
+          currentTab === 'user_data' ? this.customersEndpoint : this.applicationsAnonymizeEndpoint;
+        const request$ = currentTab === 'user_data'
+          ? this.http.delete<void>(endpoint, { body: action.ids })
+          : this.http.patch<void>(endpoint, action.ids);
+        return request$.pipe(
           map(() => PruneDataActions.deleteDataSuccess({ ids: action.ids })),
           catchError(error => of(PruneDataActions.deleteDataFailure({ ids: action.ids, error })))
         );
