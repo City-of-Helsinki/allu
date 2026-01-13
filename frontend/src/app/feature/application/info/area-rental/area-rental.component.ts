@@ -35,6 +35,7 @@ import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 })
 export class AreaRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
   showReportCustomerDates = false;
+  showMajorDisturbance = false;
 
   constructor(fb: UntypedFormBuilder,
               route: ActivatedRoute,
@@ -104,6 +105,8 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     const areaRental = <AreaRental>application.extension || new AreaRental();
     this.applicationForm.patchValue(from(application, areaRental));
     this.showReportCustomerDates = ApplicationStatus.DECISION === application.status;
+    this.showMajorDisturbance = application.startTime != null
+      && TimeUtil.isBefore(application.startTime, new Date('2026-03-01'), 'day');
   }
 
   protected update(form: AreaRentalForm): Application {

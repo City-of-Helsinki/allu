@@ -88,7 +88,7 @@
             <div class="col m2">
               <mat-checkbox formControlName="pksCard">{{'application.common.pksCard' | translation}}</mat-checkbox>
             </div>
-            <div class="col m2">
+            <div class="col m2" *ngIf="showMajorDisturbance">
               <mat-checkbox formControlName="majorDisturbance">{{'application.areaRental.majorDisturbance' | translation}}</mat-checkbox>
             </div>
           </div>
