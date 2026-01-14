@@ -18,7 +18,7 @@ mail_server_host: relay@hel.fi
 mail_server_port: 25
 mail_server_auth: false
 email_allowed_addresses: "*@gofore.fi,*@hel.fi"
-email_sender_address: Alueidenkaytto ja -valvonta Test <allu-noreply@hel.fi>
+email_sender_address: Kaupunkitilan lupa- ja asiakaspalvelut Test <allu-noreply@hel.fi>
 
 invoice_sending_enabled: true
 invoice_archivedir: /tmp/allu-invoice-archive

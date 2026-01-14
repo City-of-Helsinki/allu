@@ -11,8 +11,8 @@ Ystävällisin terveisin
 <#if handlerName??>${handlerName}</#if>
 
 Helsingin kaupunki
-Kaupunkiympäristön asukas- ja yrityspalvelut
-Alueiden käyttö ja valvonta
+Kaupunkitilan lupa- ja asiakaspalvelut
+Kaupunkitilan käyttö ja maanvuokraus –yksikkö
 Puh. 09 310 22111
 ulkoilma@hel.fi
 https://www.hel.fi/fi/yritykset-ja-tyo/yritykset-ja-yrittajat/tapahtuman-jarjestaminen/tapahtumailmoitukset-ja-luvat
