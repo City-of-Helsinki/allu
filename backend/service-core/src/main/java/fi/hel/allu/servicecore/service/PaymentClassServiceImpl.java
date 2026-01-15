@@ -55,22 +55,22 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
-   protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
-     String paymentClass = UNDEFINED;
-     for (String response : responses) {
-       final PaymentClassXml paymentClassXml = getPaymentClassPre2025(response, applicationJson);
-       final List<FeatureClassMember> paymentClasses = paymentClassXml.getFeatureMemeber().stream()
-           .sorted(Comparator.comparing(f -> f.getMaksuluokka().getPaymentLevelClass()))
-           .collect(Collectors.toList());
-       if (!paymentClasses.isEmpty()) {
-         final String pc = paymentClasses.get(0).getMaksuluokka().getPaymentLevelClass();
-         if (pc.compareTo(paymentClass) < 0) {
-           paymentClass = pc;
-         }
-       }
-     }
-     return paymentClass;
-   }
+    protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
+      String paymentClass = UNDEFINED;
+      for (String response : responses) {
+        final PaymentClassXml paymentClassXml = getPaymentClassPre2025(response, applicationJson);
+        final List<FeatureClassMember> paymentClasses = paymentClassXml.getFeatureMemeber().stream()
+            .sorted(Comparator.comparing(f -> f.getPaymentLevelClass().getPaymentLevelClass()))
+            .collect(Collectors.toList());
+        if (!paymentClasses.isEmpty()) {
+          final String pc = paymentClasses.get(0).getPaymentLevelClass().getPaymentLevelClass();
+          if (pc.compareTo(paymentClass) < 0) {
+            paymentClass = pc;
+          }
+        }
+      }
+      return paymentClass;
+    }
 
   private List<PaymentClassXmlPost2025> responsesToPaymentClasses(List<String> responses) {
     return responses.stream().map(this::getPaymentClassPost2025).toList();
