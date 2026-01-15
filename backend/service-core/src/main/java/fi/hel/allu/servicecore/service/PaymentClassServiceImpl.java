@@ -48,7 +48,17 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   @Override
   protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
-    return isApplicationPost2025(applicationJson) ? parseResultPost2025(responses, location) : parseResultPre2025(responses, applicationJson);
+    if (isApplicationPost2026(applicationJson)) {
+      return parseResultPost2026(responses, location);
+    } else if (isApplicationPost2025(applicationJson)) {
+      return parseResultPost2025(responses, location);
+    } else {
+      return parseResultPre2025(responses, applicationJson);
+    }
+  }
+
+  protected boolean isApplicationPost2026(ApplicationJson applicationJson) {
+    return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2026_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
   protected boolean isApplicationPost2025(ApplicationJson applicationJson) {
@@ -72,13 +82,21 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return paymentClass;
   }
 
-  private List<PaymentClassXmlPost2025> responsesToPaymentClasses(List<String> responses) {
-    return responses.stream().map(this::getPaymentClassPost2025).toList();
-  }
+   private List<PaymentClassXmlPost2025> responsesToPaymentClasses(List<String> responses) {
+     return responses.stream().map(this::getPaymentClassPost2025).toList();
+   }
 
-  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
-    return paymentClasses.stream().map(PaymentClassXmlPost2025::getPaymentLevels).toList();
-  }
+   private List<PaymentClassXmlPost2026> responsesToPaymentClassesPost2026(List<String> responses) {
+     return responses.stream().map(this::getPaymentClassPost2026).toList();
+   }
+
+   private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
+     return paymentClasses.stream().map(PaymentClassXmlPost2025::getPaymentLevels).toList();
+   }
+
+   private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMapsPost2026(List<PaymentClassXmlPost2026> paymentClasses) {
+     return paymentClasses.stream().map(PaymentClassXmlPost2026::getPaymentLevels).toList();
+   }
 
   private HashMap<String, List<PolygonCoordinates>> combineHashMaps(List<HashMap<String, List<PolygonCoordinates>>> hashMapList) {
     HashMap<String, List<PolygonCoordinates>> combinedMap = new HashMap<String, List<PolygonCoordinates>>();
@@ -95,6 +113,10 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   protected String parseResultPost2025(List<String> responses, LocationJson location) {
     return computePaymentLevel(getLocationArea(location), sumAreas(intersectionsToAreas(polygonsToIntersections(coordinatesToPolygons(combineHashMaps(paymentClassesToPaymentMaps(responsesToPaymentClasses(responses)))), location))));
+  }
+
+  protected String parseResultPost2026(List<String> responses, LocationJson location) {
+    return computePaymentLevel(getLocationArea(location), sumAreas(intersectionsToAreas(polygonsToIntersections(coordinatesToPolygons(combineHashMaps(paymentClassesToPaymentMapsPost2026(responsesToPaymentClassesPost2026(responses)))), location))));
   }
 
   LinearRing coordinatesToLinearRing(String coordinateString) {
@@ -263,9 +285,13 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
   }
 
-  private PaymentClassXmlPost2025 getPaymentClassPost2025(String response) {
-    return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2025.class);
-  }
+   private PaymentClassXmlPost2025 getPaymentClassPost2025(String response) {
+     return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2025.class);
+   }
+
+   private PaymentClassXmlPost2026 getPaymentClassPost2026(String response) {
+     return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2026.class);
+   }
 
   @Override
   protected String getFeatureTypeNamePre2022() {
@@ -282,9 +308,14 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return getFeatureTypeNamePre2022() + "_2022";
   }
 
-  @Override
-  protected String getFeatureTypeNamePost2025() {
-    return getFeatureTypeNamePre2022() + "_2025";
-  }
+   @Override
+   protected String getFeatureTypeNamePost2025() {
+     return getFeatureTypeNamePre2022() + "_2025";
+   }
+
+   @Override
+   protected String getFeatureTypeNamePost2026() {
+     return getFeatureTypeNamePre2022() + "_2026";
+   }
 
 }

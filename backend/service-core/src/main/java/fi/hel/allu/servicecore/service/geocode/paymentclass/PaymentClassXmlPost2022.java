@@ -6,6 +6,7 @@ import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMemberP
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ public class PaymentClassXmlPost2022 implements PaymentClassXml {
 
   @Override
   public List<FeatureClassMember> getFeatureMemeber() {
+    if (featureMember == null) return Collections.emptyList();
     return featureMember.stream().map(FeatureClassMember.class::cast).collect(Collectors.toList());
   }
 }
