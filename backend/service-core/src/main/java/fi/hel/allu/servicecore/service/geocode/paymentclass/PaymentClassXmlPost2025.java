@@ -3,7 +3,7 @@ package fi.hel.allu.servicecore.service.geocode.paymentclass;
 
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
 import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMemberPost2025;
-import fi.hel.allu.servicecore.service.geocode.paymentlevel.PaymentLevelInfo;
+import fi.hel.allu.servicecore.service.geocode.paymentlevel.PaymentLevelClass;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,10 +23,10 @@ public class PaymentClassXmlPost2025 {
     if (featureMember == null) return resultMap;
 
     for (FeatureClassMemberPost2025 member : featureMember) {
-      PaymentLevelInfo info = member.getPaymentLevelInfo();
-      if (resultMap.containsKey(info.getPaymentLevel()))
-        resultMap.get(info.getPaymentLevel()).addAll(info.getCoordinates());
-      else resultMap.put(info.getPaymentLevel(), info.getCoordinates());
+      PaymentLevelClass plc = member.paymentLevelClass;
+      if (resultMap.containsKey(plc.getPaymentLevelClass()))
+        resultMap.get(plc.getPaymentLevelClass()).addAll(plc.getCoordinates());
+      else resultMap.put(plc.getPaymentLevelClass(), plc.getCoordinates());
     }
 
     return resultMap;
