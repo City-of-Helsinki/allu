@@ -41,13 +41,23 @@ class PaymentClassServiceTest {
       "<gml:boundedBy><gml:null>unknown</gml:null></gml:boundedBy>" +
       PAYMENT_CLASSES +
       "</wfs:FeatureCollection>";
-  private static final String MEMBER = "<gml:featureMember><helsinki:Katutoiden_maksuluokat fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
-    PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat></gml:featureMember>";
+   private static final String MEMBER = "<gml:featureMember><helsinki:Katutoiden_maksuluokat fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
+     PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat></gml:featureMember>";
 
-  private static final String MEMBER_2022 = "<gml:featureMember><helsinki:Katutoiden_maksuluokat_2022 fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
-    PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat_2022></gml:featureMember>";
-  private static final ZonedDateTime NEW_PAYMENT_DATE = ZonedDateTime.now().withYear(2022).withMonth(4).withDayOfMonth(1);
-  private static final ZonedDateTime OLD_PAYMENT_DATE = ZonedDateTime.now().withYear(2022).withMonth(1).withDayOfMonth(1);
+    // Test data without tietopalvelu_id and geom (old pre-2022 format)
+    private static final String MEMBER_WITHOUT_IDS = "<gml:featureMember><helsinki:Katutoiden_maksuluokat fid=\"Katutoiden_maksuluokat.14292\"><helsinki:maksuluokka>" +
+     PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat></gml:featureMember>";
+
+   private static final String MEMBER_2022 = "<gml:featureMember><helsinki:Katutoiden_maksuluokat_2022 fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
+     PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat_2022></gml:featureMember>";
+   private static final String MEMBER_2025 = "<gml:featureMember><helsinki:Katutoiden_maksuluokat_2025 fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
+     PAYMENT_CLASS + "</helsinki:maksuluokka><helsinki:geom><gml:MultiPolygon><gml:polygonMember><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal=\".\" cs=\",\" ts=\" \">2.5494887994040444E7,6673140.94535369 2.549488801625527E7,6673156.877715736 2.5494940030358132E7,6673156.805560306 2.5494940008369345E7,6673140.873198048 2.5494887994040444E7,6673140.94535369</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></gml:polygonMember></gml:MultiPolygon></helsinki:geom></helsinki:Katutoiden_maksuluokat_2025></gml:featureMember>";
+   private static final String MEMBER_2026 = "<gml:featureMember><helsinki:Katutoiden_maksuluokat_2026 fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" +
+     PAYMENT_CLASS + "</helsinki:maksuluokka><helsinki:geom><gml:MultiPolygon><gml:polygonMember><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates decimal=\".\" cs=\",\" ts=\" \">2.5494887994040444E7,6673140.94535369 2.549488801625527E7,6673156.877715736 2.5494940030358132E7,6673156.805560306 2.5494940008369345E7,6673140.873198048 2.5494887994040444E7,6673140.94535369</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></gml:polygonMember></gml:MultiPolygon></helsinki:geom></helsinki:Katutoiden_maksuluokat_2026></gml:featureMember>";
+   private static final ZonedDateTime NEW_PAYMENT_DATE = ZonedDateTime.now().withYear(2022).withMonth(4).withDayOfMonth(1);
+   private static final ZonedDateTime OLD_PAYMENT_DATE = ZonedDateTime.now().withYear(2022).withMonth(1).withDayOfMonth(1);
+   private static final ZonedDateTime POST_2025_PAYMENT_DATE = ZonedDateTime.now().withYear(2025).withMonth(3).withDayOfMonth(1);
+   private static final ZonedDateTime POST_2026_PAYMENT_DATE = ZonedDateTime.now().withYear(2026).withMonth(3).withDayOfMonth(1);
 
   private static final Geometry GEOMETRY = geometrycollection(3879, polygon(ring(
     c(2.5494887994040444E7, 6673140.94535369),
@@ -131,25 +141,81 @@ class PaymentClassServiceTest {
     assertEquals("1", paymentClass);
   }
 
-  @Test
-  void undefinedPaymentClassIsReturned() {
-    final List<String> paymentClasses = Collections.emptyList();
+   @Test
+   void undefinedPaymentClassIsReturned() {
+     final List<String> paymentClasses = Collections.emptyList();
 
-    final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER));
-    final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-    future.set(response);
-    Mockito.when(restTemplate.exchange(
-      Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+     final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER));
+     final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
+     future.set(response);
+     Mockito.when(restTemplate.exchange(
+       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
 
-    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE),createApplication(OLD_PAYMENT_DATE));
-    assertEquals("undefined", paymentClass);
-  }
+     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE),createApplication(OLD_PAYMENT_DATE));
+     assertEquals("undefined", paymentClass);
+   }
 
-  private String createResponse(List<String> paymentClasses, String paymentMember) {
-    final StringBuilder builder = new StringBuilder();
-    paymentClasses.forEach(p -> builder.append(paymentMember.replaceFirst(PAYMENT_CLASS, p)));
-    return RESPONSE.replaceFirst(PAYMENT_CLASSES, builder.toString());
-  }
+   @Test
+   void getPaymentClassPost2025() {
+     final List<String> paymentClasses = Arrays.asList("4", "3", "2", "1", "5");
+
+     final ResponseEntity<String> response = ResponseEntity.ok(createResponsePost2025(paymentClasses, MEMBER_2025));
+     final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
+     future.set(response);
+     Mockito.when(restTemplate.exchange(
+       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+
+     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, POST_2025_PAYMENT_DATE), createApplication(POST_2025_PAYMENT_DATE));
+     assertEquals("1", paymentClass);
+   }
+
+    @Test
+    void getPaymentClassPost2026() {
+      final List<String> paymentClasses = Arrays.asList("4", "3", "2", "1", "5");
+
+      final ResponseEntity<String> response = ResponseEntity.ok(createResponsePost2026(paymentClasses, MEMBER_2026));
+      final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
+      future.set(response);
+      Mockito.when(restTemplate.exchange(
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+
+      final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, POST_2026_PAYMENT_DATE), createApplication(POST_2026_PAYMENT_DATE));
+      assertEquals("1", paymentClass);
+    }
+
+    @Test
+    void getPaymentClassWithoutTietopalveluIdAndGeom() {
+      // Test that payment class is correctly determined even when tietopalvelu_id and geom are missing
+      // This can happen with very old WFS response formats
+      final List<String> paymentClasses = Arrays.asList("3", "3", "2", "3", "4a");
+
+      final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER_WITHOUT_IDS));
+      final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
+      future.set(response);
+      Mockito.when(restTemplate.exchange(
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+
+      final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
+      assertEquals("2", paymentClass);
+    }
+
+   private String createResponse(List<String> paymentClasses, String paymentMember) {
+     final StringBuilder builder = new StringBuilder();
+     paymentClasses.forEach(p -> builder.append(paymentMember.replaceFirst(PAYMENT_CLASS, p)));
+     return RESPONSE.replaceFirst(PAYMENT_CLASSES, builder.toString());
+   }
+
+   private String createResponsePost2025(List<String> paymentClasses, String paymentMember) {
+     final StringBuilder builder = new StringBuilder();
+     paymentClasses.forEach(p -> builder.append(paymentMember.replaceFirst(PAYMENT_CLASS, p)));
+     return RESPONSE.replaceFirst(PAYMENT_CLASSES, builder.toString());
+   }
+
+   private String createResponsePost2026(List<String> paymentClasses, String paymentMember) {
+     final StringBuilder builder = new StringBuilder();
+     paymentClasses.forEach(p -> builder.append(paymentMember.replaceFirst(PAYMENT_CLASS, p)));
+     return RESPONSE.replaceFirst(PAYMENT_CLASSES, builder.toString());
+   }
 
   private LocationJson createLocation(Geometry geometry, ZonedDateTime zonedDateTime) {
     final LocationJson location = new LocationJson();

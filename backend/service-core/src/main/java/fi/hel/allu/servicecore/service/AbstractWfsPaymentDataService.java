@@ -63,6 +63,7 @@ public abstract class AbstractWfsPaymentDataService {
   private static final Logger logger = LoggerFactory.getLogger(AbstractWfsPaymentDataService.class);
   protected static final LocalDateTime POST_2022_PAYMENT_DATE = LocalDateTime.of(2022, 3, 31, 23, 59, 0, 0);
   protected static final LocalDateTime POST_2025_PAYMENT_DATE = LocalDateTime.of(2025, 2, 28, 23, 59, 0, 0);
+  protected static final LocalDateTime POST_2026_PAYMENT_DATE = LocalDateTime.of(2026, 2, 28, 23, 59, 0, 0);
   private final ApplicationProperties applicationProperties;
   private final AsyncWfsRestTemplate restTemplate;
 
@@ -78,6 +79,8 @@ public abstract class AbstractWfsPaymentDataService {
   protected abstract String getFeatureTypeNamePost2022();
 
   protected abstract String getFeatureTypeNamePost2025();
+
+  protected abstract String getFeatureTypeNamePost2026();
 
   protected abstract String getFeaturePropertyName();
 
@@ -110,6 +113,7 @@ public abstract class AbstractWfsPaymentDataService {
 
     ZonedDateTime startTimeHelsinkiZone = startTime.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
 
+    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2026_PAYMENT_DATE, TimeUtil.HelsinkiZoneId))) return getFeatureTypeNamePost2026();
     if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId))) return getFeatureTypeNamePost2025();
     if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2022_PAYMENT_DATE, TimeUtil.HelsinkiZoneId))) return getFeatureTypeNamePost2022();
     return getFeatureTypeNamePre2022();

@@ -1,23 +1,21 @@
 package fi.hel.allu.servicecore.service.geocode.featuremember;
 
-import fi.hel.allu.servicecore.service.geocode.paymentlevel.PaymentLevel;
 import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
+import fi.hel.allu.servicecore.service.geocode.paymentlevel.PaymentLevel;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class FeatureClassMemberPre2022 implements FeatureClassMember {
-
-  @XmlElement(name = "Katutoiden_maksuluokat", namespace = VariablesUtils.HELSINKI_NAMESPACE)
+public class FeatureClassMemberPost2026 {
+  @XmlElement(name = "Katutoiden_maksuluokat_2026", namespace = VariablesUtils.HELSINKI_NAMESPACE)
   public PaymentLevel paymentLevel;
 
-  @Override
-  public PaymentLevel getMaksuluokka() {
+  public PaymentLevel getPaymentLevel() {
     return paymentLevel;
   }
 
   @Override
   public String toString() {
-    return "FeatureClassMemberPre2022{" +
+    return "FeatureClassMemberPost2026{" +
       "paymentLevel=" + paymentLevel +
       '}';
   }
