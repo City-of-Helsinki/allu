@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.service.geocode.PaymentZoneXml;
+import fi.hel.allu.servicecore.service.geocode.paymentzone.PaymentZoneFeatureCollection;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 
 
@@ -33,17 +33,17 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
     return executeWfsRequest(location, applicationJson);
   }
 
-   @Override
-   protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
-     return responses.stream()
-         .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneXml.class))
-         .filter(p -> p.featureMember != null)
-         .flatMap(x -> x.featureMember.stream())
-         .map(p -> p.paymentLevelZone.getPaymentLevelZone())
-         .filter(StringUtils::isNotBlank)
-         .sorted()
-         .findFirst().orElse(DEFAULT_PAYMENT_ZONE);
-   }
+    @Override
+    protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
+      return responses.stream()
+          .map(r -> WfsUtil.unmarshalWfs(r, PaymentZoneFeatureCollection.class))
+          .filter(p -> p.featureMembers != null)
+          .flatMap(x -> x.featureMembers.stream())
+          .map(p -> p.paymentZone.getPaymentZone())
+          .filter(StringUtils::isNotBlank)
+          .sorted()
+          .findFirst().orElse(DEFAULT_PAYMENT_ZONE);
+    }
 
   @Override
   protected String getFeatureTypeNamePre2022() {
