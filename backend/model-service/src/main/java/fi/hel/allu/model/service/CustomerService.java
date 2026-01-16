@@ -1,8 +1,10 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -10,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -288,5 +289,63 @@ public class CustomerService {
     );
 
     return page;
+  }
+
+  /**
+   * Deletes the specified customers and their associated contacts from the system.
+   * Handles foreign key constraints and ensures safe deletion of associated contacts
+   * before archiving and removing customers. Non-deletable customers are excluded
+   * from the operation, and appropriate warnings are logged.
+   *
+   * @param ids the list of customer IDs to be deleted
+   * @return a DeleteIdsResult object containing the IDs of successfully deleted customers
+   *         and the IDs of customers that could not be deleted
+   */
+  @Transactional
+  public DeleteIdsResult deleteCustomersAndAssociatedContacts(List<Integer> ids) {
+    List<Integer> nonDeletableIds = customerDao.findNonDeletableCustomerIds(ids);
+
+    Set<Integer> deletableIds = new HashSet<>(ids);
+    nonDeletableIds.forEach(deletableIds::remove);
+
+    if (!deletableIds.isEmpty()) {
+      // Get associated contacts
+      List<Integer> contactIds = contactDao.findDeletableContactIdsByCustomerIds(deletableIds);
+
+      // Delete associated contacts (FK-safe)
+      if (!contactIds.isEmpty()) {
+        long deletedContacts = contactDao.deleteContactsByIds(contactIds);
+        if (deletedContacts != contactIds.size()) {
+          logger.error("Contact deletion mismatch: expected={}, actual={}",
+            contactIds.size(), deletedContacts);
+        }
+        logger.debug("Deleted {} contacts", deletedContacts);
+      }
+
+      // Archive customers
+      customerDao.archiveCustomers(deletableIds);
+
+      // Remove from deletable_customer table
+      // Use IDs sent from the UI/user to hide the customers from the UI table
+      // Daily deletable customer search will re-populate the table again if non-deletable customers were removed/hidden
+      long deletableRowsRemoved = customerDao.deleteFromDeletableCustomers(ids);
+      logger.debug("Deleted {} rows from deletable customer table", deletableRowsRemoved);
+
+      // Delete customers
+      long customersRemoved = customerDao.deleteCustomers(deletableIds);
+      if (customersRemoved != deletableIds.size()) {
+        logger.error(
+          "Deletion mismatch. Expected={}, actual={}",
+          deletableIds.size(), customersRemoved
+        );
+      }
+      logger.debug("Deleted {} customers table", customersRemoved);
+    }
+
+    if (!nonDeletableIds.isEmpty()) {
+      logger.warn("Some customers were not deleted because they became linked to an application or project: {}", nonDeletableIds);
+    }
+
+    return new DeleteIdsResult(deletableIds, nonDeletableIds);
   }
 }
