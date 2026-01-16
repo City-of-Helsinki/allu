@@ -1,16 +1,14 @@
-package fi.hel.allu.servicecore.service.geocode.paymentlevel;
+package fi.hel.allu.servicecore.service.geocode.paymentclass;
 
 import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.Geom;
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PolygonCoordinates;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
-public class PaymentLevelClass {
+public class PaymentClass {
 
   @XmlElement(name = "maksuluokka", namespace = VariablesUtils.HELSINKI_NAMESPACE)
-  public String paymentLevelClass;
+  public String paymentClass;
 
   @XmlElement(name = "tietopalvelu_id", namespace = VariablesUtils.HELSINKI_NAMESPACE)
   public int dataServiceId;
@@ -18,8 +16,8 @@ public class PaymentLevelClass {
   @XmlElement(name = "geom", namespace = VariablesUtils.HELSINKI_NAMESPACE, required = false)
   public Geom geom;
 
-  public String getPaymentLevelClass() {
-    return paymentLevelClass;
+  public String getPaymentClass() {
+    return paymentClass;
   }
 
   public List<PolygonCoordinates> getCoordinates() {
@@ -28,9 +26,9 @@ public class PaymentLevelClass {
 
   @Override
   public String toString() {
-    return "PaymentLevelClass{" +
+    return "PaymentClass{" +
       "dataServiceId=" + dataServiceId +
-      ", paymentLevelClass='" + paymentLevelClass + '\'' +
+      ", paymentClass='" + paymentClass + '\'' +
       '}';
   }
 }

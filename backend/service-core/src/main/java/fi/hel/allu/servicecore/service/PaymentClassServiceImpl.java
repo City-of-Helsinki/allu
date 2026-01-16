@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.vividsolutions.jts.geom.TopologyException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.*;
 import org.geolatte.geom.*;
 import org.geolatte.geom.LinearRing;
@@ -58,12 +57,12 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
       String paymentClass = UNDEFINED;
       for (String response : responses) {
-        final PaymentClassXml paymentClassXml = unmarshalPaymentClass(response);
-        final List<FeatureClassMember> paymentClasses = paymentClassXml.getFeatureMemeber().stream()
-            .sorted(Comparator.comparing(f -> f.getPaymentLevelClass().getPaymentLevelClass()))
+        final PaymentClassFeatureCollection paymentClassXml = unmarshalPaymentClass(response);
+         final List<PaymentClassFeatureMember> paymentClasses = paymentClassXml.getFeatureMembers().stream()
+            .sorted(Comparator.comparing(f -> f.getPaymentClass().getPaymentClass()))
             .collect(Collectors.toList());
         if (!paymentClasses.isEmpty()) {
-          final String pc = paymentClasses.get(0).getPaymentLevelClass().getPaymentLevelClass();
+          final String pc = paymentClasses.get(0).getPaymentClass().getPaymentClass();
           if (pc.compareTo(paymentClass) < 0) {
             paymentClass = pc;
           }
@@ -72,12 +71,12 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
       return paymentClass;
     }
 
-  private List<PaymentClassXml> responsesToPaymentClasses(List<String> responses) {
+  private List<PaymentClassFeatureCollection> responsesToPaymentClasses(List<String> responses) {
     return responses.stream().map(this::unmarshalPaymentClass).toList();
   }
 
-  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXml> paymentClasses) {
-    return paymentClasses.stream().map(PaymentClassXml::getPaymentLevels).toList();
+  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassFeatureCollection> paymentClasses) {
+    return paymentClasses.stream().map(PaymentClassFeatureCollection::getPaymentLevels).toList();
   }
 
   private HashMap<String, List<PolygonCoordinates>> combineHashMaps(List<HashMap<String, List<PolygonCoordinates>>> hashMapList) {
@@ -251,8 +250,8 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return highestLevel;
   }
 
-  private PaymentClassXml unmarshalPaymentClass(String response) {
-    return WfsUtil.unmarshalWfs(response, PaymentClassXml.class);
+  private PaymentClassFeatureCollection unmarshalPaymentClass(String response) {
+    return WfsUtil.unmarshalWfs(response, PaymentClassFeatureCollection.class);
   }
 
   @Override
