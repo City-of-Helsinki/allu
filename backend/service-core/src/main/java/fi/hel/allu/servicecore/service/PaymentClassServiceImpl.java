@@ -58,7 +58,7 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
       String paymentClass = UNDEFINED;
       for (String response : responses) {
-        final PaymentClassXml paymentClassXml = getPaymentClassPre2025(response, applicationJson);
+        final PaymentClassXml paymentClassXml = unmarshalPaymentClass(response);
         final List<FeatureClassMember> paymentClasses = paymentClassXml.getFeatureMemeber().stream()
             .sorted(Comparator.comparing(f -> f.getPaymentLevelClass().getPaymentLevelClass()))
             .collect(Collectors.toList());
@@ -72,12 +72,12 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
       return paymentClass;
     }
 
-  private List<PaymentClassXmlPost2025> responsesToPaymentClasses(List<String> responses) {
-    return responses.stream().map(this::getPaymentClassPost2025).toList();
+  private List<PaymentClassXml> responsesToPaymentClasses(List<String> responses) {
+    return responses.stream().map(this::unmarshalPaymentClass).toList();
   }
 
-  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
-    return paymentClasses.stream().map(PaymentClassXmlPost2025::getPaymentLevels).toList();
+  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXml> paymentClasses) {
+    return paymentClasses.stream().map(PaymentClassXml::getPaymentLevels).toList();
   }
 
   private HashMap<String, List<PolygonCoordinates>> combineHashMaps(List<HashMap<String, List<PolygonCoordinates>>> hashMapList) {
@@ -251,20 +251,8 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return highestLevel;
   }
 
-  private PaymentClassXml getPaymentClassPre2025(String response, ApplicationJson applicationJson){
-
-    if (applicationJson.getStartTime() == null) {
-      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
-    }
-    ZonedDateTime startTimeHelsinkiZone = applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
-
-    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2022_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
-      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2022.class);
-    return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
-  }
-
-  private PaymentClassXmlPost2025 getPaymentClassPost2025(String response) {
-    return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2025.class);
+  private PaymentClassXml unmarshalPaymentClass(String response) {
+    return WfsUtil.unmarshalWfs(response, PaymentClassXml.class);
   }
 
   @Override
