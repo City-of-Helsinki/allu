@@ -138,6 +138,65 @@ public class PricingDaoTest {
   }
 
   @Test
+  public void testAreaRentalNewPricesAfterMarch2026() {
+    insertExcavationPricings();
+
+    ZonedDateTime date = ZonedDateTime.of(2026, 3, 1, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
+
+    assertEquals(1600, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.UNIT_PRICE,
+      "1",
+      date));
+
+    assertEquals(1200, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.UNIT_PRICE,
+      "2",
+      date));
+
+    assertEquals(800, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.UNIT_PRICE,
+      "3",
+      date));
+
+    assertEquals(400, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.UNIT_PRICE,
+      "4",
+      date));
+
+    assertEquals(200, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.UNIT_PRICE,
+      "5",
+      date));
+  }
+
+  @Test
+  public void testAreaRentalHandlingFeesAfterMarch2026() {
+    insertExcavationPricings();
+
+    ZonedDateTime date = ZonedDateTime.of(2026, 3, 1, 0, 0, 0, 0, TimeUtil.HelsinkiZoneId);
+
+    assertEquals(8000, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.HANDLING_FEE_LT_8_DAYS,
+      date));
+
+    assertEquals(24000, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.HANDLING_FEE_LT_6_MONTHS,
+      date));
+
+    assertEquals(40000, pricingDao.findValue(
+      ApplicationType.AREA_RENTAL,
+      PricingKey.HANDLING_FEE_GE_6_MONTHS,
+      date));
+  }
+
+  @Test
   public void testExcavationNewPricesAfterMarch2026() {
     insertExcavationPricings();
 
@@ -203,7 +262,8 @@ public class PricingDaoTest {
   private void insertExcavationPricings() {
     // wasn't able to figure out how to insert Postgres dateranges with QueryDSL
     try {
-      insertAreaRentalPricings();
+      insertAreaRentalPricingsUntilMarch2026();
+      insertAreaRentalPricingsFromMarch2026();
       insertExcavationPricingsUntilMarch2025();
       insertExcavationPricingsUntilMarch2026();
       insertExcavationPricingsFromMarch2026();
@@ -213,7 +273,7 @@ public class PricingDaoTest {
     }
   }
 
-  private void insertAreaRentalPricings() throws SQLException {
+  private void insertAreaRentalPricingsUntilMarch2026() throws SQLException {
     String base = "INSERT INTO allu.pricing (application_type, key, payment_class, value, validity) VALUES ";
 
     String oldValidity = "daterange(NULL, '2025-02-28', '(]')";
@@ -227,6 +287,22 @@ public class PricingDaoTest {
     sqlRunner.runSql(base + "('AREA_RENTAL','MINOR_DISTURBANCE_HANDLING_FEE',NULL,10000,daterange(NULL,NULL,'()'))");
   }
 
+  private void insertAreaRentalPricingsFromMarch2026() throws SQLException {
+    String base = "INSERT INTO allu.pricing (key, payment_class, value, application_type, validity) VALUES ";
+    String validity = "daterange('2026-03-01', NULL, '[]')";
+
+    // UNIT_PRICE / payment classes
+    sqlRunner.runSql(base + "('UNIT_PRICE','1',1600,'AREA_RENTAL'," + validity + ")");
+    sqlRunner.runSql(base + "('UNIT_PRICE','2',1200,'AREA_RENTAL'," + validity + ")");
+    sqlRunner.runSql(base + "('UNIT_PRICE','3',800,'AREA_RENTAL'," + validity + ")");
+    sqlRunner.runSql(base + "('UNIT_PRICE','4',400,'AREA_RENTAL'," + validity + ")");
+    sqlRunner.runSql(base + "('UNIT_PRICE','5',200,'AREA_RENTAL'," + validity + ")");
+
+    // Handling fees
+    sqlRunner.runSql(base + "('HANDLING_FEE_LT_8_DAYS',NULL,8000,'AREA_RENTAL'," + validity + ")");
+    sqlRunner.runSql(base + "('HANDLING_FEE_LT_6_MONTHS',NULL,24000,'AREA_RENTAL'," + validity + ")");
+    sqlRunner.runSql(base + "('HANDLING_FEE_GE_6_MONTHS',NULL,40000,'AREA_RENTAL'," + validity + ")");
+  }
 
   private void insertExcavationPricingsUntilMarch2025() throws SQLException {
     String base = "INSERT INTO allu.pricing (application_type, key, payment_class, value, validity) VALUES ";
