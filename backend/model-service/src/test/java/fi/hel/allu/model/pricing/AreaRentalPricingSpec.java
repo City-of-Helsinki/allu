@@ -15,7 +15,6 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
-import fi.hel.allu.model.service.InvoicingPeriodService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
@@ -29,6 +28,18 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
   AreaRentalPricing arp;
   PricingDao pricingDao;
   PricingExplanator pricingExplanator;
+
+  private void createAreaRentalPricing(
+    ZonedDateTime start,
+    ZonedDateTime end,
+    ApplicationKind kind
+  ) {
+    app.setStartTime(start);
+    app.setEndTime(end);
+    app.setKindsWithSpecifiers(
+      Collections.singletonMap(kind, Collections.emptyList()));
+    arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
+  }
 
   {
     describe("Area rental Pricing", () -> {
@@ -44,18 +55,16 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.UNIT_PRICE), eq("1"), any())).thenReturn(600);
         Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.UNDERPASS_DICOUNT_PERCENTAGE), any())).thenReturn(50);
         Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.AREA_UNIT_M2), any())).thenReturn(15);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.HANDLING_FEE_LT_8_DAYS), any())).thenReturn(8000);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.HANDLING_FEE_LT_6_MONTHS), any())).thenReturn(24000);
+        Mockito.when(pricingDao.findValue(eq(ApplicationType.AREA_RENTAL), eq(PricingKey.HANDLING_FEE_GE_6_MONTHS), any())).thenReturn(40000);
       });
 
       context("with Five-day snow work", () -> {
         final ZonedDateTime start = ZonedDateTime.parse("2017-04-20T08:00:00+03:00");
         final ZonedDateTime end = ZonedDateTime.parse("2017-04-24T17:00:00+03:00");
 
-        beforeEach(() -> {
-          app.setStartTime(start);
-          app.setEndTime(end);
-          app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.SNOW_WORK, Collections.emptyList()));
-          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
-        });
+        beforeEach(() -> createAreaRentalPricing(start, end, ApplicationKind.SNOW_WORK));
 
         context("On price class 2, with area of 85 sqm", () -> {
           it("Should cost 5 * 6 * 3.00 EUR +  60 EUR", () -> {
@@ -93,13 +102,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         final ZonedDateTime start = ZonedDateTime.parse("2017-06-01T08:00:00+03:00");
         final ZonedDateTime end = ZonedDateTime.parse("2017-06-30T17:00:00+03:00");
 
-        beforeEach(() -> {
-          app.setStartTime(start);
-          app.setEndTime(end);
-          app.setKindsWithSpecifiers(
-              Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
-          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
-        });
+        beforeEach(() -> createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION));
 
         context("On price class 2, with area of 1000 sqm", () -> {
           it("Should cost 30 * 67 * 3.00 EUR + 60 EUR", () -> {
@@ -117,11 +120,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
           AreaRental areaRental = new AreaRental();
           areaRental.setMajorDisturbance(true);
           app.setExtension(areaRental);
-          app.setStartTime(start);
-          app.setEndTime(end);
-          app.setKindsWithSpecifiers(
-              Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
-          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
+          createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION);
         });
 
         context("On price class 2, with area of 1000 sqm", () -> {
@@ -132,6 +131,59 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         });
       });
 
+      context("handling fee logic after 1.3.2026", () -> {
+
+        context("work lasting less than 8 days", () -> {
+          final ZonedDateTime start = ZonedDateTime.parse("2026-03-10T08:00:00+02:00");
+          final ZonedDateTime end   = ZonedDateTime.parse("2026-03-16T17:00:00+02:00"); // 7 days
+
+          beforeEach(() -> createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION));
+
+          it("should apply HANDLING_FEE_LT_8_DAYS pricing", () -> assertEquals(8000, arp.getPriceInCents()));
+        });
+
+        context("work lasting at least 8 days but less than 6 months", () -> {
+          final ZonedDateTime start = ZonedDateTime.parse("2026-03-01T08:00:00+02:00");
+          final ZonedDateTime end   = ZonedDateTime.parse("2026-04-15T17:00:00+02:00");
+
+          beforeEach(() -> createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION));
+
+          it("should apply HANDLING_FEE_LT_6_MONTHS pricing", () -> assertEquals(24000, arp.getPriceInCents()));
+        });
+
+        context("work lasting at least 6 months", () -> {
+          final ZonedDateTime start = ZonedDateTime.parse("2026-03-01T08:00:00+02:00");
+          final ZonedDateTime end   = ZonedDateTime.parse("2026-09-01T08:00:00+02:00");
+
+          beforeEach(() -> createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION));
+
+          it("should apply HANDLING_FEE_GE_6_MONTHS pricing", () -> assertEquals(40000, arp.getPriceInCents()));
+        });
+      });
+
+      context("duration edge cases", () -> context("exactly 8 days", () -> {
+        final ZonedDateTime start = ZonedDateTime.parse("2026-03-01T00:00:00+02:00");
+        final ZonedDateTime end   = ZonedDateTime.parse("2026-03-08T23:59:59+02:00");
+
+        beforeEach(() -> createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION));
+
+        it("should not be treated as less than 8 days", () -> assertEquals(24000, arp.getPriceInCents()));
+      }));
+
+      context("handling fee logic before 1.3.2026", () -> {
+
+        final ZonedDateTime start = ZonedDateTime.parse("2026-02-28T08:00:00+02:00");
+        final ZonedDateTime end   = ZonedDateTime.parse("2026-03-30T17:00:00+02:00");
+
+        beforeEach(() -> {
+          AreaRental areaRental = new AreaRental();
+          areaRental.setMajorDisturbance(false);
+          app.setExtension(areaRental);
+          createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION);
+        });
+
+        it("should still use MINOR_DISTURBANCE_HANDLING_FEE", () -> assertEquals(6000, arp.getPriceInCents()));
+      });
     });
   }
 }

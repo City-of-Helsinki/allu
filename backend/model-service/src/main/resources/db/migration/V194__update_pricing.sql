@@ -1,4 +1,4 @@
--- Päivitetän kaivuilmoituksen hinnasto
+-- Päivitetään kaivuilmoituksen hinnasto
 
 -- 1) Päätetään nykyinen avoin hintakausi 1.3.2026
 UPDATE allu.pricing
@@ -54,3 +54,26 @@ VALUES
   -- Kaivuilmoituksen käsittely- ja valvontamaksut (LT = LESS THAN, GE = GREATER OR EQUAL)
   ('HANDLING_FEE_LT_6_MONTHS', NULL, 24000, 'EXCAVATION_ANNOUNCEMENT', daterange('2026-03-01', NULL, '[]')),
   ('HANDLING_FEE_GE_6_MONTHS', NULL, 40000, 'EXCAVATION_ANNOUNCEMENT', daterange('2026-03-01', NULL, '[]'));
+
+-- Päivitetään aluevuokrauksen hinnasto
+
+-- 1) Päätetään nykyinen avoin hintakausi 1.3.2026
+UPDATE allu.pricing
+SET validity = daterange('2025-03-01', '2026-02-28', '[]')
+WHERE application_type = 'AREA_RENTAL'
+  AND validity = daterange('2025-03-01', NULL, '[]');
+
+-- 2) Luodaan uusi hintakausi uusilla hinnoilla alkaen 1.3.2026
+INSERT INTO allu.pricing (key, payment_class, value, application_type, validity)
+VALUES
+  -- Alkava 15 m²
+  ('UNIT_PRICE', '1', 1600, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+  ('UNIT_PRICE', '2', 1200, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+  ('UNIT_PRICE', '3', 800, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+  ('UNIT_PRICE', '4', 400, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+  ('UNIT_PRICE', '5', 200, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+
+  -- Aluevuokrauksen käsittely- ja valvontamaksu
+  ('HANDLING_FEE_LT_8_DAYS', NULL, 8000, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+  ('HANDLING_FEE_LT_6_MONTHS', NULL, 24000, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]')),
+  ('HANDLING_FEE_GE_6_MONTHS', NULL, 40000, 'AREA_RENTAL', daterange('2026-03-01', NULL, '[]'));
