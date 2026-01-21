@@ -10,7 +10,8 @@ public class PaymentClassFeatureMember {
   @XmlElements({
     @XmlElement(name = "Katutoiden_maksuluokat", namespace = VariablesUtils.HELSINKI_NAMESPACE),
     @XmlElement(name = "Katutoiden_maksuluokat_2022", namespace = VariablesUtils.HELSINKI_NAMESPACE),
-    @XmlElement(name = "Katutoiden_maksuluokat_2025", namespace = VariablesUtils.HELSINKI_NAMESPACE)
+    @XmlElement(name = "Katutoiden_maksuluokat_2025", namespace = VariablesUtils.HELSINKI_NAMESPACE),
+    @XmlElement(name = "Katutoiden_maksuluokat_2026", namespace = VariablesUtils.HELSINKI_NAMESPACE)
   })
   public PaymentClass paymentClass;
 
