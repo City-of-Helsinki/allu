@@ -47,11 +47,21 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   @Override
   protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
-    return isApplicationPost2025(applicationJson) ? parseResultPost2025(responses, location) : parseResultPre2025(responses, applicationJson);
+    if (isApplicationPost2026(applicationJson)) {
+      return parseResultPost2026(responses, location);
+    }
+    if (isApplicationPost2025(applicationJson)) {
+      return parseResultPost2025(responses, location);
+    }
+    return parseResultPre2025(responses, applicationJson);
   }
 
   protected boolean isApplicationPost2025(ApplicationJson applicationJson) {
     return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+  }
+
+  protected boolean isApplicationPost2026(ApplicationJson applicationJson) {
+    return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2026_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
     protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
@@ -94,6 +104,10 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   protected String parseResultPost2025(List<String> responses, LocationJson location) {
     return computePaymentLevel(getLocationArea(location), sumAreas(intersectionsToAreas(polygonsToIntersections(coordinatesToPolygons(combineHashMaps(paymentClassesToPaymentMaps(responsesToPaymentClasses(responses)))), location))));
+  }
+
+  protected String parseResultPost2026(List<String> responses, LocationJson location) {
+    return parseResultPost2025(responses, location);
   }
 
   LinearRing coordinatesToLinearRing(String coordinateString) {
@@ -272,6 +286,11 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   @Override
   protected String getFeatureTypeNamePost2025() {
     return getFeatureTypeNamePre2022() + "_2025";
+  }
+
+  @Override
+  protected String getFeatureTypeNamePost2026() {
+    return getFeatureTypeNamePre2022() + "_2026";
   }
 
 }
