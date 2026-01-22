@@ -53,7 +53,7 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     if (isApplicationPost2025(applicationJson)) {
       return parseResultPost2025(responses, location);
     }
-    return parseResultPre2025(responses, applicationJson);
+    return parseResultPre2025(responses);
   }
 
   protected boolean isApplicationPost2025(ApplicationJson applicationJson) {
@@ -64,7 +64,7 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2026_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
-    protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
+    protected String parseResultPre2025(List<String> responses) {
       String paymentClass = UNDEFINED;
       for (String response : responses) {
         final PaymentClassFeatureCollection paymentClassXml = unmarshalPaymentClass(response);
