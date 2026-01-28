@@ -3,9 +3,7 @@ package fi.hel.allu.model.dao;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.PostalAddress;
-import fi.hel.allu.model.domain.PostalAddressItem;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import org.junit.Assert;
@@ -16,21 +14,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
 @SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 public class ContactDaoSpec extends SpeccyTestBase {
+
   @Autowired
   ContactDao contactDao;
   @Autowired
   PostalAddressDao postalAddressDao;
+  @Autowired
+  ProjectDao projectDao;
 
   private Contact testContact = new Contact();
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
@@ -79,7 +79,7 @@ public class ContactDaoSpec extends SpeccyTestBase {
         describe("findByIds", () -> {
           it("should find contacts by multiple ids", () -> {
             List<Contact> findContacts = contactDao.findByIds(Collections.singletonList(insertedContact.getId()));
-            Assert.assertFalse(findContacts.isEmpty());
+            assertFalse(findContacts.isEmpty());
             assertContact(findContacts.get(0));
             assertPostalAddress(findContacts.get(0));
           });
@@ -132,7 +132,7 @@ public class ContactDaoSpec extends SpeccyTestBase {
             assertContact(updatedContact);
             Assert.assertNull(updatedContact.getPostalAddress());
             Optional<PostalAddress> postalAddress = postalAddressDao.findById(postalAddressId);
-            Assert.assertFalse(postalAddress.isPresent());
+            assertFalse(postalAddress.isPresent());
           });
         });
       });
@@ -163,6 +163,68 @@ public class ContactDaoSpec extends SpeccyTestBase {
       });
     });
 
+    describe("Contact deletion safety", () -> {
+      it("finds only deletable contacts for given customers", () -> {
+        Customer c1 = testCommon.insertPerson();
+        Customer c2 = testCommon.insertPerson();
+
+        // A: deletable (no links)
+        Contact a = testCommon.insertContact(c1.getId());
+
+        // B: linked to application
+        Contact b = testCommon.insertContact(c1.getId());
+        Application app = testCommon.dummyOutdoorApplication("app", "owner", c1);
+        List<Contact> mutableContacts = new ArrayList<>(app.getCustomersWithContacts().get(0).getContacts());
+        mutableContacts.add(b);
+        app.getCustomersWithContacts().get(0).setContacts(mutableContacts);
+        testCommon.insertApplication(app);
+
+        // C: linked to project
+        Contact c = testCommon.insertContact(c1.getId());
+        Project project = new Project();
+        project.setCustomerId(c1.getId());
+        project.setContactId(c.getId());
+        project.setIdentifier("P1");
+        project.setName("proj");
+        project.setStartTime(ZonedDateTime.now());
+        project.setCreatorId(testCommon.insertUser("creator").getId());
+        projectDao.insert(project);
+
+        // D: another customer
+        testCommon.insertContact(c2.getId());
+
+        // Run query
+        List<Integer> deletable = contactDao.findDeletableContactIdsByCustomerIds(Set.of(c1.getId()));
+
+        // Only A should be returned
+        assertEquals(1, deletable.size());
+        assertEquals(a.getId(), deletable.get(0));
+      });
+
+      it("deletes only safe-to-delete contacts", () -> {
+        Customer customer = testCommon.insertPerson();
+
+        // A: deletable
+        Contact a = testCommon.insertContact(customer.getId());
+
+        // B: linked to application
+        Contact b = testCommon.insertContact(customer.getId());
+        Application app = testCommon.dummyOutdoorApplication("app", "owner", customer);
+        List<Contact> mutableContacts = new ArrayList<>(app.getCustomersWithContacts().get(0).getContacts());
+        mutableContacts.add(b);
+        app.getCustomersWithContacts().get(0).setContacts(mutableContacts);
+        testCommon.insertApplication(app);
+
+        List<Integer> deletable =
+          contactDao.findDeletableContactIdsByCustomerIds(Set.of(customer.getId()));
+
+        long deleted = contactDao.deleteContactsByIds(deletable);
+
+        assertEquals(1, deleted);
+        assertFalse(contactDao.findById(a.getId()).isPresent());
+        assertTrue(contactDao.findById(b.getId()).isPresent());
+      });
+    });
   }
 
   private void assertContact(Contact assertedContact) {
