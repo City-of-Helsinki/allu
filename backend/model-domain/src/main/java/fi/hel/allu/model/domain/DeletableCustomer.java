@@ -1,20 +1,20 @@
 package fi.hel.allu.model.domain;
 
 public class DeletableCustomer {
-  private Integer customerId;
+  private Integer id;
   private String sapCustomerNumber;
   private String name;
 
   public DeletableCustomer() {
   }
 
-  public DeletableCustomer(Integer customerId, String sapCustomerNumber) {
-    this.customerId = customerId;
+  public DeletableCustomer(Integer id, String sapCustomerNumber) {
+    this.id = id;
     this.sapCustomerNumber = sapCustomerNumber;
   }
 
-  public DeletableCustomer(Integer customerId, String sapCustomerNumber, String name) {
-    this.customerId = customerId;
+  public DeletableCustomer(Integer id, String sapCustomerNumber, String name) {
+    this.id = id;
     this.sapCustomerNumber = sapCustomerNumber;
     this.name = name;
   }
@@ -27,12 +27,12 @@ public class DeletableCustomer {
     this.sapCustomerNumber = sapCustomerNumber;
   }
 
-  public Integer getCustomerId() {
-    return customerId;
+  public Integer getId() {
+    return id;
   }
 
-  public void setCustomerId(Integer customerId) {
-    this.customerId = customerId;
+  public void setId(Integer id) {
+    this.id = id;
   }
 
   public String getName() {
