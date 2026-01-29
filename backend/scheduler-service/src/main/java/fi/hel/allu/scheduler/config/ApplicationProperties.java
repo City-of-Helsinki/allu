@@ -414,8 +414,4 @@ public class ApplicationProperties {
   public int getSftpTimeout() {
     return sftpTimeout;
   }
-
-  public String getCheckAndStoreDeletableCustomersUrl() {
-    return getModelServiceUrl("/customers/check-and-store-deletable");
-  }
 }

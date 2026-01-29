@@ -171,23 +171,6 @@ public class CustomerController {
   }
 
   /**
-   * Endpoint that triggers a scan for customers eligible for permanent deletion.
-   *
-   * Customers are considered eligible if they are not referenced by any
-   * application or project in the system.
-   *
-   * The resulting customers are stored in a staging table for later review
-   * and deletion.
-   *
-   * @return HTTP 200 if the operation completes successfully
-   */
-  @PostMapping(value = "/check-and-store-deletable")
-  public ResponseEntity<Void> checkAndStoreDeletableCustomers() {
-    customerService.checkAndStoreDeletableCustomers();
-    return ResponseEntity.ok().build();
-  }
-
-  /**
    * Retrieves a paginated list of deletable customers.
    *
    * Deletable customers are those that are eligible for permanent removal from the system,
