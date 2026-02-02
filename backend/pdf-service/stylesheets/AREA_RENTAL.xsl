@@ -399,6 +399,34 @@
           </xsl:otherwise>
         </xsl:choose>
         </p>
+
+        <xsl:if test="data/notBillable = 'false'">
+          <p class="pt-10">
+            <!-- Päivämäärän purku (dd.MM.yyyy → yyyyMMdd) -->
+            <xsl:variable name="day" select="format-number(substring-before(data/reservationStartDate,'.'),'00')"/>
+            <xsl:variable name="restOfDate" select="substring-after(data/reservationStartDate,'.')"/>
+            <xsl:variable name="month" select="format-number(substring-before($restOfDate,'.'),'00')"/>
+            <xsl:variable name="year" select="substring-after($restOfDate,'.')"/>
+            <xsl:variable name="date" select="concat($year, $month, $day)"/>
+
+            <xsl:choose>
+              <!-- Ennen 1.3.2025 -->
+              <xsl:when test="$date &lt; 20250301">
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 17.2.2022 § 28.
+              </xsl:when>
+
+              <!-- 1.3.2025 – 28.2.2026 -->
+              <xsl:when test="$date &lt; 20260301">
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 10.10.2024 § 157.
+              </xsl:when>
+
+              <!-- 1.3.2026 → -->
+              <xsl:otherwise>
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 29.1.2026 § 6.
+              </xsl:otherwise>
+            </xsl:choose>
+          </p>
+        </xsl:if>
       </section>
 
       <xsl:if test="data/notBillable = 'false' and data/anonymizedDocument = 'false'">
