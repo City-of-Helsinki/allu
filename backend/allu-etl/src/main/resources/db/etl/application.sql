@@ -143,24 +143,24 @@ INSERT INTO allureport.tapahtuma (
 )
 SELECT
     a.id AS hakemus_id,
-    a.extension::json ->> 'terms' AS ehdot,
+    a.extension ->> 'terms' AS ehdot,
     CASE
-        WHEN a.extension::json ->> 'nature' = 'PUBLIC_FREE' THEN 'Avoin'
-        WHEN a.extension::json ->> 'nature' = 'PUBLIC_NONFREE' THEN 'Maksullinen'
-        WHEN a.extension::json ->> 'nature' = 'CLOSED' THEN 'Suljettu'
+        WHEN a.extension ->> 'nature' = 'PUBLIC_FREE' THEN 'Avoin'
+        WHEN a.extension ->> 'nature' = 'PUBLIC_NONFREE' THEN 'Maksullinen'
+        WHEN a.extension ->> 'nature' = 'CLOSED' THEN 'Suljettu'
     END AS tapahtuman_luonne,
-    a.extension::json ->> 'description' AS kuvaus,
-    a.extension::json ->> 'url' AS www_sivu,
-    TO_TIMESTAMP((a.extension::json ->> 'eventStartTime')::float) AS tapahtuman_alkuaika,
-    TO_TIMESTAMP((a.extension::json ->> 'eventEndTime')::float) AS tapahtuman_loppuaika,
-    (a.extension::json ->> 'attendees')::integer AS yleisomaara,
-    (a.extension::json ->> 'entryFee')::integer AS osallistumismaksu,
-    (a.extension::json ->> 'ecoCompass')::boolean AS eko_kompassi,
-    (a.extension::json ->> 'foodSales')::boolean AS elintarvikemyynti,
-    a.extension::json ->> 'foodProviders' AS elintarviketoimijat,
-    (a.extension::json ->> 'structureArea')::float AS rakenteiden_neliomaara,
-    a.extension::json ->> 'structureDescription' AS rakenteiden_kuvaus,
-    a.extension::json ->> 'timeExceptions' AS tapahtuma_ajan_poikkeukset
+    a.extension ->> 'description' AS kuvaus,
+    a.extension ->> 'url' AS www_sivu,
+    TO_TIMESTAMP((a.extension ->> 'eventStartTime')::float) AS tapahtuman_alkuaika,
+    TO_TIMESTAMP((a.extension ->> 'eventEndTime')::float) AS tapahtuman_loppuaika,
+    (a.extension ->> 'attendees')::integer AS yleisomaara,
+    (a.extension ->> 'entryFee')::integer AS osallistumismaksu,
+    (a.extension ->> 'ecoCompass')::boolean AS eko_kompassi,
+    (a.extension ->> 'foodSales')::boolean AS elintarvikemyynti,
+    a.extension ->> 'foodProviders' AS elintarviketoimijat,
+    (a.extension ->> 'structureArea')::float AS rakenteiden_neliomaara,
+    a.extension ->> 'structureDescription' AS rakenteiden_kuvaus,
+    a.extension ->> 'timeExceptions' AS tapahtuma_ajan_poikkeukset
 FROM allu_operative.application a
 WHERE a.type = 'EVENT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -190,10 +190,10 @@ INSERT INTO allureport.lyhyt_maanvuokraus (
 )
 SELECT
     a.id AS hakemus_id,
-    a.extension::json ->> 'terms' AS ehdot,
-    a.extension::json ->> 'description' AS kuvaus,
-    (a.extension::json ->> 'commercial')::boolean AS kaupallinen,
-    (a.extension::json ->> 'billableSalesArea')::boolean AS laskutettava_myyntialue,
+    a.extension ->> 'terms' AS ehdot,
+    a.extension ->> 'description' AS kuvaus,
+    (a.extension ->> 'commercial')::boolean AS kaupallinen,
+    (a.extension ->> 'billableSalesArea')::boolean AS laskutettava_myyntialue,
     t.expiration_time AS irtisanomispaiva
 FROM allu_operative.application a
 LEFT JOIN allu_operative.termination t ON t.application_id = a.id
@@ -213,8 +213,8 @@ INSERT INTO allureport.muistiinpano (
 )
 SELECT
     a.id AS hakemus_id,
-    a.extension::json ->> 'terms' AS ehdot,
-    a.extension::json ->> 'description' AS kuvaus
+    a.extension ->> 'terms' AS ehdot,
+    a.extension ->> 'description' AS kuvaus
 FROM allu_operative.application a
 WHERE a.type = 'NOTE'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -231,14 +231,14 @@ INSERT INTO allureport.liikennejarjestely (
 )
 SELECT
   a.id AS hakemus_id,
-  a.extension::json ->> 'terms' AS ehdot,
-  a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
-  a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
+  a.extension ->> 'terms' AS ehdot,
+  a.extension ->> 'workPurpose' AS tyon_tarkoitus,
+  a.extension ->> 'trafficArrangements' AS liikennejarjestelyt,
   CASE
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
   END AS liikennehaitta
 FROM allu_operative.application a
 WHERE a.type = 'TEMPORARY_TRAFFIC_ARRANGEMENTS'
@@ -261,13 +261,13 @@ INSERT INTO allureport.sijoitussopimus (
 )
 SELECT
   a.id AS hakemus_id,
-  a.extension::json ->> 'terms' AS ehdot,
-  a.extension::json ->> 'propertyIdentificationNumber' AS kiinteistotunnus,
-  a.extension::json ->> 'additionalInfo' AS tyonkuvaus,
-  a.extension::json ->> 'contractText' AS sopimusteksti,
+  a.extension ->> 'terms' AS ehdot,
+  a.extension ->> 'propertyIdentificationNumber' AS kiinteistotunnus,
+  a.extension ->> 'additionalInfo' AS tyonkuvaus,
+  a.extension ->> 'contractText' AS sopimusteksti,
   t.expiration_time AS irtisanomispaiva,
-  (a.extension::json ->> 'sectionNumber')::integer AS pykala,
-  a.extension::json ->> 'rationale' AS paatoksen_perustelut
+  (a.extension ->> 'sectionNumber')::integer AS pykala,
+  a.extension ->> 'rationale' AS paatoksen_perustelut
 FROM allu_operative.application a
 LEFT JOIN allu_operative.termination t ON t.application_id = a.id
 WHERE a.type = 'PLACEMENT_CONTRACT'
@@ -294,14 +294,14 @@ INSERT INTO allureport.johtoselvitys (
 )
 SELECT
   a.id AS hakemus_id,
-  a.extension::json ->> 'terms' AS ehdot,
-  a.extension::json ->> 'workDescription' AS tyonkuvaus,
-  (a.extension::json ->> 'mapExtractCount')::integer AS karttaotteiden_maara,
-  (a.extension::json ->> 'constructionWork')::boolean AS rakentaminen,
-  (a.extension::json ->> 'maintenanceWork')::boolean AS kunnossapito,
-  (a.extension::json ->> 'emergencyWork')::boolean AS hatatyo,
-  (a.extension::json ->> 'propertyConnectivity')::boolean AS tontti_kiinteisto_liitos,
-  TO_TIMESTAMP((a.extension::json ->> 'validityTime')::float) AS voimassaoloaika
+  a.extension ->> 'terms' AS ehdot,
+  a.extension ->> 'workDescription' AS tyonkuvaus,
+  (a.extension ->> 'mapExtractCount')::integer AS karttaotteiden_maara,
+  (a.extension ->> 'constructionWork')::boolean AS rakentaminen,
+  (a.extension ->> 'maintenanceWork')::boolean AS kunnossapito,
+  (a.extension ->> 'emergencyWork')::boolean AS hatatyo,
+  (a.extension ->> 'propertyConnectivity')::boolean AS tontti_kiinteisto_liitos,
+  TO_TIMESTAMP((a.extension ->> 'validityTime')::float) AS voimassaoloaika
 FROM allu_operative.application a
 WHERE a.type = 'CABLE_REPORT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -347,37 +347,37 @@ INSERT INTO allureport.kaivuilmoitus (
 )
 SELECT
   a.id AS hakemus_id,
-  a.extension::json ->> 'terms' AS ehdot,
-  (a.extension::json ->> 'pksCard')::boolean AS pks_kortti,
-  (a.extension::json ->> 'constructionWork')::boolean AS rakentaminen,
-  (a.extension::json ->> 'maintenanceWork')::boolean AS kunnossapito,
-  (a.extension::json ->> 'emergencyWork')::boolean AS hatatyo,
-  (a.extension::json ->> 'propertyConnectivity')::boolean AS tontti_kiinteisto_liitos,
-  (a.extension::json ->> 'selfSupervision')::boolean AS omavalvonta,
-  TO_TIMESTAMP((a.extension::json ->> 'winterTimeOperation')::float) AS toiminnallinen_kunto,
-  TO_TIMESTAMP((a.extension::json ->> 'workFinished')::float) AS tyo_valmis,
-  TO_TIMESTAMP((a.extension::json ->> 'unauthorizedWorkStartTime')::float) AS luvaton_alkuaika,
-  TO_TIMESTAMP((a.extension::json ->> 'unauthorizedWorkEndTime')::float) AS luvaton_loppuaika,
-  TO_TIMESTAMP((a.extension::json ->> 'guaranteeEndTime')::float) AS takuu_paattyy,
-  TO_TIMESTAMP((a.extension::json ->> 'customerStartTime')::float) AS asiakas_alkuaika,
-  TO_TIMESTAMP((a.extension::json ->> 'customerEndTime')::float) AS asiakas_loppuaika,
-  TO_TIMESTAMP((a.extension::json ->> 'customerWinterTimeOperation')::float) AS asiakas_toiminnallinen_kunto,
-  TO_TIMESTAMP((a.extension::json ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
-  TO_TIMESTAMP((a.extension::json ->> 'operationalConditionReported')::float) AS toiminnallinen_kunto_ilmoitettu,
-  TO_TIMESTAMP((a.extension::json ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
-  a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
-  a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
+  a.extension ->> 'terms' AS ehdot,
+  (a.extension ->> 'pksCard')::boolean AS pks_kortti,
+  (a.extension ->> 'constructionWork')::boolean AS rakentaminen,
+  (a.extension ->> 'maintenanceWork')::boolean AS kunnossapito,
+  (a.extension ->> 'emergencyWork')::boolean AS hatatyo,
+  (a.extension ->> 'propertyConnectivity')::boolean AS tontti_kiinteisto_liitos,
+  (a.extension ->> 'selfSupervision')::boolean AS omavalvonta,
+  TO_TIMESTAMP((a.extension ->> 'winterTimeOperation')::float) AS toiminnallinen_kunto,
+  TO_TIMESTAMP((a.extension ->> 'workFinished')::float) AS tyo_valmis,
+  TO_TIMESTAMP((a.extension ->> 'unauthorizedWorkStartTime')::float) AS luvaton_alkuaika,
+  TO_TIMESTAMP((a.extension ->> 'unauthorizedWorkEndTime')::float) AS luvaton_loppuaika,
+  TO_TIMESTAMP((a.extension ->> 'guaranteeEndTime')::float) AS takuu_paattyy,
+  TO_TIMESTAMP((a.extension ->> 'customerStartTime')::float) AS asiakas_alkuaika,
+  TO_TIMESTAMP((a.extension ->> 'customerEndTime')::float) AS asiakas_loppuaika,
+  TO_TIMESTAMP((a.extension ->> 'customerWinterTimeOperation')::float) AS asiakas_toiminnallinen_kunto,
+  TO_TIMESTAMP((a.extension ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
+  TO_TIMESTAMP((a.extension ->> 'operationalConditionReported')::float) AS toiminnallinen_kunto_ilmoitettu,
+  TO_TIMESTAMP((a.extension ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
+  a.extension ->> 'workPurpose' AS tyon_tarkoitus,
+  a.extension ->> 'trafficArrangements' AS liikennejarjestelyt,
     CASE
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
   END AS liikennehaitta,
-  (a.extension::json ->> 'compactionAndBearingCapacityMeasurement')::boolean AS tiiveys_ja_kantavuusmittaus,
-  (a.extension::json ->> 'qualityAssuranceTest')::boolean AS paallysteen_laadunvarmistuskoe,
-  a.extension::json ->> 'additionalInfo' AS lisatiedot,
-  a.extension::json ->> 'cableReports' AS johtoselvitykset,
-  a.extension::json ->> 'placementContracts' AS sijoitussopimukset
+  (a.extension ->> 'compactionAndBearingCapacityMeasurement')::boolean AS tiiveys_ja_kantavuusmittaus,
+  (a.extension ->> 'qualityAssuranceTest')::boolean AS paallysteen_laadunvarmistuskoe,
+  a.extension ->> 'additionalInfo' AS lisatiedot,
+  a.extension ->> 'cableReports' AS johtoselvitykset,
+  a.extension ->> 'placementContracts' AS sijoitussopimukset
 FROM allu_operative.application a
 WHERE a.type = 'EXCAVATION_ANNOUNCEMENT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -424,20 +424,20 @@ INSERT INTO allureport.aluevuokraus (
 )
 SELECT
   a.id AS hakemus_id,
-  a.extension::json ->> 'terms' AS ehdot,
-  (a.extension::json ->> 'pksCard')::boolean AS pks_kortti,
-  (a.extension::json ->> 'majorDisturbance')::boolean AS haittaa_aiheuttava,
-  a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
-  a.extension::json ->> 'additionalInfo' AS lisatiedot,
-  a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
-  TO_TIMESTAMP((a.extension::json ->> 'workFinished')::float) AS tyo_valmis,
-  TO_TIMESTAMP((a.extension::json ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
-  TO_TIMESTAMP((a.extension::json ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
+  a.extension ->> 'terms' AS ehdot,
+  (a.extension ->> 'pksCard')::boolean AS pks_kortti,
+  (a.extension ->> 'majorDisturbance')::boolean AS haittaa_aiheuttava,
+  a.extension ->> 'workPurpose' AS tyon_tarkoitus,
+  a.extension ->> 'additionalInfo' AS lisatiedot,
+  a.extension ->> 'trafficArrangements' AS liikennejarjestelyt,
+  TO_TIMESTAMP((a.extension ->> 'workFinished')::float) AS tyo_valmis,
+  TO_TIMESTAMP((a.extension ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
+  TO_TIMESTAMP((a.extension ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
   CASE
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
-      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
+      WHEN a.extension ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
   END AS liikennehaitta
 FROM allu_operative.application a
 WHERE a.type = 'AREA_RENTAL'

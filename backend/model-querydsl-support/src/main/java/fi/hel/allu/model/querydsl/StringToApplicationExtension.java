@@ -16,7 +16,7 @@ import java.sql.Types;
 public class StringToApplicationExtension extends AbstractType<ApplicationExtension> {
 
   public StringToApplicationExtension() {
-    super(Types.VARCHAR);
+    super(Types.OTHER);
   }
 
   @Override

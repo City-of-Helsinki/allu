@@ -1141,8 +1141,8 @@ public class ApplicationDao {
   @Transactional(readOnly = true)
   public List<Integer> findExcavationAnnouncementByOperationalDate(ZonedDateTime conditionAfter, ZonedDateTime conditionBefore,
       List<StatusType> statusTypes) {
-    BooleanExpression whereCondition = Expressions.booleanTemplate("(extension::json->>'winterTimeOperation') is not null");
-    whereCondition = whereCondition.and(Expressions.booleanTemplate("to_timestamp((extension::json->>'winterTimeOperation')::float)  BETWEEN {0} AND {1}", conditionAfter, conditionBefore));
+    BooleanExpression whereCondition = Expressions.booleanTemplate("(extension->>'winterTimeOperation') is not null");
+    whereCondition = whereCondition.and(Expressions.booleanTemplate("to_timestamp((extension->>'winterTimeOperation')::float)  BETWEEN {0} AND {1}", conditionAfter, conditionBefore));
     whereCondition = whereCondition.and(application.type.eq(ApplicationType.EXCAVATION_ANNOUNCEMENT));
     if (!CollectionUtils.isEmpty(statusTypes)) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));
