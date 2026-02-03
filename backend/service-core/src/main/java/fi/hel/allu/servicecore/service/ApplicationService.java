@@ -83,6 +83,8 @@ public class ApplicationService {
 
   Logger log = LoggerFactory.getLogger(ApplicationService.class);
 
+  private static final ZonedDateTime NEW_FEE_SCHEDULE_START = ZonedDateTime.parse("2026-03-01T00:00:00+02:00[Europe/Helsinki]");
+
   /**
    * Find given application details.
    *
@@ -223,6 +225,7 @@ public class ApplicationService {
     if(applicationJson.getStatus() != StatusType.DECISION || applicationJson.getStatus() != StatusType.OPERATIONAL_CONDITION){
         setPaymentClasses(applicationJson);
     }
+    normalizeMajorDisturbance(applicationJson);
     Integer currentUserId = userService.getCurrentUser().getId();
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     Application application = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
@@ -343,6 +346,24 @@ public class ApplicationService {
       application.getLocations().forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l, application)));
     } else if (needsPaymentZone(application)) {
       application.getLocations().forEach(l -> l.setPaymentTariff(paymentZoneService.getPaymentZone(l, application)));
+    }
+  }
+
+  /**
+   * Normalize majorDisturbance field based on start date.
+   * For area rental applications starting on or after 2026-03-01, majorDisturbance must be null
+   * since the new fee schedule doesn't use disturbance level pricing.
+   *
+   * @param applicationJson the application to normalize
+   */
+  private void normalizeMajorDisturbance(ApplicationJson applicationJson) {
+    if (applicationJson.getType() == ApplicationType.AREA_RENTAL && applicationJson.getStartTime() != null) {
+      if (!applicationJson.getStartTime().isBefore(NEW_FEE_SCHEDULE_START)) {
+        AreaRentalJson areaRental = (AreaRentalJson) applicationJson.getExtension();
+        if (areaRental != null) {
+          areaRental.setMajorDisturbance(null);
+        }
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.servicecore.domain.AreaRentalJson;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.model.domain.Application;
@@ -273,5 +273,51 @@ public class ApplicationServiceTest extends MockServices {
     Application response = applicationService.createApplication(createMockApplicationJson(1));
     applicationService.setInvoiceRecipient(response.getId(), 15);
     verify(eventDispatcher, times(1)).dispatchUpdateEvent(eq(1), anyInt(), eq(ApplicationNotificationType.INVOICE_RECIPIENT_CHANGED), any(StatusType.class));
+  }
+
+  @Test
+  public void shouldNormalizeMajorDisturbanceForNewFeeSchedule() {
+    // Test: startTime >= 2026-03-01, majorDisturbance should be cleared
+    ApplicationJson applicationJson = createMockApplicationJson(1);
+    applicationJson.setType(ApplicationType.AREA_RENTAL);
+    applicationJson.setStartTime(ZonedDateTime.parse("2026-03-01T00:00:00+02:00[Europe/Helsinki]"));
+    AreaRentalJson areaRental = new AreaRentalJson();
+    areaRental.setMajorDisturbance(true);
+    applicationJson.setExtension(areaRental);
+
+    Mockito.when(restTemplate.exchange(
+        anyString(),
+        eq(HttpMethod.PUT),
+        any(HttpEntity.class),
+        eq(Application.class),
+        anyInt())).thenReturn(new ResponseEntity<>(createMockApplicationModel(), HttpStatus.OK));
+
+    applicationService.updateApplication(1, applicationJson);
+
+    // Verify that majorDisturbance was cleared
+    assertEquals(null, areaRental.getMajorDisturbance());
+  }
+
+  @Test
+  public void shouldNotNormalizeMajorDisturbanceBeforeNewFeeSchedule() {
+    // Test: startTime < 2026-03-01, majorDisturbance should remain unchanged
+    ApplicationJson applicationJson = createMockApplicationJson(1);
+    applicationJson.setType(ApplicationType.AREA_RENTAL);
+    applicationJson.setStartTime(ZonedDateTime.parse("2026-02-28T00:00:00+02:00[Europe/Helsinki]"));
+    AreaRentalJson areaRental = new AreaRentalJson();
+    areaRental.setMajorDisturbance(true);
+    applicationJson.setExtension(areaRental);
+
+    Mockito.when(restTemplate.exchange(
+        anyString(),
+        eq(HttpMethod.PUT),
+        any(HttpEntity.class),
+        eq(Application.class),
+        anyInt())).thenReturn(new ResponseEntity<>(createMockApplicationModel(), HttpStatus.OK));
+
+    applicationService.updateApplication(1, applicationJson);
+
+    // Verify that majorDisturbance was NOT cleared
+    assertEquals(true, areaRental.getMajorDisturbance());
   }
 }
