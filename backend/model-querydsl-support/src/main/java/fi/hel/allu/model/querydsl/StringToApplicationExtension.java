@@ -42,7 +42,7 @@ public class StringToApplicationExtension extends AbstractType<ApplicationExtens
     try {
       ObjectMapper mapper = new ObjectMapper();
       mapper.registerModule(new JavaTimeModule());
-      preparedStatement.setString(i, mapper.writeValueAsString(applicationExtension));
+      preparedStatement.setObject(i, mapper.writeValueAsString(applicationExtension), Types.OTHER);
     } catch (JsonProcessingException ex) {
       throw new SQLException(ex);
     }
