@@ -6,7 +6,21 @@
   .mat-selection-list .mat-list-option,
   .mat-list-base .mat-list-item {
     font-size: 14px;
-    height: 38px;
+    min-height: 38px;
+    height: auto;
+
+    .mat-list-item-content {
+      height: auto;
+      min-height: 38px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .mat-list-text {
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
   }
 
   .mat-selection-list .mat-list-option.map-container {

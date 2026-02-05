@@ -12,7 +12,7 @@
     [value]="description.field"
     [disabled]="isSelected(description.field)"
     [class.map-container]="description.type==='GEOMETRY'">
-    <div fxLayout="row" fxLayoutAlign="start center">
+    <div fxLayout="row" fxLayoutAlign="start start">
       <div fxFlex *ngIf="description.type==='GEOMETRY'; else textField">
         <simple-map
           *ngIf="displayMap"
