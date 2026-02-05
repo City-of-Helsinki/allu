@@ -3,6 +3,8 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.servicecore.domain.AreaRentalJson;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.ApplicationNotificationType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -290,7 +292,8 @@ public class ApplicationServiceTest extends MockServices {
         eq(HttpMethod.PUT),
         any(HttpEntity.class),
         eq(Application.class),
-        anyInt())).thenReturn(new ResponseEntity<>(createMockApplicationModel(), HttpStatus.OK));
+        anyInt(),
+        anyInt())).thenReturn(new ResponseEntity<Application>(createMockApplicationModel(), HttpStatus.OK));
 
     applicationService.updateApplication(1, applicationJson);
 
@@ -313,7 +316,8 @@ public class ApplicationServiceTest extends MockServices {
         eq(HttpMethod.PUT),
         any(HttpEntity.class),
         eq(Application.class),
-        anyInt())).thenReturn(new ResponseEntity<>(createMockApplicationModel(), HttpStatus.OK));
+        anyInt(),
+        anyInt())).thenReturn(new ResponseEntity<Application>(createMockApplicationModel(), HttpStatus.OK));
 
     applicationService.updateApplication(1, applicationJson);
 
