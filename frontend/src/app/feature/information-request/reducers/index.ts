@@ -120,6 +120,11 @@ export const getResultContacts = createSelector(
   fromInformationRequestResult.getContacts
 );
 
+export const getResultRemovedContactIds = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.getRemovedContactIds
+);
+
 export const getResultKindsWithSpecifiers = createSelector(
   getInformationRequestResultState,
   fromInformationRequestResult.getKindsWithSpecifiers

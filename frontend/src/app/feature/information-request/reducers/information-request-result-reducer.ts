@@ -2,7 +2,8 @@ import {Application} from '@model/application/application';
 import {
   InformationRequestResultActions,
   InformationRequestResultActionType,
-  SetCustomer
+  SetCustomer,
+  RemoveContact
 } from '../actions/information-request-result-actions';
 import {Customer} from '@model/customer/customer';
 import {Contact} from '@model/customer/contact';
@@ -23,6 +24,7 @@ export interface State {
   propertyDeveloper: Customer;
   contractor: Customer;
   contacts: Contact[];
+  removedContactIds: number[];
   kindsWithSpecifiers: KindsWithSpecifiers;
   invoicingCustomer: Customer;
   useCustomerForInvoicing: CustomerRoleType;
@@ -37,6 +39,7 @@ export const initialState: State = {
   propertyDeveloper: undefined,
   contractor: undefined,
   contacts: [],
+  removedContactIds: [],
   kindsWithSpecifiers: {},
   invoicingCustomer: undefined,
   useCustomerForInvoicing: undefined,
@@ -90,6 +93,16 @@ export function reducer(state: State = initialState, action: InformationRequestR
           contacts: result
         };
       }
+    }
+
+    case InformationRequestResultActionType.RemoveContact: {
+      const contactId = action.payload;
+      return {
+        ...state,
+        removedContactIds: state.removedContactIds.includes(contactId)
+          ? state.removedContactIds
+          : [...state.removedContactIds, contactId]
+      };
     }
 
     case InformationRequestResultActionType.SetKindsWithSpecifiers: {
@@ -164,6 +177,8 @@ export const getPropertyDeveloper = (state: State) => state.propertyDeveloper;
 export const getContractor = (state: State) => state.contractor;
 
 export const getContacts = (state: State) => state.contacts;
+
+export const getRemovedContactIds = (state: State) => state.removedContactIds;
 
 export const getKindsWithSpecifiers = (state: State) => state.kindsWithSpecifiers;
 

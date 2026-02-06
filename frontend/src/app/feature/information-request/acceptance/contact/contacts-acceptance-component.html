@@ -7,3 +7,10 @@
     [hideExisting]="hideExisting"
     (contactChanges)="onContactChange($event)"></contact-acceptance>
 </div>
+
+<div *ngFor="let contact of removedContacts" class="removed-contacts-section">
+  <removed-contact-acceptance
+    [contact]="contact"
+    (keep)="onRemovedContactKeep($event)"
+    (remove)="onRemovedContactRemove($event)"></removed-contact-acceptance>
+</div>

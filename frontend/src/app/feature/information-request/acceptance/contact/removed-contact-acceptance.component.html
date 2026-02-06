@@ -1,0 +1,33 @@
+<div class="removal-acceptance info-acceptance">
+  <div class="section-container">
+    <div class="section-content">
+      <h2 mat-dialog-title>{{'contact.title' | translation}}</h2>
+    </div>
+  </div>
+  <div class="section-container removal-choices">
+    <div class="section-content removal-choice"
+         [class.selected]="removalAccepted === false"
+         (click)="keepContact()">
+      <mat-radio-button [checked]="removalAccepted === false" disableRipple>
+        {{'informationRequest.acceptance.keepContact' | translation}}
+      </mat-radio-button>
+      <field-display
+        *ngIf="contact"
+        [descriptions]="contactDescriptions"
+        [fieldValues]="contactFieldValues"
+        [selected]="removalAccepted === false">
+      </field-display>
+    </div>
+    <div class="section-content removal-choice"
+         [class.selected]="removalAccepted === true"
+         (click)="acceptRemoval()">
+      <mat-radio-button [checked]="removalAccepted === true" disableRipple>
+        {{'informationRequest.acceptance.contactRemoved' | translation}}
+      </mat-radio-button>
+      <div class="removal-warning">
+        <mat-icon color="accent" class="mat-icon-18">warning</mat-icon>
+        <span>{{'informationRequest.acceptance.contactRemovedDescription' | translation}}</span>
+      </div>
+    </div>
+  </div>
+</div>

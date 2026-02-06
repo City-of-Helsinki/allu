@@ -674,7 +674,13 @@ export const translations = {
       discard: 'Hylkää tietopäivitys',
       otherBillingTitle: 'Muut laskutustiedot',
       noCustomerSelected: 'Ei valittua asiakasta',
-      noContactSelected: 'Ei valittua yhteyshenkilöä'
+      noContactSelected: 'Ei valittua yhteyshenkilöä',
+      removeCustomerFromApplication: 'Poista asiakas hakemukselta',
+      customerRemovedDescription: 'Ulkoinen järjestelmä on poistanut asiakkaan hakemukselta.',
+      keepCustomer: 'Säilytä nykyinen asiakas',
+      removeContactFromApplication: 'Poista yhteyshenkilö hakemukselta',
+      contactRemovedDescription: 'Ulkoinen järjestelmä on poistanut yhteyshenkilön hakemukselta.',
+      keepContact: 'Säilytä nykyinen yhteyshenkilö'
     },
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',
@@ -946,6 +952,8 @@ export const translations = {
   contact: {
     title: 'Yhteyshenkilö',
     name: 'Yhteyshenkilön nimi',
+    phone: 'Puhelin',
+    email: 'Sähköpostiosoite',
     orderer: 'Tilaaja',
     noContact: 'Ei yhteyshenkilöä',
     role: {

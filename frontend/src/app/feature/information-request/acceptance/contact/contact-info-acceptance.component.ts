@@ -66,7 +66,9 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
 
   protected initResultForm(): void {
     super.initResultForm();
-    const ctrl = this.fb.control(undefined, Validators.required);
+    // When non-selectable, id is auto-set via patchValue in set oldContact(); no required validator needed.
+    const validators = this.nonSelectableFields ? [] : [Validators.required];
+    const ctrl = this.fb.control(undefined, validators);
     this.form.addControl('id', ctrl);
   }
 
@@ -99,8 +101,8 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
       new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
       new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
-      new FieldDescription('email', findTranslation('email')),
-      new FieldDescription('phone', findTranslation('phone'))
+      new FieldDescription('email', findTranslation('contact.email')),
+      new FieldDescription('phone', findTranslation('contact.phone'))
     ];
   }
 }

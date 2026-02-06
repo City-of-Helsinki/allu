@@ -14,6 +14,7 @@ export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',
   SetCustomer = '[InformationRequestResult] Set result customer',
   SetContact = '[InformationRequestResult] Set result contact',
+  RemoveContact = '[InformationRequestResult] Remove result contact',
   SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
   UseCustomerForInvoicing = '[InformationRequestResult] Use customer also for invoicing',
   SetOtherInfo = '[InformationRequestResult] Set other application info',
@@ -37,6 +38,11 @@ export class SetCustomer implements ActionWithTarget {
 export class SetContact implements Action {
   readonly type = InformationRequestResultActionType.SetContact;
   constructor(public payload: Contact) {}
+}
+
+export class RemoveContact implements Action {
+  readonly type = InformationRequestResultActionType.RemoveContact;
+  constructor(public payload: number) {} // contactId
 }
 
 export class SetKindsWithSpecifiers implements Action {
@@ -83,6 +89,7 @@ export type InformationRequestResultActions =
   | SetApplication
   | SetCustomer
   | SetContact
+  | RemoveContact
   | SetKindsWithSpecifiers
   | UseCustomerForInvoicing
   | SetOtherInfo
