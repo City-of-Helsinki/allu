@@ -36,6 +36,7 @@
   field-select .mat-selection-list .mat-list-option .mat-pseudo-checkbox {
     background: map-get($success, 200);
   }
+
 }
 
 @mixin info-acceptance-theme($border-color) {

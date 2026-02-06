@@ -1,0 +1,35 @@
+<div class="removal-acceptance info-acceptance">
+  <div class="section-container">
+    <div class="section-content">
+      <h2 mat-dialog-title>
+        {{['informationRequest.field', fieldKey] | translation}}
+      </h2>
+    </div>
+  </div>
+  <div class="section-container removal-choices">
+    <div class="section-content removal-choice"
+         [class.selected]="removalAccepted === false"
+         (click)="keepCustomer()">
+      <mat-radio-button [checked]="removalAccepted === false" disableRipple>
+        {{'informationRequest.acceptance.keepCustomer' | translation}}
+      </mat-radio-button>
+      <field-display
+        *ngIf="customer"
+        [descriptions]="customerDescriptions"
+        [fieldValues]="customerFieldValues"
+        [selected]="removalAccepted === false">
+      </field-display>
+    </div>
+    <div class="section-content removal-choice"
+         [class.selected]="removalAccepted === true"
+         (click)="acceptRemoval()">
+      <mat-radio-button [checked]="removalAccepted === true" disableRipple>
+        {{'informationRequest.acceptance.customerRemoved' | translation}}
+      </mat-radio-button>
+      <div class="removal-warning">
+        <mat-icon color="accent" class="mat-icon-18">warning</mat-icon>
+        <span>{{'informationRequest.acceptance.customerRemovedDescription' | translation}}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,5 +6,5 @@ export class InformationRequestResponse {
     public informationRequestId?: number,
     public applicationId?: number,
     public responseData?: Application,
-    public updatedFiedls: InformationRequestFieldKey[] = []) {}
+    public updatedFields: InformationRequestFieldKey[] = []) {}
 }
