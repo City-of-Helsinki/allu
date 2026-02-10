@@ -8,6 +8,7 @@
     font-size: 14px;
     min-height: 38px;
     height: auto;
+    position: relative;
 
     .mat-list-item-content {
       height: auto;
@@ -41,19 +42,19 @@
   }
 
   .mat-selection-list .mat-list-option .mat-list-item-content {
-    padding-left: 0;
+    padding-left: 8px;
   }
 }
 
 :host ::ng-deep .mat-pseudo-checkbox {
   width: 8px;
+  height: auto;
   visibility: hidden;
-  height: 100%;
-  display: inline-block;
-  vertical-align: middle;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
   box-sizing: border-box;
-  position: relative;
-  flex-shrink: 0;
   border: none;
   border-radius: 0;
 }
