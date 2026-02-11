@@ -3,8 +3,8 @@ create table allu.deletable_customer (
   sap_customer_number text
 );
 
-create table allu.deleted_customer_archive (
+create table allu.customer_archive (
   id serial primary key,
   customer_id integer not null,
-  sap_customer_number text not null
+  sap_customer_number text
 );

@@ -309,6 +309,60 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         assertEquals(1, page.getTotalElements());
       });
     });
+
+    describe("findNonDeletableCustomerIds", () -> {
+
+      it("returns customer linked to application", () -> {
+        Customer c = customerDao.insert(dummyCustomer(1));
+        Application app = testCommon.dummyOutdoorApplication("Test", "User", c);
+        applicationDao.insert(app);
+
+        List<Integer> result =
+          customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+
+        assertEquals(List.of(c.getId()), result);
+      });
+
+      it("returns customer linked to project", () -> {
+        Customer c = customerDao.insert(dummyCustomer(1));
+
+        Project p = new Project();
+        p.setName("Test project");
+        p.setCustomerId(c.getId());
+        p.setContactId(testCommon.insertContact(c.getId()).getId());
+        p.setStartTime(ZonedDateTime.now());
+        p.setIdentifier("P1");
+        p.setCreatorId(testCommon.insertUser("user").getId());
+        projectDao.insert(p);
+
+        List<Integer> result =
+          customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+
+        assertEquals(List.of(c.getId()), result);
+      });
+
+      it("does not return customer with no relations", () -> {
+        Customer c = customerDao.insert(dummyCustomer(1));
+
+        List<Integer> result =
+          customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+
+        assertTrue(result.isEmpty());
+      });
+    });
+
+    describe("archive and delete customers", () -> it("archives then deletes customer", () -> {
+      Customer c = customerDao.insert(dummyCustomer(1));
+
+      customerDao.archiveCustomers(Set.of(c.getId()));
+      customerDao.deleteCustomers(Set.of(c.getId()));
+
+      assertTrue(customerDao.findById(c.getId()).isEmpty());
+
+      long archiveCount = customerDao.getArchivedCustomerCount();
+
+      assertEquals(1, archiveCount);
+    }));
   }
 
   private Customer dummyCustomer(int i) {
