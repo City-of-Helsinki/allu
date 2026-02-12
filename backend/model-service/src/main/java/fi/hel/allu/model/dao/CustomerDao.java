@@ -2,12 +2,14 @@ package fi.hel.allu.model.dao;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import fi.hel.allu.QApplication;
 import fi.hel.allu.QApplicationTag;
 import fi.hel.allu.QPostalAddress;
@@ -45,6 +47,7 @@ import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact
 import static fi.hel.allu.QChangeHistory.changeHistory;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QCustomer.customer;
+import static fi.hel.allu.QCustomerArchive.customerArchive;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QProject.project;
 
@@ -386,5 +389,75 @@ public class CustomerDao {
       case "name" -> asc ? customer.name.asc() : customer.name.desc();
       default -> customer.id.asc();
     };
+  }
+
+  /**
+   * Archives customers by moving their information into a customer archive table.
+   * The method retrieves the customer data identified by the provided set of IDs
+   * and inserts the relevant fields into the archive.
+   *
+   * @param ids a set of customer IDs to be archived. The set must not be null and
+   *            may contain zero or more IDs. Each ID corresponds to a customer
+   *            whose information will be archived.
+   */
+  public void archiveCustomers(Set<Integer> ids) {
+    queryFactory
+      .insert(customerArchive)
+      .columns(
+        customerArchive.customerId,
+        customerArchive.sapCustomerNumber,
+        customerArchive.deletedAt
+      )
+      .select(
+        queryFactory
+          .select(
+            customer.id,
+            customer.sapCustomerNumber,
+            Expressions.constant(ZonedDateTime.now())
+          )
+          .from(customer)
+          .where(customer.id.in(ids))
+      )
+      .execute();
+  }
+
+  /**
+   * Find removed/archived SAP customers which have not been marked as notified (no email notification sent).
+   *
+   * @return list of archived SAP customers which have not been marked as notified.
+   */
+  @Transactional(readOnly = true)
+  public List<ArchivedCustomer> findUnnotifiedArchivedSapCustomers() {
+    return queryFactory
+      .select(Projections.constructor(
+        ArchivedCustomer.class,
+        customerArchive.id,
+        customerArchive.customerId,
+        customerArchive.sapCustomerNumber,
+        customerArchive.deletedAt,
+        customerArchive.notificationSentAt
+      ))
+      .from(customerArchive)
+      .where(
+        customerArchive.sapCustomerNumber.isNotNull(),
+        customerArchive.notificationSentAt.isNull()
+      )
+      .orderBy(customerArchive.deletedAt.asc())
+      .fetch();
+  }
+
+  /**
+   * Marks archived SAP customers as notified by updating their notification timestamp
+   * in the database to the current time.
+   *
+   * @param customerIds a list archived SAP customers IDs to be marked as notified.
+   */
+  @Transactional
+  public void markArchivedSapCustomersNotified(List<Integer> customerIds) {
+    queryFactory
+      .update(customerArchive)
+      .set(customerArchive.notificationSentAt, ZonedDateTime.now())
+      .where(customerArchive.id.in(customerIds), customerArchive.notificationSentAt.isNull())
+      .execute();
   }
 }

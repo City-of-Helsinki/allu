@@ -270,4 +270,26 @@ public class CustomerService {
 
     return page;
   }
+
+  @Transactional(readOnly = true)
+  public List<ArchivedCustomer> findUnnotifiedArchivedSapCustomers() {
+    List<ArchivedCustomer> customers = customerDao.findUnnotifiedArchivedSapCustomers();
+
+    logger.info(
+      "Fetched {} unnotified archived SAP customers",
+      customers.size()
+    );
+
+    return customers;
+  }
+
+  @Transactional
+  public void markArchivedSapCustomersNotified(List<Integer> customerIds) {
+    logger.info(
+      "Marking {} archived SAP customers as notified",
+      customerIds.size()
+    );
+
+    customerDao.markArchivedSapCustomersNotified(customerIds);
+  }
 }

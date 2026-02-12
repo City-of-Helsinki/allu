@@ -697,6 +697,16 @@
                             <column>notification_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationNotificationType</type>
                         </typeMapping>
+                        <typeMapping>
+                          <table>customer_archive</table>
+                          <column>deleted_at</column>
+                          <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                          <table>customer_archive</table>
+                          <column>notification_sent_at</column>
+                          <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

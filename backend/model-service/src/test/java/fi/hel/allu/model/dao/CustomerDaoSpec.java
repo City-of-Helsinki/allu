@@ -289,6 +289,172 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertTrue(list.get(0).getName().compareTo(list.get(1).getName()) >= 0);
         });
       });
+      context("getDeletableCustomers", () -> {
+
+        AtomicReference<Customer> deletableCustomer = new AtomicReference<>();
+        AtomicReference<Customer> customerWithApplication = new AtomicReference<>();
+        AtomicReference<Customer> customerWithProject = new AtomicReference<>();
+        AtomicReference<Customer> customerAsInvoiceRecipient = new AtomicReference<>();
+        AtomicReference<Customer> recentlyCreatedCustomer = new AtomicReference<>();
+
+        beforeEach(() -> {
+          // Asiakas joka tulee mukaan tuloksiin (ei liitoksia projektiin tai hankkeeseen)
+          deletableCustomer.set(customerDao.insert(dummyCustomer(100)));
+
+          // Asiakas jolla on hakemus → EI saa tulla mukaan
+          customerWithApplication.set(customerDao.insert(dummyCustomer(101)));
+          Application app = testCommon.dummyOutdoorApplication("App", "Handler");
+          app.setCustomersWithContacts(
+            Collections.singletonList(
+              new CustomerWithContacts(CustomerRoleType.APPLICANT, customerWithApplication.get(), Collections.emptyList())
+            )
+          );
+          applicationDao.insert(app);
+
+          // Asiakas jolla on projekti → EI saa tulla mukaan
+          customerWithProject.set(customerDao.insert(dummyCustomer(102)));
+          Project project = new Project();
+          project.setName("proj");
+          project.setCustomerId(customerWithProject.get().getId());
+          project.setContactId(testCommon.insertContact(customerWithProject.get().getId()).getId());
+          project.setStartTime(java.time.ZonedDateTime.now());
+          project.setIdentifier("identifier");
+          project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(project);
+
+          // Asiakas joka on invoiceRecipient → EI saa tulla mukaan
+          customerAsInvoiceRecipient.set(customerDao.insert(dummyCustomer(103)));
+          Application invoiceApp = testCommon.dummyOutdoorApplication("InvoiceApp", RandomStringUtils.randomAlphabetic(10));
+          invoiceApp.setInvoiceRecipientId(customerAsInvoiceRecipient.get().getId());
+          applicationDao.insert(invoiceApp);
+
+          // Asiakas jolla CREATED-historiatapahtuma alle 1 vrk sitten → EI saa tulla mukaan
+          recentlyCreatedCustomer.set(customerDao.insert(dummyCustomer(104)));
+          ChangeHistoryItem change = new ChangeHistoryItem();
+          change.setUserId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          change.setChangeType(ChangeType.CREATED);
+          change.setChangeTime(java.time.ZonedDateTime.now()); // liian uusi
+          historyDao.addCustomerChange(recentlyCreatedCustomer.get().getId(), change);
+        });
+
+        it("should return only customers that fulfill all deletable criteria", () -> {
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<Integer> ids = page.getContent().stream()
+            .map(DeletableCustomer::getId)
+            .toList();
+
+          assertTrue(ids.contains(deletableCustomer.get().getId()));
+
+          assertFalse(ids.contains(customerWithApplication.get().getId()));
+          assertFalse(ids.contains(customerWithProject.get().getId()));
+          assertFalse(ids.contains(customerAsInvoiceRecipient.get().getId()));
+          assertFalse(ids.contains(recentlyCreatedCustomer.get().getId()));
+        });
+
+        it("should exclude customer if CREATED history is older than cutoff only when within 1 day", () -> {
+          Customer oldCustomer = customerDao.insert(dummyCustomer(105));
+
+          ChangeHistoryItem change = new ChangeHistoryItem();
+          change.setUserId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          change.setChangeType(ChangeType.CREATED);
+          change.setChangeTime(java.time.ZonedDateTime.now().minusDays(2)); // vanhempi kuin cutoff
+          historyDao.addCustomerChange(oldCustomer.getId(), change);
+
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<Integer> ids = page.getContent().stream()
+            .map(DeletableCustomer::getId)
+            .toList();
+
+          assertTrue(ids.contains(oldCustomer.getId())); // saa tulla mukaan
+        });
+
+        it("should use default pagination when pageable is null", () -> {
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(null);
+          assertNotNull(page);
+          assertTrue(page.getSize() > 0);
+        });
+
+        it("should sort by name descending", () -> {
+          Customer a = customerDao.insert(dummyCustomer(200));
+          a.setName("AAA");
+          customerDao.update(a.getId(), a);
+
+          Customer b = customerDao.insert(dummyCustomer(201));
+          b.setName("ZZZ");
+          customerDao.update(b.getId(), b);
+
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(
+            PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "name"))
+          );
+
+          List<DeletableCustomer> list = page.getContent();
+          assertTrue(list.size() >= 2);
+          assertTrue(list.get(0).getName().compareTo(list.get(1).getName()) >= 0);
+        });
+      });
+
+      describe("Archived SAP customers", () -> {
+
+        it("should find only archived SAP customers without notificationSentAt", () -> {
+          Customer customer1 = customerDao.insert(dummyCustomer(500));
+          customer1.setSapCustomerNumber("SAP-500");
+          customerDao.update(customer1.getId(), customer1);
+
+          Customer customer2 = customerDao.insert(dummyCustomer(501));
+          customer2.setSapCustomerNumber("SAP-501");
+          customerDao.update(customer2.getId(), customer2);
+
+          Customer customerWithoutSap = customerDao.insert(dummyCustomer(502));
+
+          // Arkistoidaan kaikki
+          customerDao.archiveCustomers(Set.of(customer1.getId(), customer2.getId(), customerWithoutSap.getId()));
+
+          // Merkitään toinen notifiedksi
+          List<ArchivedCustomer> archived = customerDao.findUnnotifiedArchivedSapCustomers();
+          Integer idToMark = archived.stream()
+            .filter(a -> "SAP-501".equals(a.getSapCustomerNumber()))
+            .findFirst()
+            .get()
+            .getId();
+          customerDao.markArchivedSapCustomersNotified(List.of(idToMark));
+
+          List<ArchivedCustomer> result = customerDao.findUnnotifiedArchivedSapCustomers();
+
+          assertEquals(1, result.size());
+          assertEquals("SAP-500", result.get(0).getSapCustomerNumber());
+          assertNotNull(result.get(0).getDeletedAt());
+          assertNull(result.get(0).getNotificationSentAt());
+        });
+
+        it("should mark archived SAP customers as notified", () -> {
+          Customer customer = customerDao.insert(dummyCustomer(600));
+          customer.setSapCustomerNumber("SAP-600");
+          customerDao.update(customer.getId(), customer);
+
+          customerDao.archiveCustomers(Set.of(customer.getId()));
+
+          List<ArchivedCustomer> archived = customerDao.findUnnotifiedArchivedSapCustomers();
+
+          assertEquals(1, archived.size());
+
+          customerDao.markArchivedSapCustomersNotified(List.of(archived.get(0).getId()));
+          List<ArchivedCustomer> result = customerDao.findUnnotifiedArchivedSapCustomers();
+
+          assertTrue(result.isEmpty());
+        });
+
+        it("should not return archived customers without sap number", () -> {
+          Customer customer = customerDao.insert(dummyCustomer(700));
+
+          customerDao.archiveCustomers(Set.of(customer.getId()));
+
+          List<ArchivedCustomer> result = customerDao.findUnnotifiedArchivedSapCustomers();
+
+          assertTrue(result.isEmpty());
+        });
+      });
     });
 
     describe("CustomerDao.findAll", () -> {
@@ -312,7 +478,6 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         }
       });
     });
-
   }
 
   private Customer dummyCustomer(int i) {
