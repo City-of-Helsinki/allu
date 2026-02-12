@@ -30,6 +30,7 @@ public class ScheduleRunner {
   private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
   private final CityDistrictUpdaterService cityDistrictUpdaterService;
   private final ApplicationProperties applicationProperties;
+  private final RemovedSapCustomerNotificationService removedSapCustomerNotificationService;
 
   @Autowired
   public ScheduleRunner(
@@ -40,7 +41,8 @@ public class ScheduleRunner {
     SearchSynchService searchSynchService,
     ApplicationStatusUpdaterService applicationStatusUpdaterService,
     CityDistrictUpdaterService cityDistrictUpdaterService,
-    ApplicationProperties applicationProperties
+    ApplicationProperties applicationProperties,
+    RemovedSapCustomerNotificationService removedSapCustomerNotificationService
       ) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
@@ -50,6 +52,7 @@ public class ScheduleRunner {
     this.applicationStatusUpdaterService = applicationStatusUpdaterService;
     this.cityDistrictUpdaterService = cityDistrictUpdaterService;
     this.applicationProperties = applicationProperties;
+    this.removedSapCustomerNotificationService = removedSapCustomerNotificationService;
   }
 
   @EventListener(ApplicationReadyEvent.class)
@@ -122,5 +125,10 @@ public class ScheduleRunner {
   @Scheduled(cron = "${anonymization.update.cronstring}")
   public void checkAnonymizableApplications() {
     applicationStatusUpdaterService.checkAnonymizableApplications();
+  }
+
+  @Scheduled(cron = "${removed.customers.notification.cronstring}")
+  public void sendRemovedSapCustomerNotifications() {
+    removedSapCustomerNotificationService.sendRemovedSapCustomerNotifications();
   }
 }

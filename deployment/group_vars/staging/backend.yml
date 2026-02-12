@@ -52,4 +52,5 @@ cityDistricts_update_cronstring: "0 30 0 * * SUN"
 
 anonymization_update_cronstring: "0 0 3 * * *"
 
-deletable_customer_scan_cronstring: "0 0 3 * * *"
+removed_customers_subject: "Allu - asiakasrekisterist\u00E4 poistettu SAP-numerollisia asiakkaita"
+removed_customers_notification_cronstring: "0 0 7 * * *"
