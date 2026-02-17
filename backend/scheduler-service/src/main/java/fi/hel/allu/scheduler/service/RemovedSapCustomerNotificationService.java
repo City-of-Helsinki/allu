@@ -77,10 +77,13 @@ public class RemovedSapCustomerNotificationService {
       return;
     }
 
-    sendMail(customers, recipients);
-    markCustomersNotified(customers);
-
-    logger.info("Removed SAP customer notification job finished. {} SAP customers processed.", customers.size());
+    try {
+      sendMail(customers, recipients);
+      markCustomersNotified(customers);
+      logger.info("Removed SAP customer notification job finished. {} SAP customers processed.", customers.size());
+    } catch (Exception e) {
+      logger.error("Removed SAP customer notification job failed. Customers NOT marked as notified.", e);
+    }
   }
 
   private List<ArchivedCustomer> fetchRemovedCustomers() {
@@ -110,37 +113,34 @@ public class RemovedSapCustomerNotificationService {
       .collect(Collectors.toList());
   }
 
-  private void sendMail(List<ArchivedCustomer> customers, List<String> recipients) {
+  private void sendMail(List<ArchivedCustomer> customers, List<String> recipients) throws IOException {
     String subject = applicationProperties.getRemovedSapCustomersSubject();
 
-    try {
-      logger.debug("Building removed SAP customer notification email for {} customers", customers.size());
+    logger.debug("Building removed SAP customer notification email for {} customers", customers.size());
 
-      // Muuttujat molempiin templateihin
-      Map<String, String> varsTxt = new HashMap<>();
-      Map<String, String> varsHtml = new HashMap<>();
+    // Muuttujat molempiin templateihin
+    Map<String, String> varsTxt = new HashMap<>();
+    Map<String, String> varsHtml = new HashMap<>();
 
-      varsTxt.put("count", String.valueOf(customers.size()));
-      varsHtml.put("count", String.valueOf(customers.size()));
+    varsTxt.put("count", String.valueOf(customers.size()));
+    varsHtml.put("count", String.valueOf(customers.size()));
 
-      varsTxt.put("rows", buildRowsTxt(customers));
-      varsHtml.put("rows", buildRowsHtml(customers));
+    varsTxt.put("rows", buildRowsTxt(customers));
+    varsHtml.put("rows", buildRowsHtml(customers));
 
-      // TXT
-      String txtTemplate = ResourceUtil.readClassPathResource(TEMPLATE_PATH + ".txt");
-      String body = StringSubstitutor.replace(txtTemplate, varsTxt);
+    // TXT
+    String txtTemplate = ResourceUtil.readClassPathResource(TEMPLATE_PATH + ".txt");
+    String body = StringSubstitutor.replace(txtTemplate, varsTxt);
 
-      // HTML
-      String htmlTemplate = ResourceUtil.readClassPathResource(TEMPLATE_PATH + ".html");
-      String htmlBody = StringSubstitutor.replace(htmlTemplate, varsHtml);
+    // HTML
+    String htmlTemplate = ResourceUtil.readClassPathResource(TEMPLATE_PATH + ".html");
+    String htmlBody = StringSubstitutor.replace(htmlTemplate, varsHtml);
 
-      logger.info("Sending removed SAP customer notification email to {} recipients", recipients.size());
-      alluMailService.sendEmail(recipients, subject, body, htmlBody, null);
+    logger.info("Sending removed SAP customer notification email to {} recipients", recipients.size());
+    boolean success = alluMailService.sendEmail(recipients, subject, body, htmlBody, null);
 
-    } catch (IOException e) {
-      logger.error("Failed to read removed SAP customer email templates", e);
-    } catch (Exception e) {
-      logger.error("Unexpected error while sending removed SAP customer notification email", e);
+    if (!success) {
+      throw new IllegalStateException("Removed SAP customer notification email sending failed");
     }
   }
 

@@ -63,6 +63,7 @@ public class RemovedSapCustomerNotificationServiceSpec {
         when(applicationProperties.getMarkRemovedSapCustomersNotifiedUrl()).thenReturn(MARK_NOTIFIED_URL);
         when(applicationProperties.getRemovedSapCustomersSubject()).thenReturn(CUSTOMER_NOTIFICATION_SUBJECT);
         when(applicationProperties.getCustomerNotificationReceiverEmailsUrl()).thenReturn(CUSTOMER_NOTIFICATION_EMAIL_URL);
+        when(alluMailService.sendEmail(anyList(), anyString(), anyString(), anyString(), any())).thenReturn(true);
 
         when(restTemplate.exchange(
           eq(CUSTOMER_NOTIFICATION_EMAIL_URL),
@@ -91,8 +92,7 @@ public class RemovedSapCustomerNotificationServiceSpec {
 
           notificationService.sendRemovedSapCustomerNotifications();
 
-          verify(alluMailService, never())
-            .sendEmail(anyList(), anyString(), anyString(), any(), any());
+          verify(alluMailService, never()).sendEmail(anyList(), anyString(), anyString(), any(), any());
         });
 
         it("should not send email if no removed sap customers found", () -> {
@@ -143,6 +143,31 @@ public class RemovedSapCustomerNotificationServiceSpec {
           verify(restTemplate).postForObject(
             eq(MARK_NOTIFIED_URL),
             eq(Collections.singletonList(1)),
+            eq(Void.class)
+          );
+        });
+
+        it("should NOT mark customers notified if email sending fails", () -> {
+
+          ArchivedCustomer dto = new ArchivedCustomer();
+          dto.setCustomerId(123);
+          dto.setSapCustomerNumber("SAP123");
+          dto.setId(1);
+
+          when(restTemplate.exchange(
+            eq(REMOVED_CUSTOMERS_URL),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(ArchivedCustomer[].class)
+          )).thenReturn(new ResponseEntity<>(new ArchivedCustomer[]{dto}, HttpStatus.OK));
+
+          when(alluMailService.sendEmail(anyList(), anyString(), anyString(), anyString(), any())).thenReturn(false);
+
+          notificationService.sendRemovedSapCustomerNotifications();
+
+          verify(restTemplate, never()).postForObject(
+            eq(MARK_NOTIFIED_URL),
+            any(),
             eq(Void.class)
           );
         });
