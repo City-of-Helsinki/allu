@@ -51,6 +51,11 @@ export class InformationRequestResultService {
         customerWithContacts,
         cwc => cwc.roleType === role
       );
+    } else if (customer === null) {
+      // Customer explicitly set to null means removal
+      application.customersWithContacts = application.customersWithContacts.filter(
+        cwc => cwc.roleType !== role
+      );
     }
   }
 

@@ -1,3 +1,85 @@
 .acceptance-content > *:not(:first-child) {
   margin-top: 15px;
 }
+
+.removal-acceptance {
+  display: block;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
+
+  ::ng-deep .mat-dialog-title {
+    margin: 0 0 5px;
+  }
+
+  .section-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .section-content {
+    flex: 1;
+    padding: 0 18px;
+  }
+
+  .section-container:first-of-type .section-content {
+    padding-top: 18px;
+  }
+
+  .section-container:last-of-type .section-content {
+    padding-bottom: 18px;
+  }
+}
+
+.removal-choices {
+  .removal-choice {
+    cursor: pointer;
+    padding-top: 12px;
+    padding-bottom: 16px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+
+    &:not(:first-child) {
+      border-left-width: 2px;
+      border-left-style: solid;
+    }
+
+    &:hover:not(.selected) {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    &.selected {
+      background-color: rgba(25, 118, 210, 0.06);
+    }
+  }
+
+  .customer-details {
+    margin-top: 8px;
+    margin-left: 30px;
+    font-size: 14px;
+
+    .detail-row {
+      margin-bottom: 4px;
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: #1976d2;
+      margin-right: 8px;
+    }
+
+    .detail-value {
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .removal-warning {
+    margin-top: 8px;
+    margin-left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}

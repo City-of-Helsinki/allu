@@ -672,7 +672,10 @@ export const translations = {
       providedInfo: 'Tarjotut tiedot',
       showRequestedInfo: 'Näytä pyydetyt tiedot',
       discard: 'Hylkää tietopäivitys',
-      otherBillingTitle: 'Muut laskutustiedot'
+      otherBillingTitle: 'Muut laskutustiedot',
+      customerRemoved: 'Poista asiakas',
+      customerRemovedDescription: 'Ulkoinen järjestelmä on poistanut asiakkaan hakemukselta.',
+      keepCustomer: 'Säilytä nykyinen asiakas'
     },
     summary: {
       noRequests: 'Hakemuksella ei ole täydennyspyyntöjä eikä täydennyksiä',

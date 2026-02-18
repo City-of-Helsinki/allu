@@ -56,6 +56,7 @@
             [parentForm]="form"
             [oldCustomerWithContacts]="oldInfo?.representative"
             [newCustomerWithContacts]="newInfo?.clientApplicationData?.representative"
+            [fallbackCustomerWithContacts]="oldInfo?.clientApplicationData?.representative"
             [readonly]="readonly"
             [fieldKey]="field"
             [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
@@ -65,6 +66,7 @@
             [parentForm]="form"
             [oldCustomerWithContacts]="oldInfo?.propertyDeveloper"
             [newCustomerWithContacts]="newInfo?.clientApplicationData?.propertyDeveloper"
+            [fallbackCustomerWithContacts]="oldInfo?.clientApplicationData?.propertyDeveloper"
             [readonly]="readonly"
             [fieldKey]="field"
             [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
@@ -74,6 +76,7 @@
             [parentForm]="form"
             [oldCustomerWithContacts]="oldInfo?.contractor"
             [newCustomerWithContacts]="newInfo?.clientApplicationData?.contractor"
+            [fallbackCustomerWithContacts]="oldInfo?.clientApplicationData?.contractor"
             [readonly]="readonly"
             [fieldKey]="field"
             [hideExisting]="hideExisting"></customer-with-contacts-acceptance>
