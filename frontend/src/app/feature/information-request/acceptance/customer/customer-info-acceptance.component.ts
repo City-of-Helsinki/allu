@@ -57,7 +57,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
 
   resultChanges(result: FieldValues): void {
     const customer = {...this._oldCustomer};
-    customer.type = this._newCustomer.type;
+    customer.type = this._newCustomer.type || this._oldCustomer.type;
     customer.name = result.name;
     customer.registryKey = result.registryKey;
     customer.ovt = result.ovt;
