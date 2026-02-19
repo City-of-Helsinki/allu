@@ -115,6 +115,63 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
         });
       });
     });
+    describe("ApplicationDao.deleteDraft", () -> {
+      context("Application is not a draft (not PRE_RESERVED)", () -> {
+        beforeEach(() -> {
+          application = applicationDao.insert(testCommon.dummyOutdoorApplication("name", "owner"));
+          assertNotNull(application.getId());
+        });
+        it("Can't be deleted", () -> {
+          assertThrows(IllegalArgumentException.class).when(() -> {
+            applicationDao.deleteDraft(application.getId());
+          });
+        });
+      });
+      context("Application is PRE_RESERVED", () -> {
+        beforeEach(() -> {
+          Application draft = testCommon.dummyOutdoorApplication("draft", "owner");
+          draft.setStatus(StatusType.PRE_RESERVED);
+          application = applicationDao.insert(draft);
+          assertNotNull(application.getId());
+        });
+        it("Can be deleted", () -> {
+          applicationDao.deleteDraft(application.getId());
+        });
+
+        context("Has attachment", () -> {
+          beforeEach(() -> {
+            attachmentInfo = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_CUSTOMER, "mimeTYpe", "Draft.dat",
+                "Draft attachment", 2, ZonedDateTime.parse("2017-07-03T10:15:30+03:00[Europe/Helsinki]"), false);
+            attachmentInfo = attachmentDao.insert(application.getId(), attachmentInfo, new byte[64]);
+            assertNotNull(attachmentInfo.getId());
+            assertTrue(attachmentDao.findById(attachmentInfo.getId()).isPresent());
+          });
+
+          it("Deletion deletes attachment", () -> {
+            applicationDao.deleteDraft(application.getId());
+            assertFalse(attachmentDao.findById(attachmentInfo.getId()).isPresent());
+          });
+
+          context("Other application has its own attachment", () -> {
+            final Variable<Integer> otherApplicationId = new Variable<>();
+            final Variable<Integer> otherAttachmentId = new Variable<>();
+
+            beforeEach(() -> {
+              otherApplicationId.set(testCommon.insertApplication("Other", "Other owner"));
+              AttachmentInfo ai = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_HANDLER, "mimeTYpe",
+                  "OtherDraft.dat", "Other draft attachment", 8,
+                  ZonedDateTime.parse("2017-02-15T16:43:12+02:00[Europe/Helsinki]"), false);
+              otherAttachmentId.set(attachmentDao.insert(otherApplicationId.get(), ai, new byte[64]).getId());
+            });
+
+            it("Deletion leaves other attachment intact", () -> {
+              applicationDao.deleteDraft(application.getId());
+              assertTrue(attachmentDao.findById(otherAttachmentId.get()).isPresent());
+            });
+          });
+        });
+      });
+    });
     describe("ApplicationDao.findAll", () -> {
       beforeEach(() -> {
         for (int i = 0; i < 15; ++i) {

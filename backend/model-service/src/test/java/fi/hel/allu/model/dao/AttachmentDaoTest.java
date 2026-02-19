@@ -259,6 +259,78 @@ public class AttachmentDaoTest {
     Assert.assertEquals(1, attachmentDao.findByApplication(application1.getId()).size());
   }
 
+  // Tests for deleteApplicationAttachments (ALLU-198)
+
+  @Test
+  public void testDeleteApplicationAttachments_exclusiveAttachment() {
+    AttachmentInfo info = attachmentDao.insert(application.getId(), newInfo(), generateTestData(100));
+    int attachmentId = info.getId();
+    Assert.assertTrue(attachmentDao.findById(attachmentId).isPresent());
+    Assert.assertTrue(attachmentDao.getData(attachmentId).isPresent());
+
+    attachmentDao.deleteApplicationAttachments(application.getId());
+
+    Assert.assertFalse("attachment row should be deleted", attachmentDao.findById(attachmentId).isPresent());
+    Assert.assertFalse("attachment data should be deleted", attachmentDao.getData(attachmentId).isPresent());
+    Assert.assertTrue("application should have no attachments left",
+        attachmentDao.findByApplication(application.getId()).isEmpty());
+  }
+
+  @Test
+  public void testDeleteApplicationAttachments_sharedAttachment() {
+    // Insert an attachment owned by application, then link it to a second application as well
+    Application secondApp = applicationDao.insert(testCommon.dummyOutdoorApplication("Second app", "handler"));
+    AttachmentInfo info = attachmentDao.insert(application.getId(), newInfo(), generateTestData(100));
+    int attachmentId = info.getId();
+    attachmentDao.linkApplicationToAttachment(secondApp.getId(), attachmentId);
+
+    // Both applications reference the attachment
+    Assert.assertEquals(1, attachmentDao.findByApplication(application.getId()).size());
+    Assert.assertEquals(1, attachmentDao.findByApplication(secondApp.getId()).size());
+
+    attachmentDao.deleteApplicationAttachments(application.getId());
+
+    // The attachment and its data must still exist because secondApp still holds a reference
+    Assert.assertTrue("attachment should still exist for second app",
+        attachmentDao.findById(attachmentId).isPresent());
+    Assert.assertTrue("attachment data should still exist",
+        attachmentDao.getData(attachmentId).isPresent());
+    // Only the first application's link should be gone
+    Assert.assertTrue("first app should have no attachments",
+        attachmentDao.findByApplication(application.getId()).isEmpty());
+    Assert.assertEquals("second app should still have its attachment",
+        1, attachmentDao.findByApplication(secondApp.getId()).size());
+  }
+
+  @Test
+  public void testDeleteApplicationAttachments_noAttachments() {
+    Assert.assertTrue("precondition: application has no attachments",
+        attachmentDao.findByApplication(application.getId()).isEmpty());
+
+    // Must not throw
+    attachmentDao.deleteApplicationAttachments(application.getId());
+
+    Assert.assertTrue("application should still have no attachments",
+        attachmentDao.findByApplication(application.getId()).isEmpty());
+  }
+
+  @Test
+  public void testDeleteApplicationAttachments_multipleExclusiveAttachments() {
+    AttachmentInfo info1 = attachmentDao.insert(application.getId(), newInfo(), generateTestData(10));
+    AttachmentInfo info2 = attachmentDao.insert(application.getId(), newInfo(), generateTestData(20));
+    AttachmentInfo info3 = attachmentDao.insert(application.getId(), newInfo(), generateTestData(30));
+
+    attachmentDao.deleteApplicationAttachments(application.getId());
+
+    Assert.assertFalse(attachmentDao.findById(info1.getId()).isPresent());
+    Assert.assertFalse(attachmentDao.findById(info2.getId()).isPresent());
+    Assert.assertFalse(attachmentDao.findById(info3.getId()).isPresent());
+    Assert.assertFalse(attachmentDao.getData(info1.getId()).isPresent());
+    Assert.assertFalse(attachmentDao.getData(info2.getId()).isPresent());
+    Assert.assertFalse(attachmentDao.getData(info3.getId()).isPresent());
+    Assert.assertTrue(attachmentDao.findByApplication(application.getId()).isEmpty());
+  }
+
   // Setup helper: store a bunch of attachment infos
   private List<AttachmentInfo> storeInitialAttachments() {
     AttachmentInfo info = newInfo();
