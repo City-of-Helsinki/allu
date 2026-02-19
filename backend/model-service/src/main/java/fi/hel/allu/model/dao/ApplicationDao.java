@@ -397,14 +397,8 @@ public class ApplicationDao {
   }
 
   private void deleteApplication(int id) {
+    attachmentDao.deleteApplicationAttachments(id);
     queryFactory.delete(application).where(application.id.eq(id)).execute();
-    /*
-     * After removing the application, some attachments might be unreferenced,
-     * so we need a cleanup action for them (attachment doesn't reference
-     * application directly, so ON DELETE CASCADE can't be used to automatically
-     * clean it up):
-     */
-    attachmentDao.deleteUnreferencedAttachments();
   }
 
   @Transactional
