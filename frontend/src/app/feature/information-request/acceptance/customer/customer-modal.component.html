@@ -4,6 +4,10 @@
 <div mat-dialog-content>
   <mat-list dense class="striped">
     <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'customer.search.type' | translation}}</div>
+      <div class="info-row-item">{{['customer.type', customer.type, 'name'] | translation}}</div>
+    </mat-list-item>
+    <mat-list-item>
       <div class="text-highlighted info-row-item">{{'customer.nameLabel' | translation}}</div>
       <div class="info-row-item">{{customer.name}}</div>
     </mat-list-item>
