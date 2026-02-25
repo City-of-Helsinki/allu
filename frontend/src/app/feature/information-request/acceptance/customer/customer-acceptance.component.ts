@@ -9,6 +9,7 @@ import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/intern
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
+import {EnumUtil} from '@util/enum.util';
 import {CustomerNameSearchMinChars, CustomerSearchQuery, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
@@ -73,6 +74,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   private config: CustomerAcceptanceConfig;
 
+  customerTypes = EnumUtil.enumValues(CustomerType);
+
   selectionForm: FormGroup;
   referenceFieldDescriptions: FieldDescription[] = [
     new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
@@ -101,7 +104,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({});
     this.parentForm.addControl(this.formName, this.form);
     this.searchForm = this.fb.group({
-      search: undefined
+      search: undefined,
+      customerType: this.newCustomer.type
     });
 
     this.countryCodes$ = this.store.select(fromRoot.getCodeSetCodeMap('Country'));
@@ -110,7 +114,13 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(CustomerNameSearchMinChars)
-    ).subscribe(term => this.searchCustomer(this.newCustomer.type, term, term, term));
+    ).subscribe(term => this.searchCustomer(this.searchForm.get('customerType').value, term, term, term));
+
+    this.searchForm.get('customerType').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(type => {
+      this.searchCustomer(type, this.newCustomer.name, this.newCustomer.registryKey, this.newCustomer.sapCustomerNumber);
+    });
 
     this.initialSearch();
     this.init();
@@ -224,7 +234,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   private initialSearch() {
     this.searchCustomer(
-      this.newCustomer.type,
+      this.searchForm.get('customerType').value,
       this.newCustomer.name,
       this.newCustomer.registryKey,
       this.newCustomer.sapCustomerNumber

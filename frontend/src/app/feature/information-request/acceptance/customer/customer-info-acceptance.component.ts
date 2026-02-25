@@ -86,6 +86,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
     if (customer) {
       const postalAddress = customer.postalAddress;
       return {
+        type: customer.type,
         name: customer.name,
         registryKey: customer.registryKey,
         ovt: customer.ovt,
@@ -106,12 +107,14 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
   private toDisplayValues(fieldValues: FieldValues): FieldValues {
     return {
       ...fieldValues,
+      type: fieldValues.type ? findTranslation(['customer.type', fieldValues.type, 'name']) : undefined,
       country: this.getCountry(fieldValues.country)
     };
   }
 
   private createDescriptions(customerType: string): FieldDescription[] {
     return [
+      new FieldDescription('type', findTranslation('customer.search.type')),
       new FieldDescription('name', findTranslation(['customer.type', customerType, 'nameLabel'])),
       new FieldDescription('registryKey', findTranslation(['customer.type', customerType, 'id'])),
       new FieldDescription('ovt', findTranslation(['customer.type', customerType, 'ovt'])),
