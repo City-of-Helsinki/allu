@@ -20,6 +20,7 @@ import {InformationRequestResultService} from '@feature/information-request/acce
 import {InformationRequestModalComponent} from './request/information-request-modal.component';
 import {RequestFieldComponent} from './request/request-field/request-field.component';
 import {FieldSelectComponent} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldDisplayComponent} from '@feature/information-request/acceptance/field-select/field-display.component';
 import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
@@ -65,6 +66,7 @@ import {InformationAcceptanceResolve} from '@feature/information-request/accepta
         InformationRequestModalComponent,
         RequestFieldComponent,
         FieldSelectComponent,
+        FieldDisplayComponent,
         CustomerModalComponent,
         ContactModalComponent,
         LocationsAcceptanceComponent,

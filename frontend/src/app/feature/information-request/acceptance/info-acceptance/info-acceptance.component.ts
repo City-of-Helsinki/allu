@@ -26,6 +26,9 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
   newValues: FieldValues;
   newDisplayValues: FieldValues;
 
+  protected nonSelectableFields = false;
+  noOldValuesKey = 'informationRequest.acceptance.noCustomerSelected';
+
   private _readonly: boolean;
   private destroy: Subject<boolean> = new Subject<boolean>();
 
@@ -57,6 +60,10 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
 
   get readonly() {
     return this._readonly;
+  }
+
+  get hasOldValues(): boolean {
+    return !!this.oldDisplayValues && Object.values(this.oldDisplayValues).some(v => v != null);
   }
 
   selectAllOld(): void {

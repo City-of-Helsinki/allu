@@ -79,3 +79,34 @@
 .value-change {
   font-weight: 500;
 }
+
+:host ::ng-deep .non-selectable-list {
+  .mat-list-item {
+    cursor: default;
+
+    &:hover {
+      background: none;
+    }
+  }
+}
+
+.non-selectable-list {
+  .non-selectable-item {
+    font-size: 14px;
+    min-height: 38px;
+    padding: 8px 8px;
+    cursor: default;
+
+    &:not(:last-of-type) {
+      margin-bottom: 2px;
+    }
+
+    &:nth-child(odd) {
+      background: map-get($allu-blue, 50);
+    }
+  }
+
+  &.selected {
+    border-left: 8px solid map-get($allu-success, 200);
+  }
+}

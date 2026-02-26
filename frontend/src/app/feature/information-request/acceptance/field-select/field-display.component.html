@@ -1,0 +1,22 @@
+<div class="non-selectable-list" [class.selected]="selected">
+  <div
+    *ngFor="let description of descriptions"
+    class="non-selectable-item">
+    <div fxLayout="row" fxLayoutAlign="start start">
+      <div fxFlex class="text-highlighted">{{description.label}}</div>
+      <div fxFlex="0 0 24px">
+        <mat-icon
+          color="accent"
+          class="mat-icon-18"
+          *ngIf="fieldHasChange(description.field)"
+          [matTooltip]="'informationRequest.field.valueDiffers' | translation">warning</mat-icon>
+      </div>
+      <div fxFlex [class.value-change]="fieldHasChange(description.field)">
+        <field-value
+          [field]="description.field"
+          [value]="fieldValues[description.field]"
+          [meta]="meta"></field-value>
+      </div>
+    </div>
+  </div>
+</div>

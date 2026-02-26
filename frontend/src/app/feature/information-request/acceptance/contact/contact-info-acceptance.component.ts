@@ -21,6 +21,9 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
 
   @Input() orderer: boolean;
 
+  protected nonSelectableFields = true;
+  noOldValuesKey = 'informationRequest.acceptance.noContactSelected';
+
   private _oldContact: Contact;
   private _newContact: Contact;
 
