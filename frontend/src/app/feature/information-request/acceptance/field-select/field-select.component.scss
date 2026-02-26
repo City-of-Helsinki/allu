@@ -1,3 +1,5 @@
+@import '../../../../../assets/colors';
+
 :host {
   display: block;
 }
@@ -43,6 +45,10 @@
 
   .mat-selection-list .mat-list-option .mat-list-item-content {
     padding-left: 8px;
+  }
+
+  .mat-selection-list .mat-list-option:hover {
+    background: map-get($allu-blue, 100);
   }
 }
 
