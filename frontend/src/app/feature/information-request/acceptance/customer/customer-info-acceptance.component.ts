@@ -25,6 +25,8 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
   _oldCustomer: Customer;
   _newCustomer: Customer;
 
+  protected nonSelectableFields = true;
+
   constructor(fb: UntypedFormBuilder) {
     super(fb);
   }

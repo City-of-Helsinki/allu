@@ -26,8 +26,7 @@ const FIELD_SELECT_VALUE_ACCESSOR = {
 })
 export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
-  constructor(private cdr: ChangeDetectorRef) {
-}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   @Input() id = '';
   @Input() descriptions: FieldDescription[] = [];
@@ -51,23 +50,31 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
   /** Implemented as part of ControlValueAccessor. */
   writeValue(values: string[]): void {
-    this.selectionList.writeValue(values);
+    if (this.selectionList) {
+      this.selectionList.writeValue(values);
+    }
   }
 
   /** Implemented as a part of ControlValueAccessor. */
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
-    this.selectionList.setDisabledState(isDisabled);
+    if (this.selectionList) {
+      this.selectionList.setDisabledState(isDisabled);
+    }
   }
 
   /** Implemented as part of ControlValueAccessor. */
   registerOnChange(fn: (value: any) => void): void {
-    this.selectionList.registerOnChange(fn);
+    if (this.selectionList) {
+      this.selectionList.registerOnChange(fn);
+    }
   }
 
   /** Implemented as part of ControlValueAccessor. */
   registerOnTouched(fn: () => void): void {
-    this.selectionList.registerOnTouched(fn);
+    if (this.selectionList) {
+      this.selectionList.registerOnTouched(fn);
+    }
   }
 
   @Input()
@@ -91,24 +98,26 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   }
 
   selectAll(): void {
-    if (this.selectionList.options) {
+    if (this.selectionList && this.selectionList.options) {
       this.selectionList.selectAll();
     }
   }
 
   deselectAll(): void {
-    if (this.selectionList.options) {
+    if (this.selectionList && this.selectionList.options) {
       this.selectionList.deselectAll();
     }
   }
 
   deselect(field: string): void {
-    const updatedValues = this.selectedValues.filter(f => f !== field);
-    this.selectionList.writeValue(updatedValues);
+    if (this.selectionList) {
+      const updatedValues = this.selectedValues.filter(f => f !== field);
+      this.selectionList.writeValue(updatedValues);
+    }
   }
 
   get selectedValues(): string[] {
-    if (this.selectionList.options) {
+    if (this.selectionList && this.selectionList.options) {
       return this.selectionList.selectedOptions.selected.map(opt => opt.value);
     } else {
       return [];
