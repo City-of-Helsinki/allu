@@ -36,6 +36,22 @@
   field-select .mat-selection-list .mat-list-option .mat-pseudo-checkbox {
     background: map-get($success, 200);
   }
+
+  // Highlight selected choice (käsittelijä's selection) with green indicator
+  .removal-choice.selected {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 8px;
+      background: map-get($success, 200);
+      border-radius: 4px 0 0 4px;
+    }
+  }
 }
 
 @mixin info-acceptance-theme($border-color) {
