@@ -42,7 +42,8 @@ export function reducer(state: State = initialState, action: HandledActions) {
       return {
         ...state,
         loading: true,
-        loaded: false
+        loaded: false,
+        clientData: undefined
       };
     }
 
