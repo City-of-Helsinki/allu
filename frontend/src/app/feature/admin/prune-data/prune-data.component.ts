@@ -42,7 +42,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   hasSelectedItems$ = this.selectedIds$.pipe(
     map(selectedIds => selectedIds.length > 0))
   
-  userColumns: string[] = ['selected', 'name'];
+  userColumns: string[] = ['selected', 'name', 'sapCustomerNumber'];
   applicationColumns: string[] = ['selected', 'applicationId', 'startTime', 'endTime', 'changeTime', 'changeType'];
 
 
@@ -106,8 +106,12 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
 
-  trackById(index: number, item: Application) {
-    return item.id;
+  trackById(index: number, item: any) {
+    return item.id ?? item.customerId;
+  }
+
+  getRowId(row: any): number {
+    return row.id ?? row.customerId;
   }
 
   checkAll(): void {
@@ -149,16 +153,19 @@ export class PruneDataComponent implements OnInit, OnDestroy {
   }
 
   deleteSelected(): void {
-    const data = {
-      title: 'Vahvista hakemusten anonymisointi',
-      description: 'valitut hakemukset anonymisoidaan',
-      confirmText: 'Anonymisoi',
-      cancelText: 'Peruuta'
-    };
-    this.dialog.open(ConfirmDialogComponent, {data})
-      .afterClosed()
-      .pipe(filter(result => result)) // Ignore no answers
-      .subscribe(() => this.handleDelete());
+    this.selectedIds$.pipe(first()).subscribe((ids) => {
+      const count = ids.length;
+      const data = {
+        title: 'Vahvista asiakkaiden poisto',
+        description: `Olet poistamassa ${count} kpl asiakkaita. Poistaminen on pysyvä toimenpide, poistettuja asiakkaita ei voi palauttaa.`,
+        confirmText: 'Jatka',
+        cancelText: 'Peruuta'
+      };
+      this.dialog.open(ConfirmDialogComponent, {data})
+        .afterClosed()
+        .pipe(filter(result => result)) // Ignore no answers
+        .subscribe(() => this.handleDelete());
+    });
   }
 
   handleDelete(): void {
