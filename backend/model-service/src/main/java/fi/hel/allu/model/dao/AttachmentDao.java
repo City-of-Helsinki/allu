@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
-import static com.querydsl.sql.SQLExpressions.select;
-import static com.querydsl.sql.SQLExpressions.union;
 import static fi.hel.allu.QApplicationAttachment.applicationAttachment;
 import static fi.hel.allu.QAttachment.attachment;
 import static fi.hel.allu.QAttachmentData.attachmentData;
@@ -398,20 +396,36 @@ public class AttachmentDao {
   }
 
   /**
-   * Delete all unreferenced attachments and attachment data
+   * Delete attachments belonging to the given application that are not referenced
+   * by any other application. Must be called before deleting the application row,
+   * as application_attachment rows are cascade-deleted with the application.
    */
-  @SuppressWarnings("unchecked")
   @Transactional
-  public void deleteUnreferencedAttachments() {
-    queryFactory.delete(attachment)
-    .where(attachment.id.notIn(
-        union(select(applicationAttachment.attachmentId).from(applicationAttachment),
-            select(defaultAttachment.attachmentId).from(defaultAttachment))))
-    .execute();
-    queryFactory.delete(attachmentData)
-    .where(attachmentData.id.notIn(
-        select(attachment.attachmentDataId).from(attachment)))
-    .execute();
+  public void deleteApplicationAttachments(int applicationId) {
+    List<Integer> attachmentIds = queryFactory
+        .select(applicationAttachment.attachmentId)
+        .from(applicationAttachment)
+        .where(applicationAttachment.applicationId.eq(applicationId))
+        .fetch();
+
+    // Remove this application's links first
+    queryFactory.delete(applicationAttachment)
+        .where(applicationAttachment.applicationId.eq(applicationId))
+        .execute();
+
+    // Delete each attachment only if no other application references it
+    for (Integer attachmentId : attachmentIds) {
+      long remaining = queryFactory
+          .select(applicationAttachment.id)
+          .from(applicationAttachment)
+          .where(applicationAttachment.attachmentId.eq(attachmentId))
+          .fetchCount();
+      if (remaining == 0) {
+        Integer attachmentDataId = getAttachmentDataIdForAttachment(attachmentId);
+        queryFactory.delete(attachment).where(attachment.id.eq(attachmentId)).execute();
+        deleteAttachmentData(attachmentDataId);
+      }
+    }
   }
 
   public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
