@@ -15,7 +15,14 @@
   .delete-button-row {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 32px;
+  }
+
+  .selected-count {
+    font-weight: 500;
+    color: mat.get-color-from-palette($allu-primary, 700);
   }
   nav {
     width: 100%;

@@ -2,6 +2,9 @@
   <h1> {{ title }} </h1>
 
   <div class="delete-button-row">
+    <span *ngIf="hasSelectedItems$ | async" class="selected-count">
+      {{ (selectedIds$ | async)?.length }} valittu
+    </span>
     <button *ngIf="hasSelectedItems$ | async" mat-raised-button type="button" color="primary" (click)="deleteSelected()">
       Poista valitut
     </button>
@@ -47,8 +50,8 @@
               <ng-container [ngSwitch]="column">
                 <ng-container *ngSwitchCase="'selected'">
                   <mat-checkbox 
-                    [checked]="isSelected(row.id) | async"
-                    (change)="checkSingle(row.id)">
+                    [checked]="isSelected(getRowId(row)) | async"
+                    (change)="checkSingle(getRowId(row))">
                   </mat-checkbox>
                 </ng-container>
                 <ng-container *ngSwitchCase="'applicationId'">

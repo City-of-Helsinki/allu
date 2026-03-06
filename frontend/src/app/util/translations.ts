@@ -2157,7 +2157,8 @@ export const translations = {
       endTime: 'Lopetusaika',
       changeTime: 'Muutettu',
       changeType: 'Muutos',
-      name: "Nimi"
+      name: "Nimi",
+      sapCustomerNumber: "SAP-asiakasnumero"
     }
   },
   configuration: {
