@@ -114,12 +114,12 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(CustomerNameSearchMinChars)
-    ).subscribe(term => this.searchCustomer(this.searchForm.get('customerType').value, term, term, term));
+    ).subscribe(term => this.searchWithFallback(this.searchForm.get('customerType').value, term, term, term));
 
     this.searchForm.get('customerType').valueChanges.pipe(
       takeUntil(this.destroy)
     ).subscribe(type => {
-      this.searchCustomer(type, this.newCustomer.name, this.newCustomer.registryKey, this.newCustomer.sapCustomerNumber);
+      this.searchWithFallback(type, this.newCustomer.name, this.newCustomer.registryKey, this.newCustomer.sapCustomerNumber);
     });
 
     this.initialSearch();
@@ -233,7 +233,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private initialSearch() {
-    this.searchCustomer(
+    this.searchWithFallback(
       this.searchForm.get('customerType').value,
       this.newCustomer.name,
       this.newCustomer.registryKey,
@@ -252,8 +252,25 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  private searchCustomer(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string): void {
-    const query: CustomerSearchQuery = {name, active: true, matchAny: true};
+  private searchWithFallback(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string): void {
+    const isInvoicingRole = this.fieldKey === InformationRequestFieldKey.INVOICING_CUSTOMER;
+    if (isInvoicingRole) {
+      // First search for invoicingOnly=true customers; fall back to all customers if none found
+      this.searchCustomer(type, name, registryKey, sapCustomerNumber, true);
+      this.loading$.pipe(
+        filter(loading => !loading),
+        switchMap(() => this.matchingCustomers$),
+        take(1),
+        filter(customers => customers.length === 0)
+      ).subscribe(() => this.searchCustomer(type, name, registryKey, sapCustomerNumber, undefined));
+    } else {
+      // Non-invoicing roles must never see invoicingOnly=true customers
+      this.searchCustomer(type, name, registryKey, sapCustomerNumber, false);
+    }
+  }
+
+  private searchCustomer(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string, invoicingOnly?: boolean): void {
+    const query: CustomerSearchQuery = {name, active: true, matchAny: true, invoicingOnly};
 
     if (registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS) {
       query.registryKey = registryKey;
