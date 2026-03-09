@@ -32,7 +32,8 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceDirective<any
 
     this.newValues = this.toFieldValues(this.newLocation);
     this.newDisplayValues = this.toDisplayValues(this.newValues);
-    const hasArea = NumberUtil.isDefined(this.newLocation.areaOverride);
+    const hasArea = NumberUtil.isDefined(this.newLocation.areaOverride)
+      || NumberUtil.isDefined(this.oldLocation?.areaOverride);
     this.fieldDescriptions = this.createDescriptions(hasArea);
 
     super.ngOnInit();
@@ -46,8 +47,10 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceDirective<any
     location.postalAddress = new PostalAddress(result.streetAddress, result.postalCode, result.postalOffice);
 
     // Only set area override when selected area differs from existing locations effective area (calculated / manually set)
-    // to prevent setting area override when existing calculated area was selected
-    if (location.effectiveArea !== result.area) {
+    // to prevent setting area override when existing calculated area was selected.
+    // Guard against undefined: when no area selection has been made yet (initial form load) result.area is
+    // undefined, so we must not overwrite areaOverride — that would silently discard the handler's custom value.
+    if (NumberUtil.isDefined(result.area) && location.effectiveArea !== result.area) {
       location.areaOverride = result.area;
     }
     this.locationChanges.emit(location);
