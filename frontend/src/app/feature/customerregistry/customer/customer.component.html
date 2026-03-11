@@ -22,6 +22,9 @@
           </mat-card-content>
         </allu-card>
       </div>
+      <div class="col m6">
+        <history [targetType]="customerTargetType"></history>
+      </div>
     </div>
     <div class="row">
       <customer-contacts [parentForm]="form" [onAddContact]="contactSubject.asObservable()"></customer-contacts>

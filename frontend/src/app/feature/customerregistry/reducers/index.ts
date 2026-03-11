@@ -11,6 +11,9 @@ import {createCustomerSelectors} from '@feature/customerregistry/reducers/custom
 import {createContactSelectors} from '@feature/customerregistry/reducers/contact-search-reducer';
 import {Dictionary} from '@ngrx/entity';
 import {Contact} from '@model/customer/contact';
+import * as fromHistory from '@feature/history/reducers/history-reducer';
+import * as fromCustomerHistory from '@feature/customerregistry/reducers/customer-history-reducer';
+import {CUSTOMER_META} from '@feature/customerregistry/customer-meta';
 
 export interface CustomerState {
   contacts: fromContact.State;
@@ -26,6 +29,7 @@ export interface CustomerState {
   contractorContactSearch: fromContactSearch.State;
   invoicingCustomerSearch: fromCustomerSearch.State;
   invoicingCustomerContactSearch: fromContactSearch.State;
+  history: fromHistory.State;
 }
 
 export interface State extends fromRoot.State {
@@ -45,7 +49,8 @@ export const reducers: ActionReducerMap<CustomerState> = {
   contractorSearch: fromCustomerSearch.createReducerFor(ActionTargetType.Contractor),
   contractorContactSearch: fromContactSearch.createReducerFor(ActionTargetType.Contractor),
   invoicingCustomerSearch: fromCustomerSearch.createReducerFor(ActionTargetType.InvoicingCustomer),
-  invoicingCustomerContactSearch: fromContactSearch.createReducerFor(ActionTargetType.InvoicingCustomer)
+  invoicingCustomerContactSearch: fromContactSearch.createReducerFor(ActionTargetType.InvoicingCustomer),
+  history: fromCustomerHistory.reducer
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Customer reducers');
@@ -124,3 +129,18 @@ export const getContractorSelectors = createCustomerSelectors(getContractorSearc
 export const getContractorContactsSelectors = createContactSelectors(getContractorContactSearchState);
 
 export const getInvoicingCustomerSelectors = createCustomerSelectors(getInvoicingCustomerSearchState);
+
+// History selectors
+export const getHistoryState = createSelector(
+  getCustomerState,
+  (state: CustomerState) => state.history
+);
+
+export const getHistory = createSelector(getHistoryState, fromHistory.getHistory);
+export const getFieldsVisible = createSelector(getHistoryState, fromHistory.getFieldsVisible);
+export const getHistoryLoading = createSelector(getHistoryState, fromHistory.getLoading);
+
+export const getMeta = createSelector(
+  getCustomerState,
+  () => CUSTOMER_META
+);
