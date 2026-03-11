@@ -4,6 +4,7 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import * as fromProject from '../project/reducers';
 import * as fromApplication from '../application/reducers';
+import * as fromCustomer from '../customerregistry/reducers';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
 import {SetFieldsVisible} from './actions/history-actions';
@@ -32,9 +33,14 @@ export class HistoryComponent implements OnInit {
   constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
-    const target = this.targetType === ActionTargetType.Project
-      ? fromProject
-      : fromApplication;
+    let target;
+    if (this.targetType === ActionTargetType.Project) {
+      target = fromProject;
+    } else if (this.targetType === ActionTargetType.Customer) {
+      target = fromCustomer;
+    } else {
+      target = fromApplication;
+    }
 
     this.store.select(target.getHistory)
       .pipe(takeUntil(this.destroy))

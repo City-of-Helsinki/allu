@@ -53,6 +53,15 @@ export class HistoryEffects {
   ));
 
   
+  loadCustomerHistory: Observable<Action> = createEffect(() => this.actions.pipe(
+    ofTargetAndType<LoadByTargetId>(ActionTargetType.Customer, HistoryActionType.LoadByTargetId),
+    switchMap(action => this.historyService.getCustomerHistory(action.payload).pipe(
+      map(history => new LoadSuccess(action.targetType, history)),
+      catchError(error => of(new LoadFailed(action.targetType, error)))
+    ))
+  ));
+
+  
   loadStatusHistory: Observable<Action> = createEffect(() => this.actions.pipe(
     ofTargetAndType<LoadStatus>(ActionTargetType.Application, HistoryActionType.LoadStatus),
     switchMap(action => this.historyService.getStatusHistory(action.payload).pipe(

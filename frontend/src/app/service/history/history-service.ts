@@ -10,6 +10,7 @@ import {ApplicationStatus} from '@model/application/application-status';
 
 const HISTORY_URL = '/api/applications/:appId/history';
 const PROJECT_URL = '/api/projects';
+const CUSTOMER_URL = '/api/customers';
 
 @Injectable()
 export class HistoryService {
@@ -23,6 +24,10 @@ export class HistoryService {
   getApplicationHistory(applicationId: number): Observable<ChangeHistoryItem[]> {
     const url = HISTORY_URL.replace(':appId', String(applicationId));
     return this.getHistory(url);
+  }
+
+  getCustomerHistory(customerId: number): Observable<ChangeHistoryItem[]> {
+    return this.getHistory(`${CUSTOMER_URL}/${customerId}/history`);
   }
 
   getStatusHistory(applicationId: number): Observable<ApplicationStatus[]> {

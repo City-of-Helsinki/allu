@@ -18,6 +18,10 @@ import {FormUtil} from '@util/form.util';
 import {createTranslated} from '@service/error/error-info';
 import { CurrentUser } from '@app/service/user/current-user';
 import { RoleType } from '@app/model/user/role-type';
+import {Store} from '@ngrx/store';
+import * as fromCustomer from '@feature/customerregistry/reducers';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {LoadByTargetId} from '@feature/history/actions/history-actions';
 
 
 @Component({
@@ -29,6 +33,7 @@ import { RoleType } from '@app/model/user/role-type';
 })
 export class CustomerComponent implements OnInit {
   customerTypes = EnumUtil.enumValues(CustomerType);
+  customerTargetType = ActionTargetType.Customer;
   form: UntypedFormGroup;
   customerForm: UntypedFormGroup;
   contactSubject = new Subject<Contact>();
@@ -39,12 +44,20 @@ export class CustomerComponent implements OnInit {
               private customerService: CustomerService,
               private fb: UntypedFormBuilder,
               private notification: NotificationService,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private store: Store<fromCustomer.State>) {
     this.form = CustomerWithContactsForm.initialForm(this.fb);
     this.customerForm = <UntypedFormGroup>this.form.get('customer');
   }
 
   ngOnInit(): void {
+    this.route.params.pipe(
+      map(p => p['id']),
+      filter(id => NumberUtil.isDefined(id)),
+    ).subscribe(id => {
+      this.store.dispatch(new LoadByTargetId(ActionTargetType.Customer, +id));
+    });
+
     this.route.params.pipe(
       map(p => p['id']),
       filter(id => NumberUtil.isDefined(id)),

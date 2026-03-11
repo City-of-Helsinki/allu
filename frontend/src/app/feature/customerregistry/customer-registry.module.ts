@@ -21,6 +21,7 @@ import {reducersProvider, reducersToken} from '@feature/customerregistry/reducer
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import {ContactEffects} from '@feature/customerregistry/effects/contact-effects';
 import {ContactOptionContentComponent} from '@feature/customerregistry/contact/contact-option-content.component';
+import {HistoryModule} from '@feature/history/history.module';
 
 @NgModule({
     imports: [
@@ -36,7 +37,8 @@ import {ContactOptionContentComponent} from '@feature/customerregistry/contact/c
         MatTableModule,
         MatSortModule,
         MatPaginatorModule,
-        AlluCommonModule
+        AlluCommonModule,
+        HistoryModule
     ],
     declarations: [
         CustomerRegistryComponent,
