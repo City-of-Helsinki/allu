@@ -135,13 +135,54 @@ public class MailComposerServiceSpec {
           Mockito.verify(mailBuilder).withModel(modelCapture.capture());
           assertNull(modelCapture.getValue().get("handlerName"));
         });
+
+        it("Continues sending to remaining recipients when addMailSenderLog fails", () -> {
+          Mockito.doThrow(new RuntimeException("model-service unavailable"))
+              .when(logService).addMailSenderLog(Mockito.any(MailSenderLog.class));
+
+          DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
+          decisionDetailsJson.setDecisionDistributionList(distributions);
+          decisionDetailsJson.setMessageBody("MessageBody");
+
+          try {
+            mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.DECISION);
+          } catch (Exception e) {
+            // expected: MailSendException is not thrown here since send() succeeds for both,
+            // but addMailSenderLog failures are swallowed
+          }
+
+          Mockito.verify(alluMailService, Mockito.times(2)).newMailTo(Mockito.anyString());
+          Mockito.verify(mailBuilder, Mockito.times(2)).send();
+        });
+
+        it("Continues sending to remaining recipients when one send fails", () -> {
+          Mockito.when(mailBuilder.send())
+              .thenThrow(new RuntimeException("SMTP connection failed"))
+              .thenReturn(new MailSenderLog());
+
+          DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
+          decisionDetailsJson.setDecisionDistributionList(distributions);
+          decisionDetailsJson.setMessageBody("MessageBody");
+
+          try {
+            mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.DECISION);
+          } catch (Exception e) {
+            // expected: MailSendException thrown after loop because one recipient failed
+          }
+
+          Mockito.verify(alluMailService, Mockito.times(2)).newMailTo(Mockito.anyString());
+          Mockito.verify(logService, Mockito.times(2)).addMailSenderLog(Mockito.any(MailSenderLog.class));
+        });
       });
 
     });
   }
 
+  private int distributionIdSequence = 0;
+
   private DistributionEntryJson emailDistribution(String name, String email) {
     DistributionEntryJson distributionEntryJson = new DistributionEntryJson();
+    distributionEntryJson.setId(++distributionIdSequence);
     distributionEntryJson.setDistributionType(DistributionType.EMAIL);
     distributionEntryJson.setName(name);
     distributionEntryJson.setEmail(email);
