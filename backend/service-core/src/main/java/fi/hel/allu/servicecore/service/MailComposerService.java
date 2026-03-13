@@ -107,19 +107,19 @@ public class MailComposerService {
 
   public void sendDecision(ApplicationJson application, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
     final String subject = subject(application, type);
-    List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
-        .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
+    List<DistributionEntryJson> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
+        .filter(entry -> entry.getEmail() != null).collect(Collectors.toList());
 
     if (!emailRecipients.isEmpty()) {
       final List<InlineResource> inlineResources = inlineResources();
 
       MailSenderLog log;
       List<String> failedEmails = new ArrayList<>();
-      for (String emailRecipient : emailRecipients) {
+      for (DistributionEntryJson emailRecipient : emailRecipients) {
         try {
           final String attachmentName = attachmentName(type, application.getApplicationId());
           final List<Attachment> attachments = mailAttachmentService.forApplication(application, type, attachmentName);
-          final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipient)
+          final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipient.getEmail())
             .withSubject(subject)
             .withBody(textBodyFor(application))
             .withHtmlBody(htmlBodyFor(application))
@@ -129,11 +129,15 @@ public class MailComposerService {
 
           log = mailBuilder.send();
         } catch (Exception e) {
-          logger.warn("Failed to send message", e);
-          log = new MailSenderLog(subject, ZonedDateTime.now(), emailRecipient, true, e.getMessage());
-          failedEmails.add(emailRecipient);
+          logger.warn("Failed to send message to distribution entry id {}", emailRecipient.getId(), e);
+          log = new MailSenderLog(subject, ZonedDateTime.now(), emailRecipient.getEmail(), true, e.getMessage());
+          failedEmails.add(emailRecipient.getEmail());
         }
-        saveMailSenderLog(log);
+        try {
+          saveMailSenderLog(log);
+        } catch (Exception e) {
+          logger.warn("Failed to save mail sender log", e);
+        }
       }
       if (!failedEmails.isEmpty()) {
         handleDecisionEmailSentFailed(failedEmails, application.getId());
