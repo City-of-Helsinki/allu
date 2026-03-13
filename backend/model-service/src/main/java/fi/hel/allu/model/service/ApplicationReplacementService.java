@@ -165,6 +165,9 @@ public class ApplicationReplacementService {
     application.setDecisionPublicityType(applicationToReplace.getDecisionPublicityType());
     application.setEndTime(applicationToReplace.getEndTime());
     application.setExtension(applicationToReplace.getExtension());
+    if (application.getExtension() instanceof WorkFinishedDates wfd) {
+      wfd.setWorkFinished(null);
+    }
     application.setOwner(applicationToReplace.getOwner());
     application.setInvoiceRecipientId(applicationToReplace.getInvoiceRecipientId());
     application.setName(applicationToReplace.getName());
