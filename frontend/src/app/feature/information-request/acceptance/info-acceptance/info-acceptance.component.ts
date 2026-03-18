@@ -110,17 +110,12 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
 
   protected initResultForm(): void {
     this.fieldDescriptions.forEach(desc => {
-      // When fields are non-selectable they are auto-populated from oldValues, so no required
-      // validator is needed — adding one would permanently block form submission because the
-      // value is set via patchValue which may race with Angular's change detection.
-      const validators = this.nonSelectableFields ? [] : [Validators.required];
+      const validators = [Validators.required];
       const ctrl = this.fb.control(undefined, validators);
       this.form.addControl(desc.field, ctrl);
     });
 
     // When fields are non-selectable, old values are the "auto-selected" source.
-    // The @Input setter runs before ngOnInit so patchField calls from selectAllOld()
-    // happen before the controls exist. Re-apply old values now that controls are ready.
     if (this.nonSelectableFields && this.oldValues) {
       this.onOldValuesSelected(Object.keys(this.oldValues));
     }
