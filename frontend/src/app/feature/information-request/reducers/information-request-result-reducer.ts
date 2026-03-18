@@ -144,7 +144,8 @@ export function reducer(state: State = initialState, action: InformationRequestR
       };
     }
 
-    case InformationRequestResultActionType.SaveSuccess: {
+    case InformationRequestResultActionType.SaveSuccess:
+    case InformationRequestResultActionType.Reset: {
       return initialState;
     }
 

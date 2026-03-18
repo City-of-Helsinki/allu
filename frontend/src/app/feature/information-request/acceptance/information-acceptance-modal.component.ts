@@ -8,7 +8,7 @@ import {Application} from '@model/application/application';
 import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
 import {Observable} from 'rxjs';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
+import {Reset, SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
@@ -102,6 +102,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   }
 
   cancel(): void {
+    this.store.dispatch(new Reset());
     this.dialogRef.close();
   }
 
@@ -123,6 +124,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
 
   discardChanges(): void {
     this.store.dispatch(new CloseRequest(this.data.informationRequest.informationRequestId));
+    this.store.dispatch(new Reset());
     this.dialogRef.close();
   }
 
