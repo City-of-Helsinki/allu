@@ -66,9 +66,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
 
   protected initResultForm(): void {
     super.initResultForm();
-    // When non-selectable, id is auto-set via patchValue in set oldContact(); no required validator needed.
-    const validators = this.nonSelectableFields ? [] : [Validators.required];
-    const ctrl = this.fb.control(undefined, validators);
+    const ctrl = this.fb.control(undefined, [Validators.required]);
     this.form.addControl('id', ctrl);
   }
 

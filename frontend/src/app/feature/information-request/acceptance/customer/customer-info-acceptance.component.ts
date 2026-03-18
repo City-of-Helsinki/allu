@@ -76,9 +76,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
   protected initResultForm(): void {
     super.initResultForm();
     const customerId = this._oldCustomer ? this._oldCustomer.id : undefined;
-    // When non-selectable, the id is auto-set via patchValue in set oldCustomer(); no required validator needed.
-    const validators = this.nonSelectableFields ? [] : [Validators.required];
-    const ctrl = this.fb.control(customerId, validators);
+    const ctrl = this.fb.control(customerId, [Validators.required]);
     this.form.addControl('id', ctrl);
   }
 
