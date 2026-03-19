@@ -14,7 +14,7 @@
 </div>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-dialog-content>
+  <mat-dialog-content cdkScrollable>
     <div *ngIf="requestDataAvailable && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
       <information-request-fields [requestFields]="data.informationRequest?.fields"></information-request-fields>
     </div>
