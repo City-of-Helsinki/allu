@@ -25,6 +25,7 @@ import com.greghaskins.spectrum.Variable;
 import com.querydsl.core.types.OrderSpecifier;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -349,6 +350,50 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTaskSearchCriteria location2Search = new SupervisionTaskSearchCriteria();
           location2Search.setCityDistrictIds(Arrays.asList(location2.getCityDistrictIdOverride()));
           assertEquals("Expected to find single task", 1, supervisionTaskDao.search(location2Search, PageRequest.of(0, 100)).getTotalElements());
+        });
+
+        it("Search projects enriched fields correctly", () -> {
+          Application app = insertApplication(testCommon.dummyOutdoorApplicationWithLocation("enriched", "enrichedOwner"));
+          Location location = app.getLocations().get(0);
+
+          SupervisionTask task = createTask(app.getId(), SupervisionTaskType.WARRANTY, app.getOwner());
+          task.setLocationId(location.getId());
+          SupervisionTask inserted = supervisionTaskDao.insert(task);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setApplicationIds(Arrays.asList(app.getId()));
+          search.setStatuses(Arrays.asList(SupervisionTaskStatusType.OPEN));
+
+          Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+          assertEquals(1, page.getTotalElements());
+
+          SupervisionWorkItem item = page.getContent().get(0);
+
+          // Pre-existing fields
+          assertEquals(inserted.getId(), item.getId());
+          assertEquals(app.getId(), item.getApplicationId());
+          assertNotNull(item.getApplicationIdText());
+          assertEquals(SupervisionTaskType.WARRANTY, item.getType());
+          assertNotNull(item.getAddress());
+
+          // Enriched fields from application join
+          assertEquals(ApplicationType.EVENT, item.getApplicationType());
+          assertEquals(app.getStatus(), item.getApplicationStatus());
+
+          // Enriched fields from supervision task view
+          assertEquals(SupervisionTaskStatusType.OPEN, item.getTaskStatus());
+          assertNotNull(item.getCreationTime());
+          assertEquals("just testing", item.getDescription());
+          assertNull(item.getResult());
+          assertNull(item.getActualFinishingTime());
+
+          // Enriched fields from location join
+          assertEquals(location.getId(), item.getLocationId());
+          assertEquals(location.getLocationKey(), item.getLocationKey());
+
+          // Enriched fields from owner join
+          assertEquals("realname", item.getOwnerRealName());
+          assertEquals("enrichedowner", item.getOwnerUserName());
         });
 
         context("Count query consistency", () -> {

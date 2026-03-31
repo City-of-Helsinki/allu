@@ -29,11 +29,38 @@ public class SupervisionTaskMapper {
   @Autowired
   private LocationService locationService;
 
+  /**
+   * Maps a search query work item directly to a search result without any
+   * additional HTTP calls. All needed fields are fetched by the enriched
+   * search query projection.
+   */
   public SupervisionTaskSearchResult mapToSearchResult(SupervisionWorkItem item) {
-    SupervisionTaskJson task = supervisionTaskService.findById(item.getId());
-    return mapToSearchResult(task, item.getAddress());
+    SupervisionTaskSearchResult result = new SupervisionTaskSearchResult();
+    result.setId(item.getId());
+    result.setApplicationId(item.getApplicationId());
+    result.setApplicationIdentifier(item.getApplicationIdText());
+    result.setApplicationStatus(item.getApplicationStatus());
+    result.setApplicationType(item.getApplicationType());
+    result.setType(item.getType());
+    result.setOwnerRealName(item.getOwnerRealName());
+    result.setOwnerUserName(item.getOwnerUserName());
+    result.setCreationTime(item.getCreationTime());
+    result.setPlannedFinishingTime(item.getPlannedFinishingTime());
+    result.setActualFinishingTime(item.getActualFinishingTime());
+    result.setStatus(item.getTaskStatus());
+    result.setDescription(item.getDescription());
+    result.setResult(item.getResult());
+    result.setLocationId(item.getLocationId());
+    result.setLocationKey(item.getLocationKey());
+    result.setAddresses(Optional.ofNullable(item.getAddress()).map(Arrays::asList).orElse(Collections.emptyList()));
+    return result;
   }
 
+  /**
+   * Maps a single supervision task JSON (fetched by ID) to a search result.
+   * Used by the findById and findByApplicationId endpoints which don't go
+   * through the search query. This path still requires individual HTTP calls.
+   */
   public SupervisionTaskSearchResult mapToSearchResult(SupervisionTaskJson task) {
     return mapToSearchResult(task, supervisionTaskService.getTaskAddresses(task.getId()));
   }
