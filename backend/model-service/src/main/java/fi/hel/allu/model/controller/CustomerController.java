@@ -200,26 +200,26 @@ public class CustomerController {
   }
 
   /**
-   * This endpoint is used to fetch SAP customers whose status has been archived
+   * This endpoint is used to fetch SAP customers which were removed (marked as inactive)
    * but has not yet been marked as notified (no email notification sent).
    *
-   * @return a ResponseEntity containing a list of {@code ArchivedCustomer} objects that represent
-   *         the unnotified archived customers.
+   * @return a ResponseEntity containing a list of {@code CustomerSapInfo} objects that represent
+   *         the unnotified inactive SAP customers.
    */
-  @GetMapping("/archived/sap/unnotified")
-  public ResponseEntity<List<ArchivedCustomer>> getUnnotifiedArchivedSapCustomers() {
-    return ResponseEntity.ok(customerService.findUnnotifiedArchivedSapCustomers());
+  @GetMapping("/sap/unnotified")
+  public ResponseEntity<List<CustomerSapInfo>> getUnnotifiedSapCustomers() {
+    return ResponseEntity.ok(customerService.findUnnotifiedSapCustomers());
   }
 
   /**
-   * Marks the specified archived SAP customers as notified.
+   * Marks the specified inactive SAP customers as notified.
    *
-   * @param customerIds a list of customer IDs that need to be marked as notified
+   * @param ids a list of customer IDs that need to be marked as notified
    * @return a ResponseEntity with no content indicating the operation was successful
    */
-  @PostMapping("/archived/sap/mark-notified")
-  public ResponseEntity<Void> markArchivedCustomersNotified(@RequestBody List<Integer> customerIds) {
-    customerService.markArchivedSapCustomersNotified(customerIds);
+  @PostMapping("/sap/mark-notified")
+  public ResponseEntity<Void> markSapCustomersNotified(@RequestBody List<Integer> ids) {
+    customerService.markSapCustomersNotified(ids);
     return ResponseEntity.ok().build();
   }
 }

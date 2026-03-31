@@ -1,8 +1,8 @@
 package fi.hel.allu.scheduler.service;
 
 import fi.hel.allu.common.util.ResourceUtil;
-import fi.hel.allu.model.domain.ArchivedCustomer;
 import fi.hel.allu.model.domain.Configuration;
+import fi.hel.allu.model.domain.CustomerSapInfo;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +20,48 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service for sending notifications about SAP customers that have been removed.
+ * Service for sending notifications about SAP customers that have been removed (marked as inactive).
  * This service fetches the removed customers from a remote source, gathers a list
  * of notification recipients, and sends an email with the details of the removed customers.
  * After successful notification, customers are marked as notified.
  *
  * This service is responsible for:
- * - Fetching removed customer details using a REST API.
- * - Retrieving the list of email recipients for notifications.
- * - Composing and sending notification emails in both plain text and HTML formats.
- * - Marking customers as notified after emails are sent.
  *
- * Dependencies:
- * - RestTemplate: For communication with remote services.
- * - ApplicationProperties: Configuration properties for URLs and email templates.
- * - AlluMailService: Service for sending emails.
- * - AuthenticationService: Service for handling authentication and creating authentication headers.
+ *   - Fetching removed customer details using a REST API.
+ *   - Retrieving the list of email recipients for notifications.
+ *   - Composing and sending notification emails in both plain text and HTML formats.
+ *   - Marking customers as notified after emails are sent.
+ *
+ * Notification recipient logic
+ * Recipients are not hardcoded — they are read at runtime from the model-service
+ * {@code configuration} database table via the endpoint
+ * {@code GET /configurations/CUSTOMER_NOTIFICATION_RECEIVER_EMAIL}.
+ *
+ * The table stores generic system-wide settings as {@code Configuration} objects with the
+ * following fields:
+ *
+ *   - {@code id}      – surrogate primary key (auto-generated)
+ *   - {@code type}    – {@code ConfigurationType.EMAIL} for email-address entries
+ *   - {@code key}     – {@code ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL},
+ *                         the logical name that identifies this group of settings
+ *   - {@code value}   – the actual email address string (e.g. {@code "officer@hel.fi"})
+ *   - {@code readonly}– whether the entry may be edited through the API
+ *
+ * Multiple rows may share the same {@code key}, so the system supports any number of
+ * recipients. Each row holds exactly one email address in its {@code value} field.
+ * Rows with a {@code null} or blank {@code value} are silently ignored when the
+ * recipient list is assembled (see {@link #getNotificationRecipients()}).
+ *
+ * Recipients are managed (inserted / updated) via the Allu administration UI or
+ * directly in the database; this service only reads them.
+ *
+ * Dependencies
+ *
+ *   - {@code RestTemplate}          – HTTP communication with model-service.
+ *   - {@code ApplicationProperties} – Provides URLs and email subject configuration.
+ *   - {@code AlluMailService}        – Sends the actual email.
+ *   - {@code AuthenticationService} – Creates the Bearer-token header for model-service calls.
+ *
  */
 @Service
 public class RemovedSapCustomerNotificationService {
@@ -71,7 +97,7 @@ public class RemovedSapCustomerNotificationService {
       return;
     }
 
-    List<ArchivedCustomer> customers = fetchRemovedCustomers();
+    List<CustomerSapInfo> customers = fetchRemovedCustomers();
     if (customers.isEmpty()) {
       logger.info("No removed SAP customers to notify about");
       return;
@@ -86,12 +112,12 @@ public class RemovedSapCustomerNotificationService {
     }
   }
 
-  private List<ArchivedCustomer> fetchRemovedCustomers() {
-    ArchivedCustomer[] response = restTemplate.exchange(
+  private List<CustomerSapInfo> fetchRemovedCustomers() {
+    CustomerSapInfo[] response = restTemplate.exchange(
       applicationProperties.getRemovedSapCustomersUrl(),
       HttpMethod.GET,
       new HttpEntity<>(authenticationService.createAuthenticationHeader()),
-      ArchivedCustomer[].class
+      CustomerSapInfo[].class
     ).getBody();
 
     return response != null ? Arrays.asList(response) : Collections.emptyList();
@@ -113,7 +139,7 @@ public class RemovedSapCustomerNotificationService {
       .collect(Collectors.toList());
   }
 
-  private void sendMail(List<ArchivedCustomer> customers, List<String> recipients) throws IOException {
+  private void sendMail(List<CustomerSapInfo> customers, List<String> recipients) throws IOException {
     String subject = applicationProperties.getRemovedSapCustomersSubject();
 
     logger.debug("Building removed SAP customer notification email for {} customers", customers.size());
@@ -144,20 +170,20 @@ public class RemovedSapCustomerNotificationService {
     }
   }
 
-  private String buildRowsHtml(List<ArchivedCustomer> customers) {
+  private String buildRowsHtml(List<CustomerSapInfo> customers) {
     return customers.stream()
-      .map(c -> "<tr><td>" + c.getCustomerId() + "</td><td>" + c.getSapCustomerNumber() + "</td></tr>")
+      .map(c -> "<tr><td>" + c.id() + "</td><td>" + c.sapCustomerNumber() + "</td></tr>")
       .collect(Collectors.joining());
   }
 
-  private String buildRowsTxt(List<ArchivedCustomer> customers) {
+  private String buildRowsTxt(List<CustomerSapInfo> customers) {
     return customers.stream()
-      .map(c -> c.getCustomerId() + " | " + c.getSapCustomerNumber())
+      .map(c -> c.id() + " | " + c.sapCustomerNumber())
       .collect(Collectors.joining("\n"));
   }
 
-  private void markCustomersNotified(List<ArchivedCustomer> customers) {
-    List<Integer> ids = customers.stream().map(ArchivedCustomer::getId).collect(Collectors.toList());
+  private void markCustomersNotified(List<CustomerSapInfo> customers) {
+    List<Integer> ids = customers.stream().map(CustomerSapInfo::id).collect(Collectors.toList());
 
     restTemplate.postForObject(
       applicationProperties.getMarkRemovedSapCustomersNotifiedUrl(),

@@ -419,17 +419,17 @@ public class ApplicationProperties {
   }
 
   /**
-   * Url for getting a list of removed/archived SAP customers that need to be notified by email
+   * Url for getting a list of 'removed' inactive SAP customers that need to be notified by email
    */
   public String getRemovedSapCustomersUrl() {
-    return getModelServiceUrl("/customers/archived/sap/unnotified");
+    return getModelServiceUrl("/customers/sap/unnotified");
   }
 
   /**
-   * Url for marking archived SAP customers as notified by email
+   * Url for marking 'removed' inactive SAP customers as notified by email
    */
   public String getMarkRemovedSapCustomersNotifiedUrl() {
-      return getModelServiceUrl("/customers/archived/sap/mark-notified");
+      return getModelServiceUrl("/customers/sap/mark-notified");
   }
 
   /**

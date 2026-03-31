@@ -2,21 +2,23 @@ package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
 
+/**
+ * In Finnish: arkistoitu asiakas
+ * Archived customer is a customer that has been permanently deleted from the system along with all history and log data.
+ */
 public class ArchivedCustomer {
   private Integer id;
   private Integer customerId;
   private String sapCustomerNumber;
   private ZonedDateTime deletedAt;
-  private ZonedDateTime notificationSentAt;
 
   public ArchivedCustomer() {}
 
-  public ArchivedCustomer(Integer id, Integer customerId, String sapCustomerNumber, ZonedDateTime deletedAt, ZonedDateTime notificationSentAt) {
+  public ArchivedCustomer(Integer id, Integer customerId, String sapCustomerNumber, ZonedDateTime deletedAt) {
     this.id = id;
     this.customerId = customerId;
     this.sapCustomerNumber = sapCustomerNumber;
     this.deletedAt = deletedAt;
-    this.notificationSentAt = notificationSentAt;
   }
 
   public Integer getId() {
@@ -49,13 +51,5 @@ public class ArchivedCustomer {
 
   public void setDeletedAt(ZonedDateTime deletedAt) {
     this.deletedAt = deletedAt;
-  }
-
-  public ZonedDateTime getNotificationSentAt() {
-    return notificationSentAt;
-  }
-
-  public void setNotificationSentAt(ZonedDateTime notificationSentAt) {
-    this.notificationSentAt = notificationSentAt;
   }
 }

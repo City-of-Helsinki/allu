@@ -1,10 +1,7 @@
 package service;
 
 import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.model.domain.ArchivedCustomer;
-import fi.hel.allu.model.domain.Configuration;
-import fi.hel.allu.model.domain.ConfigurationKey;
-import fi.hel.allu.model.domain.ConfigurationType;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.AlluMailService;
 import fi.hel.allu.scheduler.service.AuthenticationService;
@@ -100,8 +97,8 @@ public class RemovedSapCustomerNotificationServiceSpec {
             eq(REMOVED_CUSTOMERS_URL),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
-            eq(ArchivedCustomer[].class)
-          )).thenReturn(new ResponseEntity<>(new ArchivedCustomer[0], HttpStatus.OK));
+            eq(CustomerSapInfo[].class)
+          )).thenReturn(new ResponseEntity<>(new CustomerSapInfo[0], HttpStatus.OK));
 
           notificationService.sendRemovedSapCustomerNotifications();
 
@@ -112,17 +109,18 @@ public class RemovedSapCustomerNotificationServiceSpec {
           ArgumentCaptor<String> txtCaptor = ArgumentCaptor.forClass(String.class);
           ArgumentCaptor<String> htmlCaptor = ArgumentCaptor.forClass(String.class);
 
-          ArchivedCustomer dto = new ArchivedCustomer();
-          dto.setCustomerId(123);
-          dto.setSapCustomerNumber("SAP123");
-          dto.setId(1);
+          CustomerSapInfo dto = new CustomerSapInfo(
+            123,
+            "SAP123",
+            null
+          );
 
           when(restTemplate.exchange(
             eq(REMOVED_CUSTOMERS_URL),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
-            eq(ArchivedCustomer[].class)
-          )).thenReturn(new ResponseEntity<>(new ArchivedCustomer[]{dto}, HttpStatus.OK));
+            eq(CustomerSapInfo[].class)
+          )).thenReturn(new ResponseEntity<>(new CustomerSapInfo[]{dto}, HttpStatus.OK));
 
           notificationService.sendRemovedSapCustomerNotifications();
 
@@ -142,24 +140,25 @@ public class RemovedSapCustomerNotificationServiceSpec {
 
           verify(restTemplate).postForObject(
             eq(MARK_NOTIFIED_URL),
-            eq(Collections.singletonList(1)),
+            eq(Collections.singletonList(123)),
             eq(Void.class)
           );
         });
 
         it("should NOT mark customers notified if email sending fails", () -> {
 
-          ArchivedCustomer dto = new ArchivedCustomer();
-          dto.setCustomerId(123);
-          dto.setSapCustomerNumber("SAP123");
-          dto.setId(1);
+          CustomerSapInfo dto = new CustomerSapInfo(
+            123,
+            "SAP123",
+            null
+          );
 
           when(restTemplate.exchange(
             eq(REMOVED_CUSTOMERS_URL),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
-            eq(ArchivedCustomer[].class)
-          )).thenReturn(new ResponseEntity<>(new ArchivedCustomer[]{dto}, HttpStatus.OK));
+            eq(CustomerSapInfo[].class)
+          )).thenReturn(new ResponseEntity<>(new CustomerSapInfo[]{dto}, HttpStatus.OK));
 
           when(alluMailService.sendEmail(anyList(), anyString(), anyString(), anyString(), any())).thenReturn(false);
 
