@@ -503,42 +503,43 @@ public class CustomerDao {
   }
 
   /**
-   * Find removed/archived SAP customers which have not been marked as notified (no email notification sent).
+   * Find 'removed' inactive SAP customers which have not been marked as notified (no email notification sent).
    *
-   * @return list of archived SAP customers which have not been marked as notified.
+   * @return list of inactive SAP customers which have not been marked as notified.
    */
   @Transactional(readOnly = true)
-  public List<ArchivedCustomer> findUnnotifiedArchivedSapCustomers() {
-    return queryFactory
-      .select(Projections.constructor(
-        ArchivedCustomer.class,
-        customerArchive.id,
-        customerArchive.customerId,
-        customerArchive.sapCustomerNumber,
-        customerArchive.deletedAt,
-        customerArchive.notificationSentAt
-      ))
-      .from(customerArchive)
-      .where(
-        customerArchive.sapCustomerNumber.isNotNull(),
-        customerArchive.notificationSentAt.isNull()
-      )
-      .orderBy(customerArchive.deletedAt.asc())
-      .fetch();
+  public List<CustomerSapInfo> findUnnotifiedSapCustomers() {
+    return
+      queryFactory
+        .select(Projections.constructor(
+          CustomerSapInfo.class,
+          customer.id,
+          customer.sapCustomerNumber,
+          customer.notificationSentAt
+        ))
+        .from(customer)
+        .where(
+          customer.sapCustomerNumber.isNotNull(),
+          customer.notificationSentAt.isNull(),
+          customer.isActive.eq(false)
+        )
+        .orderBy(customer.id.asc())
+        .fetch();
+
   }
 
   /**
-   * Marks archived SAP customers as notified by updating their notification timestamp
+   * Marks 'removed' inactive SAP customers as notified by updating their notification timestamp
    * in the database to the current time.
    *
-   * @param customerIds a list archived SAP customers IDs to be marked as notified.
+   * @param customerIds a list of 'removed' inactive SAP customers IDs to be marked as notified.
    */
   @Transactional
-  public void markArchivedSapCustomersNotified(List<Integer> customerIds) {
+  public void markSapCustomersNotified(List<Integer> customerIds) {
     queryFactory
-      .update(customerArchive)
-      .set(customerArchive.notificationSentAt, ZonedDateTime.now())
-      .where(customerArchive.id.in(customerIds), customerArchive.notificationSentAt.isNull())
+      .update(customer)
+      .set(customer.notificationSentAt, ZonedDateTime.now())
+      .where(customer.id.in(customerIds), customer.notificationSentAt.isNull(), customer.isActive.eq(false))
       .execute();
   }
 }

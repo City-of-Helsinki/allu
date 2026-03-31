@@ -225,6 +225,11 @@
                             <column>end_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                      <typeMapping>
+                        <table>customer</table>
+                        <column>notification_sent_at</column>
+                        <type>java.time.ZonedDateTime</type>
+                      </typeMapping>
                         <typeMapping>
                             <table>customer_location_validity</table>
                             <column>start_time</column>
@@ -700,11 +705,6 @@
                         <typeMapping>
                           <table>customer_archive</table>
                           <column>deleted_at</column>
-                          <type>java.time.ZonedDateTime</type>
-                        </typeMapping>
-                        <typeMapping>
-                          <table>customer_archive</table>
-                          <column>notification_sent_at</column>
                           <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                     </typeMappings>

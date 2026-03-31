@@ -322,11 +322,11 @@ public class CustomerService {
   }
 
   @Transactional(readOnly = true)
-  public List<ArchivedCustomer> findUnnotifiedArchivedSapCustomers() {
-    List<ArchivedCustomer> customers = customerDao.findUnnotifiedArchivedSapCustomers();
+  public List<CustomerSapInfo> findUnnotifiedSapCustomers() {
+    List<CustomerSapInfo> customers = customerDao.findUnnotifiedSapCustomers();
 
     logger.info(
-      "Fetched {} unnotified archived SAP customers",
+      "Fetched {} 'removed' inactive unnotified SAP customers",
       customers.size()
     );
 
@@ -334,12 +334,12 @@ public class CustomerService {
   }
 
   @Transactional
-  public void markArchivedSapCustomersNotified(List<Integer> customerIds) {
+  public void markSapCustomersNotified(List<Integer> ids) {
     logger.info(
-      "Marking {} archived SAP customers as notified",
-      customerIds.size()
+      "Marking {} 'removed' inactive SAP customers as notified",
+      ids.size()
     );
 
-    customerDao.markArchivedSapCustomersNotified(customerIds);
+    customerDao.markSapCustomersNotified(ids);
   }
 }
