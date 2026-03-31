@@ -238,7 +238,7 @@ public class SupervisionTaskDao {
     return false;
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     BooleanExpression dataConditions = conditions(searchCriteria, VIEW_PATHS)
       .reduce((left, right) -> left.and(right))
