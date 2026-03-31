@@ -344,25 +344,25 @@ public class CustomerDao {
 
   private BooleanExpression isDeletableCustomer(Instant cutoff) {
     return
-      SQLExpressions.selectOne()
-        .from(applicationCustomer)
-        .where(applicationCustomer.customerId.eq(customer.id))
-        .notExists()
-
+      customer.isActive.isTrue()
+        .and(
+          SQLExpressions.selectOne()
+            .from(applicationCustomer)
+            .where(applicationCustomer.customerId.eq(customer.id))
+            .notExists()
+        )
         .and(
           SQLExpressions.selectOne()
             .from(project)
             .where(project.customerId.eq(customer.id))
             .notExists()
         )
-
         .and(
           SQLExpressions.selectOne()
             .from(application)
             .where(application.invoiceRecipientId.eq(customer.id))
             .notExists()
         )
-
         .and(
           SQLExpressions.selectOne()
             .from(changeHistory)
