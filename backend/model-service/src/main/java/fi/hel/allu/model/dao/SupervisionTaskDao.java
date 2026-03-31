@@ -15,6 +15,7 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QApplication;
+import fi.hel.allu.QLocation;
 import fi.hel.allu.QAttributeMeta;
 import fi.hel.allu.QStructureMeta;
 import fi.hel.allu.QUser;
@@ -248,7 +249,8 @@ public class SupervisionTaskDao {
       .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
       .leftJoin(project).on(application.projectId.eq(project.id))
       .leftJoin(creator).on(supervisionTaskWithAddress.creatorId.eq(creator.id))
-      .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id));
+      .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id))
+      .leftJoin(location).on(supervisionTaskWithAddress.locationId.eq(location.id));
 
     if (needsEnumSortJoins(pageRequest)) {
       q = q
@@ -362,20 +364,25 @@ public class SupervisionTaskDao {
   }
 
   private BooleanExpression cityDistrictsIn(List<Integer> ids, TaskPaths paths) {
+    // Dedicated QLocation instance so the EXISTS subquery is self-contained
+    // and does not collide with the outer query's LEFT JOIN on the static
+    // QLocation.location singleton.
+    QLocation loc = new QLocation("location");
+
     // Use city district override when it is defined
-    BooleanExpression override = location.cityDistrictIdOverride.isNotNull().and(location.cityDistrictIdOverride.in(ids));
-    BooleanExpression calculated = location.cityDistrictIdOverride.isNull().and(location.cityDistrictId.in(ids));
+    BooleanExpression override = loc.cityDistrictIdOverride.isNotNull().and(loc.cityDistrictIdOverride.in(ids));
+    BooleanExpression calculated = loc.cityDistrictIdOverride.isNull().and(loc.cityDistrictId.in(ids));
     BooleanExpression effective = override.or(calculated);
 
     // Use tasks location when available otherwise use supervision tasks application's locations
     return SQLExpressions.selectOne()
-      .from(location)
+      .from(loc)
       .where(
         paths.locationId().isNotNull()
-          .and(paths.locationId().eq(location.id)
+          .and(paths.locationId().eq(loc.id)
             .and(effective))
           .or(paths.locationId().isNull()
-            .and(paths.applicationId().eq(location.applicationId)
+            .and(paths.applicationId().eq(loc.applicationId)
               .and(effective))))
       .exists();
   }
@@ -402,8 +409,18 @@ public class SupervisionTaskDao {
     map.put("applicationId", application.id);
     map.put("applicationIdText", application.applicationId);
     map.put("applicationStatus", application.status);
+    map.put("applicationType", application.type);
     map.put("creatorId", supervisionTaskWithAddress.creatorId);
+    map.put("creationTime", supervisionTaskWithAddress.creationTime);
     map.put("plannedFinishingTime", supervisionTaskWithAddress.plannedFinishingTime);
+    map.put("actualFinishingTime", supervisionTaskWithAddress.actualFinishingTime);
+    map.put("taskStatus", supervisionTaskWithAddress.status);
+    map.put("description", supervisionTaskWithAddress.description);
+    map.put("result", supervisionTaskWithAddress.result);
+    map.put("locationId", supervisionTaskWithAddress.locationId);
+    map.put("locationKey", location.locationKey);
+    map.put("ownerRealName", owner.realName);
+    map.put("ownerUserName", owner.userName);
     map.put("address", supervisionTaskWithAddress.address);
     map.put("projectName", project.name);
     map.put("ownerId", supervisionTaskWithAddress.ownerId);
