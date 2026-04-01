@@ -322,6 +322,70 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           assertEquals("Expected to find single task", 1, supervisionTaskDao.search(location2Search, PageRequest.of(0, 100)).getTotalElements());
         });
 
+        context("Count query consistency", () -> {
+          it("Count matches results when filtering by application type", () -> {
+            SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
+            supervisionTaskDao.insert(taskForOther);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setApplicationTypes(Arrays.asList(outdoorApp.getType()));
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(1, page.getTotalElements());
+            assertEquals(page.getContent().size(), page.getTotalElements());
+          });
+
+          it("Count matches results when filtering by application ID prefix", () -> {
+            SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
+            supervisionTaskDao.insert(taskForOther);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setApplicationId(outdoorApp.getApplicationId());
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(1, page.getTotalElements());
+            assertEquals(page.getContent().size(), page.getTotalElements());
+          });
+
+          it("Count matches results when filtering by application status", () -> {
+            SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
+            supervisionTaskDao.insert(taskForOther);
+
+            applicationDao.updateStatus(outdoorApp.getId(), StatusType.HANDLING);
+            applicationDao.updateStatus(shortTermApp.getId(), StatusType.CANCELLED);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setApplicationStatus(Arrays.asList(StatusType.HANDLING));
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(1, page.getTotalElements());
+            assertEquals(page.getContent().size(), page.getTotalElements());
+          });
+
+          it("Count matches results when filtering by city district", () -> {
+            Application app1 = insertApplication(testCommon.dummyOutdoorApplicationWithLocation("event1", "owner1"));
+            Location location1 = app1.getLocations().get(0);
+
+            SupervisionTask task1 = createTask(app1.getId(), SupervisionTaskType.SUPERVISION, app1.getOwner());
+            task1.setLocationId(location1.getId());
+            supervisionTaskDao.insert(task1);
+
+            Application app2 = testCommon.dummyOutdoorApplicationWithLocation("event2", "owner2");
+            app2.getLocations().get(0).setCityDistrictIdOverride(2);
+            app2 = insertApplication(app2);
+
+            SupervisionTask task2 = createTask(app2.getId(), SupervisionTaskType.SUPERVISION, app2.getOwner());
+            supervisionTaskDao.insert(task2);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setCityDistrictIds(Arrays.asList(location1.getCityDistrictId()));
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(page.getContent().size(), page.getTotalElements());
+            assertTrue("Expected at least one result", page.getTotalElements() >= 1);
+          });
+        });
+
         context("Paging tests", () -> {
           final Variable<Page<SupervisionWorkItem>> results = new Variable<>();
 
