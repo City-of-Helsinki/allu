@@ -1,14 +1,16 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
@@ -179,9 +181,42 @@ public class SupervisionTaskDao {
       supervisionTask.type.eq(SupervisionTaskType.FINAL_SUPERVISION));
   }
 
+  /**
+   * Abstracts over column paths shared between the supervision_task base table
+   * and the supervision_task_with_address view, so that condition-building logic
+   * can be reused for both the data query (against the view) and the lightweight
+   * count query (against the base table).
+   */
+  private interface TaskPaths {
+    EnumPath<SupervisionTaskStatusType> status();
+    EnumPath<SupervisionTaskType> type();
+    DateTimePath<ZonedDateTime> plannedFinishingTime();
+    NumberPath<Integer> ownerId();
+    NumberPath<Integer> applicationId();
+    NumberPath<Integer> locationId();
+  }
+
+  private static final TaskPaths VIEW_PATHS = new TaskPaths() {
+    @Override public EnumPath<SupervisionTaskStatusType> status() { return supervisionTaskWithAddress.status; }
+    @Override public EnumPath<SupervisionTaskType> type() { return supervisionTaskWithAddress.type; }
+    @Override public DateTimePath<ZonedDateTime> plannedFinishingTime() { return supervisionTaskWithAddress.plannedFinishingTime; }
+    @Override public NumberPath<Integer> ownerId() { return supervisionTaskWithAddress.ownerId; }
+    @Override public NumberPath<Integer> applicationId() { return supervisionTaskWithAddress.applicationId; }
+    @Override public NumberPath<Integer> locationId() { return supervisionTaskWithAddress.locationId; }
+  };
+
+  private static final TaskPaths BASE_TABLE_PATHS = new TaskPaths() {
+    @Override public EnumPath<SupervisionTaskStatusType> status() { return supervisionTask.status; }
+    @Override public EnumPath<SupervisionTaskType> type() { return supervisionTask.type; }
+    @Override public DateTimePath<ZonedDateTime> plannedFinishingTime() { return supervisionTask.plannedFinishingTime; }
+    @Override public NumberPath<Integer> ownerId() { return supervisionTask.ownerId; }
+    @Override public NumberPath<Integer> applicationId() { return supervisionTask.applicationId; }
+    @Override public NumberPath<Integer> locationId() { return supervisionTask.locationId; }
+  };
+
   @Transactional
   public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    BooleanExpression conditions = conditions(searchCriteria)
+    BooleanExpression dataConditions = conditions(searchCriteria, VIEW_PATHS)
       .reduce((left, right) -> left.and(right))
       .orElse(Expressions.TRUE);
 
@@ -200,12 +235,43 @@ public class SupervisionTaskDao {
       .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
       .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
         .and(applStatusAttribute.name.eq(application.status.stringValue())))
-      .where(conditions);
+      .where(dataConditions);
 
     q = handlePageRequest(q, pageRequest);
 
-    QueryResults<SupervisionWorkItem> results = q.fetchResults();
-    return new PageImpl<>(results.getResults(), pageRequest, results.getTotal());
+    List<SupervisionWorkItem> results = q.fetch();
+    long total = countSupervisionTasks(searchCriteria);
+    return new PageImpl<>(results, pageRequest, total);
+  }
+
+  /**
+   * Lightweight count query against the base supervision_task table.
+   * Avoids the view, address resolution, project/user/metadata joins.
+   * Only joins application when the search criteria reference application fields.
+   */
+  private long countSupervisionTasks(SupervisionTaskSearchCriteria searchCriteria) {
+    BooleanExpression countConditions = conditions(searchCriteria, BASE_TABLE_PATHS)
+      .reduce((left, right) -> left.and(right))
+      .orElse(Expressions.TRUE);
+
+    SQLQuery<Long> countQuery = queryFactory.select(supervisionTask.id.count())
+      .from(supervisionTask);
+
+    if (needsApplicationJoin(searchCriteria)) {
+      countQuery = countQuery.leftJoin(application).on(supervisionTask.applicationId.eq(application.id));
+    }
+
+    return countQuery.where(countConditions).fetchOne();
+  }
+
+  /**
+   * Returns true if the search criteria contain any conditions that reference
+   * the application table (applicationId text prefix, applicationTypes, applicationStatus).
+   */
+  private static boolean needsApplicationJoin(SupervisionTaskSearchCriteria searchCriteria) {
+    return searchCriteria.getApplicationId() != null
+      || (searchCriteria.getApplicationTypes() != null && !searchCriteria.getApplicationTypes().isEmpty())
+      || (searchCriteria.getApplicationStatus() != null && !searchCriteria.getApplicationStatus().isEmpty());
   }
 
   /*
@@ -241,23 +307,23 @@ public class SupervisionTaskDao {
     return order.toArray(new OrderSpecifier<?>[order.size()]);
   }
 
-  private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
+  private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria, TaskPaths paths) {
     List<SupervisionTaskStatusType> statuses = searchCriteria.getStatuses() != null && !searchCriteria.getStatuses().isEmpty() ?
       searchCriteria.getStatuses() : Collections.singletonList(SupervisionTaskStatusType.OPEN);
 
 
     return Stream.of(
-        Optional.of(supervisionTaskWithAddress.status.in(statuses)),
-        values(searchCriteria.getTaskTypes()).map(supervisionTaskWithAddress.type::in),
-        Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTaskWithAddress.plannedFinishingTime::goe),
-        Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTaskWithAddress.plannedFinishingTime::lt),
+        Optional.of(paths.status().in(statuses)),
+        values(searchCriteria.getTaskTypes()).map(paths.type()::in),
+        Optional.ofNullable(searchCriteria.getAfter()).map(paths.plannedFinishingTime()::goe),
+        Optional.ofNullable(searchCriteria.getBefore()).map(paths.plannedFinishingTime()::lt),
         Optional.ofNullable(searchCriteria.getApplicationId()).map(String::toUpperCase).map(application.applicationId::startsWith),
-        values(searchCriteria.getOwners()).map(supervisionTaskWithAddress.ownerId::in),
+        values(searchCriteria.getOwners()).map(paths.ownerId()::in),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
-        values(searchCriteria.getCityDistrictIds()).map(this::cityDistrictsIn),
+        values(searchCriteria.getCityDistrictIds()).map(ids -> cityDistrictsIn(ids, paths)),
         // Include also empty application ID list in search conditions
-        Optional.ofNullable(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
+        Optional.ofNullable(searchCriteria.getApplicationIds()).map(paths.applicationId()::in)
       ).filter(opt -> opt.isPresent())
       .map(opt -> opt.get());
   }
@@ -267,7 +333,7 @@ public class SupervisionTaskDao {
       .filter(values -> !values.isEmpty());
   }
 
-  private BooleanExpression cityDistrictsIn(List<Integer> ids) {
+  private BooleanExpression cityDistrictsIn(List<Integer> ids, TaskPaths paths) {
     // Use city district override when it is defined
     BooleanExpression override = location.cityDistrictIdOverride.isNotNull().and(location.cityDistrictIdOverride.in(ids));
     BooleanExpression calculated = location.cityDistrictIdOverride.isNull().and(location.cityDistrictId.in(ids));
@@ -277,11 +343,11 @@ public class SupervisionTaskDao {
     return SQLExpressions.selectOne()
       .from(location)
       .where(
-        supervisionTaskWithAddress.locationId.isNotNull()
-          .and(supervisionTaskWithAddress.locationId.eq(location.id)
+        paths.locationId().isNotNull()
+          .and(paths.locationId().eq(location.id)
             .and(effective))
-          .or(supervisionTaskWithAddress.locationId.isNull()
-            .and(supervisionTaskWithAddress.applicationId.eq(location.applicationId)
+          .or(paths.locationId().isNull()
+            .and(paths.applicationId().eq(location.applicationId)
               .and(effective))))
       .exists();
   }
