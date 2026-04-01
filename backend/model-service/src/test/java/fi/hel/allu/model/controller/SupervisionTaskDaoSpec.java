@@ -207,6 +207,35 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           assertEquals(shortTermApp.getId(), result.getContent().get(1).getApplicationId());
         });
 
+        it("Sort by non-enum column plannedFinishingTime", () -> {
+          SupervisionTask laterTask = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          laterTask.setPlannedFinishingTime(testTime.plusDays(30));
+          supervisionTaskDao.insert(laterTask);
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "plannedFinishingTime"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.getNumberOfElements());
+          // existingSupervisionTask has plannedFinishingTime = testTime+1day, laterTask = testTime+30days
+          assertTrue("Earlier task should come first",
+            result.getContent().get(0).getPlannedFinishingTime()
+              .isBefore(result.getContent().get(1).getPlannedFinishingTime()));
+        });
+
+        it("Sort by non-enum column application.applicationId", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          supervisionTaskDao.insert(taskForOther);
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "application.applicationId"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.getNumberOfElements());
+          // Verify ascending order by applicationIdText
+          assertTrue("Application IDs should be in ascending order",
+            result.getContent().get(0).getApplicationIdText()
+              .compareTo(result.getContent().get(1).getApplicationIdText()) <= 0);
+        });
+
         it("Find by application id", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
