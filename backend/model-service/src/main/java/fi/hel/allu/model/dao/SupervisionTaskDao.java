@@ -214,6 +214,29 @@ public class SupervisionTaskDao {
     @Override public NumberPath<Integer> locationId() { return supervisionTask.locationId; }
   };
 
+  /**
+   * Sort keys that require the structure_meta/attribute_meta joins for enum
+   * column ordering (Finnish UI names instead of raw enum values).
+   */
+  private static final Set<String> ENUM_SORT_KEYS = Set.of(
+    "type", "application.type", "application.status");
+
+  /**
+   * Returns true if the page request sorts by any enum column that requires
+   * the structure_meta/attribute_meta joins.
+   */
+  private static boolean needsEnumSortJoins(Pageable pageRequest) {
+    if (pageRequest == null) {
+      return false;
+    }
+    for (Sort.Order order : pageRequest.getSort()) {
+      if (ENUM_SORT_KEYS.contains(order.getProperty())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Transactional
   public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     BooleanExpression dataConditions = conditions(searchCriteria, VIEW_PATHS)
@@ -225,17 +248,22 @@ public class SupervisionTaskDao {
       .leftJoin(application).on(supervisionTaskWithAddress.applicationId.eq(application.id))
       .leftJoin(project).on(application.projectId.eq(project.id))
       .leftJoin(creator).on(supervisionTaskWithAddress.creatorId.eq(creator.id))
-      .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id))
-      .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
-      .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
-        .and(typeAttribute.name.eq(supervisionTaskWithAddress.type.stringValue())))
-      .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
-      .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
-        .and(applTypeAttribute.name.eq(application.type.stringValue())))
-      .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
-      .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
-        .and(applStatusAttribute.name.eq(application.status.stringValue())))
-      .where(dataConditions);
+      .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id));
+
+    if (needsEnumSortJoins(pageRequest)) {
+      q = q
+        .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
+        .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
+          .and(typeAttribute.name.eq(supervisionTaskWithAddress.type.stringValue())))
+        .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
+        .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
+          .and(applTypeAttribute.name.eq(application.type.stringValue())))
+        .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
+        .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
+          .and(applStatusAttribute.name.eq(application.status.stringValue())));
+    }
+
+    q = q.where(dataConditions);
 
     q = handlePageRequest(q, pageRequest);
 
