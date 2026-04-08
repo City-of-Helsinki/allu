@@ -293,6 +293,44 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertTrue(list.size() >= 2);
           assertTrue(list.get(0).getName().compareTo(list.get(1).getName()) >= 0);
         });
+
+        it("should return CustomerType.PERSON for person customers", () -> {
+          // dummyCustomer creates CustomerType.PERSON customers
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<DeletableCustomer> personEntries = page.getContent().stream()
+            .filter(c -> c.getId().equals(deletableCustomer.get().getId()))
+            .toList();
+
+          assertEquals(1, personEntries.size());
+          assertEquals(CustomerType.PERSON, personEntries.get(0).getType());
+        });
+
+        it("should return CustomerType.COMPANY for company customers", () -> {
+          Customer company = dummyCustomer(300);
+          company.setType(CustomerType.COMPANY);
+          company.setRegistryKey("1234567-8");
+          Customer insertedCompany = customerDao.insert(company);
+
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<DeletableCustomer> companyEntries = page.getContent().stream()
+            .filter(c -> c.getId().equals(insertedCompany.getId()))
+            .toList();
+
+          assertEquals(1, companyEntries.size());
+          assertEquals(CustomerType.COMPANY, companyEntries.get(0).getType());
+          // Company name must not be null — name masking is service-core's responsibility
+          assertNotNull(companyEntries.get(0).getName());
+        });
+
+        it("should never return null type", () -> {
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          page.getContent().forEach(c ->
+            assertNotNull("type must never be null for customer id " + c.getId(), c.getType())
+          );
+        });
       });
 
       context("findPurgeableCustomerIds", () -> {

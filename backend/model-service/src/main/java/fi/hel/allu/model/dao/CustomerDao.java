@@ -332,7 +332,8 @@ public class CustomerDao {
           DeletableCustomer.class,
           customer.id,
           customer.sapCustomerNumber,
-          customer.name
+          customer.name,
+          customer.type
         ))
         .from(customer)
         .where(deletable)

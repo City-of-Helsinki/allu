@@ -292,12 +292,21 @@ public class CustomerService {
       pageable.getPageSize()
     );
 
-    return restTemplate.exchange(
-      url,
-      HttpMethod.GET,
-      null,
-      new ParameterizedTypeReference<RestResponsePage<CustomerSummaryRecord>>() {}
-    ).getBody();
+    RestResponsePage<DeletableCustomer> page = restTemplate.exchange(url, HttpMethod.GET, null,
+        new ParameterizedTypeReference<RestResponsePage<DeletableCustomer>>() {})
+      .getBody();
+
+    if (page == null) {
+      logger.warn("model-service returned null body for deletable customers, returning empty page");
+      return Page.empty(pageable);
+    }
+
+    return page.map(c -> new CustomerSummaryRecord(
+      c.getId(),
+      c.getSapCustomerNumber(),
+      CustomerType.PERSON.equals(c.getType()) ? null : c.getName(),
+      c.getType()
+    ));
   }
 
   /**
