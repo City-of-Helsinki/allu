@@ -50,6 +50,8 @@ import static fi.hel.allu.QCustomer.customer;
 import static fi.hel.allu.QCustomerArchive.customerArchive;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QProject.project;
+import static fi.hel.allu.QCustomerUpdateLog.customerUpdateLog;
+import static fi.hel.allu.QPersonAuditLog.personAuditLog;
 
 @Repository
 public class CustomerDao {
@@ -389,6 +391,72 @@ public class CustomerDao {
       case "name" -> asc ? customer.name.asc() : customer.name.desc();
       default -> customer.id.asc();
     };
+  }
+
+  /**
+   * Finds customer IDs that are eligible for permanent (hard) deletion.
+   * A customer is purgeable when ALL the following conditions are met:
+   * - Is_active = false (already soft-deleted; FK checks were done at soft-delete time
+   *   and a deactivated customer cannot be re-linked to any application or project)
+   * - The data retention period of 5 years has elapsed since the most recent entry across
+   *   ALL history and audit log tables:
+   *     * change_history (change_time)
+   *     * customer_update_log (update_time)
+   *     * person_audit_log (creation_time) — checked for both the customer and its contacts
+   *   A customer is only purgeable when every one of these tables either has no rows for the
+   *   customer or its latest row is older than the retention cutoff.
+   *
+   * @param pageSize  number of IDs to return
+   * @param offset    pagination offset
+   * @return list of customer IDs eligible for permanent deletion
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findPurgeableCustomerIds(int pageSize, long offset) {
+    ZonedDateTime retentionCutoff = ZonedDateTime.now().minusYears(5);
+
+    // Subquery expressions for MAX() timestamps across the three log tables.
+    // When a table has no rows for a given customer, MAX() returns NULL.
+    // In SQL, NULL < value evaluates to NULL (not TRUE), so the condition would never
+    // pass for customers with no rows in a given table.
+    // We therefore treat NULL (= no rows) as satisfying the retention condition:
+    //   "no rows at all" means there is nothing newer than the cutoff.
+    var maxChangeTime = SQLExpressions.select(changeHistory.changeTime.max())
+      .from(changeHistory)
+      .where(changeHistory.customerId.eq(customer.id));
+
+    var maxUpdateTime = SQLExpressions.select(customerUpdateLog.updateTime.max())
+      .from(customerUpdateLog)
+      .where(customerUpdateLog.customerId.eq(customer.id));
+
+    var maxAuditTime = SQLExpressions.select(personAuditLog.creationTime.max())
+      .from(personAuditLog)
+      .where(
+        personAuditLog.customerId.eq(customer.id)
+          .or(
+            personAuditLog.contactId.in(
+              SQLExpressions.select(contact.id)
+                .from(contact)
+                .where(contact.customerId.eq(customer.id))
+            )
+          )
+      );
+
+    return queryFactory
+      .select(customer.id)
+      .from(customer)
+      .where(
+        customer.isActive.isFalse()
+          // change_history: either no rows for this customer, or latest entry older than cutoff
+          .and(maxChangeTime.isNull().or(maxChangeTime.lt(retentionCutoff)))
+          // customer_update_log: either no rows for this customer, or latest entry older than cutoff
+          .and(maxUpdateTime.isNull().or(maxUpdateTime.lt(retentionCutoff)))
+          // person_audit_log: either no rows for this customer/contacts, or latest entry older than cutoff
+          .and(maxAuditTime.isNull().or(maxAuditTime.lt(retentionCutoff)))
+      )
+      .orderBy(customer.id.asc())
+      .limit(pageSize)
+      .offset(offset)
+      .fetch();
   }
 
   /**

@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.dao.*;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -14,10 +15,6 @@ import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ContactDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
@@ -37,6 +34,9 @@ public class CustomerServiceSpec extends SpeccyTestBase {
   private HistoryDao historyDao;
   private UserDao userDao;
   private ApplicationEventPublisher eventPublisher;
+  private ExternalUserDao externalUserDao;
+  private PersonAuditLogDao personAuditLogDao;
+  private CustomerUpdateLogDao customerUpdateLogDao;
 
   {
     beforeEach(() -> {
@@ -45,7 +45,19 @@ public class CustomerServiceSpec extends SpeccyTestBase {
       historyDao = Mockito.mock(HistoryDao.class);
       eventPublisher = Mockito.mock(ApplicationEventPublisher.class);
       userDao = Mockito.mock(UserDao.class);
-      customerService = new CustomerService(customerDao, contactDao, historyDao, userDao, eventPublisher);
+      externalUserDao = Mockito.mock(ExternalUserDao.class);
+      personAuditLogDao = Mockito.mock(PersonAuditLogDao.class);
+      customerUpdateLogDao = Mockito.mock(CustomerUpdateLogDao.class);
+      customerService = new CustomerService(
+        customerDao,
+        contactDao,
+        historyDao,
+        userDao,
+        eventPublisher,
+        externalUserDao,
+        personAuditLogDao,
+        customerUpdateLogDao
+      );
     });
 
     describe("Customer operations", () -> {

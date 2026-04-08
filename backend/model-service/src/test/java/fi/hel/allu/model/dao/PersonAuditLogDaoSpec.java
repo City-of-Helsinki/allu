@@ -17,6 +17,8 @@ import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.TestCommon;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @RunWith(Spectrum.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -107,6 +110,111 @@ public class PersonAuditLogDaoSpec extends SpeccyTestBase {
             failed = true;
           }
           assertEquals(true, failed);
+        });
+      });
+
+      context("deleteByCustomerIds", () -> {
+
+        it("should do nothing for null input", () -> {
+          // Must not throw
+          personAuditLogDao.deleteByCustomerIds(null);
+        });
+
+        it("should do nothing for empty input", () -> {
+          // Must not throw
+          personAuditLogDao.deleteByCustomerIds(Collections.emptyList());
+        });
+
+        it("should delete audit log entries linked directly to the customer", () -> {
+          // Arrange: insert a log entry for the customer
+          PersonAuditLogLog entry = new PersonAuditLogLog(
+            insertedCustomer.getId(), null, insertedUser.getId(), "test-source", ZonedDateTime.now()
+          );
+          PersonAuditLogLog inserted = personAuditLogDao.insert(entry);
+
+          // Verify the entry exists
+          assertTrue(personAuditLogDao.findById(inserted.getId()).isPresent());
+
+          // Act
+          personAuditLogDao.deleteByCustomerIds(Set.of(insertedCustomer.getId()));
+
+          // Assert: entry is gone
+          assertFalse(personAuditLogDao.findById(inserted.getId()).isPresent());
+        });
+
+        it("should delete audit log entries linked to a contact of the given customer", () -> {
+          // Arrange: insert a log entry for the contact (customer_id = null, contact_id = insertedContact)
+          PersonAuditLogLog contactEntry = new PersonAuditLogLog(
+            null, insertedContact.getId(), insertedUser.getId(), "contact-source", ZonedDateTime.now()
+          );
+          PersonAuditLogLog inserted = personAuditLogDao.insert(contactEntry);
+
+          assertTrue(personAuditLogDao.findById(inserted.getId()).isPresent());
+
+          // Act: delete by the parent customer ID
+          personAuditLogDao.deleteByCustomerIds(Set.of(insertedCustomer.getId()));
+
+          // Assert: contact's audit log entry is removed as well
+          assertFalse(
+            "Audit log entry for contact must be removed when its customer is deleted",
+            personAuditLogDao.findById(inserted.getId()).isPresent()
+          );
+        });
+
+        it("should delete both customer and contact entries in one call", () -> {
+          // Arrange: one entry directly on the customer, one on its contact
+          PersonAuditLogLog customerEntry = new PersonAuditLogLog(
+            insertedCustomer.getId(), null, insertedUser.getId(), "src-c", ZonedDateTime.now()
+          );
+          PersonAuditLogLog contactEntry = new PersonAuditLogLog(
+            null, insertedContact.getId(), insertedUser.getId(), "src-ct", ZonedDateTime.now()
+          );
+          PersonAuditLogLog insertedCust = personAuditLogDao.insert(customerEntry);
+          PersonAuditLogLog insertedCont = personAuditLogDao.insert(contactEntry);
+
+          // Act
+          personAuditLogDao.deleteByCustomerIds(Set.of(insertedCustomer.getId()));
+
+          // Assert: both gone
+          assertFalse(personAuditLogDao.findById(insertedCust.getId()).isPresent());
+          assertFalse(personAuditLogDao.findById(insertedCont.getId()).isPresent());
+        });
+
+        it("should not delete audit log entries belonging to a different customer", () -> {
+          // Arrange: a second customer with its own audit log entry
+          Customer otherCustomer = testCommon.insertPerson();
+          PersonAuditLogLog otherEntry = new PersonAuditLogLog(
+            otherCustomer.getId(), null, insertedUser.getId(), "other-source", ZonedDateTime.now()
+          );
+          PersonAuditLogLog insertedOther = personAuditLogDao.insert(otherEntry);
+
+          // Act: delete only insertedCustomer
+          personAuditLogDao.deleteByCustomerIds(Set.of(insertedCustomer.getId()));
+
+          // Assert: another customer's entry is untouched
+          assertTrue(
+            "Audit log entry for unrelated customer must not be removed",
+            personAuditLogDao.findById(insertedOther.getId()).isPresent()
+          );
+        });
+
+        it("should not delete contact entries belonging to a different customer", () -> {
+          // Arrange: a second customer with its own contact and contact audit log entry
+          Customer otherCustomer = testCommon.insertPerson();
+          Contact otherContact = testCommon.insertContact(otherCustomer.getId());
+          PersonAuditLogLog otherContactEntry = new PersonAuditLogLog(
+            null, otherContact.getId(), insertedUser.getId(), "other-contact-source", ZonedDateTime.now()
+          );
+          PersonAuditLogLog insertedOtherContact = personAuditLogDao.insert(otherContactEntry);
+
+          // Act: delete only insertedCustomer
+          personAuditLogDao.deleteByCustomerIds(Set.of(insertedCustomer.getId()));
+
+          // Assert: other contact's entry is untouched
+          assertTrue(
+            "Audit log entry for contact of unrelated customer must not be removed",
+            personAuditLogDao.findById(insertedOtherContact.getId()).isPresent()
+          );
         });
       });
     });

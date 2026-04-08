@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,22 @@ public class CustomerUpdateLogDao {
   public void setUpdateLogsProcessed(List<Integer> logIds) {
     queryFactory.update(customerUpdateLog).set(customerUpdateLog.processedTime, ZonedDateTime.now())
         .where(customerUpdateLog.id.in(logIds)).execute();
+  }
+
+  /**
+   * Permanently deletes customer_update_log rows for the given customer IDs.
+   *
+   * @param customerIds customer IDs whose update log entries should be deleted
+   */
+  @Transactional
+  public void deleteByCustomerIds(Collection<Integer> customerIds) {
+    if (customerIds == null || customerIds.isEmpty()) {
+      return;
+    }
+    queryFactory
+      .delete(customerUpdateLog)
+      .where(customerUpdateLog.customerId.in(customerIds))
+      .execute();
   }
 
 }

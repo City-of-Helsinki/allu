@@ -31,6 +31,7 @@ public class ScheduleRunner {
   private final CityDistrictUpdaterService cityDistrictUpdaterService;
   private final ApplicationProperties applicationProperties;
   private final RemovedSapCustomerNotificationService removedSapCustomerNotificationService;
+  private final CustomerPurgeService customerPurgeService;
 
   @Autowired
   public ScheduleRunner(
@@ -42,7 +43,8 @@ public class ScheduleRunner {
     ApplicationStatusUpdaterService applicationStatusUpdaterService,
     CityDistrictUpdaterService cityDistrictUpdaterService,
     ApplicationProperties applicationProperties,
-    RemovedSapCustomerNotificationService removedSapCustomerNotificationService
+    RemovedSapCustomerNotificationService removedSapCustomerNotificationService,
+    CustomerPurgeService customerPurgeService
       ) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
@@ -53,6 +55,7 @@ public class ScheduleRunner {
     this.cityDistrictUpdaterService = cityDistrictUpdaterService;
     this.applicationProperties = applicationProperties;
     this.removedSapCustomerNotificationService = removedSapCustomerNotificationService;
+    this.customerPurgeService = customerPurgeService;
   }
 
   @EventListener(ApplicationReadyEvent.class)
@@ -130,5 +133,14 @@ public class ScheduleRunner {
   @Scheduled(cron = "${removed.customers.notification.cronstring}")
   public void sendRemovedSapCustomerNotifications() {
     removedSapCustomerNotificationService.sendRemovedSapCustomerNotifications();
+  }
+
+  @Scheduled(cron = "${customer.purge.cronstring}")
+  public void purgeObsoleteCustomers() {
+    try {
+      customerPurgeService.purgeObsoleteCustomers();
+    } catch (Exception e) {
+      logger.error("Customer purge job failed with unexpected error", e);
+    }
   }
 }
