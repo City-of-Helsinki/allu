@@ -2,7 +2,6 @@ package fi.hel.allu.model.controller;
 
 import com.querydsl.core.QueryException;
 
-import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.OptimisticLockException;
 
 import org.slf4j.Logger;
@@ -16,20 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Handler for database-originated exceptions
+ * Handler for database-originated exceptions.
+ *
+ * Note: IllegalOperationException is intentionally NOT handled here.
+ * It is handled by ControllerExceptionHandler (common module), which maps it
+ * to HTTP 403 Forbidden — the semantically correct status for a business-rule
+ * violation such as attempting to reactivate a deactivated customer or contact.
  */
 @ControllerAdvice
 public class ControllerDbExceptionHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(ControllerDbExceptionHandler.class);
 
-
-  @ExceptionHandler({ DataIntegrityViolationException.class, QueryException.class, IllegalOperationException.class })
+  @ExceptionHandler({ DataIntegrityViolationException.class, QueryException.class })
   void handleBadRequests(RuntimeException e, HttpServletResponse response) throws IOException {
     logger.error("Data integrity violation", e);
     response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
   }
-
 
   @ExceptionHandler({OptimisticLockException.class})
   void handleLockingException(RuntimeException e, HttpServletResponse response) throws IOException {

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.user.Constants;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
@@ -128,6 +129,9 @@ public class CustomerService {
   @Transactional()
   public Customer update(int id, Customer customer, int userId) {
     Customer oldCustomer = customerDao.findById(id).orElseThrow(() -> new NoSuchEntityException("Customer not found", Integer.toString(id)));
+    if (!oldCustomer.isActive() && customer.isActive()) {
+      throw new IllegalOperationException("customer.reactivation.forbidden");
+    }
     Customer newCustomer = customerDao.update(id, customer);
     addChangeItem(id, userId, oldCustomer, newCustomer, "", false);
     if (!isExternalUser(userId)) {

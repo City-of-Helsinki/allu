@@ -11,6 +11,7 @@ import com.querydsl.sql.dml.DefaultMapper;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
 
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.Contact;
@@ -135,6 +136,9 @@ public class ContactDao {
     contactData.setId(id);
     Contact currentContact = findById(id).orElseThrow(
         () -> new NoSuchEntityException("contact.update.notFound", id));
+    if (!currentContact.isActive() && contactData.isActive()) {
+      throw new IllegalOperationException("contact.reactivation.forbidden");
+    }
 
     Integer deletedPostalAddressId = postalAddressDao.mapAndUpdatePostalAddress(currentContact, contactData);
     Integer postalAddressId = Optional.ofNullable(currentContact.getPostalAddress()).map(pAddress -> pAddress.getId()).orElse(null);
