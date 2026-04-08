@@ -311,6 +311,9 @@ public class CustomerService {
 
   /**
    * Soft delete customers and their associated contacts by calling model-service endpoint.
+   * After the database update, the Elasticsearch index is updated so that both customers
+   * and their contacts reflect the new inactive state immediately — without waiting for
+   * the next full search-sync.
    *
    * @param ids List of customer IDs to soft delete
    * @return Result of the deletion operation, including deleted and skipped IDs
@@ -324,6 +327,27 @@ public class CustomerService {
         DeleteIdsResult.class
       );
 
-    return response.getBody();
+    DeleteIdsResult result = response.getBody();
+
+    if (result != null && !result.deletedIds().isEmpty()) {
+      // Fetch the now-deactivated customers from model-service (is_active = false is
+      // already persisted) and push active=false into the Elasticsearch customer index.
+      List<CustomerJson> deactivatedCustomers = getCustomersById(result.deletedIds());
+      searchService.updateCustomers(deactivatedCustomers);
+
+      // Fetch every contact belonging to the deactivated customers and push
+      // active=false into the Elasticsearch contact index.
+      // contactService.findByCustomer() reads directly from model-service, so the
+      // contacts are already in their updated (inactive) state.
+      List<ContactJson> deactivatedContacts = result.deletedIds().stream()
+        .flatMap(customerId -> contactService.findByCustomer(customerId).stream())
+        .collect(Collectors.toList());
+
+      if (!deactivatedContacts.isEmpty()) {
+        searchService.updateContacts(deactivatedContacts);
+      }
+    }
+
+    return result;
   }
 }
