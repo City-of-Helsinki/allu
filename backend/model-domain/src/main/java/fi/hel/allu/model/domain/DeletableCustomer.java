@@ -1,9 +1,12 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.domain.types.CustomerType;
+
 public class DeletableCustomer {
   private Integer id;
   private String sapCustomerNumber;
   private String name;
+  private CustomerType type;
 
   public DeletableCustomer() {
   }
@@ -13,10 +16,11 @@ public class DeletableCustomer {
     this.sapCustomerNumber = sapCustomerNumber;
   }
 
-  public DeletableCustomer(Integer id, String sapCustomerNumber, String name) {
+  public DeletableCustomer(Integer id, String sapCustomerNumber, String name, CustomerType type) {
     this.id = id;
     this.sapCustomerNumber = sapCustomerNumber;
     this.name = name;
+    this.type = type;
   }
 
   public String getSapCustomerNumber() {
@@ -41,5 +45,13 @@ public class DeletableCustomer {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public CustomerType getType() {
+    return type;
+  }
+
+  public void setType(CustomerType type) {
+    this.type = type;
   }
 }
