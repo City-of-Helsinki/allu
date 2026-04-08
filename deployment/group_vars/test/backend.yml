@@ -48,3 +48,6 @@ anonymization_update_cronstring: "0 0 3 * * *"
 
 removed_customers_subject: "Allu - asiakasrekisteristä poistettu SAP-numerollisia asiakkaita"
 removed_customers_notification_cronstring: "0 0 7 * * *"
+
+# Cron string for permanently deleting inactive customers past their retention period
+customer_purge_cronstring: "0 0 4 * * *"

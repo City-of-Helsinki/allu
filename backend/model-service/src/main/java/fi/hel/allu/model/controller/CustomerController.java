@@ -187,6 +187,21 @@ public class CustomerController {
   }
 
   /**
+   * Returns a page of customer IDs that are eligible for permanent (hard) deletion by the scheduler.
+   * Eligible customers are inactive (is_active = false) and have had no changes for at least 5 years.
+   *
+   * @param pageSize number of IDs to return (default 500)
+   * @param offset   pagination offset (default 0)
+   * @return list of purgeable customer IDs
+   */
+  @GetMapping("/purgeable")
+  public ResponseEntity<List<Integer>> getPurgeableCustomerIds(
+      @RequestParam(defaultValue = "500") int pageSize,
+      @RequestParam(defaultValue = "0") long offset) {
+    return ResponseEntity.ok(customerService.findPurgeableCustomerIds(pageSize, offset));
+  }
+
+  /**
    * Soft deletes customers and their associated contacts from Allu's customer registry.
    * This operation updates the is_active flag to false for customers and contacts.
    *
@@ -197,6 +212,20 @@ public class CustomerController {
   public ResponseEntity<DeleteIdsResult> softDeleteCustomers(@RequestBody List<Integer> ids) {
     DeleteIdsResult result = customerService.softDeleteCustomersAndContacts(ids);
     return ResponseEntity.ok(result);
+  }
+
+  /**
+   * Permanently deletes customers and all their associated data (contacts, history, audit logs, etc.)
+   * from the database. Customer identifying data is archived to customer_archive before deletion.
+   * Intended to be called by the scheduler service for customers whose retention period has elapsed.
+   *
+   * @param ids List of customer IDs to permanently delete
+   * @return Number of permanently deleted customers
+   */
+  @DeleteMapping("/purge")
+  public ResponseEntity<Integer> purgeCustomers(@RequestBody List<Integer> ids) {
+    int deleted = customerService.purgeCustomersAndRelatedData(ids);
+    return ResponseEntity.ok(deleted);
   }
 
   /**

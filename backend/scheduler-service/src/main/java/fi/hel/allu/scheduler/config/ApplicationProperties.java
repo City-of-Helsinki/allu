@@ -438,4 +438,19 @@ public class ApplicationProperties {
   public String getRemovedSapCustomersSubject() {
     return removedCustomersNotificationSubject;
   }
+
+  /**
+   * Url for fetching customer IDs eligible for permanent deletion (scheduler use).
+   * Accepts pageSize and offset query parameters.
+   */
+  public String getPurgeableCustomersUrl() {
+    return getModelServiceUrl("/customers/purgeable");
+  }
+
+  /**
+   * Url for permanently deleting customers and their related data.
+   */
+  public String getPurgeCustomersUrl() {
+    return getModelServiceUrl("/customers/purge");
+  }
 }
