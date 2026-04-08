@@ -148,12 +148,24 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           final Sort sort = Sort.by(Sort.Order.asc("applicationId"),
                Sort.Order.desc("actualFinishingTime"));
           it("Can convert to QueryDSL ordering", () -> {
-            OrderSpecifier<?>[] orders = SupervisionTaskDao.toOrder(sort);
+            OrderSpecifier<?>[] orders = supervisionTaskDao.toOrder(sort);
             assertEquals(2, orders.length);
           });
 
           it("Throws exception on invalid sort key", () -> {
-            assertThrows(NoSuchEntityException.class).when(() -> SupervisionTaskDao.toOrder(Sort.by("noSuchKey")));
+            assertThrows(NoSuchEntityException.class).when(() -> supervisionTaskDao.toOrder(Sort.by("noSuchKey")));
+          });
+
+          it("All expected sort keys including CASE WHEN columns are resolvable", () -> {
+            List<String> expectedKeys = Arrays.asList(
+              "type", "application.type", "application.status",
+              "plannedFinishingTime", "application.applicationId",
+              "owner.realName", "creator.realName"
+            );
+            for (String key : expectedKeys) {
+              OrderSpecifier<?>[] orders = supervisionTaskDao.toOrder(Sort.by(key));
+              assertEquals("Sort key '" + key + "' should produce one OrderSpecifier", 1, orders.length);
+            }
           });
 
         });
@@ -177,6 +189,23 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           // Warranty ("Takuuvalvonta") should precede Supervision ("Valvonta"):
           assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(0).getType());
           assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(1).getType());
+        });
+
+        it("Sort by type with multiple task types verifies full Finnish alphabetical order", () -> {
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.PRELIMINARY_SUPERVISION, shortTermApp.getOwner()));
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.TERMINATION, shortTermApp.getOwner()));
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner()));
+          // existingSupervisionTask (SUPERVISION/"Valvonta") already exists from beforeEach
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "type"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(4, result.getNumberOfElements());
+          // Finnish alphabetical: Aloitusvalvonta < Irtisanomisen valvonta < Takuuvalvonta < Valvonta
+          assertEquals(SupervisionTaskType.PRELIMINARY_SUPERVISION, result.getContent().get(0).getType());
+          assertEquals(SupervisionTaskType.TERMINATION, result.getContent().get(1).getType());
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(2).getType());
+          assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(3).getType());
         });
 
         it("Sort by application type when empty criteria", () -> {
@@ -208,6 +237,19 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           assertEquals(shortTermApp.getId(), result.getContent().get(1).getApplicationId());
         });
 
+        it("Sort by type DESC reverses Finnish alphabetical order", () -> {
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner()));
+          // existingSupervisionTask (SUPERVISION/"Valvonta") from beforeEach
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.DESC, "type"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.getNumberOfElements());
+          // DESC Finnish: Valvonta > Takuuvalvonta
+          assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(0).getType());
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(1).getType());
+        });
+
         it("Sort by non-enum column plannedFinishingTime", () -> {
           SupervisionTask laterTask = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
           laterTask.setPlannedFinishingTime(testTime.plusDays(30));
@@ -235,6 +277,33 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           assertTrue("Application IDs should be in ascending order",
             result.getContent().get(0).getApplicationIdText()
               .compareTo(result.getContent().get(1).getApplicationIdText()) <= 0);
+        });
+
+        it("Sort by enum and non-enum columns combined", () -> {
+          SupervisionTask warranty1 = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          warranty1.setPlannedFinishingTime(testTime.plusDays(30));
+          supervisionTaskDao.insert(warranty1);
+
+          SupervisionTask warranty2 = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          warranty2.setPlannedFinishingTime(testTime.plusDays(5));
+          supervisionTaskDao.insert(warranty2);
+          // existingSupervisionTask: SUPERVISION/"Valvonta", plannedFinishingTime = testTime+1day
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(
+            new Order(Direction.ASC, "type"),
+            new Order(Direction.DESC, "plannedFinishingTime")
+          ));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(3, result.getNumberOfElements());
+          // First two: WARRANTY (Takuuvalvonta) sorted by plannedFinishingTime DESC
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(0).getType());
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(1).getType());
+          assertTrue("WARRANTY tasks should be sorted by plannedFinishingTime DESC",
+            result.getContent().get(0).getPlannedFinishingTime()
+              .isAfter(result.getContent().get(1).getPlannedFinishingTime()));
+          // Last: SUPERVISION (Valvonta)
+          assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(2).getType());
         });
 
         it("Find by application id", () -> {
@@ -394,6 +463,9 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           // Enriched fields from owner join
           assertEquals("realname", item.getOwnerRealName());
           assertEquals("enrichedowner", item.getOwnerUserName());
+
+          // Project name from project join
+          assertNotNull("projectName should be populated from project join", item.getProjectName());
         });
 
         context("Count query consistency", () -> {
