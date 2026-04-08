@@ -346,36 +346,35 @@ public class CustomerDao {
   }
 
   private BooleanExpression isDeletableCustomer(Instant cutoff) {
-    return
-      customer.isActive.isTrue()
-        .and(
-          SQLExpressions.selectOne()
-            .from(applicationCustomer)
-            .where(applicationCustomer.customerId.eq(customer.id))
-            .notExists()
-        )
-        .and(
-          SQLExpressions.selectOne()
-            .from(project)
-            .where(project.customerId.eq(customer.id))
-            .notExists()
-        )
-        .and(
-          SQLExpressions.selectOne()
-            .from(application)
-            .where(application.invoiceRecipientId.eq(customer.id))
-            .notExists()
-        )
-        .and(
-          SQLExpressions.selectOne()
-            .from(changeHistory)
-            .where(
-              changeHistory.customerId.eq(customer.id),
-              changeHistory.changeType.eq(ChangeType.CREATED),
-              changeHistory.changeTime.gt(cutoff.atZone(ZoneOffset.UTC))
-            )
-            .notExists()
-        );
+    BooleanExpression notLinkedToApplication = SQLExpressions.selectOne()
+      .from(applicationCustomer)
+      .where(applicationCustomer.customerId.eq(customer.id))
+      .notExists();
+
+    BooleanExpression notLinkedToProject = SQLExpressions.selectOne()
+      .from(project)
+      .where(project.customerId.eq(customer.id))
+      .notExists();
+
+    BooleanExpression notInvoiceRecipient = SQLExpressions.selectOne()
+      .from(application)
+      .where(application.invoiceRecipientId.eq(customer.id))
+      .notExists();
+
+    BooleanExpression notRecentlyCreated = SQLExpressions.selectOne()
+      .from(changeHistory)
+      .where(
+        changeHistory.customerId.eq(customer.id),
+        changeHistory.changeType.eq(ChangeType.CREATED),
+        changeHistory.changeTime.gt(cutoff.atZone(ZoneOffset.UTC))
+      )
+      .notExists();
+
+    return customer.isActive.isTrue()
+      .and(notLinkedToApplication)
+      .and(notLinkedToProject)
+      .and(notInvoiceRecipient)
+      .and(notRecentlyCreated);
   }
 
   private OrderSpecifier<?> toCustomerOrderSpecifier(Sort sort) {
@@ -474,23 +473,29 @@ public class CustomerDao {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
+    
+    BooleanExpression linkedToApplication = SQLExpressions.selectOne()
+      .from(applicationCustomer)
+      .where(applicationCustomer.customerId.eq(customer.id))
+      .exists();
+
+    BooleanExpression linkedToProject = SQLExpressions.selectOne()
+      .from(project)
+      .where(project.customerId.eq(customer.id))
+      .exists();
+
+    BooleanExpression isInvoiceRecipient = SQLExpressions.selectOne()
+      .from(application)
+      .where(application.invoiceRecipientId.eq(customer.id))
+      .exists();
 
     return queryFactory
       .select(customer.id)
       .from(customer)
-      .leftJoin(applicationCustomer)
-      .on(applicationCustomer.customerId.eq(customer.id))
-      .leftJoin(project)
-      .on(project.customerId.eq(customer.id))
-      .leftJoin(application)
-      .on(application.invoiceRecipientId.eq(customer.id))
       .where(
         customer.id.in(ids),
-        applicationCustomer.customerId.isNotNull()
-          .or(project.customerId.isNotNull())
-          .or(application.invoiceRecipientId.isNotNull())
+        linkedToApplication.or(linkedToProject).or(isInvoiceRecipient)
       )
-      .distinct()
       .fetch();
   }
 
