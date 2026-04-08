@@ -6,11 +6,13 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseForEqBuilder;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
@@ -29,12 +31,17 @@ import fi.hel.allu.model.domain.SupervisionTaskLocation;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.geolatte.geom.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.PostConstruct;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -63,26 +70,96 @@ public class SupervisionTaskDao {
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
     supervisionTask.id, supervisionTask.creationTime, supervisionTask.type);
 
-  final static QStructureMeta typeStructure = new QStructureMeta("typeStructure");
-  final static QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");
-  final static QStructureMeta applTypeStructure = new QStructureMeta("applTypeStructure");
-  final static QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
-  final static QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
-  final static QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
+  final static QStructureMeta structureMeta = QStructureMeta.structureMeta;
+  final static QAttributeMeta attributeMeta = QAttributeMeta.attributeMeta;
   final static QUser creator = new QUser("creator");
   final static QUser owner = new QUser("owner");
 
-  final static Map<String, Path<?>> COLUMNS = orderByColumns();
+  // Sort key constants for enum columns – used in both initEnumSortExpressions() and orderByColumns()
+  private static final String SORT_KEY_TASK_TYPE =
+      supervisionTask.type.getMetadata().getName();
+  private static final String SORT_KEY_APPLICATION_TYPE =
+      PathUtil.pathNameWithParent(application.type);
+  private static final String SORT_KEY_APPLICATION_STATUS =
+      PathUtil.pathNameWithParent(application.status);
+
+  private static final Logger logger = LoggerFactory.getLogger(SupervisionTaskDao.class);
 
   final QBean<SupervisionTask> supervisionTaskBean = bean(SupervisionTask.class, supervisionTask.all());
   final QBean<SupervisionWorkItem> supervisionWorkItemBean = bean(SupervisionWorkItem.class, supervisionWorkItemFields());
   final QBean<SupervisionTaskLocation> supervisionTaskLocationBean = bean(SupervisionTaskLocation.class, supervisionTaskLocation.all());
 
+  private Map<String, ComparableExpressionBase<?>> sortColumns;
 
   private final SQLQueryFactory queryFactory;
+  private final TransactionTemplate transactionTemplate;
 
-  public SupervisionTaskDao(SQLQueryFactory queryFactory) {
+  public SupervisionTaskDao(SQLQueryFactory queryFactory, TransactionTemplate transactionTemplate) {
     this.queryFactory = queryFactory;
+    this.transactionTemplate = transactionTemplate;
+  }
+
+  /**
+   * Loads enum-to-Finnish-UI-name translations from structure_meta/attribute_meta
+   * and builds CASE WHEN expressions for sorting enum columns by Finnish names.
+   * This replaces the 6 LEFT JOINs that were previously added to each search query.
+   */
+  @PostConstruct
+  void initEnumSortExpressions() {
+    transactionTemplate.executeWithoutResult(status -> {
+      // Load all translations: typeName -> (enumValue -> uiName)
+      Map<String, Map<String, String>> translations = queryFactory
+        .select(structureMeta.typeName, attributeMeta.name, attributeMeta.uiName)
+        .from(attributeMeta)
+        .join(structureMeta).on(attributeMeta.structureMetaId.eq(structureMeta.id))
+        .where(structureMeta.typeName.in("SupervisionTaskType", "ApplicationType", "StatusType"))
+        .fetch()
+        .stream()
+        .collect(Collectors.groupingBy(
+          tuple -> tuple.get(structureMeta.typeName),
+          Collectors.toMap(
+            tuple -> tuple.get(attributeMeta.name),
+            tuple -> tuple.get(attributeMeta.uiName)
+          )
+        ));
+
+      logger.info("Loaded enum sort translations: {} types, {} total mappings",
+        translations.size(),
+        translations.values().stream().mapToInt(Map::size).sum());
+
+      // Build CASE WHEN expressions for each enum column, keyed by their sort key constant
+      Map<String, StringExpression> enumSortExprs = Map.of(
+        SORT_KEY_TASK_TYPE, buildCaseExpression(
+          supervisionTaskWithAddress.type.stringValue(), translations.getOrDefault("SupervisionTaskType", Collections.emptyMap())),
+        SORT_KEY_APPLICATION_TYPE, buildCaseExpression(
+          application.type.stringValue(), translations.getOrDefault("ApplicationType", Collections.emptyMap())),
+        SORT_KEY_APPLICATION_STATUS, buildCaseExpression(
+          application.status.stringValue(), translations.getOrDefault("StatusType", Collections.emptyMap()))
+      );
+
+      // Build sortColumns map with CASE expressions instead of attribute_meta.ui_name paths
+      sortColumns = orderByColumns(enumSortExprs);
+    });
+  }
+
+  /**
+   * Builds a CASE column WHEN 'ENUM_VALUE' THEN 'Finnish Name' ... END expression
+   * for use as a sort key.
+   */
+  private static StringExpression buildCaseExpression(
+      StringExpression column, Map<String, String> enumToUiName) {
+    if (enumToUiName.isEmpty()) {
+      return column; // fallback: sort by raw enum value
+    }
+    Iterator<Map.Entry<String, String>> it = enumToUiName.entrySet().iterator();
+    Map.Entry<String, String> first = it.next();
+    CaseForEqBuilder<String>.Cases<String, StringExpression> cases =
+      column.when(first.getKey()).then(first.getValue());
+    while (it.hasNext()) {
+      Map.Entry<String, String> entry = it.next();
+      cases = cases.when(entry.getKey()).then(entry.getValue());
+    }
+    return cases.otherwise(column);
   }
 
   @Transactional(readOnly = true)
@@ -215,29 +292,6 @@ public class SupervisionTaskDao {
     @Override public NumberPath<Integer> locationId() { return supervisionTask.locationId; }
   };
 
-  /**
-   * Sort keys that require the structure_meta/attribute_meta joins for enum
-   * column ordering (Finnish UI names instead of raw enum values).
-   */
-  private static final Set<String> ENUM_SORT_KEYS = Set.of(
-    "type", "application.type", "application.status");
-
-  /**
-   * Returns true if the page request sorts by any enum column that requires
-   * the structure_meta/attribute_meta joins.
-   */
-  private static boolean needsEnumSortJoins(Pageable pageRequest) {
-    if (pageRequest == null) {
-      return false;
-    }
-    for (Sort.Order order : pageRequest.getSort()) {
-      if (ENUM_SORT_KEYS.contains(order.getProperty())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   @Transactional(readOnly = true)
   public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     BooleanExpression dataConditions = conditions(searchCriteria, VIEW_PATHS)
@@ -250,22 +304,8 @@ public class SupervisionTaskDao {
       .leftJoin(project).on(application.projectId.eq(project.id))
       .leftJoin(creator).on(supervisionTaskWithAddress.creatorId.eq(creator.id))
       .leftJoin(owner).on(supervisionTaskWithAddress.ownerId.eq(owner.id))
-      .leftJoin(location).on(supervisionTaskWithAddress.locationId.eq(location.id));
-
-    if (needsEnumSortJoins(pageRequest)) {
-      q = q
-        .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
-        .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
-          .and(typeAttribute.name.eq(supervisionTaskWithAddress.type.stringValue())))
-        .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
-        .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
-          .and(applTypeAttribute.name.eq(application.type.stringValue())))
-        .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
-        .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
-          .and(applStatusAttribute.name.eq(application.status.stringValue())));
-    }
-
-    q = q.where(dataConditions);
+      .leftJoin(location).on(supervisionTaskWithAddress.locationId.eq(location.id))
+      .where(dataConditions);
 
     q = handlePageRequest(q, pageRequest);
 
@@ -327,10 +367,10 @@ public class SupervisionTaskDao {
    * @param sort
    * @return
    */
-  public static OrderSpecifier<?>[] toOrder(Sort sort) {
+  public OrderSpecifier<?>[] toOrder(Sort sort) {
     List<OrderSpecifier<?>> order = new ArrayList<>();
     sort.forEach(o -> {
-      ComparableExpressionBase<?> path = (ComparableExpressionBase<?>) Optional.ofNullable(COLUMNS.get(o.getProperty()))
+      ComparableExpressionBase<?> path = Optional.ofNullable(sortColumns.get(o.getProperty()))
         .orElseThrow(() -> new NoSuchEntityException("Bad sort key: " + o.getProperty()));
       order.add(o.isDescending() ? path.desc() : path.asc());
     });
@@ -387,14 +427,18 @@ public class SupervisionTaskDao {
       .exists();
   }
 
-  private static Map<String, Path<?>> orderByColumns() {
-    Map<String, Path<?>> cols = supervisionTaskWithAddress.getColumns().stream()
-      .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
+  private static Map<String, ComparableExpressionBase<?>> orderByColumns(
+      Map<String, StringExpression> enumSortExprs) {
+    Map<String, ComparableExpressionBase<?>> cols = new HashMap<>();
+    // Add view columns that are ComparableExpressionBase (skip SimplePath columns like arrays)
+    supervisionTaskWithAddress.getColumns().forEach(c -> {
+      if (c instanceof ComparableExpressionBase) {
+        cols.put(c.getMetadata().getName(), (ComparableExpressionBase<?>) c);
+      }
+    });
 
-    // Override sorting for enum-column supervisionTask.type:
-    cols.put(supervisionTask.type.getMetadata().getName(), typeAttribute.uiName);
-    cols.put(PathUtil.pathNameWithParent(application.type), applTypeAttribute.uiName);
-    cols.put(PathUtil.pathNameWithParent(application.status), applStatusAttribute.uiName);
+    // Override sorting for enum columns: use CASE WHEN expressions with Finnish UI names
+    cols.putAll(enumSortExprs);
     cols.put(PathUtil.pathNameWithParent(application.applicationId), application.applicationId);
     cols.put(PathUtil.pathNameWithParent(project.name), project.name);
     cols.put(PathUtil.pathNameWithParent(creator.realName), creator.realName);
