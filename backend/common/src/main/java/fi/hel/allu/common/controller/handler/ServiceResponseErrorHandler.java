@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.OptimisticLockException;
 
@@ -42,6 +43,9 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
     } else if (clientHttpResponse.getStatusCode() == HttpStatus.CONFLICT) {
       logger.error("{} response. Throwing OptimisticLockException", HttpStatus.CONFLICT);
       throw new OptimisticLockException(getMessage(clientHttpResponse));
+    } else if (clientHttpResponse.getStatusCode() == HttpStatus.FORBIDDEN) {
+      logger.error("{} response. Throwing IllegalOperationException", HttpStatus.FORBIDDEN);
+      throw new IllegalOperationException(getMessage(clientHttpResponse));
     } else {
       logger.error("Not mapped error response. Throwing runtime exception. {} {}", clientHttpResponse.getStatusCode(),
           clientHttpResponse.getStatusText());
