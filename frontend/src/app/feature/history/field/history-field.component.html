@@ -1,10 +1,8 @@
-<div *ngIf="content" fxLayout="row" class="history-field">
-  <div fxFlexOffset="10%" fxFlex="0 0 15%" class="text-primary">
-    {{content.uiFieldName}}
-  </div>
-  <div fxFlex="0 0 auto">
+<ng-container *ngIf="content">
+  <div class="history-field-label text-primary">{{content.uiFieldName}}</div>
+  <div class="history-field-value">
     <span>{{content.oldValue}}</span>
     <span><mat-icon class="icon-middle">arrow_forward</mat-icon></span>
     <span>{{content.newValue}}</span>
   </div>
-</div>
+</ng-container>

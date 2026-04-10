@@ -18,36 +18,38 @@
     </div>
   </div>
 
-  <history-item-group
-    [changes]="changesToday$ | async"
-    [title]="'common.time.today' | translation | uppercase"
-    [meta]="meta$ | async"
-    [fieldsVisible]="fieldsVisible$ | async">
-  </history-item-group>
+  <div class="history-items">
+    <history-item-group
+      [changes]="changesToday$ | async"
+      [title]="'common.time.today' | translation | uppercase"
+      [meta]="meta$ | async"
+      [fieldsVisible]="fieldsVisible$ | async">
+    </history-item-group>
 
-  <ng-container *ngIf="changesWithinWeek$ | async as changesWithinWeek">
-    <ng-container *ngIf="changesWithinWeek.length">
-      <mat-divider class="divider-loose divider-primary"></mat-divider>
+    <ng-container *ngIf="changesWithinWeek$ | async as changesWithinWeek">
+      <ng-container *ngIf="changesWithinWeek.length">
+        <mat-divider class="divider-loose divider-primary"></mat-divider>
 
-      <history-item-group
-        [changes]="changesWithinWeek"
-        [title]="'common.time.withinWeek' | translation | uppercase"
-        [meta]="meta$ | async"
-        [fieldsVisible]="fieldsVisible$ | async">
-      </history-item-group>
+        <history-item-group
+          [changes]="changesWithinWeek"
+          [title]="'common.time.withinWeek' | translation | uppercase"
+          [meta]="meta$ | async"
+          [fieldsVisible]="fieldsVisible$ | async">
+        </history-item-group>
+      </ng-container>
     </ng-container>
-  </ng-container>
 
-  <ng-container *ngIf="olderChanges$ | async as olderChanges">
-    <ng-container *ngIf="olderChanges.length">
-      <mat-divider class="divider-loose divider-primary"></mat-divider>
+    <ng-container *ngIf="olderChanges$ | async as olderChanges">
+      <ng-container *ngIf="olderChanges.length">
+        <mat-divider class="divider-loose divider-primary"></mat-divider>
 
-      <history-item-group
-        [changes]="olderChanges"
-        [title]="'common.time.older' | translation | uppercase"
-        [meta]="meta$ | async"
-        [fieldsVisible]="fieldsVisible$ | async">
-      </history-item-group>
+        <history-item-group
+          [changes]="olderChanges"
+          [title]="'common.time.older' | translation | uppercase"
+          [meta]="meta$ | async"
+          [fieldsVisible]="fieldsVisible$ | async">
+        </history-item-group>
+      </ng-container>
     </ng-container>
-  </ng-container>
+  </div>
 </allu-card>

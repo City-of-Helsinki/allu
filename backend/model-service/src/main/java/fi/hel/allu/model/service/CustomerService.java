@@ -25,6 +25,7 @@ import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.event.CustomerUpdateEvent;
+import fi.hel.allu.model.service.history.CustomerHistoryMixins;
 
 /**
  * Customer related operations
@@ -49,6 +50,9 @@ public class CustomerService {
     this.userDao = userDao;
     this.customerUpdateEventPublisher = customerUpdateEventPublisher;
     objectComparer = new ObjectComparer();
+    objectComparer.addMixin(Customer.class, CustomerHistoryMixins.CustomerMixin.class);
+    objectComparer.addMixin(Contact.class, CustomerHistoryMixins.ContactMixin.class);
+    objectComparer.addMixin(PostalAddress.class, CustomerHistoryMixins.PostalAddressMixin.class);
   }
 
   /**
@@ -110,7 +114,7 @@ public class CustomerService {
   public Customer update(int id, Customer customer, int userId) {
     Customer oldCustomer = customerDao.findById(id).orElseThrow(() -> new NoSuchEntityException("Customer not found", Integer.toString(id)));
     Customer newCustomer = customerDao.update(id, customer);
-    addChangeItem(id, userId, oldCustomer, newCustomer, "", false);
+    addChangeItem(id, userId, oldCustomer, newCustomer, "", false, null);
     if (!isExternalUser(userId)) {
       customerUpdateEventPublisher.publishEvent(new CustomerUpdateEvent(this, oldCustomer, newCustomer));
     }
@@ -127,7 +131,7 @@ public class CustomerService {
   @Transactional()
   public Customer insert(Customer customer, int userId) {
     Customer newCustomer = customerDao.insert(customer);
-    addChangeItem(newCustomer.getId(), userId, null, newCustomer, "", true);
+    addChangeItem(newCustomer.getId(), userId, null, newCustomer, "", true, null);
     return newCustomer;
   }
 
@@ -198,7 +202,7 @@ public class CustomerService {
   @Transactional
   public List<Contact> insertContacts(List<Contact> contacts, int userId) {
     List<Contact> inserted = contactDao.insert(contacts);
-    inserted.forEach(c -> addChangeItem(c.getCustomerId(), userId, null, c, "/contacts/" + c.getId(), false));
+    inserted.forEach(c -> addChangeItem(c.getCustomerId(), userId, null, c, "/contacts/" + c.getId(), false, "CONTACT"));
     return inserted;
   }
 
@@ -218,7 +222,7 @@ public class CustomerService {
     newContacts
         .forEach(
             c -> addChangeItem(c.getCustomerId(), userId, oldContactsById.get(c.getId()), c, "/contacts/" + c.getId(),
-                false));
+                false, "CONTACT"));
     return newContacts;
   }
 
@@ -237,12 +241,12 @@ public class CustomerService {
    * otherwise make it CONTENTS_CHANGED.
    */
   private void addChangeItem(int customerId, int userId, Object oldData, Object newData, String pathPrefix,
-      boolean isCreate) {
+      boolean isCreate, String changeSpecifier) {
     List<FieldChange> fieldChanges = objectComparer.compare(oldData, newData).stream()
         .map(d -> new FieldChange(pathPrefix + d.keyName, d.oldValue, d.newValue)).collect(Collectors.toList());
     if (!fieldChanges.isEmpty()) {
       ChangeHistoryItem change = new ChangeHistoryItem(userId, null,
-          isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(), fieldChanges);
+          isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, changeSpecifier, ZonedDateTime.now(), fieldChanges);
       historyDao.addCustomerChange(customerId, change);
     }
   }

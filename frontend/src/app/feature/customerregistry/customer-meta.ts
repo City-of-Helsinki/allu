@@ -29,7 +29,7 @@ export const CUSTOMER_META = new StructureMeta('Customer', 1, [
   new AttributeMeta('/postalAddress/city',                      'Toimipaikka',                     'STRING',      undefined),
 
   // Contact fields — the numeric contact ID in paths is wildcarded to * during lookup
-  new AttributeMeta('/contacts/*/name',                         'Yhteyshenkilö',                   'STRING',      undefined),
+  new AttributeMeta('/contacts/*/name',                        'Yhteyshenkilö',                   'STRING',      undefined),
   new AttributeMeta('/contacts/*/email',                        'Sähköpostiosoite',                'STRING',      undefined),
   new AttributeMeta('/contacts/*/phone',                        'Puhelin',                         'STRING',      undefined),
   new AttributeMeta('/contacts/*/active',                       'Aktiivinen',                      'BOOLEAN',     undefined),
