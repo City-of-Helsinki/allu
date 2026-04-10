@@ -52,6 +52,8 @@ SELECT
         WHEN c.change_specifier = 'CANCELLED' THEN 'Peruttu'
         WHEN c.change_specifier = 'REPLACED' THEN 'Korvattu'
         WHEN c.change_specifier = 'ARCHIVED' THEN 'Arkistoitu'
+        WHEN c.change_specifier = 'ANONYMIZED' THEN 'Anonymisoitu'
+        WHEN c.change_specifier = 'TERMINATED' THEN 'Irtisanottu'
         WHEN c.change_specifier = 'NOTE' THEN 'Muistiinpano'
         WHEN c.change_specifier = 'APPLICANT' THEN 'Hakija'
         WHEN c.change_specifier = 'PROPERTY_DEVELOPER' THEN 'Rakennuttaja'
