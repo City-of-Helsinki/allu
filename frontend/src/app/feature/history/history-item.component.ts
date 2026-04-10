@@ -40,9 +40,10 @@ export class HistoryItemComponent implements OnInit {
   }
 
   private getFieldChanges(change: ChangeHistoryItem) {
-    return this.showFields(change)
-      ? change.fieldChanges
-      : [];
+    if (!this.showFields(change)) {
+      return [];
+    }
+    return change.fieldChanges;
   }
 
   private showFields(change: ChangeHistoryItem): boolean {

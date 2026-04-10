@@ -1977,6 +1977,9 @@ export const translations = {
         COMMENT_REMOVED: 'Kommentti poistettu',
       },
       typeWithSpecifier: {
+        CONTENTS_CHANGED: {
+          CONTACT: 'Yhteyshenkilön tietoja päivitetty'
+        },
         STATUS_CHANGED: {
           PENDING_CLIENT: 'Vireille asiakasjärjestelmässä',
           PRE_RESERVED: 'Alustava varaus luotu',
@@ -2079,7 +2082,8 @@ export const translations = {
       },
       operation: {
         ADD: 'lisätty',
-        REMOVE: 'poistettu'
+        REMOVE: 'poistettu',
+        CHANGE: 'muutettu'
       }
     }
   },

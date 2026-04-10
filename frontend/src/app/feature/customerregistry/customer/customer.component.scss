@@ -2,6 +2,51 @@ form {
   margin-top: 20px;
 }
 
+.equal-height-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+
+  > .col {
+    display: flex;
+    position: relative;
+
+    > allu-card {
+      flex: 1;
+    }
+
+    > history {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+
+      ::ng-deep > allu-card {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+
+        > mat-card {
+          flex: 1;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
+
+          .history-items {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+          }
+        }
+      }
+    }
+  }
+}
+
 .title-normal {
   font-size: 14px;
   vertical-align: text-top;

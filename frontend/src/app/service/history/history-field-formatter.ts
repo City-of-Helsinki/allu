@@ -8,6 +8,7 @@ import {findTranslation} from '../../util/translations';
 import {Some} from '../../util/option';
 import {StringUtil} from '../../util/string.util';
 import {CityDistrict} from '../../model/common/city-district';
+import {CodeSetCodeMap} from '../../model/codeset/codeset';
 import * as fromRoot from '../../feature/allu/reducers';
 import {Store} from '@ngrx/store';
 import {take} from 'rxjs/internal/operators';
@@ -17,10 +18,13 @@ export class HistoryFieldFormatter {
 
   private meta: StructureMeta;
   private cityDistricts: Array<CityDistrict> = [];
+  private countries: CodeSetCodeMap = {};
 
   constructor(private store: Store<fromRoot.State>) {
     this.store.select(fromRoot.getAllCityDistricts).pipe(take(1))
       .subscribe(districts => this.cityDistricts = districts);
+    this.store.select(fromRoot.getCodeSetCodeMap('Country')).pipe(take(1))
+      .subscribe(countries => this.countries = countries);
   }
 
   public toFormattedChange(fieldChange: FieldChange, meta: StructureMeta): FieldChange {
@@ -78,10 +82,9 @@ export class HistoryFieldFormatter {
         oldValue = Some(this.cityDistricts.find(d => String(d.id) === oldValue)).map(d => d.name).orElse(undefined);
         newValue = Some(this.cityDistricts.find(d => String(d.id) === newValue)).map(d => d.name).orElse(undefined);
         break;
-      case FieldChangeType.CUSTOMER:
-      case FieldChangeType.CONTACT:
-        uiFieldName = findTranslation(['history.change.field', fieldChange.uiFieldChangeType]) + ' '
-          + findTranslation(['history.change.operation', fieldChange.uiFieldChangeOperationType]);
+      case FieldChangeType.COUNTRY_ID:
+        oldValue = Some(Object.values(this.countries).find(c => String(c.id) === oldValue)).map(c => c.description).orElse(oldValue);
+        newValue = Some(Object.values(this.countries).find(c => String(c.id) === newValue)).map(c => c.description).orElse(newValue);
         break;
       default:
         break;
