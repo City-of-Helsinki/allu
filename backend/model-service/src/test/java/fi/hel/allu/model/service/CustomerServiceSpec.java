@@ -161,9 +161,11 @@ public class CustomerServiceSpec extends SpeccyTestBase {
           ArgumentCaptor<ChangeHistoryItem> captor = ArgumentCaptor.forClass(ChangeHistoryItem.class);
           Mockito.verify(historyDao).addCustomerChange(Mockito.eq(CUSTOMER_ID), captor.capture());
           Set<String> changedFields = captor.getValue().getFieldChanges().stream().map(fc -> fc.getFieldName()).collect(Collectors.toSet());
-          // Check that some known keys were marked as changed:
-          Arrays.asList("/id", "/email", "/name", "/phone", "/id", "/registryKey")
+          // Identity fields are ignored in history diff (see CustomerHistoryMixins),
+          // so verify only business-relevant fields.
+          Arrays.asList("/email", "/name", "/phone", "/registryKey")
               .forEach(key -> assertTrue("key \"" + key + "\" not changed", changedFields.contains(key)));
+          assertTrue("key \"/id\" should not be included in history", !changedFields.contains("/id"));
           // Check that for all keys the previous value was empty string:
           captor.getValue().getFieldChanges().stream()
               .forEach((fc -> assertTrue("key " + fc.getFieldName() + ": old value not empty:" + fc.getOldValue(),
