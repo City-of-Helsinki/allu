@@ -389,6 +389,7 @@ public class CustomerDao {
       case "id" -> asc ? customer.id.asc() : customer.id.desc();
       case "sapCustomerNumber" -> asc ? customer.sapCustomerNumber.asc() : customer.sapCustomerNumber.desc();
       case "name" -> asc ? customer.name.asc() : customer.name.desc();
+      case "type" -> asc ? customer.type.asc() : customer.type.desc();
       default -> customer.id.asc();
     };
   }
