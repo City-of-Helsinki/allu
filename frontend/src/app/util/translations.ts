@@ -676,9 +676,11 @@ export const translations = {
       noCustomerSelected: 'Ei valittua asiakasta',
       noContactSelected: 'Ei valittua yhteyshenkilöä',
       removeCustomerFromApplication: 'Poista asiakas hakemukselta',
+      customerRemoved: 'Poista asiakas hakemukselta',
       customerRemovedDescription: 'Ulkoinen järjestelmä on poistanut asiakkaan hakemukselta.',
       keepCustomer: 'Säilytä nykyinen asiakas',
       removeContactFromApplication: 'Poista yhteyshenkilö hakemukselta',
+      contactRemoved: 'Poista yhteyshenkilö hakemukselta',
       contactRemovedDescription: 'Ulkoinen järjestelmä on poistanut yhteyshenkilön hakemukselta.',
       keepContact: 'Säilytä nykyinen yhteyshenkilö'
     },
