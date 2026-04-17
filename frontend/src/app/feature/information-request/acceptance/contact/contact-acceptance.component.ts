@@ -3,9 +3,8 @@ import {Contact} from '@model/customer/contact';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import * as fromInformationRequest from '@feature/information-request/reducers';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs/index';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CONTACT_MODAL_CONFIG, ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
@@ -19,6 +18,7 @@ import {
 } from '@feature/information-request/acceptance/contact/contact-acceptance-config';
 import {CONFIRM_DIALOG_MODAL_CONFIG, ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {findTranslation} from '@util/translations';
+
 
 @Component({
   selector: 'contact-acceptance',
@@ -72,14 +72,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
     this.config = acceptanceConfig[this.fieldKey];
 
     this.matchingContacts$ = this.store.pipe(
-      select(this.config.getMatchingContacts),
-      withLatestFrom(this.store.pipe(
-        select(fromInformationRequest.getResultContacts),
-        map(selected => selected.map(contact => contact.id))
-      )),
-      // Need to filter by selected so user does not pick up duplicates
-      map(([matching, selected]) => matching.filter(contact => !selected.some(c => c === contact.id))),
-      distinctUntilChanged()
+      select(this.config.getMatchingContacts)
     );
 
     this.searchForm.get('search').valueChanges.pipe(
