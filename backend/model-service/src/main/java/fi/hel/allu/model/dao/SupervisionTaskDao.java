@@ -443,6 +443,8 @@ public class SupervisionTaskDao {
     cols.put(PathUtil.pathNameWithParent(project.name), project.name);
     cols.put(PathUtil.pathNameWithParent(creator.realName), creator.realName);
     cols.put(PathUtil.pathNameWithParent(owner.realName), owner.realName);
+    // address is a SimplePath<String[]> (not ComparableExpressionBase), so add it explicitly
+    cols.put("address", Expressions.stringTemplate("array_to_string({0}, ', ')", supervisionTaskWithAddress.address));
     return cols;
   }
 
