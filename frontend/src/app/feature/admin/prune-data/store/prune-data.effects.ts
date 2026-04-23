@@ -11,7 +11,7 @@ import { selectCurrentTab } from './prune-data.selectors';
 export class PruneDataEffects {
   private applicationsAnonymizableEndpoint  = '/api/applications/anonymizable';
   private applicationsAnonymizeEndpoint  = '/api/applications/anonymize';
-  private customersEndpoint = '/api/customers/';
+  private customersEndpoint = '/api/customers';
   private customersDeletableEndpoint = '/api/customers/deletable';
 
   constructor(

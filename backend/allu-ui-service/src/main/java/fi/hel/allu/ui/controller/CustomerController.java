@@ -176,7 +176,7 @@ public class CustomerController {
    * @param ids List of customer IDs to soft delete
    * @return Result of the deletion operation, including deleted and skipped IDs
    */
-  @DeleteMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<DeleteIdsResult> softDeleteCustomersByIds(@RequestBody List<Integer> ids) {
     DeleteIdsResult result = customerService.softDeleteCustomers(ids);
