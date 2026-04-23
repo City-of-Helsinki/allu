@@ -399,6 +399,8 @@ public class CustomerDao {
    * A customer is purgeable when ALL the following conditions are met:
    * - Is_active = false (already soft-deleted; FK checks were done at soft-delete time
    *   and a deactivated customer cannot be re-linked to any application or project)
+   * - SAP customers (sap_customer_number IS NOT NULL) must have notification_sent_at set,
+   *   meaning the removal email notification has been sent before permanent deletion
    * - The data retention period of 5 years has elapsed since the most recent entry across
    *   ALL history and audit log tables:
    *     * change_history (change_time)
@@ -453,6 +455,8 @@ public class CustomerDao {
           .and(maxUpdateTime.isNull().or(maxUpdateTime.lt(retentionCutoff)))
           // person_audit_log: either no rows for this customer/contacts, or latest entry older than cutoff
           .and(maxAuditTime.isNull().or(maxAuditTime.lt(retentionCutoff)))
+          // SAP customers must have had their removal notification sent before being permanently deleted
+          .and(customer.sapCustomerNumber.isNull().or(customer.notificationSentAt.isNotNull()))
       )
       .orderBy(customer.id.asc())
       .limit(pageSize)
@@ -474,7 +478,7 @@ public class CustomerDao {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
-    
+
     BooleanExpression linkedToApplication = SQLExpressions.selectOne()
       .from(applicationCustomer)
       .where(applicationCustomer.customerId.eq(customer.id))
