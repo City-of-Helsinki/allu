@@ -7,7 +7,7 @@ export const selectCurrentTab = createSelector(
     selectPruneDataState,
     state => state.currentTab
   );
-  
+
 export const selectPruneData = createSelector(
   selectPruneDataState,
   state => state.allData
@@ -41,13 +41,13 @@ export const selectDeleteModalVisibility = createSelector(
 export const selectDeleteInProgress = createSelector(
   selectPruneDataState,
   state => state.deleteInProgress
-)
+);
 
 export const selectAllSelected = createSelector(
   selectFilteredData,
   selectSelectedIds,
   (items, selectedIds) => {
-    if (items.length === 0) return false;
+    if (items.length === 0) { return false; }
     const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
     return pageIds.every(id => selectedIds.includes(id));
   }
@@ -66,27 +66,27 @@ export const selectTotalItems = createSelector(
   selectPruneDataState,
   state => state.totalItems
 );
-  
-  
+
+
 export const selectPageIndex = createSelector(
   selectPruneDataState,
   state => state.pageIndex
 );
-  
-  
+
+
 export const selectPageSize = createSelector(
   selectPruneDataState,
   state => state.pageSize
 );
-  
-  
+
+
 export const selectSortField = createSelector(
   selectPruneDataState,
   state => state.sortField
 );
-  
-  
+
+
 export const selectSortDirection = createSelector(
   selectPruneDataState,
   state => state.sortDirection
-); 
+);
