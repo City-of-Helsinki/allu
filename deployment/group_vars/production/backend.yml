@@ -59,4 +59,5 @@ removed_customers_subject: "Allu - asiakasrekisterist\u00E4 poistettu SAP-numero
 removed_customers_notification_cronstring: "0 0 3 * * *"
 
 # Cron string for permanently deleting inactive customers past their retention period
-customer_purge_cronstring: "0 0 4 * * *"
+# TEMPORARILY DISABLED - remove after fixing purging logic in ALLU-207
+customer_purge_cronstring: "0 0 3 31 2 *"
