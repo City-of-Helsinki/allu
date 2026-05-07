@@ -38,6 +38,58 @@ describe('MapService', () => {
     expect(processedGeoJSON).toBe(roundedOriginalGeoJSON);
   });
 
+  it('should not throw and should skip nested GeometryCollection geometries gracefully', () => {
+    const mapService = new MapUtil(new Projection());
+
+    // The unproject() helper assumes .coordinates exists, but GeometryCollection has
+    // .geometries instead — causing "TypeError: Cannot read properties of undefined (reading '0')"
+    // which aborts the entire Array.map and prevents all applications from being drawn.
+    const geoJSON = {
+      type: 'GeometryCollection',
+      crs: { type: 'name', properties: { name: 'EPSG:3879' } },
+      geometries: [
+        {
+          // Valid polygon — should still be rendered after the fix
+          type: 'Polygon',
+          coordinates: [
+            [
+              [25500000, 6700000],
+              [25500100, 6700000],
+              [25500100, 6700100],
+              [25500000, 6700000]
+            ]
+          ]
+        },
+        {
+          // Nested GeometryCollection — has no .coordinates, only .geometries, which causes
+          // "TypeError: Cannot read properties of undefined (reading '0')" in unproject().
+          type: 'GeometryCollection',
+          geometries: [
+            {
+              type: 'Polygon',
+              coordinates: [
+                [
+                  [25501000, 6701000],
+                  [25501100, 6701000],
+                  [25501100, 6701100],
+                  [25501000, 6701000]
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    // Before the fix this throws:
+    // "TypeError: Cannot read properties of undefined (reading '0')"
+    expect(() => mapService.createFeatureCollection(geoJSON as any)).not.toThrow();
+
+    // The valid polygon should still produce a feature — the bad geometry must not
+    // abort the entire collection
+    const fc = mapService.createFeatureCollection(geoJSON as any);
+    expect(fc.features.length).toBeGreaterThanOrEqual(1);
+  });
 });
 
 class Helper {

@@ -1405,6 +1405,7 @@ export const translations = {
     areasIntersect: 'Alue leikkaa toisen alueen',
     areaIntersects: 'Alue leikkaa itsensä',
     focusOnApplication: 'Tarkenna hakemukseen',
+    applicationGeometryError: 'Seuraavien hakemusten sijaintien piirtäminen kartalle epäonnistui',
     draw: {
       toolbar: {
         actions: {
