@@ -45,11 +45,20 @@ export class MapUtil {
     return geometryCollection;
   }
 
-  public createFeatureCollection(geometryCollection?: GeometryCollection, featureInfo?: MapFeatureInfo):
+  public createFeatureCollection(geometryCollection?: GeometryCollection, featureInfo?: MapFeatureInfo,
+                                  onError?: (err: Error) => void):
     FeatureCollection<GeometryObject> {
     const features = Some(geometryCollection)
       .map(gc => gc.geometries)
-      .map(geometries => geometries.map(g => this.createFeature(g, featureInfo)))
+      .map(geometries => geometries.reduce((acc, g) => {
+        try {
+          acc.push(this.createFeature(g, featureInfo));
+        } catch (e) {
+          console.error('Failed to create feature for geometry', g, e);
+          if (onError) { onError(e); }
+        }
+        return acc;
+      }, [] as Feature<GeometryObject>[]))
       .orElse([]);
 
     return this.wrapToFeatureCollection(features);

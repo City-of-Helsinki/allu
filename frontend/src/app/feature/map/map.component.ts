@@ -22,6 +22,7 @@ import {MapFeatureInfo} from '@service/map/map-feature-info';
 import {EnumUtil} from '@util/enum.util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {FixedLocation} from '@model/common/fixed-location';
+import {NotificationService} from '../notification/notification.service';
 
 @Component({
   selector: 'map',
@@ -46,13 +47,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   loading$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
+  private reportedGeometryErrors = new Set<string>();
 
   constructor(
     private mapStore: MapStore,
     private projectService: ProjectService,
     private mapController: MapController,
     private store: Store<fromRoot.State>,
-    private mapUtil: MapUtil) {}
+    private mapUtil: MapUtil,
+    private notification: NotificationService) {}
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
@@ -120,6 +123,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private drawApplications(applications: Array<Application>) {
+    const failedApplicationIds: string[] = [];
     const drawnApplications = applications
       .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId); // Only draw other than edited application
@@ -127,7 +131,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     const featureGroupsByType = drawnApplications.reduce((acc, app) => {
       const featureCollections = app.locations
         .map(loc => loc.geometry)
-        .map(gc => this.mapUtil.createFeatureCollection(gc, this.createFeatureInfo(app)));
+        .map(gc => this.mapUtil.createFeatureCollection(gc, this.createFeatureInfo(app), () => {
+          if (!failedApplicationIds.includes(app.applicationId)) {
+            failedApplicationIds.push(app.applicationId);
+          }
+        }));
 
       if (acc[app.type] === undefined) {
         acc[app.type] = this.mapUtil.mergeFeatureCollections(featureCollections);
@@ -137,6 +145,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       return acc;
     }, {});
+
+    if (failedApplicationIds.length > 0) {
+      const newFailures = failedApplicationIds.filter(id => !this.reportedGeometryErrors.has(id));
+      if (newFailures.length > 0) {
+        newFailures.forEach(id => this.reportedGeometryErrors.add(id));
+        this.notification.error(findTranslation('map.applicationGeometryError'), newFailures.join('<br>'), true, true);
+      }
+    }
 
     EnumUtil.enumValues(ApplicationType).forEach(type => {
       const layerName = findTranslation(['application.type', type]);
