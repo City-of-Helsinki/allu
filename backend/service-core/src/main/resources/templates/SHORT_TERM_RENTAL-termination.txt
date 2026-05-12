@@ -14,5 +14,5 @@ Helsingin kaupunki
 Kaupunkitilan lupa- ja asiakaspalvelut
 Kaupunkitilan käyttö ja maanvuokraus –yksikkö
 Puh. 09 310 22111
-ulkoilma@hel.fi
+ulkotila@hel.fi
 https://www.hel.fi/fi/yritykset-ja-tyo/yritykset-ja-yrittajat/yritysten-luvat-ja-tilat
