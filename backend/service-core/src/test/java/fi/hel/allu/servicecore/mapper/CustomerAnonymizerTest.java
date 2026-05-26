@@ -96,6 +96,32 @@ class CustomerAnonymizerTest {
     assertEquals("Acme Oy", result.getName());
   }
 
+  // --- registryKey removal ---
+
+  @Test
+  void anonymizeCustomer_companyType_registryKeyIsNull() {
+    CustomerJson company = customerWithName("Acme Oy", CustomerType.COMPANY);
+    company.setRegistryKey("1234567-8");
+    CustomerJson result = anonymizer.anonymizeCustomer(company);
+    assertNull(result.getRegistryKey());
+  }
+
+  @Test
+  void anonymizeCustomer_associationType_registryKeyIsNull() {
+    CustomerJson association = customerWithName("Testi ry", CustomerType.ASSOCIATION);
+    association.setRegistryKey("1234567-8");
+    CustomerJson result = anonymizer.anonymizeCustomer(association);
+    assertNull(result.getRegistryKey());
+  }
+
+  @Test
+  void anonymizeCustomer_personType_registryKeyIsNull() {
+    CustomerJson person = customerWithName("Matti Meikäläinen", CustomerType.PERSON);
+    person.setRegistryKey("010188-012C");
+    CustomerJson result = anonymizer.anonymizeCustomer(person);
+    assertNull(result.getRegistryKey());
+  }
+
   // --- helper ---
 
   private CustomerJson customerWithName(String name, CustomerType type) {
