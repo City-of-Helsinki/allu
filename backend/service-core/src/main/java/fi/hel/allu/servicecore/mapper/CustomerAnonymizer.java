@@ -16,6 +16,25 @@ public class CustomerAnonymizer {
 
   private static final String ANONYMIZED_NAME = "Yksityishenkilö";
 
+  /**
+   * Truncates a customer name at the first occurrence of ';' or 'c/o'
+   * (case-insensitive, optional whitespace around '/'). This ensures that
+   * SAP name rows 2–5 and c/o suffixes are not visible in publishable
+   * anonymized decisions.
+   *
+   * Examples:
+   *   "Acme Oy; Toinen rivi"       → "Acme Oy"
+   *   "Acme Oy c/o Joku Henkilö"   → "Acme Oy"
+   *   "Acme Oy C / O Joku Henkilö" → "Acme Oy"
+   *   "Pelkkä Nimi"                → "Pelkkä Nimi"
+   */
+  static String sanitizeName(String name) {
+    if (name == null) {
+      return null;
+    }
+    return name.split("(?i);|c\\s*/\\s*o")[0].trim();
+  }
+
   public Optional<CustomerWithContactsJson> anonymizeCustomerWithContacts(Optional<CustomerWithContactsJson> cwc) {
     return cwc.map(c ->
         new CustomerWithContactsJson(
@@ -32,7 +51,7 @@ public class CustomerAnonymizer {
       anonymizedCustomer.setPostalAddress(new PostalAddressJson());
     } else {
       anonymizedCustomer.setId(customer.getId());
-      anonymizedCustomer.setName(customer.getName());
+      anonymizedCustomer.setName(sanitizeName(customer.getName()));
       anonymizedCustomer.setActive(customer.isActive());
       anonymizedCustomer.setCountry(customer.getCountry());
       anonymizedCustomer.setInvoicingOnly(customer.isInvoicingOnly());
