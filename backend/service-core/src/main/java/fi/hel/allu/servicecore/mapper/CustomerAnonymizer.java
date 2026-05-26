@@ -59,7 +59,6 @@ public class CustomerAnonymizer {
       anonymizedCustomer.setInvoicingOperator(customer.getInvoicingOperator());
       anonymizedCustomer.setOvt(customer.getOvt());
       anonymizedCustomer.setProjectIdentifierPrefix(customer.getProjectIdentifierPrefix());
-      anonymizedCustomer.setRegistryKey(customer.getRegistryKey());
       anonymizedCustomer.setSapCustomerNumber(customer.getSapCustomerNumber());
       anonymizedCustomer.setType(customer.getType());
       anonymizedCustomer.setPostalAddress(new PostalAddressJson());
