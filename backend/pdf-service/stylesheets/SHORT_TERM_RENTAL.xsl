@@ -174,6 +174,16 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
+      <!-- Rekisterinumerot – ei näytetä anonymisoidussa versiossa -->
+      <xsl:if test="data/registrationNumbers != '' and data/anonymizedDocument = 'false'">
+        <section class="unboxed">
+          <h1>Rekisterinumerot</h1>
+          <p>
+            <xsl:value-of select="data/registrationNumbers"/>
+          </p>
+        </section>
+      </xsl:if>
+
       <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
         <section class="unboxed">
           <h1>Vuokran erittely</h1>
