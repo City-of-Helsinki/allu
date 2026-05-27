@@ -9,6 +9,7 @@ public class ShortTermRental extends ApplicationExtension {
   private String description;
   private Boolean commercial;
   private Boolean billableSalesArea;
+  private String registrationNumbers;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -40,5 +41,13 @@ public class ShortTermRental extends ApplicationExtension {
 
   public void setBillableSalesArea(Boolean billableSalesArea) {
     this.billableSalesArea = billableSalesArea;
+  }
+
+  public String getRegistrationNumbers() {
+    return registrationNumbers;
+  }
+
+  public void setRegistrationNumbers(String registrationNumbers) {
+    this.registrationNumbers = registrationNumbers;
   }
 }

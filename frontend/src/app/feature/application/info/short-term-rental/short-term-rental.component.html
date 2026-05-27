@@ -110,6 +110,15 @@
               </mat-slide-toggle>
             </div>
           </div>
+          <div fxLayout="row" *ngIf="showRegistrationNumbers">
+            <div fxFlex>
+              <mat-form-field class="input-full-width">
+                <textarea matInput cdkTextareaAutosize formControlName="registrationNumbers"
+                          [placeholder]="'application.shortTermRental.registrationNumbers' | translation"
+                          [readonly]="readonly"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
         </mat-card-content>
       </allu-card>
     </div>
