@@ -13,6 +13,7 @@ export interface ShortTermRentalForm extends ApplicationForm {
   billableSalesArea?: boolean;
   terms?: string;
   recurringEndYear?: number;
+  registrationNumbers?: string;
 }
 
 export function from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
@@ -23,7 +24,8 @@ export function from(application: Application, rental: ShortTermRental): ShortTe
     commercial: rental.commercial,
     billableSalesArea: rental.billableSalesArea,
     terms: rental.terms,
-    recurringEndYear: TimeUtil.yearFromDate(application.recurringEndTime)
+    recurringEndYear: TimeUtil.yearFromDate(application.recurringEndTime),
+    registrationNumbers: rental.registrationNumbers
   };
 }
 
@@ -33,6 +35,7 @@ export function to(form: ShortTermRentalForm): ShortTermRental {
   rental.commercial = form.commercial;
   rental.billableSalesArea = form.billableSalesArea;
   rental.terms = form.terms;
+  rental.registrationNumbers = form.registrationNumbers;
   return rental;
 }
 
@@ -47,7 +50,8 @@ export function createStructure(fb: UntypedFormBuilder): { [key: string]: any; }
       endTime: [undefined, Validators.required]
     }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
     terms: [undefined],
-    recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
+    recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)],
+    registrationNumbers: ['']
   };
 }
 
@@ -58,5 +62,6 @@ export function createDraftStructure(fb: UntypedFormBuilder): { [key: string]: a
     startTime: [undefined, Validators.required],
     endTime: [undefined, Validators.required]
   }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') });
+  form.registrationNumbers = [''];
   return form;
 }

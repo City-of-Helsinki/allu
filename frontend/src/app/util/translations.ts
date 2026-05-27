@@ -400,6 +400,7 @@ export const translations = {
       description: 'Vuokrauksen kuvaus',
       commercial: 'Kaupallinen',
       nonCommercial: 'Ei kaupallinen',
+      registrationNumbers: 'Rekisterinumerot',
       field: {
         descriptionMissing: 'Vuokrauksen kuvaus puuttuu',
         rentalStartTimeMissing: 'Vuokrauksen alkuaika puuttuu',

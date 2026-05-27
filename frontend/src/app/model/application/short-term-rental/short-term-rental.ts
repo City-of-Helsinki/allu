@@ -6,7 +6,8 @@ export class ShortTermRental extends ApplicationExtension {
     public description?: string,
     public commercial?: boolean,
     public billableSalesArea?: boolean,
-    public terms?: string) {
+    public terms?: string,
+    public registrationNumbers?: string) {
     super(ApplicationType[ApplicationType.SHORT_TERM_RENTAL], terms);
   }
 }

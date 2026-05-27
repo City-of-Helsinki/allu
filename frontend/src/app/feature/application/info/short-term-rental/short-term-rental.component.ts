@@ -38,6 +38,16 @@ const kindsWithRecurring = [
   ApplicationKind.WINTER_TERRACE,
   ApplicationKind.PARKLET
 ];
+const kindsWithRegistrationNumbers = [
+  ApplicationKind.BENJI,
+  ApplicationKind.SUMMER_THEATER,
+  ApplicationKind.MOBILE_SALES,
+  ApplicationKind.OTHER,
+  ApplicationKind.SMALL_ART_AND_CULTURE,
+  ApplicationKind.SEASON_SALE,
+  ApplicationKind.CIRCUS,
+  ApplicationKind.ART
+];
 
 @Component({
   selector: 'short-term-rental',
@@ -50,6 +60,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   showCommercial = false;
   commercialLabel: string;
   recurringAllowed = false;
+  showRegistrationNumbers = false;
   dateFilter: DateFilter;
   kind$: Observable<ApplicationKind>;
   maxEndDate$: Observable<Date>;
@@ -131,6 +142,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.showCommercial = application.kinds.some(kind => ApplicationKind.BRIDGE_BANNER === kind);
     this.updateCommercialLabel(rental.commercial);
     this.recurringAllowed = kindsWithRecurring.indexOf(application.kind) >= 0;
+    this.showRegistrationNumbers = application.kinds.some(kind => kindsWithRegistrationNumbers.includes(kind));
   }
 
   protected update(form: ShortTermRentalForm): Application {

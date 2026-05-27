@@ -43,7 +43,8 @@ export class ApplicationExtensionMapper {
           backendExtension.description,
           backendExtension.commercial,
           backendExtension.billableSalesArea,
-          backendExtension.terms);
+          backendExtension.terms,
+          backendExtension.registrationNumbers);
       case ApplicationType.CABLE_REPORT:
         return new CableReport(
           TimeUtil.dateFromBackend(backendExtension.validityTime),
@@ -175,7 +176,8 @@ export class ApplicationExtensionMapper {
       description: rental.description,
       commercial: rental.commercial,
       billableSalesArea: rental.billableSalesArea,
-      terms: rental.terms
+      terms: rental.terms,
+      registrationNumbers: rental.registrationNumbers
     };
   }
 

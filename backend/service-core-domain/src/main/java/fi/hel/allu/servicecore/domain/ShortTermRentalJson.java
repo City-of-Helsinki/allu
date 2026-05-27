@@ -10,6 +10,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
   private String description;
   private Boolean commercial;
   private Boolean billableSalesArea;
+  private String registrationNumbers;
 
   @Schema(description = "Application type (always SHORT_TERM_RENTAL).", allowableValues="SHORT_TERM_REANTAL", required = true)
   @Override
@@ -45,5 +46,15 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
   @UpdatableProperty
   public void setBillableSalesArea(Boolean billableSalesArea) {
     this.billableSalesArea = billableSalesArea;
+  }
+
+  @Schema(description = "Registration numbers for vehicles related to the rental")
+  public String getRegistrationNumbers() {
+    return registrationNumbers;
+  }
+
+  @UpdatableProperty
+  public void setRegistrationNumbers(String registrationNumbers) {
+    this.registrationNumbers = registrationNumbers;
   }
 }
