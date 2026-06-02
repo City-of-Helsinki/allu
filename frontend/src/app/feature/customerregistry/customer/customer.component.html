@@ -23,7 +23,7 @@
         </allu-card>
       </div>
       <div class="col m6">
-        <history [targetType]="customerTargetType"></history>
+        <history *ngIf="hasCustomerId" [targetType]="customerTargetType"></history>
       </div>
     </div>
     <div class="row">

@@ -8,6 +8,7 @@ import {ApplicationStatus} from '@model/application/application-status';
 export enum HistoryActionType {
   Load = '[History] Load history',
   LoadByTargetId = '[History] Load history for target',
+  Clear = '[History] Clear history',
   LoadSuccess = '[History] Load history success',
   LoadFailed = '[History] Load history failed',
   LoadStatus = '[History] Load status history',
@@ -25,6 +26,12 @@ export class LoadByTargetId implements ActionWithTarget {
   readonly type = HistoryActionType.LoadByTargetId;
 
   constructor(public targetType: ActionTargetType, public payload: number) {}
+}
+
+export class Clear implements ActionWithTarget {
+  readonly type = HistoryActionType.Clear;
+
+  constructor(public targetType: ActionTargetType) {}
 }
 
 export class LoadSuccess implements ActionWithTarget {
@@ -60,6 +67,7 @@ export class SetFieldsVisible implements ActionWithTarget {
 export type HistoryActions =
   | Load
   | LoadByTargetId
+  | Clear
   | LoadSuccess
   | LoadFailed
   | LoadStatus

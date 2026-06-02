@@ -13,7 +13,7 @@ import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {filter, map, switchMap, take} from 'rxjs/internal/operators';
+import {map, take} from 'rxjs/internal/operators';
 import {FormUtil} from '@util/form.util';
 import {createTranslated} from '@service/error/error-info';
 import { CurrentUser } from '@app/service/user/current-user';
@@ -21,7 +21,7 @@ import { RoleType } from '@app/model/user/role-type';
 import {Store} from '@ngrx/store';
 import * as fromCustomer from '@feature/customerregistry/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {LoadByTargetId} from '@feature/history/actions/history-actions';
+import {Clear, LoadByTargetId} from '@feature/history/actions/history-actions';
 
 
 @Component({
@@ -38,6 +38,7 @@ export class CustomerComponent implements OnInit {
   customerForm: UntypedFormGroup;
   contactSubject = new Subject<Contact>();
   isRemoveVisible = true;
+  hasCustomerId = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -51,18 +52,16 @@ export class CustomerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.pipe(
-      map(p => p['id']),
-      filter(id => NumberUtil.isDefined(id)),
-    ).subscribe(id => {
-      this.store.dispatch(new LoadByTargetId(ActionTargetType.Customer, +id));
+    this.route.params.pipe(map(p => p['id'])).subscribe(id => {
+      this.hasCustomerId = NumberUtil.isDefined(id);
+      if (this.hasCustomerId) {
+        this.store.dispatch(new LoadByTargetId(ActionTargetType.Customer, +id));
+        this.customerService.findCustomerById(+id)
+          .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
+      } else {
+        this.store.dispatch(new Clear(ActionTargetType.Customer));
+      }
     });
-
-    this.route.params.pipe(
-      map(p => p['id']),
-      filter(id => NumberUtil.isDefined(id)),
-      switchMap(id => this.customerService.findCustomerById(id))
-    ).subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
 
     this.removeButtonVisibilityStatus();
   }
@@ -76,7 +75,7 @@ export class CustomerComponent implements OnInit {
       .subscribe(value => {
         if (value && !userHasRole) {
           this.isRemoveVisible = false;
-        } 
+        }
     });
   }
 
