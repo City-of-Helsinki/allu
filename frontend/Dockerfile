@@ -1,4 +1,4 @@
-FROM node:12.18
+FROM node:20.11
 ENV NODE_ENV=dev
 
 WORKDIR /allu-frontend

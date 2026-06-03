@@ -13,11 +13,11 @@
     "test": "ng test",
     "test:watch": "ng test --watch=true",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "engines": {
-      "node": "12.x",
-      "npm": "6.x"
-    }
+    "e2e": "ng e2e"
+  },
+  "engines": {
+    "node": ">=18.13.0 <21",
+    "npm": ">=9 <11"
   },
   "private": true,
   "dependencies": {
