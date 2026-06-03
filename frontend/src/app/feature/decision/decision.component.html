@@ -9,12 +9,14 @@
       <div fxLayout="row">
         <div fxFlex>
           <allu-card>
-            <mat-card-title *ngIf="application.type === 'PLACEMENT_CONTRACT'">
-              {{'decision.contractAttachments' | translation}}
-            </mat-card-title>
-            <mat-card-title  *ngIf="application.type !== 'PLACEMENT_CONTRACT'">
-              {{'decision.decisionAttachments' | translation}}
-            </mat-card-title>
+            <mat-card-header>
+              <mat-card-title *ngIf="application.type === 'PLACEMENT_CONTRACT'">
+                {{'decision.contractAttachments' | translation}}
+              </mat-card-title>
+              <mat-card-title  *ngIf="application.type !== 'PLACEMENT_CONTRACT'">
+                {{'decision.decisionAttachments' | translation}}
+              </mat-card-title>
+            </mat-card-header>
             <mat-card-content>
               <attachment-thumbnails [attachments]="decisionAttachments$ | async"></attachment-thumbnails>
             </mat-card-content>
@@ -24,7 +26,9 @@
       <div fxLayout="row">
         <div fxFlex>
           <allu-card>
-            <mat-card-title>{{'decision.distribution.title' | translation}}</mat-card-title>
+            <mat-card-header>
+              <mat-card-title>{{'decision.distribution.title' | translation}}</mat-card-title>
+            </mat-card-header>
             <mat-card-content>
               <div fxLayout="row">
                 <div fxFlex>

@@ -1,5 +1,7 @@
 <allu-card *ngIf="application">
-  <mat-card-title>{{'applicationInfo.title' | translation}}</mat-card-title>
+  <mat-card-header>
+    <mat-card-title>{{'applicationInfo.title' | translation}}</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <div fxLayout="row wrap" fxLayoutGap="18px">
       <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">

@@ -11,7 +11,9 @@
       </div>
       <div fxFlex="calc(50% - 18px)">
         <allu-card *ngIf="showMap">
-          <mat-card-title>{{'location.existingAreas' | translation}}</mat-card-title>
+          <mat-card-header>
+            <mat-card-title>{{'location.existingAreas' | translation}}</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start center">
               <ng-container *ngIf="fixedLocations.length > 0">
@@ -55,7 +57,9 @@
     <div fxLayout="row" *ngIf="showMap">
       <div fxFlex>
         <allu-card>
-          <mat-card-title>{{'location.title' | translation}}</mat-card-title>
+          <mat-card-header>
+            <mat-card-title>{{'location.title' | translation}}</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <div class="row">
               <div class="mapcontainer">
@@ -188,7 +192,9 @@
     <div fxLayout="row" *ngIf="showMap">
       <div fxFlex>
         <allu-card>
-          <mat-card-title>{{'common.saving' | translation}}</mat-card-title>
+          <mat-card-header>
+            <mat-card-title>{{'common.saving' | translation}}</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <div fxLayout="row">
               <div fxFlex="0 1 70%">

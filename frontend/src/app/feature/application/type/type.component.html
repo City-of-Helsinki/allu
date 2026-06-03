@@ -1,14 +1,16 @@
 <div fxLayout="row">
   <div fxFlex>
     <allu-card>
-      <mat-card-content *ngIf="pendingKind$ | async as pendingKind">
-        <div fxLayout="row" fxLayoutGap=2px fxLayoutAlign="start center">
-          <mat-icon color="accent">warning</mat-icon>
-          <div>{{'application.clientData.newValue' | translation:{value: pendingKind} }}.</div>
-          <a class="clickable" [routerLink]="'pending_info'">{{'application.clientData.show' | translation}}</a>
-        </div>
-      </mat-card-content>
-      <mat-card-title>{{'application.type.titleLong' | translation}}</mat-card-title>
+      <mat-card-header>
+        <mat-card-content *ngIf="pendingKind$ | async as pendingKind">
+          <div fxLayout="row" fxLayoutGap=2px fxLayoutAlign="start center">
+            <mat-icon color="accent">warning</mat-icon>
+            <div>{{'application.clientData.newValue' | translation:{value: pendingKind} }}.</div>
+            <a class="clickable" [routerLink]="'pending_info'">{{'application.clientData.show' | translation}}</a>
+          </div>
+        </mat-card-content>
+        <mat-card-title>{{'application.type.titleLong' | translation}}</mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <form [formGroup]="form">
           <div fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start center" class="inner-row">

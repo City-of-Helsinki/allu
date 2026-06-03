@@ -15,8 +15,7 @@ import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/mater
 
 @Component({
   selector: 'history',
-  templateUrl: './history.component.html',
-  styleUrls: ['./history.component.scss']
+  templateUrl: './history.component.html'
 })
 export class HistoryComponent implements OnInit {
   @Input() targetType: ActionTargetType;

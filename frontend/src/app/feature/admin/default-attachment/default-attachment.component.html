@@ -1,8 +1,10 @@
 <div class="main-content">
   <allu-card>
-    <mat-card-title>
-      <h1>{{['attachment.type', attachmentType] | translation}}</h1>
-    </mat-card-title>
+    <mat-card-header>
+      <mat-card-title>
+        <h1>{{['attachment.type', attachmentType] | translation}}</h1>
+      </mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <form [formGroup]="attachmentForm">
         <div class="row">

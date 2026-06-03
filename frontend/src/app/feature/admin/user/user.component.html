@@ -2,7 +2,9 @@
   <div fxLayout="row">
     <div fxFlex="50%">
       <allu-card>
-        <mat-card-title>{{'user.userInfo' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'user.userInfo' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
             <div fxLayout="row" fxLayoutGap="18px">

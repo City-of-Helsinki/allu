@@ -2,19 +2,21 @@
   <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex *ngIf="billable">
       <allu-card>
-        <mat-card-title>
-          <div fxLayout="row" fxFlexAlign="space-between">
-            <div fxFlex>
-              {{'invoice.info.address' | translation}}
+        <mat-card-header>
+          <mat-card-title>
+            <div fxLayout="row" fxFlexAlign="space-between">
+              <div fxFlex>
+                {{'invoice.info.address' | translation}}
+              </div>
+              <div fxFlex *ngIf="invoicingProhibited" class="align-right">
+                <mat-icon color="accent" class="align-with-text">
+                  report_problem
+                </mat-icon>
+                <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
+              </div>
             </div>
-            <div fxFlex *ngIf="invoicingProhibited" class="align-right">
-              <mat-icon color="accent" class="align-with-text">
-                report_problem
-              </mat-icon>
-              <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
-            </div>
-          </div>
-        </mat-card-title>
+          </mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div class="container-centered-container" *ngIf="customerLoading$ | async">
             <mat-spinner></mat-spinner>
@@ -28,9 +30,11 @@
       <div [fxLayout]="detailsDepositDirection" fxLayoutGap="8px">
         <div fxFlex>
           <allu-card>
-            <mat-card-title>
-              {{'invoice.info.details' | translation}}
-            </mat-card-title>
+            <mat-card-header>
+              <mat-card-title>
+                {{'invoice.info.details' | translation}}
+              </mat-card-title>
+            </mat-card-header>
             <mat-card-content>
               <div fxLayout="row wrap">
                 <div fxFlex class="height-fix-bottom">
@@ -83,9 +87,11 @@
         </div>
         <div fxFlex *ngIf="showDeposit">
           <allu-card>
-            <mat-card-title>
-              {{'invoice.info.deposit' | translation}}
-            </mat-card-title>
+            <mat-card-header>
+              <mat-card-title>
+                {{'invoice.info.deposit' | translation}}
+              </mat-card-title>
+            </mat-card-header>
             <mat-card-content>
               <div fxLayout="row" fxLayoutGap="18px">
                 <div fxFlex>

@@ -1,13 +1,9 @@
-<mat-card-subtitle class="allu-card-title">
-  {{title}}
-</mat-card-subtitle>
-<mat-card-content>
-  <ul class="history-items">
-    <li *ngFor="let change of changes">
-      <history-item
-        [change]="change"
-        [meta]="meta"
-        [fieldsVisible]="fieldsVisible"></history-item>
-    </li>
-  </ul>
-</mat-card-content>
+<h3>{{title}}</h3>
+<ul class="history-items">
+  <li *ngFor="let change of changes">
+    <history-item
+      [change]="change"
+      [meta]="meta"
+      [fieldsVisible]="fieldsVisible"></history-item>
+  </li>
+</ul>

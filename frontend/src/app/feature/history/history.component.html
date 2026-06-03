@@ -1,24 +1,20 @@
-<allu-card class="full-width">
-  <div class="centered-container" *ngIf="loading$ | async">
-    <mat-spinner></mat-spinner>
-  </div>
-  <div fxLayout="row" fxLayoutAlign="space-between" class="history-header-row">
-    <div fxFlex="auto">
-      <mat-card-title>
-        {{'history.title' | translation}}
-      </mat-card-title>
+<allu-card>
+  <mat-card-header fxLayout="row" fxLayoutAlign="space-between">
+    <mat-card-title fxFlex="auto">
+      {{'history.title' | translation}}
+    </mat-card-title>
+    <mat-slide-toggle
+      fxFlex="0 0 auto"
+      labelPosition="before"
+      [checked]="fieldsVisible$ | async"
+      (change)="toggleFieldVisibility($event)">
+      {{'history.showFieldChanges' | translation}}
+    </mat-slide-toggle>
+  </mat-card-header>
+  <mat-card-content class="history-items">
+    <div class="centered-container" *ngIf="loading$ | async">
+      <mat-spinner></mat-spinner>
     </div>
-    <div fxFlex="0 0 auto">
-      <mat-slide-toggle
-        labelPosition="before"
-        [checked]="fieldsVisible$ | async"
-        (change)="toggleFieldVisibility($event)">
-        {{'history.showFieldChanges' | translation}}
-      </mat-slide-toggle>
-    </div>
-  </div>
-
-  <div class="history-items">
     <history-item-group
       [changes]="changesToday$ | async"
       [title]="'common.time.today' | translation | uppercase"
@@ -29,7 +25,6 @@
     <ng-container *ngIf="changesWithinWeek$ | async as changesWithinWeek">
       <ng-container *ngIf="changesWithinWeek.length">
         <mat-divider class="divider-loose divider-primary"></mat-divider>
-
         <history-item-group
           [changes]="changesWithinWeek"
           [title]="'common.time.withinWeek' | translation | uppercase"
@@ -42,7 +37,6 @@
     <ng-container *ngIf="olderChanges$ | async as olderChanges">
       <ng-container *ngIf="olderChanges.length">
         <mat-divider class="divider-loose divider-primary"></mat-divider>
-
         <history-item-group
           [changes]="olderChanges"
           [title]="'common.time.older' | translation | uppercase"
@@ -51,5 +45,5 @@
         </history-item-group>
       </ng-container>
     </ng-container>
-  </div>
+  </mat-card-content>
 </allu-card>

@@ -1,6 +1,8 @@
 <ng-container *ngIf="defaultAttachments$ | async as defaultAttachments">
   <allu-card *ngIf="defaultAttachments?.length > 0">
-    <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
+    <mat-card-header>
+      <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <div *ngIf="isAllowedToEdit">
         <selection-group fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start"

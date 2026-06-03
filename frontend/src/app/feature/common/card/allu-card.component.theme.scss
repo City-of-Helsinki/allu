@@ -7,16 +7,16 @@
   allu-card mat-card {
     background: $allu-card-background;
 
-    .mat-card-title,
-    .mat-card-subtitle {
+    .mat-mdc-card-title,
+    .mat-mdc-card-subtitle {
       color: mat.get-color-from-palette($primary, 500);
     }
-
+    /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
     mat-card-content label.info-label {
       color: $allu-text-black;
     }
 
-    &.mat-card .mat-divider .divider-primary {
+    &.mat-mdc-card .mat-divider .divider-primary {
       border-top-color: mat.get-color-from-palette($primary, 200);
     }
   }

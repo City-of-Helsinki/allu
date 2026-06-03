@@ -1,12 +1,14 @@
-<allu-card class="full-width" borderSide="left" [borderColor]="color">
-  <mat-card-title class="allu-card-title">
-    <ng-container *ngIf="invoicingDate; else openInvoice">
-      {{invoicingDate | date:'shortDate'}}
-    </ng-container>
-    <ng-template #openInvoice>
-      {{'invoice.open' | translation}}
-    </ng-template>
-  </mat-card-title>
+<allu-card class="full-width">
+  <mat-card-header>
+    <mat-card-title>
+      <ng-container *ngIf="invoicingDate; else openInvoice">
+        {{invoicingDate | date:'shortDate'}}
+      </ng-container>
+      <ng-template #openInvoice>
+        {{'invoice.open' | translation}}
+      </ng-template>
+    </mat-card-title>
+  </mat-card-header>
   <mat-card-content class="bordered">
     <ul>
       <li *ngFor="let row of invoice.rows" class="invoice-row-container">
