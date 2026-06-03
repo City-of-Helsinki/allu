@@ -1,7 +1,9 @@
 @use '@angular/material' as mat;
 
-@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());
+@include mat.typography-hierarchy(mat.define-typography-config());
+/* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated */
 @include mat.legacy-core();
+@include mat.core();
 
 $black-87-opacity: rgba(black, 0.87);
 $black-50-opacity: rgba(black, 0.50);

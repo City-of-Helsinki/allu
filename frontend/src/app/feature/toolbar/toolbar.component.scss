@@ -56,6 +56,11 @@ h1 {
   height: 100%;
 }
 
+ .toolbar-section button[mat-button].mat-mdc-button {
+   --mdc-text-button-label-text-color: #{mat.get-contrast-color-from-palette($allu-primary, 500)};
+   color: mat.get-contrast-color-from-palette($allu-primary, 500);
+ }
+
 .pill {
   -webkit-border-radius: 12px;
   -moz-border-radius: 12px;

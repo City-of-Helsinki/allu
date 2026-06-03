@@ -3,7 +3,7 @@ import {CommonModule, registerLocaleData} from '@angular/common';
 import localeFi from '@angular/common/locales/fi';
 import {MatLegacyAutocompleteModule as MatAutocompleteModule} from '@angular/material/legacy-autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
-import {MatLegacyButtonModule as MatButtonModule} from '@angular/material/legacy-button';
+import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
 import {MatLegacyCheckboxModule as MatCheckboxModule} from '@angular/material/legacy-checkbox';
