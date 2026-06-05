@@ -1,7 +1,7 @@
 import {Attribute, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {ApplicationType} from '@model/application/type/application-type';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, Subscription} from 'rxjs';
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../default-text/default-text-modal.component';
 import {DefaultText} from '@model/application/cable-report/default-text';

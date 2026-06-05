@@ -10,7 +10,7 @@ import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {findTranslation} from '@util/translations';
 import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';

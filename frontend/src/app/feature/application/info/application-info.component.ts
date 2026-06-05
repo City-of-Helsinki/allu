@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {UrlUtil} from '@util/url.util';

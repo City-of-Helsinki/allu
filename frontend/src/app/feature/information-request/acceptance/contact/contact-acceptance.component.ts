@@ -8,7 +8,7 @@ import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/intern
 import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CONTACT_MODAL_CONFIG, ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {NumberUtil} from '@util/number.util';
 import {isEqualWithSkip} from '@util/object.util';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';

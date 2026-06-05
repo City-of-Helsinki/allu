@@ -14,7 +14,7 @@ import {
 import {ReportLocationCustomerValidity} from '@feature/application/actions/date-reporting-actions';
 import {DateReport} from '@model/application/date-report';
 import {filter} from 'rxjs/operators';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ObjectUtil} from '@util/object.util';
 import {NumberUtil} from '@util/number.util';
 
