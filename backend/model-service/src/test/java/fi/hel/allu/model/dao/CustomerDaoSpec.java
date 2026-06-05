@@ -682,6 +682,119 @@ public class CustomerDaoSpec extends SpeccyTestBase {
 
           assertTrue(result.isEmpty());
         });
+
+        it("should exclude customer linked via application_customer", () -> {
+          Customer c = customerDao.insert(dummyCustomer(10));
+          c.setSapCustomerNumber("SAP10");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Application app = testCommon.dummyOutdoorApplication("AppLink", RandomStringUtils.randomAlphabetic(10));
+          app.setCustomersWithContacts(
+            Collections.singletonList(
+              new CustomerWithContacts(CustomerRoleType.APPLICANT, c, Collections.emptyList())
+            )
+          );
+          applicationDao.insert(app);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Linked customer must not appear in result",
+            result.stream().noneMatch(r -> "SAP10".equals(r.sapCustomerNumber())));
+        });
+
+        it("should exclude customer set as invoice recipient on an application", () -> {
+          Customer c = customerDao.insert(dummyCustomer(11));
+          c.setSapCustomerNumber("SAP11");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Application invoiceApp = testCommon.dummyOutdoorApplication("InvoiceApp", RandomStringUtils.randomAlphabetic(10));
+          invoiceApp.setInvoiceRecipientId(c.getId());
+          applicationDao.insert(invoiceApp);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Invoice recipient customer must not appear in result",
+            result.stream().noneMatch(r -> "SAP11".equals(r.sapCustomerNumber())));
+        });
+
+        it("should exclude customer linked to a project", () -> {
+          Customer c = customerDao.insert(dummyCustomer(12));
+          c.setSapCustomerNumber("SAP12");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Project project = new Project();
+          project.setName("proj-sap");
+          project.setCustomerId(c.getId());
+          project.setContactId(testCommon.insertContact(c.getId()).getId());
+          project.setStartTime(ZonedDateTime.now());
+          project.setIdentifier("identifier-sap");
+          project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(project);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Project-linked customer must not appear in result",
+            result.stream().noneMatch(r -> "SAP12".equals(r.sapCustomerNumber())));
+        });
+
+        it("should exclude customer linked via all three link types only once (result size is correct)", () -> {
+          Customer linked = customerDao.insert(dummyCustomer(13));
+          linked.setSapCustomerNumber("SAP13");
+          linked.setIsActive(false);
+          customerDao.update(linked.getId(), linked);
+
+          // Link via application_customer
+          Application app = testCommon.dummyOutdoorApplication("TripleLink", RandomStringUtils.randomAlphabetic(10));
+          app.setCustomersWithContacts(
+            Collections.singletonList(
+              new CustomerWithContacts(CustomerRoleType.APPLICANT, linked, Collections.emptyList())
+            )
+          );
+          applicationDao.insert(app);
+
+          // Link via invoice_recipient_id
+          Application invoiceApp = testCommon.dummyOutdoorApplication("TripleLinkInvoice", RandomStringUtils.randomAlphabetic(10));
+          invoiceApp.setInvoiceRecipientId(linked.getId());
+          applicationDao.insert(invoiceApp);
+
+          // Link via project
+          Project project = new Project();
+          project.setName("proj-triple");
+          project.setCustomerId(linked.getId());
+          project.setContactId(testCommon.insertContact(linked.getId()).getId());
+          project.setStartTime(ZonedDateTime.now());
+          project.setIdentifier("identifier-triple");
+          project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(project);
+
+          // An unlinked SAP customer that should still appear
+          Customer unlinked = customerDao.insert(dummyCustomer(14));
+          unlinked.setSapCustomerNumber("SAP14");
+          unlinked.setIsActive(false);
+          customerDao.update(unlinked.getId(), unlinked);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Unlinked customer must appear",
+            result.stream().anyMatch(r -> "SAP14".equals(r.sapCustomerNumber())));
+          assertEquals("Triply-linked customer must appear only 0 extra times (excluded once)",
+            0L, result.stream().filter(r -> "SAP13".equals(r.sapCustomerNumber())).count());
+        });
+
+        it("should still return unlinked inactive SAP customer (regression)", () -> {
+          Customer c = customerDao.insert(dummyCustomer(15));
+          c.setSapCustomerNumber("SAP15");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Unlinked inactive SAP customer must be returned",
+            result.stream().anyMatch(r -> "SAP15".equals(r.sapCustomerNumber())));
+        });
       });
     });
 
