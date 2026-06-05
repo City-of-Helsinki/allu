@@ -16,7 +16,7 @@ import {AdminComponent} from './admin.component';
 import {AdminNavComponent} from './nav/admin-nav.component';
 import {DefaultAttachmentsComponent} from './default-attachment/default-attachments.component';
 import {DefaultAttachmentComponent} from './default-attachment/default-attachment.component';
-import {SelectionGroupModule} from '@feature/common/selection-group/selection-group.module';
+import {MatChipsModule} from '@angular/material/chips';
 import {DefaultRecipientsComponent} from './default-recipients/default-recipients.component';
 import {RecipientsByTypeComponent} from './default-recipients/recipients-by-type.component';
 import {DefaultRecipientService} from '@service/recipients/default-recipient.service';
@@ -37,7 +37,7 @@ import { PruneDataModule } from './prune-data/prune-data.module'
     MatCardModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    SelectionGroupModule,
+    MatChipsModule,
     ConfigurationModule,
     MatTableModule,
     MatPaginatorModule,

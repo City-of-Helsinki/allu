@@ -84,11 +84,11 @@
       <div class="col s12 item-bar">
         <div class="item-bar-content">
           <span>{{'application.tags' | translation}}:</span>
-          <selection-group formControlName="tags">
-            <selection-item *ngFor="let type of tagTypes" [item]="type" selectType="CHIP">
+          <mat-chip-listbox multiple formControlName="tags">
+            <mat-chip-option *ngFor="let type of tagTypes" [value]="type">
               {{['application.tag.type', type] | translation}}
-            </selection-item>
-          </selection-group>
+            </mat-chip-option>
+          </mat-chip-listbox>
         </div>
       </div>
     </div>

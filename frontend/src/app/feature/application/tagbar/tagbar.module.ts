@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {MatLegacyChipsModule as MatChipsModule} from '@angular/material/legacy-chips';
+import {MatChipsModule} from '@angular/material/chips';
 import {MatLegacyMenuModule as MatMenuModule} from '@angular/material/legacy-menu';
 
 import {AlluCommonModule} from '../../common/allu-common.module';

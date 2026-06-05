@@ -4,15 +4,6 @@
   transform: translate3d(0,0,0) scale(.75);
 }
 
-.checkbox-matching-height .mat-checkbox-layout .mat-checkbox-label {
-  line-height: 42px;
-}
-
-.mat-checkbox-margin label.mat-checkbox-layout {
-  margin-bottom: 0.2rem;
-}
-
-
 @mixin placeholder-theme($theme) {
   $primary: map-get($theme, primary);
 
@@ -51,28 +42,6 @@
 .mat-input-element::placeholder,
 .mat-radio-label-content {
   color: rgba(0, 0, 0, 0.68) !important;
-}
-
-
-@mixin checkbox-theme($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-
-  .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
-    background-color: mat.get-color-from-palette($accent, 200);
-  }
-
-  .mat-checkbox-checked .mat-checkbox-frame {
-    border-color: mat.get-color-from-palette($accent, 200);
-  }
-
-  .mat-checkbox-label {
-    color: rgba(black, 0.87);
-  }
-
-  .mat-checkbox-disabled .mat-checkbox-label {
-    color: $black-38-opacity;
-  }
 }
 
 .mat-autocomplete-panel {

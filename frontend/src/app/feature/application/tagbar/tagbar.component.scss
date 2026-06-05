@@ -1,21 +1,2 @@
+@use '@angular/material' as mat;
 @import '../../../../assets/colors';
-
-.single-line {
-    white-space: nowrap;
-}
-
-mat-chip {
-  height: 30px;
-}
-
-.application-info {
-  min-width: 200px;
-}
-
-.tags > div {
-  margin: 0 0 0 8px;
-}
-
-.tags[fxLayout="row"] {
-  margin-bottom: 0;
-}

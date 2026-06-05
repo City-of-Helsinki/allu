@@ -1,0 +1,19 @@
+.default-attachment-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.default-attachment-checkbox {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.default-attachment-label {
+  margin-right: 4px;
+}
+
+.default-attachment-download {
+  vertical-align: middle;
+}

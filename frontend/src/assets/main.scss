@@ -18,7 +18,6 @@
 @import 'allu-common-theme';
 @import 'icons-theme';
 @import 'list-theme';
-@import 'checkbox-theme';
 @import 'forms';
 @import 'autocomplete';
 @import 'progressbar';
@@ -46,7 +45,6 @@
 @include allu-icons-theme($allu-theme, $black-50-opacity, $allu-success);
 @include allu-list-theme($allu-theme);
 @include placeholder-theme($allu-theme);
-@include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
 @include input-box-theme($allu-theme, $white-87-opacity);
 @include stored-filter-theme($allu-theme);
@@ -66,7 +64,6 @@
 @include charge-basis-theme($allu-theme);
 @include invoice-theme($allu-theme);
 @include field-select-theme($allu-theme, $allu-success);
-@include allu-checkbox-theme($allu-theme);
 
 // Reset
 html,
@@ -226,11 +223,6 @@ input:-webkit-autofill:active {
   font-weight: bold;
 }
 
-.input-field-checkbox .mat-checkbox-layout {
-  margin: 8px 0;
-  padding-bottom: 1.25em;
-}
-
 .row.no-left-pad .col {
   padding: 0 0.75rem 0 0;
   label {
@@ -318,35 +310,14 @@ ul.card-list {
   font-size: 0.8rem;
 }
 
-.allu-chip {
-  font-size: 14px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 1.43;
-  letter-spacing: normal;
-}
-
-.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-accent {
-  @extend .allu-chip;
-  color: mat.get-contrast-color-from-palette($allu-accent, 800);
-  font-weight: bold;
-  letter-spacing: 1.5px;
-}
-
-.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary {
-  @extend .allu-chip;
-  color: mat.get-contrast-color-from-palette($allu-primary, 500);
-}
-
-.mat-chip:not(.mat-basic-chip).slim-chip {
-  padding: 0px 12px;
-}
-
-.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary.chip-outline {
-  color: mat.get-color-from-palette($allu-primary, 500);
-  background-color: transparent;
-  border: 2px solid mat.get-color-from-palette($allu-primary, 500);
+mat-chip-option.mat-mdc-chip-option.mat-mdc-chip-selected,
+mat-chip-row.mat-mdc-chip-row[selected='true'],
+mat-chip.mat-mdc-chip-highlighted {
+  --mdc-chip-elevated-container-color: #{mat.get-color-from-palette($allu-accent, 500)} !important;
+  --mdc-chip-label-text-color: #{mat.get-color-config($black-50-opacity)} !important;
+  --mdc-chip-with-icon-selected-icon-color: #{mat.get-color-config($black-50-opacity)} !important;
+  --mdc-chip-with-trailing-icon-trailing-icon-color: #{mat.get-color-config($black-87-opacity)} !important;
+  --mdc-chip-label-text-weight: bold;
 }
 
 .input-full-width {

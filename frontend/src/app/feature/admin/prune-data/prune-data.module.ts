@@ -5,7 +5,7 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlluCommonModule } from '@feature/common/allu-common.module';
 import { EffectsModule } from '@ngrx/effects';

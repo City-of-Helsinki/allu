@@ -41,12 +41,6 @@
   color: mat.get-color-from-palette($allu-primary, 500);
 }
 
-.mat-chip.slim-chip {
-  margin: 0px 2px;
-  line-height: 1.43;
-  font-size: 14px;
-}
-
 .comment-content {
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -7,7 +7,6 @@ import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentComponent} from './attachment.component';
 import {AttachmentsComponent} from './attachments.component';
 import {DefaultAttachmentsComponent} from './default-attachments.component';
-import {SelectionGroupModule} from '../../common/selection-group/selection-group.module';
 import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
 
 @NgModule({
@@ -15,7 +14,6 @@ import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/mater
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
-    SelectionGroupModule,
     MatSlideToggleModule
   ],
   declarations: [
