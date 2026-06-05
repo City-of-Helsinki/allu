@@ -346,6 +346,27 @@ public class CustomerDao {
   }
 
   private BooleanExpression isDeletableCustomer(Instant cutoff) {
+    BooleanExpression notRecentlyCreated = SQLExpressions.selectOne()
+      .from(changeHistory)
+      .where(
+        changeHistory.customerId.eq(customer.id),
+        changeHistory.changeType.eq(ChangeType.CREATED),
+        changeHistory.changeTime.gt(cutoff.atZone(ZoneOffset.UTC))
+      )
+      .notExists();
+
+    return customer.isActive.isTrue()
+      .and(isNotLinkedToAnyEntity())
+      .and(notRecentlyCreated);
+  }
+
+  /**
+   * Returns a combined BooleanExpression that is true when the customer is not linked to any
+   * application (via application_customer), not set as invoice recipient on any application,
+   * and not linked to any project. These three conditions are shared between
+   * {@link #isDeletableCustomer(Instant)} and {@link #findUnnotifiedSapCustomers()}.
+   */
+  private BooleanExpression isNotLinkedToAnyEntity() {
     BooleanExpression notLinkedToApplication = SQLExpressions.selectOne()
       .from(applicationCustomer)
       .where(applicationCustomer.customerId.eq(customer.id))
@@ -361,20 +382,7 @@ public class CustomerDao {
       .where(application.invoiceRecipientId.eq(customer.id))
       .notExists();
 
-    BooleanExpression notRecentlyCreated = SQLExpressions.selectOne()
-      .from(changeHistory)
-      .where(
-        changeHistory.customerId.eq(customer.id),
-        changeHistory.changeType.eq(ChangeType.CREATED),
-        changeHistory.changeTime.gt(cutoff.atZone(ZoneOffset.UTC))
-      )
-      .notExists();
-
-    return customer.isActive.isTrue()
-      .and(notLinkedToApplication)
-      .and(notLinkedToProject)
-      .and(notInvoiceRecipient)
-      .and(notRecentlyCreated);
+    return notLinkedToApplication.and(notLinkedToProject).and(notInvoiceRecipient);
   }
 
   private OrderSpecifier<?> toCustomerOrderSpecifier(Sort sort) {
@@ -583,8 +591,10 @@ public class CustomerDao {
 
   /**
    * Find 'removed' inactive SAP customers which have not been marked as notified (no email notification sent).
+   * Customers that are still linked to any application (via application_customer), set as invoice recipient
+   * on any application, or linked to any project are excluded from the result.
    *
-   * @return list of inactive SAP customers which have not been marked as notified.
+   * @return list of inactive, unnotified, and unlinked SAP customers.
    */
   @Transactional(readOnly = true)
   public List<CustomerSapInfo> findUnnotifiedSapCustomers() {
@@ -600,7 +610,8 @@ public class CustomerDao {
         .where(
           customer.sapCustomerNumber.isNotNull(),
           customer.notificationSentAt.isNull(),
-          customer.isActive.eq(false)
+          customer.isActive.eq(false),
+          isNotLinkedToAnyEntity()
         )
         .orderBy(customer.id.asc())
         .fetch();

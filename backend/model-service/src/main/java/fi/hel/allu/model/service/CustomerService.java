@@ -365,7 +365,7 @@ public class CustomerService {
     List<CustomerSapInfo> customers = customerDao.findUnnotifiedSapCustomers();
 
     logger.info(
-      "Fetched {} 'removed' inactive unnotified SAP customers",
+      "Fetched {} inactive, unnotified, and unlinked SAP customers",
       customers.size()
     );
 
@@ -375,7 +375,7 @@ public class CustomerService {
   @Transactional
   public void markSapCustomersNotified(List<Integer> ids) {
     logger.info(
-      "Marking {} 'removed' inactive SAP customers as notified",
+      "Marking {} inactive SAP customers as notified",
       ids.size()
     );
 
