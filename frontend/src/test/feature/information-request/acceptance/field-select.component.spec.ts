@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material/dialog';
-import {MatLegacyListOption as MatListOption} from '@angular/material/legacy-list';
+import {MatListOption} from '@angular/material/list';
 import {By} from '@angular/platform-browser';
 import {FieldSelectComponent, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldValueComponent} from '@feature/information-request/acceptance/field-select/field-value.component';

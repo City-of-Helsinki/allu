@@ -1,41 +1,46 @@
-<mat-list class="search-results">
-  <ng-container *ngFor="let application of applications$ | async">
-    <mat-divider></mat-divider>
-    <mat-list-item>
-      <h1 matLine fxLayout="row" fxLayoutAlign="start center">
-        <a fxFlex [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
-        <div fxFlex="none">
-          <button mat-icon-button color="primary"
-                  [matTooltip]="'applicationBasket.addTo' | translation"
-                  (click)="addToBasket(application.id)">
-            <mat-icon>shopping_basket</mat-icon>
-          </button>
-        </div>
-        <div fxFlex="none">
-          <button mat-icon-button color="primary"
-                  [matTooltip]="'map.focusOnApplication' | translation"
-                  (click)="focusOnApplication(application)">
-            <mat-icon>filter_center_focus</mat-icon>
-          </button>
-        </div>
-      </h1>
-      <div matLine>{{application.name}}</div>
-      <div matLine>{{['application.status', application.status] | translation}}</div>
-      <div matLine>{{application.address}}</div>
-      <div matLine *ngIf="application.applicant.customer as applicant">{{applicant.name}}</div>
-      <div matLine>
+<div class="search-results">
+  <allu-card *ngFor="let application of applications$ | async" class="search-result">
+    <div class="card-header-row">
+      <mat-card-header>
+        <mat-card-title>
+          <a class="application-id-link"
+             [routerLink]="['/applications', application.id, 'summary']">
+            {{application.applicationId}}
+          </a>
+        </mat-card-title>
+      </mat-card-header>
+      <div class="card-actions">
+        <button mat-icon-button color="primary"
+                [matTooltip]="'applicationBasket.addTo' | translation"
+                (click)="addToBasket(application.id)">
+          <mat-icon>shopping_basket</mat-icon>
+        </button>
+        <button mat-icon-button color="primary"
+                [matTooltip]="'map.focusOnApplication' | translation"
+                (click)="focusOnApplication(application)">
+          <mat-icon>filter_center_focus</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-card-content>
+      <div class="detail-row">{{application.name}}</div>
+      <div class="detail-row">{{['application.status', application.status] | translation}}</div>
+      <div class="detail-row">{{application.address}}</div>
+      <div class="detail-row" *ngIf="application.applicant.customer as applicant">{{applicant.name}}</div>
+      <div class="detail-row">
         <validity-time
           [startTime]="application.startTime"
           [endTime]="application.endTime"
           [recurringEndTime]="application.recurringEndTime"
           [terminationDate]="application.terminationTime"></validity-time>
       </div>
-    </mat-list-item>
-  </ng-container>
+    </mat-card-content>
+  </allu-card>
+
   <ng-container *ngIf="remaining$ | async as remaining">
     <div *ngIf="remaining > 0" class="search-result-footer">
       <span>{{remaining}} hakemusta vielä näytettäväksi. </span>
       <button class="button-link" (click)="showMore()">Näytä lisää</button>
     </div>
   </ng-container>
-</mat-list>
+</div>

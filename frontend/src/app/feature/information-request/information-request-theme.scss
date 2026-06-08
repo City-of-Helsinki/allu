@@ -28,15 +28,10 @@
 @mixin field-select-theme($theme, $success) {
   $primary: map-get($theme, primary);
 
-  mat-selection-list .mat-list-option:nth-child(odd),
-  mat-list .mat-list-item:nth-child(odd) {
+  mat-selection-list .mat-mdc-list-option:nth-child(odd),
+  mat-list .mat-mdc-list-item:nth-child(odd) {
     background: mat.get-color-from-palette($primary, 50);
   }
-
-  field-select .mat-selection-list .mat-list-option .mat-pseudo-checkbox {
-    background: map-get($success, 200);
-  }
-
 }
 
 @mixin info-acceptance-theme($border-color) {

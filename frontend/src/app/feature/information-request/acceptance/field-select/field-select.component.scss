@@ -5,75 +5,60 @@
 }
 
 :host ::ng-deep {
-  .mat-selection-list .mat-list-option,
-  .mat-list-base .mat-list-item {
-    font-size: 14px;
-    min-height: 38px;
+  .mat-mdc-list-base .mat-mdc-list-item {
+
     height: auto;
     position: relative;
 
-    .mat-list-item-content {
-      height: auto;
-      min-height: 38px;
-      padding-top: 8px;
-      padding-bottom: 8px;
+    .mdc-list-item__content {
+      display: flex;
+      align-items: center;
+      min-height: 42px;
+      padding-left: 8px;
     }
 
-    .mat-list-text {
-      white-space: normal;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
+    .mat-mdc-list-item-unscoped-content {
+      display: block;
+      flex: 1 1 auto;
     }
   }
 
-  .mat-selection-list .mat-list-option.map-container {
+  mat-selection-list .mat-mdc-list-option.map-container {
     height: 200px;
-
-    .mat-list-item-content {
-      padding-right: 0;
-
-      .mat-list-text {
-        padding-left: 0;
-      }
-    }
   }
 
-  .mat-selection-list .mat-list-option:not(:last-of-type),
-  .mat-list .mat-list-item:not(:last-of-type) {
+  mat-selection-list .mat-mdc-list-option:not(:last-of-type),
+  mat-list .mat-mdc-list-item:not(:last-of-type) {
     margin-bottom: 2px;
   }
 
-  .mat-selection-list .mat-list-option .mat-list-item-content {
-    padding-left: 8px;
-  }
-
-  .mat-selection-list .mat-list-option:hover {
+  mat-selection-list .mat-mdc-list-option:hover {
     background: map-get($allu-blue, 100);
   }
-}
 
-:host ::ng-deep .mat-pseudo-checkbox {
-  width: 8px;
-  height: auto;
-  visibility: hidden;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 0;
-}
+  .mat-mdc-list-option .mdc-list-item__start {
+    width: 8px;
+    min-width: 8px;
+    visibility: hidden;
+    margin: 0;
+    background: map-get($allu-success, 200);
+    overflow: hidden;
+    align-self: stretch;
+  }
 
-:host ::ng-deep .mat-pseudo-checkbox.mat-pseudo-checkbox-checked {
-  visibility: visible;
-}
+  mat-list-option .mdc-checkbox {
+    visibility: hidden;
+  }
 
-:host ::ng-deep .mat-pseudo-checkbox-checked::after {
-  width: 0;
-  height: 0;
-  visibility: hidden;
-  border-left: none;
+  mat-list-option[aria-selected="true"] .mdc-list-item__start {
+    visibility: visible;
+  }
+
+  mat-list-option[aria-selected="true"] {
+    --mdc-list-list-item-disabled-label-text-opacity: 1;
+    --mdc-list-list-item-disabled-state-layer-opacity: 0;
+    opacity: 1;
+  }
 }
 
 .value-change {
@@ -81,7 +66,7 @@
 }
 
 :host ::ng-deep .non-selectable-list {
-  .mat-list-item {
+  .mat-mdc-list-item {
     cursor: default;
 
     &:hover {
@@ -92,8 +77,6 @@
 
 .non-selectable-list {
   .non-selectable-item {
-    font-size: 14px;
-    min-height: 38px;
     padding: 8px 8px;
     cursor: default;
 
