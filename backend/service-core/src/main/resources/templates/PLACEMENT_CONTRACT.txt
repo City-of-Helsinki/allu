@@ -3,7 +3,7 @@ Viestin liitteenä on sijoitussopimus ${applicationId} liitteineen. Mikäli teil
 
 ${accompanyingMessage}
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
+Miten onnistuimme? Kerro mielipiteesi täällä: https://my.roidu.com/a/AitEn4ih9SUoTRZJ
 
 Ystävällisin terveisin
 
