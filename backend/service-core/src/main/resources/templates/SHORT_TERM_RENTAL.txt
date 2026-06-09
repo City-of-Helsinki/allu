@@ -4,7 +4,7 @@ Viestin liitteenä on hakemaanne alueenkäyttöön liittyvä vuokrauspäätös $
 
 ${accompanyingMessage}
 
-Miten onnistuimme? Kerro mielipiteesi täällä: https://ecv.microsoft.com/zepZlZSdnT
+Miten onnistuimme? Kerro mielipiteesi täällä: https://my.roidu.com/a/2QppnXT4CY5RUmBJ
 
 Ystävällisin terveisin
 
