@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {MatCardModule} from '@angular/material/card';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatLegacyTooltipModule as MatTooltipModule} from '@angular/material/legacy-tooltip';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {MapModule} from '../map/map.module';
 import {MapSearchComponent} from './mapsearch.component';
 import {SearchBarModule} from '../searchbar/searchbar.module';

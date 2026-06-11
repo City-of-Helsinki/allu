@@ -21,7 +21,7 @@ import {MatLegacySelectModule as MatSelectModule} from '@angular/material/legacy
 import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
 import {MatLegacyTabsModule as MatTabsModule} from '@angular/material/legacy-tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatLegacyTooltipModule as MatTooltipModule} from '@angular/material/legacy-tooltip';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FieldErrorComponent} from './field-error/field-error.component';
 import {TranslationPipe} from '@app/pipe/translation.pipe';
