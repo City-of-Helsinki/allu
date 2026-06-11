@@ -18,3 +18,10 @@
         group=root
         mode="u=rwx,g=rx,o=rx"
   when: "'production' in group_names"
+
+- name: Copy the archive_database_logs.sh script to /usr/local/bin
+  copy: src=archive_database_logs.sh dest=/usr/local/bin/archive_database_logs.sh
+        owner=root
+        group=root
+        mode="u=rwx,g=rx,o=rx"
+  when: "'production' in group_names"

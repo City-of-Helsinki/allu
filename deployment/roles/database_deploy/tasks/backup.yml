@@ -44,3 +44,14 @@
   when: "'production' in group_names"
   become: yes
   become_user: root
+
+- name: Create cron job for archiving production database logs
+  cron:
+    name: Archive database logs
+    special_time: weekly
+    user: root
+    job: "/usr/local/bin/archive_database_logs.sh"
+    cron_file: allu_database-archive-logs
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
