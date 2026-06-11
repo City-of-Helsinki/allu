@@ -10,22 +10,16 @@
     </button>
   </div>
 
-  <div fxLayout='row'>
-    <div fxFlex>
-      <div class="labels-solid labels-end">
-        <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-          <a mat-tab-link
-             *ngFor="let tab of tabs"
-             [routerLink]="['/admin/prune-data', tab | lowercase]"
-             routerLinkActive #rla="routerLinkActive"
-             [routerLinkActiveOptions]="{exact: true}"
-             [active]="rla.isActive">
-            {{['prunedata.tab', tab] | translation}}
-          </a>
-        </nav>
-      </div>
-    </div>
-  </div>
+  <nav mat-tab-nav-bar mat-stretch-tabs="false" [tabPanel]="tabPanel">
+    <a mat-tab-link
+       *ngFor="let tab of tabs"
+       [routerLink]="['/admin/prune-data', tab | lowercase]"
+       routerLinkActive #rla="routerLinkActive"
+       [routerLinkActiveOptions]="{exact: true}"
+       [active]="rla.isActive">
+      {{['prunedata.tab', tab] | translation}}
+    </a>
+  </nav>
 
   <div fxLayout="row">
     <div fxFlex>
@@ -45,11 +39,11 @@
                 {{'prunedata.columns.' + column | translation}}
               </ng-template>
             </mat-header-cell>
-            
+
             <mat-cell *matCellDef="let row">
               <ng-container [ngSwitch]="column">
                 <ng-container *ngSwitchCase="'selected'">
-                  <mat-checkbox 
+                  <mat-checkbox
                     [checked]="isSelected(getRowId(row)) | async"
                     (change)="checkSingle(getRowId(row))">
                   </mat-checkbox>
@@ -117,9 +111,6 @@
   </mat-paginator>
   <mat-tab-nav-panel #tabPanel>
   </mat-tab-nav-panel>
-
-
-
 </div>
 
 <div *ngIf="deleteInProgress | async" class="deletion-modal">

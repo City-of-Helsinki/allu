@@ -19,7 +19,7 @@ import {MatLegacyProgressSpinnerModule as MatProgressSpinnerModule} from '@angul
 import {MatLegacyRadioModule as MatRadioModule} from '@angular/material/legacy-radio';
 import {MatLegacySelectModule as MatSelectModule} from '@angular/material/legacy-select';
 import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
-import {MatLegacyTabsModule as MatTabsModule} from '@angular/material/legacy-tabs';
+import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {FlexLayoutModule} from '@angular/flex-layout';

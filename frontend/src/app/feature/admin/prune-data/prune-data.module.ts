@@ -4,7 +4,7 @@ import { StoreModule } from '@ngrx/store';
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlluCommonModule } from '@feature/common/allu-common.module';
