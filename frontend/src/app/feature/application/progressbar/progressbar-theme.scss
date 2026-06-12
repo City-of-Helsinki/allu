@@ -1,44 +1,44 @@
 @use '@angular/material' as mat;
+
 @mixin progressbar-theme($theme, $success, $basic) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
 
-  progressbar,
-  progressbar .mat-toolbar {
+  mat-progress-bar {
+    --mdc-linear-progress-track-height: 12px !important;
+    --mdc-linear-progress-active-indicator-height: 12px !important;
     background: mat.get-color-from-palette($primary, 50);
     color: mat.get-color-from-palette($primary, 500);
+
   }
 
-  progressbar .mat-progress-bar-background {
-    fill: transparent;
+  .active .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($accent, 500)};
   }
 
-  .pending .mat-progress-bar-fill::after {
-    background-color: mat.get-color-from-palette($accent, 500);
+  .closed .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($basic, 500)};
   }
 
-  .pending .mat-progress-bar-buffer {
-    background: mat.get-color-from-palette($accent, 500, 0.5);
+  .pending .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($accent, 500)};
   }
 
-  .decision .mat-progress-bar-fill::after {
-    background: map-get($success, 200);
+  .decision .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($success, 200)};
   }
 
-  .finished .mat-progress-bar-fill::after {
-    background: map-get($success, 500);
+  .finished .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($success, 500)};
   }
 
-  .rejected .mat-progress-bar-fill::after {
-    background-color: mat.get-color-from-palette($warn, 500);
+  .cancelled .mdc-linear-progress__bar-inner,
+  .rejected .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($warn, 400)};
   }
 
-  .cancelled .mat-progress-bar-fill::after {
-    background-color: mat.get-color-from-palette($warn, 500, 0.5);
-  }
-
-  .history .mat-progress-bar-fill::after {
-    background-color: map-get($basic, 500);
+  .history .mdc-linear-progress__bar-inner {
+    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($basic, 500)};
   }
 }
