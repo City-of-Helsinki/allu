@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.types.ChangeType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static fi.hel.allu.QCustomerArchive.customerArchive;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -47,6 +49,8 @@ public class CustomerDaoSpec extends SpeccyTestBase {
   CustomerUpdateLogDao customerUpdateLogDao;
   @Autowired
   PersonAuditLogDao personAuditLogDao;
+  @Autowired
+  SQLQueryFactory sqlQueryFactory;
   @Autowired
   TestCommon testCommon;
 
@@ -468,7 +472,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertFalse("Customer with recent person_audit_log (contact) must not be purgeable", ids.contains(c.getId()));
         });
 
-        it("should support pagination via pageSize and offset", () -> {
+        it("should support cursor-based pagination via pageSize and afterId", () -> {
           ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
           int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
 
@@ -484,10 +488,12 @@ public class CustomerDaoSpec extends SpeccyTestBase {
             historyDao.addCustomerChange(c.getId(), old);
           }
 
+          // First page: afterId=0, pageSize=2 → first 2 IDs
           List<Integer> firstPage = customerDao.findPurgeableCustomerIds(2, 0);
-          List<Integer> secondPage = customerDao.findPurgeableCustomerIds(2, 2);
-
           assertEquals(2, firstPage.size());
+
+          // Second page: afterId = last ID of first page → next 2 IDs
+          List<Integer> secondPage = customerDao.findPurgeableCustomerIds(2, firstPage.get(firstPage.size() - 1));
           assertEquals(2, secondPage.size());
           // Pages must not overlap
           firstPage.forEach(id -> assertFalse("Pages must not overlap", secondPage.contains(id)));
@@ -862,6 +868,177 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertTrue(prevId < id);
           prevId = id;
         }
+      });
+    });
+
+    describe("CustomerDao.findPurgeableCustomerIds", () -> {
+
+      // Helper: creates and soft-deletes a customer with change_history older than 5 years
+      // so it qualifies as purgeable (when not linked to any entity).
+      beforeEach(() -> testCommon.deleteAllData());
+
+      it("should return an inactive customer whose log entries are older than 5 years and is not linked to any entity", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5000));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertTrue("Unlinked inactive customer with old history must be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude a customer linked via application_customer", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5001));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        // Link via application_customer
+        Application app = testCommon.dummyOutdoorApplication("AppLink5001", RandomStringUtils.randomAlphabetic(10));
+        app.setCustomersWithContacts(
+          Collections.singletonList(
+            new CustomerWithContacts(CustomerRoleType.APPLICANT, c, Collections.emptyList())
+          )
+        );
+        applicationDao.insert(app);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Customer linked via application_customer must not be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude a customer set as invoice recipient on an application", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5002));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        Application invoiceApp = testCommon.dummyOutdoorApplication("InvoiceApp5002", RandomStringUtils.randomAlphabetic(10));
+        invoiceApp.setInvoiceRecipientId(c.getId());
+        applicationDao.insert(invoiceApp);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Invoice recipient customer must not be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude a customer linked to a project", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5003));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        Project project = new Project();
+        project.setName("proj-5003");
+        project.setCustomerId(c.getId());
+        project.setContactId(testCommon.insertContact(c.getId()).getId());
+        project.setStartTime(ZonedDateTime.now());
+        project.setIdentifier("identifier-5003");
+        project.setCreatorId(userId);
+        projectDao.insert(project);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Project-linked customer must not be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude an active customer", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer active = customerDao.insert(dummyCustomer(5004)); // isActive=true by default
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(active.getId(), old);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Active customer must not be purgeable", ids.contains(active.getId()));
+      });
+
+      it("should exclude a customer whose most recent change_history entry is within 5 years", () -> {
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5005));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem recent = new ChangeHistoryItem();
+        recent.setUserId(userId);
+        recent.setChangeType(ChangeType.CONTENTS_CHANGED);
+        recent.setChangeTime(ZonedDateTime.now().minusYears(1)); // within retention period
+        historyDao.addCustomerChange(c.getId(), recent);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Customer with recent change_history must not be purgeable", ids.contains(c.getId()));
+      });
+    });
+
+    describe("CustomerDao.archiveCustomers", () -> {
+
+      beforeEach(() -> testCommon.deleteAllData());
+
+      it("should archive a customer and record sap_customer_number", () -> {
+        Customer c = customerDao.insert(dummyCustomer(6000));
+        c.setSapCustomerNumber("SAP-6000");
+        customerDao.update(c.getId(), c);
+
+        customerDao.archiveCustomers(Set.of(c.getId()));
+
+        // Query customer_archive directly for the customer_id
+        Long count = sqlQueryFactory
+          .select(customerArchive.customerId.count())
+          .from(customerArchive)
+          .where(customerArchive.customerId.eq(c.getId()))
+          .fetchOne();
+        assertEquals("Exactly one archive row must exist", 1L, (long) count);
+
+        String sapNumber = sqlQueryFactory
+          .select(customerArchive.sapCustomerNumber)
+          .from(customerArchive)
+          .where(customerArchive.customerId.eq(c.getId()))
+          .fetchOne();
+        assertEquals("SAP-6000", sapNumber);
+      });
+
+      it("should not create a duplicate row when archiving an already-archived customer", () -> {
+        Customer c = customerDao.insert(dummyCustomer(6001));
+
+        // Archive twice — ON CONFLICT DO NOTHING must prevent duplicate
+        customerDao.archiveCustomers(Set.of(c.getId()));
+        customerDao.archiveCustomers(Set.of(c.getId()));
+
+        Long count = sqlQueryFactory
+          .select(customerArchive.customerId.count())
+          .from(customerArchive)
+          .where(customerArchive.customerId.eq(c.getId()))
+          .fetchOne();
+        assertEquals("Duplicate archiveCustomers call must not create a second row", 1L, (long) count);
       });
     });
 
