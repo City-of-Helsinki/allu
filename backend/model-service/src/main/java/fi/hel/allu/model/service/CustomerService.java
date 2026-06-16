@@ -302,13 +302,13 @@ public class CustomerService {
    * Returns a page of customer IDs eligible for permanent deletion by the scheduler.
    *
    * @param pageSize number of IDs to return
-   * @param offset   pagination offset
+   * @param afterId  cursor: only return customers with id greater than this value (pass 0 for first page)
    * @return list of purgeable customer IDs
    */
   @Transactional(readOnly = true)
-  public List<Integer> findPurgeableCustomerIds(int pageSize, long offset) {
-    List<Integer> ids = customerDao.findPurgeableCustomerIds(pageSize, offset);
-    logger.debug("Found {} purgeable customer IDs (pageSize={}, offset={})", ids.size(), pageSize, offset);
+  public List<Integer> findPurgeableCustomerIds(int pageSize, int afterId) {
+    List<Integer> ids = customerDao.findPurgeableCustomerIds(pageSize, afterId);
+    logger.debug("Found {} purgeable customer IDs (pageSize={}, afterId={})", ids.size(), pageSize, afterId);
     return ids;
   }
 
@@ -405,6 +405,19 @@ public class CustomerService {
       return 0;
     }
     Set<Integer> idSet = new HashSet<>(ids);
+
+    // Runtime safety guard: remove any customers that are still linked to applications,
+    // projects, or are invoice recipients. This guards against race conditions where a
+    // customer becomes linked between the time findPurgeableCustomerIds ran and now.
+    List<Integer> nonPurgeableIds = customerDao.findNonDeletableCustomerIds(ids);
+    if (!nonPurgeableIds.isEmpty()) {
+      nonPurgeableIds.forEach(idSet::remove);
+      logger.warn("Skipping {} customers from purge because they are still linked to entities: {}",
+        nonPurgeableIds.size(), nonPurgeableIds);
+    }
+    if (idSet.isEmpty()) {
+      return 0;
+    }
 
     customerDao.archiveCustomers(idSet);
     logger.debug("Archived {} customers to customer_archive", idSet.size());
