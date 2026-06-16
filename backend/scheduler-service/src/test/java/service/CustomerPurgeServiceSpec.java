@@ -127,9 +127,9 @@ public class CustomerPurgeServiceSpec {
         });
 
         it("should continue processing remaining batches when one batch fails", () -> {
-          // 3 IDs → 3 batches of 1 each (use a tiny list so each is its own batch via the split logic)
-          // We provide 110 IDs so we get at least 3 batches (50+50+10), the middle one fails
-          List<Integer> ids = IntStream.rangeClosed(1, 110).boxed().toList();
+          // 600 IDs → 12 batches of 50. Batch 7 fails.
+          // Failure rate after batch 7: 50/350 ≈ 14% < 20% → no abort, all 12 batches run.
+          List<Integer> ids = IntStream.rangeClosed(1, 600).boxed().toList();
           mockPurgeablePage(ids);
 
           when(restTemplate.exchange(
@@ -138,14 +138,51 @@ public class CustomerPurgeServiceSpec {
             any(HttpEntity.class),
             eq(Integer.class)
           ))
-            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))        // batch 1 — ok
-            .thenThrow(new RestClientException("connection error"))      // batch 2 — fails
-            .thenReturn(new ResponseEntity<>(10, HttpStatus.OK));        // batch 3 — ok
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 1
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 2
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 3
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 4
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 5
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 6
+            .thenThrow(new RestClientException("connection error"))    // batch 7 — fails
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 8
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 9
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 10
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))       // batch 11
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK));      // batch 12
 
           purgeService.purgeObsoleteCustomers();
 
-          // All 3 batches must have been attempted despite the failure in batch 2
-          verify(restTemplate, times(3)).exchange(
+          // All 12 batches must have been attempted — failure rate stays below 20%
+          verify(restTemplate, times(12)).exchange(
+            eq(PURGE_CUSTOMERS_URL),
+            eq(HttpMethod.DELETE),
+            any(HttpEntity.class),
+            eq(Integer.class)
+          );
+        });
+
+        it("should abort processing when failure rate exceeds 20 percent threshold", () -> {
+          // 150 IDs → 3 batches of 50.
+          // Batch 1 succeeds (50 deleted), batch 2 fails.
+          // After batch 2: failedCount=50, total=100 → 50% >= 20% → ABORT; batch 3 never runs.
+          List<Integer> ids = IntStream.rangeClosed(1, 150).boxed().toList();
+          mockPurgeablePage(ids);
+
+          when(restTemplate.exchange(
+            eq(PURGE_CUSTOMERS_URL),
+            eq(HttpMethod.DELETE),
+            any(HttpEntity.class),
+            eq(Integer.class)
+          ))
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK))      // batch 1 — ok
+            .thenThrow(new RestClientException("network error"))            // batch 2 — fails → abort
+            .thenReturn(new ResponseEntity<>(50, HttpStatus.OK));     // batch 3 — must NOT be reached
+
+          purgeService.purgeObsoleteCustomers();
+
+          // Only 2 batches attempted; batch 3 was never called
+          verify(restTemplate, times(2)).exchange(
             eq(PURGE_CUSTOMERS_URL),
             eq(HttpMethod.DELETE),
             any(HttpEntity.class),

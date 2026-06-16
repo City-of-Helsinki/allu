@@ -189,16 +189,17 @@ public class CustomerController {
   /**
    * Returns a page of customer IDs that are eligible for permanent (hard) deletion by the scheduler.
    * Eligible customers are inactive (is_active = false) and have had no changes for at least 5 years.
+   * Uses cursor/keyset pagination: pass the last seen customer ID as {@code afterId}.
    *
    * @param pageSize number of IDs to return (default 500)
-   * @param offset   pagination offset (default 0)
+   * @param afterId  cursor: return only customers with id greater than this value (default 0 = first page)
    * @return list of purgeable customer IDs
    */
   @GetMapping("/purgeable")
   public ResponseEntity<List<Integer>> getPurgeableCustomerIds(
       @RequestParam(defaultValue = "500") int pageSize,
-      @RequestParam(defaultValue = "0") long offset) {
-    return ResponseEntity.ok(customerService.findPurgeableCustomerIds(pageSize, offset));
+      @RequestParam(defaultValue = "0") int afterId) {
+    return ResponseEntity.ok(customerService.findPurgeableCustomerIds(pageSize, afterId));
   }
 
   /**

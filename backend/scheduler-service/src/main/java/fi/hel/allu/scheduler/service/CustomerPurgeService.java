@@ -8,6 +8,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,10 +20,11 @@ import java.util.List;
  * Service for permanently deleting inactive customers whose data retention period (5 years) has elapsed.
  *
  * The process:
- * 1. Fetch purgeable customer IDs page by page from model-service
+ * 1. Fetch purgeable customer IDs page by page from model-service (cursor-based pagination)
  * 2. Split IDs into batches of BATCH_SIZE
  * 3. For each batch, call DELETE /customers/purge — failures are caught, logged, and skipped
- * 4. Log a summary of the run
+ * 4. Abort early if the failure rate exceeds 20% (indicates a systemic problem)
+ * 5. Log a structured summary of the run
  */
 @Service
 public class CustomerPurgeService {
@@ -48,7 +50,8 @@ public class CustomerPurgeService {
 
   /**
    * Fetches all purgeable customer IDs and permanently deletes them in batches.
-   * A failure in one batch does not prevent later batches from being processed.
+   * A failure in one batch does not prevent later batches from being processed
+   * unless the failure rate exceeds 20% of the total attempted, which triggers an early abort.
    */
   public void purgeObsoleteCustomers() {
     logger.info("Customer purge job started");
@@ -60,7 +63,8 @@ public class CustomerPurgeService {
       return;
     }
 
-    logger.info("Found {} customers eligible for permanent deletion", allIds.size());
+    int totalEligible = allIds.size();
+    logger.info("Found {} customers eligible for permanent deletion", totalEligible);
 
     int successCount = 0;
     int failedCount = 0;
@@ -73,37 +77,71 @@ public class CustomerPurgeService {
         logger.debug("Purged batch of {} customers ({} confirmed deleted)", batch.size(), deleted);
       } catch (Exception e) {
         failedCount += batch.size();
-        logger.error("Failed to purge batch of {} customer IDs {}: {}", batch.size(), batch, e.getMessage());
+        String errorDetail;
+        try {
+          errorDetail = e.getMessage();
+          if (e instanceof HttpStatusCodeException httpEx) {
+            errorDetail += " | Response body: " + httpEx.getResponseBodyAsString();
+          }
+        } catch (Exception ignored) {
+          errorDetail = "(error extracting exception message)";
+        }
+        logger.error("Failed to purge batch of {} customer IDs {}: {}", batch.size(), batch, errorDetail);
+
+        // Failure-rate abort: if more than 20% of attempted customers have failed,
+        // this signals a systemic problem rather than isolated data issues.
+        int totalAttempted = successCount + failedCount;
+        if (failedCount > 0 && (double) failedCount / totalAttempted >= 0.20) {
+          logger.error(
+            "Purge abort: failure rate exceeded threshold ({}/{} = {}%). Remaining batches will not be attempted.",
+            failedCount, totalAttempted, (int) ((double) failedCount / totalAttempted * 100)
+          );
+          break;
+        }
       }
     }
 
-    logger.info("Customer purge job finished. Successfully deleted: {}, Failed: {}", successCount, failedCount);
+    logger.info("Customer purge job finished. Total eligible: {}, Successfully deleted: {}, Failed: {}",
+      totalEligible, successCount, failedCount);
   }
 
   /**
-   * Fetches all purgeable customer IDs by paginating through the model-service endpoint.
+   * Fetches all purgeable customer IDs using cursor/keyset pagination.
+   * Tracks the last seen customer ID and passes it as the cursor for each subsequent page.
+   * This is stable under concurrent deletions (unlike offset-based pagination).
    */
   private List<Integer> fetchAllPurgeableIds() {
+    long startMs = System.currentTimeMillis();
+    logger.info("fetchAllPurgeableIds started");
+
     List<Integer> allIds = new ArrayList<>();
-    long offset = 0;
+    int lastSeenId = 0;
 
     while (true) {
-      List<Integer> page = fetchPurgeablePage(offset, PAGE_SIZE);
+      List<Integer> page = fetchPurgeablePage(lastSeenId, PAGE_SIZE);
       allIds.addAll(page);
       if (page.size() < PAGE_SIZE) {
         break;
       }
-      offset += PAGE_SIZE;
+      lastSeenId = page.get(page.size() - 1);
     }
 
+    logger.info("fetchAllPurgeableIds finished in {}ms, found {} IDs",
+      System.currentTimeMillis() - startMs, allIds.size());
     return allIds;
   }
 
-  private List<Integer> fetchPurgeablePage(long offset, int pageSize) {
+  /**
+   * Fetches a single page of purgeable customer IDs using cursor-based pagination.
+   *
+   * @param afterId  cursor: return only customers with id greater than this value
+   * @param pageSize maximum number of IDs to return
+   */
+  private List<Integer> fetchPurgeablePage(int afterId, int pageSize) {
     String url = UriComponentsBuilder
         .fromUriString(applicationProperties.getPurgeableCustomersUrl())
         .queryParam("pageSize", pageSize)
-        .queryParam("offset", offset)
+        .queryParam("afterId", afterId)
         .toUriString();
 
     List<Integer> result = restTemplate.exchange(

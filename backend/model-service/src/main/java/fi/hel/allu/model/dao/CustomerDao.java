@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.QueryFlag;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
@@ -405,32 +406,26 @@ public class CustomerDao {
   /**
    * Finds customer IDs that are eligible for permanent (hard) deletion.
    * A customer is purgeable when ALL the following conditions are met:
-   * - Is_active = false (already soft-deleted; FK checks were done at soft-delete time
-   *   and a deactivated customer cannot be re-linked to any application or project)
-   * - SAP customers (sap_customer_number IS NOT NULL) must have notification_sent_at set,
-   *   meaning the removal email notification has been sent before permanent deletion
+   * - Is_active = false (already soft-deleted)
+   * - Not linked to any application, project, or as an invoice recipient
+   * - SAP customers (sap_customer_number IS NOT NULL) must have notification_sent_at set
    * - The data retention period of 5 years has elapsed since the most recent entry across
-   *   ALL history and audit log tables:
-   *     * change_history (change_time)
-   *     * customer_update_log (update_time)
-   *     * person_audit_log (creation_time) — checked for both the customer and its contacts
-   *   A customer is only purgeable when every one of these tables either has no rows for the
-   *   customer or its latest row is older than the retention cutoff.
+   *   ALL history and audit log tables
+   *
+   * Uses cursor/keyset pagination: returns up to {@code pageSize} IDs with id > {@code afterId},
+   * ordered by customer.id ASC. Pass the last seen ID as {@code afterId} for subsequent pages.
    *
    * @param pageSize  number of IDs to return
-   * @param offset    pagination offset
+   * @param afterId   cursor: only return customers with id greater than this value (pass 0 for first page)
    * @return list of customer IDs eligible for permanent deletion
    */
   @Transactional(readOnly = true)
-  public List<Integer> findPurgeableCustomerIds(int pageSize, long offset) {
+  public List<Integer> findPurgeableCustomerIds(int pageSize, int afterId) {
     ZonedDateTime retentionCutoff = ZonedDateTime.now().minusYears(5);
 
     // Subquery expressions for MAX() timestamps across the three log tables.
     // When a table has no rows for a given customer, MAX() returns NULL.
-    // In SQL, NULL < value evaluates to NULL (not TRUE), so the condition would never
-    // pass for customers with no rows in a given table.
-    // We therefore treat NULL (= no rows) as satisfying the retention condition:
-    //   "no rows at all" means there is nothing newer than the cutoff.
+    // We treat NULL (= no rows) as satisfying the retention condition.
     var maxChangeTime = SQLExpressions.select(changeHistory.changeTime.max())
       .from(changeHistory)
       .where(changeHistory.customerId.eq(customer.id));
@@ -457,18 +452,21 @@ public class CustomerDao {
       .from(customer)
       .where(
         customer.isActive.isFalse()
-          // change_history: either no rows for this customer, or latest entry older than cutoff
+          // Cursor-based pagination: only IDs greater than the last seen ID
+          .and(customer.id.gt(afterId))
+          // Entity-link guard: must not be linked to any application, project, or invoice recipient
+          .and(isNotLinkedToAnyEntity())
+          // change_history: either no rows for this customer or latest entry older than cutoff
           .and(maxChangeTime.isNull().or(maxChangeTime.lt(retentionCutoff)))
-          // customer_update_log: either no rows for this customer, or latest entry older than cutoff
+          // customer_update_log: either no rows for this customer or latest entry older than cutoff
           .and(maxUpdateTime.isNull().or(maxUpdateTime.lt(retentionCutoff)))
-          // person_audit_log: either no rows for this customer/contacts, or latest entry older than cutoff
+          // person_audit_log: either no rows for this customer/contacts or latest entry older than cutoff
           .and(maxAuditTime.isNull().or(maxAuditTime.lt(retentionCutoff)))
           // SAP customers must have had their removal notification sent before being permanently deleted
           .and(customer.sapCustomerNumber.isNull().or(customer.notificationSentAt.isNotNull()))
       )
       .orderBy(customer.id.asc())
       .limit(pageSize)
-      .offset(offset)
       .fetch();
   }
 
@@ -539,6 +537,7 @@ public class CustomerDao {
           .from(customer)
           .where(customer.id.in(ids))
       )
+      .addFlag(QueryFlag.Position.END, " ON CONFLICT (customer_id) DO NOTHING")
       .execute();
   }
 
