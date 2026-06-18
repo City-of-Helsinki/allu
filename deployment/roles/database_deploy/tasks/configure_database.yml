@@ -162,13 +162,6 @@
     - client_auth_check.rc > 0
   become: yes
 
-- name: Add replication entry to pg_hba.conf
-  lineinfile:
-    path: /srv/data/allu/database/data/pg_hba.conf
-    line: "host replication postgres 172.18.0.1/32 md5"
-  become: yes
-  when: "'staging' in group_names or 'production' in group_names"
-
 - name: Restart a container
   docker_container:
     name: "{{ database_container_name }}"
