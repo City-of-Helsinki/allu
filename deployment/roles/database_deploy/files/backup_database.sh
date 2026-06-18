@@ -13,7 +13,7 @@ then
   mv $LATEST_DUMP $PREVIOUS_DUMP
 fi
 
-pg_basebackup -h localhost -U postgres -D /srv/backup/allu/database/dumps/latest -X stream >> $LOG_FILE 2>&1
+docker exec allu-database pg_basebackup -h localhost -U postgres -D /srv/backup/allu/database/dumps/latest -X stream >> $LOG_FILE 2>&1
 if [ $? -eq 0 ]
 then
   # df -h >> $LOG_FILE
