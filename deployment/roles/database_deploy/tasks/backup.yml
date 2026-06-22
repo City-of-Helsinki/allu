@@ -18,7 +18,7 @@
     user: root
     job: "/usr/local/bin/wal_cleanup.sh"
     cron_file: allu_archive-cleanup
-  when: "'production' in group_names"
+  when: "'production' in group_names or 'staging' in group_names"
   become: yes
   become_user: root
 
@@ -29,6 +29,6 @@
     user: root
     job: "/usr/local/bin/wal_archiver_checker.sh"
     cron_file: allu_archiver-check
-  when: "'production' in group_names"
+  when: "'production' in group_names or 'staging' in group_names"
   become: yes
   become_user: root
