@@ -1,36 +1,28 @@
 #!/bin/bash
 
 LOG_FILE=/etc/cron.d/allu_database-backup.log
-LATEST_DUMP=db_backup-latest.tar.gz
-PREVIOUS_DUMP=db_backup-previous.tar.gz
+BACKUP_DIR=/srv/backup/allu/database/dumps
+LATEST=$BACKUP_DIR/latest
+PREVIOUS=$BACKUP_DIR/previous
 
 echo "Start backup: $(date)" >> $LOG_FILE
 
-cd /srv/backup/allu/database/dumps/
-if [ -f $LATEST_DUMP ]
+# Rotate existing backup to free space for the new one
+if [ -d "$LATEST" ]
 then
-  chmod 0600 $LATEST_DUMP
-  mv $LATEST_DUMP $PREVIOUS_DUMP
+  rm -rf "$PREVIOUS"
+  mv "$LATEST" "$PREVIOUS"
 fi
 
-docker exec allu-database pg_basebackup -h localhost -U postgres -D /srv/backup/allu/database/dumps/latest -X stream >> $LOG_FILE 2>&1
+# -Ft: tar format, -z: gzip compression, -X stream: stream WAL files
+docker exec allu-database pg_basebackup -h localhost -U postgres -D $LATEST -Ft -z -X stream >> $LOG_FILE 2>&1
 if [ $? -eq 0 ]
 then
-  # df -h >> $LOG_FILE
-  tar --remove-files -zcf $LATEST_DUMP latest/ >> $LOG_FILE 2>&1
-  if [ $? -eq 0 ]
-  then
-    echo "Backup successful, deleting previous dump" >> $LOG_FILE
-    chmod 0400 $LATEST_DUMP
-    rm $PREVIOUS_DUMP
-  else
-    echo "Backup failed, retaining previous dump" >> $LOG_FILE
-    rm -rf /srv/backup/allu/database/dumps/latest
-    rm -f $LATEST_DUMP
-  fi
+  echo "Backup successful, deleting previous dump" >> $LOG_FILE
+  rm -rf "$PREVIOUS"
 else
   echo "Backup failed, retaining previous dump" >> $LOG_FILE
-  rm -rf /srv/backup/allu/database/dumps/latest
+  rm -rf "$LATEST"
 fi
 
 echo "End backup: $(date)" >> $LOG_FILE
