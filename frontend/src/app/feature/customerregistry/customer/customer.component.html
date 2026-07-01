@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="row">
-      <customer-contacts [parentForm]="form" [onAddContact]="contactSubject.asObservable()"></customer-contacts>
+      <customer-contacts [parentForm]="form" [addContact$]="contactSubject.asObservable()"></customer-contacts>
     </div>
     <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <div class="col m12">

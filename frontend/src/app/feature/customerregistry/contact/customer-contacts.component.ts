@@ -17,7 +17,7 @@ import {filter, map, switchMap} from 'rxjs/internal/operators';
 })
 export class CustomerContactsComponent implements OnInit, OnDestroy {
   @Input() parentForm: UntypedFormGroup;
-  @Input() onAddContact: Observable<Contact> = EMPTY;
+  @Input() addContact$: Observable<Contact> = EMPTY;
 
   contacts: UntypedFormArray;
 
@@ -31,7 +31,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.contacts = <UntypedFormArray>this.parentForm.get('contacts');
-    this.contactSubscription = this.onAddContact.subscribe(c => this.addContact(c));
+    this.contactSubscription = this.addContact$.subscribe(c => this.addContact(c));
     this.route.params.pipe(map(p => p['id'])).subscribe(p => this.customerId = p);
 
     this.route.params.pipe(

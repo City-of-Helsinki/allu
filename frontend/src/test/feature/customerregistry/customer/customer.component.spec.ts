@@ -17,6 +17,7 @@ import {Customer} from '@model/customer/customer';
 import {ActivatedRouteMock, CurrentUserMock, NotificationServiceMock, RouterMock} from 'test/mocks';
 import {CustomerType} from '@model/customer/customer-type';
 import {reducers as rootReducers} from '@feature/allu/reducers';
+import {TranslationPipe} from '@app/pipe/translation.pipe';
 
 class CustomerServiceMock {
   findCustomerById(id: number) {
@@ -44,7 +45,7 @@ describe('CustomerComponent', () => {
         StoreModule.forRoot(rootReducers),
         StoreModule.forFeature('customer', customerReducers)
       ],
-      declarations: [CustomerComponent],
+      declarations: [CustomerComponent, TranslationPipe],
       providers: [
         {provide: ActivatedRoute, useClass: ActivatedRouteMock},
         {provide: Router, useClass: RouterMock},
