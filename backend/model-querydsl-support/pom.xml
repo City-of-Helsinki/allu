@@ -9,7 +9,7 @@
     <artifactId>model-querydsl-support</artifactId>
     <description>Enum support classes for QueryDSL Q-class generation</description>
     <properties>
-        <querydsl.version>4.4.0</querydsl.version>
+        <querydsl-legacy.version>4.4.0</querydsl-legacy.version>
     </properties>
 
     <dependencies>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-sql</artifactId>
-            <version>${querydsl.version}</version>
+            <version>${querydsl-legacy.version}</version>
         </dependency>
     </dependencies>
 </project>

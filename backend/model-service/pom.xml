@@ -12,7 +12,7 @@
     <artifactId>model-service</artifactId>
 
     <properties>
-        <querydsl.version>4.4.0</querydsl.version>
+        <querydsl-legacy.version>4.4.0</querydsl-legacy.version>
         <!-- database configuration for source generation: -->
         <database.user>model_service</database.user>
         <database.db>model_service</database.db>
@@ -54,17 +54,17 @@
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-sql</artifactId>
-            <version>${querydsl.version}</version>
+            <version>${querydsl-legacy.version}</version>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-sql-spring</artifactId>
-            <version>${querydsl.version}</version>
+            <version>${querydsl-legacy.version}</version>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-sql-spatial</artifactId>
-            <version>${querydsl.version}</version>
+            <version>${querydsl-legacy.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -157,7 +157,7 @@
             <plugin>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-maven-plugin</artifactId>
-                <version>${querydsl.version}</version>
+                <version>${querydsl-legacy.version}</version>
                 <executions>
                     <execution>
                         <goals>
