@@ -61,7 +61,6 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationSearchService.refreshIndex();
         GetRequest getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
-                "_doc",
                 id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
@@ -69,7 +68,6 @@ class ElasticSearchMappingConfigIT extends BaseIntegrationTest {
         applicationSearchService.initIndex();
          getRequest = new GetRequest(
                 APPLICATION_INDEX_ALIAS,
-                "_doc",
                 id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");

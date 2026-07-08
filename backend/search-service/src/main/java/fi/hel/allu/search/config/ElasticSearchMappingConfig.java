@@ -1,10 +1,11 @@
 package fi.hel.allu.search.config;
 
-import org.elasticsearch.ResourceAlreadyExistsException;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.rest.RestStatus;
 
 import org.elasticsearch.common.xcontent.DeprecationHandler;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
@@ -34,7 +35,6 @@ public class ElasticSearchMappingConfig {
   private static final String FILTER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword_filter";
   private static final String FILTER = "filter";
   private static final String FIELDS = "fields";
-  private static final String MAPPING_TYPE = "_default_";
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private static final String BUILDER_ERROR = "Unexpected exception while creating ElasticSearch mapping builder";
   private final RestHighLevelClient client;
@@ -54,52 +54,29 @@ public class ElasticSearchMappingConfig {
       CreateIndexRequest indexRequest = new CreateIndexRequest(indexName);
       if (indexName.startsWith(APPLICATION_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForApplication());
-        indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
         indexRequest.mapping(getMappingBuilderForApplication());
       } else if (indexName.startsWith(CUSTOMER_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForCustomer());
-        indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Customer"));
         indexRequest.mapping(getMappingBuilderForCustomer());
       } else if (indexName.startsWith(PROJECT_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForApplication());
-        indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
         indexRequest.mapping(getMappingBuilderForProject());
       } else if (indexName.startsWith(CONTACT_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForCustomer());
-        indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Contact"));
         indexRequest.mapping(getMappingBuilderForContact());
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
       }
       client.indices().create(indexRequest, RequestOptions.DEFAULT);
-    } catch (ResourceAlreadyExistsException e) {
-      logger.info("ElasticSearch mapping for index {} not created, because it exists already.", indexName);
+    } catch (ElasticsearchStatusException e) {
+      if (e.status() == RestStatus.BAD_REQUEST) {
+        logger.info("ElasticSearch mapping for index {} not created, because it exists already.", indexName);
+      } else {
+        throw e;
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Default mappings for applications index that's applicable to all types.
-   *
-   * @return XContentBuilder
-   */
-  public XContentBuilder getMappingBuilderForDefaultApplicationsIndex() {
-    try {
-    XContentBuilder mappingBuilder = jsonBuilder()
-        .startObject()
-          .startObject(MAPPING_TYPE)
-            .startObject(PROPERTIES_INDEX_ALIAS)
-            .endObject()
-          .endObject()
-        .endObject();
-    if(logger.isDebugEnabled()) {
-      logger.debug("Default applications index mapping: {}", mappingBuilder);
-    }
-      return mappingBuilder;
-    } catch (IOException e) {
-      throw new RuntimeException(BUILDER_ERROR, e);
     }
   }
 
@@ -208,30 +185,6 @@ public class ElasticSearchMappingConfig {
         logger.debug("application index settings {}", settingsBuilder);
       }
       return settingsBuilder;
-    } catch (IOException e) {
-      throw new RuntimeException(BUILDER_ERROR, e);
-    }
-  }
-
-  /**
-   * @return  Default mappings for customers index that's applicable to all types.
-   */
-  public XContentBuilder getMappingBuilderForDefaultNameIndex(String indexName) {
-    try {
-      XContentBuilder mappingBuilder = jsonBuilder()
-          .startObject()
-            .startObject(MAPPING_TYPE)
-              .startObject(PROPERTIES_INDEX_ALIAS)
-                // alphabetical sorting with autocomplete for all name-properties in the index
-                .field("name").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
-              .endObject()
-            .endObject()
-          .endObject();
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("Default {} index mapping: {}", indexName, mappingBuilder);
-      }
-      return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException(BUILDER_ERROR, e);
     }

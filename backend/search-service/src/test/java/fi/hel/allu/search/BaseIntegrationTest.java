@@ -18,12 +18,12 @@ public abstract class BaseIntegrationTest {
 
     protected static final String CLUSTER_NAME = "allu-cluster";
     protected static final String NODE_NAME = "allu-node";
-    protected static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.8.23";
+    protected static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:7.17.28";
 
     protected static final String USERNAME = "someusername";
 
     @Container
-    protected static ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9300, 9200)
+    protected static ElasticsearchContainer container = new ElasticsearchContainer(ELASTIC_IMAGE).withExposedPorts(9200)
             .withEnv("xpack.security.enabled", "false").withEnv("network.host", "_site_")
             .withEnv("network.publish_host", "_local_").withEnv("node.name", NODE_NAME)
             .withEnv("cluster.name", CLUSTER_NAME);
