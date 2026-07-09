@@ -50,7 +50,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(value = { NoSuchEntityException.class })
   protected ResponseEntity<Object> handleNotFound(RuntimeException e, WebRequest request) {
-    logger.error(e.getMessage(), e);
+    logger.warn(e.getMessage());
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
   }
 

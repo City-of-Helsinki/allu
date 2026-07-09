@@ -35,7 +35,7 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
   @Override
   public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
     if (clientHttpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-      logger.error("{} response. Throwing not such entity exception", HttpStatus.NOT_FOUND);
+      logger.warn("{} response. Throwing not such entity exception", HttpStatus.NOT_FOUND);
       throw new NoSuchEntityException(getMessage(clientHttpResponse));
     } else if (clientHttpResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
       logger.error("{} response. Throwing IllegalArgumentException", HttpStatus.BAD_REQUEST);
