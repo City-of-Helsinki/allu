@@ -5,7 +5,7 @@
 allu_service_memory_limit:
   search-service: 1024m
   allu-ui-service: 1024m
-  model-service: 1024m
+  model-service: 2048m
   external-service: 1024m
   supervision-api: 512m
   pdf-service: 512m
