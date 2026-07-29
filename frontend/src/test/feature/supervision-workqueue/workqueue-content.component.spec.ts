@@ -9,7 +9,7 @@ import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '@feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '@model/common/page';
 import {ActivatedRoute} from '@angular/router';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
 import {RouterTestingModule} from '@angular/router/testing';

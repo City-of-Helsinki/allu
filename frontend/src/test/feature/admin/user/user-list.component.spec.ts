@@ -8,7 +8,7 @@ import {Store, StoreModule} from '@ngrx/store';
 import {RouterTestingModule} from '@angular/router/testing';
 import {DebugElement, LOCALE_ID} from '@angular/core';
 import {By} from '@angular/platform-browser';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
 import {User} from '@model/user/user';

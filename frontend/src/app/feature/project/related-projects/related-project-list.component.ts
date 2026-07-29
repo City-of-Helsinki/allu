@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Project} from '../../../model/project/project';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import * as fromRoot from '../../allu/reducers';

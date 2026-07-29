@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {Subject} from 'rxjs';

@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ApplicationWorkItemDatasource} from './application-work-item-datasource';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';

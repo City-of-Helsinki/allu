@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatChipsModule} from '@angular/material/chips';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
 import {AlluCommonModule} from '../common/allu-common.module';

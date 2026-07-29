@@ -10,7 +10,7 @@ import {CustomerContactsComponent} from './contact/customer-contacts.component';
 import {CustomerModalComponent} from './customer/customer-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
 import {CustomerInfoComponent} from './customer/customer-info.component';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
 import {StoreModule} from '@ngrx/store';

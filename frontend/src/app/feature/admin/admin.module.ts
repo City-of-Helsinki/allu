@@ -3,7 +3,7 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 import {MatExpansionModule} from '@angular/material/expansion';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
 import {MatSortModule} from '@angular/material/sort';
 import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';

@@ -22,7 +22,7 @@ import {
   selectSomeSelected,
   selectTotalItems
 } from './store/prune-data.selectors';
-import {LegacyPageEvent as PageEvent, MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {PageEvent, MatPaginator} from '@angular/material/paginator';
 
 
 interface ColumnConfig {
