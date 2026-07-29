@@ -22,16 +22,13 @@
       flex: 1 1 auto;
     }
   }
-
   mat-selection-list .mat-mdc-list-option.map-container {
     height: 200px;
   }
-
   mat-selection-list .mat-mdc-list-option:not(:last-of-type),
   mat-list .mat-mdc-list-item:not(:last-of-type) {
     margin-bottom: 2px;
   }
-
   mat-selection-list .mat-mdc-list-option:hover {
     background: map-get($allu-blue, 100);
   }

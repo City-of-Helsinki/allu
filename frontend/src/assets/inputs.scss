@@ -1,9 +1,5 @@
 @use '@angular/material' as mat;
 
-.mat-select-placeholder.mat-floating-placeholder {
-  transform: translate3d(0,0,0) scale(.75);
-}
-
 @mixin placeholder-theme($theme) {
   $primary: map-get($theme, primary);
 
@@ -22,32 +18,30 @@
   :-ms-input-placeholder {
     color: mat.get-color-from-palette($primary, 300);
   }
-
-  .mat-form-field-label,
+  .mat-mdc-floating-label,
   .mat-select-placeholder {
     color: mat.get-color-from-palette($primary, 300);
   }
-
-  input[disabled] + .mat-form-field-labelwrapper .mat-form-field-label,
+  input[disabled] + .mat-mdc-form-field-infix .mat-mdc-floating-label,
   .mat-select-disabled .mat-select-placeholder {
     color: mat.get-color-from-palette($primary, 200);
   }
 }
 
 .mat-select-disabled .mat-select-value,
-.mat-form-field-label,
-.mat-input-element:disabled,
+.mat-mdc-floating-label,
+.mat-mdc-input-element:disabled,
 .mat-label,
-.mat-input-element,
-.mat-input-element::placeholder,
+.mat-mdc-input-element,
+.mat-mdc-input-element::placeholder,
 .mat-radio-label-content {
   color: rgba(0, 0, 0, 0.68) !important;
 }
 
-.mat-autocomplete-panel {
-  .mat-option:hover:not(.mat-option-disabled),
-  .mat-option.mat-active:not(.mat-option-disabled),
-  .mat-option:focus:not(.mat-option-disabled) {
+.mat-mdc-autocomplete-panel {
+  .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+  .mat-mdc-option.mat-mdc-option-active:not(.mdc-list-item--disabled),
+  .mat-mdc-option:focus:not(.mdc-list-item--disabled) {
     background-color: mat.get-color-from-palette($allu-primary, 200);
   }
 }
@@ -56,16 +50,16 @@ td.mat-calendar-body-cell:hover {
   cursor: pointer;
 }
 
-.form-group .has-warning.ng-dirty:not(.ng-invalid) label.mat-form-field-label,
-.form-group .has-warning.ng-touched:not(.ng-invalid) label.mat-form-field-label {
+.form-group .has-warning.ng-dirty:not(.ng-invalid) label.mat-mdc-floating-label,
+.form-group .has-warning.ng-touched:not(.ng-invalid) label.mat-mdc-floating-label {
   color: mat.get-color-from-palette($allu-accent, 700);
 }
 
-.form-group .has-warning:not(.ng-invalid) .mat-form-field-underline {
+.form-group .has-warning:not(.ng-invalid) .mat-mdc-line-ripple {
   border-color: mat.get-color-from-palette($allu-accent, 700);
 }
 
-.form-group .has-warning:not(.ng-invalid) .mat-form-field-ripple {
+.form-group .has-warning:not(.ng-invalid) .mat-mdc-line-ripple {
   background-color: mat.get-color-from-palette($allu-accent, 700);
 }
 
@@ -80,11 +74,29 @@ td.mat-calendar-body-cell:hover {
   margin: 0;
 }
 
-.mat-form-field.input-no-underline .mat-form-field-underline {
+.mat-mdc-form-field.input-no-underline .mat-mdc-line-ripple {
   display: none;
 }
 
-textarea.mat-input-element.mat-autosize {
+.mat-mdc-text-field-wrapper.mdc-text-field {
+  background-color: transparent !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  --mdc-filled-text-field-container-color: transparent;
+  --mdc-filled-text-field-disabled-container-color: transparent;
+  --mdc-filled-text-field-hover-container-color: transparent;
+  --mdc-filled-text-field-focus-container-color: transparent;
+
+  .mdc-text-field__ripple {
+    display: none;
+  }
+}
+
+.mat-mdc-form-field-focus-overlay {
+  display: none !important;
+}
+
+textarea.mat-mdc-input-element.mat-autosize {
   padding: 0px 0;
   margin: 4px 0;
 }

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
-import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
+import {MatOption} from '@angular/material/core';
 import {debounceTime, map, takeUntil} from 'rxjs/internal/operators';
 import {IdentifierEntry} from '@feature/application/identifier-select/identifier-entry';
 import {Some} from '@util/option';

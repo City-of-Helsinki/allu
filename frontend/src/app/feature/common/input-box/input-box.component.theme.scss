@@ -16,7 +16,7 @@
   .input-box-content > select,
   .input-box-content > mat-select,
   .input-box-content > .select-wrapper input.select-dropdown,
-  .input-box-content > mat-select .mat-select-value {
+  .input-box-content > mat-select .mat-mdc-select-value {
     background: mat.get-contrast-color-from-palette($primary, 500);
     color: mat.get-color-from-palette($primary, 300);
 

@@ -39,7 +39,7 @@ import {RouterModule} from '@angular/router';
 import {InformationRequestSummaryModule} from '@feature/information-request/summary/information-request-summary.module';
 import {InformationRequestEntryComponent} from '@feature/information-request/acceptance/information-request-entry.component';
 import {InformationAcceptanceResolve} from '@feature/information-request/acceptance/information-acceptance-resolve';
-import {MAT_LEGACY_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material/legacy-autocomplete';
+import {MAT_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material/autocomplete';
 import {Overlay} from '@angular/cdk/overlay';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 
@@ -90,7 +90,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
         InformationRequestResultService,
         InformationAcceptanceResolve,
         {
-            provide: MAT_LEGACY_AUTOCOMPLETE_SCROLL_STRATEGY,
+            provide: MAT_AUTOCOMPLETE_SCROLL_STRATEGY,
             useFactory: (overlay: Overlay) => () => overlay.scrollStrategies.close(),
             deps: [Overlay]
         }

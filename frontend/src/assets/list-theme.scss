@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 @mixin allu-list-theme($theme) {
   $primary: map-get($theme, primary);
-  .mat-selection-list:focus,
+  .mat-mdc-selection-list:focus,
   .mat-list-option:focus {
     outline-color: mat.get-color-from-palette($primary, 100);
   }
