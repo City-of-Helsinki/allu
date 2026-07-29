@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {MatChipsModule} from '@angular/material/chips';
-import {MatLegacyMenuModule as MatMenuModule} from '@angular/material/legacy-menu';
+import {MatMenuModule} from '@angular/material/menu';
 
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {TagBarComponent} from './tagbar.component';
