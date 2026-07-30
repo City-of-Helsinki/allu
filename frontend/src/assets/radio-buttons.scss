@@ -12,7 +12,7 @@
   margin: 15px 0;
 }
 
-.vertical-radio-group .mat-radio-button {
+.vertical-radio-group .mat-mdc-radio-button {
   margin: 5px 0;
 }
 
@@ -22,7 +22,7 @@
   align-items: center;
 }
 
-.horizontal-radio-group .mat-radio-button:not(:first-of-type) {
+.horizontal-radio-group .mat-mdc-radio-button:not(:first-of-type) {
   margin-left: 10px;
 }
 

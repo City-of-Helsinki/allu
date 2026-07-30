@@ -148,7 +148,7 @@ describe('ContactComponent', () => {
 
   it('should uncheck orderer when other orderer is selected', fakeAsync(() => {
     reInitWithCableReport();
-    page.getFromContact(1, '.mat-radio-label').nativeElement.click();
+    page.getFromContact(1, '.mat-mdc-radio-label').nativeElement.click();
     detectChangesAndUpdate();
     expect(page.getFromContact(0, '.mat-radio-button').componentInstance.checked).toBe(false, 'original checkbox was checked');
     expect(page.getFromContact(1, '.mat-radio-button').componentInstance.checked).toBe(true, 'clicked checkbox was unchecked');
