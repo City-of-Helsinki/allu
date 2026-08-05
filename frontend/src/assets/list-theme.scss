@@ -2,7 +2,7 @@
 @mixin allu-list-theme($theme) {
   $primary: map-get($theme, primary);
   .mat-mdc-selection-list:focus,
-  .mat-list-option:focus {
+  .mat-mdc-list-option:focus {
     outline-color: mat.get-color-from-palette($primary, 100);
   }
 

@@ -4,6 +4,10 @@
 
 .acceptance-info-header > .mat-mdc-dialog-title {
   margin: 0;
+  padding: 0;
+  &::before {
+    display: none;
+  }
 }
 
 .info-bordered {

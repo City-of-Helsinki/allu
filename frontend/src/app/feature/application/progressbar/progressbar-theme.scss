@@ -4,7 +4,6 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
-
   mat-progress-bar {
     --mdc-linear-progress-track-height: 12px !important;
     --mdc-linear-progress-active-indicator-height: 12px !important;

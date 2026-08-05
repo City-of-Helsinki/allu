@@ -3,8 +3,8 @@
 @mixin modal-theme($theme) {
   $primary: map-get($theme, primary);
 
-  h1.mat-mdc-dialog-title {
-    color: mat.get-color-from-palette($primary, 500);
+  .mat-mdc-dialog-container {
+    --mdc-dialog-subhead-color: #{mat.get-color-from-palette($primary, 500)};
   }
 }
 

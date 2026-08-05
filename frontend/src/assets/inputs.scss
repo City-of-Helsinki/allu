@@ -19,19 +19,18 @@
     color: mat.get-color-from-palette($primary, 300);
   }
   .mat-mdc-floating-label,
-  .mat-select-placeholder {
+  .mat-mdc-select-placeholder {
     color: mat.get-color-from-palette($primary, 300);
   }
   input[disabled] + .mat-mdc-form-field-infix .mat-mdc-floating-label,
-  .mat-select-disabled .mat-select-placeholder {
+  .mat-mdc-select-disabled .mat-mdc-select-placeholder {
     color: mat.get-color-from-palette($primary, 200);
   }
 }
 
-.mat-select-disabled .mat-select-value,
+.mat-mdc-select-disabled .mat-mdc-select-value,
 .mat-mdc-floating-label,
 .mat-mdc-input-element:disabled,
-.mat-label,
 .mat-mdc-input-element,
 .mat-mdc-input-element::placeholder,
 .mat-mdc-radio-label-content {

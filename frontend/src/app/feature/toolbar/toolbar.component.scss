@@ -52,6 +52,10 @@ h1 {
   border-left: 2px solid mat.get-color-from-palette($allu-primary, 300);
 }
 
+.toolbar-section.basket-section {
+  padding-right: 17px;
+}
+
 .toolbar-section > * {
   height: 100%;
 }

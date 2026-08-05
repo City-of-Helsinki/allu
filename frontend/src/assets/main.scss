@@ -38,8 +38,6 @@
 @import 'ngx-toastr/toastr';
 
 // Theme components
-/* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-@include mat.all-legacy-component-themes($allu-theme);
 @include mat.all-component-themes($allu-theme);
 @include allu-common-theme($allu-theme, $black-87-opacity);
 @include allu-icons-theme($allu-theme, $black-50-opacity, $allu-success);

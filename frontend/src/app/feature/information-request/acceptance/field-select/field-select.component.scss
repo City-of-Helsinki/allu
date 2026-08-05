@@ -42,15 +42,12 @@
     overflow: hidden;
     align-self: stretch;
   }
-
   mat-list-option .mdc-checkbox {
     visibility: hidden;
   }
-
   mat-list-option[aria-selected="true"] .mdc-list-item__start {
     visibility: visible;
   }
-
   mat-list-option[aria-selected="true"] {
     --mdc-list-list-item-disabled-label-text-opacity: 1;
     --mdc-list-list-item-disabled-state-layer-opacity: 0;
