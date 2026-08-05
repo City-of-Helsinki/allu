@@ -17,7 +17,7 @@ import {Sort} from '@model/common/sort';
 import {Page} from '@model/common/page';
 import {BackendPage} from '@service/backend-model/backend-page';
 import {BackendCustomer} from '@service/backend-model/backend-customer';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {BackendContact} from '@service/backend-model/backend-contact';
 import {BackendCustomerWithContacts} from '@service/backend-model/backend-customer-with-contacts';
 import {catchError, map} from 'rxjs/operators';

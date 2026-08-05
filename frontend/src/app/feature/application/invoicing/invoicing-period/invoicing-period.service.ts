@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {BackendInvoicingPeriod, InvoicingPeriodMapper} from '@feature/application/invoicing/invoicing-period/invoicing-period-mapper';
 import {catchError, map} from 'rxjs/operators';

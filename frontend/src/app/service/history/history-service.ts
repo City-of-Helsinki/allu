@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {ChangeHistoryMapper} from '../mapper/change-history-mapper';

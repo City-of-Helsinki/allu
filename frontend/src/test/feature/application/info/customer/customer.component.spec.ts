@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
@@ -121,7 +121,7 @@ describe('CustomerComponent', () => {
     expect(page.cardTitle.textContent).toContain(headerText);
   }));
 
-  it('should fill the form with input customer', () => {
+  it('should fill the form with input customer', fakeAsync(() => {
     const customer = new Customer();
     customer.id = 1;
     customer.name = 'NameTest';
@@ -136,31 +136,28 @@ describe('CustomerComponent', () => {
     comp.readonly = false;
     comp.ngOnInit();
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      page.addPageElements();
-      expect(page.customerNameInput.value).toEqual(customer.name);
-      expect(page.registryKeyInput.value).toEqual(customer.registryKey);
-      expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
-      expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
-      expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
-      expect(page.customerPhoneInput.value).toEqual(customer.phone);
-      expect(page.customerEmailInput.value).toEqual(customer.email);
-    });
-  });
+    fixture.detectChanges();
+    tick();
+    page.addPageElements();
+    expect(page.customerNameInput.value).toEqual(customer.name);
+    expect(page.registryKeyInput.value).toEqual(customer.registryKey);
+    expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
+    expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
+    expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
+    expect(page.customerPhoneInput.value).toEqual(customer.phone);
+    expect(page.customerEmailInput.value).toEqual(customer.email);
+  }));
 
-  it('should disable fields if readonly', () => {
+  it('should disable fields if readonly', fakeAsync(() => {
     comp.readonly = true;
     comp.ngOnInit();
+    expect(comp.customerForm.get('name').disabled).toBeTruthy('name should be disabled');
+    expect(comp.customerForm.get('registryKey').disabled).toBeTruthy();
+    expect(comp.customerForm.get('postalAddress').get('streetAddress').disabled).toBeTruthy();
+    expect(comp.customerForm.get('postalAddress').get('postalCode').disabled).toBeTruthy();
+    expect(comp.customerForm.get('postalAddress').get('city').disabled).toBeTruthy();
+    expect(comp.customerForm.get('phone').disabled).toBeTruthy();
+    expect(comp.customerForm.get('email').disabled).toBeTruthy();
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      page.addPageElements();
-      expect(page.customerNameInput.disabled).toBeTruthy();
-      expect(page.registryKeyInput.disabled).toBeTruthy();
-      expect(page.customerAddressInput.disabled).toBeTruthy();
-      expect(page.customerPostalCodeInput.disabled).toBeTruthy();
-      expect(page.customerCityInput.disabled).toBeTruthy();
-      expect(page.customerPhoneInput.disabled).toBeTruthy();
-      expect(page.customerEmailInput.disabled).toBeTruthy();
-    });
-  });
+  }));
 });

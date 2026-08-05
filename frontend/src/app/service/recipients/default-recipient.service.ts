@@ -5,7 +5,7 @@ import {findTranslation} from '../../util/translations';
 import {DefaultRecipient} from '../../model/common/default-recipient';
 import {NumberUtil} from '../../util/number.util';
 import {DefaultRecipientMapper} from '../mapper/default-recipient-mapper';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import {HttpStatus} from '../../util/http-status';
 import {BackendDefaultRecipient} from '../backend-model/backend-default-recipient';
 import {catchError, map} from 'rxjs/operators';

@@ -2,7 +2,7 @@ import {BackendQueryParameter} from '../../backend-model/backend-query-parameter
 import {Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
 import {PageRequest} from '../../../model/common/page-request';
-import {HttpParams} from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 
 export const enumFields = [
   'status',

@@ -1,10 +1,10 @@
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import {CommentService} from '../../../../app/service/application/comment/comment.service';
 import {Comment} from '../../../../app/model/application/comment/comment';
 import {CommentType} from '../../../../app/model/application/comment/comment-type';
 import {ErrorHandler} from '../../../../app/service/error/error-handler.service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {ActionTargetType} from '../../../../app/feature/allu/actions/action-target-type';
 import {ErrorHandlerMock} from '../../../mocks';
 
@@ -41,12 +41,14 @@ describe('CommentService', () => {
 
   beforeEach(() => {
     const tb = TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [
-        { provide: ErrorHandler, useClass: ErrorHandlerMock},
-        CommentService
-      ]
-    });
+    imports: [],
+    providers: [
+        { provide: ErrorHandler, useClass: ErrorHandlerMock },
+        CommentService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     commentService = tb.inject(CommentService);
     httpClient = tb.inject(HttpClient);
     httpTestingController = tb.inject(HttpTestingController);

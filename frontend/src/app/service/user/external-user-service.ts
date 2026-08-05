@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ExternalUser} from '../../model/common/external-user';
 import {findTranslation} from '../../util/translations';
 import {ErrorHandler} from '../error/error-handler.service';

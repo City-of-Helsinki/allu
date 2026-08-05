@@ -5,7 +5,7 @@ import {findTranslation} from '../../util/translations';
 import {BackendStoredFilter, StoredFilterMapper} from '../mapper/stored-filter-mapper';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {CurrentUser} from '../user/current-user';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {catchError, map, switchMap} from 'rxjs/operators';
 
 const STORED_FILTER_URL = '/api/stored-filter';

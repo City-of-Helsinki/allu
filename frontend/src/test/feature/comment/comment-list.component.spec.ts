@@ -80,9 +80,7 @@ describe('CommentListComponent', () => {
   it('should show comments', () => {
     parentComp.comments$.next([COMMENT_ONE, COMMENT_TWO]);
     fixture.detectChanges();
-    fixture.whenStable().then(val => {
-      expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
-    });
+    expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
   });
 
   it('should re-emit save', fakeAsync(() => {

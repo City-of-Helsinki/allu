@@ -91,10 +91,8 @@ describe('AvailableToDirective', () => {
 function expectElement(expectFn: (ele) => void) {
   const fixture = TestBed.createComponent(TestComponent);
   fixture.detectChanges();
-  fixture.whenStable().then(fx => {
-    const element = fixture.debugElement.query(By.css('#content'));
-    expectFn.call(this, element);
-  });
+  const element = fixture.debugElement.query(By.css('#content'));
+  expectFn.call(this, element);
 }
 
 function createDivWithDirective(role: string, type?: string): string {

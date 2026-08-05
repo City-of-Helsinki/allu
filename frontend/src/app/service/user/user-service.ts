@@ -3,7 +3,7 @@ import {UserMapper} from '../mapper/user-mapper';
 import {Observable} from 'rxjs';
 import {HttpUtil} from '../../util/http.util';
 import {User} from '../../model/user/user';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {RoleType} from '../../model/user/role-type';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 import {ErrorHandler} from '../error/error-handler.service';

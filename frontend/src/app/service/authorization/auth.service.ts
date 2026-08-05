@@ -5,7 +5,7 @@ import {CurrentUser} from '../user/current-user';
 import * as fromAuth from '../../feature/auth/reducers';
 import {Store} from '@ngrx/store';
 import {LoggedIn, LoggedOut} from '../../feature/auth/actions/auth-actions';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {switchMap} from 'rxjs/operators';
 

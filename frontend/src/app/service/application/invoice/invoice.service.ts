@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {findTranslation} from '@util/translations';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';

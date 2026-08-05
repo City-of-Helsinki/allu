@@ -73,9 +73,7 @@ describe('CommentComponent', () => {
   it('should show relevant content for new comment', () => {
     parentComp.comment = new Comment(undefined, CommentType.INTERNAL, 'some text');
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(de.query(By.css('[formControlName="type"]'))).toBeDefined();
-      expect(de.query(By.css('.save-info'))).toBeNull();
-    });
+    expect(de.query(By.css('[formControlName="type"]'))).toBeDefined();
+    expect(de.query(By.css('.save-info'))).toBeNull();
   });
 });

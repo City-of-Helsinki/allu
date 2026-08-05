@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {ErrorInfo} from './error-info';
 import {Router} from '@angular/router';
 import {findTranslation} from '../../util/translations';
-import {HttpErrorResponse} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {HttpStatus} from '../../util/http-status';
 
 @Injectable()

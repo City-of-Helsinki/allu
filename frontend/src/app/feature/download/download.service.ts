@@ -4,7 +4,7 @@ import {Option, Some} from '../../util/option';
 import {ErrorHandler} from '../../service/error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BlobFile} from './blob-file';
-import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 
 const URL_PREFIX = '/api/';

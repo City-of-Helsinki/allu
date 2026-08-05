@@ -6,7 +6,7 @@ import {DepositMapper} from './deposit-mapper';
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
 import {BackendDeposit} from './backend-deposit';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {catchError, filter, map} from 'rxjs/operators';
 
 const DEPOSIT_URL = '/api/deposit';

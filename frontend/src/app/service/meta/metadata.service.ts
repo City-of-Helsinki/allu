@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {BackendStructureMeta} from '../backend-model/backend-structure-meta';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {ErrorHandler} from '../error/error-handler.service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 
 const APPLICATION_URL = '/api/applications';

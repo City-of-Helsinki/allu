@@ -50,7 +50,7 @@ import {CityDistrictEffects} from './effects/city-district-effects';
 import {reducers} from './reducers';
 import {AuthModule} from '../auth/auth.module';
 import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
-import {HttpClientModule} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {httpInterceptorProviders} from '../../http-interceptors';
 import {MetadataService} from '../../service/meta/metadata.service';
 import {ToastrModule} from 'ngx-toastr';
@@ -74,82 +74,76 @@ export function logger(reducer: ActionReducer<any>): any {
 export const metaReducers = environment.production ? [] : [logger];
 */
 
-@NgModule({
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot(rootRoutes, {}),
-    BrowserAnimationsModule,
-    StoreModule.forRoot(reducers, {
-      runtimeChecks: { // Disable checks to avoid Leaflet causing errors
-        strictStateImmutability: false,
-        strictActionImmutability: false,
-      },
-    }),
-    EffectsModule.forRoot([
-      CityDistrictEffects,
-      CodeSetEffects,
-      UserEffects,
-      FixedLocationEffects
-    ]),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25, // Retains last 25 states
-      logOnly: environment.production, // Restrict extension to log-only mode
-      connectInZone: true
-    }),
-    ToastrModule.forRoot(),
-    // App modules
-    ApplicationModule,
-    ProjectModule,
-    LoginModule,
-    AuthModule,
-    ToolbarModule,
-    MapSearchModule,
-    LocationModule.forRoot(),
-    WorkQueueModule,
-    SupervisionWorkqueueModule,
-    DecisionModule,
-    SearchModule,
-    AdminModule,
-    SidebarModule,
-    CustomerRegistryModule,
-    DownloadModule,
-    NotificationModule,
-    BulkApprovalModule
-  ],
-  declarations: [
-    AlluComponent,
-    Oauth2Component
-  ],
-  bootstrap: [AlluComponent],
-  providers: [
-    httpInterceptorProviders,
-    ApplicationService,
-    UserService,
-    LocationService,
-    CustomerService,
-    ContactService,
-    MapStore,
-    AuthGuard,
-    AdminGuard,
-    CanDeactivateGuard,
-    CanActivateLogin,
-    ApplicationStore,
-    LocationState,
-    ErrorHandler,
-    DefaultTextService,
-    CurrentUser,
-    ConfigService,
-    CodeSetService,
-    ConfigurationService,
-    ConfigurationHelperService,
-    CustomIconRegistry,
-    MetadataService,
-    { provide: APP_BASE_HREF,  useValue: '/' },
-    { provide: DateAdapter, useClass: AlluDateAdapter },
-    { provide: LOCALE_ID, useValue: 'fi-FI' },
-    { provide: MatPaginatorIntl, useClass: AlluPaginatorIntl }
-  ]
-})
+@NgModule({ declarations: [
+        AlluComponent,
+        Oauth2Component
+    ],
+    bootstrap: [AlluComponent], imports: [BrowserModule,
+        FormsModule,
+        RouterModule.forRoot(rootRoutes, {}),
+        BrowserAnimationsModule,
+        StoreModule.forRoot(reducers, {
+            runtimeChecks: {
+                strictStateImmutability: false,
+                strictActionImmutability: false,
+            },
+        }),
+        EffectsModule.forRoot([
+            CityDistrictEffects,
+            CodeSetEffects,
+            UserEffects,
+            FixedLocationEffects
+        ]),
+        StoreDevtoolsModule.instrument({
+            maxAge: 25, // Retains last 25 states
+            logOnly: environment.production, // Restrict extension to log-only mode
+            connectInZone: true
+        }),
+        ToastrModule.forRoot(),
+        // App modules
+        ApplicationModule,
+        ProjectModule,
+        LoginModule,
+        AuthModule,
+        ToolbarModule,
+        MapSearchModule,
+        LocationModule.forRoot(),
+        WorkQueueModule,
+        SupervisionWorkqueueModule,
+        DecisionModule,
+        SearchModule,
+        AdminModule,
+        SidebarModule,
+        CustomerRegistryModule,
+        DownloadModule,
+        NotificationModule,
+        BulkApprovalModule], providers: [
+        httpInterceptorProviders,
+        ApplicationService,
+        UserService,
+        LocationService,
+        CustomerService,
+        ContactService,
+        MapStore,
+        AuthGuard,
+        AdminGuard,
+        CanDeactivateGuard,
+        CanActivateLogin,
+        ApplicationStore,
+        LocationState,
+        ErrorHandler,
+        DefaultTextService,
+        CurrentUser,
+        ConfigService,
+        CodeSetService,
+        ConfigurationService,
+        ConfigurationHelperService,
+        CustomIconRegistry,
+        MetadataService,
+        { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: DateAdapter, useClass: AlluDateAdapter },
+        { provide: LOCALE_ID, useValue: 'fi-FI' },
+        { provide: MatPaginatorIntl, useClass: AlluPaginatorIntl },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AlluModule {}
