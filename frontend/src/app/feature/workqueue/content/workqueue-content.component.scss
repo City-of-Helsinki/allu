@@ -19,11 +19,11 @@
   color: mat.get-color-from-palette($allu-primary, 500);
 }
 
-.mat-cell:first-of-type .details-cell {
+.mat-mdc-cell:first-of-type .details-cell {
   padding-left: 42px;
 }
 
-.mat-cell:not(:first-of-type) .details-cell {
+.mat-mdc-cell:not(:first-of-type) .details-cell {
   padding-left: 2px;
 }
 

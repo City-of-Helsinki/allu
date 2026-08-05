@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {Option, Some} from '../../../util/option';
 import * as fromRoot from '../../allu/reducers';

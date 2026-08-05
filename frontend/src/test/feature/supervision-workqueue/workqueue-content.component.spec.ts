@@ -11,7 +11,7 @@ import {Page} from '@model/common/page';
 import {ActivatedRoute} from '@angular/router';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';

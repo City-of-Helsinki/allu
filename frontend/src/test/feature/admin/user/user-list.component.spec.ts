@@ -10,7 +10,7 @@ import {DebugElement, LOCALE_ID} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {User} from '@model/user/user';
 import {of} from 'rxjs/internal/observable/of';
 import * as fromRoot from '@feature/allu/reducers';

@@ -4,7 +4,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueComponent} from './workqueue.component';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';

@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, 
 import {Project} from '../../../model/project/project';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import * as fromRoot from '../../allu/reducers';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
