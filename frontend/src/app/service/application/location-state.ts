@@ -4,7 +4,7 @@ import {NumberUtil} from '../../util/number.util';
 import {Location} from '../../model/common/location';
 import {MapStore} from '../map/map-store';
 import {Some} from '../../util/option';
-import {Subscription} from 'rxjs/internal/Subscription';
+import {Subscription} from 'rxjs';
 
 @Injectable()
 export class LocationState implements OnDestroy {

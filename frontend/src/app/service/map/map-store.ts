@@ -11,7 +11,7 @@ import {ObjectUtil} from '@util/object.util';
 import {StoredFilter} from '@model/user/stored-filter';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
-import {debounceTime, distinctUntilChanged, filter, map, take} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, filter, map, take} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 import {select, Store} from '@ngrx/store';
 import * as fromMap from '@feature/map/reducers';

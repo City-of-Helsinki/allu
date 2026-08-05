@@ -4,7 +4,7 @@ import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {ReportedDateType} from '@feature/application/date-reporting/date-reporting-modal.component';
-import {startWith, takeUntil} from 'rxjs/internal/operators';
+import {startWith, takeUntil} from 'rxjs/operators';
 import {ApplicationStatus} from '@model/application/application-status';
 import {
   SupervisionApprovalModalComponent,

@@ -3,7 +3,7 @@ import * as fromApplication from '../../application/reducers';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import {ApplicationService} from '../../../service/application/application.service';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {
   Add, AddFailed, AddSuccess,
   ApplicationTagActionType,
@@ -15,7 +15,7 @@ import {
   SaveFailed,
   SaveSuccess
 } from '../actions/application-tag-actions';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Application} from '../../../model/application/application';
 import {NumberUtil} from '../../../util/number.util';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';

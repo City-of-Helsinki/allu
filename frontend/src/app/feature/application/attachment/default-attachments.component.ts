@@ -6,10 +6,10 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {AttachmentType} from '@model/application/attachment/attachment-type';
 import {ArrayUtil} from '@util/array-util';
 import {CurrentUser} from '@service/user/current-user';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
-import {Observable} from 'rxjs/internal/Observable';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'default-attachments',

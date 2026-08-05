@@ -12,7 +12,7 @@ import {DepositStatusType} from '@model/application/invoice/deposit-status-type'
 import {applicationCanBeEdited, ApplicationStatus, isSameOrBefore} from '@model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInvoicing from '@feature/application/invoicing/reducers';

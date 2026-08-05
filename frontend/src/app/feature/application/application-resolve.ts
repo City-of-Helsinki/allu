@@ -10,7 +10,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
 import {Load, LoadDistribution, LoadReplacingApplication, LoadSuccess, SaveDistributionSuccess} from './actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {catchError, filter, switchMap, take, tap} from 'rxjs/internal/operators';
+import {catchError, filter, switchMap, take, tap} from 'rxjs/operators';
 import * as commentActions from '@feature/comment/actions/comment-actions';
 import * as historyActions from '@feature/history/actions/history-actions';
 import * as metaActions from './actions/application-meta-actions';

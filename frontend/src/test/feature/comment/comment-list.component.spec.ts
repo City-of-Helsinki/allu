@@ -6,7 +6,7 @@ import {AlluCommonModule} from '../../../app/feature/common/allu-common.module';
 import {CommentListComponent} from '../../../app/feature/comment/comment-list.component';
 import {CommentType} from '../../../app/model/application/comment/comment-type';
 import {Comment} from '../../../app/model/application/comment/comment';
-import {BehaviorSubject} from 'rxjs/index';
+import {BehaviorSubject} from 'rxjs';
 
 const COMMENT_ONE = new Comment(
   1,

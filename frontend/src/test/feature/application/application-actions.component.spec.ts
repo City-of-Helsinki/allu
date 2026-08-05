@@ -24,7 +24,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
 import {MatDialog} from '@angular/material/dialog';
 import {User} from '@model/user/user';
-import {EMPTY, Observable, of} from 'rxjs/index';
+import {EMPTY, Observable, of} from 'rxjs';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
 import {NotificationService} from '@feature/notification/notification.service';

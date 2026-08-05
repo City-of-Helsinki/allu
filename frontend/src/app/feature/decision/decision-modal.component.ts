@@ -10,9 +10,9 @@ import {ApplicationStore} from '@service/application/application-store';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
 import {DistributionType} from '@model/common/distribution-type';
-import {filter, map} from 'rxjs/internal/operators';
+import {filter, map} from 'rxjs/operators';
 import {UserService} from '@service/user/user-service';
-import {of} from 'rxjs/internal/observable/of';
+import {of} from 'rxjs';
 import {DecisionTab, tabToStatus} from '@feature/decision/documents/decision-tab';
 
 export type DecisionModalType = 'DECISIONMAKING' | 'RETURNED_TO_PREPARATION' | 'REJECTED' | 'RESEND_EMAIL';

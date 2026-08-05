@@ -4,7 +4,7 @@ import {manualComments} from '@model/application/comment/comment-type';
 import {CommentForm} from './comment-form';
 import {Comment} from '@model/application/comment/comment';
 import {StringUtil} from '@util/string.util';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
 import {CurrentUser} from '@service/user/current-user';
 import {RoleType} from '@model/user/role-type';

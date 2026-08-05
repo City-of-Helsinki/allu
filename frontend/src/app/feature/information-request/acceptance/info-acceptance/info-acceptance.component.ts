@@ -1,5 +1,5 @@
 import { HostBinding, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
-import {takeUntil} from 'rxjs/internal/operators';
+import {takeUntil} from 'rxjs/operators';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';

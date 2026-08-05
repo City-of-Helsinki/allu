@@ -6,7 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import * as fromRoot from '../../allu/reducers';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 import {Dictionary} from '@ngrx/entity/src/models';
 import {CityDistrict} from '../../../model/common/city-district';
 

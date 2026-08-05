@@ -8,7 +8,7 @@ import {NumberUtil} from '@util/number.util';
 import {ArrayUtil} from '@util/array-util';
 import {ChargeBasisType, manualChargeBasisTypes} from '@model/application/invoice/charge-basis-type';
 import {Subject} from 'rxjs';
-import {distinctUntilChanged, take, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
 import {FormUtil} from '@util/form.util';
 
 export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';

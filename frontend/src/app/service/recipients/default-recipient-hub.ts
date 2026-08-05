@@ -3,7 +3,7 @@ import {DefaultRecipientService} from './default-recipient.service';
 import {DefaultRecipient} from '../../model/common/default-recipient';
 import {ArrayUtil} from '../../util/array-util';
 import {ReplaySubject} from 'rxjs';
-import {filter, map, share, switchAll, switchMap, tap} from 'rxjs/internal/operators';
+import {filter, map, share, switchAll, switchMap, tap} from 'rxjs/operators';
 import {CurrentUser} from '@service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 

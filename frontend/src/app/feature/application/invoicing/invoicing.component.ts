@@ -15,7 +15,7 @@ import {NumberUtil} from '@util/number.util';
 import {CustomerService} from '@service/customer/customer.service';
 import {CurrentUser} from '@service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {catchError, map, switchMap, take} from 'rxjs/internal/operators';
+import {catchError, map, switchMap, take} from 'rxjs/operators';
 import {applicationCanBeEdited} from '@model/application/application-status';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

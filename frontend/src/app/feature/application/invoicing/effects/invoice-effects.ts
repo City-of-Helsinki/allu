@@ -5,9 +5,9 @@ import * as ChargeBasisAction from '@feature/application/invoicing/actions/charg
 import {ChargeBasisActionType} from '@feature/application/invoicing/actions/charge-basis-actions';
 import {Action, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {InvoiceService} from '@service/application/invoice/invoice.service';
 import {InvoiceActionType, Load, LoadSuccess} from '@feature/application/invoicing/actions/invoice-actions';

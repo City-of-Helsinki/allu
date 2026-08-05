@@ -3,7 +3,7 @@ import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {Application} from '@model/application/application';
 import {MatOption} from '@angular/material/core';
-import {debounceTime, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, takeUntil} from 'rxjs/operators';
 import {GeometryCollection} from 'geojson';
 import {ArrayUtil} from '@util/array-util';
 import {NumberUtil} from '@util/number.util';

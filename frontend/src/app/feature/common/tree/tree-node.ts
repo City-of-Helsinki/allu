@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs/internal/Observable';
-import {of} from 'rxjs/internal/observable/of';
+import {Observable} from 'rxjs';
+import {of} from 'rxjs';
 
 export interface TreeStructureNode<T> {
   [key: string]: TreeStructureNode<T> | T | null;

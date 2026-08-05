@@ -6,7 +6,7 @@ import {EnumUtil} from '../../../../../util/enum.util';
 import {NegligenceFeeType} from '../../../../../model/application/invoice/negligence-fee-type';
 import {findTranslation} from '../../../../../util/translations';
 import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
-import {debounceTime, map, startWith, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, map, startWith, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'charge-basis-negligence-fee',

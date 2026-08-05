@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, Subject} from 'rxjs';
+import {lastValueFrom, Observable, Subject} from 'rxjs';
 import {NumberUtil} from '../../../util/number.util';
 import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
@@ -13,7 +13,7 @@ import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {map, take} from 'rxjs/internal/operators';
+import {map, take} from 'rxjs/operators';
 import {FormUtil} from '@util/form.util';
 import {createTranslated} from '@service/error/error-info';
 import { CurrentUser } from '@app/service/user/current-user';
@@ -68,7 +68,7 @@ export class CustomerComponent implements OnInit {
 
   async removeButtonVisibilityStatus(): Promise<void> {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists, this hides the remove
-    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
+    const userHasRole = await lastValueFrom(this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])));
 
     this.customerForm.get('sapCustomerNumber').valueChanges
       .pipe(take(1))

@@ -56,11 +56,11 @@ export class SupervisionTaskSearchEffects {
   ));
 
   private getCurrentWorkQueueSearch(): Observable<[SupervisionTaskSearchCriteria, Sort, PageRequest]> {
-    return combineLatest(
+    return combineLatest([
       this.store.pipe(select(fromSupervisionWorkQueue.getParameters), filter(search => !!search)),
       this.store.pipe(select(fromSupervisionWorkQueue.getSort)),
       this.store.pipe(select(fromSupervisionWorkQueue.getPageRequest)),
-    );
+    ]);
   }
 
   /**
@@ -69,10 +69,10 @@ export class SupervisionTaskSearchEffects {
    */
   private setTargetTypeSpecificParameters(action: Search): Observable<Search> {
     if (action.targetType === ActionTargetType.SupervisionTaskWorkQueue) {
-      return combineLatest(
+      return combineLatest([
         this.store.pipe(select(fromSupervisionWorkQueue.getTab)),
         this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
-      ).pipe(
+      ]).pipe(
         map(([tab, user]) => {
           const payload = action.payload;
           const queryCopy = ObjectUtil.clone(payload.query);

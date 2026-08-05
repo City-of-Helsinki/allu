@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {MatOption} from '@angular/material/core';
-import {debounceTime, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, takeUntil} from 'rxjs/operators';
 import {Project} from '../../../model/project/project';
 
 @Component({

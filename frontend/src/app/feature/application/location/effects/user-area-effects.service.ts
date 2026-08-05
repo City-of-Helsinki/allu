@@ -4,7 +4,7 @@ import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
 import {LocationService} from '@service/location.service';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {Load, LoadFailed, LoadSuccess, UserAreaActionType} from '@feature/application/location/actions/user-area-actions';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';

@@ -4,7 +4,7 @@ import {Project} from '../../../model/project/project';
 import {CityDistrict} from '../../../model/common/city-district';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {findTranslation} from '../../../util/translations';
-import {filter} from 'rxjs/internal/operators';
+import {filter} from 'rxjs/operators';
 import * as fromProject from '../reducers';
 import {Store} from '@ngrx/store';
 import {Delete} from '../actions/project-actions';

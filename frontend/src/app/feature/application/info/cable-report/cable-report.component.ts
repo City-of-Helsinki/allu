@@ -12,7 +12,7 @@ import {ApplicationStatus, isSameOrAfter} from '@model/application/application-s
 import * as fromApplication from '@feature/application/reducers';
 import {Add, Remove} from '@feature/application/actions/application-tag-actions';
 import {select} from '@ngrx/store';
-import {Observable} from 'rxjs/index';
+import {Observable} from 'rxjs';
 import {TimeUtil} from '@util/time.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';

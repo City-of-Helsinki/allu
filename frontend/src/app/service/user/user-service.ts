@@ -9,7 +9,7 @@ import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BackendUser} from '../backend-model/backend-user';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const ACTIVE_USERS_URL = '/api/users/active';
 const USERS_URL = '/api/users';

@@ -13,7 +13,7 @@ import {Some} from '@util/option';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ApplicationType} from '@model/application/type/application-type';
 import {DefaultTextService} from '@service/application/default-text.service';
-import {switchMap} from 'rxjs/internal/operators';
+import {switchMap} from 'rxjs/operators';
 import {FormUtil} from '@util/form.util';
 
 @Component({

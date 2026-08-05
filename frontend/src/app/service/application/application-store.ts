@@ -14,7 +14,7 @@ import {ApplicationService} from './application.service';
 import {isCommon} from '@model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
-import {catchError, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {catchError, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';

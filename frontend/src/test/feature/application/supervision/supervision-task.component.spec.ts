@@ -12,7 +12,7 @@ import {User} from '@model/user/user';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {findTranslation} from '@util/translations';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 import * as fromRoot from '@feature/allu/reducers';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromSupervisionTask from '@feature/application/supervision/reducers';

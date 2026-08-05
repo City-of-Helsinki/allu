@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
 import {REDIRECT_URL} from '../../../util/local-storage';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class AuthGuard  {

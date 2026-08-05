@@ -8,7 +8,7 @@ import {DefaultTextMapper} from '../mapper/default-text-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BackendDefaultText} from '../backend-model/backend-default-text';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const DEFAULT_TEXTS_URL = '/api/defaulttext';
 const DEFAULT_TEXTS_BY_APPLICATION_TYPE_URL = DEFAULT_TEXTS_URL + '/applicationtype/:appType';

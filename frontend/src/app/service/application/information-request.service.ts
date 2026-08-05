@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandler} from '../error/error-handler.service';
-import {Observable} from 'rxjs/index';
+import {Observable} from 'rxjs';
 import {InformationRequestResponse} from '../../model/information-request/information-request-response';
 import {InformationRequest} from '@model/information-request/information-request';
 import {BackendInformationRequestResponse, InformationRequestResponseMapper} from '../mapper/information-request-response-mapper';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {findTranslation} from '@util/translations';
 import {BackendInformationRequest, InformationRequestMapper} from '../mapper/information-request-mapper';
 import {NumberUtil} from '@util/number.util';

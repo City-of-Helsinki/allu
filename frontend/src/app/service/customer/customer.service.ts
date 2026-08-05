@@ -20,7 +20,7 @@ import {BackendCustomer} from '@service/backend-model/backend-customer';
 import {HttpClient} from '@angular/common/http';
 import {BackendContact} from '@service/backend-model/backend-contact';
 import {BackendCustomerWithContacts} from '@service/backend-model/backend-customer-with-contacts';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {CustomerType} from '@model/customer/customer-type';
 
 const CUSTOMERS_URL = '/api/customers';

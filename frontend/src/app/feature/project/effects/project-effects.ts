@@ -22,7 +22,7 @@ import * as ChildAction from '../actions/child-project-actions';
 import {Router} from '@angular/router';
 import { NumberUtil } from '../../../util/number.util';
 import {META_PROJECT, MetadataService} from '../../../service/meta/metadata.service';
-import {defer, from} from 'rxjs/index';
+import {defer, from} from 'rxjs';
 import * as fromAuth from '../../auth/reducers';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 

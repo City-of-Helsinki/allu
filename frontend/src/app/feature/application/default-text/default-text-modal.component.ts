@@ -10,7 +10,7 @@ import {NotificationService} from '../../notification/notification.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NumberUtil} from '../../../util/number.util';
 import {DefaultTextService} from '../../../service/application/default-text.service';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '800px'};
 

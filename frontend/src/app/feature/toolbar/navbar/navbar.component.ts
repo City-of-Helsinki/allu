@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {RoleType} from '@app/model/user/role-type';
 
 @Component({

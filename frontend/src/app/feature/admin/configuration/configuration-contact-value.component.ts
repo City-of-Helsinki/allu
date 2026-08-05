@@ -9,7 +9,7 @@ import {Save} from '@feature/admin/configuration/actions/configuration-actions';
 import {Observable, Subject} from 'rxjs';
 import {Contact} from '@model/customer/contact';
 import {ComplexValidator} from '@util/complex-validator';
-import {debounceTime, filter, take, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, filter, take, takeUntil} from 'rxjs/operators';
 import * as ContactSearchAction from '@feature/customerregistry/actions/contact-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ContactNameSearchMinChars, ContactSearchQuery} from '@service/customer/contact-search-query';

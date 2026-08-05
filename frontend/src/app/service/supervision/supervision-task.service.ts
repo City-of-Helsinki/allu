@@ -19,7 +19,7 @@ import {TimeUtil} from '../../util/time.util';
 import {PageRequest} from '../../model/common/page-request';
 import {BackendSupervisionTask} from '../../model/application/supervision/backend-supervision-task';
 import {BackendPage} from '../backend-model/backend-page';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';

@@ -18,7 +18,7 @@ import {Contact} from '@model/customer/contact';
 import {Application} from '@model/application/application';
 import {ProjectService} from '@service/project/project.service';
 import {NumberUtil} from '@util/number.util';
-import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';

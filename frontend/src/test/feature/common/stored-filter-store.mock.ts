@@ -1,7 +1,7 @@
 import {initialState, StoredFilterState} from '../../../app/service/stored-filter/stored-filter-store';
 import {StoredFilter} from '../../../app/model/user/stored-filter';
 import {StoredFilterType} from '../../../app/model/user/stored-filter-type';
-import {BehaviorSubject, EMPTY, Observable, of} from 'rxjs/index';
+import {BehaviorSubject, EMPTY, Observable, of} from 'rxjs';
 
 export class StoredFilterStoreMock {
   public store = new BehaviorSubject<StoredFilterState>(initialState);

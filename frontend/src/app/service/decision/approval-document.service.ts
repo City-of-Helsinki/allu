@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {findTranslation} from '@util/translations';
 import {ApprovalDocument, ApprovalDocumentType} from '@model/decision/approval-document';

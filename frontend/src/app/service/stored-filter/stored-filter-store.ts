@@ -5,7 +5,7 @@ import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {NotificationService} from '../../feature/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
-import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/internal/operators';
+import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/operators';
 import {SelectLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {Store} from '@ngrx/store';

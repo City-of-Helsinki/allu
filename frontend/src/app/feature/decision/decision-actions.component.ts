@@ -19,7 +19,7 @@ import {select, Store} from '@ngrx/store';
 import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {catchError, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';

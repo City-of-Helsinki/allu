@@ -7,7 +7,7 @@ import {from, Observable, of} from 'rxjs';
 import {Add, AddSuccess, ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '../../../util/number.util';
-import {filter} from 'rxjs/internal/operators';
+import {filter} from 'rxjs/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()

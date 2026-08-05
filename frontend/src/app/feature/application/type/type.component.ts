@@ -4,7 +4,7 @@ import {ApplicationType, getAvailableKinds, getAvailableSpecifiers, hasMultipleK
 import {ApplicationStore} from '@service/application/application-store';
 import {ArrayUtil} from '@util/array-util';
 import {Observable, of, Subject} from 'rxjs';
-import {map, take, takeUntil} from 'rxjs/internal/operators';
+import {map, take, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers/index';
 import * as fromAuth from '@feature/auth/reducers';

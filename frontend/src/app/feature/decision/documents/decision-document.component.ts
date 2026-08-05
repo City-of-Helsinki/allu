@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
-import {combineLatest, Observable, Subject} from 'rxjs/index';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {map, take, takeUntil} from 'rxjs/internal/operators';
+import {map, take, takeUntil} from 'rxjs/operators';
 import {Application} from '@model/application/application';
 import {Load} from '@feature/decision/actions/decision-actions';
 import * as fromApplication from '@feature/application/reducers';

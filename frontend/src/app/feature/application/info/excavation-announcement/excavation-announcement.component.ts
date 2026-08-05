@@ -1,7 +1,7 @@
 import {Component, OnInit, ChangeDetectorRef, AfterViewInit} from '@angular/core';
 import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
-import {filter, take} from 'rxjs/internal/operators';
+import {filter, take} from 'rxjs/operators';
 import {MatDatepicker} from '@angular/material/datepicker';
 import {MatDialog} from '@angular/material/dialog';
 import {Application} from '@model/application/application';
@@ -139,9 +139,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
     this.winterTimeOperationCtrl = this.applicationForm.controls['winterTimeOperation'];
 
-    combineLatest(
+    combineLatest([
       this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_START),
-      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END))
+      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END)])
         .pipe(take(1)).subscribe(([start, end]) => {
           this.winterTimeStart = start.value;
           this.winterTimeEnd = end.value;

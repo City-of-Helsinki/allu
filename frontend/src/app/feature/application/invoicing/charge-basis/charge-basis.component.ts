@@ -8,7 +8,7 @@ import {Application} from '@model/application/application';
 import {applicationCanBeEdited, invoicingChangesAllowedForType} from '@model/application/application-status';
 import {CurrentUser} from '@service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';

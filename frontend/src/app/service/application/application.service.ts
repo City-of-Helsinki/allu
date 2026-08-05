@@ -24,7 +24,7 @@ import {Page} from '../../model/common/page';
 import {BackendApplication, SearchResultApplication} from '../backend-model/backend-application';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {BackendDistributionEntry} from '@service/backend-model/backend-distribution-entry';
 import {DistributionMapper} from '@service/mapper/distribution-mapper';

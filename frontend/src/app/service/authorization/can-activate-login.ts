@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/ro
 import {ConfigService} from '../config/config.service';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class CanActivateLogin  {

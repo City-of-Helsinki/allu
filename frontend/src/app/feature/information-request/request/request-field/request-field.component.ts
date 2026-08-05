@@ -1,7 +1,7 @@
 import {Component, EventEmitter, forwardRef, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {StringUtil} from '@util/string.util';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
 const REQUEST_FIELD_VALUE_ACCESSOR = {

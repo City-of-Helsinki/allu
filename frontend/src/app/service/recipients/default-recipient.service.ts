@@ -8,7 +8,7 @@ import {DefaultRecipientMapper} from '../mapper/default-recipient-mapper';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {HttpStatus} from '../../util/http-status';
 import {BackendDefaultRecipient} from '../backend-model/backend-default-recipient';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const DEFAULT_RECIPIENTS_URL = '/api/default-recipients';
 const DEFAULT_RECIPIENTS_ID_URL = '/api/default-recipients/:id';

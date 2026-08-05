@@ -16,7 +16,7 @@ import {applicationCanBeEdited} from '@model/application/application-status';
 import {NotificationService} from '@feature/notification/notification.service';
 import {findTranslation} from '@util/translations';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
-import {filter, map, takeUntil} from 'rxjs/internal/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import {validForDecision} from '@model/common/file-type';
 
 @Component({

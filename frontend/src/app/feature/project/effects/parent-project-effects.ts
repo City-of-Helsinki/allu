@@ -6,7 +6,7 @@ import * as fromProject from '../reducers';
 import {from, Observable, of} from 'rxjs';
 import {ParentProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/parent-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
-import {filter} from 'rxjs/internal/operators';
+import {filter} from 'rxjs/operators';
 import {NumberUtil} from '../../../util/number.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 

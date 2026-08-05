@@ -3,7 +3,7 @@ import {MapSearchFilter} from '@service/map-search-filter';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {MapStore} from '@service/map/map-store';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {MapLayer} from '@service/map/map-layer';
 import {select, Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';

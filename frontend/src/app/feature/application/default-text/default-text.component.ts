@@ -10,7 +10,7 @@ import {DefaultTextType} from '@model/application/default-text-type';
 import {Some} from '@util/option';
 import {findTranslation} from '@util/translations';
 import {DefaultTextService} from '@service/application/default-text.service';
-import {switchMap} from 'rxjs/internal/operators';
+import {switchMap} from 'rxjs/operators';
 
 const DEFAULT_TEXT_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,

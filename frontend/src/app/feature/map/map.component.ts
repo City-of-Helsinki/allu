@@ -10,7 +10,7 @@ import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '@service/map/map-controller';
 import {Observable, Subject} from 'rxjs';
 import {ProjectService} from '@service/project/project.service';
-import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {TimeUtil} from '@util/time.util';
 import {MapUtil} from '@service/map/map.util';
 import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';

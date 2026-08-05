@@ -5,7 +5,7 @@ import {Application} from '../../model/application/application';
 import {ProjectService} from './project.service';
 import * as fromRoot from '../../feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {map, switchMap, tap} from 'rxjs/internal/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 
 @Injectable()
 export class ProjectState {

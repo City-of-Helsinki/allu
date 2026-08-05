@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
 import * as fromConfiguration from '@feature/admin/configuration/reducers';
 import {select, Store} from '@ngrx/store';
-import {Observable} from 'rxjs/internal/Observable';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {Observable} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {ConfigurationKey} from '@model/config/configuration-key';
 import {filter, map, take} from 'rxjs/operators';
 import {TimeUtil} from '@util/time.util';
 import {Configuration} from '@model/config/configuration';
 import {ApplicationKind} from '@model/application/type/application-kind';
-import {of} from 'rxjs/internal/observable/of';
+import {of} from 'rxjs';
 import {TimePeriod} from '@feature/application/info/time-period';
 import {ApplicationType} from '@model/application/type/application-type';
 import {User} from '@model/user/user';

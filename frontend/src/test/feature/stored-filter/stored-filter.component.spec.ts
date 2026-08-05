@@ -10,7 +10,7 @@ import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
 import {StoredFilterStore} from '../../../app/service/stored-filter/stored-filter-store';
 import {NotificationService} from '../../../app/feature/notification/notification.service';
-import {Observable, of, Subject} from 'rxjs/index';
+import {Observable, of, Subject} from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const filters = [

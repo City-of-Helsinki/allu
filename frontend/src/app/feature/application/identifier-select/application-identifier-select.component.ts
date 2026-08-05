@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnIn
 import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {MatOption} from '@angular/material/core';
-import {debounceTime, map, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, map, takeUntil} from 'rxjs/operators';
 import {IdentifierEntry} from '@feature/application/identifier-select/identifier-entry';
 import {Some} from '@util/option';
 import {ComplexValidator} from '@util/complex-validator';

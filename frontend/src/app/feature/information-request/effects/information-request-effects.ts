@@ -9,9 +9,9 @@ import * as SummaryAction from '@feature/information-request/actions/information
 import * as ResponseAction from '@feature/information-request/actions/information-request-response-actions';
 import {Action, select, Store} from '@ngrx/store';
 import {InformationRequestService} from '@service/application/information-request.service';
-import {from, Observable, of} from 'rxjs/index';
+import {from, Observable, of} from 'rxjs';
 import * as fromApplication from '@feature/application/reducers';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {InformationRequestResultActionType} from '@feature/information-request/actions/information-request-result-actions';
 import {ApplicationService} from '@service/application/application.service';

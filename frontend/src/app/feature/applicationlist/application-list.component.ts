@@ -7,7 +7,7 @@ import {Add} from '@feature/project/actions/application-basket-actions';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromMap from '@feature/map/reducers';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
 

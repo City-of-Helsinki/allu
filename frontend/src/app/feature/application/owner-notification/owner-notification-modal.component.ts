@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Observable, Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import {ChangeHistoryItem} from '@model/history/change-history-item';

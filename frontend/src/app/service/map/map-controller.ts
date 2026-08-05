@@ -23,7 +23,7 @@ import {MapPopupService} from './map-popup.service';
 import {Injectable} from '@angular/core';
 import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {Projection} from '@feature/map/projection';
 import {State as ScissorsState, ScissorsControl} from './scissors-control';

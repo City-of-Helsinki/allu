@@ -1,8 +1,8 @@
 import {Action, select, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '../reducers';
-import {Observable, of} from 'rxjs/index';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {Observable, of} from 'rxjs';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import * as ApplicationAction from '../actions/application-actions';
 import * as ApplicationReplacementHistoryActions from '../actions/application-replacement-history-actions';
 import {Injectable} from '@angular/core';

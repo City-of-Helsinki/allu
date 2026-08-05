@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Action, select, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {TerminationService} from '@feature/decision/termination/termination-service';
-import {from, Observable} from 'rxjs/index';
+import {from, Observable} from 'rxjs';
 import {
   LoadDocument,
   LoadDocumentFailed,
@@ -21,7 +21,7 @@ import {
   TerminationDraftFailed,
   TerminationDraftSuccess
 } from '@feature/decision/actions/termination-actions';
-import {catchError, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {Router} from '@angular/router';

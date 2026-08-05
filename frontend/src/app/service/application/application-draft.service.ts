@@ -6,7 +6,7 @@ import {ApplicationMapper} from './../mapper/application-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BackendApplication} from '../backend-model/backend-application';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const DRAFTS_URL = '/api/drafts';
 

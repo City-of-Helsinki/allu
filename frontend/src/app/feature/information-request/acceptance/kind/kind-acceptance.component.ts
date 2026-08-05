@@ -2,8 +2,8 @@ import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@a
 import {hasSpecifiers, KindsWithSpecifiers, SpecifierEntry} from '@model/application/type/application-specifier';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
-import {takeUntil} from 'rxjs/internal/operators';
-import {Subject} from 'rxjs/index';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers/index';
 import {SetKindsWithSpecifiers} from '@feature/information-request/actions/information-request-result-actions';

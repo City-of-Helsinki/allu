@@ -4,7 +4,7 @@ import {CommentType} from '../../../model/application/comment/comment-type';
 import {Comment} from '../../../model/application/comment/comment';
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'invoice-comments',

@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Feature, GeometryObject, Point} from 'geojson';
 import {UserAreasComponent} from '@feature/application/location/user-areas/user-areas.component';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {getElementText, getMatIconButton} from 'test/selector-helpers';
 
 @Component({

@@ -15,7 +15,7 @@ import {CurrentUserMock, CustomerServiceMock, NotificationServiceMock} from '../
 import {CustomerService} from '../../../../../app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../app/model/codeset/codeset';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {NotificationService} from '@feature/notification/notification.service';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import {RouterTestingModule} from '@angular/router/testing';

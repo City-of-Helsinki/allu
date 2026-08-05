@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit} from '
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Location} from '@model/common/location';
 import {ArrayUtil} from '@util/array-util';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

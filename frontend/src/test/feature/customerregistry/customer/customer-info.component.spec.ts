@@ -10,7 +10,7 @@ import {DebugElement} from '@angular/core';
 import {CustomerService} from '../../../../app/service/customer/customer.service';
 import {CodeSetService} from '../../../../app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../app/model/codeset/codeset';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CurrentUser } from '@app/service/user/current-user';

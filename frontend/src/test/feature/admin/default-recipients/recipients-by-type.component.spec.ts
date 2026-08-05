@@ -10,8 +10,8 @@ import {DefaultRecipient} from '../../../../app/model/common/default-recipient';
 import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-recipient-mock-values';
 import {NotificationService} from '../../../../app/feature/notification/notification.service';
 import {NotificationServiceMock} from '../../../mocks';
-import {share} from 'rxjs/internal/operators';
-import {BehaviorSubject, Observable, of} from 'rxjs/index';
+import {share} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);

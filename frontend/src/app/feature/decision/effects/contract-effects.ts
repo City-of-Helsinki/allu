@@ -3,7 +3,7 @@ import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {from, Observable, of} from 'rxjs/index';
+import {from, Observable, of} from 'rxjs';
 import {
   Approve,
   ApproveFailed,
@@ -17,7 +17,7 @@ import {
   LoadSuccess, Reject, RejectSuccess
 } from '@feature/decision/actions/contract-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {ContractService} from '@service/contract/contract.service';
 import {Application} from '@model/application/application';

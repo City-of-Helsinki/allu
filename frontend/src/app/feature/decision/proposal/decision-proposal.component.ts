@@ -5,7 +5,7 @@ import {Comment} from '@model/application/comment/comment';
 import {TimeUtil} from '@util/time.util';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'decision-proposal',

@@ -7,7 +7,7 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {translateArray} from '../../../util/translations';
 import {ContentRow} from '../../../model/common/content-row';
 import {Some} from '../../../util/option';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {NotificationService} from '../../notification/notification.service';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

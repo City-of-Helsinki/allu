@@ -6,7 +6,7 @@ import {ErrorHandler} from '../error/error-handler.service';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import {findTranslation} from '../../util/translations';
 import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {BulkApprovalEntry} from '@app/model/decision/bulk-approval-entry';
 import {BackendBulkApprovalEntry, BulkApprovalEntryMapper} from '../mapper/bulk-approval-entry-mapper';
 import {ApplicationStatus} from '@model/application/application-status';

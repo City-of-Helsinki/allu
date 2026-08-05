@@ -6,7 +6,7 @@ import {ContactMapper} from '../mapper/contact-mapper';
 import {Contact} from '@model/customer/contact';
 import {HttpClient} from '@angular/common/http';
 import {BackendContact} from '@service/backend-model/backend-contact';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';

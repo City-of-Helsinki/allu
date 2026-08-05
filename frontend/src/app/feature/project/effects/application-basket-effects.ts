@@ -13,7 +13,7 @@ import {
   LoadSuccess,
   Remove
 } from '../actions/application-basket-actions';
-import {catchError, combineLatest, filter, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, combineLatestWith, filter, map, switchMap, tap} from 'rxjs/operators';
 import {ApplicationService} from '@service/application/application.service';
 import {LocalStorageUtil} from '@util/local-storage.util';
 import {NotificationService} from '@feature/notification/notification.service';
@@ -32,7 +32,7 @@ export class ApplicationBasketEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApplicationBasketActionType.Load),
     map(() => LocalStorageUtil.getItemArray<number>(BASKET)),
-    combineLatest(this.store.select(fromAuth.getLoggedIn)),
+    combineLatestWith(this.store.select(fromAuth.getLoggedIn)),
     filter(([ids, loggedIn]) => loggedIn),
     switchMap(([ids, loggedIn]) => this.loadApplications(ids))
   ));
@@ -77,7 +77,7 @@ export class ApplicationBasketEffects {
 
   
   loadInitial: Observable<Action> = createEffect(() => defer(() => of(LocalStorageUtil.getItemArray<number>(BASKET))).pipe(
-    combineLatest(this.store.select(fromAuth.getLoggedIn)),
+    combineLatestWith(this.store.select(fromAuth.getLoggedIn)),
     filter(([ids, loggedIn]) => loggedIn && ids.length > 0),
     switchMap(([ids, loggedIn]) => this.loadApplications(ids))
   ));

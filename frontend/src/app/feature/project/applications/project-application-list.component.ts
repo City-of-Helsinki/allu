@@ -10,7 +10,7 @@ import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {Dictionary} from '@ngrx/entity/src/models';
 import {CityDistrict} from '../../../model/common/city-district';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'project-application-list',

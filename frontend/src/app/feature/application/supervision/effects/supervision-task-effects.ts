@@ -5,7 +5,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {SupervisionTaskService} from '@service/supervision/supervision-task.service';
-import {EMPTY, from, Observable, of} from 'rxjs/index';
+import {EMPTY, from, Observable, of} from 'rxjs';
 import {
   Approve,
   ApproveSuccess, ChangeOwner, ChangeOwnerSuccess,
@@ -22,7 +22,7 @@ import {
 } from '@feature/application/supervision/actions/supervision-task-actions';
 import * as TagActions from '@feature/application/actions/application-tag-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {catchError, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap, take, tap} from 'rxjs/operators';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {Load as LoadInvoices} from '@feature/application/invoicing/actions/invoice-actions';
 import {Load as LoadChargeBasis} from '@feature/application/invoicing/actions/charge-basis-actions';

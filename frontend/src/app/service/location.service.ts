@@ -14,7 +14,7 @@ import {findTranslation} from '@util/translations';
 import {BackendGeocoordinates} from './backend-model/backend-geocoordinates';
 import {BackendPostalAddress} from './backend-model/backend-postal-address';
 import {HttpStatus} from '@util/http-status';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {FixedLocation} from '@model/common/fixed-location';
 import {BackendFixedLocation, FixedLocationMapper} from '@service/mapper/fixed-location-mapper';
 import {FixedLocationArea} from '@model/common/fixed-location-area';

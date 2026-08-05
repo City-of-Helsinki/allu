@@ -8,7 +8,7 @@ import {NumberUtil} from '../../../util/number.util';
 import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'customer-contacts',

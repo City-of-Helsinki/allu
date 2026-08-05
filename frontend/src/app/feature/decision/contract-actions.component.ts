@@ -5,7 +5,7 @@ import {Store} from '@ngrx/store';
 import {Approve, CreateProposal, Reject} from '@feature/decision/actions/contract-actions';
 import {MatDialog} from '@angular/material/dialog';
 import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
-import {Observable, Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs';
 import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Application} from '@model/application/application';
 import {findTranslation} from '@util/translations';

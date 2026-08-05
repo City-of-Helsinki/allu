@@ -3,7 +3,7 @@ import {UserService} from './user-service';
 import {User} from '../../model/user/user';
 import {Observable, BehaviorSubject, of} from 'rxjs';
 import {NumberUtil} from '../../util/number.util';
-import {filter, first, map} from 'rxjs/internal/operators';
+import {filter, first, map} from 'rxjs/operators';
 import { RoleType } from '@app/model/user/role-type';
 
 @Injectable()

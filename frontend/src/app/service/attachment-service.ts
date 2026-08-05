@@ -9,7 +9,7 @@ import {DefaultAttachmentInfoMapper} from './mapper/default-attachment-info-mapp
 import {ApplicationType} from '../model/application/type/application-type';
 import {BackendAttachmentInfo} from './backend-model/backend-attachment-info';
 import {BackendDefaultAttachmentInfo} from './backend-model/backend-default-attachment-info';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 const uploadUrl = '/api/applications/appId/attachments';
 const downloadUrl = '/api/applications/attachments/:attachmentId/data';

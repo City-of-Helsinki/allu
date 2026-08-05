@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {IdentifierEntry} from '@feature/application/identifier-select/identifier-entry';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {map, take, takeUntil, tap} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {select, Store} from '@ngrx/store';

@@ -18,7 +18,7 @@ import {Sort} from '../../model/common/sort';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendProject} from '../backend-model/backend-project';
 import {BackendApplication} from '../backend-model/backend-application';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable()
 export class ProjectService {

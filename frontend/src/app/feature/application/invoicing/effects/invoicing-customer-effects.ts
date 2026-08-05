@@ -3,9 +3,9 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Action, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {
   InvoicingCustomerActionType,

@@ -8,7 +8,7 @@ import {ErrorHandler} from '../../error/error-handler.service';
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
 import {ActionTargetType} from '../../../feature/allu/actions/action-target-type';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const COMMENTS_URL = '/api/comments';
 

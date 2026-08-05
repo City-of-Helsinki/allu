@@ -11,7 +11,7 @@ import {CityDistrict} from '../../model/common/city-district';
 import {CodeSetCodeMap} from '../../model/codeset/codeset';
 import * as fromRoot from '../../feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 
 @Injectable()
 export class HistoryFieldFormatter {

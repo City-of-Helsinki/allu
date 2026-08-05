@@ -12,7 +12,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {User} from '@model/user/user';
-import {of} from 'rxjs/internal/observable/of';
+import {of} from 'rxjs';
 import * as fromRoot from '@feature/allu/reducers';
 import * as CityDistrictActions from '@feature/allu/actions/city-district-actions';
 import {CityDistrict} from '@model/common/city-district';
