@@ -8,7 +8,7 @@ import {ApplicationStore} from '@service/application/application-store';
 import {AttachmentHub} from './attachment-hub';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/material/legacy-slide-toggle';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 import {TimeUtil} from '@util/time.util';
 import {Some} from '@util/option';
 import {AttachmentType, isCommon} from '@model/application/attachment/attachment-type';

@@ -14,7 +14,7 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {StructureMeta} from '@model/application/meta/structure-meta';
 import { MatSpinner } from '@angular/material/progress-spinner';
-import { MatLegacySlideToggle as MatSlideToggle } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {FieldChange} from '@model/history/field-change';
 
 function createChangeHistoryItem(name: string, changeTime: Date): ChangeHistoryItem {
@@ -126,7 +126,8 @@ describe('HistoryComponent', () => {
     store.dispatch(new LoadSuccess(ActionTargetType.Application, changeHistory));
     fixture.detectChanges();
 
-    const toggle = de.query(By.css('.mat-slide-toggle-label')).nativeElement;
+    const slideToggleDe = de.query(By.directive(MatSlideToggle));
+    const toggle = slideToggleDe.query(By.css('button')).nativeElement;
     toggle.click();
     fixture.detectChanges();
 
