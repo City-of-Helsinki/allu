@@ -152,8 +152,8 @@ export class TimeUtil {
   }
 
   public static compareTo(left: Date, right: Date): number {
-    const leftMillis = !!left ? left.getTime() : undefined;
-    const rightMillis = !!right ? right.getTime() : undefined;
+    const leftMillis = left ? left.getTime() : undefined;
+    const rightMillis = right ? right.getTime() : undefined;
 
     if (leftMillis === rightMillis) {
       return 0;

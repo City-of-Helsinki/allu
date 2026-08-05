@@ -12,7 +12,7 @@ export class HistoryPreviewComponent {
 
   visibleChanges: ChangeHistoryItem[] = [];
 
-  @Input('changes') set changes(changes: ChangeHistoryItem[]) {
+  @Input() set changes(changes: ChangeHistoryItem[]) {
     this.visibleChanges = changes
       ? changes.slice(0, 5)
       : [];

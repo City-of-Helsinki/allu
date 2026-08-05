@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild, OnChanges} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
@@ -39,7 +39,7 @@ import { UpdateCustomerReference } from '@feature/information-request/actions/in
   styleUrls: ['./customer-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
+export class CustomerAcceptanceComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() oldCustomer: Customer;
   @Input() newCustomer: Customer;

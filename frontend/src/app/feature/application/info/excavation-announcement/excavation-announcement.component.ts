@@ -1,4 +1,4 @@
-import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, AfterViewInit} from '@angular/core';
 import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/internal/operators';
@@ -43,7 +43,7 @@ import {ArrayUtil} from '@util/array-util';
   templateUrl: './excavation-announcement.component.html',
   styleUrls: []
 })
-export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponent implements OnInit {
+export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponent implements OnInit, AfterViewInit {
   validityEndTimeCtrl: AbstractControlWarn;
   validityEndTimeIcon: IconConfig = new IconConfig(undefined, true, 'today');
   showReportCustomerDates = false;

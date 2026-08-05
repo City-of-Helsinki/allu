@@ -75,7 +75,7 @@ export class HistoryFieldFormatter {
   private formatDefault(fieldChange: FieldChange): FieldChange {
     let oldValue = StringUtil.replaceNull(fieldChange.oldValue);
     let newValue = StringUtil.replaceNull(fieldChange.newValue);
-    let uiFieldName = this.meta.uiName(fieldChange.fieldName, '/');
+    const uiFieldName = this.meta.uiName(fieldChange.fieldName, '/');
 
     switch (fieldChange.fieldChangeType) {
       case FieldChangeType.DISTRICT_ID:

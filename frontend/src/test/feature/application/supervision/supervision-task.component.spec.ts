@@ -205,11 +205,11 @@ describe('SupervisionTaskComponent', () => {
 
   it('should disallow editing by other users', fakeAsync(() => {
     patchValueAndInit({id: 1, creatorId: handler.id});
-    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(1); // Only edit button
+    expect(de.queryAll(By.css('.mat-mdc-raised-button')).length).toEqual(1); // Only edit button
 
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({creatorId: supervisor.id});
-    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
+    expect(de.queryAll(By.css('.mat-mdc-raised-button')).length).toEqual(0);
   }));
 
   it('should display error when planned finishing time is not set', fakeAsync(() => {
@@ -218,7 +218,7 @@ describe('SupervisionTaskComponent', () => {
     dateInput.dispatchEvent(new Event('input'));
     dateInput.dispatchEvent(new Event('blur'));
     detectAndTick();
-    const error = de.query(By.css('.mat-error')).nativeElement;
+    const error = de.query(By.css('.mat-mdc-form-field-error')).nativeElement;
     expect(error).toBeDefined();
     expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeMissing'));
   }));

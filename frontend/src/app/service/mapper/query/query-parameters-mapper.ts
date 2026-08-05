@@ -105,8 +105,8 @@ export class QueryParametersMapper {
         fieldName: QueryParametersMapper.getBackendValueField(parameterName),
         fieldValue: undefined,
         fieldMultiValue: undefined,
-        startDateValue: !!startDate ? startDate.toISOString() : undefined,
-        endDateValue: !!endDate ? endDate.toISOString() : undefined
+        startDateValue: startDate ? startDate.toISOString() : undefined,
+        endDateValue: endDate ? endDate.toISOString() : undefined
       };
     } else {
       return undefined;

@@ -83,7 +83,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
     selectAll.click();
     fixture.detectChanges();
     expect(store.dispatch).toHaveBeenCalledTimes(1);
-    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-checkbox-checked')).length).toEqual(defaultItems.content.length);
+    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-mdc-checkbox-checked')).length).toEqual(defaultItems.content.length);
   });
 
   it('should select item which checkbox is clicked', () => {
@@ -92,6 +92,6 @@ describe('SupervisionWorkqueueContentComponent', () => {
     checkboxes[1].click();
     fixture.detectChanges();
     expect(store.dispatch).toHaveBeenCalledTimes(1);
-    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-checkbox-checked')).length).toEqual(1);
+    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-mdc-checkbox-checked')).length).toEqual(1);
   });
 });

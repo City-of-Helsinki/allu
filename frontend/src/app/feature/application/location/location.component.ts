@@ -422,7 +422,7 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   private editLocation(loc: Location): void {
-    if (!!loc) {
+    if (loc) {
       this.locationForm.patchValue(LocationForm.from(loc));
       this.mapStore.locationSearchFilterChange(this.createFilter(loc));
       this.location = loc;

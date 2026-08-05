@@ -115,7 +115,7 @@ describe('StoredFilterComponent', () => {
   it('selects clicked filter and sets selected filter', fakeAsync(() => {
     spyOn(filterStore, 'currentMapFilterChange');
     openFilterMenu();
-    const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
+    const options = de.queryAll(By.css('.allu-menu-item button.mat-mdc-menu-item'));
 
     options[0].nativeElement.click();
     parentFixture.detectChanges();
@@ -130,7 +130,7 @@ describe('StoredFilterComponent', () => {
 
     spyOn(filterStore, 'currentChange');
     openFilterMenu();
-    const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
+    const options = de.queryAll(By.css('.allu-menu-item button.mat-mdc-menu-item'));
 
     options[3].nativeElement.click();
     parentFixture.detectChanges();

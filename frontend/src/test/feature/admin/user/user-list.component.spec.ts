@@ -72,17 +72,17 @@ describe('UserListComponent', () => {
   });
 
   it('should list existing users', () => {
-    expect(de.queryAll(By.css('.mat-row')).length).toEqual(users.length);
+    expect(de.queryAll(By.css('.mat-mdc-row')).length).toEqual(users.length);
   });
 
   it('should sort by clicked field', () => {
-    const firstRow = de.queryAll(By.css('.mat-row'))[0];
+    const firstRow = de.queryAll(By.css('.mat-mdc-row'))[0];
     expect(firstRow.query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[0].userName);
     const usernameHeader = de.query(By.css('.mat-column-userName')).nativeElement;
 
     // Sort by username
     usernameHeader.click();
-    const firstRowAfterSort = de.queryAll(By.css('.mat-row'))[0];
+    const firstRowAfterSort = de.queryAll(By.css('.mat-mdc-row'))[0];
     expect(firstRowAfterSort.query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
   });
 
@@ -90,13 +90,13 @@ describe('UserListComponent', () => {
     const lastLoginHeader = de.query(By.css('.mat-column-lastLogin')).nativeElement;
 
     lastLoginHeader.click();
-    const rowAscending = de.queryAll(By.css('.mat-row'));
+    const rowAscending = de.queryAll(By.css('.mat-mdc-row'));
     expect(rowAscending[0].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[1].userName);
     expect(rowAscending[1].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
     expect(rowAscending[2].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[0].userName);
 
     lastLoginHeader.click();
-    const rowsDescending = de.queryAll(By.css('.mat-row'));
+    const rowsDescending = de.queryAll(By.css('.mat-mdc-row'));
     expect(rowsDescending[0].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[0].userName);
     expect(rowsDescending[1].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
     expect(rowsDescending[2].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[1].userName);
@@ -108,8 +108,8 @@ describe('UserListComponent', () => {
     filterInput.dispatchEvent(new Event('keyup'));
 
     fixture.detectChanges();
-    expect(de.queryAll(By.css('.mat-row')).length).toEqual(1);
-    const row = de.queryAll(By.css('.mat-row'))[0];
+    expect(de.queryAll(By.css('.mat-mdc-row')).length).toEqual(1);
+    const row = de.queryAll(By.css('.mat-mdc-row'))[0];
     expect(row.query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
   });
 
@@ -119,8 +119,8 @@ describe('UserListComponent', () => {
     filterInput.dispatchEvent(new Event('keyup'));
 
     fixture.detectChanges();
-    expect(de.queryAll(By.css('.mat-row')).length).toEqual(1);
-    const row = de.queryAll(By.css('.mat-row'))[0];
+    expect(de.queryAll(By.css('.mat-mdc-row')).length).toEqual(1);
+    const row = de.queryAll(By.css('.mat-mdc-row'))[0];
     expect(row.query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
   });
 
@@ -130,8 +130,8 @@ describe('UserListComponent', () => {
     filterInput.dispatchEvent(new Event('keyup'));
 
     fixture.detectChanges();
-    expect(de.queryAll(By.css('.mat-row')).length).toEqual(1);
-    const row = de.queryAll(By.css('.mat-row'))[0];
+    expect(de.queryAll(By.css('.mat-mdc-row')).length).toEqual(1);
+    const row = de.queryAll(By.css('.mat-mdc-row'))[0];
     expect(row.query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[1].userName);
   });
 });

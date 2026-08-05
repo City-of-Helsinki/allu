@@ -80,7 +80,7 @@ describe('InformationRequestSummary', () => {
     testHost.summary = summary;
     fixture.detectChanges();
 
-    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-form-field'));
+    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-mdc-form-field'));
     expect(infoFields.length).toEqual(2);
     const requestFields: DebugElement = de.query(By.directive(InformationRequestFieldsComponent));
     expect(requestFields).toBeDefined();
@@ -92,7 +92,7 @@ describe('InformationRequestSummary', () => {
     testHost.summary = summary;
     fixture.detectChanges();
 
-    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-form-field'));
+    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-mdc-form-field'));
     expect(infoFields.length).toEqual(0);
     const requestFields: DebugElement = de.query(By.directive(InformationRequestFieldsComponent));
     expect(requestFields).toBeNull();

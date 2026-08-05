@@ -171,7 +171,7 @@ export class ArrayUtil {
   }
 
   private static toParts(full): Array<[number, string]> {
-    if (!!full) {
+    if (full) {
       const parts: Array<[number, string]> = [];
       full.replace(DIGITS, (match, numbers, text) => parts.push([numbers || Infinity, text || '']));
       return parts;

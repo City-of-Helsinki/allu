@@ -223,7 +223,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
-    if (!!term) {
+    if (term) {
       if (NumberUtil.isDefined(this.customerIdChanges.value)) {
         return this.searchForCurrentCustomer(term);
       } else {

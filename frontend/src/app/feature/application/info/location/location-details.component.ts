@@ -126,7 +126,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   private editLocation(loc: Location): void {
-    if (!!loc) {
+    if (loc) {
       this.location = loc;
     }
   }
