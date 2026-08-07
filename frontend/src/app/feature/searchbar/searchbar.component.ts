@@ -82,7 +82,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
               private mapStore: MapStore,
               private storedFilterStore: StoredFilterStore,
               private notification: NotificationService,
-              private store: Store<fromRoot.State>) {
+              private store: Store<fromRoot.State>) {
     this.baseDateValidators = [];
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({

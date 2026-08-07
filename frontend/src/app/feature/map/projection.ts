@@ -23,7 +23,7 @@ export class Projection {
   }
 
   public project(coordinates: any[]): any[] {
-    if (isPosition(coordinates)) {
+    if (isPosition(coordinates)) {
       return this.projectPosition(coordinates);
     } else {
       return coordinates.map(c => this.project(c));
@@ -31,7 +31,7 @@ export class Projection {
   }
 
   public unproject(coordinates: any[]): any[] {
-    if (isPosition(coordinates)) {
+    if (isPosition(coordinates)) {
       return this.unprojectPosition(coordinates);
     } else {
       return coordinates.map(c => this.unproject(c));

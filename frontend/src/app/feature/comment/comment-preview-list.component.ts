@@ -22,7 +22,7 @@ export class CommentPreviewListComponent {
       : [];
   }
 
-  getVisibleComments(allComments: Comment[] = []): Comment[] {
+  getVisibleComments(allComments: Comment[] = []): Comment[] {
     if (this.visibleCount === undefined || this.visibleCount >= allComments.length) {
       return allComments;
     } else {

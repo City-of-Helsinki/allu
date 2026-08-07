@@ -5,7 +5,7 @@
         <img *ngIf="logo" [src]="logo" [alt]="'nav.home' | translation">
       </a>
     </div>
-    <div class="version">{{version | async}}</div>
+    <div class="version">{{version | async}}</div>
   </div>
   <div fxFlex="auto">
     <navbar *ngIf="authenticated"></navbar>

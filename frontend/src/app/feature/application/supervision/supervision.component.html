@@ -12,7 +12,7 @@
   </div>
 
   <ul *ngIf="application$ | async as application">
-    <div class="centered-container" *ngIf="loading$ | async">
+    <div class="centered-container" *ngIf="loading$ | async">
       <mat-spinner></mat-spinner>
     </div>
     <li *ngFor="let task of supervisionTasks.controls; let i = index;">

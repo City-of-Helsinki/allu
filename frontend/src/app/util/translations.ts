@@ -1564,7 +1564,7 @@ export const translations = {
     }
   },
   sidebar: {
-    title:  {
+    title:  {
       BASIC_INFO: 'Perustiedot',
       ATTACHMENTS: 'Liitteet',
       INVOICING: 'Laskutus',
@@ -2213,7 +2213,7 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
   });
 };
 
-type Path = string | Array<string>;
+type Path = string | Array<string>;
 export interface Params { [key: string]: string | number; }
 
 /**

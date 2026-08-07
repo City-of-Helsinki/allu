@@ -1,6 +1,6 @@
 <div class="document-header">
   <nav mat-tab-nav-bar mat-stretch-tabs="false" [tabPanel]="tabPanel">
-    <a mat-tab-link *ngFor="let tab of tabs$ | async"
+    <a mat-tab-link *ngFor="let tab of tabs$ | async"
        [routerLink]="tab | lowercase"
        routerLinkActive #rla="routerLinkActive"
        [active]="rla.isActive">

@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {LocationState} from '@service/application/location-state';
 import {Location} from '@model/common/location';
@@ -26,7 +26,7 @@ import {NumberUtil} from '@util/number.util';
     './stored-locations.component.scss'
   ]
 })
-export class StoredLocationsComponent implements OnInit, OnDestroy {
+export class StoredLocationsComponent implements OnInit {
 
   @Input() readonly = false;
 
@@ -40,9 +40,6 @@ export class StoredLocationsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.locations = this.locationState.locations;
-  }
-
-  ngOnDestroy(): void {
   }
 
   districtName(id: number): Observable<string> {

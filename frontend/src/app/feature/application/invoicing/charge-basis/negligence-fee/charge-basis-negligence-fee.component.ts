@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Subject, Observable} from 'rxjs';
 import {Some} from '../../../../../util/option';
@@ -13,7 +13,7 @@ import {debounceTime, map, startWith, takeUntil} from 'rxjs/operators';
   templateUrl: './charge-basis-negligence-fee.component.html',
   styleUrls: []
 })
-export class ChargeBasisNegligenceFeeComponent implements OnInit, OnDestroy {
+export class ChargeBasisNegligenceFeeComponent implements OnInit {
 
   @Input() form: UntypedFormGroup;
 
@@ -37,9 +37,6 @@ export class ChargeBasisNegligenceFeeComponent implements OnInit, OnDestroy {
     if (!this.form.value.unit) {
       this.form.patchValue({unit: ChargeBasisUnit.DAY});
     }
-  }
-
-  ngOnDestroy(): void {
   }
 
   private filterNegligenceFeeTypes(value: string): string[] {

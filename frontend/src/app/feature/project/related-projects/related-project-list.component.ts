@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Project} from '../../../model/project/project';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -16,7 +16,7 @@ import {CityDistrict} from '../../../model/common/city-district';
   styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RelatedProjectListComponent implements OnInit, AfterViewInit {
+export class RelatedProjectListComponent implements AfterViewInit {
 
   @Input() loading: boolean;
 
@@ -38,9 +38,6 @@ export class RelatedProjectListComponent implements OnInit, AfterViewInit {
               private store: Store<fromRoot.State>) {
     this.store.select(fromRoot.getCityDistrictEntities).pipe(take(1))
       .subscribe(districts => this.districts = districts);
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {

@@ -24,7 +24,7 @@ export const initialState: State = adapter.getInitialState({
   processing: false,
 });
 
-export function reducer(state: State = initialState, action: InvoicingPeriodActions) {
+export function reducer(state: State = initialState, action: InvoicingPeriodActions) {
   switch (action.type) {
     case InvoicingPeriodActionType.Load:
     case InvoicingPeriodActionType.Change:

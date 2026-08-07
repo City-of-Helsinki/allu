@@ -25,7 +25,7 @@ export class DecisionProposalComponent implements OnInit {
     );
   }
 
-  private sortedProposals(comments: Array<Comment> = []): Array<Comment> {
+  private sortedProposals(comments: Array<Comment> = []): Array<Comment> {
     return comments.filter(c => decisionProposalComments.indexOf(c.type) >= 0)
       .sort((l, r) => TimeUtil.compareTo(l.createTime, r.createTime));
   }
