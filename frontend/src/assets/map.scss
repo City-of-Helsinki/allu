@@ -19,7 +19,7 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
 .leaflet-container .allu-map-popup a.leaflet-popup-close-button {
   top: 2px;
   right: 4px;
-  color: mat.get-contrast-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
   font-size: 20px;
 }
 

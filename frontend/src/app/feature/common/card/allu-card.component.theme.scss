@@ -9,27 +9,27 @@
 
     .mat-mdc-card-title,
     .mat-mdc-card-subtitle {
-      color: mat.get-color-from-palette($primary, 500);
+      color: mat.m2-get-color-from-palette($primary, 500);
     }
     mat-card-content label.info-label {
       color: $allu-text-black;
     }
 
     &.mat-mdc-card .mat-divider .divider-primary {
-      border-top-color: mat.get-color-from-palette($primary, 200);
+      border-top-color: mat.m2-get-color-from-palette($primary, 200);
     }
   }
 
   allu-card.allu-primary mat-card {
-    border-color: mat.get-color-from-palette($primary, 500);
+    border-color: mat.m2-get-color-from-palette($primary, 500);
   }
 
   allu-card.allu-accent  mat-card {
-    border-color: mat.get-color-from-palette($accent, 500);
+    border-color: mat.m2-get-color-from-palette($accent, 500);
   }
 
   allu-card.allu-warn mat-card {
-    border-color: mat.get-color-from-palette($warn, 500);
+    border-color: mat.m2-get-color-from-palette($warn, 500);
   }
 
   allu-card.allu-success  mat-card {

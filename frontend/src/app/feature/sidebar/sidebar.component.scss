@@ -9,7 +9,7 @@
 }
 
 .sidebar-item {
-  background: mat.get-color-from-palette($allu-primary, 500);
+  background: mat.m2-get-color-from-palette($allu-primary, 500);
   box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
   border-radius: 2px;
   height: 96px;
@@ -24,11 +24,11 @@
 }
 
 a {
-  color: mat.get-contrast-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
 }
 
 .sidebar-item.active {
   font-weight: bolder;
-  background: mat.get-contrast-color-from-palette($allu-primary, 500);
-  color: mat.get-color-from-palette($allu-primary, 500);
+  background: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 }

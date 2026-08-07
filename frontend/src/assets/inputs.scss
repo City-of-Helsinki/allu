@@ -4,27 +4,27 @@
   $primary: map-get($theme, primary);
 
   ::-webkit-input-placeholder {
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 
   :-moz-placeholder { /* Firefox 18- */
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 
   ::-moz-placeholder {  /* Firefox 19+ */
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 
   :-ms-input-placeholder {
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
   .mat-mdc-floating-label,
   .mat-mdc-select-placeholder {
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
   input[disabled] + .mat-mdc-form-field-infix .mat-mdc-floating-label,
   .mat-mdc-select-disabled .mat-mdc-select-placeholder {
-    color: mat.get-color-from-palette($primary, 200);
+    color: mat.m2-get-color-from-palette($primary, 200);
   }
 }
 
@@ -41,7 +41,7 @@
   .mat-mdc-option:hover:not(.mdc-list-item--disabled),
   .mat-mdc-option.mat-mdc-option-active:not(.mdc-list-item--disabled),
   .mat-mdc-option:focus:not(.mdc-list-item--disabled) {
-    background-color: mat.get-color-from-palette($allu-primary, 200);
+    background-color: mat.m2-get-color-from-palette($allu-primary, 200);
   }
 }
 
@@ -51,15 +51,15 @@ td.mat-calendar-body-cell:hover {
 
 .form-group .has-warning.ng-dirty:not(.ng-invalid) label.mat-mdc-floating-label,
 .form-group .has-warning.ng-touched:not(.ng-invalid) label.mat-mdc-floating-label {
-  color: mat.get-color-from-palette($allu-accent, 700);
+  color: mat.m2-get-color-from-palette($allu-accent, 700);
 }
 
 .form-group .has-warning:not(.ng-invalid) .mat-mdc-line-ripple {
-  border-color: mat.get-color-from-palette($allu-accent, 700);
+  border-color: mat.m2-get-color-from-palette($allu-accent, 700);
 }
 
 .form-group .has-warning:not(.ng-invalid) .mat-mdc-line-ripple {
-  background-color: mat.get-color-from-palette($allu-accent, 700);
+  background-color: mat.m2-get-color-from-palette($allu-accent, 700);
 }
 
 /* hide up/down arrows ("spinners") on input fields marked type="number" */

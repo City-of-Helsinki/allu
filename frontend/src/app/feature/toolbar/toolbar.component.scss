@@ -2,8 +2,8 @@
 @import '../../../assets/colors';
 
 :host {
-  background: mat.get-color-from-palette($allu-primary, 500);
-  color: mat.get-contrast-color-from-palette($allu-primary, 500);
+  background: mat.m2-get-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
   display: flex;
   flex-wrap: wrap;
   flex: 1;
@@ -49,7 +49,7 @@ h1 {
 
 .toolbar-section {
   padding: 0 5px;
-  border-left: 2px solid mat.get-color-from-palette($allu-primary, 300);
+  border-left: 2px solid mat.m2-get-color-from-palette($allu-primary, 300);
 }
 
 .toolbar-section.basket-section {
@@ -61,8 +61,8 @@ h1 {
 }
 
  .toolbar-section button[mat-button].mat-mdc-button {
-   --mdc-text-button-label-text-color: #{mat.get-contrast-color-from-palette($allu-primary, 500)};
-   color: mat.get-contrast-color-from-palette($allu-primary, 500);
+   --mdc-text-button-label-text-color: #{mat.m2-get-contrast-color-from-palette($allu-primary, 500)};
+   color: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
  }
 
 .pill {
@@ -72,6 +72,6 @@ h1 {
   padding: 4px 12px;
   font-size: 14px;
   font-weight: bold;
-  background: mat.get-color-from-palette($allu-accent, A700);
-  color: mat.get-contrast-color-from-palette($allu-accent, 900);
+  background: mat.m2-get-color-from-palette($allu-accent, A700);
+  color: mat.m2-get-contrast-color-from-palette($allu-accent, 900);
 }

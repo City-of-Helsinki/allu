@@ -113,11 +113,11 @@ li {
 }
 
 a {
-  color: mat.get-color-from-palette($allu-primary, 400);
+  color: mat.m2-get-color-from-palette($allu-primary, 400);
 }
 
 table {
-  background-color: mat.get-contrast-color-from-palette($allu-primary, 500);
+  background-color: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
 }
 
 thead.mat-calendar-table-header {
@@ -125,7 +125,7 @@ thead.mat-calendar-table-header {
 }
 
 .row-highlight:hover {
-  background-color: mat.get-color-from-palette($allu-primary, 50) !important;
+  background-color: mat.m2-get-color-from-palette($allu-primary, 50) !important;
 }
 
 .main-content {
@@ -241,22 +241,22 @@ input:-webkit-autofill:active {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     margin-right: 0;
-    border-right: 1px solid mat.get-color-from-palette($allu-primary, 600);
+    border-right: 1px solid mat.m2-get-color-from-palette($allu-primary, 600);
   }
 
   [type="button"]:last-child {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     margin-left: 0;
-    border-left: 1px solid mat.get-color-from-palette($allu-primary, 600);
+    border-left: 1px solid mat.m2-get-color-from-palette($allu-primary, 600);
   }
 
   [type="button"]:not(:first-child):not(:last-child) {
     border-radius: 0;
     margin-left: 0;
     margin-right: 0;
-    border-left: 1px solid mat.get-color-from-palette($allu-primary, 600);
-    border-right: 1px solid mat.get-color-from-palette($allu-primary, 600);
+    border-left: 1px solid mat.m2-get-color-from-palette($allu-primary, 600);
+    border-right: 1px solid mat.m2-get-color-from-palette($allu-primary, 600);
   }
 }
 
@@ -279,8 +279,8 @@ ul.card-list {
   font-family: Roboto,"Helvetica Neue",sans-serif;
   padding: 0 16px;
   min-height: 64px;
-  background-color: mat.get-contrast-color-from-palette($allu-primary, 500);
-  color: mat.get-color-from-palette($allu-primary, 500);
+  background-color: mat.m2-get-contrast-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
   margin-bottom: 20px;
 
   .item-bar-content {
@@ -306,10 +306,10 @@ ul.card-list {
 mat-chip-option.mat-mdc-chip-option.mat-mdc-chip-selected,
 mat-chip-row.mat-mdc-chip-row[selected='true'],
 mat-chip.mat-mdc-chip-highlighted {
-  --mdc-chip-elevated-container-color: #{mat.get-color-from-palette($allu-accent, 500)} !important;
-  --mdc-chip-label-text-color: #{mat.get-color-config($black-50-opacity)} !important;
-  --mdc-chip-with-icon-selected-icon-color: #{mat.get-color-config($black-50-opacity)} !important;
-  --mdc-chip-with-trailing-icon-trailing-icon-color: #{mat.get-color-config($black-87-opacity)} !important;
+  --mdc-chip-elevated-container-color: #{mat.m2-get-color-from-palette($allu-accent, 500)} !important;
+  --mdc-chip-label-text-color: #{mat.m2-get-color-config($black-50-opacity)} !important;
+  --mdc-chip-with-icon-selected-icon-color: #{mat.m2-get-color-config($black-50-opacity)} !important;
+  --mdc-chip-with-trailing-icon-trailing-icon-color: #{mat.m2-get-color-config($black-87-opacity)} !important;
   --mdc-chip-label-text-weight: bold;
 }
 
@@ -323,7 +323,7 @@ mat-chip.mat-mdc-chip-highlighted {
   left: -2px;
   text-align: left;
   transform-origin: left top;
-  color: mat.get-color-from-palette($allu-primary, 300);
+  color: mat.m2-get-color-from-palette($allu-primary, 300);
   transform: scale(0.75);
   flex-grow: 1;
 }
@@ -342,7 +342,7 @@ input.real-file-input {
 
 .file-drop-zone {
   display: inline-block;
-  border: 2px dashed mat.get-color-from-palette($allu-primary, 200);
+  border: 2px dashed mat.m2-get-color-from-palette($allu-primary, 200);
   border-radius: 6px;
   width: 100%;
   height: 100px;
@@ -352,15 +352,15 @@ input.real-file-input {
 }
 
 .file-over-drop-zone {
-  border-color: mat.get-color-from-palette($allu-primary, 500);
+  border-color: mat.m2-get-color-from-palette($allu-primary, 500);
 }
 
 .file-download-card {
   display: inline-flex;
-  border: 2px solid mat.get-color-from-palette($allu-primary, 200);
+  border: 2px solid mat.m2-get-color-from-palette($allu-primary, 200);
   border-radius: 6px;
   padding: 10px 30px;
-  color: mat.get-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 
   span {
     vertical-align: middle;

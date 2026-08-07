@@ -7,7 +7,7 @@
 }
 
 .row-highlight {
-  background-color: mat.get-color-from-palette($allu-primary, 50);
+  background-color: mat.m2-get-color-from-palette($allu-primary, 50);
 }
 
 .details-row {
@@ -16,7 +16,7 @@
 
 .status-text {
   font-weight: bold;
-  color: mat.get-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 }
 
 .mat-mdc-cell:first-of-type .details-cell {
@@ -38,7 +38,7 @@
 .details-cell.details-cell-text {
   overflow: auto;
   text-overflow: ellipsis;
-  color: mat.get-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 }
 
 .comment-content {

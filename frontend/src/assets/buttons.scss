@@ -3,19 +3,19 @@
 @mixin buttons-theme($theme) {
   $primary: map-get($theme, primary);
   .mat-button-toggle-checked {
-    background: mat.get-color-from-palette($primary, 500) !important;
+    background: mat.m2-get-color-from-palette($primary, 500) !important;
     color: white !important;
   }
   .mat-button-toggle-disabled.mat-button-toggle-checked {
-    background: mat.get-color-from-palette($primary, 300) !important;
+    background: mat.m2-get-color-from-palette($primary, 300) !important;
 
     & label {
-      color: mat.get-contrast-color-from-palette($primary, 500);
+      color: mat.m2-get-contrast-color-from-palette($primary, 500);
     }
   }
 
   button.button-link {
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 }
 

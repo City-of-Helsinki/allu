@@ -4,7 +4,7 @@
 
   charge-basis {
     li.charge-basis-entry-container:nth-of-type(odd) {
-      background: mat.get-color-from-palette($primary, 50);
+      background: mat.m2-get-color-from-palette($primary, 50);
     }
 
     li.charge-basis-entry-container:nth-of-type(even) {
@@ -12,7 +12,7 @@
     }
 
     .referring-entry {
-      border-color: mat.get-color-from-palette($primary, 500);
+      border-color: mat.m2-get-color-from-palette($primary, 500);
     }
   }
 }

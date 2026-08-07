@@ -5,11 +5,11 @@
   $warn: map-get($theme, warn);
 
   .input-box-content {
-    background: mat.get-contrast-color-from-palette($primary, 500);
+    background: mat.m2-get-contrast-color-from-palette($primary, 500);
   }
 
   .input-box-focused > .input-box-content {
-    border: 1px solid mat.get-color-from-palette($allu-primary, 200);
+    border: 1px solid mat.m2-get-color-from-palette($allu-primary, 200);
   }
 
   .input-box-content > input,
@@ -17,18 +17,18 @@
   .input-box-content > mat-select,
   .input-box-content > .select-wrapper input.select-dropdown,
   .input-box-content > mat-select .mat-mdc-select-value {
-    background: mat.get-contrast-color-from-palette($primary, 500);
-    color: mat.get-color-from-palette($primary, 300);
+    background: mat.m2-get-contrast-color-from-palette($primary, 500);
+    color: mat.m2-get-color-from-palette($primary, 300);
 
     &.ng-touched.ng-invalid,
     &.ng-touched.ng-invalid::placeholder {
-      border-color: mat.get-color-from-palette($warn, 300);
-      color: mat.get-color-from-palette($warn, 300);
+      border-color: mat.m2-get-color-from-palette($warn, 300);
+      color: mat.m2-get-color-from-palette($warn, 300);
     }
   }
 
   .input-box-content > .select-wrapper span.caret {
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 
   .input-box-error {

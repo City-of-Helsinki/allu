@@ -6,12 +6,12 @@
 
   information-request-status,
   information-request-status .mat-toolbar {
-    background: mat.get-color-from-palette($primary, 50);
-    color: mat.get-color-from-palette($primary, 500);
+    background: mat.m2-get-color-from-palette($primary, 50);
+    color: mat.m2-get-color-from-palette($primary, 500);
   }
 
   .connection.connection-active {
-    border-color: mat.get-color-from-palette($accent, 500);
+    border-color: mat.m2-get-color-from-palette($accent, 500);
   }
 
   .connection.connection-closed {

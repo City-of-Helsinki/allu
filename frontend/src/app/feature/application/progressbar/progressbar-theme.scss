@@ -7,37 +7,37 @@
   mat-progress-bar {
     --mdc-linear-progress-track-height: 12px !important;
     --mdc-linear-progress-active-indicator-height: 12px !important;
-    background: mat.get-color-from-palette($primary, 50);
-    color: mat.get-color-from-palette($primary, 500);
+    background: mat.m2-get-color-from-palette($primary, 50);
+    color: mat.m2-get-color-from-palette($primary, 500);
 
   }
 
   .active .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($accent, 500)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($accent, 500)};
   }
 
   .closed .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($basic, 500)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($basic, 500)};
   }
 
   .pending .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($accent, 500)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($accent, 500)};
   }
 
   .decision .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($success, 200)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($success, 200)};
   }
 
   .finished .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($success, 500)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($success, 500)};
   }
 
   .cancelled .mdc-linear-progress__bar-inner,
   .rejected .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($warn, 400)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($warn, 400)};
   }
 
   .history .mdc-linear-progress__bar-inner {
-    --mdc-linear-progress-active-indicator-color: #{mat.get-color-from-palette($basic, 500)};
+    --mdc-linear-progress-active-indicator-color: #{mat.m2-get-color-from-palette($basic, 500)};
   }
 }

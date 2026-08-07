@@ -3,20 +3,20 @@
   $primary: map-get($theme, primary);
   .mat-mdc-selection-list:focus,
   .mat-mdc-list-option:focus {
-    outline-color: mat.get-color-from-palette($primary, 100);
+    outline-color: mat.m2-get-color-from-palette($primary, 100);
   }
 
   ul.striped li:nth-child(odd),
   .mat-mdc-list.striped .mat-mdc-list-item:nth-child(odd) {
-    background: mat.get-color-from-palette($primary, 50);
+    background: mat.m2-get-color-from-palette($primary, 50);
   }
 
   .mat-action-list button.selected,
   .mat-action-list button.selected:focus {
-    background-color: mat.get-color-from-palette($primary, 200);
+    background-color: mat.m2-get-color-from-palette($primary, 200);
   }
 
   .mat-action-list button.selected:hover {
-    background-color: mat.get-color-from-palette($primary, 300);
+    background-color: mat.m2-get-color-from-palette($primary, 300);
   }
 }

@@ -4,15 +4,15 @@
   $primary: map-get($theme, primary);
 
   th {
-    color: mat.get-color-from-palette($primary, 500);
+    color: mat.m2-get-color-from-palette($primary, 500);
   }
 
   .allu-table-header.mat-mdc-header-row .mat-mdc-header-cell {
-    color: mat.get-color-from-palette($primary, 500);
+    color: mat.m2-get-color-from-palette($primary, 500);
   }
 
   .row-details-link {
-    color: mat.get-color-from-palette($primary, 500);
+    color: mat.m2-get-color-from-palette($primary, 500);
   }
 }
 

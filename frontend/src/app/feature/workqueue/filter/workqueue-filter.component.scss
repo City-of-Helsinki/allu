@@ -15,12 +15,12 @@ h1 {
 }
 
 .search-bar {
-    background: mat.get-color-from-palette($allu-primary, 50);
+    background: mat.m2-get-color-from-palette($allu-primary, 50);
     margin-bottom: 0px;
     padding-bottom: 0px;
     min-height: 195px;
 
     .item-bar {
-        background: mat.get-color-from-palette($allu-primary, 50);
+        background: mat.m2-get-color-from-palette($allu-primary, 50);
     }
 }

@@ -4,7 +4,7 @@
   $primary: map-get($theme, primary);
 
   .mat-mdc-dialog-container {
-    --mdc-dialog-subhead-color: #{mat.get-color-from-palette($primary, 500)};
+    --mdc-dialog-subhead-color: #{mat.m2-get-color-from-palette($primary, 500)};
   }
 }
 
