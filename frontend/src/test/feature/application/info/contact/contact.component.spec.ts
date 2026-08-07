@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
@@ -95,16 +95,15 @@ describe('ContactComponent', () => {
     page = new ContactPage();
   });
 
-  it('should show contacts from input', fakeAsync(() => {
-    flush();
-    fixture.detectChanges();
-    page.update();
-    expect(page.contacts.length).toEqual(CONTACTS_ALL.length);
-    expect(comp.contacts.at(0).get('name').value).toEqual(CONTACT1.name);
-    expect(comp.contacts.at(0).get('streetAddress').value).toEqual(CONTACT1.streetAddress);
-    expect(comp.contacts.at(1).get('name').value).toEqual(CONTACT2.name);
-    expect(comp.contacts.at(1).get('streetAddress').value).toEqual(CONTACT2.streetAddress);
-  }));
+  it('should show contacts from input', () => {
+    fixture.whenStable().then(() => {
+      expect(page.contacts.length).toEqual(CONTACTS_ALL.length);
+      expect(page.getFromContact(0, '[formControlName="name"]').nativeElement.value).toEqual(CONTACT1.name);
+      expect(page.getFromContact(0, '[formControlName="streetAddress"]').nativeElement.value).toEqual(CONTACT1.streetAddress);
+      expect(page.getFromContact(1, '[formControlName="name"]').nativeElement.value).toEqual(CONTACT2.name);
+      expect(page.getFromContact(1, '[formControlName="streetAddress"]').nativeElement.value).toEqual(CONTACT2.streetAddress);
+    });
+  });
 
   it('should show contact info fields disabled', fakeAsync(() => {
     fixture.detectChanges();
