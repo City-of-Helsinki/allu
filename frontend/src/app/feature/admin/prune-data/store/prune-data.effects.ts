@@ -28,6 +28,7 @@ export class PruneDataEffects {
         action.tab === 'user_data' ? this.customersDeletableEndpoint : this.applicationsAnonymizableEndpoint;
 
         // pagination
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
         const params: any = {};
         if (action.page !== undefined) { params.page = action.page; }
         if (action.size !== undefined) { params.size = action.size; }
@@ -41,6 +42,7 @@ export class PruneDataEffects {
           params.type = action.tab;
         }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
         return this.http.get<any>(endpoint, { params }).pipe(
           map(response => {
             if (response.content) {

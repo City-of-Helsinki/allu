@@ -2240,8 +2240,10 @@ function replaceParams(text: string, params: Params): string {
  *
  * @returns translation if found with path, otherwise returns path
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export const findTranslation = (path: Path, params?: Params, from: any = translations): string => {
   const translated = toKey(path)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     .map(pathParts => pathParts.reduce((acc: any, cur: any) => Some(acc[cur]).orElse(pathParts.join('.')) , from))
     .orElse('');
 

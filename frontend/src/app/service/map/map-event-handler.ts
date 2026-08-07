@@ -3,6 +3,7 @@ import inside from '@turf/boolean-point-in-polygon';
 import {Feature, GeometryObject} from 'geojson';
 
 export class MapEventHandler {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   static clickIntersects(event: L.LeafletMouseEvent, map: L.Map, layers: any): Feature<GeometryObject>[] {
     const clickBounds = L.latLngBounds(event.latlng, event.latlng);
     const intersectingFeatures = [];
@@ -25,6 +26,7 @@ export class MapEventHandler {
     return intersectingFeatures;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private static getBounds(feature: any): L.LatLngBounds {
     return feature.getBounds ? feature.getBounds() : undefined;
   }

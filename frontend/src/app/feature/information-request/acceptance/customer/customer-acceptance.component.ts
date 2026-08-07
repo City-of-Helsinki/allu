@@ -80,7 +80,9 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy, OnChanges
   referenceFieldDescriptions: FieldDescription[] = [
     new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
   ];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   referenceFieldValues: any = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   referenceComparedValues: any = {};
 
   constructor(

@@ -133,6 +133,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
       : this.fb.group(this.completeFormStructure);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   protected onApplicationChange(application: Application): any {
     super.onApplicationChange(application);
 

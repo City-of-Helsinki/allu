@@ -28,8 +28,7 @@ import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
 import {ApplicationExtension} from '@model/application/type/application-extension';
-import {ApplicationType} from '@model/application/type/application-type';
-import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
+import {isAreaRental} from '@model/application/area-rental/area-rental';
 
 @Component({
   selector: 'invoicing',

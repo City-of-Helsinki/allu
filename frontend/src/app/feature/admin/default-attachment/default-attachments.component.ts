@@ -37,11 +37,11 @@ export class DefaultAttachmentsComponent implements OnInit {
   remove(row: ContentRow<DefaultAttachmentInfo>): void {
     this.attachmentHub.removeDefaultAttachment(row.id)
       .subscribe(
-        result => {
+        () => {
           this.notification.success('Liite ' + row.content.name + ' poistettu');
           this.loadAttachmentInfos();
         },
-        error => this.notification.error('Liitteen ' + row.content.name + ' poistaminen epäonnistui'));
+        _error => this.notification.error('Liitteen ' + row.content.name + ' poistaminen epäonnistui'));
   }
 
   goToDetails(col: number, row: ContentRow<DefaultAttachmentInfo>): void {

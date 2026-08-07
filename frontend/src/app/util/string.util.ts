@@ -43,6 +43,7 @@ export class StringUtil {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function flattenToString(obj: any, localeId?: string): string {
   let returnVal = '';
 

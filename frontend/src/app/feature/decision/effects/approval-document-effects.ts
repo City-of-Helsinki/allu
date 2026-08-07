@@ -31,7 +31,7 @@ export class ApprovalDocumentEffects {
   loadOperationalConditionApproval: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApprovalDocumentActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.approvalDocumentService.fetch(application.id, action.documentType).pipe(
       map(document => new LoadSuccess(action.documentType, document)),
       catchError(error => from([

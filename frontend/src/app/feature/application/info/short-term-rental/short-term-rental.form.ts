@@ -39,6 +39,7 @@ export function to(form: ShortTermRentalForm): ShortTermRental {
   return rental;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function createStructure(fb: UntypedFormBuilder): { [key: string]: any; } {
   return {
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -55,6 +56,7 @@ export function createStructure(fb: UntypedFormBuilder): { [key: string]: any; }
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function createDraftStructure(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = createStructure(fb);
   form.description = [''];

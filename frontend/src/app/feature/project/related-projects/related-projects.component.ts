@@ -7,7 +7,6 @@ import {RemoveParent} from '../actions/project-actions';
 import {map, withLatestFrom} from 'rxjs/operators';
 import {Add} from '../actions/child-project-actions';
 import {Search} from '../actions/project-search-actions';
-import {ProjectSearchQuery} from '@model/project/project-search-query';
 
 @Component({
   selector: 'related-projects',

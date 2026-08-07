@@ -3,7 +3,7 @@ import {DefaultRecipientService} from './default-recipient.service';
 import {DefaultRecipient} from '../../model/common/default-recipient';
 import {ArrayUtil} from '../../util/array-util';
 import {ReplaySubject} from 'rxjs';
-import {filter, map, share, switchAll, switchMap, tap} from 'rxjs/operators';
+import {filter, map, share, switchMap, tap} from 'rxjs/operators';
 import {CurrentUser} from '@service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 
@@ -40,7 +40,7 @@ export class DefaultRecipientHub {
 
   removeDefaultRecipient(id: number) {
     return this.service.removeDefaultRecipient(id).pipe(
-      tap(response => {
+      tap(() => {
         const updated = this.latestRecipients.filter(dr => dr.id !== id);
         this.defaultRecipients$.next(updated);
       }));
@@ -52,7 +52,7 @@ export class DefaultRecipientHub {
       switchMap(() => this.service.getDefaultRecipients())
     ).subscribe(
       recipients => this.defaultRecipients$.next(recipients),
-      err => this.defaultRecipients$.next([])
+      _err => this.defaultRecipients$.next([])
     );
   }
 }

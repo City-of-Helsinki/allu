@@ -31,7 +31,7 @@
               <ng-container *ngIf="column === 'selected'; else regularHeader">
                 <mat-checkbox
                   [checked]="(someSelected$ | async) && (allSelected$ | async)"
-                  [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                   [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
                   (change)="checkAll()">
                 </mat-checkbox>
               </ng-container>

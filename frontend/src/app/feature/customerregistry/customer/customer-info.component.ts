@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {CustomerType} from '@model/customer/customer-type';
 import {EnumUtil} from '@util/enum.util';
-import {FormBuilder, FormGroup, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {FormGroup, UntypedFormControl, Validators} from '@angular/forms';
 import {EMPTY, lastValueFrom, Observable, Subject, Subscription} from 'rxjs';
 import {NumberUtil} from '@util/number.util';
 import {CustomerForm} from './customer.form';
@@ -16,7 +16,7 @@ import {
 import {CodeSetService} from '@service/codeset/codeset.service';
 import {CodeSet} from '@model/codeset/codeset';
 import {postalCodeValidator} from '@util/complex-validator';
-import {debounceTime, filter, map, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import { CurrentUser } from '@app/service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 import { Router } from '@angular/router'

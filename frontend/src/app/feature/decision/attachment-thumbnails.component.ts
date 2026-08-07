@@ -24,7 +24,7 @@ export class AttachmentThumbnailsComponent implements OnChanges {
   constructor(private attachmentService: AttachmentService) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(_changes: SimpleChanges): void {
     this.thumbnails = this.attachments
       .map(a => this.toThumbnail(a));
   }

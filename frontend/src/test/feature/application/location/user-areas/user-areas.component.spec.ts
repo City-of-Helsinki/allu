@@ -5,7 +5,7 @@ import {By} from '@angular/platform-browser';
 import {Feature, GeometryObject, Point} from 'geojson';
 import {UserAreasComponent} from '@feature/application/location/user-areas/user-areas.component';
 import {Subject} from 'rxjs';
-import {getElementText, getMatIconButton} from 'test/selector-helpers';
+import {getElementText} from 'test/selector-helpers';
 
 @Component({
   selector: 'parent',
@@ -19,13 +19,12 @@ class MockParentComponent {
 
   @ViewChild(UserAreasComponent) userAreasComponent: UserAreasComponent;
 
-  areasSelected(selected: Feature<GeometryObject>[]): void {}
+  areasSelected(_selected: Feature<GeometryObject>[]): void {}
 }
 
 describe('UserAreasComponent', () => {
   let parentComp: MockParentComponent;
   let fixture: ComponentFixture<MockParentComponent>;
-  let comp: UserAreasComponent;
   let de: DebugElement;
 
   beforeEach(waitForAsync(() => {
@@ -43,7 +42,6 @@ describe('UserAreasComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MockParentComponent);
     parentComp = fixture.componentInstance;
-    comp = parentComp.userAreasComponent;
     de = fixture.debugElement;
     fixture.detectChanges();
   });

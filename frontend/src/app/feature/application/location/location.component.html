@@ -216,7 +216,7 @@
 </div>
 
 <mat-menu #userAreaMenu="matMenu" [overlapTrigger]="false">
-  <div (click)="$event.stopPropagation()">
+  <div (click)="$event.stopPropagation()" tabindex="-1" (keydown.enter)="$event.stopPropagation()">
     <user-areas
       [loading]="userAreasLoading$ | async"
       [userAreas]="userAreas$ | async"

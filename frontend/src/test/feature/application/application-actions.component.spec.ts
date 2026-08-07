@@ -35,13 +35,15 @@ import {AttachmentType} from '@model/application/attachment/attachment-type';
 import {reducers as applicationReducers} from '@feature/application/reducers'
 
 class MatDialogRefMock {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   afterClosed(): Observable<any> {
     return EMPTY;
   }
 }
 
 class MatDialogMock {
-  open(componentOrTemplateRef: any, config?: any): any {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  open(_componentOrTemplateRef: any, _config?: any): any {
     return undefined;
   }
 }

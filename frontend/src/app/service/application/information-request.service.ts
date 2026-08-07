@@ -13,7 +13,6 @@ import {BackendInformationRequestSummary, InformationRequestSummaryMapper} from 
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 
 const applicationUrl = '/api/applications';
-const responseUrlPart = 'informationrequests/response';
 const informationRequestUrl = '/api/informationrequests';
 
 @Injectable()
@@ -85,9 +84,9 @@ export class InformationRequestService {
     );
   }
 
-  delete(id: number): Observable<{}> {
+  delete(id: number): Observable<unknown> {
     const url = `${informationRequestUrl}/${id}`;
-    return this.http.delete<{}>(url).pipe(
+    return this.http.delete<unknown>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.delete')))
     );
   }

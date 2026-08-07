@@ -20,8 +20,8 @@ export class ChildProjectEffects {
   loadChildren: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ChildProjectActionType.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    filter(([payload, project]) => NumberUtil.isExisting(project)),
-    switchMap(([payload, project]) =>
+    filter(([_payload, project]) => NumberUtil.isExisting(project)),
+    switchMap(([_payload, project]) =>
       this.projectService.getChildProjects(project.id)
         .pipe(
           map(children => new LoadSuccess(children)),

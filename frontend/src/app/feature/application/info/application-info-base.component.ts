@@ -52,7 +52,9 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   pendingInformationRequestResponse$: Observable<boolean>;
   distribution$: Observable<DistributionEntry[]>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   protected completeFormStructure: { [key: string]: any; } = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   protected draftFormStructure:  { [key: string]: any; } = {};
 
   protected destroy = new Subject<boolean>();
@@ -106,6 +108,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       .subscribe(tab => this.onTabChange(tab));
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   ngOnDestroy(): any {
     this.destroy.next(true);
     this.destroy.unsubscribe();
@@ -225,7 +228,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       select(fromApplication.getDistributionList),
       take(1),
       switchMap(distribution => this.applicationStore.save(application).pipe(
-        tap(app => this.store.dispatch(new SaveDistribution(distribution)))
+        tap(() => this.store.dispatch(new SaveDistribution(distribution)))
       ))
     ).subscribe(
       app => this.applicationSaved(app),
@@ -249,6 +252,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     this.router.navigate(['applications', application.id, 'summary']);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private updateValidators(key: string, formStructure: { [key: string]: any; }, form: UntypedFormGroup): void {
     const subStructure = formStructure[key];
     if (subStructure) {

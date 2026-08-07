@@ -222,6 +222,7 @@ export class TimeUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
     if (dateString) {
       const m = moment(dateString, format);

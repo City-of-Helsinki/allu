@@ -12,7 +12,7 @@
       <div class="action-item"
            *ngIf="isFromExternalSystem$ | async"
            [matTooltip]="decisionBlockedReasons$ | async"
-           [matTooltipDisabled]="!(decisionBlocked$ | async)">
+           [matTooltipDisabled]="(decisionBlocked$ | async) === false">
         <button mat-raised-button type="button" color="primary"
                 [disabled]="decisionBlocked$ | async"
                 (click)="createProposal()">
@@ -21,7 +21,7 @@
       </div>
       <div class="action-item"
            [matTooltip]="decisionBlockedReasons$ | async"
-           [matTooltipDisabled]="!(decisionBlocked$ | async)">
+           [matTooltipDisabled]="(decisionBlocked$ | async) === false">
         <button mat-raised-button type="button" color="primary"
                 [disabled]="decisionBlocked$ | async"
                 (click)="approve()">

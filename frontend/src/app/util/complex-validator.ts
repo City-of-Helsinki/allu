@@ -245,6 +245,7 @@ export class ComplexValidator {
 }
 
 export interface AbstractControlWarn extends AbstractControl {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   warnings: { [key: string]: any; };
 }
 

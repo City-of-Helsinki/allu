@@ -45,7 +45,7 @@ export class ProjectState {
     return combineLatest([
       this.loadParentProjects(id),
       this.loadChildProjects(id)
-    ]).pipe(map(projects => [].concat.apply([], projects))); // maps array[array, array] => array
+    ]).pipe(map(projects => [].concat(...projects))); // maps array[array, array] => array
   }
 
   get project(): Project {
@@ -72,7 +72,7 @@ export class ProjectState {
     return combineLatest([
       this.parentProjects,
       this.childProjects
-    ]).pipe(map(projects => [].concat.apply([], projects)));
+    ]).pipe(map(projects => [].concat(...projects)));
   }
 
   save(project: Project): Observable<Project> {
@@ -83,14 +83,14 @@ export class ProjectState {
 
   updateParentProject(project: Project): Observable<Array<Project>> {
     return this.projectService.updateParent(project.id, this._project.id).pipe(
-      switchMap(updated => this.loadRelatedProjects(this.project.id))
+      switchMap(() => this.loadRelatedProjects(this.project.id))
     );
   }
 
   removeParentsFrom(projectIds: Array<number>): Observable<Array<Project>> {
     if (projectIds.length > 0) {
       return this.projectService.removeParent(projectIds).pipe(
-        switchMap(response => this.loadRelatedProjects(this.project.id))
+        switchMap(() => this.loadRelatedProjects(this.project.id))
       );
     } else {
       return this.relatedProjects;

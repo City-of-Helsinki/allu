@@ -38,8 +38,8 @@ export class ContractEffects {
   loadContract: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ContractActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => this.loadAvailableContract(application))
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([_action, application]) => this.loadAvailableContract(application))
   ));
 
   
@@ -47,7 +47,7 @@ export class ContractEffects {
     ofType<SetTab>(DocumentActionType.SetTab),
     filter(action => action.payload === DecisionTab.CONTRACT),
     withLatestFrom(this.store.select(fromDecision.getContract)),
-    map(([action, contract]) => {
+    map(([_action, contract]) => {
       if (contract) {
         return new LoadSuccess(contract);
       } else {
@@ -60,8 +60,8 @@ export class ContractEffects {
   createProposal: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<CreateProposal>(ContractActionType.CreateProposal),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => this.contractService.createProposal(application.id).pipe(
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([_action, application]) => this.contractService.createProposal(application.id).pipe(
       map(contract => new CreateProposalSuccess(contract)),
       catchError(error => from([
         new CreateProposalFailed(error),
@@ -74,7 +74,7 @@ export class ContractEffects {
   approve: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Approve>(ContractActionType.Approve),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.contractService.approve(application.id, action.payload).pipe(
       map(contract => new ApproveSuccess(contract)),
       catchError(error => from([
@@ -88,7 +88,7 @@ export class ContractEffects {
   reject: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Reject>(ContractActionType.Reject),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.contractService.reject(application.id, action.payload).pipe(
       switchMap(() => [
         new RejectSuccess(),
@@ -104,7 +104,7 @@ export class ContractEffects {
   reloadApplication: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType(ContractActionType.ApproveSuccess, ContractActionType.CreateProposalSuccess, ContractActionType.RejectSuccess),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    map(([contract, application]) => new ApplicationAction.Load(application.id))
+    map(([_contract, application]) => new ApplicationAction.Load(application.id))
   ));
 
   private loadAvailableContract(application: Application): Observable<Action> {

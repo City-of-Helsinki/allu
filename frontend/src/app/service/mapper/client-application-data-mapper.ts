@@ -2,7 +2,6 @@ import {ClientApplicationData} from '../../model/application/client-application-
 import {BackendCustomerWithContacts} from '../backend-model/backend-customer-with-contacts';
 import {BackendCustomer} from '../backend-model/backend-customer';
 import {CustomerMapper} from './customer-mapper';
-import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 
 export interface BackendClientApplicationData {
   customer?: BackendCustomerWithContacts;

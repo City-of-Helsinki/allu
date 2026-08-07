@@ -81,7 +81,7 @@ export class KindAcceptanceComponent implements OnInit {
       .subscribe(kinds => this.kindSelection(kinds));
 
     this.specifiersCtrl.valueChanges.pipe(takeUntil(this.destroy))
-      .subscribe(specifiers => this.onSpecifierSelection());
+      .subscribe(() => this.onSpecifierSelection());
   }
 
   private updateSelectedSpecifiers(selectedKinds: string[]) {

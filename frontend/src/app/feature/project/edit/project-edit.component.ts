@@ -67,7 +67,7 @@ export class ProjectEditComponent {
     this.form.controls['customer'].valueChanges.subscribe(c => this.customerSelected(c));
   }
 
-  selectCustomer(option: MatOption): void {
+  selectCustomer(_option: MatOption): void {
     this.contactCtrl.reset();
     this.form.get('contactPhone').reset();
     this.form.get('contactEmail').reset();

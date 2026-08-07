@@ -128,8 +128,7 @@ export class ProgressbarComponent implements OnInit {
       }
 
       case ApplicationStatus.REPLACED:
-      case ApplicationStatus.ARCHIVED:
-      case ApplicationStatus.TERMINATED: {
+      case ApplicationStatus.ARCHIVED: {
         return 'history';
       }
       default:

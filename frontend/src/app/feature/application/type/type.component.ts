@@ -56,6 +56,7 @@ export class TypeComponent implements OnInit, OnDestroy {
               private fb: UntypedFormBuilder) {
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   ngOnInit(): any {
     this.store.pipe(
       select(fromApplication.getCurrentApplication),

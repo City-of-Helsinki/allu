@@ -26,8 +26,8 @@ const commentEditRoles = [
 })
 export class CommentComponent implements OnInit {
   @Input() comment: Comment = new Comment();
-  @Output('save') onSave = new EventEmitter<Comment>();
-  @Output('remove') onRemove = new EventEmitter<Comment>();
+  @Output() saveComment = new EventEmitter<Comment>();
+  @Output() removeComment = new EventEmitter<Comment>();
 
   canEdit = false;
   isManualType = false;
@@ -62,12 +62,12 @@ export class CommentComponent implements OnInit {
   }
 
   remove(): void {
-    this.onRemove.emit(CommentForm.to(this.form.value));
+    this.removeComment.emit(CommentForm.to(this.form.value));
   }
 
   save(): void {
     const value = this.form.value;
-    this.onSave.emit(CommentForm.to(value));
+    this.saveComment.emit(CommentForm.to(value));
     if (this.isNew) {
       this.form.reset({type: 'INTERNAL'});
     } else {
@@ -83,7 +83,7 @@ export class CommentComponent implements OnInit {
       this.form.disable();
       this.form.markAsPristine();
     } else {
-      this.onRemove.emit();
+      this.removeComment.emit();
     }
   }
 

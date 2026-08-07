@@ -22,7 +22,7 @@ export class InvoiceEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoiceActionType.Load),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
-    switchMap(([action, app]) => this.invoiceService.getInvoices(app.id).pipe(
+    switchMap(([_action, app]) => this.invoiceService.getInvoices(app.id).pipe(
       map(invoices => new LoadSuccess(invoices)),
       catchError(error => of(new NotifyFailure(error)))
     ))

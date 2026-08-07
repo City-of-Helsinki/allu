@@ -36,7 +36,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).not.toBeNull('Element was not available');
         expect(element.nativeElement.textContent).toContain(AVAILABLE, 'AVAILABLE text was not available');
@@ -50,7 +50,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).toBeNull('Element was available when it should not');
       });
@@ -64,7 +64,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).not.toBeNull('Element was not available');
         expect(element.nativeElement.textContent).toContain(AVAILABLE, 'AVAILABLE text was not available');
@@ -79,7 +79,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).toBeNull('Element was available when it should not');
       });

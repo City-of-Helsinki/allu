@@ -21,7 +21,7 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Customer> implements OnInit {
+export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective implements OnInit {
   _oldCustomer: Customer;
   _newCustomer: Customer;
 

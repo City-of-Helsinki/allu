@@ -70,7 +70,7 @@ export class CableInfoComponent implements OnInit {
       this.dialogRef = undefined;
 
       forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt))).pipe(
-        switchMap(result => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
+        switchMap(() => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
       ).subscribe(
         texts => {
           this.setDefaultTexts(texts);

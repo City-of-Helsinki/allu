@@ -60,7 +60,7 @@ import * as fromSupervisionTask from './reducers';
 export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Input() application: Application;
   @Input() form: UntypedFormGroup;
-  @Output() onRemove = new EventEmitter<void>();
+  @Output() removeTask = new EventEmitter<void>();
 
   taskTypes: string[] = [];
   canEdit = false;
@@ -76,6 +76,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
   private saving$: Observable<boolean>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private loadingDialog: MatDialogRef<LoadingIndicatorComponent, any>;
 
   constructor(private applicationStore: ApplicationStore,
@@ -149,7 +150,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     if (task.id) {
       this.store.dispatch(new Remove(task.id));
     }
-    this.onRemove.emit();
+    this.removeTask.emit();
   }
 
   save(): void {
@@ -173,7 +174,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.form.disable();
       this.editing = false;
     } else {
-      this.onRemove.emit();
+      this.removeTask.emit();
     }
   }
 
@@ -193,7 +194,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       }
     };
     this.saving$.subscribe(value => {
-      value ? this.openGlassDialog() : closeGlassDialog();
+      if (value) {
+        this.openGlassDialog();
+      } else {
+        closeGlassDialog();
+      }
     });
   }
 

@@ -48,6 +48,7 @@ export const selectAllSelected = createSelector(
   selectSelectedIds,
   (items, selectedIds) => {
     if (items.length === 0) { return false; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
     return pageIds.every(id => selectedIds.includes(id));
   }
@@ -57,6 +58,7 @@ export const selectSomeSelected = createSelector(
   selectFilteredData,
   selectSelectedIds,
   (items, selectedIds) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
     return pageIds.some(id => selectedIds.includes(id));
   }

@@ -118,6 +118,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {
     return Some(visibleFor(ApplicationType[appType], item.type))
       .filter(visible => visible)
-      .map(visible => item);
+      .map(() => item);
   }
 }

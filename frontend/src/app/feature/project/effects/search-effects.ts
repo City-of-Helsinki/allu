@@ -5,7 +5,7 @@ import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import * as project from '../actions/project-search-actions';
 import {ProjectSearchActionType} from '../actions/project-search-actions';
-import {catchError, filter, map, switchMap} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {CustomerService} from '@service/customer/customer.service';
 import {ProjectService} from '@service/project/project.service';
 

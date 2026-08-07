@@ -179,7 +179,7 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should remove new on cancel', fakeAsync(() => {
-    const onRemove = comp.onRemove;
+    const onRemove = comp.removeTask;
     spyOn(onRemove, 'emit');
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({id: undefined, status: SupervisionTaskStatusType.OPEN});
@@ -190,7 +190,7 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should remove existing', fakeAsync(() => {
-    const onRemove = comp.onRemove;
+    const onRemove = comp.removeTask;
     spyOn(onRemove, 'emit');
     spyOn(store, 'dispatch').and.callThrough();
 
@@ -254,6 +254,7 @@ describe('SupervisionTaskComponent', () => {
     expect(de.query(By.css('#reject'))).toBeNull();
   }));
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   function patchValueAndInit(val: any): void {
     comp.form.patchValue(val);
     comp.ngOnInit();

@@ -14,22 +14,21 @@ import {CommentType} from '@model/application/comment/comment-type';
 @Component({
   selector: 'parent',
   template: `<comment [comment]="comment"
-                      (save)="save($event)"
-                      (remove)="remove($event)"></comment>`
+                      (saveComment)="save($event)"
+                      (removeComment)="remove($event)"></comment>`
 })
 class MockParentComponent {
   comment: Comment;
 
   @ViewChild(CommentComponent) commentComponent: CommentComponent;
 
-  save(comment: Comment): void {}
-  remove(comment: Comment): void {}
+  save(_comment: Comment): void {}
+  remove(_comment: Comment): void {}
 }
 
 describe('CommentComponent', () => {
   let parentComp: MockParentComponent;
   let fixture: ComponentFixture<MockParentComponent>;
-  let comp: CommentComponent;
   let de: DebugElement;
   let user: User;
   const currentUser: CurrentUserMock = CurrentUserMock.create(true, true);
@@ -57,7 +56,6 @@ describe('CommentComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MockParentComponent);
     parentComp = fixture.componentInstance;
-    comp = parentComp.commentComponent;
     de = fixture.debugElement;
 
     user = new User(1, 'testUser');

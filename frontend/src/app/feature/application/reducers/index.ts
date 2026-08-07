@@ -1,4 +1,4 @@
-import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 
 import * as fromApplication from './application-reducer';
 import * as fromComments from '@feature/comment/reducers/comment-reducer';

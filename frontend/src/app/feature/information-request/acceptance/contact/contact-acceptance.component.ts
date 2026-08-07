@@ -84,7 +84,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       this.referenceContact$,
       this.store.pipe(select(this.config.getCustomer))
     ]).pipe(
-      map(([ref, customer]) => !isEqualWithSkip(ref, this._newContact, ['id', 'customerId']))
+      map(([ref, _customer]) => !isEqualWithSkip(ref, this._newContact, ['id', 'customerId']))
     );
 
     this.search$.pipe(

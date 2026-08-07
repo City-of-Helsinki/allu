@@ -14,6 +14,7 @@ export class NumberUtil {
     return !!num || (num === 0);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static isNumeric(num: any): boolean {
     return num !== undefined && num !== '' && !isNaN(num);
   }

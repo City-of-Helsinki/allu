@@ -41,7 +41,7 @@
 </div>
 
 <mat-menu #applicationBasket="matMenu" [overlapTrigger]="false" class="allu-application-basket">
-  <div (click)="$event.stopPropagation()">
+  <div (click)="$event.stopPropagation()" tabindex="-1" (keydown.enter)="$event.stopPropagation()">
     <application-basket></application-basket>
   </div>
 </mat-menu>

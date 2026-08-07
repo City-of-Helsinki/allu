@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {MapRole, MapStore} from '@service/map/map-store';
 import {Application} from '@model/application/application';
@@ -11,7 +11,6 @@ import {MapController, ShapeAdded} from '@service/map/map-controller';
 import {Observable, Subject} from 'rxjs';
 import {ProjectService} from '@service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
-import {TimeUtil} from '@util/time.util';
 import {MapUtil} from '@service/map/map.util';
 import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
 import {MapLayer} from '@service/map/map-layer';

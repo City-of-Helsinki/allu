@@ -17,7 +17,7 @@ import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequest} from '@model/information-request/information-request';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
-import {CloseRequest, LoadActiveRequest, LoadRequest} from '@feature/information-request/actions/information-request-actions';
+import {CloseRequest, LoadActiveRequest} from '@feature/information-request/actions/information-request-actions';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {map, switchMap, take} from 'rxjs/operators';

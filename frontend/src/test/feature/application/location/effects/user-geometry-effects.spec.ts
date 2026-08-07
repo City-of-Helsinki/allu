@@ -7,7 +7,7 @@ import * as fromAuth from '@feature/auth/reducers';
 import {provideMockActions} from '@ngrx/effects/testing';
 import {ReplaySubject} from 'rxjs';
 import {Observable} from 'rxjs';
-import {Feature, FeatureCollection, GeometryObject, Position} from 'geojson';
+import {FeatureCollection, GeometryObject} from 'geojson';
 import {EMPTY} from 'rxjs';
 import {LoggedUserLoaded} from '@feature/auth/actions/auth-actions';
 import {User} from '@model/user/user';
@@ -42,6 +42,7 @@ const featureCollection: FeatureCollection<GeometryObject> = {
 
 describe('User area effects', () => {
   let effects: UserAreaEffects;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   let actions: ReplaySubject<any>;
   let metadata: EffectsMetadata<UserAreaEffects>;
   let locationService: LocationServiceMock;

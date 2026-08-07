@@ -25,7 +25,7 @@ import {ArrayUtil} from '@util/array-util';
 import {terraceKinds} from '@app/model/application/type/application-kind';
 import {Invoice} from '@model/application/invoice/invoice';
 import {flexDirectionColumn, flexDirectionRow} from '@feature/common/layout/fxLayout';
-import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
+import {isAreaRental} from '@model/application/area-rental/area-rental';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 
 @Component({
@@ -104,7 +104,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       filter(result => !!result),
       switchMap(result => this.applicationStore.saveDeposit(result))
     ).subscribe(
-      result => this.notification.translateSuccess('deposit.action.save'),
+      () => this.notification.translateSuccess('deposit.action.save'),
       error => this.notification.errorInfo(error));
   }
 
@@ -113,7 +113,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     deposit.status = deposit.status + 1;
     this.applicationStore.saveDeposit(deposit)
       .subscribe(
-        result => this.notification.translateSuccess('deposit.action.save'),
+        () => this.notification.translateSuccess('deposit.action.save'),
         error => this.notification.errorInfo(error));
   }
 

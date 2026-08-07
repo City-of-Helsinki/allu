@@ -88,10 +88,12 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
     });
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: any): void {
     this._onChange = fn;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnTouched(fn: any): void {
     this._onTouched = fn;
   }
@@ -100,8 +102,10 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
     this.textsControl.setValue(text, {emitEvent: false});
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onChange = (_: any) => {};
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onTouched = (_: any) => {};
 
   private filterDefaultTexts(texts: Array<DefaultText>): Array<DefaultText> {

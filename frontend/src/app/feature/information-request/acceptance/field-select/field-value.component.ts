@@ -14,12 +14,14 @@ export class FieldValueComponent implements OnInit {
   @Input() meta: StructureMeta;
 
   valueType: ValueType;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   displayValue: any;
 
   ngOnInit(): void {
     this.valueType = typeOfValue(this.value);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   @Input() set value(value: any) {
     if (value instanceof Date) {
       this.displayValue = TimeUtil.getUiDateString(value);

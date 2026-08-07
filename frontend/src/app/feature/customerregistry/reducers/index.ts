@@ -1,12 +1,10 @@
-import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import * as fromContact from '@feature/customerregistry/reducers/contact-reducer';
 import * as fromCustomerSearch from '@feature/customerregistry/reducers/customer-search-reducer';
 import * as fromContactSearch from '@feature/customerregistry/reducers/contact-search-reducer';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {InjectionToken} from '@angular/core';
-import {Customer} from '@model/customer/customer';
-import {Page} from '@model/common/page';
 import {createCustomerSelectors} from '@feature/customerregistry/reducers/customer-search-reducer';
 import {createContactSelectors} from '@feature/customerregistry/reducers/contact-search-reducer';
 import {Dictionary} from '@ngrx/entity';

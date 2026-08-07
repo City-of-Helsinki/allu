@@ -212,7 +212,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     return application;
   }
 
-  private onValidityEndTimeChange(status: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  private onValidityEndTimeChange(_status: any) {
     if (this.validityEndTimeCtrl.warnings) {
       this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
         ? new IconConfig('accent', false, 'warning')

@@ -21,6 +21,7 @@ import {catchError, filter, switchMap, takeUntil} from 'rxjs/operators';
 export class StoredFilterComponent implements OnInit, OnDestroy {
 
   @Input() type: StoredFilterType;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   @Input() filter: any;
   @Input() selectedFilter: StoredFilter;
   @Input() availableFilters: StoredFilter[];

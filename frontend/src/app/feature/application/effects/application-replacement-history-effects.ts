@@ -24,7 +24,7 @@ export class ApplicationReplacementHistoryEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationReplacementHistoryActions.Load>(ApplicationReplacementHistoryActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.applicationService.getReplacementHistory(app.id).pipe(
+    switchMap(([_action, app]) => this.applicationService.getReplacementHistory(app.id).pipe(
       map(history => new ApplicationReplacementHistoryActions.LoadSuccess(history)),
       catchError(error => of(new NotifyFailure(error)))
     ))

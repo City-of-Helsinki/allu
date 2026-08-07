@@ -43,9 +43,9 @@ export class StoredFilterService {
     }
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     const url = `${STORED_FILTER_URL}/${id}`;
-    return this.http.delete<{}>(url).pipe(
+    return this.http.delete<unknown>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.remove')))
     );
   }

@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {UserListComponent} from '@feature/admin/user/user-list.component';
-import {Router} from '@angular/router';
 import {UserServiceMock} from 'test/mocks';
 import {UserService} from '@service/user/user-service';
 import {Store, StoreModule} from '@ngrx/store';
@@ -25,10 +24,8 @@ const users: User[] = [
 ];
 
 describe('UserListComponent', () => {
-  let comp: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
   let de: DebugElement;
-  let router: Router;
   let userService: UserServiceMock;
   let store: Store<fromRoot.State>;
 
@@ -55,9 +52,7 @@ describe('UserListComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserListComponent);
-    comp = fixture.componentInstance;
     de = fixture.debugElement;
-    router = TestBed.inject(Router) as Router;
     userService = TestBed.inject(UserService) as UserServiceMock;
     store = TestBed.inject(Store);
 

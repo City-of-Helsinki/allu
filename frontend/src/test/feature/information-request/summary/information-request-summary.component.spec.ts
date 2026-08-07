@@ -12,7 +12,6 @@ import {InformationRequestStatus} from '@model/information-request/information-r
 import {getButtonWithText} from 'test/selector-helpers';
 import {findTranslation} from '@util/translations';
 import {RouterTestingModule} from '@angular/router/testing';
-import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {MockRoutedComponent} from 'test/mocks';
 import * as fromRoot from '@feature/allu/reducers';
@@ -31,8 +30,6 @@ describe('InformationRequestSummary', () => {
   let fixture: ComponentFixture<MockHostComponent>;
   let testHost: MockHostComponent;
   let de: DebugElement;
-  let summaryComponent: InformationRequestSummaryComponent;
-  let router: Router;
   let location: Location;
   let store: Store<fromRoot.State>;
 
@@ -63,8 +60,6 @@ describe('InformationRequestSummary', () => {
     testHost = fixture.componentInstance;
     de = fixture.debugElement;
     fixture.detectChanges();
-    summaryComponent = de.query(By.directive(InformationRequestSummaryComponent)).componentInstance;
-    router = TestBed.inject(Router);
     location = TestBed.inject(Location);
     store = TestBed.inject(Store);
   });

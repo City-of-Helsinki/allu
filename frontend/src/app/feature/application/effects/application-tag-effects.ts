@@ -16,7 +16,6 @@ import {
   SaveSuccess
 } from '../actions/application-tag-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
-import {Application} from '../../../model/application/application';
 import {NumberUtil} from '../../../util/number.util';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import * as historyActions from '@feature/history/actions/history-actions';
@@ -32,7 +31,7 @@ export class ApplicationTagEffects {
   loadTags: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApplicationTagActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    switchMap(([action, current]) => this.applicationService.getTags(current.id).pipe(
+    switchMap(([_action, current]) => this.applicationService.getTags(current.id).pipe(
       map(tags => new LoadSuccess(tags)),
       catchError(error => of(new LoadFailed(error)))
     ))
@@ -83,8 +82,8 @@ export class ApplicationTagEffects {
       this.store.select(fromApplication.getTags),
       this.store.select(fromApplication.getCurrentApplication)
     ),
-    filter(([action, tags, application]) => !!application && NumberUtil.isDefined(application.id)),
-    switchMap(([action, tags, application]) => this.applicationService.saveTags(application.id, tags).pipe(
+    filter(([_action, _tags, application]) => !!application && NumberUtil.isDefined(application.id)),
+    switchMap(([_action, tags, application]) => this.applicationService.saveTags(application.id, tags).pipe(
       map(saved => new SaveSuccess(saved)),
       catchError(error => of(new SaveFailed(error)))
     ))

@@ -19,6 +19,7 @@ export class AlluTableDataSource<T> extends MatTableDataSource<T> {
       return fields;
     }, {});
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     this.sortingDataAccessor = (data: any, sortHeaderId: string): string => {
       if (typeof data[sortHeaderId] === 'string' && this.caseInsensitiveFields[sortHeaderId]) {
         return data[sortHeaderId].toLocaleLowerCase();

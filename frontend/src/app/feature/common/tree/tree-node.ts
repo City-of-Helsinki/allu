@@ -6,11 +6,13 @@ export interface TreeStructureNode<T> {
 }
 
 export interface TreeNode {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   id: any;
   children?: TreeNode[];
 }
 
 export class TreeFlatNode {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   id: any;
   expandable: boolean;
   level: number;

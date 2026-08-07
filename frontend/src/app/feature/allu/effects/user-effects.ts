@@ -16,7 +16,7 @@ export class UserEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(UserActionType.Load),
     withLatestFrom(this.store.pipe(select(fromAuth.getLoggedIn))),
-    filter(([action, loggedIn]) => loggedIn),
+    filter(([_action, loggedIn]) => loggedIn),
     switchMap(() => this.userService.getAllUsers().pipe(
       map(users => new LoadSuccess(users)),
       catchError(error => of(new NotifyFailure(error))))

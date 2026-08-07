@@ -76,7 +76,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
         this.notification.success(findTranslation('attachment.action.added', {name: saved.name}));
         Some(index).do(i => this.editableAttachments.splice(i, 1));
       },
-      error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
+      _error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
     );
   }
 
@@ -113,8 +113,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   decisionAttachmentToggle(attachment: AttachmentInfo, change: MatSlideToggleChange): void {
     attachment.decisionAttachment = change.checked;
     this.applicationStore.saveAttachment(attachment).subscribe(
-      saved => {},
-      error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
+      () => {},
+      _error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
     );
   }
 
@@ -138,8 +138,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   private onRemoveConfirm(attachment: AttachmentInfo) {
     this.applicationStore.removeAttachment(attachment.id)
       .subscribe(
-        status => this.notification.success(findTranslation('attachment.action.deleted', {name: attachment.name})),
-        error => this.notification.error(findTranslation('attachment.error.deleteFailed', {name: attachment.name})));
+        () => this.notification.success(findTranslation('attachment.action.deleted', {name: attachment.name})),
+        _error => this.notification.error(findTranslation('attachment.error.deleteFailed', {name: attachment.name})));
   }
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {

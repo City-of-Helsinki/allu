@@ -29,8 +29,8 @@ export class UserAreaEffects {
     this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
   ]
   ).pipe(
-    filter(([action, user]) => ArrayUtil.anyMatch(userAreasAllowed, user.assignedRoles)),
-    switchMap(([action, user]) => this.locationService.getUserAreas().pipe(
+    filter(([_action, user]) => ArrayUtil.anyMatch(userAreasAllowed, user.assignedRoles)),
+    switchMap(([_action, _user]) => this.locationService.getUserAreas().pipe(
       map(featureGroup => new LoadSuccess(featureGroup)),
       catchError(error => from([
         new LoadFailed(),

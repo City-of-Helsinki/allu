@@ -89,7 +89,7 @@ export class DefaultAttachmentComponent implements OnInit {
         this.notification.success('Liite ' + attachment.name + ' tallennettu');
         this.router.navigate(['../'], { relativeTo: this.route });
       },
-      error => this.notification.error('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
+      _error => this.notification.error('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
   }
 
   remove(): void {

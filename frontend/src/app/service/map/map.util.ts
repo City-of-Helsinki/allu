@@ -94,6 +94,7 @@ export class MapUtil {
     return L.rectangle(bounds);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   public isValidGeometry(layer: any): boolean {
     if (layer instanceof L.Circle || layer instanceof L.Point) {
       return true;
@@ -146,6 +147,7 @@ export class MapUtil {
     return this.project(feature.geometry);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private project(geometry: any): any {
     return {
       type: geometry.type,
@@ -153,6 +155,7 @@ export class MapUtil {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private unproject(geometry: any): any {
     return {
       type: geometry.type,

@@ -5,7 +5,7 @@ import {Application} from '@model/application/application';
 import {ApplicationTag} from '@model/application/tag/application-tag';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {ComplexValidator} from '@util/complex-validator';
-import {CableReportForm, createDefaultOrdererId, from, to} from './cable-report.form';
+import {CableReportForm, from, to} from './cable-report.form';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
 import {CableReport} from '@model/application/cable-report/cable-report';
 import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';

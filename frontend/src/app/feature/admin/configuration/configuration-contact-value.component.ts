@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormBuilder, UntypedFormControl, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
 import {Configuration} from '@model/config/configuration';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

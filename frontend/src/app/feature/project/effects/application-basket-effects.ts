@@ -33,8 +33,8 @@ export class ApplicationBasketEffects {
     ofType<Load>(ApplicationBasketActionType.Load),
     map(() => LocalStorageUtil.getItemArray<number>(BASKET)),
     combineLatestWith(this.store.select(fromAuth.getLoggedIn)),
-    filter(([ids, loggedIn]) => loggedIn),
-    switchMap(([ids, loggedIn]) => this.loadApplications(ids))
+    filter(([_ids, loggedIn]) => loggedIn),
+    switchMap(([ids, _loggedIn]) => this.loadApplications(ids))
   ));
 
   
@@ -79,7 +79,7 @@ export class ApplicationBasketEffects {
   loadInitial: Observable<Action> = createEffect(() => defer(() => of(LocalStorageUtil.getItemArray<number>(BASKET))).pipe(
     combineLatestWith(this.store.select(fromAuth.getLoggedIn)),
     filter(([ids, loggedIn]) => loggedIn && ids.length > 0),
-    switchMap(([ids, loggedIn]) => this.loadApplications(ids))
+    switchMap(([ids, _loggedIn]) => this.loadApplications(ids))
   ));
 
   private loadApplications(ids: number[]): Observable<Action> {

@@ -52,11 +52,11 @@ export class TerminationModalService {
 
     this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
-      map(config => this.dialog.open<ConfirmDialogComponent>(ConfirmDialogComponent, {data})),
+      map(() => this.dialog.open<ConfirmDialogComponent>(ConfirmDialogComponent, {data})),
       switchMap(modalRef => modalRef.afterClosed()),
       filter(result => !!result), // Ignore no answers
       withLatestFrom(this.store.select(fromDecision.getTermination))
-    ).subscribe(([resultTrue, termination]) => this.store.dispatch(new RemoveTerminationDraft(termination)));
+    ).subscribe(([_resultTrue, termination]) => this.store.dispatch(new RemoveTerminationDraft(termination)));
   }
 
 }

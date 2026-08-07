@@ -4,7 +4,7 @@ import {CommentService} from '../../../../app/service/application/comment/commen
 import {Comment} from '../../../../app/model/application/comment/comment';
 import {CommentType} from '../../../../app/model/application/comment/comment-type';
 import {ErrorHandler} from '../../../../app/service/error/error-handler.service';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {ActionTargetType} from '../../../../app/feature/allu/actions/action-target-type';
 import {ErrorHandlerMock} from '../../../mocks';
 
@@ -35,7 +35,6 @@ const COMMENT_NEW = new Comment(
 
 describe('CommentService', () => {
   let commentService: CommentService;
-  let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   let errorHandler: ErrorHandlerMock;
 
@@ -50,7 +49,6 @@ describe('CommentService', () => {
     ]
 });
     commentService = tb.inject(CommentService);
-    httpClient = tb.inject(HttpClient);
     httpTestingController = tb.inject(HttpTestingController);
     errorHandler = tb.inject(ErrorHandler) as ErrorHandlerMock;
   });
@@ -80,7 +78,7 @@ describe('CommentService', () => {
   it('getCommentsFor() should handle errors', fakeAsync(() => {
     let result: Array<Comment>;
     spyOn(errorHandler, 'handle').and.callThrough();
-    commentService.getCommentsFor(ActionTargetType.Application, APP_ID).subscribe(r => result = r, error => {});
+    commentService.getCommentsFor(ActionTargetType.Application, APP_ID).subscribe(r => result = r, _error => {});
 
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     req.error(new ErrorEvent('Expected error'));
@@ -121,7 +119,7 @@ describe('CommentService', () => {
   it('saveComment() comment should handle errors', fakeAsync(() => {
     let result: Comment;
     spyOn(errorHandler, 'handle').and.callThrough();
-    commentService.saveComment(ActionTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r, error => {});
+    commentService.saveComment(ActionTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r, _error => {});
     const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     req.error(new ErrorEvent('Expected'));
 
@@ -140,7 +138,7 @@ describe('CommentService', () => {
 
   it('remove() comment should handle errors', fakeAsync(() => {
     spyOn(errorHandler, 'handle').and.callThrough();
-    commentService.remove(COMMENT_ONE.id).subscribe(() => {}, error => {});
+    commentService.remove(COMMENT_ONE.id).subscribe(() => {}, _error => {});
     const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     req.error(new ErrorEvent('Expected'));
     tick();

@@ -10,7 +10,7 @@ import {
   ReportOperationalCondition,
 } from '@feature/application/actions/date-reporting-actions';
 import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {findTranslation} from '@util/translations';

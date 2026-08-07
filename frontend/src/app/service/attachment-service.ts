@@ -18,10 +18,12 @@ const defaultAttachmentGetUrl = '/api/applications/default-attachments';
 const defaultAttachmentUrlEdit = '/api/admin/attachments';
 
 export class ExtendedFileUploader extends FileUploader {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ng2-file-upload interop
   constructor(options: any, private meta: AttachmentInfo[]) {
     super(options);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ng2-file-upload interop
   onBuildItemForm(fileItem: any, form: any): any {
     const metaForItem = this.meta.shift();
     const json = JSON.stringify([metaForItem]);
@@ -41,7 +43,7 @@ export class AttachmentService {
     return this.upload(url, attachments);
   }
 
-  remove(applicationId: number, attachmentId: number): Observable<{}> {
+  remove(applicationId: number, attachmentId: number): Observable<unknown> {
     const url = uploadUrl.replace('appId', String(applicationId)) + '/' + attachmentId;
     return this.http.delete(url);
   }
@@ -95,7 +97,7 @@ export class AttachmentService {
     );
   }
 
-  removeDefaultAttachment(id: number): Observable<{}> {
+  removeDefaultAttachment(id: number): Observable<unknown> {
     const url = defaultAttachmentUrlEdit + '/' + id;
     return this.http.delete(url);
   }
@@ -108,13 +110,13 @@ export class AttachmentService {
         authToken: 'Bearer ' + sessionStorage.getItem('jwt')}, attachments);
       const files = attachments.map(a => a.file);
 
-      uploader.onSuccessItem = (item, response, status, headers) => {
+      uploader.onSuccessItem = (item, response, _status, _headers) => {
         const items = JSON.parse(response);
         const infos = items.map(i => AttachmentInfoMapper.mapBackend(i));
         uploadSubject.next(infos);
       };
 
-      uploader.onErrorItem = (item, response, status, headers) => uploadSubject.error(response);
+      uploader.onErrorItem = (_item, response, _status, _headers) => uploadSubject.error(response);
       uploader.onCompleteAll = () => uploadSubject.complete();
       uploader.addToQueue(<File[]>files);
       uploader.uploadAll();

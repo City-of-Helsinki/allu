@@ -38,7 +38,7 @@
         </div>
         <div class="row">
           <div class="col m6" *ngIf="!file">
-            <div fileDrop (onFileDrop)="attachmentSelected($event)" (onFileOver)="fileOverDropzone($event)"
+            <div fileDrop (fileDrop)="attachmentSelected($event)" (fileOver)="fileOverDropzone($event)"
                  class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
               <button mat-raised-button type="button" color="primary" (click)="realFileInput.click()">
                 LISÄÄ LIITE

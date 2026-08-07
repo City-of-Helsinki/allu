@@ -30,7 +30,7 @@ export class InvoicingPeriodEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoicingPeriodActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.invoicingPeriodService.load(app.id).pipe(
+    switchMap(([_action, app]) => this.invoicingPeriodService.load(app.id).pipe(
       map(periods => new LoadSuccess(periods)),
       catchError(error => from([
         new NotifyFailure(error),
@@ -64,8 +64,8 @@ export class InvoicingPeriodEffects {
   remove: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(InvoicingPeriodActionType.Remove),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.invoicingPeriodService.remove(app.id).pipe(
-      map(periods => new RemoveSuccess()),
+    switchMap(([_action, app]) => this.invoicingPeriodService.remove(app.id).pipe(
+      map(() => new RemoveSuccess()),
       catchError(error => from([
         new NotifyFailure(error),
         new OperationFailed()

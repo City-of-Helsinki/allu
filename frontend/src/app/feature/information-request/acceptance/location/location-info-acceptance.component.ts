@@ -16,7 +16,7 @@ import {NumberUtil} from '@util/number.util';
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LocationInfoAcceptanceComponent extends InfoAcceptanceDirective<any> implements OnInit {
+export class LocationInfoAcceptanceComponent extends InfoAcceptanceDirective implements OnInit {
   @Input() oldLocation: Location;
   @Input() newLocation: Location;
 

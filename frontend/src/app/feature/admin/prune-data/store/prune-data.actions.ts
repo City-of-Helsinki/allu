@@ -43,6 +43,7 @@ export const deleteDataSuccess = createAction(
 
 export const deleteDataFailure = createAction(
     '[PruneData] Delete Data Failure',
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     props<{ ids: number[]; error: any }>()
 );
 

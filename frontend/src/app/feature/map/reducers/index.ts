@@ -7,8 +7,7 @@ import * as fromApplication from './application-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {Dictionary} from '@ngrx/entity';
 import {MapLayer} from '@service/map/map-layer';
-import {ApplicationType, applicationTypeList} from '@model/application/type/application-type';
-import {ArrayUtil} from '@util/array-util';
+import {applicationTypeList} from '@model/application/type/application-type';
 
 export interface MapState {
   layers: fromLayers.State;

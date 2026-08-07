@@ -59,6 +59,7 @@ export class StoredFilterStore {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- returns per-workqueue filter payload incl. sort/search fields not modeled on StoredFilter
   getCurrentFilter(type: StoredFilterType): Observable<any> {
     return this.getCurrent(type).pipe(
       filter(current => !!current),
@@ -104,7 +105,7 @@ export class StoredFilterStore {
     );
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     return this.storedFilterService.remove(id).pipe(
       tap(() => this.loadAndClearCurrent(id))
     );

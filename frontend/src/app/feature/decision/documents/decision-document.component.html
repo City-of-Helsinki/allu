@@ -13,7 +13,7 @@
     [approvedOperationalCondition]="approvedOperationalCondition$ | async"
     [hasInvoicing]="hasInvoicing$ | async"
     [tab]="tab"
-    (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
+    (decisionConfirm)="onDecisionConfirm()"></decision-actions>
 
   <contract-actions
     *ngIf="showContractActions$ | async"

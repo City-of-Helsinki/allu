@@ -16,13 +16,13 @@ import {BehaviorSubject, Observable, of} from 'rxjs';
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);
 
-  defaultRecipientsByApplicationType(type: string) {
+  defaultRecipientsByApplicationType(_type: string) {
     return this.recipients$.asObservable().pipe(share());
   }
-  removeDefaultRecipient(id: number): Observable<{}> {
+  removeDefaultRecipient(_id: number): Observable<unknown> {
     return of({});
   }
-  saveDefaultRecipient(recipient: DefaultRecipient): Observable<{}> {
+  saveDefaultRecipient(recipient: DefaultRecipient): Observable<unknown> {
     return of(recipient);
   }
 }
@@ -99,7 +99,7 @@ describe('RecipientsByTypeComponent', () => {
     expect(de.queryAll(Page.emailDivSelector).length).toBe(2, 'Existing rows with value not found');
     expect(de.queryAll(Page.emailInputSelector).length).toBe(1, 'Input not found');
     expect(page.rows[2].query(Page.emailInputSelector).nativeElement.value).toBeFalsy('Email input should not have value');
-    comp.onItemCountChanged.subscribe(count => expect(count).toEqual(3, 'Component did not notify count by output'));
+    comp.itemCountChanged.subscribe(count => expect(count).toEqual(3, 'Component did not notify count by output'));
   }));
 
   it('should delete row on delete button click', fakeAsync(() => {
@@ -108,7 +108,7 @@ describe('RecipientsByTypeComponent', () => {
     deleteBtn.click();
     detectChangesAndUpdate();
     expect(hub.removeDefaultRecipient).toHaveBeenCalledTimes(1);
-    comp.onItemCountChanged.subscribe(count => expect(count).toEqual(2, 'Component did not notify count after removal'));
+    comp.itemCountChanged.subscribe(count => expect(count).toEqual(2, 'Component did not notify count after removal'));
   }));
 
   it('should toggle edit mode on edit button click', fakeAsync(() => {

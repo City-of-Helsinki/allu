@@ -1,4 +1,4 @@
-import {UntypedFormBuilder, Validators} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 
 export class InvoicingInfoForm {
@@ -17,6 +17,7 @@ export class InvoicingInfoForm {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static initialForm(fb: UntypedFormBuilder): any {
     return fb.group({
       id: undefined,

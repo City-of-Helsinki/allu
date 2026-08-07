@@ -38,7 +38,7 @@ export class AdminGuard  {
   private authenticate(route: ActivatedRouteSnapshot, redirectUrl: string): Observable<boolean> {
     const code = route.queryParams['code'];
     if (code) {
-      return this.authService.loginOAuth(code).pipe(map(response => true));
+      return this.authService.loginOAuth(code).pipe(map(() => true));
     } else {
       localStorage.setItem(REDIRECT_URL, redirectUrl);
       this.redirectToOAuth();

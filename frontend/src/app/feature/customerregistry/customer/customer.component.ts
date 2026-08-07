@@ -87,15 +87,15 @@ export class CustomerComponent implements OnInit {
     const customer = CustomerForm.toCustomer(formValues.customer);
     customer.active = false;
     this.save(customer, this.contactChanges()).subscribe(
-      c => this.notifyAndNavigateToCustomers(findTranslation('customer.action.removeFromRegistry')),
+      () => this.notifyAndNavigateToCustomers(findTranslation('customer.action.removeFromRegistry')),
       error => this.notification.errorInfo(error)
     );
   }
 
-  onSubmit(formValues: CustomerWithContactsForm): void {
+  onSubmit(_formValues: CustomerWithContactsForm): void {
     if (this.form.valid && this.form.dirty) {
       this.save(this.customerChanges(), this.contactChanges()).subscribe(
-        customer => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
+        () => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
         error => this.notification.errorInfo(error)
       );
     } else {

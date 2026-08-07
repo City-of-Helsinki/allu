@@ -11,6 +11,7 @@ export class JwtInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let nextReq = req;
     if (this.requireToken(req.url) && this.authService.token) {

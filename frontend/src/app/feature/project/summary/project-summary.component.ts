@@ -67,7 +67,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
       ]).pipe(
         takeUntil(this.destroy$),
         takeWhile(() => !!this.map),
-        filter(([applications, show]) => show)
+        filter(([_applications, show]) => show)
       ).subscribe(([applications, show]) => {
         if (show && !!this.map) {
           this.store.dispatch(new SearchSuccess(ActionTargetType.Project, applications));

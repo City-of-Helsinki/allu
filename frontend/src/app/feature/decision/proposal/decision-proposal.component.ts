@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {CommentType, decisionProposalComments} from '@model/application/comment/comment-type';
+import {decisionProposalComments} from '@model/application/comment/comment-type';
 import {Comment} from '@model/application/comment/comment';
 import {TimeUtil} from '@util/time.util';
 import {select, Store} from '@ngrx/store';

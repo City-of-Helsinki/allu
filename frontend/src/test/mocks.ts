@@ -1,4 +1,4 @@
-import { Component, Directive, TemplateRef, Injectable } from '@angular/core';
+import { Component, Directive, Injectable } from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
 import {Application} from '../app/model/application/application';
 import {Location} from '../app/model/common/location';
@@ -18,8 +18,6 @@ import {ErrorInfo} from '../app/service/error/error-info';
 import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
-import {ComponentType} from '@angular/cdk/portal';
-import {MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 
 /**
  * Mock for application state
@@ -58,7 +56,7 @@ export class ApplicationStoreMock {
     this.applicationCopy$.next(app);
   }
 
-  delete(id: number): Observable<{}> {
+  delete(_id: number): Observable<unknown> {
     return of({});
   }
 
@@ -66,16 +64,16 @@ export class ApplicationStoreMock {
     return EMPTY;
   }
 
-  changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+  changeStatus(_id: number, _status: ApplicationStatus, _changeInfo?: StatusChangeInfo): Observable<Application> {
     this.applicationChange(this.application$.getValue());
     return of(this.snapshot.application);
   }
 
   get comments() { return this.comments$.asObservable(); }
 
-  saveComment(applicationId: number, comment: Comment) {}
+  saveComment(_applicationId: number, _comment: Comment) {}
 
-  removeComment(comment: Comment) {}
+  removeComment(_comment: Comment) {}
 
   // Testing helper which updates status of application and emits new application
   updateStatus(status: ApplicationStatus): void {
@@ -97,10 +95,10 @@ export class ApplicationStoreMock {
 export class CustomerServiceMock {
   public orderer$ = new Subject<Contact>();
 
-  searchCustomersByField(fieldName: string, term: string) {}
-  findCustomerActiveContacts(customerId: number) {}
+  searchCustomersByField(_fieldName: string, _term: string) {}
+  findCustomerActiveContacts(_customerId: number) {}
   get orderer() { return this.orderer$.asObservable(); }
-  ordererWasSelected(orderer) {}
+  ordererWasSelected(_orderer) {}
 }
 
 export class ContactServiceMock {
@@ -128,15 +126,15 @@ export class CurrentUserMock {
     return mock;
   }
 
-  public hasRole(roles: Array<string>): Observable<boolean> {
+  public hasRole(_roles: Array<string>): Observable<boolean> {
     return of(this.allowHasRole);
   }
 
-  public hasApplicationType(types: Array<string>): Observable<boolean> {
+  public hasApplicationType(_types: Array<string>): Observable<boolean> {
     return of(this.allowHasType);
   }
 
-  public isCurrentUser(id: number): Observable<boolean> {
+  public isCurrentUser(_id: number): Observable<boolean> {
     return of(true);
   }
 
@@ -154,9 +152,9 @@ export class UserServiceMock {
   public getCurrentUser(): Observable<User> {
     return of(new User(1));
   }
-  public getByRole = (role: RoleType) => of([supervisor]);
+  public getByRole = (_role: RoleType) => of([supervisor]);
 
-  public search(criteria: UserSearchCriteria) { return of([]); }
+  public search(_criteria: UserSearchCriteria) { return of([]); }
 
   public getAllUsers(): Observable<User[]> {
     return of([]);
@@ -167,11 +165,12 @@ export class UserServiceMock {
  * Mock for angular's router
  */
 export class RouterMock {
-  public navigate(commands: any[], extras?: NavigationExtras): Promise<boolean> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  public navigate(_commands: any[], _extras?: NavigationExtras): Promise<boolean> {
     return Promise.resolve(true);
   }
 
-  navigateByUrl(url: string | UrlTree, extras?: NavigationExtras): Promise<boolean> {
+  navigateByUrl(_url: string | UrlTree, _extras?: NavigationExtras): Promise<boolean> {
     return Promise.resolve(true);
   }
 }
@@ -184,10 +183,12 @@ export class ActivatedRouteMock {
   params  = this.params$.asObservable();
   data = this.data$.asObservable();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   set testParams(newParams: any) {
     this.params$.next(newParams);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   set testData(data: any) {
     this.data$.next(data);
   }
@@ -203,11 +204,11 @@ export class MockRoutedComponent {}
  * Mock for InvoiceHub
  */
 export class InvoiceHubMock {
-  public loadChargeBasisEntries(applicationId: number): Observable<Array<ChargeBasisEntry>> {
+  public loadChargeBasisEntries(_applicationId: number): Observable<Array<ChargeBasisEntry>> {
     return EMPTY;
   }
 
-  public saveChargeBasisEntries(applicationId: number, rows: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
+  public saveChargeBasisEntries(_applicationId: number, _rows: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
     return EMPTY;
   }
 
@@ -229,26 +230,27 @@ export class CityDistrictServiceMock {
 
 @Injectable()
 export class NotificationServiceMock {
-  translateSuccess(key: string): void {}
+  translateSuccess(_key: string): void {}
 
-  success(title: string, message?: string): void {}
+  success(_title: string, _message?: string): void {}
 
-  info(title: string, message?: string): void  {}
+  info(_title: string, _message?: string): void  {}
 
-  error(title: string, message?: string): void {}
+  error(_title: string, _message?: string): void {}
 
-  errorInfo(errorInfo: ErrorInfo): void {}
+  errorInfo(_errorInfo: ErrorInfo): void {}
 
   errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T): Observable<T> {
     return returnValue ? of(returnValue) : EMPTY;
   }
 
-  translateError(errorInfo: ErrorInfo): void {}
+  translateError(_errorInfo: ErrorInfo): void {}
 
-  translateErrorMessage(key: string): void {}
+  translateErrorMessage(_key: string): void {}
 }
 
 export class ErrorHandlerMock {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   handle(error: any, message?: string): Observable<any> {
     return throwError(new ErrorInfo('error', message));
   }
@@ -271,12 +273,14 @@ export function availableToDirectiveMockMeta(mock: CurrentUserMock = new Current
 }
 
 export class MatDialogMock {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   open(): any {
     return undefined;
   }
 }
 
 export class MatDialogRefMock {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   afterClosed(): Observable<any> {
     return of();
   }

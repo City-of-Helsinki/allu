@@ -52,6 +52,7 @@ export class UserMapper {
     } : undefined;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   public static mapSearchCriteria(searchCriteria: UserSearchCriteria): any {
     return {
       roleType: searchCriteria.uiRoleType,

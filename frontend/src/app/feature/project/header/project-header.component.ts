@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Project} from '../../../model/project/project';
 import {Application} from '../../../model/application/application';
 import {ApplicationStatus, decided, isBefore} from '../../../model/application/application-status';

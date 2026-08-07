@@ -9,7 +9,7 @@ export class CanActivateLogin  {
   constructor(private configService: ConfigService, private router: Router) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
     return this.configService.isStagingOrProduction().pipe(
       map(isStagOrProd => {
         if (isStagOrProd) {

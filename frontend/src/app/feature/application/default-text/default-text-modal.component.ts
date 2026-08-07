@@ -58,7 +58,7 @@ export class DefaultTextModalComponent implements OnInit {
     if (NumberUtil.isDefined(text.id)) {
       this.defaultTextService.remove(text.id)
         .subscribe(
-          result => this.defaultTexts.removeAt(index),
+          () => this.defaultTexts.removeAt(index),
           error => this.notification.errorInfo(error)
         );
     } else {

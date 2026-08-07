@@ -2,6 +2,7 @@
  * Extend Leaflet typings authenticated wms-layer.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- required to keep this file in module context so the 'leaflet' module augmentation resolves leaflet types
 import * as L from 'leaflet';
 import {TileLayerOptions} from 'leaflet';
 

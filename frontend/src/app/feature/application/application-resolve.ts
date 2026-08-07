@@ -8,7 +8,7 @@ import {ApplicationStore} from '@service/application/application-store';
 import {NotificationService} from '@feature/notification/notification.service';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
-import {Load, LoadDistribution, LoadReplacingApplication, LoadSuccess, SaveDistributionSuccess} from './actions/application-actions';
+import {Load, LoadDistribution, LoadReplacingApplication, LoadSuccess} from './actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, switchMap, take, tap} from 'rxjs/operators';
 import * as commentActions from '@feature/comment/actions/comment-actions';
@@ -55,7 +55,7 @@ export class ApplicationResolve  {
       take(1),
       tap(app => this.store.dispatch(new LoadSuccess(app))),
       tap(app => this.loadRelatedInfo(app)),
-      tap(app => this.store.dispatch(new ResetLayers(ActionTargetType.Location))),
+      tap(() => this.store.dispatch(new ResetLayers(ActionTargetType.Location))),
       catchError(err => this.handleError(err))
     );
   }
@@ -77,6 +77,7 @@ export class ApplicationResolve  {
     this.store.dispatch(new LoadReplacingApplication(replacedByApplicationId));
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private handleError(err: any): Observable<Application> {
     this.notification.errorInfo(err);
     this.router.navigate(['/applications']);

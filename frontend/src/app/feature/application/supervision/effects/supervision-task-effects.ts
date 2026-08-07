@@ -5,7 +5,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {SupervisionTaskService} from '@service/supervision/supervision-task.service';
-import {EMPTY, from, Observable, of} from 'rxjs';
+import {from, Observable, of} from 'rxjs';
 import {
   Approve,
   ApproveSuccess, ChangeOwner, ChangeOwnerSuccess,
@@ -22,7 +22,7 @@ import {
 } from '@feature/application/supervision/actions/supervision-task-actions';
 import * as TagActions from '@feature/application/actions/application-tag-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {catchError, map, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, take} from 'rxjs/operators';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {Load as LoadInvoices} from '@feature/application/invoicing/actions/invoice-actions';
 import {Load as LoadChargeBasis} from '@feature/application/invoicing/actions/charge-basis-actions';
@@ -30,7 +30,6 @@ import {Load as LoadComments} from '@feature/comment/actions/comment-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {DateReportingService} from '@service/application/date-reporting.service';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
-import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Application} from '@model/application/application';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus} from '@model/application/application-status';
@@ -55,7 +54,7 @@ export class SupervisionTaskEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(SupervisionTaskActionType.Load),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
-    switchMap(([action, app]) => this.taskService.findTasksByApplicationId(app.id).pipe(
+    switchMap(([_action, app]) => this.taskService.findTasksByApplicationId(app.id).pipe(
       map(tasks => new LoadSuccess(tasks)),
       catchError(error => from([
         new LoadFailed(),
@@ -164,7 +163,7 @@ export class SupervisionTaskEffects {
   removeDanglingOperationalConditionTask: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApproveSuccess>(SupervisionTaskActionType.ApproveSuccess),
     withLatestExisting(this.store.select(fromSupervision.getOpenOperationalConditionTask)),
-    map(([action, task]) => new RemoveSuccess(task.id))
+    map(([_action, task]) => new RemoveSuccess(task.id))
   ));
 
   private reportDatesOnApproval(appId: number, date: Date, type: SupervisionTaskType): Observable<Application> {

@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {DecisionService} from '@service/decision/decision.service';
-import {from, Observable, of} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {DecisionActionType, Load, LoadFailed, LoadSuccess} from '@feature/decision/actions/decision-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
@@ -23,8 +23,8 @@ export class DecisionEffects {
   loadDecision: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(DecisionActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => this.decisionService.fetch(application.id).pipe(
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([_action, application]) => this.decisionService.fetch(application.id).pipe(
       map(response => new LoadSuccess(response)),
       catchError(error => from([
         new LoadFailed(error),
@@ -38,7 +38,7 @@ export class DecisionEffects {
     ofType<SetTab>(DocumentActionType.SetTab),
     filter(action => action.payload === DecisionTab.DECISION),
     withLatestFrom(this.store.select(fromDecision.getDecision)),
-    map(([action, decision]) => {
+    map(([_action, decision]) => {
       if (decision) {
         return new LoadSuccess(decision);
       } else {

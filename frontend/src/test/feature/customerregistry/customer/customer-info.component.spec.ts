@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
@@ -17,7 +17,7 @@ import { CurrentUser } from '@app/service/user/current-user';
 import { CurrentUserMock } from 'test/mocks';
 
 class CustomerHubMock {
-  searchCustomersByField(fieldName: string, term: string) {}
+  searchCustomersByField(_fieldName: string, _term: string) {}
 }
 class CodeSetServiceMock {
   public getCountries(): Observable<Array<CodeSet>> {

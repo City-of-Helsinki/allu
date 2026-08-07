@@ -43,8 +43,8 @@
                 <charge-basis-entry
                   [entry]="entry"
                   [changesAllowed]="changesAllowed"
-                  (onEdit)="editEntry($event)"
-                  (onRemove)="removeEntry(entry.id)"
+                  (edit)="editEntry($event)"
+                  (remove)="removeEntry(entry.id)"
                   (invoicableChange)="setInvoicable(entry.id, $event)"></charge-basis-entry>
               </li>
             </ul>
@@ -57,8 +57,8 @@
             <charge-basis-entry
               [entry]="entry"
               [changesAllowed]="changesAllowed"
-              (onEdit)="editEntry($event)"
-              (onRemove)="removeEntry(entry.id)"
+              (edit)="editEntry($event)"
+              (remove)="removeEntry(entry.id)"
               (invoicableChange)="setInvoicable(entry.id, $event)"></charge-basis-entry>
           </li>
         </ul>

@@ -20,6 +20,7 @@ export class StoredFilterModalComponent implements OnInit {
   typeName: string;
 
   private userId: number;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private filter: any;
 
   constructor(private dialogRef: MatDialogRef<StoredFilterModalComponent>,
@@ -61,5 +62,6 @@ export class StoredFilterModalComponent implements OnInit {
 export interface StoredFilterModalData {
   filterType: StoredFilterType;
   userId: number;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   filter: any;
 }

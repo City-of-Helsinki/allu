@@ -5,11 +5,11 @@
        *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
     <div fxFlex="25">
       <button mat-raised-button type="button" color="primary" class="in-front"
-              [disabled]="!(someSelected$ | async)" (click)="moveSelectedToSelf()">
+              [disabled]="(someSelected$ | async) === false" (click)="moveSelectedToSelf()">
         {{'common.button.toSelf' | translation | uppercase}}
       </button>
       <button mat-raised-button type="button" color="primary" class="in-front"
-              [disabled]="!(someSelected$ | async)" (click)="openHandlerModal()">
+              [disabled]="(someSelected$ | async) === false" (click)="openHandlerModal()">
         {{'common.button.moveTo' | translation | uppercase}}
       </button>
     </div>

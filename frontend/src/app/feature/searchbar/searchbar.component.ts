@@ -54,7 +54,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
   @Input() showAddress = true;
 
-  @Output() onShowAdvanced = new EventEmitter<boolean>();
+  @Output() showAdvanced = new EventEmitter<boolean>();
   @Output() addressChange = new EventEmitter<string>();
   @Output() searchChange = new EventEmitter<MapSearchFilter>();
 
@@ -197,7 +197,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   public showMore() {
-    this.onShowAdvanced.emit(true);
+    this.showAdvanced.emit(true);
   }
 
   public selectFilter(searchFilter: StoredFilter) {

@@ -1,4 +1,4 @@
-import {Component, DebugElement, Input, NgModule} from '@angular/core';
+import {Component, Input, NgModule} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Customer} from '@model/customer/customer';
 import {CodeSet, CodeSetCodeMap, CodeSetTypeMap} from '@model/codeset/codeset';
@@ -9,14 +9,12 @@ import * as fromCodeSet from '@feature/allu/reducers/code-set-reducer';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {SearchSuccess} from '@feature/customerregistry/actions/customer-search-actions';
 import * as CodeSetAction from '@feature/allu/actions/code-set-actions';
-import {By} from '@angular/platform-browser';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {CustomerService} from '@service/customer/customer.service';
 import {CustomerServiceMock, MatDialogMock, MatDialogRefMock, NotificationServiceMock} from '../../../mocks';
 import {NotificationService} from '@feature/notification/notification.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {of} from 'rxjs';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 import {CustomerType} from '@model/customer/customer-type';
 import {Page} from '@model/common/page';
@@ -89,10 +87,7 @@ const codeSet: CodeSetTypeMap = {
 describe('CustomerAcceptanceComponent', () => {
   let hostComp: MockHostComponent;
   let fixture: ComponentFixture<MockHostComponent>;
-  let de: DebugElement;
   let store: Store<fromCustomerSearch.State>;
-  let dialogRef: MatDialogRefMock;
-  let dialog: MatDialogMock;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -124,10 +119,7 @@ describe('CustomerAcceptanceComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MockHostComponent);
     hostComp = fixture.componentInstance;
-    de = fixture.debugElement;
     store = TestBed.inject(Store);
-    dialog = TestBed.inject(MatDialog) as unknown as MatDialogMock;
-    dialogRef = TestBed.inject(MatDialogRef) as MatDialogRefMock;
 
     hostComp.oldCustomer = oldCustomer;
     hostComp.newCustomer = newCustomer;

@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
-import {combineLatest, Observable, of, Subject, Subscription} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {MapUtil} from '@service/map/map.util';

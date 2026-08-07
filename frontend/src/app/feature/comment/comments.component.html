@@ -4,7 +4,7 @@
      *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY']">
   <allu-card>
     <mat-card-content>
-      <comment (save)="save($event)"></comment>
+      <comment (saveComment)="save($event)"></comment>
     </mat-card-content>
   </allu-card>
 </div>
@@ -20,6 +20,6 @@
 
   <comment-list [comments]="comments"
                 [loading]="loading$ | async"
-                (save)="save($event)"
-                (remove)="remove($event)"></comment-list>
+                (saveComment)="save($event)"
+                (removeComment)="remove($event)"></comment-list>
 </ng-container>
