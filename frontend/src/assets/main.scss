@@ -307,9 +307,13 @@ mat-chip-option.mat-mdc-chip-option.mat-mdc-chip-selected,
 mat-chip-row.mat-mdc-chip-row[selected='true'],
 mat-chip.mat-mdc-chip-highlighted {
   --mdc-chip-elevated-container-color: #{mat.m2-get-color-from-palette($allu-accent, 500)} !important;
+  --mdc-chip-elevated-selected-container-color: #{mat.m2-get-color-from-palette($allu-accent, 500)} !important;
   --mdc-chip-label-text-color: #{mat.m2-get-color-config($black-50-opacity)} !important;
+  --mdc-chip-selected-label-text-color: #{mat.m2-get-color-config($black-50-opacity)} !important;
   --mdc-chip-with-icon-selected-icon-color: #{mat.m2-get-color-config($black-50-opacity)} !important;
   --mdc-chip-with-trailing-icon-trailing-icon-color: #{mat.m2-get-color-config($black-87-opacity)} !important;
+  --mat-chip-selected-trailing-icon-color: #{mat.m2-get-color-config($black-87-opacity)} !important;
+  --mat-chip-selected-disabled-trailing-icon-color: #{mat.m2-get-color-config($black-38-opacity)} !important;
   --mdc-chip-label-text-weight: bold;
 }
 

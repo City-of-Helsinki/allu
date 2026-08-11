@@ -1,7 +1,10 @@
 // ----- Based on Angular Material 2 -----
 
 // Typography
-$mat-body-font-size-base: 1.4rem !default;
+// Base body font size. Set to 1rem (15px at the app's 15px html root). Angular Material <=17 emitted
+// its own 15px `body` rule that neutralized this; Material 18 no longer does, so 1.4rem would surface
+// as an unintended 21px body (regression vs the pre-18 render) - kept at 1rem to match the old look.
+$mat-body-font-size-base: 1rem !default;
 $mat-font-family: Roboto, 'Helvetica Neue', sans-serif !default;
 
 $map-spinner: 701;

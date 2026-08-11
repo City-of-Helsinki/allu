@@ -2,6 +2,11 @@
   margin-left: 2px;
 }
 
+/* Material 18 positions the "above" badge with `bottom: 100%` + a `margin-top: -11px` centering
+   hack (half the badge height), which stacks with `top` and makes the badge float above the text
+   line. Cancel both and center vertically via `top` instead (badge 22px vs 18px line -> top -2px). */
 .mat-badge-medium.mat-badge-above.allu-badge-center .mat-badge-content {
-  top: -3px;
+  top: -2px;
+  bottom: auto !important;
+  margin-top: 0 !important;
 }
