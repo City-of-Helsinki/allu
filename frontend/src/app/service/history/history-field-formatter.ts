@@ -11,7 +11,7 @@ import {CityDistrict} from '../../model/common/city-district';
 import {CodeSetCodeMap} from '../../model/codeset/codeset';
 import * as fromRoot from '../../feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 
 @Injectable()
 export class HistoryFieldFormatter {
@@ -75,7 +75,7 @@ export class HistoryFieldFormatter {
   private formatDefault(fieldChange: FieldChange): FieldChange {
     let oldValue = StringUtil.replaceNull(fieldChange.oldValue);
     let newValue = StringUtil.replaceNull(fieldChange.newValue);
-    let uiFieldName = this.meta.uiName(fieldChange.fieldName, '/');
+    const uiFieldName = this.meta.uiName(fieldChange.fieldName, '/');
 
     switch (fieldChange.fieldChangeType) {
       case FieldChangeType.DISTRICT_ID:

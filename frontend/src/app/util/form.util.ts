@@ -9,6 +9,7 @@ export class FormUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public static removeByValue(formArray: UntypedFormArray, condition: (val: any) => boolean) {
     for (let index = 0; index < formArray.length; ++index) {
       if (condition(formArray.at(index).value)) {
@@ -17,6 +18,7 @@ export class FormUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public static contains(formArray: UntypedFormArray, condition: (val: any) => boolean) {
     const values = formArray.value;
     return values ? values.some(condition) : false;
@@ -41,6 +43,7 @@ export class FormUtil {
     return false;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public static getValue(form: UntypedFormGroup, path: string): any {
     return Some(form)
       .map(f => f.get(path))

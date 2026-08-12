@@ -1,14 +1,16 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <allu-card>
-    <mat-card-title>
-      <div *ngIf="form.value.id">
-        <span>{{['supervision.task.type', form.getRawValue().type] | translation}}</span>
-        <span *ngIf="location"> - {{'location.locationKey' | translation:{key: location.locationKey} }}</span>
-        <span> - {{['supervision.task.status', form.value.status] | translation}}</span>
-        <span *ngIf="form.value.actualFinishingTime"> - {{form.value.actualFinishingTime | date:'short'}}</span>
-      </div>
-      <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
-    </mat-card-title>
+    <mat-card-header>
+      <mat-card-title>
+        <div *ngIf="form.value.id">
+          <span>{{['supervision.task.type', form.getRawValue().type] | translation}}</span>
+          <span *ngIf="location"> - {{'location.locationKey' | translation:{key: location.locationKey} }}</span>
+          <span> - {{['supervision.task.status', form.value.status] | translation}}</span>
+          <span *ngIf="form.value.actualFinishingTime"> - {{form.value.actualFinishingTime | date:'short'}}</span>
+        </div>
+        <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
+      </mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="18px">
         <div fxFlex>

@@ -4,34 +4,38 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
 
-  .labels-solid .mat-tab-label,
-  .labels-solid .mat-tab-link {
-    background-color: mat.get-color-from-palette($primary, 200);
-    color: mat.get-contrast-color-from-palette($primary, 500);
+  .mat-mdc-tab-links {
+    padding-top: 8px !important;
   }
 
-  .labels-solid .mat-tab-label.mat-tab-label-active,
-  .labels-solid .mat-tab-link.mat-tab-label-active {
-    background-color: white;
-    color: mat.get-color-from-palette($primary, 500);
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  .mat-mdc-tab-link {
+    background-color: mat.m2-get-color-from-palette($primary, 100) !important;
+    color: mat.m2-get-contrast-color-from-palette($primary, 500);
+    margin: 0 4px 0 !important;
+    border-radius: 8px 8px 0 0;
+    font-size: 16px !important;
+    font-weight: bold !important;
+  }
+  .mat-mdc-tab-link.mdc-tab--active {
+    background-color: white !important;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
   }
 
   nav {
 
     a {
-      color: mat.get-contrast-color-from-palette($primary, 500);
+      color: mat.m2-get-contrast-color-from-palette($primary, 500);
     }
 
     .active,
     a.active {
-      background: mat.get-color-from-palette($primary, 900);
+      background: mat.m2-get-color-from-palette($primary, 900);
     }
   }
 
   .nav-controls {
     a {
-      color: mat.get-contrast-color-from-palette($primary, 500);
+      color: mat.m2-get-contrast-color-from-palette($primary, 500);
     }
   }
 }
@@ -41,16 +45,16 @@
   $accent: map-get($theme, accent);
 
   nav.nav-bar-secondary {
-    background-color: mat.get-color-from-palette($primary, 900);
-    color: mat.get-contrast-color-from-palette($primary, 900);
+    background-color: mat.m2-get-color-from-palette($primary, 900);
+    color: mat.m2-get-contrast-color-from-palette($primary, 900);
 
     a {
-      color: mat.get-contrast-color-from-palette($primary, 900);
+      color: mat.m2-get-contrast-color-from-palette($primary, 900);
     }
 
     .active {
-      color: mat.get-contrast-color-from-palette($primary, 500);
-      border-bottom: 2px solid mat.get-color-from-palette($accent, A100);
+      color: mat.m2-get-contrast-color-from-palette($primary, 500);
+      border-bottom: 2px solid mat.m2-get-color-from-palette($accent, A100);
     }
   }
 }

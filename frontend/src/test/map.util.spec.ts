@@ -83,10 +83,12 @@ describe('MapService', () => {
 
     // Before the fix this throws:
     // "TypeError: Cannot read properties of undefined (reading '0')"
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     expect(() => mapService.createFeatureCollection(geoJSON as any)).not.toThrow();
 
     // The valid polygon should still produce a feature — the bad geometry must not
     // abort the entire collection
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
     const fc = mapService.createFeatureCollection(geoJSON as any);
     expect(fc.features.length).toBeGreaterThanOrEqual(1);
   });

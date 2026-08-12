@@ -1,5 +1,7 @@
 <allu-card>
-  <mat-card-title>{{'location.title' | translation}}</mat-card-title>
+  <mat-card-header>
+    <mat-card-title>{{'location.title' | translation}}</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex="0 1 calc(40% - 18px)">
@@ -132,7 +134,7 @@
             [layerTree]="layerTree$ | async"></map-layer-select>
         </div>
 
-        <map *ngIf="displayMap" 
+        <map *ngIf="displayMap"
             [selection]="true"
              [applicationId]="application.id"
              [showOnlyApplicationArea]="true"

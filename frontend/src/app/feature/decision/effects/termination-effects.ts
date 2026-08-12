@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Action, select, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {TerminationService} from '@feature/decision/termination/termination-service';
-import {from, Observable} from 'rxjs/index';
+import {from, Observable} from 'rxjs';
 import {
   LoadDocument,
   LoadDocumentFailed,
@@ -21,7 +21,7 @@ import {
   TerminationDraftFailed,
   TerminationDraftSuccess
 } from '@feature/decision/actions/termination-actions';
-import {catchError, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {Router} from '@angular/router';
@@ -48,8 +48,8 @@ export class TerminationEffects {
   loadTerminationInfo: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.LoadInfo),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => {
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([_action, application]) => {
       return this.terminationService.getTerminationInfo(application.id).pipe(
         map((terminationInfo) => new LoadInfoSuccess(terminationInfo)),
         catchError(error => from([
@@ -64,8 +64,8 @@ export class TerminationEffects {
   loadTerminationDocument: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<LoadDocument>(TerminationActionType.LoadDocument),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => this.terminationService.getTermination(application.id).pipe(
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([_action, application]) => this.terminationService.getTermination(application.id).pipe(
       map(response => new LoadDocumentSuccess(response)),
       catchError(error => from([
         new LoadDocumentFailed(error),
@@ -79,7 +79,7 @@ export class TerminationEffects {
     ofType<SetTab>(DocumentActionType.SetTab),
     filter(action => action.payload === DecisionTab.TERMINATION),
     withLatestFrom(this.store.select(fromDecision.getTerminationDocument)),
-    map(([action, termination]) => {
+    map(([_action, termination]) => {
       if (termination) {
         return new LoadDocumentSuccess(termination);
       } else {
@@ -92,7 +92,7 @@ export class TerminationEffects {
   terminateDecision: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.Terminate),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => {
       const draft: boolean = action.payload.draft;
       return this.terminationService.saveTerminationInfo(application.id, action.payload).pipe(
@@ -115,7 +115,7 @@ export class TerminationEffects {
   moveTerminationToDecision: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.MoveTerminationToDecision),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.changeStatusToDecisionMaking(application.id, action.payload).pipe(
       tap( updatedApp => this.router.navigate(['/applications', updatedApp.id, 'summary', 'decision', 'termination'])),
       map( () => new MoveTerminationToDecisionSuccess()),
@@ -130,7 +130,7 @@ export class TerminationEffects {
   removeTerminationDraft: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Terminate>(TerminationActionType.RemoveTerminationDraft),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, application]) => {
+    switchMap(([_action, application]) => {
       return this.terminationService.removeTerminationInfo(application.id).pipe(
         tap( () => this.router.navigate(['/applications', application.id, 'summary', 'decision'])),
         switchMap(() => {

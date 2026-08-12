@@ -1,16 +1,15 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatLegacyChipsModule as MatChipsModule} from '@angular/material/legacy-chips';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatChipsModule} from '@angular/material/chips'
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';
 import {WorkQueueContentComponent} from './content/workqueue-content.component';
-import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 import {CommentsModalComponent} from '../comment/comments-modal.component';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {RouterModule} from '@angular/router';
@@ -30,7 +29,6 @@ import {CommentModule} from '@feature/comment/comment.module';
         MatSortModule,
         MatPaginatorModule,
         MatChipsModule,
-        SelectionGroupModule,
         OwnerModalModule,
         StoredFilterModule,
         StoreModule.forFeature('workQueue', reducersToken),

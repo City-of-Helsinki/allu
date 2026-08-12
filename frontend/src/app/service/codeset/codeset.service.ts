@@ -4,9 +4,9 @@ import {ErrorHandler} from '../error/error-handler.service';
 import {HttpUtil} from '../../util/http.util';
 import {CodeSet} from '../../model/codeset/codeset';
 import {CodeSetMapper} from '../mapper/codeset-mapper';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {BackendCodeSet} from '../backend-model/backend-codeset';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const CODESET_URL = '/api/codesets';
 

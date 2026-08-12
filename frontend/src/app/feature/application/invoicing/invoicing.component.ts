@@ -7,7 +7,7 @@ import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {Customer} from '@model/customer/customer';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {findTranslation} from '@util/translations';
@@ -15,7 +15,7 @@ import {NumberUtil} from '@util/number.util';
 import {CustomerService} from '@service/customer/customer.service';
 import {CurrentUser} from '@service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {catchError, map, switchMap, take} from 'rxjs/internal/operators';
+import {catchError, map, switchMap, take} from 'rxjs/operators';
 import {applicationCanBeEdited} from '@model/application/application-status';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -28,8 +28,7 @@ import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
 import {ApplicationExtension} from '@model/application/type/application-extension';
-import {ApplicationType} from '@model/application/type/application-type';
-import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
+import {isAreaRental} from '@model/application/area-rental/area-rental';
 
 @Component({
   selector: 'invoicing',
@@ -148,7 +147,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const confirmType = this.infoForm.valid ? 'confirmSave' : 'confirmDiscard';
     const data = {
       title: findTranslation(['invoice', confirmType, 'title']),

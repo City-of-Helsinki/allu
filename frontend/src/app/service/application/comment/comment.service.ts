@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import {Comment} from '../../../model/application/comment/comment';
 import {BackendComment, CommentMapper} from './comment-mapper';
@@ -8,7 +8,7 @@ import {ErrorHandler} from '../../error/error-handler.service';
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
 import {ActionTargetType} from '../../../feature/allu/actions/action-target-type';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const COMMENTS_URL = '/api/comments';
 
@@ -33,7 +33,7 @@ export class CommentService {
       : this.insertFor(target, id, comment);
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     const url = `${COMMENTS_URL}/${id}`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')))

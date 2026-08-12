@@ -6,7 +6,7 @@ import {Injectable} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
 import * as fromNotification from './reducers';
 import {select, Store} from '@ngrx/store';
-import {filter} from 'rxjs/internal/operators';
+import {filter} from 'rxjs/operators';
 
 @Injectable()
 export class NotificationService {
@@ -31,7 +31,7 @@ export class NotificationService {
     this.toastService.success(message, title);
   }
 
-  info(title: string, message?: string): void  {
+  info(title: string, message?: string): void  {
     this.toastService.info(message, title);
   }
 

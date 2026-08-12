@@ -3,14 +3,14 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '@feature/application/reducers';
 import {Action, select, Store} from '@ngrx/store';
 import {ApplicationStore} from '@service/application/application-store';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {
   ReportCustomerOperationalCondition,
   ReportCustomerValidity, ReportLocationCustomerValidity,
   ReportOperationalCondition,
 } from '@feature/application/actions/date-reporting-actions';
 import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {findTranslation} from '@util/translations';

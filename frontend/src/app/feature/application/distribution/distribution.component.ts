@@ -4,7 +4,7 @@ import {Application} from '@model/application/application';
 import {PublicityType} from '@model/application/publicity-type';
 import {EnumUtil} from '@util/enum.util';
 import {DistributionEntry} from '@model/common/distribution-entry';
-import {Observable, Subject, Subscription} from 'rxjs';
+import {Subject} from 'rxjs';
 import {distributionChangeAllowed} from '@model/application/application-status';
 import {DistributionListComponent} from '@feature/application/distribution/distribution-list/distribution-list.component';
 import {map, takeUntil} from 'rxjs/operators';

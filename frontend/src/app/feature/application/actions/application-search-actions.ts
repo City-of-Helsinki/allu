@@ -23,7 +23,7 @@ export enum ApplicationSearchActionType {
   ClearSelected = '[ApplicationSearch] Clear selected applications'
 }
 
-export interface ApplicationSearchParams extends SearchParameters<ApplicationSearchQuery> {}
+export type ApplicationSearchParams = SearchParameters<ApplicationSearchQuery>;
 
 export class SetSearchQuery implements ActionWithTarget {
   readonly type = ApplicationSearchActionType.SetSearchQuery;

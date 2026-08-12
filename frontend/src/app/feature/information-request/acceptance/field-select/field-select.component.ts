@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewChild, ChangeDetectorRef} from '@angular/core';
 import isEqual from 'lodash/isEqual';
-import {MatLegacySelectionList as MatSelectionList} from '@angular/material/legacy-list';
+import {MatSelectionList} from '@angular/material/list';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {MapFeature} from '@feature/map/map-feature';
@@ -8,6 +8,7 @@ import {pathStyle} from '@service/map/map-draw-styles';
 import {StructureMeta} from '@model/application/meta/structure-meta';
 
 export interface FieldValues {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   [field: string]: any;
 }
 
@@ -64,6 +65,7 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   }
 
   /** Implemented as part of ControlValueAccessor. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: (value: any) => void): void {
     if (this.selectionList) {
       this.selectionList.registerOnChange(fn);

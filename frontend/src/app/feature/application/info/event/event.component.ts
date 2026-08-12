@@ -62,6 +62,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private getExtensionFormStructure(draft: boolean): ({ [key: string]: any; }) {
     return draft
       ? this.draftFormStructure

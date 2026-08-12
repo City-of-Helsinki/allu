@@ -21,7 +21,7 @@ export enum CustomerSearchActionType {
   FindByIdSuccess = '[CustomerSearch] Find customer by id success',
 }
 
-export interface CustomerSearchParams extends SearchParameters<CustomerSearchQuery> {}
+export type CustomerSearchParams = SearchParameters<CustomerSearchQuery>;
 
 export class SetSearchQuery implements ActionWithTarget {
   readonly type = CustomerSearchActionType.SetSearchQuery;

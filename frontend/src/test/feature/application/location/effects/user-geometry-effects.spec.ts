@@ -5,16 +5,16 @@ import {LocationService} from '@service/location.service';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromAuth from '@feature/auth/reducers';
 import {provideMockActions} from '@ngrx/effects/testing';
-import {ReplaySubject} from 'rxjs/internal/ReplaySubject';
-import {Observable} from 'rxjs/internal/Observable';
-import {Feature, FeatureCollection, GeometryObject, Position} from 'geojson';
+import {ReplaySubject} from 'rxjs';
+import {Observable} from 'rxjs';
+import {FeatureCollection, GeometryObject} from 'geojson';
 import {EMPTY} from 'rxjs';
 import {LoggedUserLoaded} from '@feature/auth/actions/auth-actions';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {Load, LoadFailed, LoadSuccess} from '@feature/application/location/actions/user-area-actions';
-import {of} from 'rxjs/internal/observable/of';
-import {throwError} from 'rxjs/internal/observable/throwError';
+import {of} from 'rxjs';
+import {throwError} from 'rxjs';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {ErrorInfo} from '@service/error/error-info';
 import {skip, take} from 'rxjs/operators';
@@ -42,6 +42,7 @@ const featureCollection: FeatureCollection<GeometryObject> = {
 
 describe('User area effects', () => {
   let effects: UserAreaEffects;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   let actions: ReplaySubject<any>;
   let metadata: EffectsMetadata<UserAreaEffects>;
   let locationService: LocationServiceMock;

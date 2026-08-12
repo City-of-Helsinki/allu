@@ -26,7 +26,6 @@ const timeout: TimeoutOptions = {
 export const DEFAULT_OVERLAY = 'helsinki_karttasarja';
 const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
-const OVERLAY_TILE_SIZE = 512; // px
 
 export const applicationLayers = Object.keys(ApplicationType)
   .map(type => findTranslation(['application.type', type]));
@@ -83,7 +82,6 @@ export class MapLayerService {
   }
 
   createOverlays(): L.Control.LayersObject {
-    const token = this.authService.token;
     return {
       'Karttasarja': this.createOverlayLayer('helsinki_karttasarja'),
       'Kantakartta': this.createOverlayLayer('helsinki_kantakartta'),

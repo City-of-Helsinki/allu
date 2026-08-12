@@ -2,8 +2,12 @@
   margin-top: 15px;
 }
 
-.acceptance-info-header > .mat-dialog-title {
+.acceptance-info-header > .mat-mdc-dialog-title {
   margin: 0;
+  padding: 0;
+  &::before {
+    display: none;
+  }
 }
 
 .info-bordered {

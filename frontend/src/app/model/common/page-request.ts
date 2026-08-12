@@ -1,5 +1,3 @@
-import {Page} from '@model/common/page';
-
 export class PageRequest {
   constructor(
     public readonly page: number = 0,

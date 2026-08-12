@@ -9,9 +9,9 @@ import * as SummaryAction from '@feature/information-request/actions/information
 import * as ResponseAction from '@feature/information-request/actions/information-request-response-actions';
 import {Action, select, Store} from '@ngrx/store';
 import {InformationRequestService} from '@service/application/information-request.service';
-import {from, Observable, of} from 'rxjs/index';
+import {from, Observable, of} from 'rxjs';
 import * as fromApplication from '@feature/application/reducers';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {InformationRequestResultActionType} from '@feature/information-request/actions/information-request-result-actions';
 import {ApplicationService} from '@service/application/application.service';
@@ -20,7 +20,7 @@ import {ApplicationStatus} from '@model/application/application-status';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {findTranslation} from '@util/translations';
-import {canHaveResponse, InformationRequestStatus} from '@model/information-request/information-request-status';
+import {canHaveResponse} from '@model/information-request/information-request-status';
 import {InformationRequestSummaryActionType} from '@feature/information-request/actions/information-request-summary-actions';
 import {
   InformationRequestResponseActionType
@@ -60,8 +60,8 @@ export class InformationRequestEffects {
   loadLatestRequest: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<InformationRequestAction.LoadActiveRequest>(InformationRequestActionType.LoadActiveRequest),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => this.informationRequestService.getRequestForApplication(application.id).pipe(
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([_action, application]) => this.informationRequestService.getRequestForApplication(application.id).pipe(
       map(request => new InformationRequestAction.LoadRequestSuccess(request)),
       catchError(error => from([
         new InformationRequestAction.LoadRequestFailed(error),
@@ -178,15 +178,15 @@ export class InformationRequestEffects {
   getSummaries: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SummaryAction.Get>(InformationRequestSummaryActionType.Get),
     withLatestFrom(this.store.pipe(select(fromInformationRequest.getSummariesLoaded))),
-    filter(([action, loaded]) => !loaded),
-    map(([action, loaded]) => new SummaryAction.Load())
+    filter(([_action, loaded]) => !loaded),
+    map(() => new SummaryAction.Load())
   ));
 
   
   loadSummaries: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SummaryAction.Load>(InformationRequestSummaryActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.informationRequestService.getSummariesForApplication(app.id).pipe(
+    switchMap(([_action, app]) => this.informationRequestService.getSummariesForApplication(app.id).pipe(
       map(summaries => new SummaryAction.LoadSuccess(summaries)),
       catchError(error => of(new NotifyFailure(error)))
     ))

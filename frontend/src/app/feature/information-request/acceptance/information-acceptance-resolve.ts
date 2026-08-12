@@ -26,7 +26,7 @@ export class InformationAcceptanceResolve  {
     private informationRequestService: InformationRequestService
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<InformationAcceptanceData> {
+  resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<InformationAcceptanceData> {
     return this.store.pipe(
       select(fromApplication.getClientData),
       switchMap(clientData => {
@@ -94,7 +94,7 @@ export class InformationAcceptanceResolve  {
         this.store.pipe(select(fromInformationRequest.getInformationRequestResponse(requestId)), take(1)),
         this.store.pipe(select(fromApplication.getCurrentApplication), take(1))
       ])),
-      filter(([request, response, currentApp]) => response !== undefined),
+      filter(([_request, response, _currentApp]) => response !== undefined),
     );
   }
 

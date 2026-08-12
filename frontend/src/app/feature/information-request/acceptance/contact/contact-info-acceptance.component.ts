@@ -16,7 +16,7 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Contact> implements OnInit {
+export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective implements OnInit {
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
   @Input() orderer: boolean;

@@ -14,6 +14,7 @@ import {
 } from '@angular/platform-browser-dynamic/testing';
 
 // Unfortunately, there's no typing for the `__karma__` variable. Just declare it as any.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 declare const __karma__: any;
 
 // Prevent Karma from running prematurely.

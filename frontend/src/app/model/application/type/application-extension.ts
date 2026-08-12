@@ -11,6 +11,7 @@ export interface WorkFinishedDates {
 }
 
 // Check if given object has every property the interface requires
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
 export function isWorkFinishedDates(obj: any): obj is WorkFinishedDates {
   return 'workFinished' in obj
     && 'customerWorkFinished' in obj
@@ -23,6 +24,7 @@ export interface OperationalConditionDates {
   operationalConditionReported?: Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
 export function isOperationalConditionDates(obj: any): obj is OperationalConditionDates {
   return 'winterTimeOperation' in obj
   && 'customerWinterTimeOperation' in obj
@@ -33,6 +35,7 @@ export interface GuaranteeEndTime {
   guaranteeEndTime?: Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
 export function isGuaranteeEndTime(obj: any): obj is GuaranteeEndTime {
   return 'guaranteeEndTime' in obj;
 }
@@ -42,6 +45,7 @@ export interface CustomerStartEndTimes {
   customerEndTime?: Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
 export function isCustomerStartEndTimes(obj: any): obj is CustomerStartEndTimes {
   return 'customerStartTime' in obj
     && 'customerEndTime' in obj;

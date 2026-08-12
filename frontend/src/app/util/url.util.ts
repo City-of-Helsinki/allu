@@ -1,6 +1,6 @@
 import {ActivatedRoute} from '@angular/router';
 import {Some} from './option';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 

@@ -39,27 +39,3 @@ nav.nav-bar-secondary {
     font-size: 14px;
   }
 }
-
-.labels-solid .mat-tab-label,
-.labels-solid .mat-tab-link {
-  margin: 2px 5px 0;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  font-size: 16px !important;
-  font-weight: bold !important;
-}
-
-.labels-end .mat-tab-labels,
-.labels-end .mat-tab-links {
-  justify-content: flex-end;
-  padding-right:10%;
-
-}
-
-.labels-end .mat-tab-list {
-  max-width: 95vw;
-}
-
-.mat-tab-links {
-  display: flex;
-}

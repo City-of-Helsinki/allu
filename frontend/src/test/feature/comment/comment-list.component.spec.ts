@@ -6,7 +6,7 @@ import {AlluCommonModule} from '../../../app/feature/common/allu-common.module';
 import {CommentListComponent} from '../../../app/feature/comment/comment-list.component';
 import {CommentType} from '../../../app/model/application/comment/comment-type';
 import {Comment} from '../../../app/model/application/comment/comment';
-import {BehaviorSubject} from 'rxjs/index';
+import {BehaviorSubject} from 'rxjs';
 
 const COMMENT_ONE = new Comment(
   1,
@@ -25,16 +25,16 @@ const COMMENT_TWO = new Comment(
 @Component({
   selector: 'parent',
   template: `<comment-list [comments]="comments$.asObservable() | async"
-                       (save)="save($event)"
-                       (remove)="remove($event)"></comment-list>`
+                       (saveComment)="save($event)"
+                       (removeComment)="remove($event)"></comment-list>`
 })
 class MockParentComponent {
   comments$ = new BehaviorSubject<Comment[]>([]);
 
   @ViewChild(CommentListComponent, {static: true}) commentsComponent: CommentListComponent;
 
-  save(comment: Comment): void {}
-  remove(comment: Comment): void {}
+  save(_comment: Comment): void {}
+  remove(_comment: Comment): void {}
 }
 
 @Component({
@@ -43,8 +43,8 @@ class MockParentComponent {
 })
 class MockCommentComponent {
   @Input() comment: Comment = new Comment();
-  @Output('save') onSave = new EventEmitter<Comment>();
-  @Output('remove') onRemove = new EventEmitter<Comment>();
+  @Output() saveComment = new EventEmitter<Comment>();
+  @Output() removeComment = new EventEmitter<Comment>();
 
   form = new UntypedFormGroup({});
 }
@@ -80,16 +80,14 @@ describe('CommentListComponent', () => {
   it('should show comments', () => {
     parentComp.comments$.next([COMMENT_ONE, COMMENT_TWO]);
     fixture.detectChanges();
-    fixture.whenStable().then(val => {
-      expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
-    });
+    expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
   });
 
   it('should re-emit save', fakeAsync(() => {
     spyOn(parentComp, 'save');
     const commentComp = comp.children.first;
     const comment = new Comment(1);
-    commentComp.onSave.emit(new Comment(1));
+    commentComp.saveComment.emit(new Comment(1));
     expect(parentComp.save).toHaveBeenCalledWith(comment);
   }));
 
@@ -97,7 +95,7 @@ describe('CommentListComponent', () => {
     spyOn(parentComp, 'remove');
     const commentComp = comp.children.first;
     const comment = new Comment(1);
-    commentComp.onRemove.emit(new Comment(1));
+    commentComp.removeComment.emit(new Comment(1));
     expect(parentComp.remove).toHaveBeenCalledWith(comment);
   });
 

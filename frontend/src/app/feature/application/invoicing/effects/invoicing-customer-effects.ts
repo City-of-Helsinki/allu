@@ -3,9 +3,9 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Action, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {
   InvoicingCustomerActionType,
@@ -28,14 +28,14 @@ export class InvoicingCustomerEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoicingCustomerActionType.Load),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
-    switchMap(([action, app]) => this.findInvoicingCustomer(app.id, app.invoiceRecipientId))
+    switchMap(([_action, app]) => this.findInvoicingCustomer(app.id, app.invoiceRecipientId))
   ));
 
   
   setRecipient: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SetRecipient>(InvoicingCustomerActionType.SetRecipient),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, app]) => app.id !== undefined),
+    filter(([_action, app]) => app.id !== undefined),
     switchMap(([action, app]) => this.invoiceService.saveRecipient(app.id, action.payload).pipe(
       switchMap(() => [new SetRecipientSuccess(action.payload), new TagAction.Load(), new Load()]),
       catchError(error => of(new NotifyFailure(error)))

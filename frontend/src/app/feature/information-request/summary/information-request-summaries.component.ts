@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 import {select, Store} from '@ngrx/store';
 import * as fromInformationRequest from '@feature/information-request/reducers';

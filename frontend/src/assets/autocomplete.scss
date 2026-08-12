@@ -1,27 +1,26 @@
-.mat-autocomplete-panel.multi-line-option {
+.mat-mdc-autocomplete-panel.multi-line-option {
   max-height: 512px;
 }
 
-.mat-autocomplete-panel.multi-line-option .mat-option {
+.mat-mdc-autocomplete-panel.multi-line-option .mat-mdc-option {
   min-height: 48px;
   height: auto;
   padding-top: 16px;
   padding-bottom: 16px;
-
-  .mat-option-text {
+  .mdc-list-item__primary-text {
     overflow: hidden;
     white-space: normal;
     line-height: 1.1em;
   }
 }
 
-.mat-autocomplete-panel .mat-option h4.mat-option-header {
+.mat-mdc-autocomplete-panel .mat-mdc-option h4.mat-option-header {
   margin: 0;
   padding: 0;
   font-weight: 400;
 }
 
-.mat-autocomplete-panel .mat-option .mat-option-line {
+.mat-mdc-autocomplete-panel .mat-mdc-option .mat-option-line {
   margin: 0;
   padding: 0;
   font-size: 14px;

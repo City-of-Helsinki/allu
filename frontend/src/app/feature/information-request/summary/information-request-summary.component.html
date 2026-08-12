@@ -1,19 +1,21 @@
 <allu-card>
-  <mat-card-title>
-    <div fxLayout="row">
-      <div fxFlex="auto">
-        <ng-container *ngIf="summary.updateWithoutRequest; else fullRequest">
-          {{'informationRequest.summary.request.customerReportedChange' | translation}}
-        </ng-container>
-        <ng-template #fullRequest>
-          {{'informationRequest.summary.request.title' | translation}}
-        </ng-template>
+  <mat-card-header>
+    <mat-card-title>
+      <div fxLayout="row">
+        <div fxFlex="auto">
+          <ng-container *ngIf="summary.updateWithoutRequest; else fullRequest">
+            {{'informationRequest.summary.request.customerReportedChange' | translation}}
+          </ng-container>
+          <ng-template #fullRequest>
+            {{'informationRequest.summary.request.title' | translation}}
+          </ng-template>
+        </div>
+        <div fxFlex="none">
+          <information-request-status [status]="summary.status"></information-request-status>
+        </div>
       </div>
-      <div fxFlex="none">
-        <information-request-status [status]="summary.status"></information-request-status>
-      </div>
-    </div>
-  </mat-card-title>
+    </mat-card-title>
+  </mat-card-header>
   <mat-card-content *ngIf="!summary.updateWithoutRequest">
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex>

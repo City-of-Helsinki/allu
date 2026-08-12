@@ -4,7 +4,7 @@ import {User} from '@model/user/user';
 import {UserService} from '@service/user/user-service';
 import * as fromRoot from '@feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {findTranslation, translateArray} from '@util/translations';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -42,7 +42,7 @@ export class UserListComponent implements OnInit {
     this.userService.getAllUsers().pipe(
       withLatestFrom(this.store.select(fromRoot.getCityDistrictEntities)),
       map(([users, cityDistricts]) => users.map(user => this.toUserElement(user, cityDistricts)))
-    ).subscribe(users =>  {
+    ).subscribe(users =>  {
       this.dataSource.data = users;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

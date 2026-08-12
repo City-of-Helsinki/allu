@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {Observable} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
@@ -42,7 +42,7 @@ export class TerminationService {
 
   removeTerminationInfo(applicationId: number): Observable<TerminationInfo> {
     const url = `${APPLICATION_URL}/${applicationId}/termination/info`;
-    return this.http.delete<BackendTerminationInfo>(url).pipe(
+    return this.http.delete<TerminationInfo>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('termination.error.removeInfo')))
     );
   }

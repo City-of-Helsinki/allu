@@ -3,9 +3,9 @@ import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from
 import {Contact} from '@model/customer/contact';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import {Subject} from 'rxjs/index';
+import {Subject} from 'rxjs';
 import {SetContact, RemoveContact} from '@feature/information-request/actions/information-request-result-actions';
-import {takeUntil} from 'rxjs/internal/operators';
+import {takeUntil} from 'rxjs/operators';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {config as acceptanceConfig} from '@feature/information-request/acceptance/customer/customer-acceptance-config';
 

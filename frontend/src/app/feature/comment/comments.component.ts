@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Store} from '@ngrx/store';
 import {Remove, Save, ToggleDirection} from './actions/comment-actions';
 import {CommentListComponent} from './comment-list.component';
@@ -59,7 +59,7 @@ export class CommentsComponent implements OnInit {
     }
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const data = {
       title: findTranslation(['comment.confirmDiscard.title']),
       description: findTranslation(['comment.confirmDiscard.description']),

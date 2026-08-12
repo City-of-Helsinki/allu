@@ -4,7 +4,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Store, StoreModule} from '@ngrx/store';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 
 import {CustomerComponent} from '@feature/customerregistry/customer/customer.component';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';

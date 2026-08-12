@@ -2,8 +2,8 @@ import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@a
 import {hasSpecifiers, KindsWithSpecifiers, SpecifierEntry} from '@model/application/type/application-specifier';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
-import {takeUntil} from 'rxjs/internal/operators';
-import {Subject} from 'rxjs/index';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers/index';
 import {SetKindsWithSpecifiers} from '@feature/information-request/actions/information-request-result-actions';
@@ -61,7 +61,7 @@ export class KindAcceptanceComponent implements OnInit {
     return hasSpecifiers(this.availableKindsWithSpecifiers);
   }
 
-  kindSelection(kinds: string | Array<string>) {
+  kindSelection(kinds: string | Array<string>) {
     const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
     const availableSpecifiers = getAvailableSpecifiers(this.applicationType, selectedKinds);
     this.availableKindsWithSpecifiers = availableSpecifiers;
@@ -81,7 +81,7 @@ export class KindAcceptanceComponent implements OnInit {
       .subscribe(kinds => this.kindSelection(kinds));
 
     this.specifiersCtrl.valueChanges.pipe(takeUntil(this.destroy))
-      .subscribe(specifiers => this.onSpecifierSelection());
+      .subscribe(() => this.onSpecifierSelection());
   }
 
   private updateSelectedSpecifiers(selectedKinds: string[]) {

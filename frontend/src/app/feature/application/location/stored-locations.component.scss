@@ -2,5 +2,5 @@
 @import '../../../../assets/colors';
 
 tr.selected {
-  background: mat.get-color-from-palette($allu-primary, 100) !important;
+  background: mat.m2-get-color-from-palette($allu-primary, 100) !important;
 }

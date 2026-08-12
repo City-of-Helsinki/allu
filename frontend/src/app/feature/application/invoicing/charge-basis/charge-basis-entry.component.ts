@@ -13,8 +13,8 @@ export class ChargeBasisEntryComponent {
   @Input() entry: ChargeBasisEntry;
   @Input() changesAllowed: boolean;
 
-  @Output() onEdit: EventEmitter<ChargeBasisEntry> = new EventEmitter<ChargeBasisEntry>();
-  @Output() onRemove: EventEmitter<void> = new EventEmitter<void>();
+  @Output() edit: EventEmitter<ChargeBasisEntry> = new EventEmitter<ChargeBasisEntry>();
+  @Output() remove: EventEmitter<void> = new EventEmitter<void>();
   @Output() invoicableChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   editAllowed(entry: ChargeBasisEntry): boolean {

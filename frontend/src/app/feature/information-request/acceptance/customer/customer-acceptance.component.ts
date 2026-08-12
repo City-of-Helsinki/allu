@@ -1,18 +1,18 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild, OnChanges} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs/index';
-import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
 import {EnumUtil} from '@util/enum.util';
 import {CustomerNameSearchMinChars, CustomerSearchQuery, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {isEqualWithSkip} from '@util/object.util';
 import {CustomerInfoAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-info-acceptance.component';
@@ -39,7 +39,7 @@ import { UpdateCustomerReference } from '@feature/information-request/actions/in
   styleUrls: ['./customer-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
+export class CustomerAcceptanceComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() oldCustomer: Customer;
   @Input() newCustomer: Customer;
@@ -80,7 +80,9 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   referenceFieldDescriptions: FieldDescription[] = [
     new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
   ];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   referenceFieldValues: any = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   referenceComparedValues: any = {};
 
   constructor(

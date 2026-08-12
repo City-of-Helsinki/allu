@@ -6,7 +6,7 @@ import {MAX_DATE, MIN_DATE} from '../../../util/time.util';
 export class ProjectQueryParametersMapper {
 
   public static mapFrontend(query: ProjectSearchQuery): BackendQueryParameters {
-    return Some(query).map(q => {
+    return Some(query).map(() => {
       return {
         queryParameters: ProjectQueryParametersMapper.mapProjectParameters(query)
       };

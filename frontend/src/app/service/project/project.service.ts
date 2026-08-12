@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {Project} from '../../model/project/project';
@@ -18,7 +18,7 @@ import {Sort} from '../../model/common/sort';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendProject} from '../backend-model/backend-project';
 import {BackendApplication} from '../backend-model/backend-application';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable()
 export class ProjectService {
@@ -70,7 +70,7 @@ export class ProjectService {
     }
   }
 
-  public delete(id: number): Observable<{}> {
+  public delete(id: number): Observable<unknown> {
     const url = ProjectService.PROJECT_URL + '/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('project.error.removeFailed')))
@@ -89,7 +89,7 @@ export class ProjectService {
     return this.addProjectApplications(id, [applicationId]);
   }
 
-  public removeApplication(appId: number): Observable<{}> {
+  public removeApplication(appId: number): Observable<unknown> {
     const url = `${ProjectService.PROJECT_URL}/applications/${appId}`;
     return this.http.delete(url).pipe(
       catchError(err => this.errorHandler.handle(err, findTranslation('project.error.applicationRemoveFailed')))
@@ -123,7 +123,7 @@ export class ProjectService {
     );
   }
 
-  public removeParent(ids: Array<number>): Observable<{}> {
+  public removeParent(ids: Array<number>): Observable<unknown> {
     const url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
     return this.http.put(url, JSON.stringify(ids)).pipe(
       catchError(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')))

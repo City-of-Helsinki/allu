@@ -5,7 +5,7 @@ import {MatIcon} from '@angular/material/icon';
 import {Some} from '@util/option';
 
 export function getMatIconButton(debugElement: DebugElement, buttonIcon: string) {
-  return ArrayUtil.first(debugElement.queryAll(By.css('button.mat-icon-button'))
+  return ArrayUtil.first(debugElement.queryAll(By.css('button.mat-mdc-icon-button'))
     .filter(btn => btn.query(By.css('mat-icon')).nativeElement.textContent === buttonIcon)
     .map(btn => btn.nativeElement));
 }

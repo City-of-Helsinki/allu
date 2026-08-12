@@ -15,7 +15,9 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Sijoitussopimuksen tiedot</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>Sijoitussopimuksen tiedot</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
             <div class="col m6">
@@ -88,7 +90,9 @@
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <default-text formControlName="terms"
                         [applicationType]="application.type"
@@ -103,7 +107,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'OTHER.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'OTHER.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <default-text formControlName="rationale"
                         [applicationType]="application.type"

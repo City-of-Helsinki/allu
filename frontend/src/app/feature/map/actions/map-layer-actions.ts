@@ -26,6 +26,7 @@ export class ResetLayers implements ActionWithTarget {
 
 export class AddTreeStructure implements ActionWithTarget {
   readonly type = MapLayerActionType.AddTreeStructure;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   constructor(public targetType: ActionTargetType, public payload: any) {}
 }
 

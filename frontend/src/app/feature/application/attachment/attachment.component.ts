@@ -21,8 +21,8 @@ const MB = 1000 * 1000;
 export class AttachmentComponent implements OnInit, OnDestroy {
   @Input() attachment: AttachmentInfo = new AttachmentInfo();
   @Input() decisionAttachmentDisabled = false;
-  @Output() onCancel = new EventEmitter<void>();
-  @Output() onSave = new EventEmitter<AttachmentInfo>();
+  @Output() cancelled = new EventEmitter<void>();
+  @Output() savedAttachment = new EventEmitter<AttachmentInfo>();
 
   private destroy = new Subject<boolean>();
 
@@ -63,7 +63,7 @@ export class AttachmentComponent implements OnInit, OnDestroy {
     this.attachmentForm.patchValue(AttachmentInfo.toForm(this.attachment));
     this.setValidForDecision(this.attachment.mimeType);
 
-    if (!!this.attachment.id) {
+    if (this.attachment.id) {
       this.attachmentForm.disable();
     }
   }
@@ -84,13 +84,14 @@ export class AttachmentComponent implements OnInit, OnDestroy {
     const form = this.attachmentForm.value;
     const attachment = AttachmentInfo.fromForm(form);
     attachment.mimeType = form.file.type;
-    this.onSave.emit(attachment);
+    this.savedAttachment.emit(attachment);
   }
 
   cancel(): void {
-    this.onCancel.emit();
+    this.cancelled.emit();
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   attachmentSelected(files: any[]): void {
     if (files && files.length > 0) {
       const file = files[0];

@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
@@ -8,7 +8,7 @@ import {NumberUtil} from '@util/number.util';
 import {ArrayUtil} from '@util/array-util';
 import {ChargeBasisType, manualChargeBasisTypes} from '@model/application/invoice/charge-basis-type';
 import {Subject} from 'rxjs';
-import {distinctUntilChanged, take, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, take, takeUntil} from 'rxjs/operators';
 import {FormUtil} from '@util/form.util';
 
 export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};

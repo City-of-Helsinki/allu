@@ -9,7 +9,7 @@ import {FieldValues} from '@feature/information-request/acceptance/field-select/
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 import {ArrayUtil} from '@util/array-util';
-import {formatValue, StructureMeta} from '@model/application/meta/structure-meta';
+import {StructureMeta} from '@model/application/meta/structure-meta';
 import {blacklistForType} from '@feature/information-request/acceptance/other/field-update-rules';
 
 const requiredFields = {
@@ -23,7 +23,7 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OtherInfoAcceptanceComponent extends InfoAcceptanceDirective<any> implements OnInit {
+export class OtherInfoAcceptanceComponent extends InfoAcceptanceDirective implements OnInit {
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
   @Input() fieldKeys: string[];

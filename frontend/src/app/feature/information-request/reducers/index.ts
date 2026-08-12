@@ -4,8 +4,6 @@ import * as fromInformationRequestResult from './information-request-result-redu
 import * as fromInformationRequestSummary from './information-request-summary-reducer';
 import * as fromRoot from '../../allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
-import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
-import {CustomerRoleType} from '../../../model/customer/customer-role-type';
 import {InformationRequest} from '@model/information-request/information-request';
 import {Dictionary} from '@ngrx/entity';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';

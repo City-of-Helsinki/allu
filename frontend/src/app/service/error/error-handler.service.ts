@@ -3,14 +3,14 @@ import {Injectable} from '@angular/core';
 import {ErrorInfo} from './error-info';
 import {Router} from '@angular/router';
 import {findTranslation} from '../../util/translations';
-import {HttpErrorResponse} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {HttpStatus} from '../../util/http-status';
 
 @Injectable()
 export class ErrorHandler {
   constructor(private router: Router) {}
 
-  handle(error: HttpErrorResponse, message?: string): Observable<any> {
+  handle(error: HttpErrorResponse, message?: string): Observable<never> {
     console.error('Status:', error.statusText, 'original message:', error.message);
     if (error.error && error.error[0] && error.error[0].errorMessage) {
       message = error.error[0].errorMessage;

@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Decision} from '../../model/decision/Decision';
 import {ErrorHandler} from '../error/error-handler.service';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import {findTranslation} from '../../util/translations';
 import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {BulkApprovalEntry} from '@app/model/decision/bulk-approval-entry';
 import {BackendBulkApprovalEntry, BulkApprovalEntryMapper} from '../mapper/bulk-approval-entry-mapper';
 import {ApplicationStatus} from '@model/application/application-status';
@@ -31,27 +31,27 @@ export class DecisionService {
     );
   }
 
-  public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+  public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<unknown> {
     const url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendWorkFinished(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+  public sendWorkFinished(applicationId: number, emailDetails: DecisionDetails): Observable<unknown> {
     const url = WORK_FINISHED_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendOperationalCondition(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+  public sendOperationalCondition(applicationId: number, emailDetails: DecisionDetails): Observable<unknown> {
     const url = OPERATIONAL_CONDITION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+  public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<unknown> {
     const url = TERMINATION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
-  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<{}> {
+  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<unknown> {
     switch (status) {
       case ApplicationStatus.OPERATIONAL_CONDITION: {
         return this.sendOperationalCondition(applicationId, emailDetails);
@@ -76,7 +76,7 @@ export class DecisionService {
     );
   }
 
-  private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<{}> {
+  private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<unknown> {
     if (emailDetails.decisionDistributionList && emailDetails.decisionDistributionList.length) {
       return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails))).pipe(
         catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.send')))

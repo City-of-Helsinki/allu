@@ -1,8 +1,10 @@
 <div class="main-content">
   <allu-card>
-    <mat-card-title>
-      <h1>{{['attachment.type', attachmentType] | translation}}</h1>
-    </mat-card-title>
+    <mat-card-header>
+      <mat-card-title>
+        <h1>{{['attachment.type', attachmentType] | translation}}</h1>
+      </mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <form [formGroup]="attachmentForm">
         <div class="row">
@@ -14,12 +16,12 @@
         </div>
         <div class="row">
           <div class="col m12">
-            <selection-group formControlName="applicationTypes">
-              <span class="label-small">Hakemustyypit</span>
-              <selection-item *ngFor="let type of applicationTypes" [item]="type">
+            <span class="label-small">Hakemustyypit</span>
+            <mat-chip-listbox multiple formControlName="applicationTypes">
+              <mat-chip-option *ngFor="let type of applicationTypes" [value]="type">
                 {{['application.type', type] | translation}}
-              </selection-item>
-            </selection-group>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </div>
         </div>
         <div class="row">
@@ -36,7 +38,7 @@
         </div>
         <div class="row">
           <div class="col m6" *ngIf="!file">
-            <div fileDrop (onFileDrop)="attachmentSelected($event)" (onFileOver)="fileOverDropzone($event)"
+            <div fileDrop (fileDrop)="attachmentSelected($event)" (fileOver)="fileOverDropzone($event)"
                  class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
               <button mat-raised-button type="button" color="primary" (click)="realFileInput.click()">
                 LISÄÄ LIITE

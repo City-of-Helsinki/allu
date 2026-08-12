@@ -11,7 +11,7 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {ArrayUtil} from '../../../util/array-util';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '../../allu/reducers';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 import {NotificationService} from '../../notification/notification.service';
 import {FixedLocationArea} from '@model/common/fixed-location-area';
 
@@ -37,7 +37,7 @@ export class DefaultAttachmentComponent implements OnInit {
               private router: Router,
               private store: Store<fromRoot.State>,
               private attachmentHub: AttachmentHub,
-              private notification: NotificationService) {
+              private notification: NotificationService) {
 
     this.attachmentForm = this.fb.group({
       id: [undefined],
@@ -89,7 +89,7 @@ export class DefaultAttachmentComponent implements OnInit {
         this.notification.success('Liite ' + attachment.name + ' tallennettu');
         this.router.navigate(['../'], { relativeTo: this.route });
       },
-      error => this.notification.error('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
+      _error => this.notification.error('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
   }
 
   remove(): void {

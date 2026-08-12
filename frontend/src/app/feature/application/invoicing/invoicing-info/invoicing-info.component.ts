@@ -4,7 +4,7 @@ import {Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
 import {ALWAYS_ENABLED_FIELDS} from '@feature/customerregistry/customer/customer-info.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Deposit} from '@model/application/invoice/deposit';
@@ -12,7 +12,7 @@ import {DepositStatusType} from '@model/application/invoice/deposit-status-type'
 import {applicationCanBeEdited, ApplicationStatus, isSameOrBefore} from '@model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInvoicing from '@feature/application/invoicing/reducers';
@@ -25,7 +25,7 @@ import {ArrayUtil} from '@util/array-util';
 import {terraceKinds} from '@app/model/application/type/application-kind';
 import {Invoice} from '@model/application/invoice/invoice';
 import {flexDirectionColumn, flexDirectionRow} from '@feature/common/layout/fxLayout';
-import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
+import {isAreaRental} from '@model/application/area-rental/area-rental';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 
 @Component({
@@ -104,7 +104,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       filter(result => !!result),
       switchMap(result => this.applicationStore.saveDeposit(result))
     ).subscribe(
-      result => this.notification.translateSuccess('deposit.action.save'),
+      () => this.notification.translateSuccess('deposit.action.save'),
       error => this.notification.errorInfo(error));
   }
 
@@ -113,7 +113,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     deposit.status = deposit.status + 1;
     this.applicationStore.saveDeposit(deposit)
       .subscribe(
-        result => this.notification.translateSuccess('deposit.action.save'),
+        () => this.notification.translateSuccess('deposit.action.save'),
         error => this.notification.errorInfo(error));
   }
 

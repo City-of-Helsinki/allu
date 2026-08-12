@@ -48,8 +48,8 @@ export class BulkApprovalEffects {
 
   approveEntry(entry: BulkApprovalEntry): Observable<ApproveEntryComplete> {
     return this.applicationService.changeStatus(entry.id, entry.targetState, new StatusChangeInfo()).pipe(
-      switchMap(app => this.decisionService.sendByStatus(entry.id, entry.targetState, new DecisionDetails(entry.distributionList)).pipe(
-        map(result => new ApproveEntryComplete({id: entry.id})),
+      switchMap(() => this.decisionService.sendByStatus(entry.id, entry.targetState, new DecisionDetails(entry.distributionList)).pipe(
+        map(() => new ApproveEntryComplete({id: entry.id})),
         catchError(error => of(new ApproveEntryComplete({id: entry.id, error: error}))),
         tap(action => this.store.dispatch(action)) // Dispatch action to notify progress
       ))

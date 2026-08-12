@@ -4,16 +4,16 @@ import {Action, select, Store} from '@ngrx/store';
 import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {ApprovalDocumentService} from '@service/decision/approval-document.service';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
 import {ApprovalDocumentActionType, Load, LoadFailed, LoadSuccess} from '@feature/decision/actions/approval-document.actions';
 import {ApprovalDocumentType} from '@model/decision/approval-document';
 import {NumberUtil} from '@util/number.util';
-import {from} from 'rxjs/internal/observable/from';
+import {from} from 'rxjs';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
-import {of} from 'rxjs/internal/observable/of';
-import {EMPTY} from 'rxjs/internal/observable/empty';
+import {of} from 'rxjs';
+import {EMPTY} from 'rxjs';
 
 const TabToDocumentType = {
   OPERATIONAL_CONDITION: ApprovalDocumentType.OPERATIONAL_CONDITION,
@@ -31,7 +31,7 @@ export class ApprovalDocumentEffects {
   loadOperationalConditionApproval: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApprovalDocumentActionType.Load),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, application]) => NumberUtil.isExisting(application)),
+    filter(([_action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.approvalDocumentService.fetch(application.id, action.documentType).pipe(
       map(document => new LoadSuccess(action.documentType, document)),
       catchError(error => from([

@@ -8,7 +8,7 @@ import {NumberUtil} from '../../../util/number.util';
 import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'customer-contacts',
@@ -45,13 +45,14 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     this.contactSubscription.unsubscribe();
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   removeContact(index: number, contactValue: any): void {
     if (NumberUtil.isDefined(contactValue.id)) {
       this.contacts.at(index).patchValue({active: false});
       this.customerService.saveContactsForCustomer(this.customerId, this.contacts.value)
         .subscribe(
-          result => this.notification.translateSuccess('customers.notifications.contactRemoved'),
-          error => this.notification.translateErrorMessage('customers.notifications.contactRemoveFailed'));
+          () => this.notification.translateSuccess('customers.notifications.contactRemoved'),
+          _error => this.notification.translateErrorMessage('customers.notifications.contactRemoveFailed'));
     } else {
       this.contacts.removeAt(index);
     }

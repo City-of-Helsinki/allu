@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {CustomerType} from '@model/customer/customer-type';
 import {EnumUtil} from '@util/enum.util';
-import {FormBuilder, FormGroup, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
-import {EMPTY, Observable, Subject, Subscription} from 'rxjs';
+import {FormGroup, UntypedFormControl, Validators} from '@angular/forms';
+import {EMPTY, lastValueFrom, Observable, Subject, Subscription} from 'rxjs';
 import {NumberUtil} from '@util/number.util';
 import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '@util/complex-validator';
@@ -16,7 +16,7 @@ import {
 import {CodeSetService} from '@service/codeset/codeset.service';
 import {CodeSet} from '@model/codeset/codeset';
 import {postalCodeValidator} from '@util/complex-validator';
-import {debounceTime, filter, map, startWith, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, filter, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import { CurrentUser } from '@app/service/user/current-user';
 import {RoleType} from '@model/user/role-type';
 import { Router } from '@angular/router'
@@ -131,7 +131,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   //this check should only happen inside /customer
   async checkForRestrictedEdit(): Promise<void> {
     if (this.form.disabled) this.form.enable();
-    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
+    const userHasRole = await lastValueFrom(this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])));
     this.form.get("sapCustomerNumber").valueChanges
       .pipe(take(1))
       .subscribe(value => {

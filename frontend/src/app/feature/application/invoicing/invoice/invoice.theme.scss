@@ -4,7 +4,7 @@
 
   invoice {
     li.invoice-row-container:nth-of-type(odd) {
-      background: mat.get-color-from-palette($primary, 50);
+      background: mat.m2-get-color-from-palette($primary, 50);
     }
 
     li.invoice-row-container:nth-of-type(even) {

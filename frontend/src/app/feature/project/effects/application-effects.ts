@@ -38,8 +38,8 @@ export class ApplicationEffects {
   loadApplications: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ApplicationActionTypes.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    filter(([payload, project]) => NumberUtil.isExisting(project)),
-    switchMap(([action, project]) =>
+    filter(([_payload, project]) => NumberUtil.isExisting(project)),
+    switchMap(([_action, project]) =>
       this.projectService.getProjectApplications(project.id)
         .pipe(
           map(applications => new LoadSuccess(applications)),
@@ -86,14 +86,14 @@ export class ApplicationEffects {
   projectUpdate: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType(ApplicationActionTypes.AddSuccess, ApplicationActionTypes.RemoveSuccess),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    map(([payload, project]) => new projectActions.Load(project.id))
+    map(([_payload, project]) => new projectActions.Load(project.id))
   ));
 
   
   projectSaved: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<SaveSuccess>(ProjectActionTypes.SaveSuccess),
     withLatestFrom(this.store.select(fromProject.getPendingApplicationIds)),
-    map(([payload, ids]) => ids),
+    map(([_payload, ids]) => ids),
     filter(applications => applications.length >= 0),
     map(ids => new AddPending(ids))
   ));

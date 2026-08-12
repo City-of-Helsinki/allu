@@ -9,6 +9,7 @@ export interface PruneDataState {
   filteredData: PruneDataItem[];
   currentTab: string | null;
   loading: boolean;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   error: any;
   selectedIds: number[];
   showDeleteModal: boolean;
@@ -150,6 +151,7 @@ function makeDateTimesHumanReadable(data: PruneDataItem[]) {
   }));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 function getItemId(item: any): number {
   return item.id ?? item.customerId;
 }

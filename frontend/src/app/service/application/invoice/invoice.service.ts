@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {findTranslation} from '@util/translations';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {ChargeBasisEntryMapper} from '@service/mapper/charge-basis-entry-mapper';
 import {BackendChargeBasisEntry} from '@service/backend-model/backend-charge-basis-entry';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {NumberUtil} from '@util/number.util';
 import {Invoice} from '@model/application/invoice/invoice';
 import {BackendInvoice, InvoiceMapper} from '@service/mapper/invoice-mapper';
@@ -31,7 +31,7 @@ export class InvoiceService {
     );
   }
 
-  saveRecipient(applicationId: number, recipientId: number): Observable<{}> {
+  saveRecipient(applicationId: number, recipientId: number): Observable<unknown> {
     const url = `${APPLICATIONS_URL}/${applicationId}/invoicerecipient`;
 
     const params = NumberUtil.isDefined(recipientId)

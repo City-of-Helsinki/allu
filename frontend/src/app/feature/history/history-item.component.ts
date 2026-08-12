@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {ChangeType} from '../../model/history/change-type';
 import {Store} from '@ngrx/store';
@@ -14,7 +14,7 @@ import {ArrayUtil} from '@util/array-util';
   styleUrls: ['./history-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryItemComponent implements OnInit {
+export class HistoryItemComponent {
   @Input() meta: StructureMeta;
   @Input() fieldsVisible: boolean;
 
@@ -25,9 +25,6 @@ export class HistoryItemComponent implements OnInit {
 
   constructor(private store: Store<fromRoot.State>,
               private formatter: HistoryFormatter) {}
-
-  ngOnInit(): void {
-  }
 
   @Input() set change(change: ChangeHistoryItem) {
     this._change = change;

@@ -1,12 +1,12 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Project} from '../../../model/project/project';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import * as fromRoot from '../../allu/reducers';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 import {Dictionary} from '@ngrx/entity/src/models';
 import {CityDistrict} from '../../../model/common/city-district';
 
@@ -16,7 +16,7 @@ import {CityDistrict} from '../../../model/common/city-district';
   styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RelatedProjectListComponent implements OnInit, AfterViewInit {
+export class RelatedProjectListComponent implements AfterViewInit {
 
   @Input() loading: boolean;
 
@@ -38,9 +38,6 @@ export class RelatedProjectListComponent implements OnInit, AfterViewInit {
               private store: Store<fromRoot.State>) {
     this.store.select(fromRoot.getCityDistrictEntities).pipe(take(1))
       .subscribe(districts => this.districts = districts);
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {

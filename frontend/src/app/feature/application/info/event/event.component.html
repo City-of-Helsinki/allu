@@ -16,7 +16,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.event.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.event.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(50% - 18px)">
@@ -124,7 +126,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.event.structures' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.event.structures' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="0 0 calc(25% - 18px)">
@@ -217,7 +221,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.event.marketingProvidersTitle' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.event.marketingProvidersTitle' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(100% - 18px)">
@@ -253,7 +259,9 @@
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <default-text formControlName="terms"
                         [applicationType]="application.type"

@@ -1,10 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {ReportedDateType} from '@feature/application/date-reporting/date-reporting-modal.component';
-import {startWith, takeUntil} from 'rxjs/internal/operators';
+import {startWith, takeUntil} from 'rxjs/operators';
 import {ApplicationStatus} from '@model/application/application-status';
 import {
   SupervisionApprovalModalComponent,

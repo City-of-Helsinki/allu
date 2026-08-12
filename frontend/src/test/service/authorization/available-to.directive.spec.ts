@@ -36,7 +36,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).not.toBeNull('Element was not available');
         expect(element.nativeElement.textContent).toContain(AVAILABLE, 'AVAILABLE text was not available');
@@ -50,7 +50,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).toBeNull('Element was available when it should not');
       });
@@ -64,7 +64,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).not.toBeNull('Element was not available');
         expect(element.nativeElement.textContent).toContain(AVAILABLE, 'AVAILABLE text was not available');
@@ -79,7 +79,7 @@ describe('AvailableToDirective', () => {
 
     TestBed.overrideTemplate(TestComponent, div)
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
-      .compileComponents().then(res => {
+      .compileComponents().then(() => {
       expectElement(element => {
         expect(element).toBeNull('Element was available when it should not');
       });
@@ -91,10 +91,8 @@ describe('AvailableToDirective', () => {
 function expectElement(expectFn: (ele) => void) {
   const fixture = TestBed.createComponent(TestComponent);
   fixture.detectChanges();
-  fixture.whenStable().then(fx => {
-    const element = fixture.debugElement.query(By.css('#content'));
-    expectFn.call(this, element);
-  });
+  const element = fixture.debugElement.query(By.css('#content'));
+  expectFn.call(this, element);
 }
 
 function createDivWithDirective(role: string, type?: string): string {

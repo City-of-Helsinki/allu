@@ -1,9 +1,10 @@
 @use '@angular/material' as mat;
 
-@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());
-@include mat.legacy-core();
+@include mat.typography-hierarchy(mat.m2-define-typography-config());
+@include mat.core();
 
 $black-87-opacity: rgba(black, 0.87);
+$black-75-opacity: rgba(black, 0.75);
 $black-50-opacity: rgba(black, 0.50);
 $black-38-opacity: rgba(black, 0.38);
 $black-28-opacity: rgba(black, 0.28);
@@ -85,21 +86,21 @@ $allu-basic: (
   500: #9b9b9b
 );
 
-$allu-primary: mat.define-palette($allu-blue);
-$allu-accent:  mat.define-palette($allu-orange);
-$allu-warn:    mat.define-palette(mat.$red-palette);
+$allu-primary: mat.m2-define-palette($allu-blue);
+$allu-accent:  mat.m2-define-palette($allu-orange);
+$allu-warn:    mat.m2-define-palette(mat.$m2-red-palette);
 
-$allu-theme-palette: mat.define-light-theme((
+$allu-theme-palette: mat.m2-define-light-theme((
   color: (
     primary: $allu-primary,
     accent: $allu-accent,
     warn: $allu-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: mat.m2-define-typography-config(),
   density: 0,
 ));
 
-$allu-background: mat.get-color-from-palette($allu-primary, 50);
+$allu-background: mat.m2-get-color-from-palette($allu-primary, 50);
 $allu-text-black: #1f1f1f;
 $allu-card-background: #ffffff;
 $allu-card-shadow: #f5f5f5;

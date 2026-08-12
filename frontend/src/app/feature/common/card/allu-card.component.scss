@@ -1,42 +1,18 @@
-:host {
-  display: block;
-}
-
 :host mat-card ::ng-deep {
   border-radius: 6px;
-
-  mat-card-content {
-    label.info-label {
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 500;
-      padding-top: 9px;
-    }
-
-    .info-field {
-      padding-top: 3px;
-    }
-
-    .col.info-field-group {
-      padding-left: 0;
-    }
-
-    .input-field-info-text {
-      height: 3rem;
-    }
+  mat-card-header {
+    padding: 16px;
   }
-
+  mat-card-title {
+    font-size: 24px;
+  }
   mat-card-content.bordered {
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #ddd;
   }
-
-  mat-card-footer.footer-min-height {
-    min-height: 56px;
-  }
 }
 
-:host mat-card.mat-card ::ng-deep {
+:host mat-card.mat-mdc-card ::ng-deep {
   .mat-divider {
     position: relative;
   }
@@ -46,32 +22,10 @@
   }
 }
 
-:host(.full-width) ::ng-deep {
-  mat-card {
-    padding: 24px 0;
-
-    .allu-card-title,
-    .allu-card-content {
-      padding: 0 24px;
-    }
-  }
-}
-
 :host(.slim-card) ::ng-deep {
   mat-card {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    min-height: 3rem;
     line-height: 3rem;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-
     mat-card-content {
-      width: 100%;
-    }
-
-    mat-card-content.card-content {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
@@ -86,31 +40,5 @@
     .card-item-align-right {
       margin-left: auto;
     }
-
-    mat-card-title {
-      white-space: nowrap;
-      margin-right: 18px;
-      margin-bottom: 0px;
-    }
   }
-}
-
-:host(.allu-card-border-left) mat-card {
-  border-left-style: solid;
-  border-left-width: 10px;
-}
-
-:host(.allu-card-border-right) mat-card {
-  border-right-style: solid;
-  border-right-width: 10px;
-}
-
-:host(.allu-card-border-top) mat-card {
-  border-top-style: solid;
-  border-top-width: 10px;
-}
-
-:host(.allu-card-border-bottom) mat-card {
-  border-bottom-style: solid;
-  border-bottom-width: 10px;
 }

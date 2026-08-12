@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UntypedFormBuilder} from '@angular/forms';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
 import {Observable, Subject} from 'rxjs';
@@ -8,7 +8,7 @@ import {Application} from '@model/application/application';
 import {applicationCanBeEdited, invoicingChangesAllowedForType} from '@model/application/application-status';
 import {CurrentUser} from '@service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';

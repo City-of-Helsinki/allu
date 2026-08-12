@@ -1,5 +1,7 @@
 <allu-card>
-  <mat-card-title>Kommentit</mat-card-title>
+  <mat-card-header>
+    <mat-card-title>Kommentit</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <div class="comment-entry" *ngFor="let comment of comments$ | async">
       <div class="comment-header">

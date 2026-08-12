@@ -1,26 +1,30 @@
 <ng-container *ngIf="defaultAttachments$ | async as defaultAttachments">
   <allu-card *ngIf="defaultAttachments?.length > 0">
-    <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
+    <mat-card-header>
+      <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <div *ngIf="isAllowedToEdit">
-        <selection-group fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start"
-                         [ngModel]="selectedAttachments" (select)="onSelect($event)">
-          <div fxFlex="nogrow" *ngFor="let attachment of defaultAttachments">
-            <selection-item [item]="attachment" selectType="CHECKBOX">
-              {{attachment.name}}
-            </selection-item>
-            <button mat-icon-button (click)="download(attachment)">
+        <div *ngFor="let attachment of defaultAttachments"
+             class="default-attachment-row"
+             fxLayout="row"
+             fxLayoutAlign="start center"
+             fxLayoutGap="8px">
+          <mat-checkbox
+            class="default-attachment-checkbox"
+            fxFlex
+            [checked]="isSelected(attachment)"
+            (change)="onToggle(attachment, $event.checked)"
+            [disabled]="!isAllowedToEdit">
+            <span class="default-attachment-label">{{ attachment.name }}</span>
+            <button
+              mat-icon-button
+              type="button"
+              class="default-attachment-download"
+              (click)="$event.preventDefault(); $event.stopPropagation(); download(attachment)">
               <mat-icon>file_download</mat-icon>
             </button>
-          </div>
-        </selection-group>
-      </div>
-      <div fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start" *ngIf="!isAllowedToEdit">
-        <div fxFlex="nogrow" *ngFor="let attachment of selectedAttachments">
-          <span>{{attachment.name}}</span>
-          <button mat-icon-button (click)="download(attachment)">
-            <mat-icon>file_download</mat-icon>
-          </button>
+          </mat-checkbox>
         </div>
       </div>
     </mat-card-content>

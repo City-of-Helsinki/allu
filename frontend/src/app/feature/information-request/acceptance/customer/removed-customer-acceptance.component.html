@@ -9,7 +9,8 @@
   <div class="section-container removal-choices">
     <div class="section-content removal-choice"
          [class.selected]="removalAccepted === false"
-         (click)="keepCustomer()">
+         tabindex="0"
+         (click)="keepCustomer()" (keyup.enter)="keepCustomer()">
       <mat-radio-button [checked]="removalAccepted === false" disableRipple>
         {{'informationRequest.acceptance.keepCustomer' | translation}}
       </mat-radio-button>
@@ -22,7 +23,8 @@
     </div>
     <div class="section-content removal-choice"
          [class.selected]="removalAccepted === true"
-         (click)="acceptRemoval()">
+         tabindex="0"
+         (click)="acceptRemoval()" (keyup.enter)="acceptRemoval()">
       <mat-radio-button [checked]="removalAccepted === true" disableRipple>
         {{'informationRequest.acceptance.customerRemoved' | translation}}
       </mat-radio-button>

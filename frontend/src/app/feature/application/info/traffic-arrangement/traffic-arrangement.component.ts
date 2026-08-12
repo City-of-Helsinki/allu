@@ -6,7 +6,6 @@ import {TrafficArrangement} from '@model/application/traffic-arrangement/traffic
 import {from, to, TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
 import {TimeUtil} from '@util/time.util';
-import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
 
 @Component({
   selector: 'traffic-arrangement',

@@ -19,7 +19,6 @@ import {
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 import {MapModule} from '@feature/map/map.module';
 import {SupervisionTaskLocationComponent} from '@feature/application/supervision/location/supervision-task-location.component';
-import { LoadingIndicatorComponent } from '@app/feature/common/loading-indicator/loading-indicator.component';
 
 @NgModule({
     imports: [

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {SelectLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {

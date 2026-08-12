@@ -1,15 +1,27 @@
-.mat-form-field.form-field-100 {
+.mat-mdc-form-field.form-field-100 {
   width: 100%
 }
 
-.mat-form-field.form-field-50 {
+.mat-mdc-form-field.form-field-50 {
   width: 50%;
 }
 
-.mat-form-field.form-field-33 {
+.mat-mdc-form-field.form-field-33 {
   width: 33%;
 }
 
-.mat-form-field.form-field-dense .mat-form-field-wrapper {
+.mat-mdc-form-field.form-field-dense .mat-mdc-text-field-wrapper {
   margin-bottom: -1.25em;
+}
+
+// Bring hint/error text closer to the field by pulling the subscript
+// wrapper up over the empty padding-bottom space of the input wrapper.
+.mat-mdc-form-field .mat-mdc-form-field-subscript-wrapper {
+  margin-top: -20px;
+
+  .mat-mdc-form-field-hint-wrapper,
+  .mat-mdc-form-field-error-wrapper {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

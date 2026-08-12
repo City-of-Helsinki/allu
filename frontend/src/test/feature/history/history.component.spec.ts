@@ -13,9 +13,8 @@ import {Load, LoadSuccess} from '@feature/history/actions/history-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {StructureMeta} from '@model/application/meta/structure-meta';
-import { MatLegacySpinner as MatSpinner } from '@angular/material/legacy-progress-spinner';
-import { MatLegacySlideToggle as MatSlideToggle } from '@angular/material/legacy-slide-toggle';
-import {FieldChange} from '@model/history/field-change';
+import { MatSpinner } from '@angular/material/progress-spinner';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 function createChangeHistoryItem(name: string, changeTime: Date): ChangeHistoryItem {
   const item = new ChangeHistoryItem();
@@ -69,9 +68,7 @@ const changeHistory: ChangeHistoryItem[] = [
 
 describe('HistoryComponent', () => {
   let fixture: ComponentFixture<MockHostComponent>;
-  let testHost: MockHostComponent;
   let de: DebugElement;
-  let historyComponent: HistoryComponent;
   let store: Store<fromRoot.State>;
 
   beforeEach(waitForAsync(() => {
@@ -93,11 +90,8 @@ describe('HistoryComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MockHostComponent);
-    testHost = fixture.componentInstance;
     de = fixture.debugElement;
     store = TestBed.inject(Store);
-    historyComponent = de.query(By.directive(HistoryComponent)).componentInstance;
-
     fixture.detectChanges();
   });
 
@@ -126,7 +120,8 @@ describe('HistoryComponent', () => {
     store.dispatch(new LoadSuccess(ActionTargetType.Application, changeHistory));
     fixture.detectChanges();
 
-    const toggle = de.query(By.css('.mat-slide-toggle-label')).nativeElement;
+    const slideToggleDe = de.query(By.directive(MatSlideToggle));
+    const toggle = slideToggleDe.query(By.css('button')).nativeElement;
     toggle.click();
     fixture.detectChanges();
 

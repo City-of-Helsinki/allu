@@ -173,18 +173,13 @@
         </mat-form-field>
       </div>
     </div>
-
-    <div fxLayout="row">
-      <div fxFlex>
-        <selection-group formControlName="statuses">
-          <selection-item *ngFor="let status of statuses"
-                          [item]="status"
-                          selectType="CHIP"
-                          class="btn-chip-50">
-            {{['searchbar.status', status] | translation}}
-          </selection-item>
-        </selection-group>
-      </div>
-    </div>
+    <mat-chip-listbox multiple formControlName="statuses">
+      <mat-chip-option *ngFor="let status of statuses"
+                      [value]="status"
+                      selectType="CHIP"
+                      class="btn-chip-50">
+        {{['searchbar.status', status] | translation}}
+      </mat-chip-option>
+    </mat-chip-listbox>
   </div>
 </form>

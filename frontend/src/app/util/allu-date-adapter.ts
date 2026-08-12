@@ -30,11 +30,12 @@ export class AlluDateAdapter extends NativeDateAdapter {
     return DEFAULT_DAY_OF_WEEK_NAMES[style];
   }
 
-  format(date: Date, displayFormat: Object): string {
+  format(date: Date, _displayFormat: object): string {
     return TimeUtil.getUiDateString(date);
   }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   parse(value: any): Date | any {
     return typeof value === 'string' ? TimeUtil.getDateFromUi(value) : value;
   }

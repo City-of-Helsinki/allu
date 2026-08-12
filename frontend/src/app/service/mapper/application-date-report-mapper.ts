@@ -9,7 +9,7 @@ export interface BackendApplicationDateReport {
 
 export class ApplicationDateReportMapper {
   public static mapFrontend(dateReport: DateReport): BackendApplicationDateReport {
-    return !!dateReport
+    return dateReport
       ? {
         reportingDate: TimeUtil.dateToBackend(dateReport.reportingDate),
         reportedDate: TimeUtil.dateToBackend(dateReport.reportedDate),

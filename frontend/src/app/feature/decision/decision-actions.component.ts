@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ApplicationStatus, inHandling} from '@model/application/application-status';
@@ -19,7 +19,7 @@ import {select, Store} from '@ngrx/store';
 import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {catchError, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
@@ -35,7 +35,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
   @Input() application: Application;
   @Input() approvedOperationalCondition = false;
   @Input() tab: DecisionTab = DecisionTab.DECISION;
-  @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
+  @Output() decisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   showProposal = false;
   skipProposal = false;
@@ -56,7 +56,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
     this.watchDecisionBlocked();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(_changes: SimpleChanges): void {
     const status = this.application.status;
     this.showProposal = inHandling(status)
       && !automaticDecisionMaking(this.application.type)
@@ -93,7 +93,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
     this.confirmDecisionSend(status, status).pipe(
       switchMap(confirmation => this.toOperationalCondition(confirmation)),
       switchMap(confirmation => this.changeStatus(confirmation)),
-    ).subscribe(app => {}); // Nothing to do but must subscribe so observable is run
+    ).subscribe(() => {}); // Nothing to do but must subscribe so observable is run
   }
 
   public returnToPreparation(): void {
@@ -136,8 +136,8 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(() => {
           this.store.dispatch(new Load(ActionTargetType.Application));
-          this.onDecisionConfirm.emit(changeInfo);
-        }, err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
+          this.decisionConfirm.emit(changeInfo);
+        }, _err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
     }
   }
 
@@ -170,7 +170,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
     this.application = application;
   }
 
-  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {
+  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<unknown> {
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
@@ -183,7 +183,7 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
       .orElseGet(() => of({}));
   }
 
-  private sendDecisionDocument(appId: number, details: DecisionDetails, status: ApplicationStatus): Observable<{}> {
+  private sendDecisionDocument(appId: number, details: DecisionDetails, status: ApplicationStatus): Observable<unknown> {
     if (status === ApplicationStatus.OPERATIONAL_CONDITION) {
       return this.decisionService.sendOperationalCondition(appId, details);
     } else if (status === ApplicationStatus.FINISHED) {

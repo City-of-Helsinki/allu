@@ -13,9 +13,9 @@ h3.list-item-title {
 
 .status-text {
   font-weight: bold;
-  color: mat.get-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 }
 
-.mat-checkbox {
+.mat-mdc-checkbox {
   padding-left: 10px;
 }

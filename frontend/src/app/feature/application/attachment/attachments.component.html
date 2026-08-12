@@ -2,7 +2,7 @@
 <div fxLayout="row" fxLayoutAlign="center"
      *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY']">
   <div fxFlex>
-    <div fileDrop (onFileDrop)="onFileDrop($event)" (onFileOver)="fileOverDropzone($event)"
+    <div fileDrop (fileDrop)="onFileDrop($event)" (fileOver)="fileOverDropzone($event)"
          class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
       <button mat-raised-button type="button" color="primary" (click)="addNewAttachment()">
         {{'attachment.addNew' | translation}}
@@ -16,23 +16,23 @@
     <li *ngFor="let attachment of editableAttachments; let i = index;">
       <attachment [attachment]="attachment"
                   [decisionAttachmentDisabled]="!applicationCanBeEdited"
-                  (onCancel)="cancel(i)" (onSave)="save($event, i)"></attachment>
+                  (cancelled)="cancel(i)" (savedAttachment)="save($event, i)"></attachment>
     </li>
 
     <li *ngFor="let attachment of commonAttachments; let i = index;">
       <allu-card class="slim-card">
-        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY']">
-          <button mat-icon-button *ngIf="canEdit(attachment)" (click)="remove(attachment)">
-            <mat-icon>clear</mat-icon>
-           </button>
-        </ng-container>
-        <button mat-icon-button="" *ngIf="attachment.id !== undefined" (click)="download(attachment)">
-          <mat-icon>file_download</mat-icon>
-        </button>
-        <mat-card-content class="card-content">
+        <mat-card-content>
+          <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY']">
+            <button mat-icon-button *ngIf="canEdit(attachment)" (click)="remove(attachment)">
+              <mat-icon>clear</mat-icon>
+             </button>
+          </ng-container>
+          <button mat-icon-button="" *ngIf="attachment.id !== undefined" (click)="download(attachment)">
+            <mat-icon>file_download</mat-icon>
+          </button>
           <div fxLayout="row wrap" fxLayoutGap="18px" class="inner-row">
             <div fxFlex>
-              <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}              
+              <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
             </div>
             <div>{{attachment.size | fileSize:'MB'}}</div>
             <div fxFlex>

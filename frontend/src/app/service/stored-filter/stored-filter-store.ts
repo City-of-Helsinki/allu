@@ -5,7 +5,7 @@ import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {NotificationService} from '../../feature/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
-import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/internal/operators';
+import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/operators';
 import {SelectLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {Store} from '@ngrx/store';
@@ -59,6 +59,7 @@ export class StoredFilterStore {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- returns per-workqueue filter payload incl. sort/search fields not modeled on StoredFilter
   getCurrentFilter(type: StoredFilterType): Observable<any> {
     return this.getCurrent(type).pipe(
       filter(current => !!current),
@@ -104,7 +105,7 @@ export class StoredFilterStore {
     );
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     return this.storedFilterService.remove(id).pipe(
       tap(() => this.loadAndClearCurrent(id))
     );

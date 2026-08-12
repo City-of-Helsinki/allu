@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';

@@ -2,8 +2,7 @@ import {Application} from '@model/application/application';
 import {
   InformationRequestResultActions,
   InformationRequestResultActionType,
-  SetCustomer,
-  RemoveContact
+  SetCustomer
 } from '../actions/information-request-result-actions';
 import {Customer} from '@model/customer/customer';
 import {Contact} from '@model/customer/contact';

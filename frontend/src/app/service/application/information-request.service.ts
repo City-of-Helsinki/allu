@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ErrorHandler} from '../error/error-handler.service';
-import {Observable} from 'rxjs/index';
+import {Observable} from 'rxjs';
 import {InformationRequestResponse} from '../../model/information-request/information-request-response';
 import {InformationRequest} from '@model/information-request/information-request';
 import {BackendInformationRequestResponse, InformationRequestResponseMapper} from '../mapper/information-request-response-mapper';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {findTranslation} from '@util/translations';
 import {BackendInformationRequest, InformationRequestMapper} from '../mapper/information-request-mapper';
 import {NumberUtil} from '@util/number.util';
@@ -13,7 +13,6 @@ import {BackendInformationRequestSummary, InformationRequestSummaryMapper} from 
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 
 const applicationUrl = '/api/applications';
-const responseUrlPart = 'informationrequests/response';
 const informationRequestUrl = '/api/informationrequests';
 
 @Injectable()
@@ -85,9 +84,9 @@ export class InformationRequestService {
     );
   }
 
-  delete(id: number): Observable<{}> {
+  delete(id: number): Observable<unknown> {
     const url = `${informationRequestUrl}/${id}`;
-    return this.http.delete<{}>(url).pipe(
+    return this.http.delete<unknown>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.delete')))
     );
   }

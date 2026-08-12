@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin} from 'rxjs';
 
 import {DefaultTextType} from '@model/application/default-text-type';
@@ -13,7 +13,7 @@ import {Some} from '@util/option';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ApplicationType} from '@model/application/type/application-type';
 import {DefaultTextService} from '@service/application/default-text.service';
-import {switchMap} from 'rxjs/internal/operators';
+import {switchMap} from 'rxjs/operators';
 import {FormUtil} from '@util/form.util';
 
 @Component({
@@ -70,7 +70,7 @@ export class CableInfoComponent implements OnInit {
       this.dialogRef = undefined;
 
       forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt))).pipe(
-        switchMap(result => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
+        switchMap(() => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
       ).subscribe(
         texts => {
           this.setDefaultTexts(texts);

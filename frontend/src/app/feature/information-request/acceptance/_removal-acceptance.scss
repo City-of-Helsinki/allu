@@ -5,8 +5,12 @@
   border-style: solid;
   border-radius: 4px;
 
-  ::ng-deep .mat-dialog-title {
+  ::ng-deep .mat-mdc-dialog-title {
     margin: 0 0 5px;
+    padding: 0;
+    &::before {
+      display: none;
+    }
   }
 
   .section-container {
@@ -49,7 +53,6 @@
       background-color: rgba(0, 0, 0, 0.06);
     }
   }
-
   mat-radio-button {
     display: block;
     margin-bottom: 12px;

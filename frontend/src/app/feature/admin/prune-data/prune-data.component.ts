@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 
 import * as fromRoot from '@feature/allu/reducers';
@@ -22,13 +22,8 @@ import {
   selectSomeSelected,
   selectTotalItems
 } from './store/prune-data.selectors';
-import {LegacyPageEvent as PageEvent, MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {PageEvent, MatPaginator} from '@angular/material/paginator';
 
-
-interface ColumnConfig {
-  columns: string[];
-  translations: { [key: string]: string };
-}
 
 @Component({
   selector: 'prune-data',
@@ -114,10 +109,12 @@ export class PruneDataComponent implements OnInit, OnDestroy {
       }));
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   trackById(index: number, item: any) {
     return item.id ?? item.customerId;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   getRowId(row: any): number {
     return row.id ?? row.customerId;
   }
@@ -134,6 +131,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
     });
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   isSelected(id: number): any {
     return this.store.select(selectSelectedIds).pipe(
       map(selectedIds => selectedIds.includes(id))
@@ -155,6 +153,7 @@ export class PruneDataComponent implements OnInit, OnDestroy {
       });
     }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   compare(a: any, b: any, isAsc: boolean): number {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }

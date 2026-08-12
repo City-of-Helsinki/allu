@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {BackendInvoicingPeriod, InvoicingPeriodMapper} from '@feature/application/invoicing/invoicing-period/invoicing-period-mapper';
 import {catchError, map} from 'rxjs/operators';
@@ -42,7 +42,7 @@ export class InvoicingPeriodService {
     );
   }
 
-  remove(applicationId: number): Observable<{}> {
+  remove(applicationId: number): Observable<unknown> {
     const url = `${BASE_URL}/${applicationId}/invoicingperiods`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('invoicing.period.error.remove')))

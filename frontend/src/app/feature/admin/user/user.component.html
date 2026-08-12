@@ -2,7 +2,9 @@
   <div fxLayout="row">
     <div fxFlex="50%">
       <allu-card>
-        <mat-card-title>{{'user.userInfo' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'user.userInfo' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
             <div fxLayout="row" fxLayoutGap="18px">
@@ -62,7 +64,7 @@
                   <mat-select formControlName="assignedRoles" [multiple]="true"
                               [placeholder]="'user.roles' | translation"
                               class="input-full-width">
-                    <mat-option value="ROLE_ADMIN" [disabled]="!(canRemoveAdminRole() | async)">
+                    <mat-option value="ROLE_ADMIN" [disabled]="(canRemoveAdminRole() | async) === false">
                       {{'user.role.ROLE_ADMIN' | translation}}
                     </mat-option>
                     <mat-option *ngFor="let role of roles" [value]="role">{{['user.role', role] | translation}}

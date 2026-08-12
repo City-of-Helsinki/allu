@@ -1,7 +1,7 @@
 import {Attribute, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {ApplicationType} from '@model/application/type/application-type';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, Subscription} from 'rxjs';
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../default-text/default-text-modal.component';
 import {DefaultText} from '@model/application/cable-report/default-text';
@@ -10,7 +10,7 @@ import {DefaultTextType} from '@model/application/default-text-type';
 import {Some} from '@util/option';
 import {findTranslation} from '@util/translations';
 import {DefaultTextService} from '@service/application/default-text.service';
-import {switchMap} from 'rxjs/internal/operators';
+import {switchMap} from 'rxjs/operators';
 
 const DEFAULT_TEXT_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -88,10 +88,12 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
     });
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: any): void {
     this._onChange = fn;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnTouched(fn: any): void {
     this._onTouched = fn;
   }
@@ -100,8 +102,10 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
     this.textsControl.setValue(text, {emitEvent: false});
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onChange = (_: any) => {};
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onTouched = (_: any) => {};
 
   private filterDefaultTexts(texts: Array<DefaultText>): Array<DefaultText> {

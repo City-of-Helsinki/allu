@@ -1,5 +1,5 @@
 import {combineLatest, Observable} from 'rxjs';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Application} from '@model/application/application';
 import {filter, takeUntil} from 'rxjs/operators';

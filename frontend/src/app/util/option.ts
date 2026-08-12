@@ -2,12 +2,14 @@ export interface Option<A> {
   isDefined(): boolean;
   value(): A;
   map<B>(fn: (a: A) => B): Option<B>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   do(fn: (a: A) => any): Option<A>;
   filter(predicate: (a: A) => boolean): Option<A>;
   orElse(val: A): A;
   orElseGet(fn: () => A): A;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export class NoneOpt implements Option<any> {
   constructor() {}
 
@@ -19,23 +21,28 @@ export class NoneOpt implements Option<any> {
     throw new Error('No value');
   }
 
-  map(fn: (a: any) => any): NoneOpt {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  map(_fn: (a: any) => any): NoneOpt {
     return new NoneOpt();
   }
 
-  do(fn: (a: any) => any): NoneOpt {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  do(_fn: (a: any) => any): NoneOpt {
     return this;
   }
 
 
-  filter(predicate: (a: never) => boolean): Option<any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  filter(_predicate: (a: never) => boolean): Option<any> {
     return None();
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   orElse(val: any): any {
     return val;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   orElseGet(fn: () => any): any {
     return fn();
   }
@@ -58,6 +65,7 @@ export class SomeOpt<T> implements Option<T> {
     return result === undefined ? new NoneOpt() : new SomeOpt(result);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   do(fn: (a: T) => any): Option<T> {
     if (this.isDefined()) {
       fn(this.val);
@@ -69,11 +77,11 @@ export class SomeOpt<T> implements Option<T> {
     return predicate(this.val) ? Some(this.val) : None();
   }
 
-  orElse(val: T): T {
+  orElse(_val: T): T {
     return this.val;
   }
 
-  orElseGet(fn: () => T): T {
+  orElseGet(_fn: () => T): T {
     return this.val;
   }
 }

@@ -4,7 +4,7 @@ import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
 import {LocationService} from '@service/location.service';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {Load, LoadFailed, LoadSuccess, UserAreaActionType} from '@feature/application/location/actions/user-area-actions';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
@@ -29,8 +29,8 @@ export class UserAreaEffects {
     this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
   ]
   ).pipe(
-    filter(([action, user]) => ArrayUtil.anyMatch(userAreasAllowed, user.assignedRoles)),
-    switchMap(([action, user]) => this.locationService.getUserAreas().pipe(
+    filter(([_action, user]) => ArrayUtil.anyMatch(userAreasAllowed, user.assignedRoles)),
+    switchMap(([_action, _user]) => this.locationService.getUserAreas().pipe(
       map(featureGroup => new LoadSuccess(featureGroup)),
       catchError(error => from([
         new LoadFailed(),

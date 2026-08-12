@@ -6,17 +6,16 @@ import * as fromProject from '../project/reducers';
 import * as fromApplication from '../application/reducers';
 import * as fromCustomer from '../customerregistry/reducers';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
-import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {SetFieldsVisible} from './actions/history-actions';
-import {takeUntil} from 'rxjs/internal/operators';
+import {takeUntil} from 'rxjs/operators';
 import {TimeUtil} from '../../util/time.util';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/material/legacy-slide-toggle';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'history',
-  templateUrl: './history.component.html',
-  styleUrls: ['./history.component.scss']
+  templateUrl: './history.component.html'
 })
 export class HistoryComponent implements OnInit {
   @Input() targetType: ActionTargetType;

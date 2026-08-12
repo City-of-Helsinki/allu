@@ -26,7 +26,9 @@
   <div fxLayout="row" fxLayoutGap="18px">
     <div fxFlex="50">
       <allu-card>
-        <mat-card-title>{{'application.excavationAnnouncement.validity' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.excavationAnnouncement.validity' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div formGroupName="validityTimes">
             <div fxLayout="row" fxLayoutGap="18px" class="form-group">
@@ -135,7 +137,9 @@
     </div>
     <div fxFlex="50">
       <allu-card>
-        <mat-card-title>{{'application.excavationAnnouncement.validityReportedByCustomer' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.excavationAnnouncement.validityReportedByCustomer' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div formGroupName="customerValidityTimes">
             <div fxLayout="row" fxLayoutGap="18px" class="form-group">
@@ -220,7 +224,9 @@
   <div fxLayout="row" fxLayoutGap="18px">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.excavationAnnouncement.excavationInfo' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.excavationAnnouncement.excavationInfo' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row" class="form-group">
             <div fxFlex>
@@ -294,7 +300,9 @@
     </div>
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.relatedApplications' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.relatedApplications' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row" fxLayoutGap="18px">
             <div fxFlex="calc(50% - 18px)">
@@ -331,7 +339,9 @@
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row" class="form-group">
             <div fxFlex="20">

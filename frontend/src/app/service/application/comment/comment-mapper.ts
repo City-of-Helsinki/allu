@@ -24,6 +24,7 @@ export class CommentMapper {
     );
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   static mapFrontend(comment: Comment): any {
     return (comment) ?
       {

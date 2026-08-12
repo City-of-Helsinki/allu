@@ -4,9 +4,9 @@ import * as fromApplication from '@feature/application/reducers';
 import {Action, select, Store} from '@ngrx/store';
 import {ApplicationStore} from '@service/application/application-store';
 import {ExcavationAnnouncementService} from '@service/application/excavation-announcement.service';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {ExcavationAnnouncementActionType, SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 

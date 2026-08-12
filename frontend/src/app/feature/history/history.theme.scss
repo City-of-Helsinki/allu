@@ -4,11 +4,11 @@
 
   ul.history-items {
     li:nth-of-type(odd) .history-item {
-      background: mat.get-color-from-palette($primary, 100);
+      background: mat.m2-get-color-from-palette($primary, 100);
     }
 
     li:nth-of-type(even) .history-item {
-      background: mat.get-color-from-palette($primary, 50);
+      background: mat.m2-get-color-from-palette($primary, 50);
     }
   }
 }

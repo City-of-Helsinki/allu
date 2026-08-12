@@ -26,7 +26,9 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Liikennejärjestelyn voimassaolo</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>Liikennejärjestelyn voimassaolo</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
             <div formGroupName="validityTimes" class="col s6">
@@ -70,7 +72,9 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Liikennejärjestelyn tiedot</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>Liikennejärjestelyn tiedot</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
             <div class="col m12">
@@ -122,7 +126,9 @@
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <default-text formControlName="terms"
                         [applicationType]="application.type"

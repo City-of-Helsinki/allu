@@ -1,7 +1,7 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatCardModule} from '@angular/material/card';
 
 import {CustomerInfoComponent} from '../../../../app/feature/customerregistry/customer/customer-info.component';
 import {AlluCommonModule} from '../../../../app/feature/common/allu-common.module';
@@ -10,14 +10,14 @@ import {DebugElement} from '@angular/core';
 import {CustomerService} from '../../../../app/service/customer/customer.service';
 import {CodeSetService} from '../../../../app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../app/model/codeset/codeset';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CurrentUser } from '@app/service/user/current-user';
 import { CurrentUserMock } from 'test/mocks';
 
 class CustomerHubMock {
-  searchCustomersByField(fieldName: string, term: string) {}
+  searchCustomersByField(_fieldName: string, _term: string) {}
 }
 class CodeSetServiceMock {
   public getCountries(): Observable<Array<CodeSet>> {

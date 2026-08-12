@@ -12,7 +12,7 @@ import {User} from '@model/user/user';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {findTranslation} from '@util/translations';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
-import {of} from 'rxjs/index';
+import {of} from 'rxjs';
 import * as fromRoot from '@feature/allu/reducers';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromSupervisionTask from '@feature/application/supervision/reducers';
@@ -179,7 +179,7 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should remove new on cancel', fakeAsync(() => {
-    const onRemove = comp.onRemove;
+    const onRemove = comp.removeTask;
     spyOn(onRemove, 'emit');
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({id: undefined, status: SupervisionTaskStatusType.OPEN});
@@ -190,7 +190,7 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should remove existing', fakeAsync(() => {
-    const onRemove = comp.onRemove;
+    const onRemove = comp.removeTask;
     spyOn(onRemove, 'emit');
     spyOn(store, 'dispatch').and.callThrough();
 
@@ -205,11 +205,11 @@ describe('SupervisionTaskComponent', () => {
 
   it('should disallow editing by other users', fakeAsync(() => {
     patchValueAndInit({id: 1, creatorId: handler.id});
-    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(1); // Only edit button
+    expect(de.queryAll(By.css('.mat-mdc-raised-button')).length).toEqual(1); // Only edit button
 
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({creatorId: supervisor.id});
-    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
+    expect(de.queryAll(By.css('.mat-mdc-raised-button')).length).toEqual(0);
   }));
 
   it('should display error when planned finishing time is not set', fakeAsync(() => {
@@ -218,7 +218,7 @@ describe('SupervisionTaskComponent', () => {
     dateInput.dispatchEvent(new Event('input'));
     dateInput.dispatchEvent(new Event('blur'));
     detectAndTick();
-    const error = de.query(By.css('.mat-error')).nativeElement;
+    const error = de.query(By.css('.mat-mdc-form-field-error')).nativeElement;
     expect(error).toBeDefined();
     expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeMissing'));
   }));
@@ -254,6 +254,7 @@ describe('SupervisionTaskComponent', () => {
     expect(de.query(By.css('#reject'))).toBeNull();
   }));
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   function patchValueAndInit(val: any): void {
     comp.form.patchValue(val);
     comp.ngOnInit();

@@ -3,7 +3,7 @@ import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
-import {takeUntil} from 'rxjs/internal/operators';
+import {takeUntil} from 'rxjs/operators';
 import * as fromInvoicing from '@feature/application/invoicing/reducers';
 import {Store} from '@ngrx/store';
 

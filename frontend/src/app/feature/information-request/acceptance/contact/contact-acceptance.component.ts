@@ -3,12 +3,12 @@ import {Contact} from '@model/customer/contact';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs/index';
-import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CONTACT_MODAL_CONFIG, ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {NumberUtil} from '@util/number.util';
 import {isEqualWithSkip} from '@util/object.util';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
@@ -84,7 +84,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       this.referenceContact$,
       this.store.pipe(select(this.config.getCustomer))
     ]).pipe(
-      map(([ref, customer]) => !isEqualWithSkip(ref, this._newContact, ['id', 'customerId']))
+      map(([ref, _customer]) => !isEqualWithSkip(ref, this._newContact, ['id', 'customerId']))
     );
 
     this.search$.pipe(

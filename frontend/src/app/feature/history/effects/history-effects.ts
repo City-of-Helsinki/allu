@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect} from '@ngrx/effects';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {Action, Store} from '@ngrx/store';
 import * as fromHistory from '../reducers/history-reducer';
 import * as fromProject from '../../project/reducers';
@@ -8,7 +8,7 @@ import * as fromApplication from '../../application/reducers';
 import {ofTargetAndType, withLatestExistingOfTargetAndType} from '../../allu/actions/action-with-target';
 import {HistoryActionType, Load, LoadByTargetId, LoadFailed, LoadStatus, LoadStatusComplete, LoadSuccess} from '../actions/history-actions';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {HistoryService} from '../../../service/history/history-service';
 
 

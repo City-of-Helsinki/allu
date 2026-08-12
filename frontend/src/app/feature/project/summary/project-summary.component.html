@@ -68,7 +68,7 @@
                 {{'comment.title' | translation}}
               </h2>
               <comment-preview-list
-                [comments]="comments$ | async"
+                [comments]="comments$ | async"
                 [visibleCount]="3"
                 [commentLink]="['/projects', project.id, 'comments']"
                 [noCommentText]="'comment.noProjectComments' | translation">

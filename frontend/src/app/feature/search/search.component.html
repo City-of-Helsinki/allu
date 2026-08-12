@@ -97,7 +97,7 @@
           <button mat-raised-button type="submit" color="primary">
             {{'common.button.search' | translation | uppercase}}
           </button>
-          <button mat-raised-button type="button" color="primary" [disabled]="!(someSelected$ | async)"
+          <button mat-raised-button type="button" color="primary" [disabled]="(someSelected$ | async) === false"
                   class="in-front" (click)="addToBasket()"
                   *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
             {{'applicationBasket.addTo' | translation | uppercase}}
@@ -119,7 +119,7 @@
             <div>
               <mat-checkbox
                 [checked]="(someSelected$ | async) && (allSelected$ | async)"
-                [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
                 (change)="checkAll()"></mat-checkbox>
             </div>
           </mat-header-cell>

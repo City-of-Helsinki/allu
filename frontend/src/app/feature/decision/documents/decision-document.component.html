@@ -9,11 +9,11 @@
     pdfViewFooter
     [allowActions]="allowDecisionActions$ | async"
     [allowResend]="allowDecisionResend$ | async"
-    [application]="application$ | async"
+    [application]="application$ | async"
     [approvedOperationalCondition]="approvedOperationalCondition$ | async"
     [hasInvoicing]="hasInvoicing$ | async"
     [tab]="tab"
-    (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
+    (decisionConfirm)="onDecisionConfirm()"></decision-actions>
 
   <contract-actions
     *ngIf="showContractActions$ | async"

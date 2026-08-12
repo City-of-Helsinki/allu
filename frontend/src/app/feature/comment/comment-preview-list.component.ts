@@ -16,13 +16,13 @@ export class CommentPreviewListComponent {
 
   constructor() {}
 
-  @Input('comments') set comments(comments: Comment[]) {
+  @Input() set comments(comments: Comment[]) {
     this.visibleComments = comments
       ? this.getVisibleComments(comments)
       : [];
   }
 
-  getVisibleComments(allComments: Comment[] = []): Comment[] {
+  getVisibleComments(allComments: Comment[] = []): Comment[] {
     if (this.visibleCount === undefined || this.visibleCount >= allComments.length) {
       return allComments;
     } else {

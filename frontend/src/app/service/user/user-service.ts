@@ -3,13 +3,13 @@ import {UserMapper} from '../mapper/user-mapper';
 import {Observable} from 'rxjs';
 import {HttpUtil} from '../../util/http.util';
 import {User} from '../../model/user/user';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {RoleType} from '../../model/user/role-type';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BackendUser} from '../backend-model/backend-user';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const ACTIVE_USERS_URL = '/api/users/active';
 const USERS_URL = '/api/users';

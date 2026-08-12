@@ -2,7 +2,7 @@ import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {ComplexValidator} from '@util/complex-validator';
 import {MAX_YEAR, MIN_YEAR} from '@util/time.util';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {RecurringType} from '@feature/application/info/recurring/recurring-type';
 
@@ -71,12 +71,15 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: any): void {
     this._onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  registerOnTouched(_fn: any): void {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onChange = (_: any) => {};
 
   private typeChange(type: RecurringType): void {

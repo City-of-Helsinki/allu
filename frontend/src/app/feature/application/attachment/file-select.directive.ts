@@ -12,6 +12,7 @@ export class FileSelectDirective {
   }
 
   @HostListener('change')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public onChange(): any {
     const files = this.element.nativeElement.files;
     const fileArray = [];

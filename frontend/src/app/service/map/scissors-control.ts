@@ -79,6 +79,7 @@ export class ScissorsControl extends L.Control {
   public options: L.ControlOptions;
   private map: L.Map;
   private state = State.Inactive;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private selectedFeature: any;
   private cuttingGroup: L.FeatureGroup;
   private cuttingLineDrawHandler: L.Draw.Polyline;
@@ -122,6 +123,7 @@ export class ScissorsControl extends L.Control {
     // Initialize a feature group to hold the cutting line and a draw handler
     // for the line.
     this.cuttingGroup = L.featureGroup().addTo(this.map);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     this.cuttingLineDrawHandler = new L.Draw.Polyline(this.map as any, {
       shapeOptions: {
         color: '#ff0000',
@@ -251,6 +253,7 @@ export class ScissorsControl extends L.Control {
       const cuttingLine = e.layer;
       this.cuttingGroup.addLayer(cuttingLine);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
       const cutLineGeoJSON = (cuttingLine as any).toGeoJSON();
       const featureGeoJSON = this.selectedFeature;
 
@@ -262,6 +265,7 @@ export class ScissorsControl extends L.Control {
       if (cutResult && cutResult.length > 0) {
         // Find and remove the original feature from the edited items layer.
         this.editedItems.eachLayer(layer => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
           const layerGeoJSON = (layer as any).toGeoJSON();
           if (turf.booleanEqual(layerGeoJSON, this.selectedFeature)) {
             this.editedItems.removeLayer(layer);
@@ -276,6 +280,7 @@ export class ScissorsControl extends L.Control {
           // Show measurements for the new features if they are polygons.
           const geometryType = cutFeature.geometry.type;
           if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
             (newLayer as any).showMeasurements(translations.map.measure);
           }
         });
@@ -360,6 +365,7 @@ export class ScissorsControl extends L.Control {
    * @param lineFeature The line feature to convert to a thick polygon.
    * @returns A GeoJSON polygon feature.
    */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private createThickLinePolygonForCut(lineFeature: any): any {
     const offsetLine1 = turf.lineOffset(lineFeature, 0.00001,
                                         {units: 'kilometers'});
@@ -386,8 +392,11 @@ export class ScissorsControl extends L.Control {
    *          operation.
    */
   private calculateCut(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     feature: any,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     cuttingLine: any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   ): any[] {
     try {
       if (!feature || !feature.geometry || !cuttingLine ||
@@ -431,6 +440,7 @@ export class ScissorsControl extends L.Control {
         return [feature];
       }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
       const results: any[] = [];
       const geom = turf.getGeom(clipped);
 
@@ -469,6 +479,7 @@ export class ScissorsControl extends L.Control {
    * @param geojson The GeoJSON feature to normalize.
    * @returns A new GeoJSON feature with normalized coordinates.
    */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private normalizeCoordinates(geojson: any): any {
     const PRECISION = 9; // Adjust precision as needed
 
@@ -483,6 +494,7 @@ export class ScissorsControl extends L.Control {
     };
 
     // Function to recursively process coordinates.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     const processCoordinates = (coords: any[]): any[] => {
       if (coords.length === 0) return coords;
 

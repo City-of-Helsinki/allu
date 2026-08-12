@@ -1,16 +1,18 @@
-import {Observable} from 'rxjs/internal/Observable';
-import {of} from 'rxjs/internal/observable/of';
+import {Observable} from 'rxjs';
+import {of} from 'rxjs';
 
 export interface TreeStructureNode<T> {
   [key: string]: TreeStructureNode<T> | T | null;
 }
 
 export interface TreeNode {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   id: any;
   children?: TreeNode[];
 }
 
 export class TreeFlatNode {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   id: any;
   expandable: boolean;
   level: number;

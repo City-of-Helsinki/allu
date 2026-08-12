@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/index';
+import {Observable} from 'rxjs';
 import {Project} from '../../../model/project/project';
 import * as fromProject from '../reducers';
 import {Store} from '@ngrx/store';
 import {RemoveParent} from '../actions/project-actions';
-import {map, withLatestFrom} from 'rxjs/internal/operators';
+import {map, withLatestFrom} from 'rxjs/operators';
 import {Add} from '../actions/child-project-actions';
 import {Search} from '../actions/project-search-actions';
-import {ProjectSearchQuery} from '@model/project/project-search-query';
 
 @Component({
   selector: 'related-projects',

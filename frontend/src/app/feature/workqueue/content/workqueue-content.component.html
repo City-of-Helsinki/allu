@@ -9,7 +9,7 @@
         <div>
           <mat-checkbox
             [checked]="(someSelected$ | async) && (allSelected$ | async)"
-            [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+            [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
             (change)="checkAll()"></mat-checkbox>
         </div>
       </mat-header-cell>
@@ -119,14 +119,13 @@
              class="details-cell"
              *ngIf="row.applicationTags?.length">
           <div fxFlex>
-            <mat-chip-list>
+            <mat-chip-set>
               <mat-chip *ngFor="let tag of row.applicationTags"
-                        [selected]="tagSelected(tag.type) | async"
-                        class="accent-chip slim-chip"
-                        color="accent">
+                        [highlighted]="tagSelected(tag.type) | async"
+                        class="slim-chip">
                 {{['application.tag.type', tag.type] | translation}}
               </mat-chip>
-            </mat-chip-list>
+            </mat-chip-set>
           </div>
         </div>
       </mat-cell>

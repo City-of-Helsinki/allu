@@ -7,7 +7,7 @@
 }
 
 .row-highlight {
-  background-color: mat.get-color-from-palette($allu-primary, 50);
+  background-color: mat.m2-get-color-from-palette($allu-primary, 50);
 }
 
 .details-row {
@@ -16,14 +16,14 @@
 
 .status-text {
   font-weight: bold;
-  color: mat.get-color-from-palette($allu-primary, 500);
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 }
 
-.mat-cell:first-of-type .details-cell {
+.mat-mdc-cell:first-of-type .details-cell {
   padding-left: 42px;
 }
 
-.mat-cell:not(:first-of-type) .details-cell {
+.mat-mdc-cell:not(:first-of-type) .details-cell {
   padding-left: 2px;
 }
 
@@ -38,13 +38,7 @@
 .details-cell.details-cell-text {
   overflow: auto;
   text-overflow: ellipsis;
-  color: mat.get-color-from-palette($allu-primary, 500);
-}
-
-.mat-chip.slim-chip {
-  margin: 0px 2px;
-  line-height: 1.43;
-  font-size: 14px;
+  color: mat.m2-get-color-from-palette($allu-primary, 500);
 }
 
 .comment-content {

@@ -1,10 +1,9 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormBuilder, FormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Configuration} from '@model/config/configuration';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Save} from '@feature/admin/configuration/actions/configuration-actions';
-import {ConfigurationType} from '@model/config/configuration-type';
 import {Some} from '@util/option';
 import {MIN_DATE, TimeUtil} from '@util/time.util';
 import {takeUntil} from 'rxjs/operators';

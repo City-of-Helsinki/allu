@@ -91,10 +91,10 @@ export class ApplicationSearchEffects {
    */
   private setTargetTypeSpecificParameters(action: Search): Observable<Search> {
     if (action.targetType === ActionTargetType.ApplicationWorkQueue) {
-      return combineLatest(
+      return combineLatest([
         this.store.pipe(select(fromWorkQueue.getTab)),
         this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
-      ).pipe(
+      ]).pipe(
         map(([tab, user]) => {
           const payload = action.payload;
           const queryCopy = ObjectUtil.clone(payload.query);

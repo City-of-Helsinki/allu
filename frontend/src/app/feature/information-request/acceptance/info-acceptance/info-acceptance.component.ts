@@ -1,5 +1,5 @@
 import { HostBinding, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
-import {takeUntil} from 'rxjs/internal/operators';
+import {takeUntil} from 'rxjs/operators';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';
@@ -8,7 +8,7 @@ import {StructureMeta} from '@model/application/meta/structure-meta';
 import { Some } from '@app/util/option';
 
 @Directive()
-export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
+export abstract class InfoAcceptanceDirective implements OnInit, OnDestroy {
   @Input() form: UntypedFormGroup;
   @Input() id: string;
   @Input() meta: StructureMeta;

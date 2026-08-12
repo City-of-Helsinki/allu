@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatCardModule} from '@angular/material/card';
 import {MatExpansionModule} from '@angular/material/expansion';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
-import {MatLegacySlideToggleModule as MatSlideToggleModule} from '@angular/material/legacy-slide-toggle';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';
@@ -16,7 +16,7 @@ import {AdminComponent} from './admin.component';
 import {AdminNavComponent} from './nav/admin-nav.component';
 import {DefaultAttachmentsComponent} from './default-attachment/default-attachments.component';
 import {DefaultAttachmentComponent} from './default-attachment/default-attachment.component';
-import {SelectionGroupModule} from '@feature/common/selection-group/selection-group.module';
+import {MatChipsModule} from '@angular/material/chips';
 import {DefaultRecipientsComponent} from './default-recipients/default-recipients.component';
 import {RecipientsByTypeComponent} from './default-recipients/recipients-by-type.component';
 import {DefaultRecipientService} from '@service/recipients/default-recipient.service';
@@ -37,7 +37,7 @@ import { PruneDataModule } from './prune-data/prune-data.module'
     MatCardModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    SelectionGroupModule,
+    MatChipsModule,
     ConfigurationModule,
     MatTableModule,
     MatPaginatorModule,

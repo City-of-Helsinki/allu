@@ -15,28 +15,22 @@
   $primary: map-get($theme, primary);
 
   .field-group-options label {
-    color: mat.get-color-from-palette($primary, 300);
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 
   li:nth-child(odd) .field-acceptance,
   li:nth-child(odd) .field-display,
   .label-row {
-    background: mat.get-color-from-palette($primary, 50);
+    background: mat.m2-get-color-from-palette($primary, 50);
   }
 }
 
 @mixin field-select-theme($theme, $success) {
   $primary: map-get($theme, primary);
-
-  mat-selection-list .mat-list-option:nth-child(odd),
-  mat-list .mat-list-item:nth-child(odd) {
-    background: mat.get-color-from-palette($primary, 50);
+  mat-selection-list .mat-mdc-list-option:nth-child(odd),
+  mat-list .mat-mdc-list-item:nth-child(odd) {
+    background: mat.m2-get-color-from-palette($primary, 50);
   }
-
-  field-select .mat-selection-list .mat-list-option .mat-pseudo-checkbox {
-    background: map-get($success, 200);
-  }
-
 }
 
 @mixin info-acceptance-theme($border-color) {
