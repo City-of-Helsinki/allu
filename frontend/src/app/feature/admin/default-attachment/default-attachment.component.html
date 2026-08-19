@@ -10,7 +10,8 @@
         <div class="row">
           <div class="col m5">
             <mat-form-field class="input-full-width">
-              <input matInput type="text" formControlName="name" placeholder="Nimi">
+              <mat-label>Nimi</mat-label>
+              <input matInput type="text" formControlName="name">
             </mat-form-field>
           </div>
         </div>
@@ -27,7 +28,8 @@
         <div class="row">
           <div class="col m6">
             <mat-form-field class="input-full-width">
-              <mat-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
+              <mat-label>Alue</mat-label>
+              <mat-select formControlName="fixedLocationId" class="input-full-width">
                 <mat-option value="" selected>{{'attachment.noArea' | translation}}</mat-option>
                 <mat-option *ngFor="let area of areas | async" [value]="area.id">
                   {{area.name}}

@@ -35,8 +35,8 @@
           <div class="row form-group">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="workDescription"
-                          placeholder="Työn kuvaus"></textarea>
+                <mat-label>Työn kuvaus</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="workDescription"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -44,7 +44,8 @@
             <div formGroupName="reportTimes">
               <div class="col m3">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="{{'application.cableReport.field.startTime' | translation}}"
+                  <mat-label>{{'application.cableReport.field.startTime' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="startTime"
                          [matDatepicker]="startTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -58,7 +59,8 @@
               </div>
               <div class="col m3">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="{{'application.cableReport.field.endTime' | translation}}"
+                  <mat-label>{{'application.cableReport.field.endTime' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="endTime"
                          [matDatepicker]="endTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
@@ -67,7 +69,8 @@
             </div>
             <div class="col m3">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="validityTime" placeholder="Voimassaolo"
+                <mat-label>Voimassaolo</mat-label>
+                <input matInput type="text" formControlName="validityTime"
                        [matDatepicker]="validityTimePicker"/>
                 <mat-datepicker-toggle matSuffix [for]="validityTimePicker"
                                        [disabled]="readonly"></mat-datepicker-toggle>

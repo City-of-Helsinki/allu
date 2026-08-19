@@ -7,7 +7,8 @@
     </div>
     <div fxFlex="38%">
       <mat-form-field class="input-full-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" [placeholder]="'common.filter' | translation">
+        <mat-label>{{'common.filter' | translation}}</mat-label>
+        <input matInput (keyup)="applyFilter($event.target.value)">
       </mat-form-field>
     </div>
   </div>

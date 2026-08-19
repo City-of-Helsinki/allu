@@ -23,8 +23,8 @@
     <div fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <textarea matInput cdkTextareaAutosize formControlName="comment" required
-                    [placeholder]="'contract.approval.comment' | translation"></textarea>
+          <mat-label>{{'contract.approval.comment' | translation}}</mat-label>
+          <textarea matInput cdkTextareaAutosize formControlName="comment" required></textarea>
           <mat-error *ngIf="approvalForm.get('comment').hasError('required')">
             {{'contract.approval.field.commentMissing' | translation}}
           </mat-error>
@@ -34,7 +34,8 @@
     <div fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <mat-select [placeholder]="'contract.approval.selectDecisionMaker' | translation"
+          <mat-label>{{'contract.approval.selectDecisionMaker' | translation}}</mat-label>
+          <mat-select
                       class="input-full-width"
                       formControlName="handler" required>
             <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">

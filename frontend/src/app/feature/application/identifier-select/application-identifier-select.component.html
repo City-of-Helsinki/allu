@@ -2,11 +2,11 @@
   <div fxLayout="row">
     <div fxFlex>
       <mat-form-field class="input-full-width">
+        <mat-label>{{'application.identifiers.searchAndAdd' | translation}}</mat-label>
         <span matPrefix>{{prefix}} &nbsp;</span>
         <input matInput type="text"
                [maxLength]="IDENTIFIER_LENGTH"
                [formControl]="searchControl"
-               [placeholder]="'application.identifiers.searchAndAdd' | translation"
                [matAutocomplete]="applicationSearch"/>
         <mat-autocomplete #applicationSearch="matAutocomplete"
                           [displayWith]="displayName"

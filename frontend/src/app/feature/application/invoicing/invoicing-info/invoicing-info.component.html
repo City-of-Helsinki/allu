@@ -61,15 +61,15 @@
               <div fxLayout="row wrap" fxLayoutGap="18px">
                 <div fxFlex *ngIf="billable">
                   <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="customerReference"
-                           [placeholder]="'invoice.info.customerReference' | translation"/>
+                    <mat-label>{{'invoice.info.customerReference' | translation}}</mat-label>
+                    <input matInput type="text" formControlName="customerReference"/>
                   </mat-form-field>
                 </div>
 
                 <div fxFlex *ngIf="billable && showInvoicingDate">
                   <mat-form-field class="input-full-width">
+                    <mat-label>{{'invoice.info.invoicingDate' | translation}}</mat-label>
                     <input matInput formControlName="invoicingDate" required
-                           [placeholder]="'invoice.info.invoicingDate' | translation"
                            [matDatepicker]="invoicingDatePicker">
                     <mat-datepicker-toggle matSuffix [for]="invoicingDatePicker"
                                            [disabled]="form.disabled"></mat-datepicker-toggle>
@@ -96,8 +96,8 @@
               <div fxLayout="row" fxLayoutGap="18px">
                 <div fxFlex>
                   <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="depositAmount"
-                           [placeholder]="'deposit.amount' | translation"/>
+                    <mat-label>{{'deposit.amount' | translation}}</mat-label>
+                    <input matInput type="text" formControlName="depositAmount"/>
                     <span matSuffix>€</span>
                   </mat-form-field>
                 </div>
@@ -115,8 +115,8 @@
               <div fxLayout="row">
                 <div fxFlex>
                   <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="depositReason"
-                          [placeholder]="'deposit.reason' | translation"></textarea>
+                <mat-label>{{'deposit.reason' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="depositReason"></textarea>
                   </mat-form-field>
                 </div>
               </div>

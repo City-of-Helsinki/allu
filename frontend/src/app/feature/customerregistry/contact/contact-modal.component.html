@@ -4,7 +4,8 @@
     <div class="row form-group">
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+          <mat-label>Yhteyshenkilön nimi</mat-label>
+          <input matInput type="text" formControlName="name" required/>
           <mat-hint>
             <field-error [form]="contactForm" field="name" hasError="required">{{'contact.field.nameMissing' |
               translation}}
@@ -16,12 +17,14 @@
     <div class="row form-group">
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+          <mat-label>Katuosoite</mat-label>
+          <input matInput type="text" formControlName="streetAddress"/>
         </mat-form-field>
       </div>
       <div class="col m3">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+          <mat-label>Postinumero</mat-label>
+          <input matInput type="text" formControlName="postalCode"/>
           <mat-hint>
             <field-error [form]="contactForm" field="postalCode" hasError="pattern">{{'common.field.postalCode' |
               translation}}
@@ -31,14 +34,16 @@
       </div>
       <div class="col m3">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+          <mat-label>Toimipaikka</mat-label>
+          <input matInput type="text" formControlName="city"/>
         </mat-form-field>
       </div>
     </div>
     <div class="row form-group">
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+          <mat-label>Sähköpostiosoite</mat-label>
+          <input matInput type="text" formControlName="email"/>
           <mat-hint>
             <field-error [form]="contactForm" field="email" hasError="email">
               {{'common.field.emailInvalid' | translation}}
@@ -48,7 +53,8 @@
       </div>
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+          <mat-label>Puhelin</mat-label>
+          <input matInput type="text" formControlName="phone"/>
           <mat-hint>
             <field-error [form]="contactForm" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
               translation}}

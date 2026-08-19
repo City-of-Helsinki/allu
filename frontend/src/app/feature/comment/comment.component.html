@@ -45,9 +45,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <mat-form-field  *ngIf="form.enabled" class="input-full-width">
+        <mat-label>{{'comment.myComment' | translation}}</mat-label>
         <textarea matInput cdkTextareaAutosize
-                  formControlName="text" id="commentText"
-                  [placeholder]="'comment.myComment' | translation"></textarea>
+                  formControlName="text" id="commentText"></textarea>
         <mat-error *ngIf="form.get('text').hasError('required')">
           {{'comment.field.emptyText' | translation}}
         </mat-error>

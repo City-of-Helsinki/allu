@@ -25,7 +25,8 @@
               <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="18px">
                 <div fxFlex>
                   <mat-form-field class="input-full-width">
-                    <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width"
+                    <mat-label>{{'supervision.task.type.title' | translation}}</mat-label>
+                    <mat-select class="input-full-width"
                                 formControlName="type" required>
                       <mat-option *ngFor="let type of taskTypes" [value]="type">
                         {{['supervision.task.type', type] | translation}}
@@ -35,7 +36,8 @@
                 </div>
                 <div fxFlex>
                   <mat-form-field class="input-full-width">
-                    <mat-select [placeholder]="'supervision.task.owner' | translation" class="input-full-width"
+                    <mat-label>{{'supervision.task.owner' | translation}}</mat-label>
+                    <mat-select class="input-full-width"
                                 formControlName="ownerId" required>
                       <mat-option *ngFor="let supervisor of availableSupervisors" [value]="supervisor.id">
                         {{supervisor.realName}}
@@ -45,8 +47,8 @@
                 </div>
                 <div fxFlex>
                   <mat-form-field class="input-full-width">
+                    <mat-label>{{'supervision.task.plannedFinishingTime' | translation}}</mat-label>
                     <input matInput formControlName="plannedFinishingTime" required
-                           [placeholder]="'supervision.task.plannedFinishingTime' | translation"
                            [matDatepicker]="plannedFinishingTimePicker">
                     <mat-datepicker-toggle matSuffix [for]="plannedFinishingTimePicker"
                                            [disabled]="form.disabled"></mat-datepicker-toggle>
@@ -67,16 +69,16 @@
               <div fxLayout="row">
                 <div fxFlex="100%">
                   <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="description"
-                          [placeholder]="'supervision.task.description' | translation"></textarea>
+                <mat-label>{{'supervision.task.description' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="description"></textarea>
                   </mat-form-field>
                 </div>
               </div>
               <div fxLayout="row" *ngIf="form.getRawValue().result">
                 <div fxFlex="100%">
                   <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="result"
-                          [placeholder]="'supervision.task.result' | translation"></textarea>
+                <mat-label>{{'supervision.task.result' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="result"></textarea>
                   </mat-form-field>
                 </div>
               </div>

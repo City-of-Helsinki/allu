@@ -2,8 +2,8 @@
   <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="18px">
     <div fxFlex="initial">
       <mat-form-field class="search-field">
+        <mat-label>{{'project.applications.searchAndAdd' | translation}}</mat-label>
         <input matInput type="text" [formControl]="searchControl"
-               [placeholder]="'project.applications.searchAndAdd' | translation"
                [matAutocomplete]="applicationSearch"/>
         <mat-autocomplete #applicationSearch="matAutocomplete"
                           [displayWith]="displayName"

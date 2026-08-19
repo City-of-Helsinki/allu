@@ -9,8 +9,8 @@
       <div fxLayout="row" *ngIf="natureSelectable">
         <div fxFlex="0 0 25%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'application.event.nature.placeholder' | translation}}</mat-label>
             <mat-select formControlName="nature"
-                        placeholder="{{'application.event.nature.placeholder' | translation}}"
                         [required]="required(form.get('nature'))"
                         class="input-full-width">
               <mat-option *ngFor="let nature of eventNatures" [value]="nature">

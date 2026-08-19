@@ -1,9 +1,9 @@
 <div class="configuration-entry-controls">
   <div class="configuration-entry-value">
     <mat-form-field class="input-full-width">
+      <mat-label>{{'project.info.contactName' | translation}}</mat-label>
       <input matInput type="text" [formControl]="valueCtrl"
-             [matAutocomplete]="contactSearch"
-             [placeholder]="'project.info.contactName' | translation"/>
+             [matAutocomplete]="contactSearch"/>
 
       <mat-autocomplete #contactSearch="matAutocomplete"
                         [displayWith]="contactName"

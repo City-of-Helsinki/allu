@@ -34,8 +34,8 @@
             <div fxLayout="row" fxLayoutGap="18px" class="form-group">
               <div fxFlex="50">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.common.startTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime" required
-                         [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="startTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -52,8 +52,8 @@
               </div>
               <div fxFlex="50">
                 <mat-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
+                  <mat-label>{{'application.common.endTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime" required
-                         [placeholder]="'application.common.endTime' | translation"
                          [matDatepicker]="endTimePicker"/>
                   <button type="button" mat-icon-button [disabled]="readonly" matSuffix
                           (click)="onValidityEndTimePickerClick(endTimePicker)">
@@ -81,8 +81,8 @@
             <div fxLayout="row" fxLayoutGap="18px" class="form-group">
               <div fxFlex="50">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.excavationAnnouncement.unauthorizedStartTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime"
-                         [placeholder]="'application.excavationAnnouncement.unauthorizedStartTime' | translation"
                          [matDatepicker]="unauthorizedStartTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="unauthorizedStartTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -96,8 +96,8 @@
               </div>
               <div fxFlex="50">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.excavationAnnouncement.unauthorizedEndTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime"
-                         [placeholder]="'application.excavationAnnouncement.unauthorizedEndTime' | translation"
                          [matDatepicker]="unauthorizedEndTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="unauthorizedEndTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -109,8 +109,8 @@
           <div fxLayout="row" fxLayoutGap="18px" class="form-group">
             <div fxFlex="50">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.excavationAnnouncement.winterTimeOperation' | translation}}</mat-label>
                 <input matInput type="text" formControlName="winterTimeOperation"
-                       [placeholder]="'application.excavationAnnouncement.winterTimeOperation' | translation"
                        [matDatepicker]="winterTimeOperationPicker"/>
                 <mat-datepicker-toggle matSuffix [for]="winterTimeOperationPicker"
                                        [disabled]="readonly"></mat-datepicker-toggle>
@@ -119,16 +119,16 @@
             </div>
             <div fxFlex="50">
               <mat-form-field class="input-full-width">
-                <input matInput readonly type="text" formControlName="workFinished"
-                       [placeholder]="'application.excavationAnnouncement.workFinished' | translation"/>
+                <mat-label>{{'application.excavationAnnouncement.workFinished' | translation}}</mat-label>
+                <input matInput readonly type="text" formControlName="workFinished"/>
               </mat-form-field>
             </div>
           </div>
           <div fxLayout="row" class="form-group">
             <div fxFlex="50" class="gap-single-9">
               <mat-form-field class="input-full-width">
-                <input matInput readonly type="text" formControlName="guaranteeEndTime"
-                       [placeholder]="'application.excavationAnnouncement.guaranteeEndTime' | translation"/>
+                <mat-label>{{'application.excavationAnnouncement.guaranteeEndTime' | translation}}</mat-label>
+                <input matInput readonly type="text" formControlName="guaranteeEndTime"/>
               </mat-form-field>
             </div>
           </div>
@@ -145,8 +145,8 @@
             <div fxLayout="row" fxLayoutGap="18px" class="form-group">
               <div fxFlex="50">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.common.startTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime"
-                         [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="customerStartTimePicker"/>
                   <button type="button" mat-icon-button matSuffix
                           *ngIf="showReportCustomerDates; else customerStartTimePickerToggle"
@@ -166,8 +166,8 @@
               </div>
               <div fxFlex="50">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.common.endTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime"
-                         [placeholder]="'application.common.endTime' | translation"
                          [matDatepicker]="customerEndTimePicker"/>
                   <button type="button" mat-icon-button matSuffix
                           *ngIf="showReportCustomerDates; else customerEndTimePickerToggle"
@@ -185,8 +185,8 @@
           <div fxLayout="row" fxLayoutGap="18px" class="form-group">
             <div fxFlex="50">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.excavationAnnouncement.winterTimeOperation' | translation}}</mat-label>
                 <input matInput type="text" formControlName="customerWinterTimeOperation"
-                       [placeholder]="'application.excavationAnnouncement.winterTimeOperation' | translation"
                        [matDatepicker]="customerWinterTimeOperationPicker"/>
                 <button type="button" mat-icon-button matSuffix
                         *ngIf="showReportCustomerDates; else customerWinterTimeOperationPickerToggle"
@@ -201,8 +201,8 @@
             </div>
             <div fxFlex="50">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.excavationAnnouncement.workFinished' | translation}}</mat-label>
                 <input matInput type="text" formControlName="customerWorkFinished"
-                       [placeholder]="'application.excavationAnnouncement.workFinished' | translation"
                        [matDatepicker]="customerWorkFinishedPicker"/>
                 <button type="button" mat-icon-button matSuffix
                         *ngIf="showReportCustomerDates; else customerWorkFinishedPickerToggle"
@@ -231,18 +231,18 @@
           <div fxLayout="row" class="form-group">
             <div fxFlex>
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.common.workPurpose' | translation}}</mat-label>
                 <textarea matInput cdkTextareaAutosize required
-                          formControlName="workPurpose"
-                          [placeholder]="'application.common.workPurpose' | translation"></textarea>
+                          formControlName="workPurpose"></textarea>
               </mat-form-field>
             </div>
           </div>
           <div fxLayout="row" class="form-group">
             <div fxFlex>
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.common.additionalInfo' | translation}}</mat-label>
                 <textarea matInput cdkTextareaAutosize
-                          formControlName="additionalInfo"
-                          [placeholder]="'application.common.additionalInfo' | translation"></textarea>
+                          formControlName="additionalInfo"></textarea>
               </mat-form-field>
             </div>
           </div>

@@ -7,16 +7,16 @@
     <div fxLayout="column">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-            <textarea matInput cdkTextareaAutosize formControlName="result" required
-                      [placeholder]="'supervision.task.result' | translation"></textarea>
+            <mat-label>{{'supervision.task.result' | translation}}</mat-label>
+            <textarea matInput cdkTextareaAutosize formControlName="result" required></textarea>
           <mat-error *ngIf="form.get('result').hasError('required')">
             {{'supervision.task.field.resultMissing' | translation}}
           </mat-error>
         </mat-form-field>
 
         <mat-form-field *ngIf="showNewSupervisionDate" class="form-field-50">
+          <mat-label>{{'supervision.task.newSupervisionDate' | translation}}</mat-label>
           <input matInput formControlName="newSupervisionDate" required
-                 [placeholder]="'supervision.task.newSupervisionDate' | translation"
                  [matDatepicker]="newSupervisionDatePicker">
           <mat-datepicker-toggle matSuffix [for]="newSupervisionDatePicker"
                                  [disabled]="form.disabled"></mat-datepicker-toggle>

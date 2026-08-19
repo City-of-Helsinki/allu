@@ -133,9 +133,9 @@
     <div *ngIf="showAddress" fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
+          <mat-label>{{'searchbar.address' | translation}}</mat-label>
           <input matInput type="text"
                  formControlName="address"
-                 [placeholder]="'searchbar.address' | translation"
                  (keyup.enter)="addressSelected(searchForm.value.address)"
                  [matAutocomplete]="addressSearch"/>
           <mat-autocomplete #addressSearch="matAutocomplete">
@@ -152,8 +152,8 @@
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex="calc(50% - 18px)">
         <mat-form-field class="input-full-width">
+          <mat-label>{{'applicationSearch.startTime' | translation}}</mat-label>
           <input matInput type="text" formControlName="startDate"
-                 [placeholder]="'applicationSearch.startTime' | translation"
                  [matDatepicker]="startDatePicker"
                  [max]="searchForm.get('endDate').value"
                  (dateChange)="onFormChange(searchForm.value)"/>
@@ -163,8 +163,8 @@
       </div>
       <div fxFlex="calc(50% - 18px)">
         <mat-form-field class="input-full-width">
+          <mat-label>{{'applicationSearch.endTime' | translation}}</mat-label>
           <input matInput type="text" formControlName="endDate"
-                 [placeholder]="'applicationSearch.endTime' | translation"
                  [matDatepicker]="endDatePicker"
                  [min]="searchForm.get('startDate').value"
                  (dateChange)="onFormChange(searchForm.value)"/>

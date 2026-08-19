@@ -5,14 +5,14 @@
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="30%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="applicationId"
-                   [placeholder]="'applicationSearch.applicationId' | translation"/>
+            <mat-label>{{'applicationSearch.applicationId' | translation}}</mat-label>
+            <input matInput type="text" formControlName="applicationId"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="type" [multiple]="true"
-                        [placeholder]="'applicationSearch.type' | translation" class="input-full-width">
+            <mat-label>{{'applicationSearch.type' | translation}}</mat-label>
+            <mat-select formControlName="type" [multiple]="true" class="input-full-width">
               <mat-option *ngFor="let option of applicationTypeStrings" [value]="option">
                 {{ ['application.type', option] | translation }}
               </mat-option>
@@ -21,8 +21,8 @@
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="status" [multiple]="true"
-                        [placeholder]="'applicationSearch.status' | translation" class="input-full-width">
+            <mat-label>{{'applicationSearch.status' | translation}}</mat-label>
+            <mat-select formControlName="status" [multiple]="true" class="input-full-width">
               <mat-option *ngFor="let option of applicationStatusStrings" [value]="option">
                 {{ ['application.status', option] | translation }}
               </mat-option>
@@ -31,8 +31,8 @@
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="districts" [multiple]="true"
-                        [placeholder]="'application.cityDistrict' | translation" class="input-full-width">
+            <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
+            <mat-select formControlName="districts" [multiple]="true" class="input-full-width">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
               </mat-option>
             </mat-select>
@@ -40,8 +40,8 @@
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="owner" [multiple]="true"
-                        [placeholder]="'applicationSearch.owner' | translation" class="input-full-width">
+            <mat-label>{{'applicationSearch.owner' | translation}}</mat-label>
+            <mat-select formControlName="owner" [multiple]="true" class="input-full-width">
               <mat-option *ngFor="let owner of owners | async" [value]="owner.userName">{{owner.realName}}
               </mat-option>
             </mat-select>
@@ -51,32 +51,32 @@
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="30%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="address"
-                   [placeholder]="'applicationSearch.address' | translation"/>
+            <mat-label>{{'applicationSearch.address' | translation}}</mat-label>
+            <input matInput type="text" formControlName="address"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="applicant"
-                   [placeholder]="'application.applicant' | translation"/>
+            <mat-label>{{'application.applicant' | translation}}</mat-label>
+            <input matInput type="text" formControlName="applicant"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="contact"
-                   [placeholder]="'application.contact' | translation"/>
+            <mat-label>{{'application.contact' | translation}}</mat-label>
+            <input matInput type="text" formControlName="contact"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="freeText"
-                   [placeholder]="'common.freeTextSearch' | translation"/>
+            <mat-label>{{'common.freeTextSearch' | translation}}</mat-label>
+            <input matInput type="text" formControlName="freeText"/>
           </mat-form-field>
         </div>
         <div fxFlex="7%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'applicationSearch.startTime' | translation}}</mat-label>
             <input matInput type="text" formControlName="startTime"
-                   [placeholder]="'applicationSearch.startTime' | translation"
                    [matDatepicker]="startTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #startTimePicker></mat-datepicker>
@@ -84,8 +84,8 @@
         </div>
         <div fxFlex="7%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'applicationSearch.endTime' | translation}}</mat-label>
             <input matInput type="text" formControlName="endTime"
-                   [placeholder]="'applicationSearch.endTime' | translation"
                    [matDatepicker]="endTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #endTimePicker></mat-datepicker>

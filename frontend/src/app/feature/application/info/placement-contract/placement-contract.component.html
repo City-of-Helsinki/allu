@@ -22,8 +22,8 @@
           <div class="row form-group">
             <div class="col m6">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="propertyIdentificationNumber"
-                       [placeholder]="'application.placementContract.propertyIdentificationNumber' | translation"/>
+                <mat-label>{{'application.placementContract.propertyIdentificationNumber' | translation}}</mat-label>
+                <input matInput type="text" formControlName="propertyIdentificationNumber"/>
               </mat-form-field>
             </div>
           </div>
@@ -31,8 +31,9 @@
             <div formGroupName="validityTimes">
               <div class="col s3">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                         [matDatepicker]="startTimePicker"/>
+                  <mat-label>Voimassaolon aloitus</mat-label>
+                  <input matInput type="text" formControlName="startTime"
+                         [matDatepicker]="startTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #startTimePicker></mat-datepicker>
@@ -48,8 +49,9 @@
               </div>
               <div class="col s3">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                         [matDatepicker]="endTimePicker"/>
+                  <mat-label>Voimassaolon lopetus</mat-label>
+                  <input matInput type="text" formControlName="endTime"
+                         [matDatepicker]="endTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
                   <mat-error *ngIf="applicationForm.get('validityTimes.endTime').hasError('required')">
@@ -65,14 +67,14 @@
           <div class="row form-group">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"
-                          placeholder="Työn kuvaus"></textarea>
+                <mat-label>Työn kuvaus</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"></textarea>
               </mat-form-field>
             </div>
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="contractText"
-                          [placeholder]="'application.placementContract.contractText' | translation"></textarea>
+                <mat-label>{{'application.placementContract.contractText' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="contractText"></textarea>
               </mat-form-field>
             </div>
           </div>
