@@ -34,18 +34,15 @@
     <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <div class="col m12">
         <allu-card>
-          <div class="row">
-            <div class="col m4">
-              <button type="submit" mat-raised-button color="primary">{{'common.button.save' | translation | uppercase}}</button>
-              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation | uppercase}}</button>
-            </div>
-            <div class="col m8">
-              <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation | uppercase}}</button>
-              <button type="button" mat-raised-button color="primary"
-                      *ngIf="isRemoveVisible"
-                      (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation | uppercase}}
-              </button>
-            </div>
+          <div fxLayout="row wrap" fxLayoutGap="8px" fxLayoutAlign="start center" class="customer-actions-row">
+            <button type="submit" mat-raised-button color="primary">{{'common.button.save' | translation | uppercase}}</button>
+            <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation | uppercase}}</button>
+            <span fxFlex></span>
+            <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation | uppercase}}</button>
+            <button type="button" mat-raised-button color="primary"
+                    *ngIf="isRemoveVisible"
+                    (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation | uppercase}}
+            </button>
           </div>
         </allu-card>
       </div>
