@@ -16,7 +16,7 @@
     <div class="col m12">
       <allu-card>
         <mat-card-header>
-          <mat-card-title>Sijoitussopimuksen tiedot</mat-card-title>
+          <mat-card-title>{{'application.placementContract.title' | translation}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
@@ -31,7 +31,7 @@
             <div formGroupName="validityTimes">
               <div class="col s3">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Voimassaolon aloitus</mat-label>
+                  <mat-label>{{'application.common.startTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime"
                          [matDatepicker]="startTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
@@ -49,7 +49,7 @@
               </div>
               <div class="col s3">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Voimassaolon lopetus</mat-label>
+                  <mat-label>{{'application.common.endTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime"
                          [matDatepicker]="endTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
@@ -67,7 +67,7 @@
           <div class="row form-group">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                <mat-label>Työn kuvaus</mat-label>
+                <mat-label>{{'informationRequest.field.WORK_DESCRIPTION' | translation}}</mat-label>
                 <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"></textarea>
               </mat-form-field>
             </div>

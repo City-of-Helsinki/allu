@@ -36,14 +36,14 @@
         <allu-card>
           <div class="row">
             <div class="col m4">
-              <button type="submit" mat-raised-button color="primary">{{'common.button.save' | translation}}</button>
-              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation}}</button>
+              <button type="submit" mat-raised-button color="primary">{{'common.button.save' | translation | uppercase}}</button>
+              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation | uppercase}}</button>
             </div>
             <div class="col m8">
-              <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation}}</button>
+              <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation | uppercase}}</button>
               <button type="button" mat-raised-button color="primary"
                       *ngIf="isRemoveVisible"
-                      (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation}}
+                      (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation | uppercase}}
               </button>
             </div>
           </div>

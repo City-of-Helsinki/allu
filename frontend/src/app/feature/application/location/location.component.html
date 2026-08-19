@@ -72,7 +72,7 @@
                     targetType="Location"
                     [showAddress]="!fixedLocationsSelected"
                     (searchChange)="onSearchChange($event)"
-                    (addressChange)="onAddressChange($event)">Loading searchbar</searchbar>
+                    (addressChange)="onAddressChange($event)">{{'common.loading.searchbar' | translation}}</searchbar>
                 </div>
                 <map *ngIf="displayMap" [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
                      [applicationId]="application.id"
@@ -98,7 +98,7 @@
               </div>
               <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <mat-label>{{'location.cityDistrict' | translation}}</mat-label>
+                  <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
                   <input matInput type="text" formControlName="cityDistrictName"/>
                 </mat-form-field>
               </div>

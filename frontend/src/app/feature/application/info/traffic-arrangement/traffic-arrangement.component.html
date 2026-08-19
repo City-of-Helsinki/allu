@@ -27,14 +27,14 @@
     <div class="col m12">
       <allu-card>
         <mat-card-header>
-          <mat-card-title>Liikennejärjestelyn voimassaolo</mat-card-title>
+          <mat-card-title>{{'application.trafficArrangement.validityTitle' | translation}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
             <div formGroupName="validityTimes" class="col s6">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Voimassaolon aloitus</mat-label>
+                  <mat-label>{{'application.common.startTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime"
                          [matDatepicker]="startTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
@@ -52,7 +52,7 @@
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Voimassaolon lopetus</mat-label>
+                  <mat-label>{{'application.common.endTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime"
                          [matDatepicker]="endTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
@@ -75,7 +75,7 @@
     <div class="col m12">
       <allu-card>
         <mat-card-header>
-          <mat-card-title>Liikennejärjestelyn tiedot</mat-card-title>
+          <mat-card-title>{{'application.trafficArrangement.title' | translation}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="row form-group">

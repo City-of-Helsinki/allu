@@ -6,7 +6,7 @@
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex="0 1 calc(40% - 18px)">
         <mat-form-field *ngIf="!fixedLocationsSelected; else fixedLocations" class="input-full-width">
-          <mat-label>{{'location.postalAddress' | translation}}</mat-label>
+          <mat-label>{{'customer.postalAddress' | translation}}</mat-label>
           <input matInput type="text"
                  [ngModel]="location.postalAddress.streetAddress"
                  [disabled]="readonly"/>
@@ -74,7 +74,7 @@
       </div>
       <div fxFlex="0 1 calc(20% - 18px)">
         <mat-form-field class="input-full-width">
-          <mat-label>{{'location.cityDistrict' | translation}}</mat-label>
+          <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
           <input matInput type="text"
                  [ngModel]="districtName(location.cityDistrictId) | async"
                  [disabled]="readonly"/>

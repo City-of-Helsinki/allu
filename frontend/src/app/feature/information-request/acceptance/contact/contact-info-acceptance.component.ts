@@ -99,8 +99,8 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective impl
       new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
       new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
-      new FieldDescription('email', findTranslation('contact.email')),
-      new FieldDescription('phone', findTranslation('contact.phone'))
+      new FieldDescription('email', findTranslation('emailAddress')),
+      new FieldDescription('phone', findTranslation('phone'))
     ];
   }
 }

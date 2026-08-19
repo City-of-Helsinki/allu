@@ -1,6 +1,6 @@
 <div class="main-content">
   <div class="search-bar">
-    <h1>HAKU</h1>
+    <h1>{{'common.search' | translation | uppercase}}</h1>
     <form [formGroup]="queryForm" (ngSubmit)="search()">
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="30%">
@@ -51,7 +51,7 @@
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="30%">
           <mat-form-field class="input-full-width">
-            <mat-label>{{'applicationSearch.address' | translation}}</mat-label>
+            <mat-label>{{'customer.postalAddress' | translation}}</mat-label>
             <input matInput type="text" formControlName="address"/>
           </mat-form-field>
         </div>
@@ -145,7 +145,7 @@
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.name' | translation}}</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'name' | translation}}</mat-header-cell>
           <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
         </ng-container>
 
@@ -174,7 +174,7 @@
         </ng-container>
 
         <ng-container matColumnDef="locations.address">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'postalAddress.streetAddress' | translation}}</mat-header-cell>
           <mat-cell *matCellDef="let row">{{row.address}}</mat-cell>
         </ng-container>
 

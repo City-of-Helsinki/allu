@@ -40,7 +40,7 @@
       <div class="info-row-item">{{customer.email}}</div>
     </mat-list-item>
     <mat-list-item>
-      <div class="text-highlighted info-row-item">{{'customer.phone' | translation}}</div>
+      <div class="text-highlighted info-row-item">{{'phone' | translation}}</div>
       <div class="info-row-item">{{customer.phone}}</div>
     </mat-list-item>
     <mat-list-item>
@@ -51,9 +51,9 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button type="button" color="primary" (click)="confirm()">
-    {{'common.button.save' | translation}}
+    {{'common.button.save' | translation | uppercase}}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
-    {{'common.button.cancel' | translation}}
+    {{'common.button.cancel' | translation | uppercase}}
   </button>
 </div>

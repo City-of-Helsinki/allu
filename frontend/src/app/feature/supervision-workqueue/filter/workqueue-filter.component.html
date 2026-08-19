@@ -75,7 +75,7 @@
       </div>
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
-          <mat-label>{{'supervisionWorkqueue.filter.cityDistrict' | translation}}</mat-label>
+          <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
           <mat-select formControlName="cityDistrictIds" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
           </mat-select>

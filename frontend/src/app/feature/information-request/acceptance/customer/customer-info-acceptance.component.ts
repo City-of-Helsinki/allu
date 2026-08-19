@@ -125,7 +125,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective imp
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
       new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
       new FieldDescription('email', findTranslation('customer.email')),
-      new FieldDescription('phone', findTranslation('customer.phone')),
+      new FieldDescription('phone', findTranslation('phone')),
       new FieldDescription('country', findTranslation('customer.country')),
       new FieldDescription('sapCustomerNumber', findTranslation('customer.sapCustomerNumber'))
     ];

@@ -4,13 +4,13 @@
       <form [formGroup]="userForm" (ngSubmit)="save()">
         <allu-card>
           <mat-card-header>
-            <mat-card-title>Rajapintakäyttäjän tiedot</mat-card-title>
+            <mat-card-title>{{'externalUser.title' | translation}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <div class="row">
               <div class="col s12">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Käyttäjänimi</mat-label>
+                  <mat-label>{{'user.username' | translation}}</mat-label>
                   <input matInput type="text" formControlName="username" required/>
                   <mat-hint>
                     <field-error [form]="userForm" field="username" hasError="required">{{'common.field.usernameMissing'
@@ -21,7 +21,7 @@
               </div>
               <div class="col s12">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Nimi</mat-label>
+                  <mat-label>{{'name' | translation}}</mat-label>
                   <input matInput type="text" formControlName="name" required/>
                   <mat-hint>
                     <field-error [form]="userForm" field="name" hasError="required">{{'common.field.nameMissing' |
@@ -32,7 +32,7 @@
               </div>
               <div class="col s12">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Sähköpostiosoite</mat-label>
+                  <mat-label>{{'emailAddress' | translation}}</mat-label>
                   <input matInput type="text" formControlName="emailAddress"/>
                   <mat-hint>
                     <field-error [form]="userForm" field="emailAddress" hasError="email">
@@ -42,11 +42,11 @@
                 </mat-form-field>
               </div>
               <div class="col s12">
-                <mat-checkbox formControlName="active" class="checkbox-matching-height">Aktiivinen</mat-checkbox>
+                <mat-checkbox formControlName="active" class="checkbox-matching-height">{{'user.active' | translation}}</mat-checkbox>
               </div>
               <div class="col s12">
                 <mat-form-field class="input-full-width customer-name-search">
-                  <mat-label>Lisää asiakas</mat-label>
+                  <mat-label>{{'externalUser.addCustomer' | translation}}</mat-label>
                   <input matInput type="text"
                          formControlName="customerName" [matAutocomplete]="nameSearch"/>
                   <mat-autocomplete #nameSearch="matAutocomplete">
@@ -71,7 +71,7 @@
             <div class="row">
               <div class="col s12">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Roolit</mat-label>
+                  <mat-label>{{'user.roles' | translation}}</mat-label>
                   <mat-select formControlName="assignedRoles" [multiple]="true"
                               class="input-full-width">
                     <mat-option *ngFor="let role of roles" [value]="role">
@@ -82,7 +82,7 @@
               </div>
               <div class="col s12">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Voimassaolo päättyy</mat-label>
+                  <mat-label>{{'externalUser.field.expirationTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="expirationTime"
                          [matDatepicker]="expirationTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="expirationTimePicker"></mat-datepicker-toggle>
@@ -96,7 +96,7 @@
               </div>
               <div class="col s12">
                 <mat-form-field class="input-full-width">
-                  <mat-label>Salasana</mat-label>
+                  <mat-label>{{'common.password' | translation}}</mat-label>
                   <input matInput type="password" formControlName="password"/>
                 </mat-form-field>
               </div>
@@ -104,7 +104,7 @@
             <div class="row">
               <div class="col m12">
                 <button mat-raised-button color="primary" type="submit" [disabled]="submitted">
-                  Tallenna
+                  {{'common.button.save' | translation}}
                 </button>
               </div>
             </div>

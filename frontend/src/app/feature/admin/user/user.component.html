@@ -17,7 +17,7 @@
               </div>
               <div fxFlex="calc(60% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <mat-label>{{'user.name' | translation}}</mat-label>
+                  <mat-label>{{'name' | translation}}</mat-label>
                   <input matInput type="text" formControlName="realName"
                          required/>
                 </mat-form-field>
@@ -32,7 +32,7 @@
               </div>
               <div fxFlex="calc(30% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <mat-label>{{'user.email' | translation}}</mat-label>
+                  <mat-label>{{'emailAddress' | translation}}</mat-label>
                   <input matInput type="text" formControlName="emailAddress"/>
                   <mat-error *ngIf="userForm.get('emailAddress').hasError('email')">
                     {{'common.field.emailInvalid' | translation}}
@@ -94,7 +94,7 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <button mat-raised-button color="primary" type="submit" [disabled]="submitted">
-                  {{'common.button.save' | translation}}
+                  {{'common.button.save' | translation | uppercase}}
                 </button>
               </div>
             </div>

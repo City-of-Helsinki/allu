@@ -72,7 +72,7 @@ export class DateReportingModalComponent implements OnInit {
       this.reportedDateTranslationKey = 'dateReporting.dateField.reportedStartDate';
       this.reportedEndDateTranslationKey = 'dateReporting.dateField.reportedEndDate';
     } else {
-      this.reportedDateTranslationKey = 'dateReporting.dateField.reportedDate';
+      this.reportedDateTranslationKey = 'common.day';
     }
   }
 }
