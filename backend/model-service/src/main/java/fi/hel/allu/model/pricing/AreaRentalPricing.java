@@ -168,15 +168,29 @@ public class AreaRentalPricing extends Pricing {
   }
 
   /**
+   * Returns the end date used for determining the handling fee. When the work has been
+   * finished before the application's original end date (reported via the final supervision
+   * approval), the work finished date is used instead of the application end time.
+   *
+   * @return the work finished date if set, otherwise the application end time.
+   */
+  private ZonedDateTime getHandlingFeeEndTime() {
+    AreaRental areaRental = (AreaRental) application.getExtension();
+    return areaRental.getWorkFinished() != null ? areaRental.getWorkFinished() : application.getEndTime();
+  }
+
+  /**
    * Calculates the total duration of the rental period for the current application in days.
    * The duration includes both the start and end dates, adding one day to ensure inclusivity.
+   * When the work has been finished before the application's original end date, the duration
+   * is calculated from the start date to the work finished date.
    *
    * @return the duration of the rental period in days, inclusive of both start and end dates.
    */
   private long getDurationInDays() {
     return ChronoUnit.DAYS.between(
       application.getStartTime().toLocalDate(),
-      application.getEndTime().toLocalDate()
+      getHandlingFeeEndTime().toLocalDate()
     ) + 1;
   }
 
@@ -185,6 +199,8 @@ public class AreaRentalPricing extends Pricing {
    *
    * The method calculates a date that is six months after the start time of the application.
    * It then checks if the end time of the application is on or after that calculated date.
+   * When the work has been finished before the application's original end date, the end time
+   * is the work finished date.
    *
    * @return {@code true} if the rental period of the application is at least six months,
    *         {@code false} otherwise.
@@ -192,7 +208,7 @@ public class AreaRentalPricing extends Pricing {
   private boolean isAtLeastSixMonths() {
     ZonedDateTime start = application.getStartTime();
     ZonedDateTime sixMonthsLater = start.plusMonths(6);
-    return !application.getEndTime().isBefore(sixMonthsLater);
+    return !getHandlingFeeEndTime().isBefore(sixMonthsLater);
   }
 
   /**
