@@ -10,8 +10,8 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <mat-select class="input-full-width" formControlName="customerType" required
-                              [placeholder]="'project.info.ownerType' | translation">
+                  <mat-label>{{'project.info.ownerType' | translation}}</mat-label>
+                  <mat-select class="input-full-width" formControlName="customerType" required>
                     <mat-option *ngFor="let type of customerTypes" [value]="type">
                       {{['customer.type', type, 'name'] | translation}}
                     </mat-option>
@@ -23,9 +23,9 @@
               </div>
               <div fxFlex="calc(75% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'project.info.ownerName' | translation}}</mat-label>
                   <input matInput type="text" formControlName="customer" required
-                         [matAutocomplete]="customerSearch"
-                         [placeholder]="'project.info.ownerName' | translation"/>
+                         [matAutocomplete]="customerSearch"/>
 
                   <mat-autocomplete #customerSearch="matAutocomplete"
                                     class="multi-line-option"
@@ -49,9 +49,9 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'project.info.contactName' | translation}}</mat-label>
                   <input matInput type="text" formControlName="contact" required
-                         [matAutocomplete]="contactSearch"
-                         [placeholder]="'project.info.contactName' | translation"/>
+                         [matAutocomplete]="contactSearch"/>
 
                   <mat-autocomplete #contactSearch="matAutocomplete"
                                     [displayWith]="contactName"
@@ -69,22 +69,22 @@
               </div>
               <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="contactPhone"
-                         [placeholder]="'project.info.contactPhone' | translation"/>
+                  <mat-label>{{'phone' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="contactPhone"/>
                 </mat-form-field>
               </div>
               <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="contactEmail"
-                         [placeholder]="'project.info.contactEmail' | translation"/>
+                  <mat-label>{{'emailAddress' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="contactEmail"/>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="identifier" required
-                         [placeholder]="'project.info.identifier' | translation"/>
+                  <mat-label>{{'project.info.identifier' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="identifier" required/>
                   <mat-error *ngIf="form.get('identifier').hasError('required')">
                     {{'project.field.identifierMissing' | translation}}
                   </mat-error>
@@ -92,22 +92,22 @@
               </div>
               <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="name"
-                         [placeholder]="'project.info.name' | translation"/>
+                  <mat-label>{{'project.info.name' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="name"/>
                 </mat-form-field>
               </div>
               <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="customerReference"
-                         [placeholder]="'project.info.customerReference' | translation"/>
+                  <mat-label>{{'project.info.customerReference' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="customerReference"/>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"
-                            [placeholder]="'project.info.additionalInfo' | translation"></textarea>
+                  <mat-label>{{'project.info.additionalInfo' | translation}}</mat-label>
+                  <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"></textarea>
                 </mat-form-field>
               </div>
             </div>

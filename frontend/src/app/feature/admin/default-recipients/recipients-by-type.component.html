@@ -31,7 +31,7 @@
           <td>
             <div *ngIf="row.disabled" class="left-align">{{row.value.email}}</div>
             <input-box *ngIf="row.enabled">
-              <input inputBoxInput type="text" formControlName="email" placeholder="Sähköposti*"/>
+              <input inputBoxInput type="text" formControlName="email" [placeholder]="'decision.distribution.recipientEmail' | translation"/>
               <field-error [form]="recipientRows.controls[i]" field="email" hasError="email">
                 {{'common.field.emailInvalid' | translation}}
               </field-error>

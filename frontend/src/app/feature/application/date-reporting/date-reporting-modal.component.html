@@ -8,8 +8,8 @@
         <div fxLayout="row wrap" fxLayoutGap="18px">
           <div fxFlex="calc(50% - 18px)">
             <mat-form-field class="input-full-width">
+              <mat-label>{{['dateReporting.dateField', data.dateType] | translation}}</mat-label>
               <input matInput type="text" formControlName="reportedDate" required
-                     [placeholder]="['dateReporting.dateField', data.dateType] | translation"
                      [matDatepicker]="reportedDatePicker"
                      [max]="maxReportedDate"/>
               <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"></mat-datepicker-toggle>
@@ -22,8 +22,8 @@
           </div>
           <div fxFlex="calc(50% - 18px)" *ngIf="data.dateType==='validity'">
             <mat-form-field class="input-full-width">
+              <mat-label>{{'dateReporting.dateField.reportedEndDate' | translation}}</mat-label>
               <input matInput type="text" formControlName="reportedEndDate"
-                     [placeholder]="'dateReporting.dateField.reportedEndDate' | translation"
                      [matDatepicker]="reportedEndDatePicker"
                      [min]="minReportedEndDate"/>
               <mat-datepicker-toggle matSuffix [for]="reportedEndDatePicker"></mat-datepicker-toggle>
@@ -36,8 +36,8 @@
           </div>
           <div fxFlex="0 1 calc(50% - 18px)">
             <mat-form-field class="input-full-width">
+              <mat-label>{{'dateReporting.dateField.reportingDate' | translation}}</mat-label>
               <input matInput type="text" formControlName="reportingDate" required
-                     [placeholder]="'dateReporting.dateField.reportingDate' | translation"
                      [matDatepicker]="reportingDatePicker"/>
               <mat-datepicker-toggle matSuffix [for]="reportingDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #reportingDatePicker></mat-datepicker>
@@ -54,9 +54,9 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button type="button" color="primary" (click)="save()" [disabled]="!form.valid">
-    {{'common.button.save' | translation}}
+    {{'common.button.save' | translation | uppercase}}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
-    {{'common.button.cancel' | translation}}
+    {{'common.button.cancel' | translation | uppercase}}
   </button>
 </div>

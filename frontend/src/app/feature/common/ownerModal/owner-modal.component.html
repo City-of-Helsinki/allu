@@ -2,8 +2,8 @@
 <div mat-dialog-content>
   <div class="col s2">
     <mat-form-field class="input-full-width">
-      <mat-select [(ngModel)]="selectedUser" class="input-full-width"
-                  [placeholder]="['ownerModal', type, 'selectedUser'] | translation">
+      <mat-label>{{['ownerModal', type, 'selectedUser'] | translation}}</mat-label>
+      <mat-select [(ngModel)]="selectedUser" class="input-full-width">
         <mat-option value="">{{['ownerModal', type, 'noSelectedUser'] | translation}}</mat-option>
         <mat-option *ngFor="let user of allUsers" [value]="user">{{user.realName}}</mat-option>
       </mat-select>
@@ -12,9 +12,9 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button type="button" color="primary" (click)="confirm()">
-    {{'common.button.ok' | translation}}
+    {{'common.button.ok' | translation | uppercase}}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
-    {{'common.button.cancel' | translation}}
+    {{'common.button.cancel' | translation | uppercase}}
   </button>
 </div>

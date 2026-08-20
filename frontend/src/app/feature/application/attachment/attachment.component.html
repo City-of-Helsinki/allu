@@ -18,8 +18,8 @@
       <div fxLayout="row">
         <div fxFlex="50">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="type" class="input-full-width" required
-                        [placeholder]="'attachment.type.title' | translation">
+            <mat-label>{{'attachment.type.title' | translation}}</mat-label>
+            <mat-select formControlName="type" class="input-full-width" required>
               <mat-option *ngFor="let type of attachmentTypes" [value]="type">{{['attachment.type', type] |
                 translation}}
               </mat-option>
@@ -30,8 +30,9 @@
       <div fxLayout="row">
         <div fxFlex="50">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'attachment.select' | translation}}</mat-label>
             <input matInput type="text" (click)="realFileInput.click()" required
-                   formControlName="name" [placeholder]="'attachment.select' | translation">
+                   formControlName="name">
             <mat-hint *ngIf="!validForDecision">
               {{'attachment.onlyPdfForDecision' | translation}}
             </mat-hint>
@@ -53,18 +54,18 @@
       <div fxLayout="row">
         <div fxFlex>
           <mat-form-field class="input-full-width">
-            <textarea matInput cdkTextareaAutosize formControlName="description"
-                      [placeholder]="'attachment.description' | translation"></textarea>
+            <mat-label>{{'attachment.description' | translation}}</mat-label>
+            <textarea matInput cdkTextareaAutosize formControlName="description"></textarea>
           </mat-form-field>
         </div>
       </div>
       <div fxLayout="row wrap" fxLayoutGap="18px">
         <div fxFlex>
           <button mat-raised-button type="submit" color="primary" [disabled]="!attachmentForm.valid">
-            {{'common.button.save' | translation}}
+            {{'common.button.save' | translation | uppercase}}
           </button>
           <button mat-raised-button type="button" color="primary" (click)="cancel()">
-            {{'common.button.cancel' | translation}}
+            {{'common.button.cancel' | translation | uppercase}}
           </button>
         </div>
       </div>

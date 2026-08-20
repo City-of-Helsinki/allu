@@ -7,9 +7,9 @@
       <div fxLayout="row" fxLayoutGap="18px" class="form-group">
         <div fxFlex="0 1 calc(25% - 18px)">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'application.cableReport.cableInfo.selectInfoType' | translation}}</mat-label>
             <mat-select formControlName="selectedCableInfoTypes"
                         [multiple]="true" required
-                        [placeholder]="'application.cableReport.cableInfo.selectInfoType' | translation"
                         class="input-full-width">
               <mat-option *ngFor="let type of cableInfoTypes" value="{{type}}">{{['defaultText.type', type] |
                 translation}}
@@ -19,8 +19,8 @@
         </div>
         <div fxFlex="0 1 calc(15% - 18px)">
           <mat-form-field class="input-full-width">
-            <input matInput type="number" formControlName="mapExtractCount"
-                   [placeholder]="'application.cableReport.cableInfo.mapExtractCount' | translation"/>
+            <mat-label>{{'application.cableReport.cableInfo.mapExtractCount' | translation}}</mat-label>
+            <input matInput type="number" formControlName="mapExtractCount"/>
           </mat-form-field>
         </div>
       </div>
@@ -32,8 +32,8 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div *ngIf="!readonly" fxFlex="0 1 calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'defaultText.placeholder' | translation}}</mat-label>
                   <mat-select class="input-full-width"
-                              [placeholder]="'defaultText.placeholder' | translation"
                               (selectionChange)="addDefaultText(index, $event.value)">
                     <mat-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]" [value]="defaultText.text">
                       {{defaultText.text}}
@@ -51,9 +51,9 @@
             <div fxLayout="row">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.cableReport.cableInfo.additionalInfo' | translation}}</mat-label>
                   <textarea matInput cdkTextareaAutosize
-                            formControlName="additionalInfo"
-                            [placeholder]="'application.cableReport.cableInfo.additionalInfo' | translation"></textarea>
+                            formControlName="additionalInfo"></textarea>
                 </mat-form-field>
               </div>
             </div>

@@ -141,7 +141,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
 
     patchValueAndInit(validTask);
-    const saveBtn = getButtonWithText(de, findTranslation('common.button.save'));
+    const saveBtn = getButtonWithText(de, findTranslation('common.button.save').toUpperCase());
     saveBtn.click();
     detectAndTick();
     const expectedTask = SupervisionTaskForm.to(comp.form.value);
@@ -153,7 +153,7 @@ describe('SupervisionTaskComponent', () => {
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({id: 1, creatorId: handler.id});
 
-    const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
+    const editBtn = getButtonWithText(de, findTranslation('common.button.edit').toUpperCase());
     expect(comp.editing).toEqual(false, 'Form was enabled');
     expect(editBtn).toBeDefined('No edit button');
     editBtn.click();
@@ -166,13 +166,13 @@ describe('SupervisionTaskComponent', () => {
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({id: 1, creatorId: handler.id});
 
-    const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
+    const editBtn = getButtonWithText(de, findTranslation('common.button.edit').toUpperCase());
     editBtn.click();
     detectAndTick();
     const valueBeforeReset = comp.form.getRawValue();
     comp.form.patchValue(validTask);
     detectAndTick();
-    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel'));
+    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
     cancelBtn.click();
     detectAndTick();
     expect(comp.form.getRawValue()).toEqual(valueBeforeReset, 'Form was not reset correctly');
@@ -183,7 +183,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(onRemove, 'emit');
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
     patchValueAndInit({id: undefined, status: SupervisionTaskStatusType.OPEN});
-    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel'));
+    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
     cancelBtn.click();
     detectAndTick();
     expect(onRemove.emit).toHaveBeenCalled();
@@ -195,7 +195,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType.OPEN});
-    const removeBtn = getButtonWithText(de, findTranslation('common.button.remove'));
+    const removeBtn = getButtonWithText(de, findTranslation('common.button.remove').toUpperCase());
     removeBtn.click();
     detectAndTick();
 
@@ -226,7 +226,7 @@ describe('SupervisionTaskComponent', () => {
   it('should allow admin to remove other users task', fakeAsync(() => {
     spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(admin));
     patchValueAndInit({id: 1, creatorId: handler.id, status: SupervisionTaskStatusType.OPEN});
-    const removeButton = getButtonWithText(de, findTranslation('common.button.remove'));
+    const removeButton = getButtonWithText(de, findTranslation('common.button.remove').toUpperCase());
     expect(removeButton).toBeTruthy('No remove button found for admin');
   }));
 

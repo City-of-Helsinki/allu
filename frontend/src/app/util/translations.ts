@@ -6,6 +6,10 @@ export const translations = {
     infoText: 'Kirjauduit ulos Allu-järjestelmästä. ' +
     'Mikäli haluat varmistaa uloskirjautumisen myös Helsingin kaupungin AD-tunnistuksesta, tyhjennä selaimen välimuisti.'
   },
+  login: {
+    title: 'Kirjaudu',
+    submit: 'Lähetä'
+  },
   nav: {
     map: 'Kartta',
     workqueue: 'Työjono',
@@ -15,16 +19,17 @@ export const translations = {
     customers: 'Asiakkaat',
     admin: 'Ylläpito'
   },
+  applicationList: {
+    showMore: 'Näytä lisää'
+  },
   application: {
     newApplication: 'Uusi hakemus',
     draft: 'Alustava varaus',
     owner: 'Omistaja',
     handler: 'Käsittelijä',
-    name: 'Nimi',
     applicationId: 'Tunnus',
     applicant: 'Hakija',
     contact: 'Yhteyshenkilö',
-    streetAddress: 'Katuosoite',
     cityDistrict: 'Kaupunginosa',
     creationTime: 'Saapunut',
     startTime: 'Aloitus',
@@ -292,6 +297,7 @@ export const translations = {
       }
     },
     publicityType: {
+      title: 'Julkisuus',
       PUBLIC: 'Julkinen',
       NON_PUBLIC: 'Ei-julkinen',
       CONFIDENTIAL_PARTIALLY: 'Osittain salassa pidettävä',
@@ -420,6 +426,7 @@ export const translations = {
       title: 'Johtoselvityksen tiedot',
       cableInfo: {
         title: 'Johtotiedot',
+        validityTime: 'Voimassaolo',
         selectInfoType: 'Valitse tyyppi',
         mapExtractCount: 'Karttaotteiden määrä',
         additionalInfo: 'Lisätietoja'
@@ -463,13 +470,20 @@ export const translations = {
       }
     },
     note: {
+      title: 'Muistiinpanon tiedot',
       field: {
+        validityStartTime: 'Alkupäivämäärä',
+        validityEndTime: 'Loppupäivämäärä',
+        name: 'Muistiinpanon nimi',
+        description: 'Kuvaus',
         validityStartTimeMissing: 'Alkupäivämäärä puuttuu',
         validityEndTimeMissing: 'Loppupäivämäärä puuttuu',
         validityDurationAtMax: 'Vuosittain toistuvan muistiinpanon keston täytyy olla alle vuosi'
       }
     },
     trafficArrangement: {
+      title: 'Liikennejärjestelyn tiedot',
+      validityTitle: 'Liikennejärjestelyn voimassaolo',
       workPurpose: 'Työn tarkoitus',
       field: {
         validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
@@ -478,11 +492,14 @@ export const translations = {
       }
     },
     placementContract: {
+      title: 'Sijoitussopimuksen tiedot',
       contractText: 'Sopimusteksti',
       propertyIdentificationNumber: 'Kiinteistötunnus',
       terminationDate: 'Irtisanomispäivä'
     },
     areaRental: {
+      title: 'Aluevuokrauksen tiedot',
+      validityTitle: 'Aluevuokrauksen voimassaolo',
       workFinished: 'Työ valmis',
       customerWorkFinished: 'Työ valmis (Asiakkaan ilmoittama)',
       majorDisturbance: 'Vähäistä suurempaa haittaa aiheuttava työ',
@@ -564,7 +581,6 @@ export const translations = {
     type: 'Hakemuksen tyyppi',
     status: 'Hakemuksen tila',
     owner: 'Hakemuksen omistaja',
-    address: 'Osoite',
     startTime: 'Alkupäivä',
     endTime: 'Loppupäivä',
     receivedTime: 'Saapunut',
@@ -580,7 +596,6 @@ export const translations = {
     endTime: 'Arvioitu päättyminen',
     name: 'Hakemuksen nimi',
     location: 'Sijainti',
-    cityDistrict: 'Kaupunginosa',
     handler: 'Käsittelijä'
   },
   dateReporting: {
@@ -600,7 +615,6 @@ export const translations = {
       workFinished: 'Työ valmis'
     },
     dateField: {
-      reportedDate: 'Päivä',
       winterTimeOperation: 'Toiminnallinen kunto',
       workFinished: 'Työ valmis',
       validity: 'Voimassaolon aloitus',
@@ -668,7 +682,6 @@ export const translations = {
       readonlyTitle: 'Ehdotetut tietopäivitykset',
       noChange: 'Älä vaihda',
       change: 'Vaihda',
-      close: 'Sulje',
       existingInfo: 'Nykyiset tiedot',
       providedInfo: 'Tarjotut tiedot',
       showRequestedInfo: 'Näytä pyydetyt tiedot',
@@ -759,8 +772,6 @@ export const translations = {
       ownerType: 'Omistajan tyyppi',
       ownerName: 'Hankkeen omistaja',
       contactName: 'Yhteyshenkilön nimi',
-      contactPhone: 'Puhelin',
-      contactEmail: 'Sähköpostiosoite',
       contactInfo: 'Yhteystiedot',
       cityDistricts: 'Kaupunginosa(t)',
       email: 'Sähköposti',
@@ -837,7 +848,6 @@ export const translations = {
     nameLabel: 'Nimi',
     registryKey: 'Tunniste',
     email: 'Sähköposti',
-    phone: 'Puhelin',
     postalAddress: 'Osoite',
     addNew: 'Lisää uusi asiakas',
     invoiceRecipient: 'Laskun saaja',
@@ -851,7 +861,6 @@ export const translations = {
     country: 'Maa',
     type: {
       pick: 'Valitse tyyppi',
-      title: 'Tyyppi',
       COMPANY: {
         name: 'Yritys',
         nameLabel: 'Yrityksen nimi',
@@ -911,12 +920,10 @@ export const translations = {
     },
     field: {
       typeMissing: 'Tyyppi puuttuu',
-      nameMissing: 'Nimi puuttuu',
       nameShort: 'Nimi on liian lyhyt',
       registryKeyShort: 'Tunniste on liian lyhyt',
       ovtShort: 'OVT-tunnus liian lyhyt',
       ovtLong: 'OVT-tunnus liian pitkä',
-      emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt',
       invalidSsn: 'Virheellinen henkilötunnus',
       countryMissing: 'Maa puuttuu'
@@ -955,8 +962,9 @@ export const translations = {
   contact: {
     title: 'Yhteyshenkilö',
     name: 'Yhteyshenkilön nimi',
-    phone: 'Puhelin',
-    email: 'Sähköpostiosoite',
+    postalAddress: {
+      postalOffice: 'Toimipaikka'
+    },
     orderer: 'Tilaaja',
     noContact: 'Ei yhteyshenkilöä',
     role: {
@@ -974,9 +982,7 @@ export const translations = {
       }
     },
     field: {
-      nameMissing: 'Nimi puuttuu',
       nameShort: 'Nimi on liian lyhyt',
-      emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt'
     },
     error: {
@@ -1109,6 +1115,9 @@ export const translations = {
     },
     distribution: {
       title: 'Päätöksen jakelu',
+      recipientName: 'Nimi*',
+      recipientEmail: 'Sähköposti*',
+      recipientStreetAddress: 'Katuosoite*',
       type: {
         EMAIL: 'Sähköposti',
         PAPER: 'Paperi'
@@ -1193,9 +1202,7 @@ export const translations = {
     userInfo: 'Käyttäjän tiedot',
     addNew: 'Lisää uusi käyttäjä',
     username: 'Käyttäjänimi',
-    name: 'Nimi',
     title: 'Tehtävänimike',
-    email: 'Sähköpostiosoite',
     phone: 'Puhelinnumero',
     active: 'Aktiivinen',
     lastLogin: 'Viimeisin kirjautuminen',
@@ -1207,17 +1214,17 @@ export const translations = {
     }
   },
   externalUser: {
-    username: 'Käyttäjänimi',
-    name: 'Nimi',
+    title: 'Rajapintakäyttäjän tiedot',
+    addNew: 'Lisää uusi rajapintakäyttäjä',
     email: 'Sähköposti',
-    lastLogin: 'Viimeisin kirjautuminen',
-    roles: 'Roolit',
     expirationTime: 'Voimassa',
+    addCustomer: 'Lisää asiakas',
     role: {
       ROLE_INTERNAL: 'Sisäinen',
       ROLE_TRUSTED_PARTNER: 'Luotettu kumppani'
     },
     field: {
+      expirationTime: 'Voimassaolo päättyy',
       expirationTimeMissing: 'Voimassaoloaika puuttuu'
     },
     actions: {
@@ -1254,6 +1261,7 @@ export const translations = {
   },
   defaultText: {
     placeholder: 'Vakiotekstit',
+    name: 'Vakioteksti',
     actions: {
       saved: 'Vakiotekstit tallennettu'
     },
@@ -1287,14 +1295,12 @@ export const translations = {
     identifier: 'Tunniste',
     startTime: 'Aloitus',
     endTime: 'Lopetus',
-    postalAddress: 'Osoite',
     additionalInfo: 'Lisätietoja paikasta',
     fixedArea: 'Alue',
     sections: 'Lohkot',
     fixedLocations: 'Kiinteät sijainnit',
     area: 'Alueen pinta-ala',
     areaOverride: 'Käsittelijän syöttämä pinta-ala',
-    cityDistrict: 'Kaupunginosa',
     cityDistrictOverride: 'Käsittelijän valitsema kaupunginosa',
     underpass: 'Altakuljettava',
     paymentTariff: 'Maksuluokka',
@@ -1338,6 +1344,14 @@ export const translations = {
     filter: 'Suodata',
     freeTextSearch: 'Vapaa tekstihaku',
     search: 'Haku',
+    day: 'Päivä',
+    month: 'Kuukausi',
+    password: 'Salasana',
+    loading: {
+      text: 'Ladataan...',
+      map: 'Ladataan karttaa',
+      searchbar: 'Ladataan hakua'
+    },
     select: 'Valitse',
     selectAll: 'Valitse kaikki',
     saving: 'Tallennus',
@@ -1363,11 +1377,12 @@ export const translations = {
       logout: 'Kirjaudu ulos',
     },
     button: {
-      ok: 'HYVÄKSY',
-      save: 'TALLENNA',
-      cancel: 'PERUUTA',
-      remove: 'POISTA',
-      edit: 'MUOKKAA',
+      ok: 'Hyväksy',
+      save: 'Tallenna',
+      cancel: 'Peruuta',
+      remove: 'Poista',
+      edit: 'Muokkaa',
+      new: 'Uusi',
       home: 'Kartalle',
       add: 'Lisää',
       addAll: 'Lisää kaikki',
@@ -1580,6 +1595,8 @@ export const translations = {
   attachments: 'Liitteet',
   attachment: {
     title: 'Liite',
+    fixedArea: 'Alue',
+    fixedAreas: 'Alueet',
     addNew: 'Lisää liite',
     select: 'Valitse liite',
     description: 'Liitteen kuvaus',
@@ -1641,7 +1658,7 @@ export const translations = {
       EXTERNAL_SYSTEM: 'Ulkoinen järjestelmä',
       TO_EXTERNAL_SYSTEM: 'Ulkoiselle järjestelmälle'
     },
-    addComment: 'LISÄÄ KOMMENTTI',
+    addComment: 'Lisää kommentti',
     newComment: 'Uusi kommentti',
     commentType: 'Kommentin tyyppi',
     myComment: 'Oma kommenttini on...',
@@ -1663,14 +1680,14 @@ export const translations = {
   },
   supervision: {
     title: 'Valvonnan tehtävät',
-    addTask: 'LISÄÄ VALVONTAPYYNTÖ',
+    addTask: 'Lisää valvontapyyntö',
     task: {
       newTask: 'Uusi valvonnan tehtävä',
       description: 'Tehtävän kuvaus',
       result: 'Valvojan merkinnät',
       createdBy: 'Luonut',
-      approve: 'HYVÄKSY',
-      reject: 'HYLKÄÄ',
+      approve: 'Hyväksy',
+      reject: 'Hylkää',
       newSupervisionDate: 'Uusi valvonta-aika',
       needsInvoicingChanges: 'Lisää ylimääräisiä maksuja ',
       toInvoicing:  'laskutuksen kautta.',
@@ -1733,7 +1750,6 @@ export const translations = {
       applicationId: 'Hakemustunnus',
       applicationStatus: 'Hakemuksen tila',
       applicationType: 'Hakemustyyppi',
-      cityDistrict: 'Kaupunginosa',
       after: 'Jälkeen',
       before: 'Ennen'
     },
@@ -1744,7 +1760,6 @@ export const translations = {
       owner: 'Valvoja',
       creator: 'Valvontapyynnön jättäjä',
       plannedFinishingTime: 'Ajankohta',
-      address: 'Osoite',
       project: 'Hanke'
     }
   },
@@ -1833,8 +1848,8 @@ export const translations = {
     confirmSave: {
       title: 'Tallennetaanko muutokset',
       description: 'Sinulla on tallentamattomia muutoksia. Haluatko tallentaa ne?',
-      confirmText: 'Tallenna',
-      cancelText: 'Hylkää'
+      cancelText: 'Hylkää',
+      confirmText: 'Tallenna'
     },
     confirmDiscard: {
       title: 'Hylätäänkö muutokset',
@@ -2092,8 +2107,8 @@ export const translations = {
     }
   },
   customers: {
-    newContact: 'UUSI YHTEYSHENKILÖ',
-    removeFromRegistry: 'POISTA REKISTERISTÄ',
+    newContact: 'Uusi yhteyshenkilö',
+    removeFromRegistry: 'Poista rekisteristä',
     notifications: {
       contactRemoved: 'Yhteyshenkilö poistettu',
       contactRemoveFailed: 'Yhteyshenkilön poistaminen epäonnistui'
@@ -2149,6 +2164,12 @@ export const translations = {
     }
   },
   prunedata: {
+    removeSelected: 'Poista valitut',
+    nameHidden: '(Nimi piilotettu)',
+    noCustomers: 'Ei asiakkaita',
+    noApplications: 'Ei hakemuksia',
+    anonymizing: 'Tietoja anonymisoidaan',
+    selectPage: 'Valitse sivu',
     tab: {
       AREA_RENTAL: 'Aluevuokraukset',
       CABLE_REPORT: 'Johtoselvitykset',

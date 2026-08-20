@@ -2,9 +2,9 @@
   <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
+        <mat-label>{{'customer.type.pick' | translation}}</mat-label>
         <mat-select class="input-full-width" formControlName="type"
-                    (selectionChange)="resetFormIfExisting()" required
-                    [placeholder]="'customer.type.pick' | translation">
+                    (selectionChange)="resetFormIfExisting()" required>
           <mat-option *ngFor="let type of customerTypes" [value]="type">
             {{['customer.type', type, 'name'] | translation}}
           </mat-option>
@@ -20,9 +20,9 @@
       <div fxLayout="row" class="inner-row" fxLayoutGap="18px">
         <div fxFlex="0 1 calc(25% - 18px)">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'customer.country' | translation}}</mat-label>
             <mat-select class="input-full-width"
-                        formControlName="country" required
-                        [placeholder]="'customer.country' | translation">
+                        formControlName="country" required>
               <mat-option *ngFor="let country of countries | async" [value]="country.code">
                 {{country.description}}
               </mat-option>
@@ -34,9 +34,9 @@
         </div>
         <div fxFlex="calc(50% - 18px)" *ngIf="showInvoicingInfo && existingCustomer">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'customer.sapCustomerNumber' | translation}}</mat-label>
             <input matInput type="text"
-                   formControlName="sapCustomerNumber"
-                   [placeholder]="'customer.sapCustomerNumber' | translation"/>
+                   formControlName="sapCustomerNumber"/>
           </mat-form-field>
         </div>
       </div>
@@ -47,8 +47,8 @@
   <div fxLayout="row wrap" fxLayoutGap="18px" *ngIf="form.value.type==='PERSON'; else notPerson">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
+        <mat-label>{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}</mat-label>
         <input matInput type="text" formControlName="name" required
-               [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation"
                [matAutocomplete]="nameSearch" (keyup)="onKeyup($event)"/>
         <mat-autocomplete #nameSearch="matAutocomplete" class="multi-line-option">
           <mat-option *ngFor="let customer of matchingNameCustomers | async"
@@ -62,7 +62,7 @@
 
         <mat-hint>
           <field-error [form]="form" field="name" hasError="required">
-            {{'customer.field.nameMissing' | translation}}
+            {{'common.field.nameMissing' | translation}}
           </field-error>
           <field-error [form]="form" field="name" hasError="minlength">
             {{'customer.field.nameShort' | translation}}
@@ -72,8 +72,8 @@
     </div>
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
+        <mat-label>{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}</mat-label>
         <input matInput type="text" formControlName="registryKey"
-               placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}"
                [matAutocomplete]="registryKeySearch"/>
 
         <mat-autocomplete #registryKeySearch="matAutocomplete" class="multi-line-option">
@@ -103,8 +103,8 @@
     <div fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
+          <mat-label>{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}</mat-label>
           <input matInput type="text" formControlName="name" required
-                 [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation"
                  [matAutocomplete]="nameSearch" (keyup)="onKeyup($event)"/>
           <mat-autocomplete #nameSearch="matAutocomplete" class="multi-line-option">
             <mat-option *ngFor="let customer of matchingNameCustomers | async"
@@ -118,7 +118,7 @@
 
           <mat-hint>
             <field-error [form]="form" field="name" hasError="required">
-              {{'customer.field.nameMissing' | translation}}
+              {{'common.field.nameMissing' | translation}}
             </field-error>
             <field-error [form]="form" field="name" hasError="minlength">
               {{'customer.field.nameShort' | translation}}
@@ -130,8 +130,8 @@
     <div fxLayout="row wrap" fxLayoutGap="18px">
       <div fxFlex="calc(50% - 18px)">
         <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
+          <mat-label>{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}</mat-label>
           <input matInput type="text" formControlName="registryKey"
-                 [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'id'] | translation"
                  [matAutocomplete]="registryKeySearch"/>
 
           <mat-autocomplete #registryKeySearch="matAutocomplete" class="multi-line-option">
@@ -158,8 +158,8 @@
         <div fxLayout="row" class="inner-row" fxLayoutGap="18px">
           <div fxFlex="calc(50% - 18px)">
             <mat-form-field class="input-full-width">
-              <input matInput type="text" formControlName="ovt"
-                     [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation"/>
+              <mat-label>{{['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation}}</mat-label>
+              <input matInput type="text" formControlName="ovt"/>
 
               <mat-hint>
                 <field-error [form]="form" field="ovt" hasError="minlength">{{'customer.field.ovtShort' | translation}}
@@ -171,8 +171,8 @@
           </div>
           <div fxFlex="calc(50% - 18px)">
             <mat-form-field class="input-full-width">
-              <input matInput type="text" formControlName="invoicingOperator"
-                     [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'invoicingOperator'] | translation"/>
+              <mat-label>{{['customer.type', form.value.type || 'DEFAULT', 'invoicingOperator'] | translation}}</mat-label>
+              <input matInput type="text" formControlName="invoicingOperator"/>
             </mat-form-field>
           </div>
         </div>
@@ -183,18 +183,18 @@
   <div fxLayout="row wrap" fxLayoutGap="18px" formGroupName="postalAddress">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
+        <mat-label>{{'postalAddress.streetAddress' | translation}}</mat-label>
         <input matInput type="text"
-               formControlName="streetAddress"
-               [placeholder]="'postalAddress.streetAddress' | translation"/>
+               formControlName="streetAddress"/>
       </mat-form-field>
     </div>
     <div fxFlex="calc(50% - 18px)">
       <div fxLayout="row" class="inner-row" fxLayoutGap="18px">
         <div fxFlex="calc(50% - 18px)">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'postalAddress.postalCode' | translation}}</mat-label>
             <input matInput type="text"
-                   formControlName="postalCode"
-                   [placeholder]="'postalAddress.postalCode' | translation"/>
+                   formControlName="postalCode"/>
             <mat-hint>
               <field-error [form]="form.get('postalAddress')" field="postalCode" hasError="pattern">
                 {{'common.field.postalCode' | translation}}
@@ -204,9 +204,9 @@
         </div>
         <div fxFlex="calc(50% - 18px)">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'postalAddress.postalOffice' | translation}}</mat-label>
             <input matInput type="text"
-                   formControlName="city"
-                   [placeholder]="'postalAddress.postalOffice' | translation"/>
+                   formControlName="city"/>
           </mat-form-field>
         </div>
       </div>
@@ -216,9 +216,9 @@
   <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
+        <mat-label>{{'emailAddress' | translation}}</mat-label>
         <input matInput type="text"
-               formControlName="email"
-               [placeholder]="'emailAddress' | translation"/>
+               formControlName="email"/>
         <mat-hint>
           <field-error [form]="form" field="email" hasError="email">
             {{'common.field.emailInvalid' | translation}}
@@ -228,9 +228,9 @@
     </div>
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
+        <mat-label>{{'phone' | translation}}</mat-label>
         <input matInput type="text"
-               formControlName="phone"
-               [placeholder]="'phone' | translation"/>
+               formControlName="phone"/>
         <mat-hint>
           <field-error [form]="form" field="phone" hasError="minLength">
             {{'customer.field.phoneShort' | translation}}
@@ -243,9 +243,9 @@
   <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
+        <mat-label>{{'customer.projectIdentifierPrefix' | translation}}</mat-label>
         <input matInput type="text"
-               formControlName="projectIdentifierPrefix"
-               [placeholder]="'customer.projectIdentifierPrefix' | translation"/>
+               formControlName="projectIdentifierPrefix"/>
       </mat-form-field>
     </div>
 

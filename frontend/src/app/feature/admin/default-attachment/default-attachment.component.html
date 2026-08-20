@@ -10,13 +10,14 @@
         <div class="row">
           <div class="col m5">
             <mat-form-field class="input-full-width">
-              <input matInput type="text" formControlName="name" placeholder="Nimi">
+              <mat-label>{{'name' | translation}}</mat-label>
+              <input matInput type="text" formControlName="name">
             </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col m12">
-            <span class="label-small">Hakemustyypit</span>
+            <span class="label-small">{{'user.applicationTypes' | translation}}</span>
             <mat-chip-listbox multiple formControlName="applicationTypes">
               <mat-chip-option *ngFor="let type of applicationTypes" [value]="type">
                 {{['application.type', type] | translation}}
@@ -27,7 +28,8 @@
         <div class="row">
           <div class="col m6">
             <mat-form-field class="input-full-width">
-              <mat-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
+              <mat-label>{{'attachment.fixedArea' | translation}}</mat-label>
+              <mat-select formControlName="fixedLocationId" class="input-full-width">
                 <mat-option value="" selected>{{'attachment.noArea' | translation}}</mat-option>
                 <mat-option *ngFor="let area of areas | async" [value]="area.id">
                   {{area.name}}
@@ -41,7 +43,7 @@
             <div fileDrop (fileDrop)="attachmentSelected($event)" (fileOver)="fileOverDropzone($event)"
                  class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
               <button mat-raised-button type="button" color="primary" (click)="realFileInput.click()">
-                LISÄÄ LIITE
+                {{'attachment.addNew' | translation}}
                 <mat-icon>file_upload</mat-icon>
               </button>
             </div>
@@ -64,9 +66,9 @@
         <div class="row">
           <div class="col m12">
             <button mat-raised-button type="button" color="primary"
-                    (click)="save()" [disabled]="!attachmentForm.valid">TALLENNA
+                    (click)="save()" [disabled]="!attachmentForm.valid">{{'common.button.save' | translation | uppercase}}
             </button>
-            <button mat-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
+            <button mat-raised-button type="button" color="primary" (click)="cancel()">{{'common.button.cancel' | translation | uppercase}}</button>
           </div>
         </div>
       </form>

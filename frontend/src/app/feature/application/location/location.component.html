@@ -19,9 +19,9 @@
               <ng-container *ngIf="fixedLocations.length > 0">
                 <div fxFlex="0 1 calc(50% - 18px)">
                   <mat-form-field class="input-full-width">
+                    <mat-label>{{'location.fixedLocations' | translation}}</mat-label>
                     <mat-select class="input-full-width" multiple
-                                formControlName="fixedLocations"
-                                [placeholder]="'location.fixedLocations' | translation">
+                                formControlName="fixedLocations">
                       <mat-select-trigger>
                         <partial-list-display [items]="fixedLocationInfos" [show]="2"></partial-list-display>
                       </mat-select-trigger>
@@ -72,7 +72,7 @@
                     targetType="Location"
                     [showAddress]="!fixedLocationsSelected"
                     (searchChange)="onSearchChange($event)"
-                    (addressChange)="onAddressChange($event)">Loading searchbar</searchbar>
+                    (addressChange)="onAddressChange($event)">{{'common.loading.searchbar' | translation}}</searchbar>
                 </div>
                 <map *ngIf="displayMap" [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
                      [applicationId]="application.id"
@@ -85,27 +85,27 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'location.area' | translation}}</mat-label>
                   <input matInput type="number"
-                         formControlName="areaSize"
-                         [placeholder]="'location.area' | translation"/>
+                         formControlName="areaSize"/>
                 </mat-form-field>
               </div>
               <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="number" formControlName="areaOverride"
-                         [placeholder]="'location.areaOverride' | translation"/>
+                  <mat-label>{{'location.areaOverride' | translation}}</mat-label>
+                  <input matInput type="number" formControlName="areaOverride"/>
                 </mat-form-field>
               </div>
               <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="cityDistrictName"
-                         [placeholder]="'location.cityDistrict' | translation"/>
+                  <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="cityDistrictName"/>
                 </mat-form-field>
               </div>
               <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <mat-select formControlName="cityDistrictIdOverride" class="input-full-width"
-                              [placeholder]="'location.cityDistrictOverride' | translation">
+                  <mat-label>{{'location.cityDistrictOverride' | translation}}</mat-label>
+                  <mat-select formControlName="cityDistrictIdOverride" class="input-full-width">
                     <mat-option value="" selected>-</mat-option>
                     <mat-option *ngFor="let district of districts | async" [value]="district.id">
                       {{district.name}}
@@ -117,17 +117,17 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="0 1 calc(20% - 18px)" *ngIf="showPaymentTariff">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'location.paymentTariff' | translation}}</mat-label>
                   <input matInput type="text"
                          [value]="paymentTariff()"
-                         [disabled]="true"
-                         [placeholder]="'location.paymentTariff' | translation"/>
+                         [disabled]="true"/>
                 </mat-form-field>
               </div>
               <div fxFlex="0 1 calc(20% - 18px)" *ngIf="showPaymentTariff">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'location.paymentTariffOverride' | translation}}</mat-label>
                   <mat-select class="input-full-width"
-                              formControlName="paymentTariffOverride"
-                              [placeholder]="'location.paymentTariffOverride' | translation">
+                              formControlName="paymentTariffOverride">
                     <mat-option>-</mat-option>
                     <mat-option *ngFor="let tariff of paymentTariffs" [value]="tariff">{{'location.paymentTariffValue' | translation:{tariff: tariff} }}</mat-option>
                   </mat-select>
@@ -135,27 +135,27 @@
               </div>
               <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'location.customerStartTime' | translation}}</mat-label>
                   <input matInput type="text"
                          [disabled]="true"
-                         [value]="location?.customerStartTime | date:'shortDate'"
-                         [placeholder]="'location.customerStartTime' | translation"/>
+                         [value]="location?.customerStartTime | date:'shortDate'"/>
                 </mat-form-field>
               </div>
               <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'location.customerEndTime' | translation}}</mat-label>
                   <input matInput type="text"
                          [disabled]="true"
-                         [value]="location?.customerEndTime | date:'shortDate'"
-                         [placeholder]="'location.customerEndTime' | translation"/>
+                         [value]="location?.customerEndTime | date:'shortDate'"/>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="0 1 calc(60% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'location.additionalInfo' | translation}}</mat-label>
                   <input matInput type="text"
-                         formControlName="info"
-                         [placeholder]="'location.additionalInfo' | translation"/>
+                         formControlName="info"/>
                 </mat-form-field>
               </div>
               <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">

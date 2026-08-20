@@ -18,8 +18,8 @@
             <div fxLayout="row wrap" fxLayoutGap="18px">
               <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'contact.name' | translation}}</mat-label>
                   <input matInput type="text" formControlName="name" required
-                         [placeholder]="'contact.name' | translation"
                          [matAutocomplete]="nameSearch" (keyup)="onKeyup($event, index)"/>
                   <mat-autocomplete #nameSearch="matAutocomplete">
                     <mat-option *ngFor="let contact of getMatchingContacts(index) | async"
@@ -29,16 +29,16 @@
                   </mat-autocomplete>
                   <mat-hint>
                     <field-error [form]="contact" field="name" hasError="required">
-                      {{'contact.field.nameMissing' | translation}}
+                      {{'common.field.nameMissing' | translation}}
                     </field-error>
                   </mat-hint>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'emailAddress' | translation}}</mat-label>
                   <input matInput type="text"
-                         formControlName="email"
-                         [placeholder]="'emailAddress' | translation"/>
+                         formControlName="email"/>
                   <mat-hint>
                     <field-error [form]="contact" field="email" hasError="email">
                       {{'common.field.emailInvalid' | translation}}
@@ -48,9 +48,9 @@
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'phone' | translation}}</mat-label>
                   <input matInput type="text"
-                         formControlName="phone"
-                         [placeholder]="'phone' | translation"/>
+                         formControlName="phone"/>
                   <mat-hint>
                     <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
                       translation}}
@@ -62,16 +62,16 @@
             <div fxLayout="row wrap" fxLayoutGap="18px">
               <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'postalAddress.streetAddress' | translation}}</mat-label>
                   <input matInput type="text"
-                         formControlName="streetAddress"
-                         [placeholder]="'postalAddress.streetAddress' | translation"/>
+                         formControlName="streetAddress"/>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'postalAddress.postalCode' | translation}}</mat-label>
                   <input matInput type="text"
-                         formControlName="postalCode"
-                         [placeholder]="'postalAddress.postalCode' | translation"/>
+                         formControlName="postalCode"/>
                   <mat-hint>
                     <field-error [form]="contact" field="postalCode" hasError="pattern">
                       {{'common.field.postalCode' | translation}}
@@ -81,9 +81,9 @@
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'postalAddress.postalOffice' | translation}}</mat-label>
                   <input matInput type="text"
-                         formControlName="city"
-                         [placeholder]="'postalAddress.postalOffice' | translation"/>
+                         formControlName="city"/>
                 </mat-form-field>
               </div>
             </div>

@@ -29,8 +29,8 @@
     <div fxLayout="row wrap" fxLayout.lt-md="column wrap" fxLayoutGap="0.75rem">
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="owners" [multiple]="true"
-                      [placeholder]="'supervision.task.owner' | translation" class="input-full-width">
+          <mat-label>{{'supervision.task.owner' | translation}}</mat-label>
+          <mat-select formControlName="owners" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
               {{supervisor.realName}}
             </mat-option>
@@ -39,8 +39,8 @@
       </div>
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="taskTypes" [multiple]="true"
-                      [placeholder]="'supervisionWorkqueue.filter.taskTypes' | translation">
+          <mat-label>{{'supervisionWorkqueue.filter.taskTypes' | translation}}</mat-label>
+          <mat-select formControlName="taskTypes" [multiple]="true">
             <mat-option *ngFor="let type of taskTypes" [value]="type">{{['supervision.task.type', type] |
               translation}}
             </mat-option>
@@ -49,14 +49,14 @@
       </div>
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="applicationId"
-                 [placeholder]="'supervisionWorkqueue.filter.applicationId' | translation">
+          <mat-label>{{'supervisionWorkqueue.filter.applicationId' | translation}}</mat-label>
+          <input matInput type="text" formControlName="applicationId">
         </mat-form-field>
       </div>
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="applicationStatus" [multiple]="true"
-                      [placeholder]="'supervisionWorkqueue.filter.applicationStatus' | translation">
+          <mat-label>{{'supervisionWorkqueue.filter.applicationStatus' | translation}}</mat-label>
+          <mat-select formControlName="applicationStatus" [multiple]="true">
             <mat-option *ngFor="let status of applicationStatusTypes" [value]="status">{{['application.status', status]
               | translation}}
             </mat-option>
@@ -65,8 +65,8 @@
       </div>
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="applicationTypes" [multiple]="true"
-                      [placeholder]="'supervisionWorkqueue.filter.applicationType' | translation">
+          <mat-label>{{'supervisionWorkqueue.filter.applicationType' | translation}}</mat-label>
+          <mat-select formControlName="applicationTypes" [multiple]="true">
             <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] |
               translation}}
             </mat-option>
@@ -75,16 +75,16 @@
       </div>
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="cityDistrictIds" [multiple]="true" class="input-full-width"
-                      [placeholder]="'supervisionWorkqueue.filter.cityDistrict' | translation">
+          <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
+          <mat-select formControlName="cityDistrictIds" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
+          <mat-label>{{'supervisionWorkqueue.filter.after' | translation}}</mat-label>
           <input matInput type="text" formControlName="after"
-                 [placeholder]="'supervisionWorkqueue.filter.after' | translation"
                  [matDatepicker]="afterPicker"/>
           <mat-datepicker-toggle matSuffix [for]="afterPicker"></mat-datepicker-toggle>
           <mat-datepicker #afterPicker></mat-datepicker>
@@ -92,8 +92,8 @@
       </div>
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
+          <mat-label>{{'supervisionWorkqueue.filter.before' | translation}}</mat-label>
           <input matInput type="text" formControlName="before"
-                 [placeholder]="'supervisionWorkqueue.filter.before' | translation"
                  [matDatepicker]="beforePicker"/>
           <mat-datepicker-toggle matSuffix [for]="beforePicker"></mat-datepicker-toggle>
           <mat-datepicker #beforePicker></mat-datepicker>

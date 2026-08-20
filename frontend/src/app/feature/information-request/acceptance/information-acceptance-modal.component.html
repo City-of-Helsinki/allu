@@ -129,7 +129,7 @@
   <div mat-dialog-actions>
     <ng-container *ngIf="readonly; else normalActions">
       <button type="button" mat-raised-button color="primary" (click)="cancel()">
-        {{'informationRequest.acceptance.close' | translation | uppercase}}
+        {{'common.button.close' | translation | uppercase}}
       </button>
       <button *ngIf="oldInfo.status==='PENDING'" type="button" mat-raised-button color="primary" (click)="moveToHandling()">
         {{'application.button.toHandling' | translation | uppercase}}

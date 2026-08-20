@@ -40,7 +40,7 @@
   <ng-container *ngIf="remaining$ | async as remaining">
     <div *ngIf="remaining > 0" class="search-result-footer">
       <span>{{remaining}} hakemusta vielä näytettäväksi. </span>
-      <button class="button-link" (click)="showMore()">Näytä lisää</button>
+      <button class="button-link" (click)="showMore()">{{'applicationList.showMore' | translation}}</button>
     </div>
   </ng-container>
 </div>

@@ -1,8 +1,8 @@
 <form>
   <mat-form-field class="search-field">
+    <mat-label>{{'location.searchAndAddGeometry' | translation}}</mat-label>
     <input matInput type="text"
            [formControl]="searchControl"
-           [placeholder]="'location.searchAndAddGeometry' | translation"
            [matAutocomplete]="applicationSearch"/>
     <mat-autocomplete #applicationSearch="matAutocomplete"
                       (optionSelected)="add($event.option)">

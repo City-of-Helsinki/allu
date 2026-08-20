@@ -27,15 +27,16 @@
     <div class="col m12">
       <allu-card>
         <mat-card-header>
-          <mat-card-title>Liikennejärjestelyn voimassaolo</mat-card-title>
+          <mat-card-title>{{'application.trafficArrangement.validityTitle' | translation}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
             <div formGroupName="validityTimes" class="col s6">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                         [matDatepicker]="startTimePicker"/>
+                  <mat-label>{{'application.common.startTime' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="startTime"
+                         [matDatepicker]="startTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #startTimePicker></mat-datepicker>
@@ -51,8 +52,9 @@
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                         [matDatepicker]="endTimePicker"/>
+                  <mat-label>{{'application.common.endTime' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="endTime"
+                         [matDatepicker]="endTimePicker" required/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
                   <mat-hint>
@@ -73,7 +75,7 @@
     <div class="col m12">
       <allu-card>
         <mat-card-header>
-          <mat-card-title>Liikennejärjestelyn tiedot</mat-card-title>
+          <mat-card-title>{{'application.trafficArrangement.title' | translation}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
@@ -107,8 +109,8 @@
           <div class="row form-group">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                                <textarea matInput cdkTextareaAutosize formControlName="workPurpose"
-                                          [placeholder]="'application.trafficArrangement.workPurpose' | translation"></textarea>
+                <mat-label>{{'application.trafficArrangement.workPurpose' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="workPurpose"></textarea>
               </mat-form-field>
             </div>
           </div>

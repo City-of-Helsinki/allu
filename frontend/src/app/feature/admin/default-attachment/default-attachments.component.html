@@ -1,7 +1,7 @@
 <div class="main-content">
   <div fxLayout="row" class="action-bar-loose">
     <div fxFlex>
-      <a mat-raised-button type="button" color="primary" [routerLink]="['new']">UUSI</a>
+      <a mat-raised-button type="button" color="primary" [routerLink]="['new']">{{'common.button.new' | translation | uppercase}}</a>
     </div>
   </div>
   <div fxLayout="row">
@@ -10,9 +10,9 @@
         <thead>
         <tr>
           <th></th>
-          <th>Nimi</th>
-          <th>Hakemustyypit</th>
-          <th>Alueet</th>
+          <th>{{'name' | translation}}</th>
+          <th>{{'user.applicationTypes' | translation}}</th>
+          <th>{{'attachment.fixedAreas' | translation}}</th>
         </tr>
         </thead>
         <tbody>

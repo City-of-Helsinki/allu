@@ -10,29 +10,30 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="calc(40% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'user.username' | translation}}</mat-label>
                   <input matInput type="text" class="lowercase"
-                         formControlName="userName" required
-                         [placeholder]="'user.username' | translation"/>
+                         formControlName="userName" required/>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(60% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'name' | translation}}</mat-label>
                   <input matInput type="text" formControlName="realName"
-                         required [placeholder]="'user.name' | translation"/>
+                         required/>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="calc(40% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="title"
-                         [placeholder]="'user.title' | translation"/>
+                  <mat-label>{{'user.title' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="title"/>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(30% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="emailAddress"
-                         [placeholder]="'user.email' | translation"/>
+                  <mat-label>{{'emailAddress' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="emailAddress"/>
                   <mat-error *ngIf="userForm.get('emailAddress').hasError('email')">
                     {{'common.field.emailInvalid' | translation}}
                   </mat-error>
@@ -40,16 +41,16 @@
               </div>
               <div fxFlex="calc(30% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="phone"
-                         [placeholder]="'user.phone' | translation"/>
+                  <mat-label>{{'user.phone' | translation}}</mat-label>
+                  <input matInput type="text" formControlName="phone"/>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'user.applicationTypes' | translation}}</mat-label>
                   <mat-select formControlName="allowedApplicationTypes" [multiple]="true"
-                              [placeholder]="'user.applicationTypes' | translation"
                               class="input-full-width">
                     <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] |
                       translation}}
@@ -61,8 +62,8 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'user.roles' | translation}}</mat-label>
                   <mat-select formControlName="assignedRoles" [multiple]="true"
-                              [placeholder]="'user.roles' | translation"
                               class="input-full-width">
                     <mat-option value="ROLE_ADMIN" [disabled]="(canRemoveAdminRole() | async) === false">
                       {{'user.role.ROLE_ADMIN' | translation}}
@@ -76,8 +77,8 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'user.cityDistricts' | translation}}</mat-label>
                   <mat-select formControlName="cityDistrictIds" [multiple]="true"
-                              [placeholder]="'user.cityDistricts' | translation"
                               class="input-full-width">
                     <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
                     </mat-option>
@@ -93,7 +94,7 @@
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex>
                 <button mat-raised-button color="primary" type="submit" [disabled]="submitted">
-                  {{'common.button.save' | translation}}
+                  {{'common.button.save' | translation | uppercase}}
                 </button>
               </div>
             </div>

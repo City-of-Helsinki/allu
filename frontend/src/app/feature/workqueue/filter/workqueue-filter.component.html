@@ -29,8 +29,8 @@
     <div class="row row-slim">
       <div class="col s2">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="type" [multiple]="true" class="input-full-width"
-                      [placeholder]="'applicationSearch.type' | translation">
+          <mat-label>{{'applicationSearch.type' | translation}}</mat-label>
+          <mat-select formControlName="type" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let type of applicationTypes" [value]="type">
               {{['application.type', type] | translation}}
             </mat-option>
@@ -39,16 +39,16 @@
       </div>
       <div class="col s2" [hidden]="(tab$ | async)==='OWN'">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
-                      [placeholder]="'applicationSearch.owner' | translation">
+          <mat-label>{{'applicationSearch.owner' | translation}}</mat-label>
+          <mat-select formControlName="owner" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let owner of owners" [value]="owner.userName">{{owner.realName}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col s2">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="status" [multiple]="true" class="input-full-width"
-                      [placeholder]="'applicationSearch.status' | translation">
+          <mat-label>{{'applicationSearch.status' | translation}}</mat-label>
+          <mat-select formControlName="status" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let status of applicationStatuses" [value]="status">
               {{['application.status', status] | translation}}
             </mat-option>
@@ -57,16 +57,16 @@
       </div>
       <div class="col s2">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="districts" [multiple]="true" class="input-full-width"
-                      [placeholder]="'application.cityDistrict' | translation">
+          <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
+          <mat-select formControlName="districts" [multiple]="true" class="input-full-width">
             <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col s2">
         <mat-form-field class="input-full-width">
+          <mat-label>{{'applicationSearch.startTime' | translation}}</mat-label>
           <input matInput type="text" formControlName="startTime"
-                 [placeholder]="'applicationSearch.startTime' | translation"
                  [matDatepicker]="startTimePicker"/>
           <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
           <mat-datepicker #startTimePicker></mat-datepicker>
@@ -74,8 +74,8 @@
       </div>
       <div class="col s2">
         <mat-form-field class="input-full-width">
+          <mat-label>{{'applicationSearch.endTime' | translation}}</mat-label>
           <input matInput type="text" formControlName="endTime"
-                 [placeholder]="'applicationSearch.endTime' | translation"
                  [matDatepicker]="endTimePicker"/>
           <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
           <mat-datepicker #endTimePicker></mat-datepicker>

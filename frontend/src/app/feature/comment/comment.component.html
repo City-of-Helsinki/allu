@@ -45,9 +45,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <mat-form-field  *ngIf="form.enabled" class="input-full-width">
+        <mat-label>{{'comment.myComment' | translation}}</mat-label>
         <textarea matInput cdkTextareaAutosize
-                  formControlName="text" id="commentText"
-                  [placeholder]="'comment.myComment' | translation"></textarea>
+                  formControlName="text" id="commentText"></textarea>
         <mat-error *ngIf="form.get('text').hasError('required')">
           {{'comment.field.emptyText' | translation}}
         </mat-error>
@@ -59,11 +59,11 @@
   <div fxLayout="row" fxLayoutGap="18px" *ngIf="form.enabled">
     <button [disabled]="!formValid" (click)="save()"
         mat-raised-button type="button" color="primary">
-      {{'common.button.save' | translation}}
+      {{'common.button.save' | translation | uppercase}}
     </button>
     <button *ngIf="!isNew" (click)="cancel()"
             mat-raised-button type="button" color="primary">
-      {{'common.button.cancel' | translation}}
+      {{'common.button.cancel' | translation | uppercase}}
     </button>
   </div>
 </form>
