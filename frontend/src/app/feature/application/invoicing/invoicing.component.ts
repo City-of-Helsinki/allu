@@ -29,6 +29,7 @@ import {NotifyFailure} from '@feature/notification/actions/notification-actions'
 import {createTranslated} from '@service/error/error-info';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 import {isAreaRental} from '@model/application/area-rental/area-rental';
+import {isExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 
 @Component({
   selector: 'invoicing',
@@ -185,6 +186,10 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
   private updateExtension(form: InvoicingInfoForm, extension: ApplicationExtension): void {
     if (isAreaRental(extension)) {
       extension.majorDisturbance = form.majorDisturbance;
+    }
+    if (isExcavationAnnouncement(extension)) {
+      extension.noAreaUsageFee = form.noAreaUsageFee;
+      extension.noAreaUsageFeeReason = form.noAreaUsageFee ? form.noAreaUsageFeeReason : undefined;
     }
   }
 }

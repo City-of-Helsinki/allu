@@ -26,6 +26,7 @@ import {terraceKinds} from '@app/model/application/type/application-kind';
 import {Invoice} from '@model/application/invoice/invoice';
 import {flexDirectionColumn, flexDirectionRow} from '@feature/common/layout/fxLayout';
 import {isAreaRental} from '@model/application/area-rental/area-rental';
+import {isExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 
 @Component({
@@ -45,11 +46,14 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   showDeposit: boolean;
   showInvoicingDate: boolean;
   showMajorDisturbance: boolean;
+  showNoAreaUsageFee: boolean;
   applicationType: ApplicationType;
   customerLoading$: Observable<boolean>;
 
   private notBillableCtrl: UntypedFormControl;
   private notBillableReasonCtrl: UntypedFormControl;
+  private noAreaUsageFeeCtrl: UntypedFormControl;
+  private noAreaUsageFeeReasonCtrl: UntypedFormControl;
   private invoicingDateCtrl: UntypedFormControl;
   private originalForm: InvoicingInfoForm;
   private originalRecipientForm: CustomerForm;
@@ -65,8 +69,11 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     this.recipientForm = <UntypedFormGroup>this.form.get('invoiceRecipient');
     this.notBillableCtrl = <UntypedFormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <UntypedFormControl>this.form.get('notBillableReason');
+    this.noAreaUsageFeeCtrl = <UntypedFormControl>this.form.get('noAreaUsageFee');
+    this.noAreaUsageFeeReasonCtrl = <UntypedFormControl>this.form.get('noAreaUsageFeeReason');
     this.invoicingDateCtrl = <UntypedFormControl>this.form.get('invoicingDate');
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
+    this.noAreaUsageFeeCtrl.valueChanges.subscribe(value => this.onNoAreaUsageFeeChange(value));
     this.initForm();
     this.customerLoading$ = this.store.pipe(select(fromInvoicing.getInvoicingCustomerLoading));
   }
@@ -159,6 +166,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       this.applicationType = app.type;
       this.showMajorDisturbance = app.type === ApplicationType.AREA_RENTAL
         && TimeUtil.isBefore(app.startTime, new Date('2026-03-01'), 'day');
+      this.showNoAreaUsageFee = app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
 
       this.initForExtension(app.extension);
     });
@@ -195,6 +203,15 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       this.notBillableReasonCtrl.clearValidators();
       this.form.addControl('invoiceRecipient', this.recipientForm);
     }
+  }
+
+  private onNoAreaUsageFeeChange(noAreaUsageFee: boolean) {
+    if (noAreaUsageFee) {
+      this.noAreaUsageFeeReasonCtrl.setValidators([Validators.required]);
+    } else {
+      this.noAreaUsageFeeReasonCtrl.clearValidators();
+    }
+    this.noAreaUsageFeeReasonCtrl.updateValueAndValidity();
   }
 
   private setCustomerEdit(): void {
@@ -256,6 +273,12 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   private initForExtension(extension: ApplicationExtension) {
     if (isAreaRental(extension)) {
       this.form.patchValue({majorDisturbance: extension.majorDisturbance});
+    }
+    if (isExcavationAnnouncement(extension)) {
+      this.form.patchValue({
+        noAreaUsageFee: extension.noAreaUsageFee,
+        noAreaUsageFeeReason: extension.noAreaUsageFeeReason
+      });
     }
   }
 }

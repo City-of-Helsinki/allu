@@ -1800,6 +1800,8 @@ export const translations = {
       details: 'Laskutustiedot',
       notBillable: 'Ei laskuteta',
       notBillableReason: 'Peruste',
+      noAreaUsageFee: 'Ei peritä alueenkäyttömaksua',
+      noAreaUsageFeeReason: 'Peruste',
       customerReference: 'Asiakkaan viite',
       invoicingDate: 'Laskutuspäivä',
       skipPriceCalculation: 'Ei automaattista hinnanlaskentaa'
@@ -1843,6 +1845,7 @@ export const translations = {
       workIdMissing: 'Työnumero puuttuu',
       invoiceReferenceMissing: 'Laskutusviite puuttuu',
       notBillableReasonMissing: 'Korvauksettomuuden peruste puuttuu',
+      noAreaUsageFeeReasonMissing: 'Alueenkäyttömaksun perimättä jättämisen peruste puuttuu',
       invoicingDateMissing: 'Laskutuspäivä puuttuu'
     },
     confirmSave: {

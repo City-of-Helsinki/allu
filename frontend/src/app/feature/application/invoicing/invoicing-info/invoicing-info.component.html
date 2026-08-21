@@ -51,6 +51,24 @@
                 </div>
               </div>
               <div fxLayout="row wrap">
+                <div fxFlex *ngIf="showNoAreaUsageFee" class="height-fix-bottom">
+                  <mat-checkbox formControlName="noAreaUsageFee">{{'invoice.info.noAreaUsageFee' | translation}}</mat-checkbox>
+                </div>
+              </div>
+              <div fxLayout="row">
+                <div fxFlex *ngIf="showNoAreaUsageFee && form.getRawValue().noAreaUsageFee">
+                  <mat-form-field class="input-full-width">
+                    <mat-label>{{'invoice.info.noAreaUsageFeeReason' | translation}}</mat-label>
+                    <textarea matInput cdkTextareaAutosize formControlName="noAreaUsageFeeReason"></textarea>
+                    <mat-error>
+                      <field-error [form]="form" field="noAreaUsageFeeReason" hasError="required">
+                        {{'invoice.field.noAreaUsageFeeReasonMissing' | translation}}
+                      </field-error>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div fxLayout="row wrap">
                 <div fxFlex class="height-fix-bottom">
                   <mat-checkbox formControlName="skipPriceCalculation">{{'invoice.info.skipPriceCalculation' | translation}}</mat-checkbox>
                 </div>
