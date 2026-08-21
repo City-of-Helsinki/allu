@@ -38,6 +38,8 @@ public class ExcavationAnnouncement extends ApplicationExtension
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
   private List<String> placementContracts;
   private List<String> cableReports;
+  private Boolean noAreaUsageFee;
+  private String noAreaUsageFeeReason;
 
 
   @Override
@@ -349,5 +351,28 @@ public class ExcavationAnnouncement extends ApplicationExtension
 
   public void setCableReports(List<String> cableReports) {
     this.cableReports = cableReports;
+  }
+
+  /**
+   * In Finnish: Ei peritä alueenkäyttömaksua. True, if the area usage fee (alueenkäyttömaksu)
+   * should not be charged for this excavation announcement.
+   */
+  public Boolean getNoAreaUsageFee() {
+    return noAreaUsageFee;
+  }
+
+  public void setNoAreaUsageFee(Boolean noAreaUsageFee) {
+    this.noAreaUsageFee = noAreaUsageFee;
+  }
+
+  /**
+   * In Finnish: Peruste. Mandatory justification text for not charging the area usage fee.
+   */
+  public String getNoAreaUsageFeeReason() {
+    return noAreaUsageFeeReason;
+  }
+
+  public void setNoAreaUsageFeeReason(String noAreaUsageFeeReason) {
+    this.noAreaUsageFeeReason = noAreaUsageFeeReason;
   }
 }

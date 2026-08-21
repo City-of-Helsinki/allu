@@ -43,6 +43,8 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
   private List<String> placementContracts;
   private List<String> cableReports;
+  private Boolean noAreaUsageFee;
+  private String noAreaUsageFeeReason;
 
   @Schema(description = "Application type (always EXCAVATION_ANNOUNCEMENT).", allowableValues="EXCAVATION_ANNOUNCEMENT", required = true)
   @Override
@@ -299,5 +301,25 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   @UpdatableProperty
   public void setCableReports(List<String> cableReports) {
     this.cableReports = cableReports;
+  }
+
+  @Schema(description = "True if the area usage fee (alueenkäyttömaksu) should not be charged")
+  public Boolean getNoAreaUsageFee() {
+    return noAreaUsageFee;
+  }
+
+  @UpdatableProperty
+  public void setNoAreaUsageFee(Boolean noAreaUsageFee) {
+    this.noAreaUsageFee = noAreaUsageFee;
+  }
+
+  @Schema(description = "Justification for not charging the area usage fee")
+  public String getNoAreaUsageFeeReason() {
+    return noAreaUsageFeeReason;
+  }
+
+  @UpdatableProperty
+  public void setNoAreaUsageFeeReason(String noAreaUsageFeeReason) {
+    this.noAreaUsageFeeReason = noAreaUsageFeeReason;
   }
 }

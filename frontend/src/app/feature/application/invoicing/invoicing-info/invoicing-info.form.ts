@@ -13,7 +13,9 @@ export class InvoicingInfoForm {
     public customerReference?: string,
     public invoicingDate?: Date,
     public skipPriceCalculation: boolean = false,
-    public majorDisturbance?: boolean) {
+    public majorDisturbance?: boolean,
+    public noAreaUsageFee?: boolean,
+    public noAreaUsageFeeReason?: string) {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
@@ -30,7 +32,9 @@ export class InvoicingInfoForm {
       customerReference: [undefined],
       invoicingDate: [undefined],
       skipPriceCalculation: [false],
-      majorDisturbance: [undefined]
+      majorDisturbance: [undefined],
+      noAreaUsageFee: [false],
+      noAreaUsageFeeReason: [undefined]
     });
   }
 }

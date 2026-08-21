@@ -88,7 +88,9 @@ export class ApplicationExtensionMapper {
           backendExtension.compactionAndBearingCapacityMeasurement,
           backendExtension.qualityAssuranceTest,
           backendExtension.cableReports,
-          backendExtension.placementContracts
+          backendExtension.placementContracts,
+          backendExtension.noAreaUsageFee,
+          backendExtension.noAreaUsageFeeReason
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.description);
@@ -243,7 +245,9 @@ export class ApplicationExtensionMapper {
       compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
       qualityAssuranceTest: excavation.qualityAssuranceTest,
       cableReports: excavation.cableReports,
-      placementContracts: excavation.placementContracts
+      placementContracts: excavation.placementContracts,
+      noAreaUsageFee: excavation.noAreaUsageFee,
+      noAreaUsageFeeReason: excavation.noAreaUsageFeeReason
     };
   }
 

@@ -105,6 +105,66 @@ public class ApplicationServiceTest {
     verify(pricingService).calculateChargeBasis(Mockito.any(Application.class));
   }
 
+  @Test(expected = IllegalOperationException.class)
+  public void shouldThrowWhenNoAreaUsageFeeWithoutReason() {
+    final int APP_ID = 123;
+    final Application application = new Application();
+    application.setId(APP_ID);
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setNoAreaUsageFee(true);
+    extension.setNoAreaUsageFeeReason("");
+    application.setExtension(extension);
+    applicationService.update(APP_ID, application, 1);
+  }
+
+  @Test(expected = IllegalOperationException.class)
+  public void shouldThrowWhenNoAreaUsageFeeWithNullReason() {
+    final int APP_ID = 123;
+    final Application application = new Application();
+    application.setId(APP_ID);
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setNoAreaUsageFee(true);
+    application.setExtension(extension);
+    applicationService.update(APP_ID, application, 1);
+  }
+
+  @Test
+  public void shouldNotThrowWhenNoAreaUsageFeeWithReason() {
+    final int APP_ID = 123;
+    final Application updated = new Application();
+    updated.setId(APP_ID);
+    when(applicationDao.update(Mockito.anyInt(), Mockito.any(Application.class))).thenReturn(updated);
+
+    final Application application = new Application();
+    application.setId(APP_ID);
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setNoAreaUsageFee(true);
+    extension.setNoAreaUsageFeeReason("Kaupungin kaavahanke");
+    application.setExtension(extension);
+    applicationService.update(APP_ID, application, 1);
+    verify(applicationDao).update(Mockito.eq(APP_ID), Mockito.eq(application));
+  }
+
+  @Test
+  public void shouldNotThrowWhenNoAreaUsageFeeNotSet() {
+    final int APP_ID = 123;
+    final Application updated = new Application();
+    updated.setId(APP_ID);
+    when(applicationDao.update(Mockito.anyInt(), Mockito.any(Application.class))).thenReturn(updated);
+
+    final Application application = new Application();
+    application.setId(APP_ID);
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setNoAreaUsageFee(false);
+    application.setExtension(extension);
+    applicationService.update(APP_ID, application, 1);
+    verify(applicationDao).update(Mockito.eq(APP_ID), Mockito.eq(application));
+  }
+
   @Test
   public void testUpdateTags() {
     final int APP_ID = 123;

@@ -158,6 +158,7 @@ public class ApplicationService {
   @Transactional
   public Application update(int id, Application application, int userId) {
     verifyApplicationIsUpdatable(id);
+    validateNoAreaUsageFee(application);
     defaultValueService.setByType(application);
     List<Location> locations = locationService.updateApplicationLocations(id, application.getLocations(), userId);
     applicationDao.updateClientApplicationData(id, application.getClientApplicationData());
@@ -578,6 +579,21 @@ public class ApplicationService {
     StatusType status = applicationDao.getStatus(id);
     if (StatusType.CANCELLED.equals(status)) {
       throw new IllegalOperationException("application.cancelled.updated");
+    }
+  }
+
+  /**
+   * Validates that an excavation announcement, for which the area usage fee is excluded,
+   * must have a justification text set.
+   */
+  private void validateNoAreaUsageFee(Application application) {
+    if (application.getType() != ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      return;
+    }
+    ExcavationAnnouncement extension = (ExcavationAnnouncement) application.getExtension();
+    if (extension != null && Boolean.TRUE.equals(extension.getNoAreaUsageFee())
+        && StringUtils.isBlank(extension.getNoAreaUsageFeeReason())) {
+      throw new IllegalOperationException("application.noAreaUsageFee.reasonMissing");
     }
   }
 
