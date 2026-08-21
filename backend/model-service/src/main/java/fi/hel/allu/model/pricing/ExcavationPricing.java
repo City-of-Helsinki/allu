@@ -2,6 +2,7 @@ package fi.hel.allu.model.pricing;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -14,7 +15,6 @@ import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.PriceUtil;
-import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
 
 public class ExcavationPricing extends Pricing {
@@ -27,7 +27,8 @@ public class ExcavationPricing extends Pricing {
   private final PricingDao pricingDao;
 
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
-  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
+  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu (%s-%s)";
+  private static final String AREA_FEE_EXPLANATION = "Maksuluokka %s, %sm2";
   private static final String SELF_SUPERVISION_TEXT = "Omavalvonta";
   private static final String HANDLING_FEE_LT_6_MONTHS_TEXT = "Alle kuusi (6) kuukautta kestävä työ";
   private static final String HANDLING_FEE_GE_6_MONTHS_TEXT = "Vähintään kuusi (6) kuukautta kestävä työ";
@@ -37,6 +38,8 @@ public class ExcavationPricing extends Pricing {
 
   private static final LocalDateTime POST_2025_PAYMENT_DATE = LocalDateTime.of(2025, 3, 1, 0, 0, 0, 0);
   private static final LocalDateTime POST_2026_PAYMENT_DATE = LocalDateTime.of(2026, 3, 1, 0, 0, 0, 0);
+
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.uuuu");
 
 
   public ExcavationPricing(
@@ -90,10 +93,10 @@ public class ExcavationPricing extends Pricing {
 
     final List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
-      addChargeBasisEntryForPeriod(paymentClass, dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
+      addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
     }
     if (pricedPeriods.size() > 1) {
-      addChargeBasisEntryForPeriod(paymentClass, dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
+      addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
     }
   }
 
@@ -149,15 +152,19 @@ public class ExcavationPricing extends Pricing {
     }
   }
 
-  private void addChargeBasisEntryForPeriod(String paymentClass, int dailyFee,
+  private void addChargeBasisEntryForPeriod(String paymentClass, double area, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
-    String rowText = String.format(AREA_FEE_TEXT, PriceUtil.getPaymentClassText(paymentClass));
+    String rowText = String.format(AREA_FEE_TEXT, formatDate(invoicedPeriod.start), formatDate(invoicedPeriod.end));
+    List<String> explanation = List.of(String.format(AREA_FEE_EXPLANATION,
+        PriceUtil.getPaymentClassText(paymentClass), (int) Math.ceil(area)));
     int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;
     addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
-        dailyFee, rowText, totalPrice,
-        pricingExplanator.getExplanationWithCustomPeriod(
-          application, Printable.forDayPeriod(invoicedPeriod.start, invoicedPeriod.end)), invoicedPeriod.invoicingPeriodId);
+        dailyFee, rowText, totalPrice, explanation, invoicedPeriod.invoicingPeriodId);
     setPriceInCents(totalPrice + getPriceInCents());
+  }
+
+  private String formatDate(ZonedDateTime date) {
+    return date.withZoneSameInstant(TimeUtil.HelsinkiZoneId).format(DATE_FORMATTER);
   }
 
   private List<PricedPeriod> getPricedPeriods() {
