@@ -43,6 +43,10 @@ class MockContactComponent {
   @Input() contactRequired = false;
 
   onCustomerRemove() {}
+
+  resetContacts() {}
+
+  onCustomerChange(_customerId: number) {}
 }
 
 describe('CustomerComponent', () => {
@@ -159,5 +163,34 @@ describe('CustomerComponent', () => {
     expect(comp.customerForm.get('phone').disabled).toBeTruthy();
     expect(comp.customerForm.get('email').disabled).toBeTruthy();
     fixture.detectChanges();
+  }));
+
+  it('should re-enable fields after clearing an existing customer', fakeAsync(() => {
+    const customer = new Customer();
+    customer.id = 1;
+    customer.name = 'Tervaajat';
+    customer.country = 'FI';
+
+    comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT, customer);
+    comp.readonly = false;
+    comp.ngOnInit();
+    fixture.detectChanges();
+    tick();
+
+    expect(comp.customerForm.get('country').disabled).toBeTruthy('country should be disabled for an existing customer');
+    expect(comp.customerForm.get('postalAddress').get('streetAddress').disabled).toBeTruthy();
+    expect(comp.customerForm.get('ovt').disabled).toBeTruthy();
+
+    comp.onClearFormPress();
+
+    expect(comp.customerForm.get('id').value).toBeFalsy();
+    expect(comp.customerForm.get('country').value).toEqual('FI');
+    expect(comp.customerForm.get('country').disabled).toBeFalsy('country should be editable after clear');
+    expect(comp.customerForm.get('postalAddress').get('streetAddress').disabled).toBeFalsy();
+    expect(comp.customerForm.get('ovt').disabled).toBeFalsy();
+    expect(comp.customerForm.get('phone').disabled).toBeFalsy();
+    expect(comp.customerForm.get('email').disabled).toBeFalsy();
+    expect(comp.customerForm.get('sapCustomerNumber').disabled).toBeTruthy('sapCustomerNumber should stay disabled');
+    tick(300);
   }));
 });
