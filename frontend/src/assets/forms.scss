@@ -16,8 +16,11 @@
 
 // Bring hint/error text closer to the field by pulling the subscript
 // wrapper up over the empty padding-bottom space of the input wrapper.
+// pointer-events is disabled so the overlapping wrapper does not block
+// clicks from focusing the input field.
 .mat-mdc-form-field .mat-mdc-form-field-subscript-wrapper {
   margin-top: -20px;
+  pointer-events: none;
 
   .mat-mdc-form-field-hint-wrapper,
   .mat-mdc-form-field-error-wrapper {
