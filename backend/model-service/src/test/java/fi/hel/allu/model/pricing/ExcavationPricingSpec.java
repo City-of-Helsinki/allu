@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +12,10 @@ import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.domain.PricingKey;
@@ -20,6 +23,7 @@ import fi.hel.allu.model.service.WinterTimeService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
@@ -302,5 +306,76 @@ public class ExcavationPricingSpec extends LocationBasedPricing {
         });
       });
     });
+
+    describe("Excavation Announcement area fee row text and explanation", () -> {
+      context("monthly period with payment class 2 and area of 12230 sqm", () -> {
+        beforeEach(() -> {
+          winterTimeService = Mockito.mock(WinterTimeService.class);
+          pricingExplanator = Mockito.mock(PricingExplanator.class);
+          pricingDao = Mockito.mock(PricingDao.class);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.HANDLING_FEE_LT_6_MONTHS), any())).thenReturn(24000);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.MORE_THAN_1000M2), eq("2"), any())).thenReturn(33400);
+
+          ZonedDateTime start = ZonedDateTime.parse("2026-04-01T00:00:00+03:00");
+          ZonedDateTime end = ZonedDateTime.parse("2026-04-30T23:59:59+03:00");
+
+          app = new Application();
+          app.setExtension(new ExcavationAnnouncement());
+          app.setStartTime(start);
+          app.setEndTime(end);
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao,
+              List.of(new InvoicingPeriod(1, StatusType.FINISHED)));
+          exc.addLocationPrice(getLocation(1, 12230.0, "2", start, end), start);
+        });
+
+        it("has row text 'Alueenkäyttömaksu (1.4.2026-30.4.2026)'", () -> {
+          assertEquals("Alueenkäyttömaksu (1.4.2026-30.4.2026)", areaFeeEntry().getText());
+        });
+
+        it("has explanation 'Maksuluokka 2, 12230m2'", () -> {
+          assertEquals(List.of("Maksuluokka 2, 12230m2"), Arrays.asList(areaFeeEntry().getExplanation()));
+        });
+
+        it("has row text shorter than or equal to 70 characters", () -> {
+          assertTrue(areaFeeEntry().getText().length() <= 70);
+        });
+      });
+
+      context("winter time operational condition period before winter start", () -> {
+        beforeEach(() -> {
+          winterTimeService = Mockito.mock(WinterTimeService.class);
+          pricingExplanator = Mockito.mock(PricingExplanator.class);
+          pricingDao = Mockito.mock(PricingDao.class);
+          Mockito.when(winterTimeService.getWinterTime())
+              .thenReturn(new AnnualTimePeriod(LocalDate.of(2025, 12, 1), LocalDate.of(2026, 4, 30)));
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.HANDLING_FEE), any())).thenReturn(18000);
+          Mockito.when(pricingDao.findValue(eq(ApplicationType.EXCAVATION_ANNOUNCEMENT), eq(PricingKey.MORE_THAN_1000M2), eq("2"), any())).thenReturn(33400);
+
+          ZonedDateTime start = ZonedDateTime.parse("2025-11-11T00:00:00+02:00");
+          ZonedDateTime end = ZonedDateTime.parse("2025-12-01T00:00:00+02:00");
+
+          app = new Application();
+          ExcavationAnnouncement ea = new ExcavationAnnouncement();
+          ea.setWinterTimeOperation(ZonedDateTime.parse("2025-11-20T00:00:00+02:00"));
+          app.setExtension(ea);
+          app.setStartTime(start);
+          app.setEndTime(end);
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao,
+              List.of(new InvoicingPeriod(1, StatusType.FINISHED)));
+          exc.addLocationPrice(getLocation(1, 12230.0, "2", start, end), start);
+        });
+
+        it("has row text 'Alueenkäyttömaksu (11.11.2025-30.11.2025)'", () -> {
+          assertEquals("Alueenkäyttömaksu (11.11.2025-30.11.2025)", areaFeeEntry().getText());
+        });
+      });
+    });
+  }
+
+  ChargeBasisEntry areaFeeEntry() {
+    return exc.getChargeBasisEntries().stream()
+        .filter(e -> e.getTag() != null && e.getTag().startsWith("EADF"))
+        .findFirst()
+        .orElseThrow(() -> new AssertionError("No area fee charge basis entry found"));
   }
 }
