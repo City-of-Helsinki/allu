@@ -231,6 +231,75 @@ public class ExcavationPricingSpec extends LocationBasedPricing {
 
           assertEquals(List.of("Vähintään kuusi (6) kuukautta kestävä työ"), explanation);
         });
+
+        it("uses LT_6_MONTHS when work is finished before the six month boundary", () -> {
+          ZonedDateTime start = ZonedDateTime.parse("2026-03-01T00:00:00+02:00");
+          ZonedDateTime end   = ZonedDateTime.parse("2026-10-01T00:00:00+02:00"); // > 6 kk
+          ZonedDateTime workFinished = ZonedDateTime.parse("2026-08-31T00:00:00+02:00"); // < 6 kk
+
+          Application app = new Application();
+          ExcavationAnnouncement ea = new ExcavationAnnouncement();
+          ea.setWorkFinished(workFinished);
+          app.setExtension(ea);
+          app.setStartTime(start);
+          app.setEndTime(end);
+
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao, periods);
+          // area ja payment class ovat yhdentekeviä, koska daily fee ei ole stubattu → vain handling fee jää
+          exc.addLocationPrice(getLocation(1, 10.0, "1", start, end), start);
+
+          assertEquals(24000, exc.getPriceInCents());
+
+          Mockito.verify(pricingDao).findValue(
+            eq(ApplicationType.EXCAVATION_ANNOUNCEMENT),
+            eq(PricingKey.HANDLING_FEE_LT_6_MONTHS),
+            any()
+          );
+        });
+
+        it("keeps GE_6_MONTHS when work is finished at or after the six month boundary", () -> {
+          ZonedDateTime start = ZonedDateTime.parse("2026-03-01T00:00:00+02:00");
+          ZonedDateTime end   = ZonedDateTime.parse("2026-10-01T00:00:00+02:00"); // > 6 kk
+          ZonedDateTime workFinished = ZonedDateTime.parse("2026-09-01T00:00:00+02:00"); // tasan 6 kk
+
+          Application app = new Application();
+          ExcavationAnnouncement ea = new ExcavationAnnouncement();
+          ea.setWorkFinished(workFinished);
+          app.setExtension(ea);
+          app.setStartTime(start);
+          app.setEndTime(end);
+
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao, periods);
+          // area ja payment class ovat yhdentekeviä, koska daily fee ei ole stubattu → vain handling fee jää
+          exc.addLocationPrice(getLocation(1, 10.0, "1", start, end), start);
+
+          assertEquals(40000, exc.getPriceInCents());
+
+          Mockito.verify(pricingDao).findValue(
+            eq(ApplicationType.EXCAVATION_ANNOUNCEMENT),
+            eq(PricingKey.HANDLING_FEE_GE_6_MONTHS),
+            any()
+          );
+        });
+
+        it("returns LT_6_MONTHS explanation when work is finished before the six month boundary", () -> {
+          ZonedDateTime start = ZonedDateTime.parse("2026-03-01T00:00:00+02:00");
+          ZonedDateTime end   = ZonedDateTime.parse("2026-10-01T00:00:00+02:00"); // > 6 kk
+          ZonedDateTime workFinished = ZonedDateTime.parse("2026-08-31T00:00:00+02:00"); // < 6 kk
+
+          Application app = new Application();
+          ExcavationAnnouncement ea = new ExcavationAnnouncement();
+          ea.setWorkFinished(workFinished);
+          app.setExtension(ea);
+          app.setStartTime(start);
+          app.setEndTime(end);
+
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao, List.of());
+
+          List<String> explanation = exc.getHandlingFeeExplanation(ea);
+
+          assertEquals(List.of("Alle kuusi (6) kuukautta kestävä työ"), explanation);
+        });
       });
     });
   }

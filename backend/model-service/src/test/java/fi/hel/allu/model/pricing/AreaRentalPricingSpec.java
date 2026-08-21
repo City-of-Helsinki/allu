@@ -159,6 +159,36 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
 
           it("should apply HANDLING_FEE_GE_6_MONTHS pricing", () -> assertEquals(40000, arp.getPriceInCents()));
         });
+
+        context("work finished before the application end date", () -> {
+          final ZonedDateTime start = ZonedDateTime.parse("2026-03-16T08:00:00+02:00");
+          final ZonedDateTime end   = ZonedDateTime.parse("2026-03-23T17:00:00+02:00"); // 8 days
+          final ZonedDateTime workFinished = ZonedDateTime.parse("2026-03-20T17:00:00+02:00"); // 5 days
+
+          beforeEach(() -> {
+            AreaRental areaRental = new AreaRental();
+            areaRental.setWorkFinished(workFinished);
+            app.setExtension(areaRental);
+            createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION);
+          });
+
+          it("should use work finished date to apply HANDLING_FEE_LT_8_DAYS pricing", () -> assertEquals(8000, arp.getPriceInCents()));
+        });
+
+        context("work finished shortens application below six months", () -> {
+          final ZonedDateTime start = ZonedDateTime.parse("2026-03-01T08:00:00+02:00");
+          final ZonedDateTime end   = ZonedDateTime.parse("2026-09-01T08:00:00+02:00"); // 6 months
+          final ZonedDateTime workFinished = ZonedDateTime.parse("2026-07-31T17:00:00+02:00"); // under 6 months
+
+          beforeEach(() -> {
+            AreaRental areaRental = new AreaRental();
+            areaRental.setWorkFinished(workFinished);
+            app.setExtension(areaRental);
+            createAreaRentalPricing(start, end, ApplicationKind.NEW_BUILDING_CONSTRUCTION);
+          });
+
+          it("should apply HANDLING_FEE_LT_6_MONTHS pricing", () -> assertEquals(24000, arp.getPriceInCents()));
+        });
       });
 
       context("duration edge cases", () -> context("exactly 8 days", () -> {
