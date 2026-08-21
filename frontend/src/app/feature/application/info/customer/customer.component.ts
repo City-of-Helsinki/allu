@@ -121,7 +121,23 @@ export class CustomerComponent implements OnInit, OnDestroy {
   onClearFormPress(): void {
     this.contacts.resetContacts();
     this.contacts.onCustomerChange(null);
-    this.customerForm.reset();
+    this.customerForm.reset({
+      type: undefined,
+      name: '',
+      registryKey: '',
+      ovt: '',
+      invoicingOperator: '',
+      country: 'FI',
+      postalAddress: {streetAddress: '', postalCode: '', city: ''},
+      email: '',
+      phone: '',
+      active: true,
+      invoicingOnly: false,
+      projectIdentifierPrefix: undefined
+    });
+    this.customerForm.enable();
+    this.customerForm.get('sapCustomerNumber').disable();
+    this.customerForm.get('invoicingProhibited').disable();
   }
 
   get isNewCustomer() {
