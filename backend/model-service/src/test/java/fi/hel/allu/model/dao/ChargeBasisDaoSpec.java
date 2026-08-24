@@ -1,10 +1,13 @@
 package fi.hel.allu.model.dao;
 
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -57,6 +60,26 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
             assertThrows(RuntimeException.class)
                 .when(() -> chargeBasisDao.setChargeBasis(modification(123, generateTestEntries(12, "Fail", null), true)));
           });
+        });
+      });
+
+      describe("findModificationTimesByIds", () -> {
+        it("returns empty map for empty id list", () -> {
+          assertTrue(chargeBasisDao.findModificationTimesByIds(Collections.emptyList()).isEmpty());
+        });
+
+        it("returns empty map for unknown ids", () -> {
+          assertTrue(chargeBasisDao.findModificationTimesByIds(Collections.singletonList(999999)).isEmpty());
+        });
+
+        it("returns modification times of the given entries", () -> {
+          int appId = testCommon.insertApplication("Hakemus", "Käsittelijä");
+          chargeBasisDao.setChargeBasis(modification(appId, generateTestEntries(2, "test", null), true));
+          List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId);
+          List<Integer> ids = entries.stream().map(ChargeBasisEntry::getId).collect(Collectors.toList());
+          Map<Integer, ZonedDateTime> result = chargeBasisDao.findModificationTimesByIds(ids);
+          assertEquals(2, result.size());
+          assertTrue(result.values().stream().allMatch(Objects::nonNull));
         });
       });
 
