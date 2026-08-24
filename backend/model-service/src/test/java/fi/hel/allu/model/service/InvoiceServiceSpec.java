@@ -26,6 +26,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Spectrum.class)
@@ -42,6 +43,13 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
   private InvoicingDateService invoicingDateService;
 
   private InvoiceService invoiceService;
+
+  private Invoice pendingInvoice(int applicationId, int invoiceRecipientId, int chargeBasisId) {
+    InvoiceRow row = new InvoiceRow();
+    row.setChargeBasisId(chargeBasisId);
+    return new Invoice(1, applicationId, ZonedDateTime.now(), false, false,
+        Collections.singletonList(row), invoiceRecipientId, null);
+  }
 
   {
     beforeEach(() -> {
@@ -84,44 +92,111 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         assertEquals(INVOICE_RECIPIENT_ID, (long)invoiceCaptor.getValue().getRecipientId());
       });
 
-      it("Find pending invoices", () -> {
-        final Customer customer = new Customer();
-        customer.setType(CustomerType.COMPANY);
-        customer.setName("The Company");
-        final int INVOICE_RECIPIENT_ID = 33;
-        final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
-        InvoiceRow row = new InvoiceRow();
-        row.setNetPrice(10);
-        final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
-        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID, null);
-        List<Invoice> pendingInvoices = Collections.singletonList(invoice);
-        Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
-        Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
+      describe("Find pending invoices", () -> {
+        beforeEach(() -> {
+          Mockito.when(invoiceDao.findLastInvoicedSentTimeByApplication(Mockito.anyCollection()))
+              .thenReturn(Collections.emptyMap());
+          Mockito.when(chargeBasisService.findModificationTimesByIds(Mockito.anyCollection()))
+              .thenReturn(Collections.emptyMap());
+        });
 
-        List<Invoice> foundPendingInvoices = invoiceService.findPending();
-        assertEquals(pendingInvoices.size(), foundPendingInvoices.size());
-        Invoice foundInvoice = foundPendingInvoices.get(0);
-        assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
-        assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
+        it("Finds pending invoices", () -> {
+          final Customer customer = new Customer();
+          customer.setType(CustomerType.COMPANY);
+          customer.setName("The Company");
+          final int INVOICE_RECIPIENT_ID = 33;
+          final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
+          InvoiceRow row = new InvoiceRow();
+          row.setNetPrice(10);
+          final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
+          Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID, null);
+          List<Invoice> pendingInvoices = Collections.singletonList(invoice);
+          Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
+          Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
+
+          List<Invoice> foundPendingInvoices = invoiceService.findPending();
+          assertEquals(pendingInvoices.size(), foundPendingInvoices.size());
+          Invoice foundInvoice = foundPendingInvoices.get(0);
+          assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
+          assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
+        });
+        it("Returns invoices even if sum is zero", () -> {
+          final Customer customer = new Customer();
+          customer.setType(CustomerType.COMPANY);
+          customer.setName("The Company");
+          final int INVOICE_RECIPIENT_ID = 33;
+          final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
+          InvoiceRow row = new InvoiceRow();
+          row.setNetPrice(0);
+          final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
+          Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID, null);
+          List<Invoice> pendingInvoices = Collections.singletonList(invoice);
+          Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
+          Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
+          List<Invoice> foundPendingInvoices = invoiceService.findPending();
+          assertEquals(pendingInvoices.size(), foundPendingInvoices.size());
+          Invoice foundInvoice = foundPendingInvoices.get(0);
+          assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
+          assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
+        });
       });
-      it("Returns invoices even if sum is zero", () -> {
-        final Customer customer = new Customer();
-        customer.setType(CustomerType.COMPANY);
-        customer.setName("The Company");
+
+      describe("Invoice change detection", () -> {
+        final int APPLICATION_ID = 2;
         final int INVOICE_RECIPIENT_ID = 33;
-        final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
-        InvoiceRow row = new InvoiceRow();
-        row.setNetPrice(0);
-        final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
-        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID, null);
-        List<Invoice> pendingInvoices = Collections.singletonList(invoice);
-        Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
-        Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
-        List<Invoice> foundPendingInvoices = invoiceService.findPending();
-        assertEquals(pendingInvoices.size(), foundPendingInvoices.size());
-        Invoice foundInvoice = foundPendingInvoices.get(0);
-        assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
-        assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
+        final int CHARGE_BASIS_ID = 1;
+
+        beforeEach(() -> {
+          final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(new Customer());
+          Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
+        });
+
+        it("Marks invoice as changed when application has not been invoiced before", () -> {
+          Mockito.when(invoiceDao.findPending())
+              .thenReturn(Collections.singletonList(pendingInvoice(APPLICATION_ID, INVOICE_RECIPIENT_ID, CHARGE_BASIS_ID)));
+          Mockito.when(invoiceDao.findLastInvoicedSentTimeByApplication(Mockito.anyCollection()))
+              .thenReturn(Collections.emptyMap());
+          Mockito.when(chargeBasisService.findModificationTimesByIds(Mockito.anyCollection()))
+              .thenReturn(Collections.emptyMap());
+          Invoice found = invoiceService.findPending().get(0);
+          assertTrue(found.isInvoiceChanged());
+        });
+
+        it("Marks invoice as unchanged when re-invoiced without change", () -> {
+          ZonedDateTime sentTime = ZonedDateTime.now().minusDays(10);
+          Mockito.when(invoiceDao.findPending())
+              .thenReturn(Collections.singletonList(pendingInvoice(APPLICATION_ID, INVOICE_RECIPIENT_ID, CHARGE_BASIS_ID)));
+          Mockito.when(invoiceDao.findLastInvoicedSentTimeByApplication(Mockito.anyCollection()))
+              .thenReturn(Collections.singletonMap(APPLICATION_ID, sentTime));
+          Mockito.when(chargeBasisService.findModificationTimesByIds(Mockito.anyCollection()))
+              .thenReturn(Collections.singletonMap(CHARGE_BASIS_ID, sentTime.minusDays(1)));
+          Invoice found = invoiceService.findPending().get(0);
+          assertFalse(found.isInvoiceChanged());
+        });
+
+        it("Marks invoice as changed when charge basis entry modified after last invoicing", () -> {
+          ZonedDateTime sentTime = ZonedDateTime.now().minusDays(10);
+          Mockito.when(invoiceDao.findPending())
+              .thenReturn(Collections.singletonList(pendingInvoice(APPLICATION_ID, INVOICE_RECIPIENT_ID, CHARGE_BASIS_ID)));
+          Mockito.when(invoiceDao.findLastInvoicedSentTimeByApplication(Mockito.anyCollection()))
+              .thenReturn(Collections.singletonMap(APPLICATION_ID, sentTime));
+          Mockito.when(chargeBasisService.findModificationTimesByIds(Mockito.anyCollection()))
+              .thenReturn(Collections.singletonMap(CHARGE_BASIS_ID, sentTime.plusDays(1)));
+          Invoice found = invoiceService.findPending().get(0);
+          assertTrue(found.isInvoiceChanged());
+        });
+
+        it("Marks invoice as unchanged when no charge basis entry modification time is available", () -> {
+          ZonedDateTime sentTime = ZonedDateTime.now().minusDays(10);
+          Mockito.when(invoiceDao.findPending())
+              .thenReturn(Collections.singletonList(pendingInvoice(APPLICATION_ID, INVOICE_RECIPIENT_ID, CHARGE_BASIS_ID)));
+          Mockito.when(invoiceDao.findLastInvoicedSentTimeByApplication(Mockito.anyCollection()))
+              .thenReturn(Collections.singletonMap(APPLICATION_ID, sentTime));
+          Mockito.when(chargeBasisService.findModificationTimesByIds(Mockito.anyCollection()))
+              .thenReturn(Collections.emptyMap());
+          Invoice found = invoiceService.findPending().get(0);
+          assertFalse(found.isInvoiceChanged());
+        });
       });
 
     });

@@ -19,6 +19,15 @@ public class Invoice {
   private InvoiceRecipient invoiceRecipient;
   private Integer invoicingPeriodId;
 
+  /**
+   * True if this invoice is the application's first invoice or if its contents
+   * have changed compared to the previous invoicing round. False if the
+   * application has been invoiced before and nothing affecting the invoice rows
+   * has changed since the last invoicing. Computed when pending invoices are
+   * fetched; used to split the invoice notification email into two groups.
+   */
+  private boolean invoiceChanged;
+
   public Invoice(Integer id, Integer applicationId, ZonedDateTime invoicableTime, boolean invoiced,
       boolean sapIdPending, List<InvoiceRow> rows, Integer recipientId, Integer invoicingPeriodId) {
     this.id = id;
@@ -144,6 +153,20 @@ public class Invoice {
 
   public void setSentTime(ZonedDateTime sentTime) {
     this.sentTime = sentTime;
+  }
+
+  /**
+   * Get whether this invoice's contents have changed compared to the previous
+   * invoicing round, or whether it is the application's first invoice.
+   *
+   * @return true if first invoice or invoice rows have changed since last invoicing
+   */
+  public boolean isInvoiceChanged() {
+    return invoiceChanged;
+  }
+
+  public void setInvoiceChanged(boolean invoiceChanged) {
+    this.invoiceChanged = invoiceChanged;
   }
 
 }

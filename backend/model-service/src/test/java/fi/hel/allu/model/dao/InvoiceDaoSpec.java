@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.runner.RunWith;
@@ -84,6 +85,45 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
         it("markAsSent doesn't throw", () -> {
           invoiceDao.markSent(Arrays.asList(1, 2, 44, 9010));
+        });
+      });
+
+      context("findLastInvoicedSentTimeByApplication", () -> {
+        it("returns empty map for empty application list", () -> {
+          assertTrue(invoiceDao.findLastInvoicedSentTimeByApplication(Collections.emptyList()).isEmpty());
+        });
+
+        it("does not include applications without invoiced invoices", () -> {
+          int appId = testCommon.insertApplication("Hakemus", "Käsittelijä");
+          invoiceDao.insert(appId, testInvoice());
+          assertTrue(invoiceDao.findLastInvoicedSentTimeByApplication(Collections.singletonList(appId)).isEmpty());
+        });
+
+        it("returns the send time of the latest invoiced invoice per application", () -> {
+          int appId = testCommon.insertApplication("Hakemus", "Käsittelijä");
+          int otherAppId = testCommon.insertApplication("Ansökning", "Handläggare");
+          ZonedDateTime firstSent = ZonedDateTime.parse("2024-01-01T10:00:00+02:00");
+          ZonedDateTime secondSent = ZonedDateTime.parse("2024-06-01T10:00:00+02:00");
+          ZonedDateTime otherSent = ZonedDateTime.parse("2024-03-01T10:00:00+02:00");
+
+          Invoice first = testInvoice();
+          first.setInvoiced(true);
+          first.setSentTime(firstSent);
+          invoiceDao.insert(appId, first);
+          Invoice second = testInvoice();
+          second.setInvoiced(true);
+          second.setSentTime(secondSent);
+          invoiceDao.insert(appId, second);
+          Invoice other = testInvoice();
+          other.setInvoiced(true);
+          other.setSentTime(otherSent);
+          invoiceDao.insert(otherAppId, other);
+
+          Map<Integer, ZonedDateTime> result =
+              invoiceDao.findLastInvoicedSentTimeByApplication(Arrays.asList(appId, otherAppId));
+          assertEquals(2, result.size());
+          assertEquals(secondSent.toInstant(), result.get(appId).toInstant());
+          assertEquals(otherSent.toInstant(), result.get(otherAppId).toInstant());
         });
       });
 

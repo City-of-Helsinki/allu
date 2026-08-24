@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -242,5 +243,26 @@ public class ChargeBasisDao {
         .from(chargeBasis)
         .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.tag.eq(tag))
         .fetchFirst());
+  }
+
+  /**
+   * Find the modification time of the given charge basis entries.
+   * Entries without modification time or without given ID are not present in the result.
+   *
+   * @param chargeBasisIds charge basis entry IDs to check
+   * @return map from charge basis entry ID to its modification time
+   */
+  @Transactional(readOnly = true)
+  public Map<Integer, ZonedDateTime> findModificationTimesByIds(Collection<Integer> chargeBasisIds) {
+    if (chargeBasisIds.isEmpty()) {
+      return Collections.emptyMap();
+    }
+    return queryFactory
+        .select(chargeBasis.id, chargeBasis.modificationTime)
+        .from(chargeBasis)
+        .where(chargeBasis.id.in(chargeBasisIds), chargeBasis.modificationTime.isNotNull())
+        .fetch()
+        .stream()
+        .collect(Collectors.toMap(t -> t.get(chargeBasis.id), t -> t.get(chargeBasis.modificationTime)));
   }
 }

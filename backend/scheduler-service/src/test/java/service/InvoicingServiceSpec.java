@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -72,8 +73,12 @@ public class InvoicingServiceSpec {
       describe("sendInvoices", () -> {
 
         Supplier<Application> application = let(this::createApplication);
+        Supplier<Application> secondApplication = let(this::createApplication);
+        Supplier<List<Application>> applications = let(() -> Arrays.asList(application.get(), secondApplication.get()));
         Supplier<Integer> applicationId = let(() -> application.get().getId());
+        Supplier<Integer> secondApplicationId = let(() -> secondApplication.get().getId());
         Supplier<String> applicationApplicationId = let(() -> application.get().getApplicationId());
+        Supplier<String> secondApplicationApplicationId = let(() -> secondApplication.get().getApplicationId());
 
         beforeEach(() -> {
           when(applicationProperties.getPendingInvoicesUrl()).thenReturn(PENDING_INVOICES_URL);
@@ -85,7 +90,7 @@ public class InvoicingServiceSpec {
           when(restTemplate.postForObject(eq(FIND_APPLICATIONS_URL), anyList(), any())).thenAnswer(invocationOnMock -> {
             List<Integer> applicationIds = invocationOnMock.getArgument(1);
             if (!applicationIds.isEmpty()) {
-              return new Application[]{application.get()};
+              return applications.get().stream().filter(a -> applicationIds.contains(a.getId())).toArray(Application[]::new);
             } else {
               return new Application[]{};
             }
@@ -99,7 +104,7 @@ public class InvoicingServiceSpec {
         });
 
         describe("with only non-zero net sum invoices", () -> {
-          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), 10, 100));
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), true, 10, 100));
           Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
           beforeEach(() -> {
@@ -117,9 +122,9 @@ public class InvoicingServiceSpec {
             assertInvoicesMarkedSent(invoiceIds.get());
           });
 
-          it("should send email concerning related applications", () -> {
+          it("should send email listing the application as first-time-or-changed", () -> {
             invoicingService.sendInvoices();
-            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), 2);
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), Collections.emptyList(), 2);
           });
 
           it("should request archival of related applications", () -> {
@@ -129,7 +134,7 @@ public class InvoicingServiceSpec {
         });
 
         describe("with zero and non-zero net sum invoices", () -> {
-          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), 0, 10, 100, 300));
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), true, 0, 10, 100, 300));
           Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
           beforeEach(() -> {
@@ -147,9 +152,9 @@ public class InvoicingServiceSpec {
             assertInvoicesMarkedSent(invoiceIds.get());
           });
 
-          it("should send email concerning related applications", () -> {
+          it("should send email listing the application as first-time-or-changed", () -> {
             invoicingService.sendInvoices();
-            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), 3);
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), Collections.emptyList(), 3);
           });
 
           it("should request archival of all related applications", () -> {
@@ -158,9 +163,8 @@ public class InvoicingServiceSpec {
           });
         });
 
-
         describe("with only zero net sum invoices", () -> {
-          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), 0, 0, 0));
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), false, 0, 0, 0));
           Supplier<List<Integer>> invoiceIds = let(() -> invoices.get().stream().map(Invoice::getId).collect(Collectors.toList()));
 
           beforeEach(() -> {
@@ -180,12 +184,82 @@ public class InvoicingServiceSpec {
 
           it("should not send email concerning related applications", () -> {
             invoicingService.sendInvoices();
-            assertNotificationSentFor(Collections.emptyList(), 0);
+            assertNotificationSentFor(Collections.emptyList(), Collections.emptyList(), 0);
           });
 
           it("should request archival of related applications", () -> {
             invoicingService.sendInvoices();
             assertArchivalRequested(Collections.singletonList(applicationId.get()));
+          });
+        });
+
+        describe("with only re-invoiced unchanged invoices", () -> {
+          Supplier<List<Invoice>> invoices = let(() -> createInvoices(applicationId.get(), false, 10, 100));
+
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray(new Invoice[0]));
+            doReturn(true).when(invoicingService).sendToSap(any());
+          });
+
+          it("should send email listing the application as re-invoiced without change", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.emptyList(), Collections.singletonList(applicationApplicationId.get()), 2);
+          });
+        });
+
+        describe("with invoices where only some are changed for the same application", () -> {
+          Supplier<List<Invoice>> invoices = let(() -> {
+            List<Invoice> result = new ArrayList<>();
+            result.add(createInvoice(applicationId.get(), true, 10));
+            result.add(createInvoice(applicationId.get(), false, 100));
+            return result;
+          });
+
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray(new Invoice[0]));
+            doReturn(true).when(invoicingService).sendToSap(any());
+          });
+
+          it("should send email listing the application as first-time-or-changed", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()), Collections.emptyList(), 2);
+          });
+        });
+
+        describe("with two applications", () -> {
+          Supplier<List<Invoice>> invoices = let(() -> {
+            List<Invoice> result = new ArrayList<>();
+            result.addAll(createInvoices(applicationId.get(), true, 10));
+            result.addAll(createInvoices(secondApplicationId.get(), false, 20));
+            return result;
+          });
+
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(invoices.get().toArray(new Invoice[0]));
+            doReturn(true).when(invoicingService).sendToSap(any());
+          });
+
+          it("should send email separating the applications into the correct groups", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.singletonList(applicationApplicationId.get()),
+                Collections.singletonList(secondApplicationApplicationId.get()), 2);
+          });
+
+          it("should request archival of all related applications", () -> {
+            invoicingService.sendInvoices();
+            assertArchivalRequested(Arrays.asList(applicationId.get(), secondApplicationId.get()));
+          });
+        });
+
+        describe("with no pending invoices", () -> {
+          beforeEach(() -> {
+            when(restTemplate.getForObject(eq(PENDING_INVOICES_URL), any())).thenReturn(new Invoice[0]);
+          });
+
+          it("should send email with zero invoices and not send anything to sap", () -> {
+            invoicingService.sendInvoices();
+            assertNotificationSentFor(Collections.emptyList(), Collections.emptyList(), 0);
+            verify(invoicingService, never()).sendToSap(any());
           });
         });
       });
@@ -204,12 +278,16 @@ public class InvoicingServiceSpec {
     assertContainSameElements(invoiceIdCaptor.getValue(), invoiceIds);
   }
 
-  private void assertNotificationSentFor(List<String> applicationApplicationIds, Integer expectedNumOfInvoices) {
-    ArgumentCaptor<List<String>> applicationIdCaptor = ArgumentCaptor.forClass(List.class);
+  private void assertNotificationSentFor(List<String> expectedFirstTimeOrChanged, List<String> expectedReInvoicedUnchanged,
+      Integer expectedNumOfInvoices) {
+    ArgumentCaptor<List<String>> firstTimeOrChangedCaptor = ArgumentCaptor.forClass(List.class);
+    ArgumentCaptor<List<String>> reInvoicedUnchangedCaptor = ArgumentCaptor.forClass(List.class);
     ArgumentCaptor<Integer> numOfInvoicesCaptor = ArgumentCaptor.forClass(Integer.class);
-    verify(invoicingService).sendNotificationEmail(applicationIdCaptor.capture(), numOfInvoicesCaptor.capture());
+    verify(invoicingService).sendNotificationEmail(firstTimeOrChangedCaptor.capture(), reInvoicedUnchangedCaptor.capture(),
+        numOfInvoicesCaptor.capture());
     Assert.assertEquals(expectedNumOfInvoices, numOfInvoicesCaptor.getValue());
-    assertContainSameElements(applicationIdCaptor.getValue(), applicationApplicationIds);
+    assertContainSameElements(firstTimeOrChangedCaptor.getValue(), expectedFirstTimeOrChanged);
+    assertContainSameElements(reInvoicedUnchangedCaptor.getValue(), expectedReInvoicedUnchanged);
   }
 
   private void assertArchivalRequested(List<Integer> applicationIds) {
@@ -250,18 +328,19 @@ public class InvoicingServiceSpec {
     return application;
   }
 
-  private List<Invoice> createInvoices(Integer applicationId, Integer... netPrices) {
+  private List<Invoice> createInvoices(Integer applicationId, boolean invoiceChanged, Integer... netPrices) {
     List<Invoice> invoices = new ArrayList<>();
     for (Integer netPrice : netPrices) {
-      invoices.add(createInvoice(applicationId, netPrice));
+      invoices.add(createInvoice(applicationId, invoiceChanged, netPrice));
     }
     return invoices;
   }
 
-  private Invoice createInvoice(Integer applicationId, int netPrice) {
+  private Invoice createInvoice(Integer applicationId, boolean invoiceChanged, int netPrice) {
     Invoice invoice = new Invoice();
     invoice.setId(idCounter++);
     invoice.setApplicationId(applicationId);
+    invoice.setInvoiceChanged(invoiceChanged);
 
     ArrayList<InvoiceRow> rows = new ArrayList<>();
     InvoiceRow invoiceRow = createInvoiceRow(netPrice);
