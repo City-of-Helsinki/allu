@@ -2,7 +2,10 @@ package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -105,6 +108,28 @@ public class InvoiceDao {
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Find the send time of the most recently invoiced (sent) invoice for each given
+   * application. Applications without any invoiced invoice are not present in the result.
+   *
+   * @param applicationIds application IDs to check
+   * @return map from application ID to the send time of its latest invoiced invoice
+   */
+  @Transactional(readOnly = true)
+  public Map<Integer, ZonedDateTime> findLastInvoicedSentTimeByApplication(Collection<Integer> applicationIds) {
+    if (applicationIds.isEmpty()) {
+      return Collections.emptyMap();
+    }
+    return queryFactory
+        .select(invoice.applicationId, invoice.sentTime.max())
+        .from(invoice)
+        .where(invoice.applicationId.in(applicationIds), invoice.invoiced.isTrue(), invoice.sentTime.isNotNull())
+        .groupBy(invoice.applicationId)
+        .fetch()
+        .stream()
+        .collect(Collectors.toMap(t -> t.get(invoice.applicationId), t -> t.get(invoice.sentTime.max())));
   }
 
   /**

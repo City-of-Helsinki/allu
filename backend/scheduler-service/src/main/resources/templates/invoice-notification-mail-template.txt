@@ -2,8 +2,11 @@ Allusta lähetetty ${sentDate} ${nrOfInvoices} uutta laskua.
 
 Liittymänumero: 341
 
-Laskujen hakemustunnukset:
-${invoiceApplicationIds}
+Ensimmäistä kertaa laskutettavien hakemusten hakemustunnukset ${firstTimeOrChangedCount} kpl:
+${firstTimeOrChangedApplicationIds}
+
+Aikaisemmin laskutettujen uudelleen laskutettavien hakemusten hakemustunnukset ${reInvoicedUnchangedCount} kpl:
+${reInvoicedUnchangedApplicationIds}
 
 
 Tämän sähköpostin lähettäjä on tekninen osoite.
