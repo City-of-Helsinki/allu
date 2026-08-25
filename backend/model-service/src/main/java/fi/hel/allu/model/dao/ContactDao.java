@@ -1,6 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
@@ -109,13 +108,17 @@ public class ContactDao {
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     List<Expression<?>> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
     mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
-    QueryResults<Contact> queryResults = queryFactory
+    List<Contact> results = queryFactory
         .select(Projections.bean(Contact.class, mappedExpressions.toArray(new Expression[0])))
         .from(contact)
         .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
         .orderBy(contact.id.asc()).offset(offset).limit(count)
-        .fetchResults();
-    return new PageImpl<>(queryResults.getResults(), pageRequest, queryResults.getTotal());
+        .fetch();
+    long total = queryFactory
+        .select(contact.id)
+        .from(contact)
+        .fetchCount();
+    return new PageImpl<>(results, pageRequest, total);
   }
 
   @Transactional

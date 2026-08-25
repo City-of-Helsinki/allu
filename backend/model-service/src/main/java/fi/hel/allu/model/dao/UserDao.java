@@ -109,7 +109,7 @@ public class UserDao {
   @Transactional(readOnly = true)
   public List<User> findAll() {
     List<User> users = queryFactory.select(userBean).from(QUser.user)
-        .orderBy(QUser.user.realName.asc()).fetchResults().getResults();
+        .orderBy(QUser.user.realName.asc()).fetch();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;
@@ -134,7 +134,7 @@ public class UserDao {
         .innerJoin(userCityDistrict).on(user.id.eq(userCityDistrict.userId))
         .where(userApplicationType.applicationType.eq(applicationType.name())
             .and(userRole.role.eq(roleType.name()).and(userCityDistrict.cityDistrictId.eq(cityDistrictId))))
-        .fetchResults().getResults();
+        .fetch();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;
@@ -159,7 +159,7 @@ public class UserDao {
             .where(userApplicationType.applicationType.eq(applicationType.name())
                 .and(userRole.role.eq(doesntHaveRoleType.name())
                 .and(userCityDistrict.cityDistrictId.eq(cityDistrictId)))))
-        ).fetchResults().getResults();
+        ).fetch();
     final List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;
@@ -171,7 +171,7 @@ public class UserDao {
         .innerJoin(userRole).on(user.id.eq(userRole.userId))
         .where(userRole.role.eq(roleType.name()))
         .orderBy(QUser.user.realName.asc())
-        .fetchResults().getResults();
+        .fetch();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;

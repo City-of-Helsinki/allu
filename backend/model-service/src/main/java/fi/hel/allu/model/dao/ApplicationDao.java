@@ -1,7 +1,6 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -130,15 +129,20 @@ public class ApplicationDao {
   public Page<Application> findAll(Pageable pageRequest) {
     long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    QueryResults<Application> queryResults = queryFactory
+    List<Application> results = queryFactory
       .select(applicationBean)
       .from(application)
       .where(application.status.ne(StatusType.ANONYMIZED))
       .orderBy(application.id.asc())
       .offset(offset)
       .limit(count)
-      .fetchResults();
-    return new PageImpl<>(populateDependencies(queryResults.getResults()), pageRequest, queryResults.getTotal());
+      .fetch();
+    long total = queryFactory
+      .select(applicationBean)
+      .from(application)
+      .where(application.status.ne(StatusType.ANONYMIZED))
+      .fetchCount();
+    return new PageImpl<>(populateDependencies(results), pageRequest, total);
   }
 
   /**
