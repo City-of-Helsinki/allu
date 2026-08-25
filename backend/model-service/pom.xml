@@ -12,7 +12,7 @@
     <artifactId>model-service</artifactId>
 
     <properties>
-        <querydsl.version>4.4.0</querydsl.version>
+        <querydsl.version>5.1.0</querydsl.version>
         <!-- database configuration for source generation: -->
         <database.user>model_service</database.user>
         <database.db>model_service</database.db>
@@ -718,6 +718,11 @@
                         <version>${postgresql.version}</version>
                     </dependency>
                     <dependency>
+                        <groupId>com.querydsl</groupId>
+                        <artifactId>querydsl-sql-spatial</artifactId>
+                        <version>${querydsl.version}</version>
+                    </dependency>
+                    <dependency>
                         <groupId>fi.hel.allu</groupId>
                         <artifactId>model-querydsl-support</artifactId>
                         <version>${project.parent.version}</version>
@@ -743,6 +748,45 @@
                             <sources>
                                 <source>${project.basedir}/target/generated-sources</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>fix-querydsl-spatial-imports</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- querydsl-maven-plugin:5.x generates imports for packages that were
+                                     renamed in 5.x: jts.path -> jts, spatial.path -> spatial.
+                                     The actual types are referenced by FQN so the imports are unused.
+                                     Remove them so the compiler does not fail on missing packages. -->
+                                <replaceregexp match="import com\.querydsl\.spatial\.jts\.path\.\*;" replace="" byline="true">
+                                    <fileset dir="${project.build.directory}/generated-sources/java" includes="**/*.java"/>
+                                </replaceregexp>
+                                <replaceregexp match="import com\.querydsl\.spatial\.path\.\*;" replace="" byline="true">
+                                    <fileset dir="${project.build.directory}/generated-sources/java" includes="**/*.java"/>
+                                </replaceregexp>
+                                <!-- querydsl-maven-plugin:5.x generates raw GeometryPath fields (no type
+                                     parameter). Raw types break type inference in the DAO query chains,
+                                     causing "QueryBase cannot be converted to SQLQuery<T>" errors.
+                                     Re-type each field as GeometryPath<org.geolatte.geom.Geometry> and
+                                     use the Class-aware constructor so the type token is preserved. -->
+                                <replaceregexp
+                                    match="public final com\.querydsl\.spatial\.GeometryPath (\w+) = new com\.querydsl\.spatial\.GeometryPath\(forProperty\(&quot;(\w+)&quot;\)\);"
+                                    replace="public final com.querydsl.spatial.GeometryPath&lt;org.geolatte.geom.Geometry&gt; \1 = new com.querydsl.spatial.GeometryPath&lt;&gt;(org.geolatte.geom.Geometry.class, forProperty(&quot;\2&quot;));"
+                                    byline="true">
+                                    <fileset dir="${project.build.directory}/generated-sources/java" includes="**/*.java"/>
+                                </replaceregexp>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

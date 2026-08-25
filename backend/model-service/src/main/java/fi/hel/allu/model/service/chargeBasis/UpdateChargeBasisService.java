@@ -97,9 +97,8 @@ public class UpdateChargeBasisService {
   }
 
   private boolean hasSameKey(ChargeBasisEntry entry1, ChargeBasisEntry entry2) {
-    return entry1.getManuallySet() ? com.google.common.base.Objects.equal(
-      entry1.getId(), entry2.getId())
-      : com.google.common.base.Objects.equal(entry1.getTag(), entry2.getTag());
+    return entry1.getManuallySet() ? Objects.equals(entry1.getId(), entry2.getId())
+      : Objects.equals(entry1.getTag(), entry2.getTag());
   }
 
 
