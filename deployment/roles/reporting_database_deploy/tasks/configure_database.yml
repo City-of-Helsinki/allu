@@ -77,7 +77,7 @@
   become_user: postgres
 
 - name: Add foreign data wrapper
-  command:  psql {{ reporting_database_name }} --host localhost -p 5433  -c "CREATE SERVER allu_operative FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '{{ operative_database_host }}', dbname '{{ operative_database_name }}', port '5432', updatable 'false');"
+  command:  psql {{ reporting_database_name }} --host localhost -p 5433  -c "CREATE SERVER allu_operative FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '{{ operative_database_host }}', dbname '{{ operative_database_name }}', port '5432', updatable 'false', use_remote_estimate 'true', fetch_size '10000');"
   become: yes
   become_user: postgres
 
