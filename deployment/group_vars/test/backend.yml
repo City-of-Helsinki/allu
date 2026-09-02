@@ -46,8 +46,9 @@ supervision_api_basepath: /supervision-api
 
 anonymization_update_cronstring: "0 0 3 * * *"
 
+# Cron string for sending notification email about removed SAP customers
 removed_customers_subject: "Allu - asiakasrekisterist\u00E4 poistettu SAP-numerollisia asiakkaita"
-removed_customers_notification_cronstring: "0 0 3 * * *"
+removed_customers_notification_cronstring: "0 15 3 * * *"
 
-# Cron string for permanently deleting inactive customers past their retention period
+# Cron string for permanently deleting inactive customers past their retention period - disable with cron: 0 0 3 31 2 *
 customer_purge_cronstring: "0 0 4 * * *"
