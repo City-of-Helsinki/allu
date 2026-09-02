@@ -44,6 +44,15 @@ public class EtlRunner {
     }, "ETL batch run failed at {} - all batch changes (transaction) were rolled back");
   }
 
+  @Scheduled(cron = "${etl.cleanup.cronstring}")
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void runCleanup() {
+    runScheduled(() -> {
+      List<String> files = applicationProperties.getEtlCleanupSqlFiles();
+      files.forEach(file -> executeScript(file, "cleanup"));
+    }, "ETL cleanup run failed at {}");
+  }
+
   private void runScheduled(Runnable task, String errorMsg) {
     try {
       task.run();
