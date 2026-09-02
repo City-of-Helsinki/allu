@@ -12,14 +12,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationProperties {
 
-  private String etlScripts;
+  private final String etlScripts;
+  private final String etlCleanupScripts;
 
   @Autowired
-  public ApplicationProperties(@Value("${etl.sql.files}") @NotNull String etlScripts) {
+  public ApplicationProperties(@Value("${etl.sql.files}") @NotNull String etlScripts,
+      @Value("${etl.cleanup.sql.files:cleanup.sql}") @NotNull String etlCleanupScripts) {
     this.etlScripts = etlScripts;
+    this.etlCleanupScripts = etlCleanupScripts;
   }
 
   public List<String> getEtlSqlFiles() {
-    return Arrays.asList(etlScripts.split(","));
+    return splitScriptList(etlScripts);
+  }
+
+  public List<String> getEtlCleanupSqlFiles() {
+    return splitScriptList(etlCleanupScripts);
+  }
+
+  private List<String> splitScriptList(String scripts) {
+    return Arrays.stream(scripts.split(","))
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .toList();
   }
 }
