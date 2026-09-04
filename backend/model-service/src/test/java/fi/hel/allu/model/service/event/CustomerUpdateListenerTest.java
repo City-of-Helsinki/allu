@@ -11,7 +11,7 @@ import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerUpdateLog;
 import fi.hel.allu.model.domain.PostalAddress;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
