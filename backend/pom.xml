@@ -21,7 +21,7 @@
         <skip.frontend>true</skip.frontend>
         <node.version>v5.5.0</node.version>
         <npm.version>3.3.12</npm.version>
-        <spring-security.version>5.8.0</spring-security.version>
+        <spring-security.version>5.8.16</spring-security.version>
     </properties>
 
     <modules>
