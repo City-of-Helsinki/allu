@@ -1,9 +1,9 @@
 package fi.hel.allu.servicecore.security;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -18,16 +18,18 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class PreAuthorizeEnforcerInterceptor implements HandlerInterceptor {
 
-  @Autowired
-  ApplicationProperties applicationProperties;
+  private final ApplicationProperties applicationProperties;
+
+  public PreAuthorizeEnforcerInterceptor(ApplicationProperties applicationProperties) {
+    this.applicationProperties = applicationProperties;
+  }
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
+  public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+                           @NonNull Object handler) {
     // OK status is checked because otherwise this filter would also handle /error and such URLs,
     // which do not need @PreAuthorized
-    if (handler instanceof HandlerMethod && (response.getStatus() == HttpStatus.OK.value())) {
-      HandlerMethod hm = (HandlerMethod) handler;
+    if (handler instanceof HandlerMethod hm && (response.getStatus() == HttpStatus.OK.value())) {
       PreAuthorize annotation = AnnotationUtils.findAnnotation(hm.getMethod(), PreAuthorize.class);
       if (applicationProperties.getAnonymousAccessPaths().contains(request.getRequestURI())) {
         // no checking for certain uris
