@@ -1,12 +1,11 @@
 package fi.hel.allu.external.config;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,17 +21,23 @@ import fi.hel.allu.servicecore.security.StatelessAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
-  @Autowired
-  private ServerTokenAuthenticationService tokenAuthenticationService;
-  @Autowired
-  private ExternalUserDetailService externalUserDetailService;
-  @Autowired
-  private ApplicationProperties applicationProperties;
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  private final ServerTokenAuthenticationService tokenAuthenticationService;
+  private final ExternalUserDetailService externalUserDetailService;
+  private final ApplicationProperties applicationProperties;
+  private final PasswordEncoder passwordEncoder;
+
+  public SecurityConfig(ServerTokenAuthenticationService tokenAuthenticationService,
+      ExternalUserDetailService externalUserDetailService,
+      ApplicationProperties applicationProperties,
+      PasswordEncoder passwordEncoder) {
+    this.tokenAuthenticationService = tokenAuthenticationService;
+    this.externalUserDetailService = externalUserDetailService;
+    this.applicationProperties = applicationProperties;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
