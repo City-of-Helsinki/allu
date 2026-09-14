@@ -27,7 +27,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field *ngIf="showDateReporting" class="form-field-50">
+    <mat-form-field *ngIf="showDateReporting" class="form-field-50 reported-date-field">
       <mat-label>{{['dateReporting.reportedInfo', reportedDateType] | translation}}</mat-label>
       <input matInput formControlName="reportedDate" required
              [matDatepicker]="reportedDatePicker"
