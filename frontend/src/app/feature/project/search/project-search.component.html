@@ -22,7 +22,8 @@
             <mat-label>{{'projectSearch.districts' | translation}}</mat-label>
             <mat-select formControlName="districts"
                         [multiple]="true"
-                        class="input-full-width">
+                        class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
               </mat-option>
             </mat-select>

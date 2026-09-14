@@ -30,7 +30,8 @@
       <div class="col s2">
         <mat-form-field class="input-full-width">
           <mat-label>{{'applicationSearch.type' | translation}}</mat-label>
-          <mat-select formControlName="type" [multiple]="true" class="input-full-width">
+          <mat-select formControlName="type" [multiple]="true" class="input-full-width"
+                      panelClass="filter-select-panel">
             <mat-option *ngFor="let type of applicationTypes" [value]="type">
               {{['application.type', type] | translation}}
             </mat-option>
@@ -40,7 +41,8 @@
       <div class="col s2" [hidden]="(tab$ | async)==='OWN'">
         <mat-form-field class="input-full-width">
           <mat-label>{{'applicationSearch.owner' | translation}}</mat-label>
-          <mat-select formControlName="owner" [multiple]="true" class="input-full-width">
+          <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
+                      panelClass="filter-select-panel">
             <mat-option *ngFor="let owner of owners" [value]="owner.userName">{{owner.realName}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -48,7 +50,8 @@
       <div class="col s2">
         <mat-form-field class="input-full-width">
           <mat-label>{{'applicationSearch.status' | translation}}</mat-label>
-          <mat-select formControlName="status" [multiple]="true" class="input-full-width">
+          <mat-select formControlName="status" [multiple]="true" class="input-full-width"
+                      panelClass="filter-select-panel">
             <mat-option *ngFor="let status of applicationStatuses" [value]="status">
               {{['application.status', status] | translation}}
             </mat-option>
@@ -58,7 +61,8 @@
       <div class="col s2">
         <mat-form-field class="input-full-width">
           <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
-          <mat-select formControlName="districts" [multiple]="true" class="input-full-width">
+          <mat-select formControlName="districts" [multiple]="true" class="input-full-width"
+                      panelClass="filter-select-panel">
             <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
           </mat-select>
         </mat-form-field>
