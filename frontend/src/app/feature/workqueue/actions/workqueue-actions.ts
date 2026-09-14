@@ -3,7 +3,8 @@ import {ActionWithTarget} from '@feature/allu/actions/action-with-target';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export enum WorkQueueActionType {
-  SetTab = '[WorkQueue] Set tab'
+  SetTab = '[WorkQueue] Set tab',
+  Refresh = '[WorkQueue] Refresh applications'
 }
 
 export class SetTab implements ActionWithTarget {
@@ -12,5 +13,12 @@ export class SetTab implements ActionWithTarget {
   constructor(public targetType: ActionTargetType, public payload: WorkQueueTab) {}
 }
 
+export class Refresh implements ActionWithTarget {
+  readonly type = WorkQueueActionType.Refresh;
+
+  constructor(public targetType: ActionTargetType = ActionTargetType.ApplicationWorkQueue) {}
+}
+
 export type WorkqueueActions =
-  | SetTab;
+  | SetTab
+  | Refresh;
