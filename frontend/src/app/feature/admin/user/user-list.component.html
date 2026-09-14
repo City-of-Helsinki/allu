@@ -1,6 +1,6 @@
 <div class="main-content">
   <div fxLayout="row" class="action-bar-loose">
-    <div fxFlex>
+    <div fxFlex class="table-flex-container">
       <a [routerLink]="['/admin/users/new']" mat-raised-button type="button" color="primary">
         {{'user.addNew' | translation}}
       </a>
@@ -15,7 +15,8 @@
   <div fxLayout="row">
     <div fxFlex>
       <div class="mat-elevation-z8 data-table data-table-with-paging">
-        <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+        <div class="table-scroll-container">
+          <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
           <ng-container matColumnDef="userName">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.username' | translation}}</mat-header-cell>
             <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.userName}}</mat-cell>
@@ -61,7 +62,8 @@
 
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight clickable" (click)="showUser(row)"></mat-row>
-        </mat-table>
+          </mat-table>
+        </div>
 
         <mat-paginator #paginator
                        [pageSize]="25"
