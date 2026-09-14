@@ -23,6 +23,7 @@ import {catchError, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {BaseDecisionActionsComponent} from '@feature/decision/base-decision-actions.component';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {Refresh as RefreshWorkQueue} from '@feature/workqueue/actions/workqueue-actions';
 
 @Component({
   selector: 'decision-actions',
@@ -100,7 +101,10 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
     this.confirmDecisionSend(ApplicationStatus.RETURNED_TO_PREPARATION, ApplicationStatus.RETURNED_TO_PREPARATION).pipe(
       switchMap(confirmation => this.changeStatus(confirmation))
     ).subscribe(
-      () => this.router.navigateByUrl('/workqueue'),
+      () => {
+        this.myStore.dispatch(new RefreshWorkQueue());
+        this.router.navigateByUrl('/workqueue');
+      },
       error => this.notification.errorInfo(error)
     );
   }
@@ -109,7 +113,10 @@ export class DecisionActionsComponent extends BaseDecisionActionsComponent imple
     this.changeStatus(confirmation).pipe(
       switchMap(app => this.sendDecision(app.id, confirmation))
     ).subscribe(
-      () => this.router.navigateByUrl('/workqueue'),
+      () => {
+        this.myStore.dispatch(new RefreshWorkQueue());
+        this.router.navigateByUrl('/workqueue');
+      },
       error => this.notification.errorInfo(error));
   }
 

@@ -29,6 +29,7 @@ import * as fromAuth from '@feature/auth/reducers';
 import {ObjectUtil} from '@util/object.util';
 import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 import {ApproveComplete, BulkApprovalActionType} from '@feature/decision/actions/bulk-approval-actions';
+import {Refresh as RefreshWorkQueue, WorkQueueActionType} from '@feature/workqueue/actions/workqueue-actions';
 
 @Injectable()
 export class ApplicationSearchEffects {
@@ -64,11 +65,12 @@ export class ApplicationSearchEffects {
 
   
   refreshWorkQueueSearch: Observable<Action> = createEffect(() => this.actions.pipe(
-    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess | ApproveComplete>(
+    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess | ApproveComplete | RefreshWorkQueue>(
       ApplicationActionType.ChangeOwnerSuccess,
       ApplicationActionType.RemoveOwnerSuccess,
       ApplicationActionType.RemoveOwnerNotificationSuccess,
-      BulkApprovalActionType.ApproveComplete
+      BulkApprovalActionType.ApproveComplete,
+      WorkQueueActionType.Refresh
     ),
     switchMap(() => this.getCurrentWorkQueueSearch()),
     switchMap(([search, sort, pageRequest]) => [
