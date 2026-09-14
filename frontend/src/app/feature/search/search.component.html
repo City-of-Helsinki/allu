@@ -12,7 +12,8 @@
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-label>{{'applicationSearch.type' | translation}}</mat-label>
-            <mat-select formControlName="type" [multiple]="true" class="input-full-width">
+            <mat-select formControlName="type" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let option of applicationTypeStrings" [value]="option">
                 {{ ['application.type', option] | translation }}
               </mat-option>
@@ -22,7 +23,8 @@
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-label>{{'applicationSearch.status' | translation}}</mat-label>
-            <mat-select formControlName="status" [multiple]="true" class="input-full-width">
+            <mat-select formControlName="status" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let option of applicationStatusStrings" [value]="option">
                 {{ ['application.status', option] | translation }}
               </mat-option>
@@ -32,7 +34,8 @@
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
-            <mat-select formControlName="districts" [multiple]="true" class="input-full-width">
+            <mat-select formControlName="districts" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
               </mat-option>
             </mat-select>
@@ -41,7 +44,8 @@
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-label>{{'applicationSearch.owner' | translation}}</mat-label>
-            <mat-select formControlName="owner" [multiple]="true" class="input-full-width">
+            <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let owner of owners | async" [value]="owner.userName">{{owner.realName}}
               </mat-option>
             </mat-select>

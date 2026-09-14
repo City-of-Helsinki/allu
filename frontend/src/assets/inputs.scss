@@ -45,6 +45,18 @@
   }
 }
 
+.filter-select-panel {
+  width: max-content !important;
+  min-width: min(220px, calc(100vw - 32px)) !important;
+  max-width: min(400px, calc(100vw - 32px)) !important;
+}
+
+.cdk-overlay-pane:has(> .filter-select-panel) {
+  width: max-content !important;
+  min-width: min(220px, calc(100vw - 32px)) !important;
+  max-width: min(400px, calc(100vw - 32px)) !important;
+}
+
 td.mat-calendar-body-cell:hover {
   cursor: pointer;
 }
