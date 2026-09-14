@@ -30,7 +30,8 @@
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
           <mat-label>{{'supervision.task.owner' | translation}}</mat-label>
-          <mat-select formControlName="owners" [multiple]="true" class="input-full-width">
+          <mat-select formControlName="owners" [multiple]="true" class="input-full-width"
+                      panelClass="filter-select-panel">
             <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
               {{supervisor.realName}}
             </mat-option>
@@ -40,7 +41,7 @@
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
           <mat-label>{{'supervisionWorkqueue.filter.taskTypes' | translation}}</mat-label>
-          <mat-select formControlName="taskTypes" [multiple]="true">
+          <mat-select formControlName="taskTypes" [multiple]="true" panelClass="filter-select-panel">
             <mat-option *ngFor="let type of taskTypes" [value]="type">{{['supervision.task.type', type] |
               translation}}
             </mat-option>
@@ -56,7 +57,7 @@
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
           <mat-label>{{'supervisionWorkqueue.filter.applicationStatus' | translation}}</mat-label>
-          <mat-select formControlName="applicationStatus" [multiple]="true">
+          <mat-select formControlName="applicationStatus" [multiple]="true" panelClass="filter-select-panel">
             <mat-option *ngFor="let status of applicationStatusTypes" [value]="status">{{['application.status', status]
               | translation}}
             </mat-option>
@@ -66,7 +67,7 @@
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
           <mat-label>{{'supervisionWorkqueue.filter.applicationType' | translation}}</mat-label>
-          <mat-select formControlName="applicationTypes" [multiple]="true">
+          <mat-select formControlName="applicationTypes" [multiple]="true" panelClass="filter-select-panel">
             <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] |
               translation}}
             </mat-option>
@@ -76,7 +77,8 @@
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
           <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
-          <mat-select formControlName="cityDistrictIds" [multiple]="true" class="input-full-width">
+          <mat-select formControlName="cityDistrictIds" [multiple]="true" class="input-full-width"
+                      panelClass="filter-select-panel">
             <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
           </mat-select>
         </mat-form-field>
