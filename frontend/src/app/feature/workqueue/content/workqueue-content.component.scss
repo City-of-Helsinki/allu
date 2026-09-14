@@ -6,6 +6,10 @@
   border-bottom: none;
 }
 
+.content-row .mat-mdc-cell {
+  border-bottom: none;
+}
+
 .row-highlight {
   background-color: mat.m2-get-color-from-palette($allu-primary, 50);
 }
