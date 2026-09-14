@@ -7,16 +7,18 @@
       {{'application.recurring.recurringYearlyForNow' | translation}}
     </mat-radio-button>
     <mat-radio-button value="until" class="recurring-radio-button">
-      <span>{{'application.recurring.recurringYearly' | translation}}</span>
-      <mat-form-field floatLabel="never" class="year-input error-overflow">
-        <input type="number" matInput formControlName="endYear"
-               [placeholder]="'application.recurring.untilYear' | translation"
-               [min]="minYear"
-               [max]="maxYear"
-               step="1"/>
-        <mat-error>{{'application.field.recurringEndYearNotBetween' | translation}}</mat-error>
-      </mat-form-field>
-      <span>{{'application.recurring.until' | translation}}</span>
+      <span class="recurring-until-label">
+        <span>{{'application.recurring.recurringYearly' | translation}}</span>
+        <mat-form-field floatLabel="never" class="year-input error-overflow">
+          <input type="number" matInput formControlName="endYear"
+                 [placeholder]="'application.recurring.untilYear' | translation"
+                 [min]="minYear"
+                 [max]="maxYear"
+                 step="1"/>
+          <mat-error>{{'application.field.recurringEndYearNotBetween' | translation}}</mat-error>
+        </mat-form-field>
+        <span>{{'application.recurring.until' | translation}}</span>
+      </span>
     </mat-radio-button>
   </mat-radio-group>
 </form>
