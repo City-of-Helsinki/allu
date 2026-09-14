@@ -22,9 +22,10 @@
   </nav>
 
   <div fxLayout="row">
-    <div fxFlex>
+    <div fxFlex class="table-flex-container">
       <div class="mat-elevation-z8 data-table data-table-with-paging">
-        <mat-table #table [dataSource]="filteredDataSource$ | async" matSort (matSortChange)="onSort($event)" [trackBy]="trackById">
+        <div class="table-scroll-container">
+          <mat-table #table [dataSource]="filteredDataSource$ | async" matSort (matSortChange)="onSort($event)" [trackBy]="trackById">
 
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
             <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -96,7 +97,8 @@
 
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
-        </mat-table>
+          </mat-table>
+        </div>
       </div>
     </div>
   </div>

@@ -27,6 +27,28 @@
 
 .data-table {
   position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.table-flex-container {
+  min-width: 0;
+}
+
+.table-scroll-container {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table-scroll-container > mat-table {
+  min-width: 100%;
+  width: max-content;
+}
+
+.mat-mdc-paginator-page-size-select .mat-mdc-text-field-wrapper {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
 }
 
 .data-table.data-table-with-paging .loading-shade {
@@ -94,4 +116,3 @@ mat-cell.mat-cell-selection {
   overflow: hidden;
   max-width: 500px;
 }
-
