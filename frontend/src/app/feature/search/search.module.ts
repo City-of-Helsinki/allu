@@ -6,6 +6,7 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
+import {HyphenateDistrictPipe} from '@app/pipe/hyphenate-district.pipe';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import {MatTableModule} from '@angular/material/table';
     MatPaginatorModule
   ],
   declarations: [
-    SearchComponent
+    SearchComponent,
+    HyphenateDistrictPipe
   ],
   providers: []
 })

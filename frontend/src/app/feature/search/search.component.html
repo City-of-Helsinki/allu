@@ -111,6 +111,7 @@
     </form>
   </div>
 </div>
+
 <div fxLayout="row">
   <div fxFlex class="table-flex-container">
     <div class="mat-elevation-z8 data-table data-table-with-paging">
@@ -118,102 +119,106 @@
         <mat-spinner></mat-spinner>
       </div>
       <div class="table-scroll-container">
-        <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+        <table mat-table class="application-search-table" #table [dataSource]="dataSource" matSort [trackBy]="trackById">
         <ng-container matColumnDef="selected">
-          <mat-header-cell *matHeaderCellDef>
+          <th mat-header-cell *matHeaderCellDef>
             <div>
               <mat-checkbox
                 [checked]="(someSelected$ | async) && (allSelected$ | async)"
                 [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
                 (change)="checkAll()"></mat-checkbox>
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          </th>
+          <td mat-cell *matCellDef="let row">
             <mat-checkbox
               [checked]="selected(row.id) | async"
               (change)="checkSingle(row.id)"></mat-checkbox>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="owner.realName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.owner?.realName}}</td>
         </ng-container>
 
         <ng-container matColumnDef="applicationId">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
               {{row.applicationId}}
             </a>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'name' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'name' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="type">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ ['application.type', row.type] | translation }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{ ['application.type', row.type] | translation }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ ['application.status', row.status] | translation }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{ ['application.status', row.status] | translation }}</td>
         </ng-container>
 
         <ng-container matColumnDef="project.identifier">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.title' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.title' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <a *ngIf="row.project" class="row-details-link" [routerLink]="['/projects', row.project.id]">
               {{row.project.identifier}}
             </a>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="customers.applicant.customer.name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="locations.address">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'postalAddress.streetAddress' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.address}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'postalAddress.streetAddress' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.address}}</td>
         </ng-container>
 
         <ng-container matColumnDef="locations.cityDistrictId">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</th>
+           <td mat-cell *matCellDef="let row">
+             <span class="district-name">
+               {{districtName(row.firstLocation.effectiveCityDistrictId) | async | hyphenateDistrict}}
+             </span>
+           </td>
         </ng-container>
 
         <ng-container matColumnDef="receivedTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.receivedTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.receivedTime | date:'shortDate'}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.receivedTime' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.receivedTime | date:'shortDate'}}</td>
         </ng-container>
 
         <ng-container matColumnDef="startTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.startTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.startTime' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <validity-start-time [startTime]="row.startTime" [recurring]="!!row.recurringEndTime"></validity-start-time>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="endTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.endTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.endTime' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <validity-end-time
               [startTime]="row.startTime"
               [endTime]="row.endTime"
               [recurringEndTime]="row.recurringEndTime"></validity-end-time>
-          </mat-cell>
+          </td>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"
-                 class="row-highlight"></mat-row>
-        </mat-table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="row-highlight"></tr>
+        </table>
       </div>
 
       <mat-paginator #paginator
