@@ -41,9 +41,38 @@
   overflow-x: auto;
 }
 
-.table-scroll-container > mat-table {
-  min-width: 100%;
-  width: max-content;
+.allu-table-header .mat-mdc-header-cell {
+  background: white;
+}
+
+.table-scroll-container > .application-search-table {
+  width: 100%;
+  table-layout: auto;
+}
+
+.application-search-table th,
+.application-search-table td {
+  vertical-align: middle;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.application-search-table .mat-column-selected {
+  width: 1%;
+  white-space: nowrap;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.application-search-table .mat-column-applicationId,
+.application-search-table .mat-column-receivedTime,
+.application-search-table .mat-column-startTime,
+.application-search-table .mat-column-endTime {
+  white-space: nowrap;
+}
+
+.application-search-table .mat-column-locations-cityDistrictId {
+  hyphens: manual;
 }
 
 .mat-mdc-paginator-page-size-select .mat-mdc-text-field-wrapper {
@@ -104,10 +133,14 @@ mat-cell.mat-cell-4 {
   flex: 4;
 }
 
-mat-header-cell.mat-cell-selection,
-mat-cell.mat-cell-selection {
-  flex: none;
-  padding-right: 34px;
+mat-header-cell,
+mat-cell {
+  flex: auto;
+  overflow-wrap: break-word;
+}
+
+.application-search-table .mat-column-locations-cityDistrictId {
+  hyphens: manual;
 }
 
 .mat-cell-text-limit {
