@@ -310,6 +310,20 @@ public class ApplicationDaoTest {
   }
 
   @Test
+  public void testFindByEndTimeExcludesAnonymizedApplications() {
+    Application application = testCommon.dummyOutdoorApplication("Anonymized application", "Test Owner");
+    ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
+    application.setEndTime(time0.plusDays(1));
+    application.setStatus(StatusType.ANONYMIZED);
+    int applicationId = applicationDao.insert(application).getId();
+
+    List<Integer> matches = applicationDao.findByEndTime(time0, time0.plusDays(14),
+        Collections.emptyList(), Collections.emptyList());
+
+    assertFalse(matches.contains(applicationId));
+  }
+
+  @Test
   public void testFindByEndTimeWithSpecifiers() {
     // Insert three applications that end in different times in future, remember
     // their ids, set different statuses for all:
