@@ -89,6 +89,9 @@ public class ApplicationArchiverService {
 
   public void moveToFinishedOrArchived(Integer applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    if (application.getStatus() == StatusType.ANONYMIZED) {
+      return;
+    }
     if (readyForArchive(application)) {
       archiveApplication(applicationId);
     } else if (readyForFinished(application)){
