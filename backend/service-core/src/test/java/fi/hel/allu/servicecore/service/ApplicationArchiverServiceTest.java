@@ -240,6 +240,15 @@ public class ApplicationArchiverServiceTest {
   }
 
   @Test
+  public void shouldNotChangeStatusOfAnonymizedApplication() {
+    applicationJson.setStatus(StatusType.ANONYMIZED);
+
+    archiverService.moveToFinishedOrArchived(APPLICATION_ID);
+
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), any(StatusType.class));
+  }
+
+  @Test
   public void shouldAnonymizeSuitableCableReports() {
     when(applicationServiceComposer.fetchPotentiallyAnonymizableApplications()).thenReturn(createAnonymizableCableReports());
     when(applicationServiceComposer.fetchActiveExcavationAnnouncements()).thenReturn(createExcavationAnnouncementList());

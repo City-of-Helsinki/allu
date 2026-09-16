@@ -59,6 +59,7 @@ public class ApplicationDao {
           application.externalApplicationId, application.invoicingPeriodLength, application.ownerNotification);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
+  private static final BooleanExpression APPLICATION_NOT_ANONYMIZED = application.status.ne(StatusType.ANONYMIZED);
 
   private static final List<StatusType> INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES =
       List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED, StatusType.ANONYMIZED);
@@ -189,7 +190,8 @@ public class ApplicationDao {
     if (statusTypes != null && ! statusTypes.isEmpty()) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));
     }
-    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
+    List<Integer> applications = queryFactory.select(application.id).from(application)
+        .where(whereCondition.and(APPLICATION_NOT_REPLACED).and(APPLICATION_NOT_ANONYMIZED)).fetch();
     return applications;
   }
 
