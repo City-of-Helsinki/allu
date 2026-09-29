@@ -26,6 +26,13 @@
         group=allu
         mode="u=rwx,g=rx,o=rx"
 
+- name: create letsencrypt dir for allu
+  file: path=/home/allu/letsencrypt
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
 - name: create data directory
   file: path=/srv/data/allu
     state=directory
