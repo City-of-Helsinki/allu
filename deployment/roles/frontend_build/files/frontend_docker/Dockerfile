@@ -13,7 +13,10 @@ RUN dpkg -i /tmp/openssl*.deb \
 # Use https instead of http (as outgoing http was blocked in CI)
 RUN echo 'deb https://deb.debian.org/debian bullseye main contrib non-free' > /etc/apt/sources.list \
  && echo 'deb https://deb.debian.org/debian bullseye-updates main contrib non-free' >> /etc/apt/sources.list \
- && echo 'deb https://security.debian.org/debian-security bullseye-security main contrib non-free' >> /etc/apt/sources.list
+ && echo 'deb https://security.debian.org/debian-security bullseye-security main contrib non-free' >> /etc/apt/sources.list \
+ # Add snapshot repo to install certbot dependencies due to Debian 11 EOL
+ && echo 'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20260626T084258Z bullseye-security main contrib non-free' >> /etc/apt/sources.list \
+ && echo 'deb-src [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20260626T084258Z bullseye-security main contrib non-free' >> /etc/apt/sources.list
 
 RUN apt-get update \
     && apt-get install -y tzdata systemctl python3-dev cron apache2 libapache2-mod-wsgi-py3 python3-pip supervisor \
@@ -124,6 +127,9 @@ RUN rm /tmp/root_crontab
 
 # supervisord
 COPY supervisord.conf /etc/supervisord.conf
+
+# certbot certificate management
+COPY --chmod=+x install_certs.sh /home/allu/install_certs.sh
 
 ######################################################################################
 # Changes that should not be cached
