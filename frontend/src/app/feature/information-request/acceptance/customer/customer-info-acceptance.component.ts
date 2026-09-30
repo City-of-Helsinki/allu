@@ -21,9 +21,11 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Customer> implements OnInit {
+export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective implements OnInit {
   _oldCustomer: Customer;
   _newCustomer: Customer;
+
+  protected nonSelectableFields = true;
 
   constructor(fb: UntypedFormBuilder) {
     super(fb);
@@ -57,7 +59,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
 
   resultChanges(result: FieldValues): void {
     const customer = {...this._oldCustomer};
-    customer.type = this._newCustomer.type;
+    customer.type = result.type;
     customer.name = result.name;
     customer.registryKey = result.registryKey;
     customer.ovt = result.ovt;
@@ -74,7 +76,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
   protected initResultForm(): void {
     super.initResultForm();
     const customerId = this._oldCustomer ? this._oldCustomer.id : undefined;
-    const ctrl = this.fb.control(customerId, Validators.required);
+    const ctrl = this.fb.control(customerId, [Validators.required]);
     this.form.addControl('id', ctrl);
   }
 
@@ -86,6 +88,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
     if (customer) {
       const postalAddress = customer.postalAddress;
       return {
+        type: customer.type,
         name: customer.name,
         registryKey: customer.registryKey,
         ovt: customer.ovt,
@@ -106,12 +109,14 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
   private toDisplayValues(fieldValues: FieldValues): FieldValues {
     return {
       ...fieldValues,
+      type: fieldValues.type ? findTranslation(['customer.type', fieldValues.type, 'name']) : undefined,
       country: this.getCountry(fieldValues.country)
     };
   }
 
   private createDescriptions(customerType: string): FieldDescription[] {
     return [
+      new FieldDescription('type', findTranslation('customer.search.type')),
       new FieldDescription('name', findTranslation(['customer.type', customerType, 'nameLabel'])),
       new FieldDescription('registryKey', findTranslation(['customer.type', customerType, 'id'])),
       new FieldDescription('ovt', findTranslation(['customer.type', customerType, 'ovt'])),
@@ -120,7 +125,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceDirective<Cus
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
       new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
       new FieldDescription('email', findTranslation('customer.email')),
-      new FieldDescription('phone', findTranslation('customer.phone')),
+      new FieldDescription('phone', findTranslation('phone')),
       new FieldDescription('country', findTranslation('customer.country')),
       new FieldDescription('sapCustomerNumber', findTranslation('customer.sapCustomerNumber'))
     ];

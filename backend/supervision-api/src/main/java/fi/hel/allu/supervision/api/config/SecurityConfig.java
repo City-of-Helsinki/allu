@@ -1,18 +1,16 @@
 package fi.hel.allu.supervision.api.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -21,40 +19,43 @@ import fi.hel.allu.supervision.api.security.TokenAuthenticationService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class SecurityConfig {
 
-  @Autowired
-  private TokenAuthenticationService tokenAuthenticationService;
-  @Autowired
-  private ApplicationProperties applicationProperties;
+  private final TokenAuthenticationService tokenAuthenticationService;
+  private final ApplicationProperties applicationProperties;
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  public SecurityConfig(TokenAuthenticationService tokenAuthenticationService,
+      ApplicationProperties applicationProperties) {
+    this.tokenAuthenticationService = tokenAuthenticationService;
+    this.applicationProperties = applicationProperties;
+  }
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // disable use of JSESSIONID
-        .authorizeRequests()
+        .authorizeHttpRequests()
         // Allow anonymous logins for configured paths
-        .antMatchers(applicationProperties.getAnonymousAccessPaths().toArray(new String[0])).permitAll()
+        .requestMatchers(applicationProperties.getAnonymousAccessPaths().toArray(new String[0])).permitAll()
         .anyRequest()
         .authenticated()
         .and().addFilterBefore(
         new StatelessAuthenticationFilter(tokenAuthenticationService),
         UsernamePasswordAuthenticationFilter.class)
         .csrf().disable();
+    return http.build();
   }
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    UserDetailsService uds = (String username) ->
-    { throw new UnsupportedOperationException("UserDetailsService.loadUserByUsername not expected to be called ever"); };
-    auth.userDetailsService(uds);
-  }
-
+  /**
+   * Exposed only for consistency with the Spring Security component-based configuration style;
+   * not used by the JWT-based {@link StatelessAuthenticationFilter} authentication flow, which
+   * bypasses the {@link AuthenticationManager} entirely (same as before this class's WebSecurityConfigurerAdapter
+   * removal, where the underlying UserDetailsService was a throw-away stub never expected to be called).
+   */
   @Bean
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
 
   @Bean

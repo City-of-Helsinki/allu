@@ -1,7 +1,6 @@
 import {ApplicationActions, ApplicationActionType} from '@feature/application/actions/application-actions';
 import {ApprovalDocumentActions, ApprovalDocumentActionType} from '@feature/decision/actions/approval-document.actions';
 import {ApprovalDocument, ApprovalDocumentType} from '@model/decision/approval-document';
-import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface State {
   loading: boolean;

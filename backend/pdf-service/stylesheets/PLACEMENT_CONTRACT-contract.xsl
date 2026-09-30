@@ -337,8 +337,7 @@ rakenteet kustannuksellaan.
 	  </p>
 	  <br/>
 	  <p>
-	    Kaikista käytöstä poistetuista rakenteista on ilmoitettava kaupungin alueiden käyttö- ja valvontayksikön
-katutyö- ja sijaintipalvelut –tiimille (kymp.alueidenkaytto@hel.fi) viipymättä. Vaikka rakenteet
+	    Kaikista käytöstä poistetuista rakenteista on ilmoitettava kaupungille (kymp.alueidenkaytto@hel.fi) viipymättä. Vaikka rakenteet
 poistettaisiin käytöstä, ne säilyvät edelleen sijoittavan sopimusosapuolen omistuksessa ja
 kunnossapitovastuulla.
 	  </p>
@@ -376,7 +375,7 @@ siirtämään tämän sopimuksen kiinteistön tai rakennuksen luovutuksensaajall
 	  </p>
 	  <h2 class="padded-header">14. Muutoksenhaun vaikutus sopimukseen</h2>
 	  <p>
-	    Mikäli alueiden käyttö ja valvonta -yksikön katutyö- ja sijaintipalveluiden tiimipäällikön päätös kumoutuu
+	    Mikäli tähän sopimukseen liittyvä päätös kumoutuu
 tai muuttuu oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta taikka
 jos oikaisuvaatimuksen tai valituksen käsittelevä viranomainen, toimielin tai valitusviranomainen kieltää
 täytäntöönpanon, katsotaan sopimus purkautuneeksi. Kaupunki ei vastaa sijoittavalle
@@ -391,8 +390,7 @@ purkautuneeksi.
           <h2>Sopimuksen allekirjoitukset</h2>
 
           <xsl:if test="data/draft = 'false'">
-            <p class="indented">Helsingin kaupungin puolesta alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden
-              tiimipäällikkö on allekirjoittanut tämän asiakirjan sähköisesti</p>
+            <p class="indented">Helsingin kaupungin puolesta yleisten alueiden valvonta ja infraluvat -yksikön yleisten alueiden rakenteet -tiimin päällikkö on allekirjoittanut tämän asiakirjan sähköisesti</p>
             <p class="indented">
               <xsl:value-of select="data/decisionTimestamp"/>,
               <xsl:value-of select="data/deciderTitle"/>,
@@ -446,7 +444,7 @@ purkautuneeksi.
 
       <div class="unboxed avoid-pb">
         <h2>Sijoitussopimukset:</h2>
-        <p>Katutyö- ja sijaintipalvelut -tiimi</p>
+        <p>Yleisten alueiden rakenteet -tiimi</p>
         <p>Työpajankatu 8</p>
         <p>PL 58231, 00099 Helsingin kaupunki</p>
         <p>asiakaspalvelu puh. (09) 310 22111</p>
@@ -454,7 +452,7 @@ purkautuneeksi.
       </div>
       <div class="unboxed avoid-pb">
         <h2>Kaivuilmoitukset:</h2>
-        <p>Katutyö- ja sijaintipalvelut -tiimi</p>
+        <p>Lupatiimi</p>
         <p>Työpajankatu 8</p>
         <p>PL 58231, 00099 Helsingin kaupunki</p>
         <p>asiakaspalvelu puh. (09) 310 22111</p>

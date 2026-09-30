@@ -13,7 +13,7 @@ class AuthServiceMock {
     return true;
   }
 
-  loginOAuth(code: string): Observable<User> {
+  loginOAuth(_code: string): Observable<User> {
     return EMPTY;
   }
 }

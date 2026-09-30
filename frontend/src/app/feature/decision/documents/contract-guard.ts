@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import {Store} from '@ngrx/store';
-import {Observable} from 'rxjs/index';
+import {Observable} from 'rxjs';
 import * as fromApplication from '@feature/application/reducers';
-import {map, tap} from 'rxjs/internal/operators';
+import {map, tap} from 'rxjs/operators';
 import {ApplicationType} from '@model/application/type/application-type';
 
 @Injectable()

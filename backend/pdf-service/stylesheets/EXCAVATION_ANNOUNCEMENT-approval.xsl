@@ -211,20 +211,28 @@
               </div>
             </div>
             <p class="space-above">
-	      <!-- Käytössä on XSLT 1.0, joten saatavissa ei ole asiallista päivämäärävertailua :-( -->
-	      <xsl:variable name="day" select="format-number(substring-before(data/reservationStartDate,'.'),'00')"/>
-	      <xsl:variable name="restOfDate" select="substring-after(data/reservationStartDate,'.')"/>
-	      <xsl:variable name="month" select="format-number(substring-before($restOfDate,'.'),'00')"/>
-	      <xsl:variable name="year" select="substring-after($restOfDate,'.')"/>
-	      <xsl:variable name="date" select="concat($year, $month, $day)"/>
-	      <xsl:choose>
-		<xsl:when test="$date &lt; 20250301">
-                  Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 17.2.2022 § 28.
-		</xsl:when>
-		<xsl:otherwise>
-		  Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 10.10.2024 § 157.
-		</xsl:otherwise>
-	      </xsl:choose>
+            <!-- Käytössä on XSLT 1.0, joten saatavissa ei ole asiallista päivämäärävertailua :-( -->
+            <xsl:variable name="day" select="format-number(substring-before(data/reservationStartDate,'.'),'00')"/>
+            <xsl:variable name="restOfDate" select="substring-after(data/reservationStartDate,'.')"/>
+            <xsl:variable name="month" select="format-number(substring-before($restOfDate,'.'),'00')"/>
+            <xsl:variable name="year" select="substring-after($restOfDate,'.')"/>
+            <xsl:variable name="date" select="concat($year, $month, $day)"/>
+            <xsl:choose>
+              <!-- Ennen 1.3.2025 -->
+              <xsl:when test="$date &lt; 20250301">
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 17.2.2022 § 28.
+              </xsl:when>
+
+              <!-- 1.3.2025 – 28.2.2026 -->
+              <xsl:when test="$date &lt; 20260301">
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 10.10.2024 § 157.
+              </xsl:when>
+
+              <!-- 1.3.2026 → -->
+              <xsl:otherwise>
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 29.1.2026 § 6.
+              </xsl:otherwise>
+            </xsl:choose>
             </p>
             <p>
               Lasku lähetetään erikseen.
@@ -245,12 +253,38 @@
       <section class="unboxed new-page">
         <h2>Muutoksenhaku</h2>
         <p class="space-above">
-          Kunnan antamien määräysten lainmukaisuuden ratkaiseminen osoitetaan rakennusvalvontapalveluun.
-          Muutoksenhaku kunnan antamiin päätöksiin osoitetaan kaupunkiympäristö lautakunnalle, sähköposti
-          helsinki.kirjaamo@hel.fi. Ennen varsinaisen valituksen tekemistä maksuvelvollisen tulee tehdä kirjallinen
-          muistutus maksun perimisestä päättävälle kunnan viranomaiselle 14 päivän kuluessa maksulipun (lasku)
-          saamisesta.
+          Maksuvelvollisella on oikeus tehdä 14 päivän kuluessa laskun saamisesta kirjallinen muistutus maksun
+          perimisestä päättävälle kunnan viranomaiselle. Muistutus osoitetaan Helsingin kaupungin
+          kaupunkiympäristön toimialan yleisten alueiden valvonta ja infraluvat -yksikön päällikölle.
+          Asiointiosoite on seuraava:
         </p>
+        <table class="contact-table">
+          <tr>
+            <td>Sähköpostiosoite:</td>
+            <td>luvat@hel.fi</td>
+          </tr>
+          <tr>
+            <td>Suojattu sähköposti:</td>
+            <td>https://securemail.hel.fi/ (käytäthän aina suojattua sähköpostia, kun lähetät henkilökohtaisia tietojasi)</td>
+          </tr>
+          <tr>
+            <td>Postiosoite:</td>
+            <td>Helsingin kaupungin kaupunkiympäristön toimiala, yleisten alueiden valvonta ja infraluvat -yksikkö
+              Helsingin kaupungin kirjaamo
+              PL 10
+              00099 HELSINGIN KAUPUNKI
+            </td>
+          </tr>
+          <tr>
+            <td>Käyntiosoite:</td>
+            <td>Pohjoisesplanadi 11–13</td>
+          </tr>
+          <tr>
+            <td>Puhelinnumero:</td>
+            <td>09 310 13700</td>
+          </tr>
+        </table>
+        <p class="pt-10">Kirjaamon aukioloaika on maanantaista perjantaihin klo 08.15–16.00.</p>
       </section>
 
       <xsl:if test="data/deciderName != ''">

@@ -1,12 +1,13 @@
-<h1 mat-dialog-title>Yhteyshenkilö</h1>
+<h1 mat-dialog-title>{{'contact.title' | translation}}</h1>
 <form [formGroup]="contactForm" (ngSubmit)="onSubmit(contactForm.value)">
   <div mat-dialog-content>
     <div class="row form-group">
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+          <mat-label>{{'contact.name' | translation}}</mat-label>
+          <input matInput type="text" formControlName="name" required/>
           <mat-hint>
-            <field-error [form]="contactForm" field="name" hasError="required">{{'contact.field.nameMissing' |
+            <field-error [form]="contactForm" field="name" hasError="required">{{'common.field.nameMissing' |
               translation}}
             </field-error>
           </mat-hint>
@@ -16,12 +17,14 @@
     <div class="row form-group">
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+          <mat-label>{{'postalAddress.streetAddress' | translation}}</mat-label>
+          <input matInput type="text" formControlName="streetAddress"/>
         </mat-form-field>
       </div>
       <div class="col m3">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+          <mat-label>{{'postalAddress.postalCode' | translation}}</mat-label>
+          <input matInput type="text" formControlName="postalCode"/>
           <mat-hint>
             <field-error [form]="contactForm" field="postalCode" hasError="pattern">{{'common.field.postalCode' |
               translation}}
@@ -31,14 +34,16 @@
       </div>
       <div class="col m3">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+          <mat-label>{{'contact.postalAddress.postalOffice' | translation}}</mat-label>
+          <input matInput type="text" formControlName="city"/>
         </mat-form-field>
       </div>
     </div>
     <div class="row form-group">
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+          <mat-label>{{'emailAddress' | translation}}</mat-label>
+          <input matInput type="text" formControlName="email"/>
           <mat-hint>
             <field-error [form]="contactForm" field="email" hasError="email">
               {{'common.field.emailInvalid' | translation}}
@@ -48,7 +53,8 @@
       </div>
       <div class="col m6">
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+          <mat-label>{{'phone' | translation}}</mat-label>
+          <input matInput type="text" formControlName="phone"/>
           <mat-hint>
             <field-error [form]="contactForm" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
               translation}}
@@ -59,7 +65,7 @@
     </div>
   </div>
   <div mat-dialog-actions>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!contactForm.valid">TALLENNA</button>
-    <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!contactForm.valid">{{'common.button.save' | translation | uppercase}}</button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">{{'common.button.cancel' | translation | uppercase}}</button>
   </div>
 </form>

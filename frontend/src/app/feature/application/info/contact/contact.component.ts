@@ -11,11 +11,11 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
 import {FormUtil} from '@util/form.util';
 import {CustomerService} from '@service/customer/customer.service';
-import {debounceTime, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {DistributionType} from '@model/common/distribution-type';
 import {OrdererId} from '@model/application/cable-report/orderer-id';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ContactService} from '@service/customer/contact.service';
@@ -223,7 +223,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
-    if (!!term) {
+    if (term) {
       if (NumberUtil.isDefined(this.customerIdChanges.value)) {
         return this.searchForCurrentCustomer(term);
       } else {

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.vividsolutions.jts.geom.TopologyException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.service.geocode.featuremember.FeatureClassMember;
 import fi.hel.allu.servicecore.service.geocode.paymentclass.*;
 import org.geolatte.geom.*;
 import org.geolatte.geom.LinearRing;
@@ -48,36 +47,46 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   @Override
   protected String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location) {
-    return isApplicationPost2025(applicationJson) ? parseResultPost2025(responses, location) : parseResultPre2025(responses, applicationJson);
+    if (isApplicationPost2026(applicationJson)) {
+      return parseResultPost2026(responses, location);
+    }
+    if (isApplicationPost2025(applicationJson)) {
+      return parseResultPost2025(responses, location);
+    }
+    return parseResultPre2025(responses);
   }
 
   protected boolean isApplicationPost2025(ApplicationJson applicationJson) {
     return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
-  protected String parseResultPre2025(List<String> responses, ApplicationJson applicationJson) {
-    String paymentClass = UNDEFINED;
-    for (String response : responses) {
-      final PaymentClassXml paymentClassXml = getPaymentClassPre2025(response, applicationJson);
-      final List<FeatureClassMember> paymentClasses = paymentClassXml.getFeatureMemeber().stream()
-          .sorted(Comparator.comparing(f -> f.getMaksuluokka().getPayment()))
-          .collect(Collectors.toList());
-      if (!paymentClasses.isEmpty()) {
-        final String pc = paymentClasses.get(0).getMaksuluokka().getPayment();
-        if (pc.compareTo(paymentClass) < 0) {
-          paymentClass = pc;
+  protected boolean isApplicationPost2026(ApplicationJson applicationJson) {
+    return applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId).isAfter(ZonedDateTime.of(POST_2026_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+  }
+
+    protected String parseResultPre2025(List<String> responses) {
+      String paymentClass = UNDEFINED;
+      for (String response : responses) {
+        final PaymentClassFeatureCollection paymentClassXml = unmarshalPaymentClass(response);
+         final List<PaymentClassFeatureMember> paymentClasses = paymentClassXml.getFeatureMembers().stream()
+            .sorted(Comparator.comparing(f -> f.getPaymentClass().getPaymentClass()))
+            .collect(Collectors.toList());
+        if (!paymentClasses.isEmpty()) {
+          final String pc = paymentClasses.get(0).getPaymentClass().getPaymentClass();
+          if (pc.compareTo(paymentClass) < 0) {
+            paymentClass = pc;
+          }
         }
       }
+      return paymentClass;
     }
-    return paymentClass;
+
+  private List<PaymentClassFeatureCollection> responsesToPaymentClasses(List<String> responses) {
+    return responses.stream().map(this::unmarshalPaymentClass).toList();
   }
 
-  private List<PaymentClassXmlPost2025> responsesToPaymentClasses(List<String> responses) {
-    return responses.stream().map(this::getPaymentClassPost2025).toList();
-  }
-
-  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassXmlPost2025> paymentClasses) {
-    return paymentClasses.stream().map(PaymentClassXmlPost2025::getPaymentLevels).toList();
+  private List<HashMap<String, List<PolygonCoordinates>>> paymentClassesToPaymentMaps(List<PaymentClassFeatureCollection> paymentClasses) {
+    return paymentClasses.stream().map(PaymentClassFeatureCollection::getPaymentLevels).toList();
   }
 
   private HashMap<String, List<PolygonCoordinates>> combineHashMaps(List<HashMap<String, List<PolygonCoordinates>>> hashMapList) {
@@ -95,6 +104,10 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
 
   protected String parseResultPost2025(List<String> responses, LocationJson location) {
     return computePaymentLevel(getLocationArea(location), sumAreas(intersectionsToAreas(polygonsToIntersections(coordinatesToPolygons(combineHashMaps(paymentClassesToPaymentMaps(responsesToPaymentClasses(responses)))), location))));
+  }
+
+  protected String parseResultPost2026(List<String> responses, LocationJson location) {
+    return parseResultPost2025(responses, location);
   }
 
   LinearRing coordinatesToLinearRing(String coordinateString) {
@@ -251,20 +264,8 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
     return highestLevel;
   }
 
-  private PaymentClassXml getPaymentClassPre2025(String response, ApplicationJson applicationJson){
-
-    if (applicationJson.getStartTime() == null) {
-      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
-    }
-    ZonedDateTime startTimeHelsinkiZone = applicationJson.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
-
-    if (startTimeHelsinkiZone.isAfter(ZonedDateTime.of(POST_2022_PAYMENT_DATE, TimeUtil.HelsinkiZoneId)))
-      return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2022.class);
-    return WfsUtil.unmarshalWfs(response, PaymentClassXmlPre2022.class);
-  }
-
-  private PaymentClassXmlPost2025 getPaymentClassPost2025(String response) {
-    return WfsUtil.unmarshalWfs(response, PaymentClassXmlPost2025.class);
+  private PaymentClassFeatureCollection unmarshalPaymentClass(String response) {
+    return WfsUtil.unmarshalWfs(response, PaymentClassFeatureCollection.class);
   }
 
   @Override
@@ -285,6 +286,11 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   @Override
   protected String getFeatureTypeNamePost2025() {
     return getFeatureTypeNamePre2022() + "_2025";
+  }
+
+  @Override
+  protected String getFeatureTypeNamePost2026() {
+    return getFeatureTypeNamePre2022() + "_2026";
   }
 
 }

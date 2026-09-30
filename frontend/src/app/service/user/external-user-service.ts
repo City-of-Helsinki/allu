@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ExternalUser} from '../../model/common/external-user';
 import {findTranslation} from '../../util/translations';
 import {ErrorHandler} from '../error/error-handler.service';
 import {ExternalUserMapper} from '../mapper/external-user-mapper';
 import {BackendExternalUser} from '../backend-model/backend-external-user';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const EXTERNAL_USERS_URL = '/api/externalusers';
 

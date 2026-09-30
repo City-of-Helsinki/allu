@@ -160,7 +160,48 @@ public class InvoiceService {
         logger.error("Invoice recipient not found with ID {}", i.getRecipientId());
       }
     });
+    setInvoiceChanged(invoices);
     return invoices;
+  }
+
+  /**
+   * Sets the {@code invoiceChanged} flag of each pending invoice. An invoice is marked as
+   * changed when it is the application's first invoice or when any charge basis entry behind
+   * its invoice rows has been created or modified after the application's latest invoiced
+   * (sent) invoice. This is used to split the invoice notification email into first-time-or-changed
+   * and re-invoiced-without-change groups.
+   */
+  private void setInvoiceChanged(List<Invoice> invoices) {
+    if (invoices.isEmpty()) {
+      return;
+    }
+    Set<Integer> applicationIds = invoices.stream()
+        .map(Invoice::getApplicationId)
+        .collect(Collectors.toSet());
+    Map<Integer, ZonedDateTime> lastInvoicedSentTimes =
+        invoiceDao.findLastInvoicedSentTimeByApplication(applicationIds);
+    Set<Integer> chargeBasisIds = invoices.stream()
+        .flatMap(i -> i.getRows().stream())
+        .map(InvoiceRow::getChargeBasisId)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
+    Map<Integer, ZonedDateTime> chargeBasisModificationTimes =
+        chargeBasisService.findModificationTimesByIds(chargeBasisIds);
+
+    invoices.forEach(invoice -> {
+      ZonedDateTime lastSentTime = lastInvoicedSentTimes.get(invoice.getApplicationId());
+      if (lastSentTime == null) {
+        invoice.setInvoiceChanged(true);
+      } else {
+        boolean modifiedAfterLastInvoicing = invoice.getRows().stream()
+            .map(InvoiceRow::getChargeBasisId)
+            .filter(Objects::nonNull)
+            .map(chargeBasisModificationTimes::get)
+            .filter(Objects::nonNull)
+            .anyMatch(modificationTime -> modificationTime.isAfter(lastSentTime));
+        invoice.setInvoiceChanged(modifiedAfterLastInvoicing);
+      }
+    });
   }
 
   private List<Invoice> filterZeroInvoices(List<Invoice> invoices) {

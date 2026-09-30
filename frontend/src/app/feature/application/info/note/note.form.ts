@@ -10,15 +10,6 @@ export interface NoteForm extends ApplicationForm {
   description?: string;
 }
 
-export class NoteForm implements ApplicationForm {
-  constructor(
-    public name: string,
-    public validityTimes: TimePeriod,
-    public recurringEndYear?: number,
-    public description?: string
-  ) {}
-}
-
 export function to(form: NoteForm): Note {
   const note = new Note();
   note.description = form.description;

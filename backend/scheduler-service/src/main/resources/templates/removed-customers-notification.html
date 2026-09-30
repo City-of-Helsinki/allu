@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Allu - asiakasrekisteristä poistettu SAP-numerollisia asiakkaita</title>
+  <style>
+    body { font-family: Arial, sans-serif; color: #333; }
+    p { max-width: 600px; }
+    .table-container { margin-top: 15px; }
+    table { border-collapse: collapse; width: 420px; }
+    th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .count { font-weight: bold; }
+  </style>
+</head>
+
+<body>
+<h2>Allu - asiakasrekisteristä poistettu SAP-numerollisia asiakkaita</h2>
+
+<p>
+  Allun asiakasrekisteristä on poistettu SAP-numerollisia asiakkaita
+  <span class="count">${count}</span> kpl.
+</p>
+
+<p>Alla näkyvät asiakkaiden Allu-id:t ja SAP-asiakasnumerot:</p>
+
+<div class="table-container">
+  <table>
+    <thead>
+    <tr>
+      <th>Allu-id</th>
+      <th>SAP-numero</th>
+    </tr>
+    </thead>
+    <tbody>
+      ${rows}
+    </tbody>
+  </table>
+</div>
+
+<p>
+  Tämän sähköpostin lähettäjä on tekninen osoite.
+  Tarvittaessa lisätietoja osoitteesta kymp.allu@hel.fi.
+</p>
+</body>
+</html>

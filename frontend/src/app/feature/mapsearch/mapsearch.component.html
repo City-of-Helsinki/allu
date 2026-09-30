@@ -37,7 +37,7 @@
         barType="SIMPLE"
         [filter]="searchFilter$ | async"
         (searchChange)="onSearchChange($event)"
-        (onShowAdvanced)="showAdvancedSearch()"></searchbar>
+        (showAdvanced)="showAdvancedSearch()"></searchbar>
     </div>
     <map *ngIf="displayMap" 
          [zoom]="true"

@@ -77,7 +77,7 @@ public class InvoicingService {
     final List<Invoice> invoices = getPendingInvoices();
     if (invoices.isEmpty()) {
       logger.info("No invoices to send.");
-      sendNotificationEmail(new ArrayList<String>(),0);
+      sendNotificationEmail(Collections.emptyList(), Collections.emptyList(), 0);
       return;
     }
 
@@ -100,12 +100,40 @@ public class InvoicingService {
     SalesOrderContainer salesOrderContainer = createSalesOrderContainer(nonNetZeroInvoices, applicationsWithNonZeroInvoicesById);
     if (sendToSap(salesOrderContainer)) {
       invoiceIdsToSend.addAll(nonNetZeroInvoices.stream().map(Invoice::getId).collect(Collectors.toList()));
-      sendNotificationEmail(applicationsWithNonZeroInvoicesById.values().stream().map(Application::getApplicationId).collect(Collectors.toList()), nonNetZeroInvoices.size());
+      List<List<String>> applicationIds =
+          splitApplicationIdsForNotification(nonNetZeroInvoices, applicationsWithNonZeroInvoicesById);
+      sendNotificationEmail(applicationIds.get(0), applicationIds.get(1), nonNetZeroInvoices.size());
       applicationIdsToArchive.addAll(applicationIdsWithNonZeroInvoices);
     }
 
     markInvoicesSent(invoiceIdsToSend);
     applicationStatusUpdaterService.archiveApplications(new ArrayList<>(applicationIdsToArchive));
+  }
+
+  /**
+   * Splits the applications of the given invoices into two groups: those that are invoiced for
+   * the first time or whose invoice rows have changed since the previous invoicing round, and
+   * those that are re-invoiced without any change. An application belongs to the unchanged group
+   * only if all of its invoices are unchanged re-invoicings.
+   *
+   * @return a two-element list where index 0 holds the first-time-or-changed application identifiers
+   *         and index 1 holds the re-invoiced-without-change application identifiers
+   */
+  private List<List<String>> splitApplicationIdsForNotification(List<Invoice> nonNetZeroInvoices,
+      Map<Integer, Application> applicationsById) {
+    Map<Integer, List<Invoice>> invoicesByApplication = nonNetZeroInvoices.stream()
+        .collect(Collectors.groupingBy(Invoice::getApplicationId));
+    List<String> firstTimeOrChangedApplicationIds = new ArrayList<>();
+    List<String> reInvoicedUnchangedApplicationIds = new ArrayList<>();
+    invoicesByApplication.forEach((applicationId, appInvoices) -> {
+      Application application = applicationsById.get(applicationId);
+      if (appInvoices.stream().allMatch(invoice -> !invoice.isInvoiceChanged())) {
+        reInvoicedUnchangedApplicationIds.add(application.getApplicationId());
+      } else {
+        firstTimeOrChangedApplicationIds.add(application.getApplicationId());
+      }
+    });
+    return Arrays.asList(firstTimeOrChangedApplicationIds, reInvoicedUnchangedApplicationIds);
   }
 
   private SalesOrderContainer createSalesOrderContainer(List<Invoice> invoices, Map<Integer, Application> applicationsById) {
@@ -173,7 +201,8 @@ public class InvoicingService {
     restTemplate.postForObject(applicationProperties.getMarkInvoicesSentUrl(), invoiceIds, Void.class);
   }
 
-  public void sendNotificationEmail(List<String> applicationIds, Integer nrOfInvoices) {
+  public void sendNotificationEmail(List<String> firstTimeOrChangedApplicationIds, List<String> reInvoicedUnchangedApplicationIds,
+      Integer nrOfInvoices) {
     List<String> receiverEmails = getInvoiceNotificationReceiverEmails();
     if (receiverEmails.isEmpty()) {
       return;
@@ -182,18 +211,23 @@ public class InvoicingService {
     String subject = applicationProperties.getInvoiceNotificationSubject();
     try {
       String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
-      String body = StringSubstitutor.replace(mailTemplate, mailVariables(applicationIds, nrOfInvoices));
+      String body = StringSubstitutor.replace(mailTemplate,
+          mailVariables(firstTimeOrChangedApplicationIds, reInvoicedUnchangedApplicationIds, nrOfInvoices));
       alluMailService.sendEmail(receiverEmails, subject, body, null, null);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
   }
 
-  private Map<String, String> mailVariables(List<String> applicationIds, int nrOfInvoices) {
+  private Map<String, String> mailVariables(List<String> firstTimeOrChangedApplicationIds,
+      List<String> reInvoicedUnchangedApplicationIds, int nrOfInvoices) {
     Map<String, String> result = new HashMap<>();
     result.put("sentDate", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
     result.put("nrOfInvoices", String.valueOf(nrOfInvoices));
-    result.put("invoiceApplicationIds", String.join(", ", applicationIds));
+    result.put("firstTimeOrChangedCount", String.valueOf(firstTimeOrChangedApplicationIds.size()));
+    result.put("firstTimeOrChangedApplicationIds", String.join(", ", firstTimeOrChangedApplicationIds));
+    result.put("reInvoicedUnchangedCount", String.valueOf(reInvoicedUnchangedApplicationIds.size()));
+    result.put("reInvoicedUnchangedApplicationIds", String.join(", ", reInvoicedUnchangedApplicationIds));
     return result;
   }
 

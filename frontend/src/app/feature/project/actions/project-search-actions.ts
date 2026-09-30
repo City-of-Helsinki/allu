@@ -10,7 +10,7 @@ import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
 import {Page} from '@model/common/page';
 
-export interface ProjectSearchParams extends SearchParameters<ProjectSearchQuery> {}
+export type ProjectSearchParams = SearchParameters<ProjectSearchQuery>;
 
 export enum ProjectSearchActionType {
   SetSearchQuery = '[ProjectSearch] Set search query',

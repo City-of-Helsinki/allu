@@ -71,6 +71,7 @@ export function toEvent(form: EventForm, type: ApplicationType): Event {
   return event;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function eventForm(fb: UntypedFormBuilder): { [key: string]: any; } {
   return {
     description: [''],
@@ -103,6 +104,7 @@ export function eventForm(fb: UntypedFormBuilder): { [key: string]: any; } {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function eventDraft(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = eventForm(fb);
   form.description = [''];
@@ -110,12 +112,14 @@ export function eventDraft(fb: UntypedFormBuilder): { [key: string]: any; } {
   return form;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function outdoorEventForm(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = eventForm(fb);
   form.nature = ['', Validators.required];
   return form;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function outdoorEventDraft(fb: UntypedFormBuilder): { [key: string]: any; } {
   const form = outdoorEventForm(fb);
   form.description = [''];

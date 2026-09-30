@@ -5,8 +5,8 @@ import {findTranslation} from '../../util/translations';
 import {BackendStoredFilter, StoredFilterMapper} from '../mapper/stored-filter-mapper';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {CurrentUser} from '../user/current-user';
-import {HttpClient} from '@angular/common/http';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import { HttpClient } from '@angular/common/http';
+import {catchError, map, switchMap} from 'rxjs/operators';
 
 const STORED_FILTER_URL = '/api/stored-filter';
 
@@ -43,9 +43,9 @@ export class StoredFilterService {
     }
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     const url = `${STORED_FILTER_URL}/${id}`;
-    return this.http.delete<{}>(url).pipe(
+    return this.http.delete<unknown>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.remove')))
     );
   }

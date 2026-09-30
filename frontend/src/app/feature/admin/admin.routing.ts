@@ -34,8 +34,8 @@ export const adminRoutes: Routes = [
     ]},
     { path: 'default-attachments', data: {attachmentType: 'DEFAULT'}, children: attachmentChildRoutes },
     { path: 'default-images', data: {attachmentType: 'DEFAULT_IMAGE'}, children: attachmentChildRoutes },
-    { path: 'default-recipients', component: DefaultRecipientsComponent},
-    { path: 'prune-data', children: [
+    { path: 'default-recipients', component: DefaultRecipientsComponent},
+    { path: 'prune-data', children: [
      { path: '', redirectTo: 'excavation_announcement', pathMatch: 'full' },
      { path: ':tab', component: PruneDataComponent}
     ]},

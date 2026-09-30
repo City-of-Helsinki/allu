@@ -7,7 +7,7 @@ import {from, Observable, of} from 'rxjs';
 import {Add, AddSuccess, ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '../../../util/number.util';
-import {filter} from 'rxjs/internal/operators';
+import {filter} from 'rxjs/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
@@ -20,8 +20,8 @@ export class ChildProjectEffects {
   loadChildren: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(ChildProjectActionType.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    filter(([payload, project]) => NumberUtil.isExisting(project)),
-    switchMap(([payload, project]) =>
+    filter(([_payload, project]) => NumberUtil.isExisting(project)),
+    switchMap(([_payload, project]) =>
       this.projectService.getChildProjects(project.id)
         .pipe(
           map(children => new LoadSuccess(children)),

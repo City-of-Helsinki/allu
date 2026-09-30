@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
-import {Observable} from 'rxjs/index';
+import {Observable} from 'rxjs';
 import {Application} from '@model/application/application';
 import {DateReport} from '@model/application/date-report';
 import {ApplicationDateReportMapper} from '@service/mapper/application-date-report-mapper';
 import {BackendApplication} from '@service/backend-model/backend-application';
 import {ApplicationMapper} from '@service/mapper/application-mapper';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {findTranslation} from '@util/translations';
 import {TimeUtil} from '@util/time.util';
 

@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatCardModule} from '@angular/material/card';
 import {ContactComponent} from '@feature/application/info/contact/contact.component';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {ApplicationStore} from '@service/application/application-store';
@@ -96,20 +96,19 @@ describe('ContactComponent', () => {
   });
 
   it('should show contacts from input', () => {
-    fixture.whenStable().then(result => {
+    fixture.whenStable().then(() => {
       expect(page.contacts.length).toEqual(CONTACTS_ALL.length);
       expect(page.getFromContact(0, '[formControlName="name"]').nativeElement.value).toEqual(CONTACT1.name);
       expect(page.getFromContact(0, '[formControlName="streetAddress"]').nativeElement.value).toEqual(CONTACT1.streetAddress);
-
       expect(page.getFromContact(1, '[formControlName="name"]').nativeElement.value).toEqual(CONTACT2.name);
       expect(page.getFromContact(1, '[formControlName="streetAddress"]').nativeElement.value).toEqual(CONTACT2.streetAddress);
     });
   });
 
   it('should show contact info fields disabled', fakeAsync(() => {
-    fixture.whenStable().then(result => {
-      expect(page.getFromContact(0, '[formControlName="name"] [disabled]')).toBeDefined();
-    });
+    fixture.detectChanges();
+    tick();
+    expect(page.getFromContact(0, '[formControlName="name"] [disabled]')).toBeDefined();
   }));
 
   it('should add contact when add is called', fakeAsync(() => {
@@ -148,10 +147,10 @@ describe('ContactComponent', () => {
 
   it('should uncheck orderer when other orderer is selected', fakeAsync(() => {
     reInitWithCableReport();
-    page.getFromContact(1, '.mat-radio-label').nativeElement.click();
+    page.getFromContact(1, '.mdc-label').nativeElement.click();
     detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-radio-button').componentInstance.checked).toBe(false, 'original checkbox was checked');
-    expect(page.getFromContact(1, '.mat-radio-button').componentInstance.checked).toBe(true, 'clicked checkbox was unchecked');
+    expect(page.getFromContact(0, '.mat-mdc-radio-button').componentInstance.checked).toBe(false, 'original checkbox was checked');
+    expect(page.getFromContact(1, '.mat-mdc-radio-button').componentInstance.checked).toBe(true, 'clicked checkbox was unchecked');
   }));
 
   function reInitWithCableReport() {

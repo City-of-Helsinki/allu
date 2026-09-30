@@ -7,8 +7,8 @@ import {Application} from '@model/application/application';
 import {ApplicationStore} from '@service/application/application-store';
 import {AttachmentHub} from './attachment-hub';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
-import {MatLegacySlideToggleChange as MatSlideToggleChange} from '@angular/material/legacy-slide-toggle';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 import {TimeUtil} from '@util/time.util';
 import {Some} from '@util/option';
 import {AttachmentType, isCommon} from '@model/application/attachment/attachment-type';
@@ -16,7 +16,7 @@ import {applicationCanBeEdited} from '@model/application/application-status';
 import {NotificationService} from '@feature/notification/notification.service';
 import {findTranslation} from '@util/translations';
 import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
-import {filter, map, takeUntil} from 'rxjs/internal/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import {validForDecision} from '@model/common/file-type';
 
 @Component({
@@ -76,7 +76,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
         this.notification.success(findTranslation('attachment.action.added', {name: saved.name}));
         Some(index).do(i => this.editableAttachments.splice(i, 1));
       },
-      error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
+      _error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
     );
   }
 
@@ -113,8 +113,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   decisionAttachmentToggle(attachment: AttachmentInfo, change: MatSlideToggleChange): void {
     attachment.decisionAttachment = change.checked;
     this.applicationStore.saveAttachment(attachment).subscribe(
-      saved => {},
-      error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
+      () => {},
+      _error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
     );
   }
 
@@ -125,7 +125,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
     return true;
   }
 
-  private confirmChanges(): Observable<boolean> {
+  private confirmChanges(): Observable<boolean> {
     const data = {
       title: findTranslation(['attachment.confirmDiscard.title']),
       description: findTranslation(['attachment.confirmDiscard.description']),
@@ -138,8 +138,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   private onRemoveConfirm(attachment: AttachmentInfo) {
     this.applicationStore.removeAttachment(attachment.id)
       .subscribe(
-        status => this.notification.success(findTranslation('attachment.action.deleted', {name: attachment.name})),
-        error => this.notification.error(findTranslation('attachment.error.deleteFailed', {name: attachment.name})));
+        () => this.notification.success(findTranslation('attachment.action.deleted', {name: attachment.name})),
+        _error => this.notification.error(findTranslation('attachment.error.deleteFailed', {name: attachment.name})));
   }
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {

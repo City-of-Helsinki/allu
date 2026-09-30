@@ -1,7 +1,7 @@
 import {Component, EventEmitter, forwardRef, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {StringUtil} from '@util/string.util';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
 const REQUEST_FIELD_VALUE_ACCESSOR = {
@@ -55,6 +55,7 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
     return this.selectedCtrl.value;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: any): void {
     this._onChange = fn;
   }
@@ -67,6 +68,7 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnTouched(fn: any): void {
     this._onTouched = fn;
   }
@@ -88,7 +90,9 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
     this._onChange(description);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onChange = (_: any) => {};
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onTouched = (_: any) => {};
 }

@@ -2,9 +2,8 @@ import {Component, DebugElement, Input} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {By} from '@angular/platform-browser';
-import {FieldSelectComponent} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 import {InformationRequestSummaryPairComponent} from '@feature/information-request/summary/information-request-summary-pair.component';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
@@ -38,7 +37,6 @@ describe('FieldSelectComponent', () => {
   let fixture: ComponentFixture<MockHostComponent>;
   let testHost: MockHostComponent;
   let de: DebugElement;
-  let summaryPairComponenent: InformationRequestSummaryPairComponent;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -62,7 +60,6 @@ describe('FieldSelectComponent', () => {
     testHost = fixture.componentInstance;
     de = fixture.debugElement;
     fixture.detectChanges();
-    summaryPairComponenent = de.query(By.directive(InformationRequestSummaryPairComponent)).componentInstance;
   });
 
   it('loads component', () => {

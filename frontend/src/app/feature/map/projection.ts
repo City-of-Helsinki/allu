@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import 'proj4leaflet';
 import {Position} from 'geojson';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 function isPosition(coordinates: any[]): coordinates is Position {
   return coordinates === undefined || coordinates.length === 0 || !Array.isArray(coordinates[0]);
 }
@@ -22,16 +23,18 @@ export class Projection {
     });
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public project(coordinates: any[]): any[] {
-    if (isPosition(coordinates)) {
+    if (isPosition(coordinates)) {
       return this.projectPosition(coordinates);
     } else {
       return coordinates.map(c => this.project(c));
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public unproject(coordinates: any[]): any[] {
-    if (isPosition(coordinates)) {
+    if (isPosition(coordinates)) {
       return this.unprojectPosition(coordinates);
     } else {
       return coordinates.map(c => this.unproject(c));

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {Contract} from '@model/contract/contract';
 import {findTranslation} from '@util/translations';
@@ -50,9 +50,9 @@ export class ContractService {
     );
   }
 
-  public reject(applicationId: number, reason: string): Observable<{}> {
+  public reject(applicationId: number, reason: string): Observable<unknown> {
     const url = `${URL_PREFIX}/${applicationId}/contract/rejected`;
-    return this.http.post<{}>(url, reason).pipe(
+    return this.http.post<unknown>(url, reason).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('contract.error.rejectFailed')))
     );
   }

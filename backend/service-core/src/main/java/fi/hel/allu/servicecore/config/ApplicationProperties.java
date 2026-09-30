@@ -1638,4 +1638,15 @@ public class ApplicationProperties {
   public String getAnonymizableApplicationsUrl() {
     return getModelServiceUrl("/applications/anonymizable?type={type}");
   }
+
+  /**
+   * @return url to fetch all deletable customers from model-service with paging
+   */
+  public String getDeletableCustomersUrl() {
+    return getModelServiceUrl("/customers/deletable");
+  }
+
+  public String getDeleteCustomersUrl() {
+    return getModelServiceUrl("/customers");
+  }
 }

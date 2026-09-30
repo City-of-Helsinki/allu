@@ -11,7 +11,7 @@ import {ExternalUserForm} from './external-user-form';
 import {NotificationService} from '../../notification/notification.service';
 import {translations} from '../../../util/translations';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';

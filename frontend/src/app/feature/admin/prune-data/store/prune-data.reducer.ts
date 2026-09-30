@@ -1,7 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import * as PruneDataActions from './prune-data.actions';
 import { PruneDataItem } from '../models/prude-data-item.model';
-import { TimeUtil } from '@app/util/time.util';
 import moment from 'moment';
 
 
@@ -10,6 +9,7 @@ export interface PruneDataState {
   filteredData: PruneDataItem[];
   currentTab: string | null;
   loading: boolean;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   error: any;
   selectedIds: number[];
   showDeleteModal: boolean;
@@ -20,7 +20,7 @@ export interface PruneDataState {
   sortField: string | null;
   sortDirection: string | null;
 }
-    
+
 export const initialState: PruneDataState = {
   allData: [],
   filteredData: [],
@@ -47,13 +47,25 @@ export const pruneDataReducer = createReducer(
   })),
   on(PruneDataActions.toggleSelectItem, (state, { id }) => ({
     ...state,
-    selectedIds: state.selectedIds.includes(id) 
+    selectedIds: state.selectedIds.includes(id)
       ? state.selectedIds.filter(itemId => itemId !== id)
       : [...state.selectedIds, id]
   })),
   on(PruneDataActions.toggleSelectAll, (state) => {
-    const allIds = state.filteredData.map(item => item.id);
-    const newSelectedIds = state.selectedIds.length === allIds.length ? [] : allIds;
+    const pageIds = state.filteredData.map(item => getItemId(item));
+    const allPageItemsSelected = pageIds.every(id => state.selectedIds.includes(id));
+
+    let newSelectedIds: number[];
+    if (allPageItemsSelected) {
+      // Deselect only current page items
+      newSelectedIds = state.selectedIds.filter(id => !pageIds.includes(id));
+    } else {
+      // Add current page items to selection (keep existing selections from other pages)
+      const existingIds = new Set(state.selectedIds);
+      pageIds.forEach(id => existingIds.add(id));
+      newSelectedIds = Array.from(existingIds);
+    }
+
     return {
       ...state,
       selectedIds: newSelectedIds
@@ -76,7 +88,7 @@ export const pruneDataReducer = createReducer(
     allData: humanReadableData,
     filteredData: humanReadableData,
     totalItems: totalItems !== undefined ? totalItems : state.totalItems
-  }
+  };
   }),
   on(PruneDataActions.fetchAllDataFailure, (state, { error }) => ({
     ...state,
@@ -122,19 +134,24 @@ export const pruneDataReducer = createReducer(
 );
 
 function filterDataByTab(data: PruneDataItem[], tab: string | null): PruneDataItem[] {
-  if (!tab) return data;
+  if (!tab) { return data; }
   return data.filter(item => item.applicationType === tab.toUpperCase());
 }
 
 function removeDeleted(data: PruneDataItem[], ids: number[]): PruneDataItem[] {
-  return data.filter(item => !ids.includes(item.id));
+  return data.filter(item => !ids.includes(getItemId(item)));
 }
 
 function makeDateTimesHumanReadable(data: PruneDataItem[]) {
   return data.map(d => ({
-    ...d, 
-    startTime: moment(d.startTime).format('DD.MM.YYYY'), 
+    ...d,
+    startTime: moment(d.startTime).format('DD.MM.YYYY'),
     endTime: moment(d.endTime).format('DD.MM.YYYY'),
     changeTime: moment(d.changeTime).format('DD.MM.YYYY - HH:mm')
   }));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+function getItemId(item: any): number {
+  return item.id ?? item.customerId;
 }

@@ -1,27 +1,29 @@
 <div class="main-content">
   <div fxLayout="row" class="action-bar-loose">
-    <div fxFlex>
+    <div fxFlex class="table-flex-container">
       <a [routerLink]="['/admin/users/new']" mat-raised-button type="button" color="primary">
         {{'user.addNew' | translation}}
       </a>
     </div>
     <div fxFlex="38%">
       <mat-form-field class="input-full-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" [placeholder]="'common.filter' | translation">
+        <mat-label>{{'common.filter' | translation}}</mat-label>
+        <input matInput (keyup)="applyFilter($event.target.value)">
       </mat-form-field>
     </div>
   </div>
   <div fxLayout="row">
     <div fxFlex>
       <div class="mat-elevation-z8 data-table data-table-with-paging">
-        <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+        <div class="table-scroll-container">
+          <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
           <ng-container matColumnDef="userName">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.username' | translation}}</mat-header-cell>
             <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.userName}}</mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="realName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.name' | translation}}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'name' | translation}}</mat-header-cell>
             <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.realName}}</mat-cell>
           </ng-container>
 
@@ -60,7 +62,8 @@
 
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight clickable" (click)="showUser(row)"></mat-row>
-        </mat-table>
+          </mat-table>
+        </div>
 
         <mat-paginator #paginator
                        [pageSize]="25"

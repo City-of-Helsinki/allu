@@ -1,4 +1,4 @@
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {CommonHeaderInterceptor} from './common-header-interceptor';
 import {JwtInterceptor} from './jwt-interceptor';
 

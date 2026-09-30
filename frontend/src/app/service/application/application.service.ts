@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
@@ -24,7 +24,7 @@ import {Page} from '../../model/common/page';
 import {BackendApplication, SearchResultApplication} from '../backend-model/backend-application';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {BackendDistributionEntry} from '@service/backend-model/backend-distribution-entry';
 import {DistributionMapper} from '@service/mapper/distribution-mapper';
@@ -128,7 +128,7 @@ export class ApplicationService {
   /**
    * Deletes given application (only NOTE-types can be deleted)
    */
-  public remove(id: number): Observable<{}> {
+  public remove(id: number): Observable<unknown> {
     const url = APPLICATIONS_URL + '/note/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')))
@@ -164,7 +164,7 @@ export class ApplicationService {
   /**
    * Changes owner of given applications. Does not return anything. Use Observable's subscribe complete.
    */
-  public changeOwner(owner: number, applicationIds: Array<number>): Observable<{}> {
+  public changeOwner(owner: number, applicationIds: Array<number>): Observable<unknown> {
     const url = APPLICATIONS_URL + '/owner/' + owner;
     return this.http.put(url, JSON.stringify(applicationIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')))
@@ -174,7 +174,7 @@ export class ApplicationService {
   /**
    * Removes owner of given applications. Does not return anything. Use Observable's subscribe complete.
    */
-  public removeOwner(applicationIds: Array<number>): Observable<{}> {
+  public removeOwner(applicationIds: Array<number>): Observable<unknown> {
     const url = APPLICATIONS_URL + '/owner/remove';
     return this.http.put(url, JSON.stringify(applicationIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')))
@@ -200,7 +200,7 @@ export class ApplicationService {
     );
   }
 
-  public removeTag(appId: number, tagType: ApplicationTagType): Observable<{}> {
+  public removeTag(appId: number, tagType: ApplicationTagType): Observable<unknown> {
     const url = `${APPLICATIONS_URL}/${appId}/tags/${tagType}`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagRemoveFailed')))
@@ -232,7 +232,7 @@ export class ApplicationService {
 
   getReplacementHistory(id: number): Observable<Array<ApplicationIdentifier>> {
     const url = `${APPLICATIONS_URL}/${id}/replacementHistory`;
-    return this.http.get<ApplicationIdentifier>(url).pipe(
+    return this.http.get<ApplicationIdentifier[]>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.replacementHistory')))
     );
   }
@@ -245,7 +245,7 @@ export class ApplicationService {
     );
   }
 
-  removeOwnerNotification(id: number): Observable<{}> {
+  removeOwnerNotification(id: number): Observable<unknown> {
     const url = `${APPLICATIONS_URL}/${id}/ownernotification`;
     return this.http.delete<void>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeOwnerNotification')))

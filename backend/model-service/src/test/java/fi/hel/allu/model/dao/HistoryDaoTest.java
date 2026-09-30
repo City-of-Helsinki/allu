@@ -3,8 +3,7 @@ package fi.hel.allu.model.dao;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.FieldChange;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -19,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -118,5 +119,79 @@ public class HistoryDaoTest {
     assertEquals("/bar", app2History.get(1).getFieldChanges().get(1).getFieldName());
     assertEquals("oldBar", app2History.get(1).getFieldChanges().get(1).getOldValue());
     assertEquals("newBar", app2History.get(1).getFieldChanges().get(1).getNewValue());
+  }
+
+  // --- deleteCustomerAndContactChangeHistory ---
+
+  @Test
+  public void deleteCustomerAndContactChangeHistory_deletesCustomerHistory() {
+    // Arrange: one customer with two change history entries (with field changes)
+    Customer customer = testCommon.insertPerson();
+    int userId = testCommon.insertUser("hist-user-1").getId();
+
+    historyDao.addCustomerChange(customer.getId(),
+        new ChangeHistoryItem(userId, null, ChangeType.CREATED, null, ZonedDateTime.now(), null));
+    historyDao.addCustomerChange(customer.getId(),
+        new ChangeHistoryItem(userId, null, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
+            Arrays.asList(new FieldChange("/name", "old", "new"))));
+
+    // Verify entries exist before deletion
+    assertEquals(2, historyDao.getCustomerHistory(customer.getId()).size());
+
+    // Act
+    historyDao.deleteCustomerAndContactChangeHistory(Set.of(customer.getId()));
+
+    // Assert: all history rows removed
+    assertEquals(0, historyDao.getCustomerHistory(customer.getId()).size());
+  }
+
+  @Test
+  public void deleteCustomerAndContactChangeHistory_deletesContactHistoryStoredUnderCustomerId() {
+    // Contacts store their history under change_history.customer_id, so the same
+    // method must clean up contact-level entries as well.
+    Customer customer = testCommon.insertPerson();
+    testCommon.insertContact(customer.getId());
+    int userId = testCommon.insertUser("hist-user-2").getId();
+
+    // Add a history entry that represents a contact change, stored against customer_id
+    historyDao.addCustomerChange(customer.getId(),
+        new ChangeHistoryItem(userId, null, ChangeType.CONTACT_CHANGED, null, ZonedDateTime.now(),
+            Arrays.asList(new FieldChange("/contacts/email", "a@b.com", "c@d.com"))));
+
+    assertEquals(1, historyDao.getCustomerHistory(customer.getId()).size());
+
+    historyDao.deleteCustomerAndContactChangeHistory(Set.of(customer.getId()));
+
+    assertEquals(0, historyDao.getCustomerHistory(customer.getId()).size());
+  }
+
+  @Test
+  public void deleteCustomerAndContactChangeHistory_doesNotAffectOtherCustomers() {
+    // Only the targeted customer's history must be removed; other customers' history untouched.
+    Customer target = testCommon.insertPerson();
+    Customer other  = testCommon.insertPerson();
+    int userId = testCommon.insertUser("hist-user-3").getId();
+
+    historyDao.addCustomerChange(target.getId(),
+        new ChangeHistoryItem(userId, null, ChangeType.CREATED, null, ZonedDateTime.now(), null));
+    historyDao.addCustomerChange(other.getId(),
+        new ChangeHistoryItem(userId, null, ChangeType.CREATED, null, ZonedDateTime.now(), null));
+
+    historyDao.deleteCustomerAndContactChangeHistory(Set.of(target.getId()));
+
+    assertEquals(0, historyDao.getCustomerHistory(target.getId()).size());
+    assertEquals(1, historyDao.getCustomerHistory(other.getId()).size());
+  }
+
+  @Test
+  public void deleteCustomerAndContactChangeHistory_handlesNullInput() {
+    // Should not throw for null input
+    historyDao.deleteCustomerAndContactChangeHistory(null);
+  }
+
+  @Test
+  public void deleteCustomerAndContactChangeHistory_handlesEmptyInput() {
+    // Should not throw for empty input
+    historyDao.deleteCustomerAndContactChangeHistory(Collections.emptySet());
   }
 }

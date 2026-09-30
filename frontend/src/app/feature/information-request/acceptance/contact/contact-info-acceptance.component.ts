@@ -16,10 +16,13 @@ const requiredFields = {
   styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Contact> implements OnInit {
+export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective implements OnInit {
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
   @Input() orderer: boolean;
+
+  protected nonSelectableFields = true;
+  noOldValuesKey = 'informationRequest.acceptance.noContactSelected';
 
   private _oldContact: Contact;
   private _newContact: Contact;
@@ -63,7 +66,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
 
   protected initResultForm(): void {
     super.initResultForm();
-    const ctrl = this.fb.control(undefined, Validators.required);
+    const ctrl = this.fb.control(undefined, [Validators.required]);
     this.form.addControl('id', ctrl);
   }
 
@@ -96,7 +99,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceDirective<Cont
       new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
       new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
-      new FieldDescription('email', findTranslation('email')),
+      new FieldDescription('email', findTranslation('emailAddress')),
       new FieldDescription('phone', findTranslation('phone'))
     ];
   }

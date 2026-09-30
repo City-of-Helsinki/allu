@@ -2,19 +2,16 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.ui.service.CustomerExportService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,12 +32,17 @@ public class CustomerController {
 
   private static final String CUSTOMER_EXPORT_FILENAME = "allu_customers_";
 
-  @Autowired
-  CustomerService customerService;
-  @Autowired
-  ContactService contactService;
-  @Autowired
-  CustomerExportService customerExportService;
+  private final CustomerService customerService;
+  private final ContactService contactService;
+  private final CustomerExportService customerExportService;
+
+  public CustomerController(CustomerService customerService,
+                            ContactService contactService,
+                            CustomerExportService customerExportService) {
+    this.customerService = customerService;
+    this.contactService = contactService;
+    this.customerExportService = customerExportService;
+  }
 
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
@@ -148,5 +150,39 @@ public class CustomerController {
 
   private String getCustomerExportFileName() {
     return CUSTOMER_EXPORT_FILENAME + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+  }
+
+  /**
+   * Returns a paginated list of customers eligible for permanent deletion.
+   * A customer is deletable if it is not linked to any application or project in Allu.
+   * Only minimal details (ID, SAP customer number, and name) are included in the response.
+   *
+   * @param pageable pagination and sorting information
+   * @return a page of customers matching the criteria; empty page if none found
+   */
+  @GetMapping(value = "/deletable")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<Page<CustomerSummaryRecord>> getDeletableCustomers(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageable
+  ) {
+    Page<CustomerSummaryRecord> result = customerService.getDeletableCustomers(pageable);
+    return ResponseEntity.ok(result);
+  }
+
+  /**
+   * Soft deletes customers and their associated contacts from Allu's customer registry.
+   * This operation updates the is_active flag to false for customers and contacts.
+   *
+   * @param ids List of customer IDs to soft delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
+   */
+  @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<DeleteIdsResult> softDeleteCustomersByIds(@RequestBody List<Integer> ids) {
+    DeleteIdsResult result = customerService.softDeleteCustomers(ids);
+    // Always return 200 OK — the body communicates the full outcome via deletedIds and skippedIds.
+    // Skipped IDs are an expected, normal outcome of the business rule (customer became linked
+    // to an application between the listing and the delete request), not an error or conflict.
+    return ResponseEntity.ok(result);
   }
 }

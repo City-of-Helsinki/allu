@@ -1,4 +1,4 @@
-<div class="acceptance-content">
+<div class="acceptance-content" *ngIf="!customerRemoved; else removedTemplate">
   <customer-acceptance
     [parentForm]="parentForm"
     [oldCustomer]="oldCustomerWithContacts?.customer"
@@ -11,7 +11,17 @@
   <contacts-acceptance
     [parentForm]="parentForm"
     [newContacts]="newCustomerWithContacts?.contacts"
+    [oldContacts]="effectiveOldCustomerWithContacts?.contacts"
     [readonly]="readonly"
     [fieldKey]="fieldKey"
     [hideExisting]="hideExisting"></contacts-acceptance>
 </div>
+
+<ng-template #removedTemplate>
+  <removed-customer-acceptance
+    [customer]="effectiveOldCustomerWithContacts?.customer"
+    [fieldKey]="fieldKey"
+    (keep)="keepCustomer()"
+    (remove)="acceptRemoval()">
+  </removed-customer-acceptance>
+</ng-template>

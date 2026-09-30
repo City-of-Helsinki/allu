@@ -5,7 +5,7 @@ import {Component, DebugElement} from '@angular/core';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../mocks';
 import {CurrentUser} from '@service/user/current-user';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {FormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
@@ -20,6 +20,7 @@ import * as fromAuth from '@feature/auth/reducers';
 import {SearchSuccess, ToggleSelect} from '@feature/application/supervision/actions/supervision-task-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ChangeOwner} from '@feature/application/supervision/actions/supervision-task-actions';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -55,6 +56,7 @@ describe('SupervisionWorkqueueComponent', () => {
         RouterTestingModule,
         AlluCommonModule,
         OwnerModalModule,
+        NoopAnimationsModule,
         StoreModule.forRoot({
           'supervisionWorkQueue': combineReducers(fromSupervisionWorkQueue.reducers),
           'auth': combineReducers(fromAuth.reducers)

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges} from '@angular/core';
 import {FieldChange} from '../../../model/history/field-change';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {HistoryFieldFormatter} from '../../../service/history/history-field-formatter';
@@ -9,21 +9,18 @@ import {HistoryFieldFormatter} from '../../../service/history/history-field-form
   styleUrls: ['./history-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryFieldComponent implements OnInit {
+export class HistoryFieldComponent implements OnChanges {
   @Input() meta: StructureMeta;
+  @Input() fieldChange: FieldChange;
 
   content: FieldChange;
 
-  constructor(private formatter: HistoryFieldFormatter) {}
+  constructor(private formatter: HistoryFieldFormatter, private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-  }
-
-  @Input() set fieldChange(fieldChange: FieldChange) {
-  setTimeout(() => {
-    if (this.meta) {
-      this.content = this.formatter.toFormattedChange(fieldChange, this.meta);
+  ngOnChanges(): void {
+    if (this.fieldChange && this.meta) {
+      this.content = this.formatter.toFormattedChange(this.fieldChange, this.meta);
+      this.cdr.markForCheck();
     }
-  }, 0)
   }
 }

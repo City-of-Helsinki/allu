@@ -11,7 +11,6 @@ import {Contract} from '@model/contract/contract';
 import {ApprovalDocument, ApprovalDocumentType} from '@model/decision/approval-document';
 import {InjectionToken} from '@angular/core';
 import {TerminationDocument} from '@feature/decision/termination/TerminationDocument';
-import {Dictionary} from '@util/object.util';
 
 export interface DecisionState {
   decision: fromDecision.State;

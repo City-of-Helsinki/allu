@@ -6,8 +6,8 @@ import {DepositMapper} from './deposit-mapper';
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
 import {BackendDeposit} from './backend-deposit';
-import {HttpClient} from '@angular/common/http';
-import {catchError, filter, map} from 'rxjs/internal/operators';
+import { HttpClient } from '@angular/common/http';
+import {catchError, filter, map} from 'rxjs/operators';
 
 const DEPOSIT_URL = '/api/deposit';
 const DEPOSIT_UPDATE_URL = '/api/deposit/:id';
@@ -45,7 +45,7 @@ export class DepositService {
     }
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     const url = DEPOSIT_REMOVE_URL.replace(':id', String(id));
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('deposit.error.remove')))

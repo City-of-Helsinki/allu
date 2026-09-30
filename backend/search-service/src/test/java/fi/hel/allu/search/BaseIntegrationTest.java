@@ -18,7 +18,7 @@ public abstract class BaseIntegrationTest {
 
     protected static final String CLUSTER_NAME = "allu-cluster";
     protected static final String NODE_NAME = "allu-node";
-    protected static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.8.0";
+    protected static final String ELASTIC_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:6.8.23";
 
     protected static final String USERNAME = "someusername";
 

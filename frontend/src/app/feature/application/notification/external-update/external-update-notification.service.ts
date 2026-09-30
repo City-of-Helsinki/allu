@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {map} from 'rxjs/internal/operators';
-import {combineLatest, Observable} from 'rxjs/index';
+import {map} from 'rxjs/operators';
+import {combineLatest, Observable} from 'rxjs';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';

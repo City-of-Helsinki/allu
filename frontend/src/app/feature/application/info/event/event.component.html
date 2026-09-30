@@ -16,13 +16,15 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.event.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.event.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="name" required
-                       [placeholder]="'application.event.name' | translation"/>
+                <mat-label>{{'application.event.name' | translation}}</mat-label>
+                <input matInput type="text" formControlName="name" required/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="name" hasError="required">
                     {{'application.field.nameMissing' | translation}}
@@ -36,8 +38,8 @@
             <ng-container formGroupName="eventTimes">
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.event.startTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime" required
-                         [placeholder]="'application.event.startTime' | translation"
                          [matDatepicker]="startTimePicker"
                          [max]="maxEventStartTime"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
@@ -55,8 +57,8 @@
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.event.endTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime" required
-                         [placeholder]="'application.event.endTime' | translation"
                          [matDatepicker]="endTimePicker"
                          [min]="minEventEndTime"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
@@ -71,9 +73,9 @@
             </ng-container>
             <div fxFlex="calc(100% - 18px)">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.event.description' | translation}}</mat-label>
                 <textarea matInput cdkTextareaAutosize formControlName="description"
-                          [required]="required(applicationForm.get('description'))"
-                          [placeholder]="'application.event.description' | translation"></textarea>
+                          [required]="required(applicationForm.get('description'))"></textarea>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="description" hasError="required">
                     {{'application.event.field.descriptionMissing' | translation}}
@@ -83,20 +85,21 @@
             </div>
             <div fxFlex="calc(100% - 18px)">
               <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="timeExceptions"
-                          [placeholder]="'application.event.timeExceptions' | translation"></textarea>
+                <mat-label>{{'application.event.timeExceptions' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="timeExceptions"></textarea>
               </mat-form-field>
             </div>
             <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="url"
-                       [placeholder]="'application.event.url' | translation"/>
+                <mat-label>{{'application.event.url' | translation}}</mat-label>
+                <input matInput type="text" formControlName="url"/>
               </mat-form-field>
             </div>
             <div fxFlex="calc(25% - 18px)">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.event.attendees' | translation}}</mat-label>
                 <input matInput type="number" formControlName="attendees"
-                       step="1" min="0" [placeholder]="'application.event.attendees' | translation"/>
+                       step="1" min="0"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="attendees" hasError="greaterThanOrEqual">
                     {{'application.event.field.attendeesGreaterThanOrEqual' | translation}}
@@ -106,8 +109,9 @@
             </div>
             <div fxFlex="calc(25% - 18px)">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.event.entryFee' | translation}}</mat-label>
                 <input matInput type="number" formControlName="entryFee"
-                       step="any" min="0" [placeholder]="'application.event.entryFee' | translation"/>
+                       step="any" min="0"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="entryFee" hasError="greaterThanOrEqual">
                     {{'application.event.field.eventEntryFeeThanOrEqual' | translation}}
@@ -124,7 +128,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.event.structures' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.event.structures' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="0 0 calc(25% - 18px)">
@@ -136,8 +142,8 @@
             </div>
             <div fxFlex="0 0 calc(25% - 18px)" [hidden]="!structureArea.checked">
               <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="structureArea" step="any" min="0"
-                       [placeholder]="'application.event.structureArea' | translation"/>
+                <mat-label>{{'application.event.structureArea' | translation}}</mat-label>
+                <input matInput type="number" formControlName="structureArea" step="any" min="0"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="structureArea" hasError="greaterThanOrEqual">
                     {{'application.event.field.structureAreaGreaterThanOrEqual' | translation}}
@@ -147,8 +153,8 @@
             </div>
             <div fxFlex="calc(100% - 18px)" [hidden]="!structureArea.checked">
               <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="structureDescription"
-                          [placeholder]="'application.event.structureDescription' | translation"></textarea>
+                <mat-label>{{'application.event.structureDescription' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="structureDescription"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -164,8 +170,8 @@
             <ng-container formGroupName="structureTimes" *ngIf="structureTimes.checked">
               <div fxFlex="0 0 calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.event.structureStartTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="startTime"
-                         [placeholder]="'application.event.structureStartTime' | translation"
                          [matDatepicker]="structureStartTimePicker"
                          [max]="maxBuildStart"/>
                   <mat-datepicker-toggle matSuffix [for]="structureStartTimePicker"
@@ -183,8 +189,8 @@
               </div>
               <div fxFlex="0 0 calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
+                  <mat-label>{{'application.event.structureEndTime' | translation}}</mat-label>
                   <input matInput type="text" formControlName="endTime"
-                         [placeholder]="'application.event.structureEndTime' | translation"
                          [matDatepicker]="structureEndTimePicker"
                          [min]="minTeardownEnd"/>
                   <mat-datepicker-toggle matSuffix [for]="structureEndTimePicker"
@@ -217,7 +223,9 @@
   <div fxLayout="row">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'application.event.marketingProvidersTitle' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.event.marketingProvidersTitle' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(100% - 18px)">
@@ -228,8 +236,8 @@
             </div>
             <div fxFlex="calc(100% - 18px)" [hidden]="!marketingProviders.checked">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.event.marketingProvidersDescription' | translation}}</mat-label>
                 <textarea matInput cdkTextareaAutosize formControlName="marketingProviders"
-                          [placeholder]="'application.event.marketingProvidersDescription' | translation"
                           ></textarea>
               </mat-form-field>
             </div>
@@ -240,8 +248,8 @@
             </div>
             <div fxFlex="calc(100% - 18px)" [hidden]="!foodSales.checked">
               <mat-form-field class="input-full-width">
-                <textarea matInput cdkTextareaAutosize formControlName="foodProviders"
-                          [placeholder]="'application.event.foodProviders' | translation"></textarea>
+                <mat-label>{{'application.event.foodProviders' | translation}}</mat-label>
+                <textarea matInput cdkTextareaAutosize formControlName="foodProviders"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -253,7 +261,9 @@
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <default-text formControlName="terms"
                         [applicationType]="application.type"

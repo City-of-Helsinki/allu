@@ -1,6 +1,4 @@
 import {CustomerType} from '@model/customer/customer-type';
-import {PageRequest} from '@model/common/page-request';
-import {Sort} from '@model/common/sort';
 import {SearchParameters} from '@feature/common/search-parameters';
 
 export interface CustomerSearchQuery {

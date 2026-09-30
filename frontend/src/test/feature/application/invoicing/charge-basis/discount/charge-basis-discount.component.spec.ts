@@ -82,7 +82,7 @@ describe('ChargeBasisDiscountComponent', () => {
     select.nativeElement.click();
     detectAndTick();
 
-    const options = select.queryAll(By.css('mat-option .mat-option-text'));
+    const options = select.queryAll(By.css('mat-option .mdc-list-item__primary-text'));
     expect(options.length).toEqual(existingEntries.length + 1); // entries + default option
     expect(options[0].nativeElement.textContent.trim()).toEqual(findTranslation('chargeBasis.discountFor.wholeInvoice'));
     expect(options[1].nativeElement.textContent.trim()).toEqual(existingEntries[0].text);

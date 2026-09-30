@@ -3,6 +3,7 @@ import {NumberUtil} from '../../util/number.util';
 import {ArrayUtil} from '../../util/array-util';
 
 const DISTRICT_ID_CHANGE = ['cityDistrictId', '/cityDistricts'];
+const COUNTRY_ID_CHANGE = '/countryId';
 const CUSTOMER_CHANGE = '/customer/';
 const CONTACT_CHANGE = '/contacts/';
 const CUSTOMER_URL = '/customers/:id';
@@ -11,6 +12,7 @@ export enum FieldChangeType {
   CUSTOMER,
   CONTACT,
   DISTRICT_ID,
+  COUNTRY_ID,
   OTHER
 }
 
@@ -85,6 +87,8 @@ export class FieldChange {
   private initFieldChangeType(fieldName: string) {
     if (DISTRICT_ID_CHANGE.some(partId => fieldName.indexOf(partId) >= 0)) {
       this._fieldChangeType = FieldChangeType.DISTRICT_ID;
+    } else if (fieldName.indexOf(COUNTRY_ID_CHANGE) >= 0) {
+      this._fieldChangeType = FieldChangeType.COUNTRY_ID;
     } else if (fieldName.indexOf(CUSTOMER_CHANGE) >= 0) {
       this._fieldChangeType = FieldChangeType.CUSTOMER;
     } else if (fieldName.indexOf(CONTACT_CHANGE) >= 0) {

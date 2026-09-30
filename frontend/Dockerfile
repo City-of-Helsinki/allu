@@ -1,11 +1,11 @@
-FROM node:12.18
+FROM node:20.11
 ENV NODE_ENV=dev
 
 WORKDIR /allu-frontend
 
-COPY ["package.json", "./"]
+COPY ["package.json", "package-lock.json", "./"]
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 

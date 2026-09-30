@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {Action, select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromInvoicing from '@feature/application/invoicing/reducers';
@@ -16,7 +16,7 @@ import * as ApplicationAction from '@feature/application/actions/application-act
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {InvoicingPeriodService} from '@feature/application/invoicing/invoicing-period/invoicing-period.service';
-import {from} from 'rxjs/internal/observable/from';
+import {from} from 'rxjs';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {ApplicationActionType} from '@feature/application/actions/application-actions';
 
@@ -30,7 +30,7 @@ export class InvoicingPeriodEffects {
   load: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Load>(InvoicingPeriodActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.invoicingPeriodService.load(app.id).pipe(
+    switchMap(([_action, app]) => this.invoicingPeriodService.load(app.id).pipe(
       map(periods => new LoadSuccess(periods)),
       catchError(error => from([
         new NotifyFailure(error),
@@ -64,8 +64,8 @@ export class InvoicingPeriodEffects {
   remove: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Remove>(InvoicingPeriodActionType.Remove),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.invoicingPeriodService.remove(app.id).pipe(
-      map(periods => new RemoveSuccess()),
+    switchMap(([_action, app]) => this.invoicingPeriodService.remove(app.id).pipe(
+      map(() => new RemoveSuccess()),
       catchError(error => from([
         new NotifyFailure(error),
         new OperationFailed()

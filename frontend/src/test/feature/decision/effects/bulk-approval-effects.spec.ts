@@ -2,8 +2,8 @@ import {TestBed} from '@angular/core/testing';
 import {EffectsMetadata, getEffectsMetadata} from '@ngrx/effects';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import {provideMockActions} from '@ngrx/effects/testing';
-import {ReplaySubject} from 'rxjs/internal/ReplaySubject';
-import {Observable} from 'rxjs/internal/Observable';
+import {ReplaySubject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {EMPTY, of, throwError} from 'rxjs';
 import {BulkApprovalEffects} from '@feature/decision/effects/bulk-approval-effects';
 import {ApplicationStatus} from '@model/application/application-status';
@@ -28,17 +28,17 @@ import {take} from 'rxjs/operators';
 import {ErrorInfo} from '@service/error/error-info';
 
 class DecisionServiceMock {
-  public sendByStatus(applicationId: number, status: ApplicationStatus, emailDetails: DecisionDetails): Observable<{}> {
+  public sendByStatus(_applicationId: number, _status: ApplicationStatus, _emailDetails: DecisionDetails): Observable<unknown> {
     return EMPTY;
   }
 
-  public getBulkApprovalEntries(applicationIds: number[]): Observable<BulkApprovalEntry[]> {
+  public getBulkApprovalEntries(_applicationIds: number[]): Observable<BulkApprovalEntry[]> {
     return EMPTY;
   }
 }
 
 class ApplicationServiceMock {
-  public changeStatus(appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+  public changeStatus(_appId: number, _status: ApplicationStatus, _changeInfo?: StatusChangeInfo): Observable<Application> {
     return EMPTY;
   }
 }
@@ -56,6 +56,7 @@ const approvalEntries = [
 
 describe('Bulk approval effects', () => {
   let effects: BulkApprovalEffects;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   let actions$: ReplaySubject<any>;
   let metadata: EffectsMetadata<BulkApprovalEffects>;
   let decisionService: DecisionServiceMock;
@@ -138,7 +139,7 @@ describe('Bulk approval effects', () => {
   it('should handle and report errors but approve rest', () => {
     const errorInfo = new ErrorInfo('title');
     const failingId = approvalEntries[1].id;
-    sendDecisionSpy.and.callFake((id: number, targetState: ApplicationStatus, info: StatusChangeInfo) => {
+    sendDecisionSpy.and.callFake((id: number, _targetState: ApplicationStatus, _info: StatusChangeInfo) => {
       if (failingId === id) {
         throwError(errorInfo);
       }

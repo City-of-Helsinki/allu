@@ -3,7 +3,7 @@
 ARCHIVE_DIR=/srv/backup/allu/database/wal_archive
 
 # find the latest .backup file in wal_archive
-LATEST_BACKUP=`ls -c ${ARCHIVE_DIR}/*.backup 2> /dev/null|head -n 1`
+LATEST_BACKUP=`find "${ARCHIVE_DIR}" -maxdepth 1 -name "*.backup" -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2-`
 
 # check that we found something
 if [ "$LATEST_BACKUP" == "" ]

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewChild, ChangeDetectorRef} from '@angular/core';
 import isEqual from 'lodash/isEqual';
-import {MatLegacySelectionList as MatSelectionList} from '@angular/material/legacy-list';
+import {MatSelectionList} from '@angular/material/list';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {MapFeature} from '@feature/map/map-feature';
@@ -8,6 +8,7 @@ import {pathStyle} from '@service/map/map-draw-styles';
 import {StructureMeta} from '@model/application/meta/structure-meta';
 
 export interface FieldValues {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   [field: string]: any;
 }
 
@@ -26,8 +27,7 @@ const FIELD_SELECT_VALUE_ACCESSOR = {
 })
 export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
-  constructor(private cdr: ChangeDetectorRef) {
-}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   @Input() id = '';
   @Input() descriptions: FieldDescription[] = [];
@@ -51,23 +51,32 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
   /** Implemented as part of ControlValueAccessor. */
   writeValue(values: string[]): void {
-    this.selectionList.writeValue(values);
+    if (this.selectionList) {
+      this.selectionList.writeValue(values);
+    }
   }
 
   /** Implemented as a part of ControlValueAccessor. */
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
-    this.selectionList.setDisabledState(isDisabled);
+    if (this.selectionList) {
+      this.selectionList.setDisabledState(isDisabled);
+    }
   }
 
   /** Implemented as part of ControlValueAccessor. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: (value: any) => void): void {
-    this.selectionList.registerOnChange(fn);
+    if (this.selectionList) {
+      this.selectionList.registerOnChange(fn);
+    }
   }
 
   /** Implemented as part of ControlValueAccessor. */
   registerOnTouched(fn: () => void): void {
-    this.selectionList.registerOnTouched(fn);
+    if (this.selectionList) {
+      this.selectionList.registerOnTouched(fn);
+    }
   }
 
   @Input()
@@ -91,24 +100,26 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   }
 
   selectAll(): void {
-    if (this.selectionList.options) {
+    if (this.selectionList && this.selectionList.options) {
       this.selectionList.selectAll();
     }
   }
 
   deselectAll(): void {
-    if (this.selectionList.options) {
+    if (this.selectionList && this.selectionList.options) {
       this.selectionList.deselectAll();
     }
   }
 
   deselect(field: string): void {
-    const updatedValues = this.selectedValues.filter(f => f !== field);
-    this.selectionList.writeValue(updatedValues);
+    if (this.selectionList) {
+      const updatedValues = this.selectedValues.filter(f => f !== field);
+      this.selectionList.writeValue(updatedValues);
+    }
   }
 
   get selectedValues(): string[] {
-    if (this.selectionList.options) {
+    if (this.selectionList && this.selectionList.options) {
       return this.selectionList.selectedOptions.selected.map(opt => opt.value);
     } else {
       return [];

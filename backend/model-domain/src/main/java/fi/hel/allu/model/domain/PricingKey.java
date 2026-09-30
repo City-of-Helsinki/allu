@@ -5,6 +5,8 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 public enum PricingKey {
   // Excavation announcement
   HANDLING_FEE,
+  HANDLING_FEE_LT_6_MONTHS, // LT = LESS THAN
+  HANDLING_FEE_GE_6_MONTHS, // GE = GREATER OR EQUAL
   HANDLING_FEE_SELF_SUPERVISION,
   SMALL_AREA_DAILY_FEE,
   MEDIUM_AREA_DAILY_FEE,
@@ -36,6 +38,8 @@ public enum PricingKey {
   PARKLET,
 
   // Area rental
+  // Includes also HANDLING_FEE_LT_6_MONTHS (LT = LESS THA) and HANDLING_FEE_GE_6_MONTHS (GE = GREATER OR EQUAL)
+  HANDLING_FEE_LT_8_DAYS, // LT = LESS THAN
   MINOR_DISTURBANCE_HANDLING_FEE,
   MAJOR_DISTURBANCE_HANDLING_FEE,
   UNIT_PRICE,

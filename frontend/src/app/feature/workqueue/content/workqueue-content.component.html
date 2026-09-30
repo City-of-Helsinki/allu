@@ -3,13 +3,14 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort [trackBy]="trackById">
+  <div class="table-scroll-container">
+    <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort [trackBy]="trackById">
     <ng-container matColumnDef="selected">
       <mat-header-cell *matHeaderCellDef class="mat-cell-selection">
         <div>
           <mat-checkbox
             [checked]="(someSelected$ | async) && (allSelected$ | async)"
-            [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+            [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
             (change)="checkAll()"></mat-checkbox>
         </div>
       </mat-header-cell>
@@ -59,7 +60,7 @@
     </ng-container>
 
     <ng-container matColumnDef="locations.address">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'postalAddress.streetAddress' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">{{row.address}}</mat-cell>
     </ng-container>
 
@@ -119,14 +120,13 @@
              class="details-cell"
              *ngIf="row.applicationTags?.length">
           <div fxFlex>
-            <mat-chip-list>
+            <mat-chip-set>
               <mat-chip *ngFor="let tag of row.applicationTags"
-                        [selected]="tagSelected(tag.type) | async"
-                        class="accent-chip slim-chip"
-                        color="accent">
+                        [highlighted]="tagSelected(tag.type) | async"
+                        class="slim-chip">
                 {{['application.tag.type', tag.type] | translation}}
               </mat-chip>
-            </mat-chip-list>
+            </mat-chip-set>
           </div>
         </div>
       </mat-cell>
@@ -142,7 +142,8 @@
     <mat-row *matRowDef="let row; columns: ['latestComment', 'tags']; let i = dataIndex;"
              class="details-row details-row-last" [class.row-highlight]="highlight(i)"
              (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave()"></mat-row>
-  </mat-table>
+    </mat-table>
+  </div>
 
   <mat-paginator #paginator
                  [pageSizeOptions]="[5, 10, 25, 100]">

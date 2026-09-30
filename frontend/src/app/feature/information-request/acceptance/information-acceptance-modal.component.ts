@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
@@ -8,7 +8,7 @@ import {Application} from '@model/application/application';
 import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
 import {Observable} from 'rxjs';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
+import {Reset, SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
@@ -17,7 +17,7 @@ import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequest} from '@model/information-request/information-request';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
-import {CloseRequest, LoadActiveRequest, LoadRequest} from '@feature/information-request/actions/information-request-actions';
+import {CloseRequest, LoadActiveRequest} from '@feature/information-request/actions/information-request-actions';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {map, switchMap, take} from 'rxjs/operators';
@@ -102,6 +102,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
   }
 
   cancel(): void {
+    this.store.dispatch(new Reset());
     this.dialogRef.close();
   }
 
@@ -123,6 +124,7 @@ export class InformationAcceptanceModalComponent implements OnInit {
 
   discardChanges(): void {
     this.store.dispatch(new CloseRequest(this.data.informationRequest.informationRequestId));
+    this.store.dispatch(new Reset());
     this.dialogRef.close();
   }
 

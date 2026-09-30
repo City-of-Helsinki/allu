@@ -15,12 +15,13 @@ export const initialState: State = {
 
 export function reducer(state: State = initialState, action: AddressSearchActions) {
   switch (action.type) {
-    case AddressSearchActionType.SearchSuccess:
+    case AddressSearchActionType.SearchSuccess: {
       const sorted = [...action.payload].sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress));
       return {
         ...state,
         matching: sorted
       };
+    }
 
     case AddressSearchActionType.FetchCoordinates:
     case AddressSearchActionType.ClearCoordinates:

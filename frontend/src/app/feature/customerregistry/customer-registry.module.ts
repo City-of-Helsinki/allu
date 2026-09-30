@@ -10,9 +10,9 @@ import {CustomerContactsComponent} from './contact/customer-contacts.component';
 import {CustomerModalComponent} from './customer/customer-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
 import {CustomerInfoComponent} from './customer/customer-info.component';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {CustomerSearchEffects} from './effects/customer-search-effects';
@@ -21,6 +21,7 @@ import {reducersProvider, reducersToken} from '@feature/customerregistry/reducer
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import {ContactEffects} from '@feature/customerregistry/effects/contact-effects';
 import {ContactOptionContentComponent} from '@feature/customerregistry/contact/contact-option-content.component';
+import {HistoryModule} from '@feature/history/history.module';
 
 @NgModule({
     imports: [
@@ -36,7 +37,8 @@ import {ContactOptionContentComponent} from '@feature/customerregistry/contact/c
         MatTableModule,
         MatSortModule,
         MatPaginatorModule,
-        AlluCommonModule
+        AlluCommonModule,
+        HistoryModule
     ],
     declarations: [
         CustomerRegistryComponent,

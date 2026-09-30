@@ -1,17 +1,18 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, SimpleChanges, ViewChild, OnChanges} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs/index';
-import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
+import {EnumUtil} from '@util/enum.util';
 import {CustomerNameSearchMinChars, CustomerSearchQuery, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {isEqualWithSkip} from '@util/object.util';
 import {CustomerInfoAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-info-acceptance.component';
@@ -38,7 +39,7 @@ import { UpdateCustomerReference } from '@feature/information-request/actions/in
   styleUrls: ['./customer-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
+export class CustomerAcceptanceComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() oldCustomer: Customer;
   @Input() newCustomer: Customer;
@@ -73,11 +74,15 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   private config: CustomerAcceptanceConfig;
 
+  customerTypes = EnumUtil.enumValues(CustomerType);
+
   selectionForm: FormGroup;
   referenceFieldDescriptions: FieldDescription[] = [
     new FieldDescription('customerReference', findTranslation('customer.customerReference'), SelectFieldType.TEXT)
   ];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   referenceFieldValues: any = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   referenceComparedValues: any = {};
 
   constructor(
@@ -101,7 +106,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({});
     this.parentForm.addControl(this.formName, this.form);
     this.searchForm = this.fb.group({
-      search: undefined
+      search: undefined,
+      customerType: this.newCustomer.type
     });
 
     this.countryCodes$ = this.store.select(fromRoot.getCodeSetCodeMap('Country'));
@@ -110,7 +116,13 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(CustomerNameSearchMinChars)
-    ).subscribe(term => this.searchCustomer(this.newCustomer.type, term, term, term));
+    ).subscribe(term => this.searchWithFallback(this.searchForm.get('customerType').value, term, term, term));
+
+    this.searchForm.get('customerType').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(type => {
+      this.searchWithFallback(type, this.newCustomer.name, this.newCustomer.registryKey, this.newCustomer.sapCustomerNumber);
+    });
 
     this.initialSearch();
     this.init();
@@ -223,8 +235,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private initialSearch() {
-    this.searchCustomer(
-      this.newCustomer.type,
+    this.searchWithFallback(
+      this.searchForm.get('customerType').value,
       this.newCustomer.name,
       this.newCustomer.registryKey,
       this.newCustomer.sapCustomerNumber
@@ -242,8 +254,25 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  private searchCustomer(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string): void {
-    const query: CustomerSearchQuery = {name, active: true, matchAny: true};
+  private searchWithFallback(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string): void {
+    const isInvoicingRole = this.fieldKey === InformationRequestFieldKey.INVOICING_CUSTOMER;
+    if (isInvoicingRole) {
+      // First search for invoicingOnly=true customers; fall back to all customers if none found
+      this.searchCustomer(type, name, registryKey, sapCustomerNumber, true);
+      this.loading$.pipe(
+        filter(loading => !loading),
+        switchMap(() => this.matchingCustomers$),
+        take(1),
+        filter(customers => customers.length === 0)
+      ).subscribe(() => this.searchCustomer(type, name, registryKey, sapCustomerNumber, undefined));
+    } else {
+      // Non-invoicing roles must never see invoicingOnly=true customers
+      this.searchCustomer(type, name, registryKey, sapCustomerNumber, false);
+    }
+  }
+
+  private searchCustomer(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string, invoicingOnly?: boolean): void {
+    const query: CustomerSearchQuery = {name, active: true, matchAny: true, invoicingOnly};
 
     if (registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS) {
       query.registryKey = registryKey;

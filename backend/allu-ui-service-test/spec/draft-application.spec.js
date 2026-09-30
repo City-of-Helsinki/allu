@@ -127,13 +127,95 @@ describe('Application draft', () => {
       'endTime': applicationEndTime,
       'customersWithContacts': [applicantCustomersWithContactsCreated],
       'extension': {
-        'applicationType': 'SHORT_TERM_RENTAL'
+        'applicationType': 'SHORT_TERM_RENTAL',
+        'registrationNumbers': null
       },
 
     };
 
 
     let options = TestUtil.getPostOptions('/api/drafts', draft);
+    TestUtil.login('kasittelija')
+    .then(token => TestUtil.addAuthorization(options, token))
+    .then(() => rp(options))
+    .then(done, done.fail);
+  });
+
+  it('Create draft with registrationNumbers', done => {
+    const draftWithRegNumbers = {
+      'type': 'SHORT_TERM_RENTAL',
+      'kindsWithSpecifiers': {'SEASON_SALE': []},
+      'locations': [
+          {
+            'id': null,
+            'startTime': applicationStartTime,
+            'endTime': applicationEndTime,
+            'geometry': {
+              'type': 'GeometryCollection',
+              'crs': {
+                'properties': {
+                  'name': 'EPSG:3879'
+                },
+                'type': 'name'
+              },
+              'bbox': null,
+              'geometries': [
+                {
+                  'type': 'Polygon',
+                  'crs': null,
+                  'bbox': [
+                    2.549815796449239E7,
+                    6672928.0334480135,
+                    2.5498190016256575E7,
+                    6672968.0474401545],
+                  'coordinates': [
+                    [
+                      [
+                        2.549815796449239E7,
+                        6672928.049400462
+                      ],
+                      [
+                        2.5498157984586794E7,
+                        6672968.0474401545
+                      ],
+                      [
+                        2.5498190016256575E7,
+                        6672968.031487824
+                      ],
+                      [
+                        2.5498189996511605E7,
+                        6672928.0334480135
+                      ],
+                      [
+                        2.549815796449239E7,
+                        6672928.049400462
+                      ]
+                    ]
+                  ]
+                }
+              ]
+            },
+            'area': 1281.2113072694833,
+            'areaOverride': null,
+            'postalAddress': {
+              'streetAddress': null,
+              'postalCode': null,
+              'city': null
+            },
+            'fixedLocationIds': []
+          }
+        ],
+      'name': 'Sesonkimyynnin alustava varaus',
+      'startTime': applicationStartTime,
+      'endTime': applicationEndTime,
+      'customersWithContacts': [applicantCustomersWithContactsCreated],
+      'extension': {
+        'applicationType': 'SHORT_TERM_RENTAL',
+        'registrationNumbers': 'ABC-123, DEF-456'
+      },
+    };
+
+    let options = TestUtil.getPostOptions('/api/drafts', draftWithRegNumbers);
     TestUtil.login('kasittelija')
     .then(token => TestUtil.addAuthorization(options, token))
     .then(() => rp(options))

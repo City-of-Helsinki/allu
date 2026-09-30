@@ -5,7 +5,7 @@ import {StructureMeta} from '../../../model/application/meta/structure-meta';
 @Component({
   selector: 'history-fields',
   templateUrl: './history-fields.component.html',
-  styleUrls: [],
+  styleUrls: ['./history-fields.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryFieldsComponent {

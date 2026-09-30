@@ -57,37 +57,43 @@ public class AlluMailService {
    * Send email to given recipients
    *
    * @param recipients list of e-mail addresses
-   * @param subjet the e-mails subject
+   * @param subject the e-mails subject
    * @param body the e-mails body
-   * @return
+   * @return true if email was sent successfully or false if sending failed
    */
-  public void sendEmail(List<String> recipients, String subject, String body, String htmlBody, List<InlineResource> inlineResources) {
-    MailSenderLog log;
+  public boolean sendEmail(List<String> recipients, String subject, String body, String htmlBody, List<InlineResource> inlineResources) {
     List<String> forbiddenAddresses = getForbiddenEmailAddresses(recipients);
-    if (!forbiddenAddresses.isEmpty() ) {
+
+    if (!forbiddenAddresses.isEmpty()) {
       String errorMessage = "Forbidden recipient addresses: " + String.join(", ", forbiddenAddresses);
       logger.warn(errorMessage);
-      log = new MailSenderLog(subject, ZonedDateTime.now(), recipients, true, errorMessage);
-    } else {
-      MailMessage message = new MailMessage();
-      message.setBody(body);
-      message.setHtmlBody(htmlBody);
-      message.setSubject(subject);
-      message.setTo(recipients);
-      message.setFrom(applicationProperties.getEmailSenderAddress());
-      if (inlineResources != null) {
-        message.setInlineResources(inlineResources);
-      }
-      log =  sendEmail(message);
+      MailSenderLog result = new MailSenderLog(subject, ZonedDateTime.now(), recipients, true, errorMessage);
+      logService.addMailSenderLog(result);
+      return false;
     }
-    logService.addMailSenderLog(log);
+
+    MailMessage message = new MailMessage();
+    message.setBody(body);
+    message.setHtmlBody(htmlBody);
+    message.setSubject(subject);
+    message.setTo(recipients);
+    message.setFrom(applicationProperties.getEmailSenderAddress());
+
+    if (inlineResources != null) {
+      message.setInlineResources(inlineResources);
+    }
+
+    MailSenderLog result = sendEmail(message);
+    logService.addMailSenderLog(result);
+
+    return !result.isSentFailed();
   }
 
   private MailSenderLog sendEmail(MailMessage message) {
     try {
       return mailService.send(message);
     } catch (Exception e) {
-      logger.warn("Failed to send message", e);
+      logger.error("Failed to send message", e);
       return new MailSenderLog(message.getSubject(), ZonedDateTime.now(), message.getTo(), true, e.getMessage());
     }
   }
@@ -95,7 +101,7 @@ public class AlluMailService {
   public List<String> getForbiddenEmailAddresses(List<String> recipients) {
     List<String> forbidden;
     if (emailAcceptPattern != null) {
-      forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
+      forbidden = recipients.stream().filter(r -> !emailAcceptPattern.matcher(r).matches())
           .collect(Collectors.toList());
       return forbidden;
     } else {

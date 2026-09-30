@@ -3,7 +3,6 @@ import {StoredFilter} from '../../model/user/stored-filter';
 import {Some} from '../../util/option';
 import {TimeUtil} from '../../util/time.util';
 import {ArrayUtil} from '../../util/array-util';
-import {ApplicationType} from '../../model/application/type/application-type';
 
 export class StoredFilterMapper {
   static mapBackendList(filters: BackendStoredFilter[]): StoredFilter[] {
@@ -34,6 +33,7 @@ export class StoredFilterMapper {
     } : undefined;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFilterForType(type: StoredFilterType, filterString: string): any {
     const filter = JSON.parse(filterString);
 
@@ -49,6 +49,7 @@ export class StoredFilterMapper {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapBackendMap(filter: any): any {
     return {
       startDate: TimeUtil.dateFromBackend(filter.startDate),
@@ -58,6 +59,7 @@ export class StoredFilterMapper {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapBackendWorkqueue(filter: any): any {
     const search = filter.search;
 
@@ -77,6 +79,7 @@ export class StoredFilterMapper {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapBackendSupervisionWorkqueue(filter: any): any {
     const search = filter.search;
 

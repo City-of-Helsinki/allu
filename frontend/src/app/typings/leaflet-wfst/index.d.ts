@@ -9,6 +9,7 @@ declare module 'leaflet' {
     loadFeatures(filters: Filter[] | Filter);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet typings interop
   function wfs(options: any, readFormat?: any): WFS;
 
   function filter(filters: Filter[] | Filter): Filter;
@@ -35,7 +36,7 @@ declare module 'leaflet' {
     }
 
     class Like extends Filter {
-      constructor(propertyName: string, likeExpression: string, attributes: Object);
+      constructor(propertyName: string, likeExpression: string, attributes: object);
     }
 
     class And extends Filter {
@@ -55,7 +56,7 @@ declare module 'leaflet' {
     function gt(property: string, literal: string, matchCase?: boolean): GT;
     function leq(property: string, literal: string, matchCase?: boolean): LEQ;
     function geq(property: string, literal: string, matchCase?: boolean): GEQ;
-    function like(propertyName: string, likeExpression: string, attributes: Object): Like;
+    function like(propertyName: string, likeExpression: string, attributes: object): Like;
     function and(first: Filter, ...rest: Filter[]): And;
     function or(first: Filter, ...rest: Filter[]): Or;
     function bbox(propertyName: string, latLngBounds: L.LatLngBounds, CRS: L.CRS): BBox;

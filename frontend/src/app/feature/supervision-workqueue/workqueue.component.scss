@@ -6,7 +6,7 @@ mat-card {
 }
 
 .work-queue-controls {
-  background-color: mat.get-color-from-palette($allu-primary, 50);
+  background-color: mat.m2-get-color-from-palette($allu-primary, 50);
 
   .in-front {
     z-index: 100;

@@ -6,6 +6,7 @@ export class EnumUtil {
    * @param enumType
    * @returns {Array<string>}
    */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   public static enumValues(enumType: any): Array<string> {
     const enumNames: Array<string> = [];
     for (const item in enumType) {

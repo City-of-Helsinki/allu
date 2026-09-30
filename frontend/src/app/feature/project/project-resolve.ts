@@ -16,7 +16,7 @@ import * as historyActions from '../history/actions/history-actions';
 import {NumberUtil} from '../../util/number.util';
 
 import {ActionTargetType} from '../allu/actions/action-target-type';
-import {filter, switchMap, take, tap} from 'rxjs/internal/operators';
+import {filter, switchMap, take, tap} from 'rxjs/operators';
 import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 
 @Injectable()

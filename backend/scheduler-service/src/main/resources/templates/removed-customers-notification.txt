@@ -1,0 +1,12 @@
+Allu - asiakasrekisteristä poistettu SAP-numerollisia asiakkaita
+
+Allun asiakasrekisteristä on poistettu SAP-numerollisia asiakkaita ${count} kpl.
+
+Alla näkyvät asiakkaiden Allu-id:t ja SAP-asiakasnumerot:
+
+Allu-id | SAP-numero
+---------------------
+${rows}
+
+Tämän sähköpostin lähettäjä on tekninen osoite.
+Tarvittaessa lisätietoja osoitteesta kymp.allu@hel.fi.

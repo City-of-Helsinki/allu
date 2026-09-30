@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {DefaultText} from '../../model/application/cable-report/default-text';
@@ -8,7 +8,7 @@ import {DefaultTextMapper} from '../mapper/default-text-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BackendDefaultText} from '../backend-model/backend-default-text';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const DEFAULT_TEXTS_URL = '/api/defaulttext';
 const DEFAULT_TEXTS_BY_APPLICATION_TYPE_URL = DEFAULT_TEXTS_URL + '/applicationtype/:appType';
@@ -42,7 +42,7 @@ export class DefaultTextService {
     }
   }
 
-  public remove(id: number): Observable<{}> {
+  public remove(id: number): Observable<unknown> {
     const url = DEFAULT_TEXTS_URL + '/' + id;
     return this.http.delete(url).pipe(
       catchError(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')))

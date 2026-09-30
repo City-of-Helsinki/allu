@@ -31,6 +31,7 @@ export class DistributionMapper {
     );
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   static mapFrontend(entry: DistributionEntry): any {
     return (entry) ?
       {

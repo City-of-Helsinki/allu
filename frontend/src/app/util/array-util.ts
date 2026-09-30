@@ -12,7 +12,7 @@ export class ArrayUtil {
 
   static first<T>(array: Array<T>, filterFn?: (item: T) => boolean): T {
     if (array) {
-      const filter = filterFn || ((item: T) => true);
+      const filter = filterFn || ((_item: T) => true);
       return array.filter(filter)[0];
     } else {
       return undefined;
@@ -21,14 +21,14 @@ export class ArrayUtil {
 
   static rest<T>(array: Array<T>, filterFn?: (item: T) => boolean): T[] {
     if (array) {
-      const filter = filterFn || ((item: T) => true);
+      const filter = filterFn || ((_item: T) => true);
       return array.filter(filter).slice(1);
     } else {
       return undefined;
     }
   }
 
-  static last<T>(array: Array<T>, filterFn?: (item: T) => boolean): T {
+  static last<T>(array: Array<T>, _filterFn?: (item: T) => boolean): T {
     if (array) {
       return ArrayUtil.first(array.reverse());
     } else {
@@ -46,6 +46,7 @@ export class ArrayUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static containSame(left: Array<any>, right: Array<any>): boolean {
     const lengthEqual = left.length === right.length;
     const allItems = left.every(lItem => right.indexOf(lItem) >= 0);
@@ -117,16 +118,19 @@ export class ArrayUtil {
     return array.concat(newValues).filter(ArrayUtil.unique);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static uniqueItem(valueFn?: (item) => any): (value: any, index: number, self: any[]) => boolean {
     return (value, index, self) => self
       .map(item => valueFn(item))
       .indexOf(valueFn(value)) === index;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static unique(value: any, index: number, self: any[]): boolean {
     return self.indexOf(value) === index;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static flatten(array: Array<any>): Array<any> {
     if (!Array.isArray(array)) {
       throw new Error(`Not an array ${ array}`);
@@ -171,7 +175,7 @@ export class ArrayUtil {
   }
 
   private static toParts(full): Array<[number, string]> {
-    if (!!full) {
+    if (full) {
       const parts: Array<[number, string]> = [];
       full.replace(DIGITS, (match, numbers, text) => parts.push([numbers || Infinity, text || '']));
       return parts;

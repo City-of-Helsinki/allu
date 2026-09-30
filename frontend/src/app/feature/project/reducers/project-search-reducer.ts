@@ -1,5 +1,5 @@
 import {Project} from '@model/project/project';
-import {ProjectSearchActionType, ProjectSearchParams, SearchActions} from '../actions/project-search-actions';
+import {ProjectSearchActionType, SearchActions} from '../actions/project-search-actions';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
 import {Page} from '@model/common/page';

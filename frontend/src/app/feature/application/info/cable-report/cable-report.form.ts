@@ -3,7 +3,6 @@ import {CableReport} from '@model/application/cable-report/cable-report';
 import {CableInfoEntry} from '@model/application/cable-report/cable-info-entry';
 import {Application} from '@model/application/application';
 import {ApplicationForm} from '@feature/application/info/application-form';
-import {TimeUtil} from '@util/time.util';
 import {ApplicationStatus} from '@model/application/application-status';
 import {OrdererId} from '@model/application/cable-report/orderer-id';
 import {CustomerRoleType} from '@model/customer/customer-role-type';

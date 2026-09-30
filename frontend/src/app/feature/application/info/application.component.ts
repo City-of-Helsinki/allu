@@ -13,7 +13,7 @@ import {NumberUtil} from '@util/number.util';
 import * as fromApplication from '../reducers';
 import * as fromSupervisionTask from '@feature/application/supervision/reducers';
 import {Store} from '@ngrx/store';
-import {map, takeUntil} from 'rxjs/internal/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import * as fromRoot from '@feature/allu/reducers';
 
 @Component({
@@ -118,6 +118,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {
     return Some(visibleFor(ApplicationType[appType], item.type))
       .filter(visible => visible)
-      .map(visible => item);
+      .map(() => item);
   }
 }

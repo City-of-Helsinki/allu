@@ -1,7 +1,6 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -60,6 +59,7 @@ public class ApplicationDao {
           application.externalApplicationId, application.invoicingPeriodLength, application.ownerNotification);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
+  private static final BooleanExpression APPLICATION_NOT_ANONYMIZED = application.status.ne(StatusType.ANONYMIZED);
 
   private static final List<StatusType> INACTIVE_EXCAVATION_ANNOUNCEMENT_STATUSES =
       List.of(StatusType.ARCHIVED, StatusType.REPLACED, StatusType.CANCELLED, StatusType.FINISHED, StatusType.ANONYMIZED);
@@ -130,15 +130,20 @@ public class ApplicationDao {
   public Page<Application> findAll(Pageable pageRequest) {
     long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    QueryResults<Application> queryResults = queryFactory
+    List<Application> results = queryFactory
       .select(applicationBean)
       .from(application)
       .where(application.status.ne(StatusType.ANONYMIZED))
       .orderBy(application.id.asc())
       .offset(offset)
       .limit(count)
-      .fetchResults();
-    return new PageImpl<>(populateDependencies(queryResults.getResults()), pageRequest, queryResults.getTotal());
+      .fetch();
+    long total = queryFactory
+      .select(applicationBean)
+      .from(application)
+      .where(application.status.ne(StatusType.ANONYMIZED))
+      .fetchCount();
+    return new PageImpl<>(populateDependencies(results), pageRequest, total);
   }
 
   /**
@@ -185,7 +190,8 @@ public class ApplicationDao {
     if (statusTypes != null && ! statusTypes.isEmpty()) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));
     }
-    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
+    List<Integer> applications = queryFactory.select(application.id).from(application)
+        .where(whereCondition.and(APPLICATION_NOT_REPLACED).and(APPLICATION_NOT_ANONYMIZED)).fetch();
     return applications;
   }
 
@@ -1141,8 +1147,8 @@ public class ApplicationDao {
   @Transactional(readOnly = true)
   public List<Integer> findExcavationAnnouncementByOperationalDate(ZonedDateTime conditionAfter, ZonedDateTime conditionBefore,
       List<StatusType> statusTypes) {
-    BooleanExpression whereCondition = Expressions.booleanTemplate("(extension::json->>'winterTimeOperation') is not null");
-    whereCondition = whereCondition.and(Expressions.booleanTemplate("to_timestamp((extension::json->>'winterTimeOperation')::float)  BETWEEN {0} AND {1}", conditionAfter, conditionBefore));
+    BooleanExpression whereCondition = Expressions.booleanTemplate("(extension->>'winterTimeOperation') is not null");
+    whereCondition = whereCondition.and(Expressions.booleanTemplate("to_timestamp((extension->>'winterTimeOperation')::float)  BETWEEN {0} AND {1}", conditionAfter, conditionBefore));
     whereCondition = whereCondition.and(application.type.eq(ApplicationType.EXCAVATION_ANNOUNCEMENT));
     if (!CollectionUtils.isEmpty(statusTypes)) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));

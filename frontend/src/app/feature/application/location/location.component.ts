@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
-import {combineLatest, Observable, of, Subject, Subscription} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {MapUtil} from '@service/map/map.util';
@@ -29,11 +29,11 @@ import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {select, Store} from '@ngrx/store';
-import {filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
-import {EMPTY} from 'rxjs/internal/observable/empty';
+import {EMPTY} from 'rxjs';
 import * as fromLocation from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
 import {DistributionEntry} from '@model/common/distribution-entry';
@@ -380,7 +380,7 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   editedItemCountChanged(editedItemCount: number) {
     this.editedItemCount = editedItemCount;
-    if (editedItemCount > 0) {
+    if (editedItemCount > 0) {
       this.fixedLocationsCtrl.disable({emitEvent: false});
     } else {
       this.fixedLocationsCtrl.enable({emitEvent: false});
@@ -422,7 +422,7 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
 
   private editLocation(loc: Location): void {
-    if (!!loc) {
+    if (loc) {
       this.locationForm.patchValue(LocationForm.from(loc));
       this.mapStore.locationSearchFilterChange(this.createFilter(loc));
       this.location = loc;

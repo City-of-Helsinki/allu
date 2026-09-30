@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
-import {combineLatest, Observable} from 'rxjs/index';
+import {combineLatest, Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
 import * as fromDecision from '@feature/decision/reducers';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {ApplicationType} from '@model/application/type/application-type';
 import {Application} from '@model/application/application';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';

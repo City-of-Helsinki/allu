@@ -44,7 +44,7 @@
              [focusOnDrawn]="true"
              role="OTHER"
              [availableLayers]="availableLayers$ | async"
-             [selectedLayers]="selectedLayers$ | async">Loading map</map>
+             [selectedLayers]="selectedLayers$ | async">{{'common.loading.map' | translation}}</map>
       </div>
     </div>
   </div>
@@ -68,7 +68,7 @@
                 {{'comment.title' | translation}}
               </h2>
               <comment-preview-list
-                [comments]="comments$ | async"
+                [comments]="comments$ | async"
                 [visibleCount]="3"
                 [commentLink]="['/projects', project.id, 'comments']"
                 [noCommentText]="'comment.noProjectComments' | translation">

@@ -2,39 +2,37 @@
   <h1> {{ title }} </h1>
 
   <div class="delete-button-row">
+    <span *ngIf="hasSelectedItems$ | async" class="selected-count">
+      {{ (selectedIds$ | async)?.length }} valittu
+    </span>
     <button *ngIf="hasSelectedItems$ | async" mat-raised-button type="button" color="primary" (click)="deleteSelected()">
-      Poista valitut
+      {{'prunedata.removeSelected' | translation}}
     </button>
   </div>
 
-  <div fxLayout='row'>
-    <div fxFlex>
-      <div class="labels-solid labels-end">
-        <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-          <a mat-tab-link
-             *ngFor="let tab of tabs"
-             [routerLink]="['/admin/prune-data', tab | lowercase]"
-             routerLinkActive #rla="routerLinkActive"
-             [routerLinkActiveOptions]="{exact: true}"
-             [active]="rla.isActive">
-            {{['prunedata.tab', tab] | translation}}
-          </a>
-        </nav>
-      </div>
-    </div>
-  </div>
+  <nav mat-tab-nav-bar mat-stretch-tabs="false" [tabPanel]="tabPanel">
+    <a mat-tab-link
+       *ngFor="let tab of tabs"
+       [routerLink]="['/admin/prune-data', tab | lowercase]"
+       routerLinkActive #rla="routerLinkActive"
+       [routerLinkActiveOptions]="{exact: true}"
+       [active]="rla.isActive">
+      {{['prunedata.tab', tab] | translation}}
+    </a>
+  </nav>
 
   <div fxLayout="row">
-    <div fxFlex>
+    <div fxFlex class="table-flex-container">
       <div class="mat-elevation-z8 data-table data-table-with-paging">
-        <mat-table #table [dataSource]="filteredDataSource$ | async" matSort (matSortChange)="onSort($event)" [trackBy]="trackById">
+        <div class="table-scroll-container">
+          <mat-table #table [dataSource]="filteredDataSource$ | async" matSort (matSortChange)="onSort($event)" [trackBy]="trackById">
 
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <ng-container *ngIf="column === 'selected'; else regularHeader">
                 <mat-checkbox
                   [checked]="(someSelected$ | async) && (allSelected$ | async)"
-                  [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                   [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
                   (change)="checkAll()">
                 </mat-checkbox>
               </ng-container>
@@ -42,19 +40,32 @@
                 {{'prunedata.columns.' + column | translation}}
               </ng-template>
             </mat-header-cell>
-            
+
             <mat-cell *matCellDef="let row">
               <ng-container [ngSwitch]="column">
                 <ng-container *ngSwitchCase="'selected'">
-                  <mat-checkbox 
-                    [checked]="isSelected(row.id) | async"
-                    (change)="checkSingle(row.id)">
+                  <mat-checkbox
+                    [checked]="isSelected(getRowId(row)) | async"
+                    (change)="checkSingle(getRowId(row))">
                   </mat-checkbox>
                 </ng-container>
                 <ng-container *ngSwitchCase="'applicationId'">
                       <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
                         {{row.applicationId}}
                       </a>
+                </ng-container>
+                <ng-container *ngSwitchCase="'type'">
+                  {{ ['customer.type', row.type, 'name'] | translation }}
+                </ng-container>
+                <ng-container *ngSwitchCase="'name'">
+                  <a class="row-details-link" [routerLink]="['/customers', row.id]">
+                    <ng-container *ngIf="row.type !== 'PERSON'; else personPlaceholder">
+                      {{ row.name }}
+                    </ng-container>
+                    <ng-template #personPlaceholder>
+                      {{'prunedata.nameHidden' | translation}}
+                    </ng-template>
+                  </a>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   <ng-container *ngIf="column === 'changeType'; else regularContent">
@@ -76,17 +87,18 @@
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell" colspan="6">
               <ng-container *ngIf="(currentTab$ | async) === 'user_data'; else noApplications">
-                Ei asiakkaita
+                {{'prunedata.noCustomers' | translation}}
               </ng-container>
               <ng-template #noApplications>
-                Ei hakemuksia
+                {{'prunedata.noApplications' | translation}}
               </ng-template>
             </td>
           </tr>
 
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
-        </mat-table>
+          </mat-table>
+        </div>
       </div>
     </div>
   </div>
@@ -97,18 +109,15 @@
     [length]="totalItems$ | async"
     (page)="onPageChange($event)"
     [disabled]="(totalItems$ | async) === 0"
-    aria-label="Select page">
+    [attr.aria-label]="'prunedata.selectPage' | translation">
   </mat-paginator>
   <mat-tab-nav-panel #tabPanel>
   </mat-tab-nav-panel>
-
-
-
 </div>
 
 <div *ngIf="deleteInProgress | async" class="deletion-modal">
   <div class="deletion-content">
     <mat-spinner diameter="30"></mat-spinner>
-    <p>Tietoja anonymisoidaan</p>
+    <p>{{'prunedata.anonymizing' | translation}}</p>
   </div>
 </div>

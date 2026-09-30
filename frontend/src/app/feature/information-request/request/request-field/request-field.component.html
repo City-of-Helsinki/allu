@@ -5,9 +5,9 @@
 </div>
 <div fxLayout="row" *ngIf="selectedCtrl.value">
   <mat-form-field class="input-full-width">
+    <mat-label>{{'informationRequest.request.guide' | translation}}</mat-label>
     <input matInput type="text"  required
-           [formControl]="descriptionCtrl"
-           placeholder="{{'informationRequest.request.guide' | translation}}"/>
+           [formControl]="descriptionCtrl"/>
     <mat-error *ngIf="descriptionCtrl.hasError('required')">{{'informationRequest.field.descriptionMissing' | translation}}</mat-error>
   </mat-form-field>
 </div>

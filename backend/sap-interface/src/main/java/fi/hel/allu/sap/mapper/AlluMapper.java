@@ -32,7 +32,7 @@ public class AlluMapper {
   /*
    * Allu-specific constant values for various SAP fields:
    */
-  private static final String ALLU_ORDER_ITEM_NUMBER = "2831300000";
+  private static final String ALLU_PROJECT_NUMBER = "2830K002831300";
   private static final String ALLU_SENDER_ID = "ID341";
   // Civil law orders ("Yksityisoikeudellinen tilauslaji")
   private static final String ALLU_ORDER_TYPE_CIVIL = "ZTY1";
@@ -95,7 +95,7 @@ public class AlluMapper {
     storeExplanation(lineItem, invoiceRow.getExplanation());
     // Note: SAP's "Net price" is actually unit price
     lineItem.setNetPrice(String.format("%.02f", (double) invoiceRow.getUnitPrice() / 100));
-    lineItem.setOrderItemNumber(ALLU_ORDER_ITEM_NUMBER);
+    lineItem.setWbsElement(ALLU_PROJECT_NUMBER);
     lineItem.setQuantity(String.format("%.02f", invoiceRow.getQuantity()));
     lineItem.setUnit(mapToSapUnit(invoiceRow.getUnit()));
     lineItem.setMaterial(sapMaterial);
@@ -194,7 +194,6 @@ public class AlluMapper {
   }
 
   // Material definitions for SAP (from 2017-10-16_Pelkat_Allun_nimikkeet.xlsx)
-
   private static String SAP_MATERIAL_AREA_RENTAL = "10002502";
   private static String SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT = "10002501";
   private static String SAP_MATERIAL_FREE_EVENT = "27100024";
@@ -214,54 +213,37 @@ public class AlluMapper {
   private static String SAP_MATERIAL_PLACEMENT_CONTRACT = "27100032";
   private static String SAP_MATERIAL_TERRACE = "27100052";
   private static String SAP_MATERIAL_PARKLET = "27100129";
+  private static String SAP_MATERIAL_MOBILE_SALES = "27100007";
 
   private static String mapToSapMaterial(Application application) {
     if (application.getType() == null) {
       return null;
     }
-    switch (application.getType()) {
-      case AREA_RENTAL:
-        return SAP_MATERIAL_AREA_RENTAL;
-      case EXCAVATION_ANNOUNCEMENT:
-        return SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT;
-      case PLACEMENT_CONTRACT:
-        return SAP_MATERIAL_PLACEMENT_CONTRACT;
-      default:
-        // Don't do anything, will be decided in next switch
-    }
-    switch (Optional.ofNullable(application.getKind()).orElse(ApplicationKind.OTHER)) {
-      case OUTDOOREVENT:
-        return mapOutdoorEventToSapMaterial((Event)application.getExtension());
-      case BIG_EVENT:
-        return SAP_MATERIAL_NONFREE_EVENT;
-      case BRIDGE_BANNER:
-        return SAP_MATERIAL_BRIDGE_BANNER;
-      case PROMOTION_OR_SALES:
-        return SAP_MATERIAL_PROMOTION_OR_SALES;
-      case URBAN_FARMING:
-        return SAP_MATERIAL_URBAN_FARMING;
-      case KESKUSKATU_SALES:
-        return SAP_MATERIAL_KESKUSKATU_SALES;
-      case SUMMER_THEATER:
-        return SAP_MATERIAL_SUMMER_THEATER;
-      case DOG_TRAINING_EVENT:
-        return SAP_MATERIAL_DOG_TRAINING_EVENT;
-      case DOG_TRAINING_FIELD:
-        return SAP_MATERIAL_DOG_TRAINING_FIELD;
-      case PROMOTION:
-        return SAP_MATERIAL_PROMOTION;
-      case SEASON_SALE:
-        return SAP_MATERIAL_SEASON_SALE;
-      case CIRCUS:
-        return SAP_MATERIAL_CIRCUS;
-      case SUMMER_TERRACE:
-      case WINTER_TERRACE:
-        return SAP_MATERIAL_TERRACE;
-      case PARKLET:
-        return SAP_MATERIAL_PARKLET;
-      default:
-        return SAP_MATERIAL_OTHER_RENTAL;
-    }
+
+    return switch (application.getType()) {
+      case AREA_RENTAL -> SAP_MATERIAL_AREA_RENTAL;
+      case EXCAVATION_ANNOUNCEMENT -> SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT;
+      case PLACEMENT_CONTRACT -> SAP_MATERIAL_PLACEMENT_CONTRACT;
+      default ->
+        switch (Optional.ofNullable(application.getKind()).orElse(ApplicationKind.OTHER)) {
+          case OUTDOOREVENT -> mapOutdoorEventToSapMaterial((Event) application.getExtension());
+          case BIG_EVENT -> SAP_MATERIAL_NONFREE_EVENT;
+          case BRIDGE_BANNER -> SAP_MATERIAL_BRIDGE_BANNER;
+          case PROMOTION_OR_SALES -> SAP_MATERIAL_PROMOTION_OR_SALES;
+          case URBAN_FARMING -> SAP_MATERIAL_URBAN_FARMING;
+          case KESKUSKATU_SALES -> SAP_MATERIAL_KESKUSKATU_SALES;
+          case SUMMER_THEATER -> SAP_MATERIAL_SUMMER_THEATER;
+          case DOG_TRAINING_EVENT -> SAP_MATERIAL_DOG_TRAINING_EVENT;
+          case DOG_TRAINING_FIELD -> SAP_MATERIAL_DOG_TRAINING_FIELD;
+          case PROMOTION -> SAP_MATERIAL_PROMOTION;
+          case SEASON_SALE -> SAP_MATERIAL_SEASON_SALE;
+          case CIRCUS -> SAP_MATERIAL_CIRCUS;
+          case SUMMER_TERRACE, WINTER_TERRACE -> SAP_MATERIAL_TERRACE;
+          case PARKLET -> SAP_MATERIAL_PARKLET;
+          case MOBILE_SALES ->  SAP_MATERIAL_MOBILE_SALES;
+          default -> SAP_MATERIAL_OTHER_RENTAL;
+        };
+    };
   }
 
   private static String mapOutdoorEventToSapMaterial(Event event) {

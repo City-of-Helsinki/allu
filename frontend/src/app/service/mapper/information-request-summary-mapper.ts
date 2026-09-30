@@ -21,6 +21,7 @@ export class InformationRequestSummaryMapper {
     return summaries.map(s => this.mapBackend(s));
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   public static mapBackend(summary: BackendInformationRequestSummary): any {
     return new InformationRequestSummary(
       summary.informationRequestId,

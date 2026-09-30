@@ -20,15 +20,29 @@
   <div class="section-container">
     <div *ngIf="!hideExisting" class="section-content">
       <field-select
+        *ngIf="!nonSelectableFields"
         #oldValuesSelect
         [id]="id + '-old'"
         [descriptions]="fieldDescriptions"
         [fieldValues]="oldDisplayValues"
         [meta]="meta"
         formControlName="oldValues"></field-select>
+      <ng-container *ngIf="nonSelectableFields">
+        <p *ngIf="!hasOldValues" class="no-customer-selected">
+          {{noOldValuesKey | translation}}
+        </p>
+        <field-display
+          *ngIf="hasOldValues"
+          [id]="id + '-old'"
+          [descriptions]="fieldDescriptions"
+          [fieldValues]="oldDisplayValues"
+          [selected]="true"
+          [meta]="meta"></field-display>
+      </ng-container>
     </div>
     <div class="section-content">
       <field-select
+        *ngIf="!nonSelectableFields"
         #newValuesSelect
         [id]="id + '-new'"
         [descriptions]="fieldDescriptions"
@@ -36,6 +50,13 @@
         [comparedValues]="oldDisplayValues"
         [meta]="meta"
         formControlName="newValues"></field-select>
+      <field-display
+        *ngIf="nonSelectableFields"
+        [id]="id + '-new'"
+        [descriptions]="fieldDescriptions"
+        [fieldValues]="newDisplayValues"
+        [comparedValues]="oldDisplayValues"
+        [meta]="meta"></field-display>
     </div>
   </div>
 </form>

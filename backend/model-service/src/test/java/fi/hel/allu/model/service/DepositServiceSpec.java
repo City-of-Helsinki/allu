@@ -14,11 +14,10 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DepositDao;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.Deposit;
-import fi.hel.allu.model.domain.SupervisionTask;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.*;

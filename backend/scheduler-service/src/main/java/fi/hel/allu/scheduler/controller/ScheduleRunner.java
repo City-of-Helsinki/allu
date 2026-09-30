@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * The launcher class. Scheduled tasks are collected here.
  */
@@ -31,14 +30,21 @@ public class ScheduleRunner {
   private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
   private final CityDistrictUpdaterService cityDistrictUpdaterService;
   private final ApplicationProperties applicationProperties;
+  private final RemovedSapCustomerNotificationService removedSapCustomerNotificationService;
+  private final CustomerPurgeService customerPurgeService;
 
   @Autowired
-  public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
-      SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
-      SearchSynchService searchSynchService,
-      ApplicationStatusUpdaterService applicationStatusUpdaterService,
-      CityDistrictUpdaterService cityDistrictUpdaterService,
-      ApplicationProperties applicationProperties
+  public ScheduleRunner(
+    ApplicantReminderService applicantReminderService,
+    InvoicingService invoicingService,
+    SapCustomerService sapCustomerService,
+    SapCustomerNotificationService sapCustomerNotificationService,
+    SearchSynchService searchSynchService,
+    ApplicationStatusUpdaterService applicationStatusUpdaterService,
+    CityDistrictUpdaterService cityDistrictUpdaterService,
+    ApplicationProperties applicationProperties,
+    RemovedSapCustomerNotificationService removedSapCustomerNotificationService,
+    CustomerPurgeService customerPurgeService
       ) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
@@ -48,6 +54,8 @@ public class ScheduleRunner {
     this.applicationStatusUpdaterService = applicationStatusUpdaterService;
     this.cityDistrictUpdaterService = cityDistrictUpdaterService;
     this.applicationProperties = applicationProperties;
+    this.removedSapCustomerNotificationService = removedSapCustomerNotificationService;
+    this.customerPurgeService = customerPurgeService;
   }
 
   @EventListener(ApplicationReadyEvent.class)
@@ -73,14 +81,26 @@ public class ScheduleRunner {
   @Scheduled(cron = "${invoice.cronstring}")
   public void sendInvoices() {
     if (invoicingService.isInvoiceSendingEnabled()) {
-      invoicingService.sendInvoices();
+      logger.info("Invoice sending job started.");
+      try {
+        invoicingService.sendInvoices();
+        logger.info("Invoice sending job ended.");
+      } catch (Exception e) {
+        logger.error("Invoice sending job failed.", e);
+      }
     }
   }
 
   @Scheduled(cron = "${customer.update.cronstring}")
   public void updateCustomers() {
     if (sapCustomerService.isUpdateEnabled()) {
-      sapCustomerService.updateCustomers();
+      logger.info("Customer update job started.");
+      try {
+        sapCustomerService.updateCustomers();
+        logger.info("Customer update job ended.");
+      } catch (Exception e) {
+        logger.error("Customer update job failed.", e);
+      }
     }
   }
 
@@ -108,5 +128,19 @@ public class ScheduleRunner {
   @Scheduled(cron = "${anonymization.update.cronstring}")
   public void checkAnonymizableApplications() {
     applicationStatusUpdaterService.checkAnonymizableApplications();
+  }
+
+  @Scheduled(cron = "${removed.customers.notification.cronstring}")
+  public void sendRemovedSapCustomerNotifications() {
+    removedSapCustomerNotificationService.sendRemovedSapCustomerNotifications();
+  }
+
+  @Scheduled(cron = "${customer.purge.cronstring}")
+  public void purgeObsoleteCustomers() {
+    try {
+      customerPurgeService.purgeObsoleteCustomers();
+    } catch (Exception e) {
+      logger.error("Customer purge job failed with unexpected error", e);
+    }
   }
 }

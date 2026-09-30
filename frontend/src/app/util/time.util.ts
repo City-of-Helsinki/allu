@@ -152,8 +152,8 @@ export class TimeUtil {
   }
 
   public static compareTo(left: Date, right: Date): number {
-    const leftMillis = !!left ? left.getTime() : undefined;
-    const rightMillis = !!right ? right.getTime() : undefined;
+    const leftMillis = left ? left.getTime() : undefined;
+    const rightMillis = right ? right.getTime() : undefined;
 
     if (leftMillis === rightMillis) {
       return 0;
@@ -222,6 +222,7 @@ export class TimeUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
     if (dateString) {
       const m = moment(dateString, format);

@@ -5,32 +5,26 @@
        *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
     <div fxFlex="25">
       <button mat-raised-button type="button" color="primary" class="in-front"
-              [disabled]="!(someSelected$ | async)" (click)="moveSelectedToSelf()">
+              [disabled]="(someSelected$ | async) === false" (click)="moveSelectedToSelf()">
         {{'common.button.toSelf' | translation | uppercase}}
       </button>
       <button mat-raised-button type="button" color="primary" class="in-front"
-              [disabled]="!(someSelected$ | async)" (click)="openHandlerModal()">
+              [disabled]="(someSelected$ | async) === false" (click)="openHandlerModal()">
         {{'common.button.moveTo' | translation | uppercase}}
       </button>
     </div>
   </div>
 
-  <div fxLayout='row'>
-    <div fxFlex>
-      <div class="labels-solid labels-end">
-        <nav mat-tab-nav-bar headerPosition="end">
-          <a mat-tab-link
-             *ngFor="let tab of tabs"
-             [routerLink]="tab | lowercase"
-             routerLinkActive #rla="routerLinkActive"
-             [active]="rla.isActive">
-            {{['workqueue.tab', tab] | translation}}
-          </a>
-        </nav>
-      </div>
-      <div>
-        <router-outlet></router-outlet>
-      </div>
-    </div>
-  </div>
+  <nav mat-tab-nav-bar mat-stretch-tabs="false" mat-align-tabs="end" [tabPanel]="tabPanel">
+    <a mat-tab-link
+       *ngFor="let tab of tabs"
+       [routerLink]="tab | lowercase"
+       routerLinkActive #rla="routerLinkActive"
+       [active]="rla.isActive">
+      {{['workqueue.tab', tab] | translation}}
+    </a>
+  </nav>
+  <mat-tab-nav-panel #tabPanel>
+    <router-outlet></router-outlet>
+  </mat-tab-nav-panel>
 </div>

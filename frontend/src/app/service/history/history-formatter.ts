@@ -11,7 +11,7 @@ export interface ChangeDescription {
 }
 
 export interface ChangeItemDescription {
-  ref?: string | any[];
+  ref?: string | unknown[];
   content: string;
 }
 
@@ -91,7 +91,7 @@ export class HistoryFormatter {
   }
 
   private createChangeItemDescription(descriptionType: ChangeDescriptionType,
-                                      content: string, ref?: string | any[]): ChangeItemDescription {
+                                      content: string, ref?: string | unknown[]): ChangeItemDescription {
     return ChangeDescriptionType.FULL === descriptionType
       ? {ref, content}
       : {content};

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {BehaviorSubject, combineLatest} from 'rxjs';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 interface DisplayedContent {
@@ -24,10 +24,10 @@ export class PartialListDisplayComponent implements OnInit {
   private _showCount: BehaviorSubject<number> = new BehaviorSubject<number>(1);
 
   ngOnInit(): void {
-    this.displayedContent$ = combineLatest(
+    this.displayedContent$ = combineLatest([
       this._items,
       this._showCount
-    ).pipe(
+    ]).pipe(
       map(([items, showCount]) => this.createDisplayedContent(items, showCount))
     );
   }

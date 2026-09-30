@@ -27,6 +27,7 @@
   docker_image:
     source: pull
     name: "{{ github_registry_url }}/city-of-helsinki/allu/allu_database:{{ branch }}"
+    timeout: 120
   become: yes
 
 - name: Start allu_database container
@@ -40,6 +41,7 @@
     volumes:
       - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
       - /srv/backup/allu/database/wal_archive:/srv/backup/allu/database/wal_archive:rw
+      - /srv/backup/allu/database/dumps:/srv/backup/allu/database/dumps:rw
     published_ports:
       - "5432:5432"
     networks:

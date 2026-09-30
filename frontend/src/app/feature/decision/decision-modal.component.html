@@ -6,7 +6,8 @@
     <div fxLayout="row">
       <div fxFlex *ngIf="ownerSelection">
         <mat-form-field class="input-full-width">
-          <mat-select [placeholder]="'decision.selectHandler' | translation" class="input-full-width"
+          <mat-label>{{'decision.selectHandler' | translation}}</mat-label>
+          <mat-select class="input-full-width"
                       formControlName="owner" required>
             <mat-option *ngFor="let owner of owners | async" [value]="owner.id">
               {{owner.realName}}
@@ -21,8 +22,8 @@
     <div fxLayout="row" *ngIf="type === 'RETURNED_TO_PREPARATION' || type === 'REJECTED'">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <textarea matInput cdkTextareaAutosize formControlName="comment" required
-                    [placeholder]="'decision.reason' | translation"></textarea>
+          <mat-label>{{'decision.reason' | translation}}</mat-label>
+          <textarea matInput cdkTextareaAutosize formControlName="comment" required></textarea>
           <mat-error *ngIf="decisionForm.get('comment').hasError('required')">
             {{'decision.field.commentMissing' | translation}}
           </mat-error>
@@ -32,8 +33,8 @@
     <div fxLayout="row" *ngIf="emailDistribution">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-            <textarea matInput cdkTextareaAutosize formControlName="emailMessage"
-                      [placeholder]="'decision.emailMessage' | translation"></textarea>
+            <mat-label>{{'decision.emailMessage' | translation}}</mat-label>
+            <textarea matInput cdkTextareaAutosize formControlName="emailMessage"></textarea>
         </mat-form-field>
       </div>
     </div>
@@ -53,6 +54,6 @@
     {{getConfirmButtonTextKey() | translation | uppercase }}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
-    {{'common.button.cancel' | translation}}
+    {{'common.button.cancel' | translation | uppercase}}
   </button>
 </div>

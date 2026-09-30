@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.DocumentSearchCriteria;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.DocumentSearchResult;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
@@ -72,7 +73,7 @@ public class ApprovalDocumentService {
         (type == ApprovalDocumentType.WORK_FINISHED && application.getStatus().ordinal() >= StatusType.FINISHED.ordinal())) {
       try {
         return getFinalApprovalDocument(applicationId, type);
-      } catch (NoSuchElementException e) {
+      } catch (NoSuchEntityException e) {
         return generateApprovalDocumentPreview(application, type, chargeBasisEntries);
       }
     } else {

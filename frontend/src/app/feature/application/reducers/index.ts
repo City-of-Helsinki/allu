@@ -1,4 +1,4 @@
-import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 
 import * as fromApplication from './application-reducer';
 import * as fromComments from '@feature/comment/reducers/comment-reducer';
@@ -114,17 +114,17 @@ export const getClientData = createSelector(
 
 export const getPendingKind = createSelector(
   getClientData,
-  (clientData: ClientApplicationData) => !!clientData ? clientData.clientApplicationKind : undefined
+  (clientData: ClientApplicationData) => clientData ? clientData.clientApplicationKind : undefined
 );
 
 export const getPendingCustomerWithContacts = createSelector(
   getClientData,
-  (clientData: ClientApplicationData) => !!clientData ? clientData.customer : undefined
+  (clientData: ClientApplicationData) => clientData ? clientData.customer : undefined
 );
 
 export const getPendingInvoicingCustomer = createSelector(
   getClientData,
-  (clientData: ClientApplicationData) => !!clientData ? clientData.invoicingCustomer : undefined
+  (clientData: ClientApplicationData) => clientData ? clientData.invoicingCustomer : undefined
 );
 
 export const hasPendingCustomerInfo = createSelector(

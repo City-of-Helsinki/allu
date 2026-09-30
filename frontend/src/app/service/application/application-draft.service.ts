@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BackendApplication} from '../backend-model/backend-application';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const DRAFTS_URL = '/api/drafts';
 
@@ -40,9 +40,9 @@ export class ApplicationDraftService {
   /**
    * Deletes given draft
    */
-  public remove(id: number): Observable<{}> {
+  public remove(id: number): Observable<unknown> {
     const url = `${DRAFTS_URL}/${id}`;
-    return this.http.delete<{}>(url).pipe(
+    return this.http.delete<unknown>(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')))
     );
   }

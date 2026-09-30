@@ -1,15 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {ChangeHistoryMapper} from '../mapper/change-history-mapper';
 import {BackendChangeHistoryItem} from '../backend-model/backend-change-history-item';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {ApplicationStatus} from '@model/application/application-status';
 
 const HISTORY_URL = '/api/applications/:appId/history';
 const PROJECT_URL = '/api/projects';
+const CUSTOMER_URL = '/api/customers';
 
 @Injectable()
 export class HistoryService {
@@ -23,6 +24,10 @@ export class HistoryService {
   getApplicationHistory(applicationId: number): Observable<ChangeHistoryItem[]> {
     const url = HISTORY_URL.replace(':appId', String(applicationId));
     return this.getHistory(url);
+  }
+
+  getCustomerHistory(customerId: number): Observable<ChangeHistoryItem[]> {
+    return this.getHistory(`${CUSTOMER_URL}/${customerId}/history`);
   }
 
   getStatusHistory(applicationId: number): Observable<ApplicationStatus[]> {

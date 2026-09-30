@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {SupervisionTask} from '../../model/application/supervision/supervision-task';
 import {SupervisionTaskMapper} from './supervision-task-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
@@ -19,7 +19,7 @@ import {TimeUtil} from '../../util/time.util';
 import {PageRequest} from '../../model/common/page-request';
 import {BackendSupervisionTask} from '../../model/application/supervision/backend-supervision-task';
 import {BackendPage} from '../backend-model/backend-page';
-import {catchError, map} from 'rxjs/internal/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
@@ -59,7 +59,7 @@ export class SupervisionTaskService {
     }
   }
 
-  remove(id: number): Observable<{}> {
+  remove(id: number): Observable<unknown> {
     const url = SUPERVISION_TASK_URL + '/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('supervisiontask.error.remove')))
@@ -75,14 +75,14 @@ export class SupervisionTaskService {
     );
   }
 
-  changeOwner(ownerId: number, taskIds: Array<number>): Observable<{}> {
+  changeOwner(ownerId: number, taskIds: Array<number>): Observable<unknown> {
     const url = SUPERVISION_TASK_OWNER_URL + '/' + ownerId;
     return this.http.put(url, JSON.stringify(taskIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')))
     );
   }
 
-  removeOwner(taskIds: Array<number>): Observable<{}> {
+  removeOwner(taskIds: Array<number>): Observable<unknown> {
     const url = SUPERVISION_TASK_OWNER_URL + '/remove';
     return this.http.put(url, JSON.stringify(taskIds)).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')))

@@ -1,7 +1,7 @@
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacyCardModule as MatCardModule} from '@angular/material/legacy-card';
+import {MatCardModule} from '@angular/material/card';
 
 import {CustomerComponent} from '../../../../../app/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../app/feature/common/allu-common.module';
@@ -15,7 +15,7 @@ import {CurrentUserMock, CustomerServiceMock, NotificationServiceMock} from '../
 import {CustomerService} from '../../../../../app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../app/model/codeset/codeset';
-import {Observable, of} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {NotificationService} from '@feature/notification/notification.service';
 import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -43,6 +43,10 @@ class MockContactComponent {
   @Input() contactRequired = false;
 
   onCustomerRemove() {}
+
+  resetContacts() {}
+
+  onCustomerChange(_customerId: number) {}
 }
 
 describe('CustomerComponent', () => {
@@ -121,7 +125,7 @@ describe('CustomerComponent', () => {
     expect(page.cardTitle.textContent).toContain(headerText);
   }));
 
-  it('should fill the form with input customer', () => {
+  it('should fill the form with input customer', fakeAsync(() => {
     const customer = new Customer();
     customer.id = 1;
     customer.name = 'NameTest';
@@ -136,31 +140,57 @@ describe('CustomerComponent', () => {
     comp.readonly = false;
     comp.ngOnInit();
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      page.addPageElements();
-      expect(page.customerNameInput.value).toEqual(customer.name);
-      expect(page.registryKeyInput.value).toEqual(customer.registryKey);
-      expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
-      expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
-      expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
-      expect(page.customerPhoneInput.value).toEqual(customer.phone);
-      expect(page.customerEmailInput.value).toEqual(customer.email);
-    });
-  });
+    fixture.detectChanges();
+    tick();
+    page.addPageElements();
+    expect(page.customerNameInput.value).toEqual(customer.name);
+    expect(page.registryKeyInput.value).toEqual(customer.registryKey);
+    expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
+    expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
+    expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
+    expect(page.customerPhoneInput.value).toEqual(customer.phone);
+    expect(page.customerEmailInput.value).toEqual(customer.email);
+  }));
 
-  it('should disable fields if readonly', () => {
+  it('should disable fields if readonly', fakeAsync(() => {
     comp.readonly = true;
     comp.ngOnInit();
+    expect(comp.customerForm.get('name').disabled).toBeTruthy('name should be disabled');
+    expect(comp.customerForm.get('registryKey').disabled).toBeTruthy();
+    expect(comp.customerForm.get('postalAddress').get('streetAddress').disabled).toBeTruthy();
+    expect(comp.customerForm.get('postalAddress').get('postalCode').disabled).toBeTruthy();
+    expect(comp.customerForm.get('postalAddress').get('city').disabled).toBeTruthy();
+    expect(comp.customerForm.get('phone').disabled).toBeTruthy();
+    expect(comp.customerForm.get('email').disabled).toBeTruthy();
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      page.addPageElements();
-      expect(page.customerNameInput.disabled).toBeTruthy();
-      expect(page.registryKeyInput.disabled).toBeTruthy();
-      expect(page.customerAddressInput.disabled).toBeTruthy();
-      expect(page.customerPostalCodeInput.disabled).toBeTruthy();
-      expect(page.customerCityInput.disabled).toBeTruthy();
-      expect(page.customerPhoneInput.disabled).toBeTruthy();
-      expect(page.customerEmailInput.disabled).toBeTruthy();
-    });
-  });
+  }));
+
+  it('should re-enable fields after clearing an existing customer', fakeAsync(() => {
+    const customer = new Customer();
+    customer.id = 1;
+    customer.name = 'Tervaajat';
+    customer.country = 'FI';
+
+    comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT, customer);
+    comp.readonly = false;
+    comp.ngOnInit();
+    fixture.detectChanges();
+    tick();
+
+    expect(comp.customerForm.get('country').disabled).toBeTruthy('country should be disabled for an existing customer');
+    expect(comp.customerForm.get('postalAddress').get('streetAddress').disabled).toBeTruthy();
+    expect(comp.customerForm.get('ovt').disabled).toBeTruthy();
+
+    comp.onClearFormPress();
+
+    expect(comp.customerForm.get('id').value).toBeFalsy();
+    expect(comp.customerForm.get('country').value).toEqual('FI');
+    expect(comp.customerForm.get('country').disabled).toBeFalsy('country should be editable after clear');
+    expect(comp.customerForm.get('postalAddress').get('streetAddress').disabled).toBeFalsy();
+    expect(comp.customerForm.get('ovt').disabled).toBeFalsy();
+    expect(comp.customerForm.get('phone').disabled).toBeFalsy();
+    expect(comp.customerForm.get('email').disabled).toBeFalsy();
+    expect(comp.customerForm.get('sapCustomerNumber').disabled).toBeTruthy('sapCustomerNumber should stay disabled');
+    tick(300);
+  }));
 });

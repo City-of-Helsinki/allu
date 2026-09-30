@@ -19,6 +19,14 @@
   </div>
   <div class="left-controls">
     <form [formGroup]="searchForm">
+      <mat-form-field class="input-full-width" *ngIf="!readonly">
+        <mat-label>{{'customer.search.type' | translation}}</mat-label>
+        <mat-select formControlName="customerType">
+          <mat-option *ngFor="let type of customerTypes" [value]="type">
+            {{['customer.type', type, 'name'] | translation}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field floatLabel="never" class="input-full-width" *ngIf="!readonly">
         <input matInput type="text" formControlName="search"
                [placeholder]="'customer.search.search' | translation"

@@ -1,4 +1,4 @@
-import '../app/util/option.ts';
+import '../app/util/option';
 import {Some, None} from '../app/util/option';
 import {NoneOpt} from '../app/util/option';
 

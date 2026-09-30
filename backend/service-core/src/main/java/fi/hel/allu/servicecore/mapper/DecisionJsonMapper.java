@@ -333,6 +333,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       decisionJson
           .setEventNature("Lyhytaikainen maanvuokraus, " + translate(application.getKind()));
       decisionJson.setEventDescription(strj.getDescription());
+      decisionJson.setRegistrationNumbers(strj.getRegistrationNumbers());
     }
     if (ApplicationKind.BRIDGE_BANNER.equals(application.getKind())) {
       // For bridge banners, site area should be skipped in printout

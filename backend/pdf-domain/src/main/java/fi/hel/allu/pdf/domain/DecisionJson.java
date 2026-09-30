@@ -59,6 +59,7 @@ public class DecisionJson {
 
   private String eventName;
   private String eventDescription;
+  private String registrationNumbers;
   private String eventUrl;
   private String eventNature;
   private String structureArea;
@@ -438,6 +439,14 @@ public class DecisionJson {
 
   public void setEventDescription(String eventDescription) {
     this.eventDescription = eventDescription;
+  }
+
+  public String getRegistrationNumbers() {
+    return registrationNumbers;
+  }
+
+  public void setRegistrationNumbers(String registrationNumbers) {
+    this.registrationNumbers = registrationNumbers;
   }
 
   public String getEventUrl() {

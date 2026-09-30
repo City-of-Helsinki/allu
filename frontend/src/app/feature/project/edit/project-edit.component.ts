@@ -12,13 +12,13 @@ import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
 import {Customer} from '@model/customer/customer';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';
+import {MatOption} from '@angular/material/core';
 import {ComplexValidator} from '@util/complex-validator';
 import {Contact} from '@model/customer/contact';
 import {Application} from '@model/application/application';
 import {ProjectService} from '@service/project/project.service';
 import {NumberUtil} from '@util/number.util';
-import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
@@ -67,7 +67,7 @@ export class ProjectEditComponent {
     this.form.controls['customer'].valueChanges.subscribe(c => this.customerSelected(c));
   }
 
-  selectCustomer(option: MatOption): void {
+  selectCustomer(_option: MatOption): void {
     this.contactCtrl.reset();
     this.form.get('contactPhone').reset();
     this.form.get('contactEmail').reset();

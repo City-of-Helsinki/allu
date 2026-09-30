@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, merge, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {Application} from '@model/application/application';
 import {Some} from '@util/option';
 import {LocationService} from '@service/location.service';
@@ -11,7 +11,7 @@ import {ObjectUtil} from '@util/object.util';
 import {StoredFilter} from '@model/user/stored-filter';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
-import {debounceTime, distinctUntilChanged, filter, map, take} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, take} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 import {select, Store} from '@ngrx/store';
 import * as fromMap from '@feature/map/reducers';

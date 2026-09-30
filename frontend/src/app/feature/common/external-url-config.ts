@@ -27,7 +27,7 @@ export function getByIdentifier(identificationNumber: string): string {
 }
 
 const matching = (identificationNumber: string) => {
-  if (!!identificationNumber) {
+  if (identificationNumber) {
     return Object.keys(externalUrls)
       .map(key => externalUrls[key])
       .filter(link => identificationNumber.toUpperCase().startsWith(link.prefix.toUpperCase()));

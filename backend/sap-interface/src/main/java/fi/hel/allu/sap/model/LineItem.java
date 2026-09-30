@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "LineItem")
 @XmlType(propOrder = { "material", "quantity", "unit", "netPrice", "lineText1", "lineText2", "lineText3", "lineText4",
-    "lineText5", "lineText6", "orderItemNumber" })
+    "lineText5", "lineText6", "wbsElement" })
 public class LineItem {
 
   private String material;
@@ -28,7 +28,7 @@ public class LineItem {
   private String lineText5;
   private String lineText6;
 
-  private String orderItemNumber;
+  private String wbsElement;
 
   /**
    * SAP nimike (8 numeroa), pakollinen
@@ -162,14 +162,14 @@ public class LineItem {
   }
 
   /**
-   * SAP sisäinen tilaus (10 numeroa)
+   * SAP projektinumero (14 merkkiä)
    */
-  @XmlElement(name = "OrderItemNumber")
-  public String getOrderItemNumber() {
-    return orderItemNumber;
+  @XmlElement(name = "WBS_Element")
+  public String getWbsElement() {
+    return wbsElement;
   }
 
-  public void setOrderItemNumber(String orderItemNumber) {
-    this.orderItemNumber = orderItemNumber;
+  public void setWbsElement(String wbsElement) {
+    this.wbsElement = wbsElement;
   }
 }

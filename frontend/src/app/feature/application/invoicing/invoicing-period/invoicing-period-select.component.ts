@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
-import {Subscription} from 'rxjs/internal/Subscription';
+import {Subscription} from 'rxjs';
 import {InvoicingPeriodLength} from '@feature/application/invoicing/invoicing-period/invoicing-period-length';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

@@ -305,6 +305,31 @@ public class HistoryDao {
     return item;
   }
 
+  /**
+   * Permanently deletes change_history rows (and their field_change children) for the given customer IDs.
+   * Covers both customer-level history and contact-level history, since contacts store their
+   * history using change_history.customer_id.
+   * field_change rows must be deleted first due to the FK constraint on change_history_id.
+   *
+   * @param customerIds customer IDs whose history should be permanently deleted
+   */
+  @Transactional
+  public void deleteCustomerAndContactChangeHistory(Collection<Integer> customerIds) {
+    if (customerIds == null || customerIds.isEmpty()) {
+      return;
+    }
+    List<Integer> changeIds = queryFactory
+      .select(changeHistory.id)
+      .from(changeHistory)
+      .where(changeHistory.customerId.in(customerIds))
+      .fetch();
+
+    if (!changeIds.isEmpty()) {
+      queryFactory.delete(fieldChange).where(fieldChange.changeHistoryId.in(changeIds)).execute();
+      queryFactory.delete(changeHistory).where(changeHistory.id.in(changeIds)).execute();
+    }
+  }
+
   @Transactional
   public void anonymizeHistoryFor(List<Integer> applicationIds) {
     User anonUser = userDao.findAnonymizationUser();

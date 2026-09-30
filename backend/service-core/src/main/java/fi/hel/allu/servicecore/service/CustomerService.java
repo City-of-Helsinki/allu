@@ -1,8 +1,15 @@
 package fi.hel.allu.servicecore.service;
 
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.DeleteIdsResult;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -18,10 +25,6 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
@@ -36,6 +39,8 @@ public class CustomerService {
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
   private final ChangeHistoryMapper changeHistoryMapper;
+
+  private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
   @Autowired
   public CustomerService(
@@ -56,7 +61,6 @@ public class CustomerService {
     this.personAuditLogService = personAuditLogService;
     this.changeHistoryMapper = changeHistoryMapper;
   }
-
 
   /**
    * Create a new customer. Customer id must null to create a new customer.
@@ -270,4 +274,80 @@ public class CustomerService {
     restTemplate.put(applicationProperties.getCustomerUpdateLogProcessedUrl(), logIds);
   }
 
+  /**
+   * Get customers that are eligible for permanent deletion by calling model-service endpoint.
+   * Data is retrieved from the model-service's database.
+   * A customer is deletable if it is not linked to any application or project in Allu.
+   *
+   * @param pageable page request for the search
+   * @return list of customers eligible for permanent deletion
+   */
+  public Page<CustomerSummaryRecord> getDeletableCustomers(Pageable pageable) {
+    URI url = PageRequestBuilder.fromUriString(
+      applicationProperties.getDeletableCustomersUrl(), pageable);
+
+    logger.debug(
+      "Requesting deletable customers from model-service, page={}, size={}",
+      pageable.getPageNumber(),
+      pageable.getPageSize()
+    );
+
+    RestResponsePage<DeletableCustomer> page = restTemplate.exchange(url, HttpMethod.GET, null,
+        new ParameterizedTypeReference<RestResponsePage<DeletableCustomer>>() {})
+      .getBody();
+
+    if (page == null) {
+      logger.warn("model-service returned null body for deletable customers, returning empty page");
+      return Page.empty(pageable);
+    }
+
+    return page.map(c -> new CustomerSummaryRecord(
+      c.getId(),
+      c.getSapCustomerNumber(),
+      CustomerType.PERSON.equals(c.getType()) ? null : c.getName(),
+      c.getType()
+    ));
+  }
+
+  /**
+   * Soft delete customers and their associated contacts by calling model-service endpoint.
+   * After the database update, the Elasticsearch index is updated so that both customers
+   * and their contacts reflect the new inactive state immediately — without waiting for
+   * the next full search-sync.
+   *
+   * @param ids List of customer IDs to soft delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
+   */
+  public DeleteIdsResult softDeleteCustomers(List<Integer> ids) {
+    ResponseEntity<DeleteIdsResult> response =
+      restTemplate.exchange(
+        applicationProperties.getDeleteCustomersUrl(),
+        HttpMethod.DELETE,
+        new HttpEntity<>(ids),
+        DeleteIdsResult.class
+      );
+
+    DeleteIdsResult result = response.getBody();
+
+    if (result != null && !result.deletedIds().isEmpty()) {
+      // Fetch the now-deactivated customers from model-service (is_active = false is
+      // already persisted) and push active=false into the Elasticsearch customer index.
+      List<CustomerJson> deactivatedCustomers = getCustomersById(result.deletedIds());
+      searchService.updateCustomers(deactivatedCustomers);
+
+      // Fetch every contact belonging to the deactivated customers and push
+      // active=false into the Elasticsearch contact index.
+      // contactService.findByCustomer() reads directly from model-service, so the
+      // contacts are already in their updated (inactive) state.
+      List<ContactJson> deactivatedContacts = result.deletedIds().stream()
+        .flatMap(customerId -> contactService.findByCustomer(customerId).stream())
+        .collect(Collectors.toList());
+
+      if (!deactivatedContacts.isEmpty()) {
+        searchService.updateContacts(deactivatedContacts);
+      }
+    }
+
+    return result;
+  }
 }

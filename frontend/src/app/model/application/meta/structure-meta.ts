@@ -73,6 +73,6 @@ function formatNonEmpty(path: string, value: string, meta: StructureMeta) {
   const pathWithValue = `${path}.${value}`;
   return Some(value)
     .filter(v => !StringUtil.isEmpty(v))
-    .map(v => meta.uiName(pathWithValue))
+    .map(() => meta.uiName(pathWithValue))
     .orElse('');
 }

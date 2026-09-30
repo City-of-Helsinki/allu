@@ -1,5 +1,5 @@
 import { HostBinding, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
-import {takeUntil} from 'rxjs/internal/operators';
+import {takeUntil} from 'rxjs/operators';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';
@@ -8,7 +8,7 @@ import {StructureMeta} from '@model/application/meta/structure-meta';
 import { Some } from '@app/util/option';
 
 @Directive()
-export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
+export abstract class InfoAcceptanceDirective implements OnInit, OnDestroy {
   @Input() form: UntypedFormGroup;
   @Input() id: string;
   @Input() meta: StructureMeta;
@@ -25,6 +25,9 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
   oldDisplayValues: FieldValues;
   newValues: FieldValues;
   newDisplayValues: FieldValues;
+
+  protected nonSelectableFields = false;
+  noOldValuesKey = 'informationRequest.acceptance.noCustomerSelected';
 
   private _readonly: boolean;
   private destroy: Subject<boolean> = new Subject<boolean>();
@@ -57,6 +60,10 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
 
   get readonly() {
     return this._readonly;
+  }
+
+  get hasOldValues(): boolean {
+    return !!this.oldDisplayValues && Object.values(this.oldDisplayValues).some(v => v != null);
   }
 
   selectAllOld(): void {
@@ -103,9 +110,15 @@ export abstract class InfoAcceptanceDirective<T> implements OnInit, OnDestroy {
 
   protected initResultForm(): void {
     this.fieldDescriptions.forEach(desc => {
-      const ctrl = this.fb.control(undefined, [Validators.required]);
+      const validators = [Validators.required];
+      const ctrl = this.fb.control(undefined, validators);
       this.form.addControl(desc.field, ctrl);
     });
+
+    // When fields are non-selectable, old values are the "auto-selected" source.
+    if (this.nonSelectableFields && this.oldValues) {
+      this.onOldValuesSelected(Object.keys(this.oldValues));
+    }
 
     this.form.valueChanges.pipe(
       takeUntil(this.destroy),

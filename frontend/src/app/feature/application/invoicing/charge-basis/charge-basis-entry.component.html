@@ -27,10 +27,10 @@
   </ng-template>
   <div fxFlex.gt-sm="100px">
     <ng-container *ngIf="editAllowed(entry)">
-      <button type="button" mat-icon-button (click)="onEdit.emit(entry)">
+      <button type="button" mat-icon-button (click)="edit.emit(entry)">
         <mat-icon>edit</mat-icon>
       </button>
-      <button type="button" mat-icon-button (click)="onRemove.emit()">
+      <button type="button" mat-icon-button (click)="remove.emit()">
         <mat-icon>clear</mat-icon>
       </button>
     </ng-container>

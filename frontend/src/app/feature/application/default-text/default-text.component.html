@@ -1,7 +1,8 @@
 <div fxLayout="row" fxLayoutGap="18px" *ngIf="!readonly">
   <div fxFlex="60">
     <mat-form-field class="input-full-width">
-      <mat-select class="input-full-width" [placeholder]="[textType, 'selectTerm'] | translation">
+      <mat-label>{{[textType, 'selectTerm'] | translation}}</mat-label>
+      <mat-select class="input-full-width">
         <mat-option *ngFor="let defaultText of defaultTexts"
                     [value]="defaultText.text"
                     (click)="addDefaultText(defaultText.text)">
@@ -19,9 +20,9 @@
 <div fxLayout="row">
   <div fxFlex>
     <mat-form-field class="input-full-width">
+      <mat-label>{{[textType, 'applicationTerms'] | translation}}</mat-label>
       <textarea matInput cdkTextareaAutosize [required]="required"
-                [formControl]="textsControl"
-                [placeholder]="[textType, 'applicationTerms'] | translation"></textarea>
+                [formControl]="textsControl"></textarea>
       <mat-error *ngIf="textsControl.hasError('required')">{{[textType, 'missing'] | translation}}</mat-error>
     </mat-form-field>
   </div>

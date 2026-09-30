@@ -58,9 +58,7 @@
           {{['application.status', application.status] | translation | uppercase}}
         </ng-template>
       </div>
-      <div class="progress-bar" [ngClass]="color">
-        <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
-      </div>
+      <mat-progress-bar mode="determinate" [value]="progress" [ngClass]="color"></mat-progress-bar>
     </div>
   </div>
 </mat-toolbar>

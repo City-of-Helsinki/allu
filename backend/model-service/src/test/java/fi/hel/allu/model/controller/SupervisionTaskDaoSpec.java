@@ -25,6 +25,7 @@ import com.greghaskins.spectrum.Variable;
 import com.querydsl.core.types.OrderSpecifier;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -147,12 +148,24 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           final Sort sort = Sort.by(Sort.Order.asc("applicationId"),
                Sort.Order.desc("actualFinishingTime"));
           it("Can convert to QueryDSL ordering", () -> {
-            OrderSpecifier<?>[] orders = SupervisionTaskDao.toOrder(sort);
+            OrderSpecifier<?>[] orders = supervisionTaskDao.toOrder(sort);
             assertEquals(2, orders.length);
           });
 
           it("Throws exception on invalid sort key", () -> {
-            assertThrows(NoSuchEntityException.class).when(() -> SupervisionTaskDao.toOrder(Sort.by("noSuchKey")));
+            assertThrows(NoSuchEntityException.class).when(() -> supervisionTaskDao.toOrder(Sort.by("noSuchKey")));
+          });
+
+          it("All expected sort keys including CASE WHEN columns are resolvable", () -> {
+            List<String> expectedKeys = Arrays.asList(
+              "type", "application.type", "application.status",
+              "plannedFinishingTime", "application.applicationId",
+              "owner.realName", "creator.realName"
+            );
+            for (String key : expectedKeys) {
+              OrderSpecifier<?>[] orders = supervisionTaskDao.toOrder(Sort.by(key));
+              assertEquals("Sort key '" + key + "' should produce one OrderSpecifier", 1, orders.length);
+            }
           });
 
         });
@@ -176,6 +189,23 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           // Warranty ("Takuuvalvonta") should precede Supervision ("Valvonta"):
           assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(0).getType());
           assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(1).getType());
+        });
+
+        it("Sort by type with multiple task types verifies full Finnish alphabetical order", () -> {
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.PRELIMINARY_SUPERVISION, shortTermApp.getOwner()));
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.TERMINATION, shortTermApp.getOwner()));
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner()));
+          // existingSupervisionTask (SUPERVISION/"Valvonta") already exists from beforeEach
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "type"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(4, result.getNumberOfElements());
+          // Finnish alphabetical: Aloitusvalvonta < Irtisanomisen valvonta < Takuuvalvonta < Valvonta
+          assertEquals(SupervisionTaskType.PRELIMINARY_SUPERVISION, result.getContent().get(0).getType());
+          assertEquals(SupervisionTaskType.TERMINATION, result.getContent().get(1).getType());
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(2).getType());
+          assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(3).getType());
         });
 
         it("Sort by application type when empty criteria", () -> {
@@ -205,6 +235,75 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           // HANDLING ("Käsittelyssä") should precede CANCELLED ("Peruttu"):
           assertEquals(outdoorApp.getId(), result.getContent().get(0).getApplicationId());
           assertEquals(shortTermApp.getId(), result.getContent().get(1).getApplicationId());
+        });
+
+        it("Sort by type DESC reverses Finnish alphabetical order", () -> {
+          supervisionTaskDao.insert(createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner()));
+          // existingSupervisionTask (SUPERVISION/"Valvonta") from beforeEach
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.DESC, "type"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.getNumberOfElements());
+          // DESC Finnish: Valvonta > Takuuvalvonta
+          assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(0).getType());
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(1).getType());
+        });
+
+        it("Sort by non-enum column plannedFinishingTime", () -> {
+          SupervisionTask laterTask = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          laterTask.setPlannedFinishingTime(testTime.plusDays(30));
+          supervisionTaskDao.insert(laterTask);
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "plannedFinishingTime"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.getNumberOfElements());
+          // existingSupervisionTask has plannedFinishingTime = testTime+1day, laterTask = testTime+30days
+          assertTrue("Earlier task should come first",
+            result.getContent().get(0).getPlannedFinishingTime()
+              .isBefore(result.getContent().get(1).getPlannedFinishingTime()));
+        });
+
+        it("Sort by non-enum column application.applicationId", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          supervisionTaskDao.insert(taskForOther);
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "application.applicationId"));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.getNumberOfElements());
+          // Verify ascending order by applicationIdText
+          assertTrue("Application IDs should be in ascending order",
+            result.getContent().get(0).getApplicationIdText()
+              .compareTo(result.getContent().get(1).getApplicationIdText()) <= 0);
+        });
+
+        it("Sort by enum and non-enum columns combined", () -> {
+          SupervisionTask warranty1 = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          warranty1.setPlannedFinishingTime(testTime.plusDays(30));
+          supervisionTaskDao.insert(warranty1);
+
+          SupervisionTask warranty2 = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY, shortTermApp.getOwner());
+          warranty2.setPlannedFinishingTime(testTime.plusDays(5));
+          supervisionTaskDao.insert(warranty2);
+          // existingSupervisionTask: SUPERVISION/"Valvonta", plannedFinishingTime = testTime+1day
+
+          Pageable pageRequest = PageRequest.of(0, 10, Sort.by(
+            new Order(Direction.ASC, "type"),
+            new Order(Direction.DESC, "plannedFinishingTime")
+          ));
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(3, result.getNumberOfElements());
+          // First two: WARRANTY (Takuuvalvonta) sorted by plannedFinishingTime DESC
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(0).getType());
+          assertEquals(SupervisionTaskType.WARRANTY, result.getContent().get(1).getType());
+          assertTrue("WARRANTY tasks should be sorted by plannedFinishingTime DESC",
+            result.getContent().get(0).getPlannedFinishingTime()
+              .isAfter(result.getContent().get(1).getPlannedFinishingTime()));
+          // Last: SUPERVISION (Valvonta)
+          assertEquals(SupervisionTaskType.SUPERVISION, result.getContent().get(2).getType());
         });
 
         it("Find by application id", () -> {
@@ -320,6 +419,117 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTaskSearchCriteria location2Search = new SupervisionTaskSearchCriteria();
           location2Search.setCityDistrictIds(Arrays.asList(location2.getCityDistrictIdOverride()));
           assertEquals("Expected to find single task", 1, supervisionTaskDao.search(location2Search, PageRequest.of(0, 100)).getTotalElements());
+        });
+
+        it("Search projects enriched fields correctly", () -> {
+          Application app = insertApplication(testCommon.dummyOutdoorApplicationWithLocation("enriched", "enrichedOwner"));
+          Location location = app.getLocations().get(0);
+
+          SupervisionTask task = createTask(app.getId(), SupervisionTaskType.WARRANTY, app.getOwner());
+          task.setLocationId(location.getId());
+          SupervisionTask inserted = supervisionTaskDao.insert(task);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setApplicationIds(Arrays.asList(app.getId()));
+          search.setStatuses(Arrays.asList(SupervisionTaskStatusType.OPEN));
+
+          Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+          assertEquals(1, page.getTotalElements());
+
+          SupervisionWorkItem item = page.getContent().get(0);
+
+          // Pre-existing fields
+          assertEquals(inserted.getId(), item.getId());
+          assertEquals(app.getId(), item.getApplicationId());
+          assertNotNull(item.getApplicationIdText());
+          assertEquals(SupervisionTaskType.WARRANTY, item.getType());
+          assertNotNull(item.getAddress());
+
+          // Enriched fields from application join
+          assertEquals(ApplicationType.EVENT, item.getApplicationType());
+          assertEquals(app.getStatus(), item.getApplicationStatus());
+
+          // Enriched fields from supervision task view
+          assertEquals(SupervisionTaskStatusType.OPEN, item.getTaskStatus());
+          assertNotNull(item.getCreationTime());
+          assertEquals("just testing", item.getDescription());
+          assertNull(item.getResult());
+          assertNull(item.getActualFinishingTime());
+
+          // Enriched fields from location join
+          assertEquals(location.getId(), item.getLocationId());
+          assertEquals(location.getLocationKey(), item.getLocationKey());
+
+          // Enriched fields from owner join
+          assertEquals("realname", item.getOwnerRealName());
+          assertEquals("enrichedowner", item.getOwnerUserName());
+
+          // Project name from project join
+          assertNotNull("projectName should be populated from project join", item.getProjectName());
+        });
+
+        context("Count query consistency", () -> {
+          it("Count matches results when filtering by application type", () -> {
+            SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
+            supervisionTaskDao.insert(taskForOther);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setApplicationTypes(Arrays.asList(outdoorApp.getType()));
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(1, page.getTotalElements());
+            assertEquals(page.getContent().size(), page.getTotalElements());
+          });
+
+          it("Count matches results when filtering by application ID prefix", () -> {
+            SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
+            supervisionTaskDao.insert(taskForOther);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setApplicationId(outdoorApp.getApplicationId());
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(1, page.getTotalElements());
+            assertEquals(page.getContent().size(), page.getTotalElements());
+          });
+
+          it("Count matches results when filtering by application status", () -> {
+            SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
+            supervisionTaskDao.insert(taskForOther);
+
+            applicationDao.updateStatus(outdoorApp.getId(), StatusType.HANDLING);
+            applicationDao.updateStatus(shortTermApp.getId(), StatusType.CANCELLED);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setApplicationStatus(Arrays.asList(StatusType.HANDLING));
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(1, page.getTotalElements());
+            assertEquals(page.getContent().size(), page.getTotalElements());
+          });
+
+          it("Count matches results when filtering by city district", () -> {
+            Application app1 = insertApplication(testCommon.dummyOutdoorApplicationWithLocation("event1", "owner1"));
+            Location location1 = app1.getLocations().get(0);
+
+            SupervisionTask task1 = createTask(app1.getId(), SupervisionTaskType.SUPERVISION, app1.getOwner());
+            task1.setLocationId(location1.getId());
+            supervisionTaskDao.insert(task1);
+
+            Application app2 = testCommon.dummyOutdoorApplicationWithLocation("event2", "owner2");
+            app2.getLocations().get(0).setCityDistrictIdOverride(2);
+            app2 = insertApplication(app2);
+
+            SupervisionTask task2 = createTask(app2.getId(), SupervisionTaskType.SUPERVISION, app2.getOwner());
+            supervisionTaskDao.insert(task2);
+
+            SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+            search.setCityDistrictIds(Arrays.asList(location1.getCityDistrictId()));
+
+            Page<SupervisionWorkItem> page = supervisionTaskDao.search(search, PageRequest.of(0, 100));
+            assertEquals(page.getContent().size(), page.getTotalElements());
+            assertTrue("Expected at least one result", page.getTotalElements() >= 1);
+          });
         });
 
         context("Paging tests", () -> {

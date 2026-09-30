@@ -1,10 +1,10 @@
-<h1 mat-dialog-title>Asiakastiedot</h1>
+<h1 mat-dialog-title>{{'customer.registryTitle' | translation}}</h1>
 <form [formGroup]="customerForm" (ngSubmit)="onSubmit(customerForm.value)">
   <div mat-dialog-content>
     <customer-info [form]="customerForm"></customer-info>
   </div>
   <div mat-dialog-actions>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!customerForm.valid">TALLENNA</button>
-    <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!customerForm.valid">{{'common.button.save' | translation | uppercase}}</button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">{{'common.button.cancel' | translation | uppercase}}</button>
   </div>
 </form>

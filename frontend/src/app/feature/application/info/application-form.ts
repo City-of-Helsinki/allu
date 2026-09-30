@@ -21,6 +21,7 @@ export interface CommunicationForm {
   distributionRows?: Array<DistributionEntryForm>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function applicationForm(app: Application = new Application()): { [key: string]: any; } {
   return {
     name: [app.name, [Validators.required, Validators.minLength(2)]],

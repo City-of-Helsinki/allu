@@ -11,11 +11,11 @@ h1 {
 }
 
 .search-bar {
-  background: mat.get-color-from-palette($allu-primary, 50);
+  background: mat.m2-get-color-from-palette($allu-primary, 50);
   margin-bottom: 10px;
   padding-bottom: 10px;
 }
 
 table.header {
-  background: mat.get-color-from-palette($allu-primary, 50);
+  background: mat.m2-get-color-from-palette($allu-primary, 50);
 }

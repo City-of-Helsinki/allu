@@ -29,6 +29,7 @@ import * as fromAuth from '@feature/auth/reducers';
 import {ObjectUtil} from '@util/object.util';
 import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 import {ApproveComplete, BulkApprovalActionType} from '@feature/decision/actions/bulk-approval-actions';
+import {Refresh as RefreshWorkQueue, WorkQueueActionType} from '@feature/workqueue/actions/workqueue-actions';
 
 @Injectable()
 export class ApplicationSearchEffects {
@@ -64,11 +65,12 @@ export class ApplicationSearchEffects {
 
   
   refreshWorkQueueSearch: Observable<Action> = createEffect(() => this.actions.pipe(
-    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess | ApproveComplete>(
+    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess | ApproveComplete | RefreshWorkQueue>(
       ApplicationActionType.ChangeOwnerSuccess,
       ApplicationActionType.RemoveOwnerSuccess,
       ApplicationActionType.RemoveOwnerNotificationSuccess,
-      BulkApprovalActionType.ApproveComplete
+      BulkApprovalActionType.ApproveComplete,
+      WorkQueueActionType.Refresh
     ),
     switchMap(() => this.getCurrentWorkQueueSearch()),
     switchMap(([search, sort, pageRequest]) => [
@@ -91,10 +93,10 @@ export class ApplicationSearchEffects {
    */
   private setTargetTypeSpecificParameters(action: Search): Observable<Search> {
     if (action.targetType === ActionTargetType.ApplicationWorkQueue) {
-      return combineLatest(
+      return combineLatest([
         this.store.pipe(select(fromWorkQueue.getTab)),
         this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
-      ).pipe(
+      ]).pipe(
         map(([tab, user]) => {
           const payload = action.payload;
           const queryCopy = ObjectUtil.clone(payload.query);

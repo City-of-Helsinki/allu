@@ -42,15 +42,15 @@ export const getLoggedInUser = (store: Store<fromRoot.State>) => store.pipe(
 
 export const getAllowedApplicationTypes = createSelector(
   getUser,
-  (user: User) => !!user ? user.allowedApplicationTypes : []
+  (user: User) => user ? user.allowedApplicationTypes : []
 );
 
 export const getAllowedTags = createSelector(
   getUser,
-  (user: User) => !!user ? allowedTagsByRoles(user.assignedRoles) : []
+  (user: User) => user ? allowedTagsByRoles(user.assignedRoles) : []
 );
 
 export const getRemovableTags = createSelector(
   getUser,
-  (user: User) => !!user ? removableTagsByRoles(user.assignedRoles) : []
+  (user: User) => user ? removableTagsByRoles(user.assignedRoles) : []
 );

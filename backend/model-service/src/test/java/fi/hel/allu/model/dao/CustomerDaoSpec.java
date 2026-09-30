@@ -1,13 +1,19 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import com.querydsl.sql.SQLQueryFactory;
+import fi.hel.allu.common.types.ChangeType;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.greghaskins.spectrum.Spectrum;
@@ -21,6 +27,7 @@ import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static fi.hel.allu.QCustomerArchive.customerArchive;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -35,6 +42,16 @@ public class CustomerDaoSpec extends SpeccyTestBase {
   @Autowired
   ContactDao contactDao;
   @Autowired
+  ProjectDao projectDao;
+  @Autowired
+  HistoryDao historyDao;
+  @Autowired
+  CustomerUpdateLogDao customerUpdateLogDao;
+  @Autowired
+  PersonAuditLogDao personAuditLogDao;
+  @Autowired
+  SQLQueryFactory sqlQueryFactory;
+  @Autowired
   TestCommon testCommon;
 
   private Customer testCustomer;
@@ -43,7 +60,6 @@ public class CustomerDaoSpec extends SpeccyTestBase {
   private Contact insertedContact;
   private Application insertedApplication;
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
-
 
   {
     // transaction setup is done in SpeccyTestBase
@@ -175,8 +191,662 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         applicationDao.addTag(insertedApplication.getId(), testCommon.dummyTag(ApplicationTagType.SAP_ID_MISSING));
         List<InvoiceRecipientCustomer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
         assertEquals(0, customers.size());
+      });
+
+      context("getDeletableCustomers", () -> {
+
+        AtomicReference<Customer> deletableCustomer = new AtomicReference<>();
+        AtomicReference<Customer> customerWithApplication = new AtomicReference<>();
+        AtomicReference<Customer> customerWithProject = new AtomicReference<>();
+        AtomicReference<Customer> customerAsInvoiceRecipient = new AtomicReference<>();
+        AtomicReference<Customer> recentlyCreatedCustomer = new AtomicReference<>();
+
+        beforeEach(() -> {
+          // Asiakas joka tulee mukaan tuloksiin (ei liitoksia projektiin tai hankkeeseen)
+          deletableCustomer.set(customerDao.insert(dummyCustomer(100)));
+
+          // Asiakas jolla on hakemus → EI saa tulla mukaan
+          customerWithApplication.set(customerDao.insert(dummyCustomer(101)));
+          Application app = testCommon.dummyOutdoorApplication("App", "Handler");
+          app.setCustomersWithContacts(
+            Collections.singletonList(
+              new CustomerWithContacts(CustomerRoleType.APPLICANT, customerWithApplication.get(), Collections.emptyList())
+            )
+          );
+          applicationDao.insert(app);
+
+          // Asiakas jolla on projekti → EI saa tulla mukaan
+          customerWithProject.set(customerDao.insert(dummyCustomer(102)));
+          Project project = new Project();
+          project.setName("proj");
+          project.setCustomerId(customerWithProject.get().getId());
+          project.setContactId(testCommon.insertContact(customerWithProject.get().getId()).getId());
+          project.setStartTime(ZonedDateTime.now());
+          project.setIdentifier("identifier");
+          project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(project);
+
+          // Asiakas joka on invoiceRecipient → EI saa tulla mukaan
+          customerAsInvoiceRecipient.set(customerDao.insert(dummyCustomer(103)));
+          Application invoiceApp = testCommon.dummyOutdoorApplication("InvoiceApp", RandomStringUtils.randomAlphabetic(10));
+          invoiceApp.setInvoiceRecipientId(customerAsInvoiceRecipient.get().getId());
+          applicationDao.insert(invoiceApp);
+
+          // Asiakas jolla CREATED-historiatapahtuma alle 1 vrk sitten → EI saa tulla mukaan
+          recentlyCreatedCustomer.set(customerDao.insert(dummyCustomer(104)));
+          ChangeHistoryItem change = new ChangeHistoryItem();
+          change.setUserId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          change.setChangeType(ChangeType.CREATED);
+          change.setChangeTime(ZonedDateTime.now()); // liian uusi
+          historyDao.addCustomerChange(recentlyCreatedCustomer.get().getId(), change);
+        });
+
+        it("should return only customers that fulfill all deletable criteria", () -> {
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<Integer> ids = page.getContent().stream()
+            .map(DeletableCustomer::getId)
+            .toList();
+
+          assertTrue(ids.contains(deletableCustomer.get().getId()));
+
+          assertFalse(ids.contains(customerWithApplication.get().getId()));
+          assertFalse(ids.contains(customerWithProject.get().getId()));
+          assertFalse(ids.contains(customerAsInvoiceRecipient.get().getId()));
+          assertFalse(ids.contains(recentlyCreatedCustomer.get().getId()));
+        });
+
+        it("should exclude customer if CREATED history is older than cutoff only when within 1 day", () -> {
+          Customer oldCustomer = customerDao.insert(dummyCustomer(105));
+
+          ChangeHistoryItem change = new ChangeHistoryItem();
+          change.setUserId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          change.setChangeType(ChangeType.CREATED);
+          change.setChangeTime(ZonedDateTime.now().minusDays(2)); // vanhempi kuin cutoff
+          historyDao.addCustomerChange(oldCustomer.getId(), change);
+
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<Integer> ids = page.getContent().stream()
+            .map(DeletableCustomer::getId)
+            .toList();
+
+          assertTrue(ids.contains(oldCustomer.getId())); // saa tulla mukaan
+        });
+
+        it("should use default pagination when pageable is null", () -> {
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(null);
+          assertNotNull(page);
+          assertTrue(page.getSize() > 0);
+        });
+
+        it("should sort by name descending", () -> {
+          Customer a = customerDao.insert(dummyCustomer(200));
+          a.setName("AAA");
+          customerDao.update(a.getId(), a);
+
+          Customer b = customerDao.insert(dummyCustomer(201));
+          b.setName("ZZZ");
+          customerDao.update(b.getId(), b);
+
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(
+            PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "name"))
+          );
+
+          List<DeletableCustomer> list = page.getContent();
+          assertTrue(list.size() >= 2);
+          assertTrue(list.get(0).getName().compareTo(list.get(1).getName()) >= 0);
+        });
+
+        it("should return CustomerType.PERSON for person customers", () -> {
+          // dummyCustomer creates CustomerType.PERSON customers
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<DeletableCustomer> personEntries = page.getContent().stream()
+            .filter(c -> c.getId().equals(deletableCustomer.get().getId()))
+            .toList();
+
+          assertEquals(1, personEntries.size());
+          assertEquals(CustomerType.PERSON, personEntries.get(0).getType());
+        });
+
+        it("should return CustomerType.COMPANY for company customers", () -> {
+          Customer company = dummyCustomer(300);
+          company.setType(CustomerType.COMPANY);
+          company.setRegistryKey("1234567-8");
+          Customer insertedCompany = customerDao.insert(company);
+
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          List<DeletableCustomer> companyEntries = page.getContent().stream()
+            .filter(c -> c.getId().equals(insertedCompany.getId()))
+            .toList();
+
+          assertEquals(1, companyEntries.size());
+          assertEquals(CustomerType.COMPANY, companyEntries.get(0).getType());
+          // Company name must not be null — name masking is service-core's responsibility
+          assertNotNull(companyEntries.get(0).getName());
+        });
+
+        it("should never return null type", () -> {
+          Page<DeletableCustomer> page = customerDao.getDeletableCustomers(PageRequest.of(0, 50));
+
+          page.getContent().forEach(c ->
+            assertNotNull("type must never be null for customer id " + c.getId(), c.getType())
+          );
+        });
+      });
+
+      context("findPurgeableCustomerIds", () -> {
+
+        // Helper: inserts a soft-deleted customer with all log entries older than 5 years
+        // so it qualifies for permanent deletion.
+        AtomicReference<Customer> purgeableCustomer = new AtomicReference<>();
+
+        beforeEach(() -> {
+          ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+          // Purgeable: inactive, all log entries > 5 years old
+          Customer c = customerDao.insert(dummyCustomer(500));
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+          ChangeHistoryItem old = new ChangeHistoryItem();
+          old.setUserId(userId);
+          old.setChangeType(ChangeType.CONTENTS_CHANGED);
+          old.setChangeTime(overFiveYearsAgo);
+          historyDao.addCustomerChange(c.getId(), old);
+          purgeableCustomer.set(c);
+        });
+
+        it("should return inactive customer whose all log entries are older than 5 years", () -> {
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertTrue("Purgeable customer should be returned", ids.contains(purgeableCustomer.get().getId()));
+        });
+
+        it("should not return active customer even if all log entries are old", () -> {
+          // Active customer with old change history — not purgeable because is_active=true
+          ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+          Customer active = customerDao.insert(dummyCustomer(501)); // isActive=true by default
+          ChangeHistoryItem old = new ChangeHistoryItem();
+          old.setUserId(userId);
+          old.setChangeType(ChangeType.CONTENTS_CHANGED);
+          old.setChangeTime(overFiveYearsAgo);
+          historyDao.addCustomerChange(active.getId(), old);
+
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertFalse("Active customer must not appear in purgeable list", ids.contains(active.getId()));
+        });
+
+        it("should not return inactive customer with recent change_history entry", () -> {
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+          Customer c = customerDao.insert(dummyCustomer(502));
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+          // Recent change_history entry — within 5 years
+          ChangeHistoryItem recent = new ChangeHistoryItem();
+          recent.setUserId(userId);
+          recent.setChangeType(ChangeType.CONTENTS_CHANGED);
+          recent.setChangeTime(ZonedDateTime.now().minusYears(1));
+          historyDao.addCustomerChange(c.getId(), recent);
+
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertFalse("Customer with recent change_history must not be purgeable", ids.contains(c.getId()));
+        });
+
+        it("should not return inactive customer with recent customer_update_log entry", () -> {
+          ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+          Customer c = customerDao.insert(dummyCustomer(503));
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          // Old change_history — passes the change_history check
+          ChangeHistoryItem old = new ChangeHistoryItem();
+          old.setUserId(userId);
+          old.setChangeType(ChangeType.CONTENTS_CHANGED);
+          old.setChangeTime(overFiveYearsAgo);
+          historyDao.addCustomerChange(c.getId(), old);
+
+          // Recent customer_update_log entry — should block purge
+          CustomerUpdateLog updateLog = new CustomerUpdateLog(c.getId(), ZonedDateTime.now().minusYears(1));
+          customerUpdateLogDao.insertUpdateLog(updateLog);
+
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertFalse("Customer with recent customer_update_log must not be purgeable", ids.contains(c.getId()));
+        });
+
+        it("should not return inactive customer with recent person_audit_log entry for the customer", () -> {
+          ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+          Customer c = customerDao.insert(dummyCustomer(504));
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          // Old change_history
+          ChangeHistoryItem old = new ChangeHistoryItem();
+          old.setUserId(userId);
+          old.setChangeType(ChangeType.CONTENTS_CHANGED);
+          old.setChangeTime(overFiveYearsAgo);
+          historyDao.addCustomerChange(c.getId(), old);
+
+          // Recent person_audit_log for the customer directly
+          personAuditLogDao.insert(
+            new PersonAuditLogLog(c.getId(), null, userId, "test-source", ZonedDateTime.now().minusYears(1))
+          );
+
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertFalse("Customer with recent person_audit_log (customer) must not be purgeable", ids.contains(c.getId()));
+        });
+
+        it("should not return inactive customer with recent person_audit_log entry for its contact", () -> {
+          ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+          Customer c = customerDao.insert(dummyCustomer(505));
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Contact cont = new Contact();
+          cont.setCustomerId(c.getId());
+          cont.setName("contact of 505");
+          cont.setPostalAddress(testPostalAddress);
+          Contact savedContact = contactDao.insert(Collections.singletonList(cont)).get(0);
+
+          // Old change_history
+          ChangeHistoryItem old = new ChangeHistoryItem();
+          old.setUserId(userId);
+          old.setChangeType(ChangeType.CONTENTS_CHANGED);
+          old.setChangeTime(overFiveYearsAgo);
+          historyDao.addCustomerChange(c.getId(), old);
+
+          // Recent person_audit_log for the customer's contact
+          personAuditLogDao.insert(
+            new PersonAuditLogLog(null, savedContact.getId(), userId, "test-source", ZonedDateTime.now().minusYears(1))
+          );
+
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertFalse("Customer with recent person_audit_log (contact) must not be purgeable", ids.contains(c.getId()));
+        });
+
+        it("should support cursor-based pagination via pageSize and afterId", () -> {
+          ZonedDateTime overFiveYearsAgo = ZonedDateTime.now().minusYears(6);
+          int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+          // Insert 3 additional purgeable customers (one already exists from beforeEach)
+          for (int i = 510; i < 513; i++) {
+            Customer c = customerDao.insert(dummyCustomer(i));
+            c.setIsActive(false);
+            customerDao.update(c.getId(), c);
+            ChangeHistoryItem old = new ChangeHistoryItem();
+            old.setUserId(userId);
+            old.setChangeType(ChangeType.CONTENTS_CHANGED);
+            old.setChangeTime(overFiveYearsAgo);
+            historyDao.addCustomerChange(c.getId(), old);
+          }
+
+          // First page: afterId=0, pageSize=2 → first 2 IDs
+          List<Integer> firstPage = customerDao.findPurgeableCustomerIds(2, 0);
+          assertEquals(2, firstPage.size());
+
+          // Second page: afterId = last ID of first page → next 2 IDs
+          List<Integer> secondPage = customerDao.findPurgeableCustomerIds(2, firstPage.get(firstPage.size() - 1));
+          assertEquals(2, secondPage.size());
+          // Pages must not overlap
+          firstPage.forEach(id -> assertFalse("Pages must not overlap", secondPage.contains(id)));
+        });
+
+        it("should return empty list when no customers are purgeable", () -> {
+          // All customers in beforeEach that are active or have recent data
+          Customer active = customerDao.insert(dummyCustomer(520));
+          // active customer with no log entries — not purgeable (is_active=true)
+
+          List<Integer> ids = customerDao.findPurgeableCustomerIds(100, 0);
+          assertFalse(ids.contains(active.getId()));
+        });
+      });
+
+      context("findNonDeletableCustomerIds", () -> {
+
+        it("should return empty list for null input", () -> {
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(null);
+          assertTrue(result.isEmpty());
+        });
+
+        it("should return empty list for empty input", () -> {
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(Collections.emptyList());
+          assertTrue(result.isEmpty());
+        });
+
+        it("should not flag customer with no links as non-deletable", () -> {
+          Customer c = customerDao.insert(dummyCustomer(600));
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+          assertTrue("Customer without any links should be deletable", result.isEmpty());
+        });
+
+        it("should flag customer linked to an application as non-deletable", () -> {
+          Customer c = customerDao.insert(dummyCustomer(601));
+          Application app = testCommon.dummyOutdoorApplication("App601", "Handler");
+          app.setCustomersWithContacts(
+            Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, c, Collections.emptyList()))
+          );
+          applicationDao.insert(app);
+
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+          assertTrue("Customer linked to application must be non-deletable", result.contains(c.getId()));
+        });
+
+        it("should flag customer linked to a project as non-deletable", () -> {
+          Customer c = customerDao.insert(dummyCustomer(602));
+          Project proj = new Project();
+          proj.setName("proj602");
+          proj.setCustomerId(c.getId());
+          proj.setContactId(testCommon.insertContact(c.getId()).getId());
+          proj.setStartTime(ZonedDateTime.now());
+          proj.setIdentifier("id602");
+          proj.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(proj);
+
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+          assertTrue("Customer linked to project must be non-deletable", result.contains(c.getId()));
+        });
+
+        it("should flag customer that is an invoice recipient as non-deletable", () -> {
+          Customer c = customerDao.insert(dummyCustomer(603));
+          Application app = testCommon.dummyOutdoorApplication("InvApp603", RandomStringUtils.randomAlphabetic(10));
+          app.setInvoiceRecipientId(c.getId());
+          applicationDao.insert(app);
+
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(List.of(c.getId()));
+          assertTrue("Invoice recipient customer must be non-deletable", result.contains(c.getId()));
+        });
+
+        it("should return only non-deletable IDs from a mixed list", () -> {
+          Customer free = customerDao.insert(dummyCustomer(604));
+          Customer linked = customerDao.insert(dummyCustomer(605));
+          Application app = testCommon.dummyOutdoorApplication("App605", "Handler");
+          app.setCustomersWithContacts(
+            Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, linked, Collections.emptyList()))
+          );
+          applicationDao.insert(app);
+
+          List<Integer> result = customerDao.findNonDeletableCustomerIds(List.of(free.getId(), linked.getId()));
+          assertFalse("Free customer must not be in non-deletable list", result.contains(free.getId()));
+          assertTrue("Linked customer must be in non-deletable list", result.contains(linked.getId()));
+        });
+      });
+
+      context("archiveCustomers", () -> {
+
+        it("should insert rows into customer_archive for given customer IDs", () -> {
+          Customer c1 = customerDao.insert(dummyCustomer(700));
+          Customer c2 = customerDao.insert(dummyCustomer(701));
+
+          long beforeCount = customerDao.getArchivedCustomerCount();
+          customerDao.archiveCustomers(Set.of(c1.getId(), c2.getId()));
+          long afterCount = customerDao.getArchivedCustomerCount();
+
+          assertEquals(2, afterCount - beforeCount);
+        });
+
+        it("should store correct customer_id and sap_customer_number in archive", () -> {
+          Customer c = customerDao.insert(dummyCustomer(702));
+          c.setSapCustomerNumber("SAP-702");
+          customerDao.update(c.getId(), c);
+
+          customerDao.archiveCustomers(Set.of(c.getId()));
+
+          // Verify via getArchivedCustomerCount that count grew (full archive record
+          // verification would require a dedicated DAO read method)
+          long count = customerDao.getArchivedCustomerCount();
+          assertTrue(count > 0);
+        });
+
+        it("should do nothing when ids is empty", () -> {
+          long before = customerDao.getArchivedCustomerCount();
+          customerDao.archiveCustomers(Collections.emptySet());
+          long after = customerDao.getArchivedCustomerCount();
+          assertEquals(before, after);
+        });
+      });
+
+      context("deleteCustomers", () -> {
+
+        it("should return 0 when ids is null", () -> {
+          long result = customerDao.deleteCustomers(null);
+          assertEquals(0, result);
+        });
+
+        it("should return 0 when ids is empty", () -> {
+          long result = customerDao.deleteCustomers(Collections.emptySet());
+          assertEquals(0, result);
+        });
+
+        it("should permanently delete customers by ID", () -> {
+          Customer c1 = customerDao.insert(dummyCustomer(800));
+          Customer c2 = customerDao.insert(dummyCustomer(801));
+
+          long deleted = customerDao.deleteCustomers(Set.of(c1.getId(), c2.getId()));
+
+          assertEquals(2, deleted);
+          assertFalse("Customer 1 must not exist after deletion", customerDao.findById(c1.getId()).isPresent());
+          assertFalse("Customer 2 must not exist after deletion", customerDao.findById(c2.getId()).isPresent());
+        });
+
+        it("should only delete the specified customers", () -> {
+          Customer toDelete = customerDao.insert(dummyCustomer(802));
+          Customer toKeep = customerDao.insert(dummyCustomer(803));
+
+          customerDao.deleteCustomers(Set.of(toDelete.getId()));
+
+          assertFalse(customerDao.findById(toDelete.getId()).isPresent());
+          assertTrue("Customer not in delete set must still exist", customerDao.findById(toKeep.getId()).isPresent());
+        });
+      });
+
+      describe("Inactive SAP customers", () -> {
+
+        it("should return inactive SAP customers missing notificationSentAt", () -> {
+          Customer c1 = customerDao.insert(dummyCustomer(1));
+          c1.setSapCustomerNumber("SAP1");
+          c1.setIsActive(false);
+          customerDao.update(c1.getId(), c1);
+
+          Customer c2 = customerDao.insert(dummyCustomer(2));
+          c2.setSapCustomerNumber("SAP2");
+          c2.setIsActive(false);
+          c2.setNotificationSentAt(ZonedDateTime.now());
+          customerDao.update(c2.getId(), c2);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertEquals(1, result.size());
+          assertEquals("SAP1", result.get(0).sapCustomerNumber());
+        });
+
+        it("should mark inactive SAP customers as notified", () -> {
+          Customer c = customerDao.insert(dummyCustomer(3));
+          c.setSapCustomerNumber("SAP3");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          customerDao.markSapCustomersNotified(List.of(c.getId()));
+
+          Customer updated = customerDao.findById(c.getId()).get();
+          assertNotNull(updated.getNotificationSentAt());
+        });
+
+        it("should not return customers without SAP number", () -> {
+          Customer c = customerDao.insert(dummyCustomer(4));
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue(result.isEmpty());
+        });
+
+        it("should exclude customer linked via application_customer", () -> {
+          Customer c = customerDao.insert(dummyCustomer(10));
+          c.setSapCustomerNumber("SAP10");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Application app = testCommon.dummyOutdoorApplication("AppLink", RandomStringUtils.randomAlphabetic(10));
+          app.setCustomersWithContacts(
+            Collections.singletonList(
+              new CustomerWithContacts(CustomerRoleType.APPLICANT, c, Collections.emptyList())
+            )
+          );
+          applicationDao.insert(app);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Linked customer must not appear in result",
+            result.stream().noneMatch(r -> "SAP10".equals(r.sapCustomerNumber())));
+        });
+
+        it("should exclude customer set as invoice recipient on an application", () -> {
+          Customer c = customerDao.insert(dummyCustomer(11));
+          c.setSapCustomerNumber("SAP11");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Application invoiceApp = testCommon.dummyOutdoorApplication("InvoiceApp", RandomStringUtils.randomAlphabetic(10));
+          invoiceApp.setInvoiceRecipientId(c.getId());
+          applicationDao.insert(invoiceApp);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Invoice recipient customer must not appear in result",
+            result.stream().noneMatch(r -> "SAP11".equals(r.sapCustomerNumber())));
+        });
+
+        it("should exclude customer linked to a project", () -> {
+          Customer c = customerDao.insert(dummyCustomer(12));
+          c.setSapCustomerNumber("SAP12");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          Project project = new Project();
+          project.setName("proj-sap");
+          project.setCustomerId(c.getId());
+          project.setContactId(testCommon.insertContact(c.getId()).getId());
+          project.setStartTime(ZonedDateTime.now());
+          project.setIdentifier("identifier-sap");
+          project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(project);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Project-linked customer must not appear in result",
+            result.stream().noneMatch(r -> "SAP12".equals(r.sapCustomerNumber())));
+        });
+
+        it("should exclude customer linked via all three link types only once (result size is correct)", () -> {
+          Customer linked = customerDao.insert(dummyCustomer(13));
+          linked.setSapCustomerNumber("SAP13");
+          linked.setIsActive(false);
+          customerDao.update(linked.getId(), linked);
+
+          // Link via application_customer
+          Application app = testCommon.dummyOutdoorApplication("TripleLink", RandomStringUtils.randomAlphabetic(10));
+          app.setCustomersWithContacts(
+            Collections.singletonList(
+              new CustomerWithContacts(CustomerRoleType.APPLICANT, linked, Collections.emptyList())
+            )
+          );
+          applicationDao.insert(app);
+
+          // Link via invoice_recipient_id
+          Application invoiceApp = testCommon.dummyOutdoorApplication("TripleLinkInvoice", RandomStringUtils.randomAlphabetic(10));
+          invoiceApp.setInvoiceRecipientId(linked.getId());
+          applicationDao.insert(invoiceApp);
+
+          // Link via project
+          Project project = new Project();
+          project.setName("proj-triple");
+          project.setCustomerId(linked.getId());
+          project.setContactId(testCommon.insertContact(linked.getId()).getId());
+          project.setStartTime(ZonedDateTime.now());
+          project.setIdentifier("identifier-triple");
+          project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId());
+          projectDao.insert(project);
+
+          // An unlinked SAP customer that should still appear
+          Customer unlinked = customerDao.insert(dummyCustomer(14));
+          unlinked.setSapCustomerNumber("SAP14");
+          unlinked.setIsActive(false);
+          customerDao.update(unlinked.getId(), unlinked);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Unlinked customer must appear",
+            result.stream().anyMatch(r -> "SAP14".equals(r.sapCustomerNumber())));
+          assertEquals("Triply-linked customer must appear only 0 extra times (excluded once)",
+            0L, result.stream().filter(r -> "SAP13".equals(r.sapCustomerNumber())).count());
+        });
+
+        it("should still return unlinked inactive SAP customer (regression)", () -> {
+          Customer c = customerDao.insert(dummyCustomer(15));
+          c.setSapCustomerNumber("SAP15");
+          c.setIsActive(false);
+          customerDao.update(c.getId(), c);
+
+          List<CustomerSapInfo> result = customerDao.findUnnotifiedSapCustomers();
+
+          assertTrue("Unlinked inactive SAP customer must be returned",
+            result.stream().anyMatch(r -> "SAP15".equals(r.sapCustomerNumber())));
+        });
+      });
     });
 
+    describe("softDeleteCustomers", () -> {
+
+      it("should return 0 when ids is null", () -> {
+        long updated = customerDao.softDeleteCustomers(null);
+        assertEquals(0, updated);
+      });
+
+      it("should return 0 when ids is empty", () -> {
+        long updated = customerDao.softDeleteCustomers(Collections.emptySet());
+        assertEquals(0, updated);
+      });
+
+      it("should soft delete customers by setting isActive=false", () -> {
+        Customer c1 = customerDao.insert(dummyCustomer(1000));
+        Customer c2 = customerDao.insert(dummyCustomer(1001));
+
+        assertTrue(c1.isActive());
+        assertTrue(c2.isActive());
+
+        long updated = customerDao.softDeleteCustomers(Set.of(c1.getId(), c2.getId()));
+
+        assertEquals(2, updated);
+
+        Customer updated1 = customerDao.findById(c1.getId()).orElseThrow();
+        Customer updated2 = customerDao.findById(c2.getId()).orElseThrow();
+
+        assertFalse(updated1.isActive());
+        assertFalse(updated2.isActive());
+      });
+
+      it("should not modify customers not in the given id set", () -> {
+        Customer c1 = customerDao.insert(dummyCustomer(2000));
+        Customer c2 = customerDao.insert(dummyCustomer(2001));
+        Customer c3 = customerDao.insert(dummyCustomer(2002));
+
+        long updated = customerDao.softDeleteCustomers(Set.of(c2.getId()));
+
+        assertEquals(1, updated);
+
+        assertTrue(customerDao.findById(c1.getId()).orElseThrow().isActive());
+        assertFalse(customerDao.findById(c2.getId()).orElseThrow().isActive());
+        assertTrue(customerDao.findById(c3.getId()).orElseThrow().isActive());
+      });
     });
 
     describe("CustomerDao.findAll", () -> {
@@ -187,7 +857,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         }
       });
 
-      it("Can fetch 5 customers in ascendind ID order", () -> {
+      it("Can fetch 5 customers in ascending ID order", () -> {
         Page<Customer> page = customerDao.findAll(PageRequest.of(1, 5));
         assertEquals(5, page.getSize());
         List<Customer> elements = page.getContent();
@@ -200,6 +870,178 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         }
       });
     });
+
+    describe("CustomerDao.findPurgeableCustomerIds", () -> {
+
+      // Helper: creates and soft-deletes a customer with change_history older than 5 years
+      // so it qualifies as purgeable (when not linked to any entity).
+      beforeEach(() -> testCommon.deleteAllData());
+
+      it("should return an inactive customer whose log entries are older than 5 years and is not linked to any entity", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5000));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertTrue("Unlinked inactive customer with old history must be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude a customer linked via application_customer", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5001));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        // Link via application_customer
+        Application app = testCommon.dummyOutdoorApplication("AppLink5001", RandomStringUtils.randomAlphabetic(10));
+        app.setCustomersWithContacts(
+          Collections.singletonList(
+            new CustomerWithContacts(CustomerRoleType.APPLICANT, c, Collections.emptyList())
+          )
+        );
+        applicationDao.insert(app);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Customer linked via application_customer must not be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude a customer set as invoice recipient on an application", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5002));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        Application invoiceApp = testCommon.dummyOutdoorApplication("InvoiceApp5002", RandomStringUtils.randomAlphabetic(10));
+        invoiceApp.setInvoiceRecipientId(c.getId());
+        applicationDao.insert(invoiceApp);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Invoice recipient customer must not be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude a customer linked to a project", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5003));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(c.getId(), old);
+
+        Project project = new Project();
+        project.setName("proj-5003");
+        project.setCustomerId(c.getId());
+        project.setContactId(testCommon.insertContact(c.getId()).getId());
+        project.setStartTime(ZonedDateTime.now());
+        project.setIdentifier("identifier-5003");
+        project.setCreatorId(userId);
+        projectDao.insert(project);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Project-linked customer must not be purgeable", ids.contains(c.getId()));
+      });
+
+      it("should exclude an active customer", () -> {
+        ZonedDateTime sixYearsAgo = ZonedDateTime.now().minusYears(6);
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer active = customerDao.insert(dummyCustomer(5004)); // isActive=true by default
+        ChangeHistoryItem old = new ChangeHistoryItem();
+        old.setUserId(userId);
+        old.setChangeType(ChangeType.CONTENTS_CHANGED);
+        old.setChangeTime(sixYearsAgo);
+        historyDao.addCustomerChange(active.getId(), old);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Active customer must not be purgeable", ids.contains(active.getId()));
+      });
+
+      it("should exclude a customer whose most recent change_history entry is within 5 years", () -> {
+        int userId = testCommon.insertUser(RandomStringUtils.randomAlphabetic(10)).getId();
+
+        Customer c = customerDao.insert(dummyCustomer(5005));
+        c.setIsActive(false);
+        customerDao.update(c.getId(), c);
+        ChangeHistoryItem recent = new ChangeHistoryItem();
+        recent.setUserId(userId);
+        recent.setChangeType(ChangeType.CONTENTS_CHANGED);
+        recent.setChangeTime(ZonedDateTime.now().minusYears(1)); // within retention period
+        historyDao.addCustomerChange(c.getId(), recent);
+
+        List<Integer> ids = customerDao.findPurgeableCustomerIds(10, 0);
+        assertFalse("Customer with recent change_history must not be purgeable", ids.contains(c.getId()));
+      });
+    });
+
+    describe("CustomerDao.archiveCustomers", () -> {
+
+      beforeEach(() -> testCommon.deleteAllData());
+
+      it("should archive a customer and record sap_customer_number", () -> {
+        Customer c = customerDao.insert(dummyCustomer(6000));
+        c.setSapCustomerNumber("SAP-6000");
+        customerDao.update(c.getId(), c);
+
+        customerDao.archiveCustomers(Set.of(c.getId()));
+
+        // Query customer_archive directly for the customer_id
+        Long count = sqlQueryFactory
+          .select(customerArchive.customerId.count())
+          .from(customerArchive)
+          .where(customerArchive.customerId.eq(c.getId()))
+          .fetchOne();
+        assertEquals("Exactly one archive row must exist", 1L, (long) count);
+
+        String sapNumber = sqlQueryFactory
+          .select(customerArchive.sapCustomerNumber)
+          .from(customerArchive)
+          .where(customerArchive.customerId.eq(c.getId()))
+          .fetchOne();
+        assertEquals("SAP-6000", sapNumber);
+      });
+
+      it("should not create a duplicate row when archiving an already-archived customer", () -> {
+        Customer c = customerDao.insert(dummyCustomer(6001));
+
+        // Archive twice — ON CONFLICT DO NOTHING must prevent duplicate
+        customerDao.archiveCustomers(Set.of(c.getId()));
+        customerDao.archiveCustomers(Set.of(c.getId()));
+
+        Long count = sqlQueryFactory
+          .select(customerArchive.customerId.count())
+          .from(customerArchive)
+          .where(customerArchive.customerId.eq(c.getId()))
+          .fetchOne();
+        assertEquals("Duplicate archiveCustomers call must not create a second row", 1L, (long) count);
+      });
+    });
+
   }
 
   private Customer dummyCustomer(int i) {

@@ -28,6 +28,7 @@
     source: pull
     name: "{{ github_registry_url }}/city-of-helsinki/allu/allu_search_service:{{ branch }}"
     force_source: yes
+    timeout: 120
   become: yes
 
 - name: Start allu_search_service container

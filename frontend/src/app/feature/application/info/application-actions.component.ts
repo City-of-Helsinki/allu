@@ -10,12 +10,12 @@ import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {findTranslation} from '@util/translations';
 import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
-import {filter, map, take, takeUntil} from 'rxjs/operators';
+import {filter, map, takeUntil} from 'rxjs/operators';
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
@@ -216,7 +216,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   moveToHandling(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.HANDLING)
       .subscribe(app => this.router.navigate(['/applications', app.id, 'edit']),
-        err => this.notification.translateErrorMessage('application.error.toHandling'));
+        _err => this.notification.translateErrorMessage('application.error.toHandling'));
   }
 
   toDecisionmaking(): void {
@@ -225,7 +225,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   delete(): void {
     Some(this.applicationStore.snapshot.application.id).do(id => this.applicationStore.delete(id).subscribe(
-      response => {
+      () => {
         this.notification.translateSuccess('application.action.deleted');
         this.router.navigate(['/']);
       },
@@ -247,11 +247,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   showExternalUpdates(): void {
-    this.router.navigate(['pending_info'], {relativeTo: this.route});
+    this.router.navigate(['pending_info'], {relativeTo: this.route});
   }
 
   showInformationRequestInfo(): void {
-    this.router.navigate(['information_request'], {relativeTo: this.route});
+    this.router.navigate(['information_request'], {relativeTo: this.route});
   }
 
   cancelInformationRequest(): void {
@@ -264,7 +264,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.CANCELLED)
       .subscribe(
         () => this.router.navigate(['/workqueue']),
-        err => this.notification.translateErrorMessage('application.error.cancel'));
+        _err => this.notification.translateErrorMessage('application.error.cancel'));
   }
 
   private showDecisionForApplication(app: Application): boolean {

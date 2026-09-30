@@ -6,7 +6,7 @@ import {EnvironmentType} from '@model/config/environment-type';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import * as fromProject from '../project/reducers';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {Router} from '@angular/router';

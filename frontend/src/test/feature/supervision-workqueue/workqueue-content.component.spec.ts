@@ -9,9 +9,9 @@ import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '@feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '@model/common/page';
 import {ActivatedRoute} from '@angular/router';
-import {MatLegacyPaginatorModule as MatPaginatorModule} from '@angular/material/legacy-paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {MatLegacyTableModule as MatTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
@@ -83,7 +83,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
     selectAll.click();
     fixture.detectChanges();
     expect(store.dispatch).toHaveBeenCalledTimes(1);
-    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-checkbox-checked')).length).toEqual(defaultItems.content.length);
+    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-mdc-checkbox-checked')).length).toEqual(defaultItems.content.length);
   });
 
   it('should select item which checkbox is clicked', () => {
@@ -92,6 +92,6 @@ describe('SupervisionWorkqueueContentComponent', () => {
     checkboxes[1].click();
     fixture.detectChanges();
     expect(store.dispatch).toHaveBeenCalledTimes(1);
-    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-checkbox-checked')).length).toEqual(1);
+    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-mdc-checkbox-checked')).length).toEqual(1);
   });
 });

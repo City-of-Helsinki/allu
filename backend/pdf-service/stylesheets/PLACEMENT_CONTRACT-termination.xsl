@@ -23,7 +23,8 @@
           </div>
           <div class="department">
             <p>Kaupunkiympäristö</p>
-            <p>Alueidenkäyttö ja -valvonta</p>
+            <p>Yleisten alueiden valvonta ja<br/>
+              infraluvat -yksikkö</p>
           </div>
           <div class="half-right">
             <h1>Irtisanominen</h1>
@@ -112,7 +113,7 @@
             <div class="unboxed avoid-pb">
               <section>
                 <h2>Päätös</h2>
-                <p class="indented space-above">Alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikkö päätti irtisanoa sijoitussopimuksen.</p>
+                <p class="indented space-above">Yleisten alueiden valvonta ja infraluvat -yksikön yleisten alueiden rakenteet -tiimin päällikkö päätti irtisanoa sijoitussopimuksen.</p>
                 <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
                 <p class="indented space-above">
                   <xsl:value-of select="data/decisionTimestamp"/>,
@@ -124,7 +125,7 @@
             <div class="unboxed avoid-pb">
               <section class="half-left">
                 <h2>Lisätiedot</h2>
-                <p>Kaupunkiympäristön alueidenkäyttö</p>
+                <p>Yleisten alueiden rakenteet -tiimi</p>
                 <p>alueidenkaytto@hel.fi</p>
               </section>
 
@@ -137,7 +138,7 @@
               </section>
             </div>
           </div>
-          <div class="unboxed avoid-pb">
+          <section class="new-page unboxed justify">
             <h2 class="new-page">MUUTOKSENHAKUOHJEET</h2>
             <h2>OHJEET OIKAISUVAATIMUKSEN TEKEMISEKSI</h2>
             <div class="indented">
@@ -220,12 +221,14 @@
                 <li>oikaisuvaatimuksen tekijän yhteystiedot</li>
               </ul>
             </div>
-            <h3>Pöytäkirja</h3>
-            <div class="indented">
-              <p>Päätöstä koskevia pöytäkirjan otteita ja liitteitä lähetetään pyynnöstä.
-                Asiakirjoja voi tilata Helsingin kaupungin kirjaamosta.</p>
+            <div class="avoid-pb">
+              <h3>Pöytäkirja</h3>
+              <div class="indented">
+                <p>Päätöstä koskevia pöytäkirjan otteita ja liitteitä lähetetään pyynnöstä.
+                  Asiakirjoja voi tilata Helsingin kaupungin kirjaamosta.</p>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
       </body>
     </html>

@@ -8,7 +8,7 @@ import {MapUtil} from './map.util';
 import {MapSearchFilter} from '../map-search-filter';
 import {ApplicationStatus, ApplicationStatusGroup} from '../../model/application/application-status';
 import {ArrayUtil} from '../../util/array-util';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {SearchResultApplication} from '../backend-model/backend-application';
 import {catchError, map, reduce, switchMap, tap} from 'rxjs/operators';
 import {QueryParametersMapper} from '@app/service/mapper/query/query-parameters-mapper';

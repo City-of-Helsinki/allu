@@ -5,7 +5,7 @@
         <img *ngIf="logo" [src]="logo" [alt]="'nav.home' | translation">
       </a>
     </div>
-    <div class="version">{{version | async}}</div>
+    <div class="version">{{version | async}}</div>
   </div>
   <div fxFlex="auto">
     <navbar *ngIf="authenticated"></navbar>
@@ -24,11 +24,13 @@
     </div>
   </div>
 
-  <div fxFlex="none" class="toolbar-section" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-    <button mat-icon-button [matMenuTriggerFor]="applicationBasket">
-      <mat-icon>shopping_basket</mat-icon>
-    </button>
-    <span class="pill">{{applicationBasketSize$ | async}}</span>
+  <div fxFlex="none" class="toolbar-section basket-section" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
+      <button mat-icon-button [matMenuTriggerFor]="applicationBasket">
+        <mat-icon>shopping_basket</mat-icon>
+      </button>
+      <span class="pill">{{applicationBasketSize$ | async}}</span>
+    </div>
   </div>
 
   <div fxFlex="none" class="nav-controls toolbar-section" *ngIf="authenticated">
@@ -39,7 +41,7 @@
 </div>
 
 <mat-menu #applicationBasket="matMenu" [overlapTrigger]="false" class="allu-application-basket">
-  <div (click)="$event.stopPropagation()">
+  <div (click)="$event.stopPropagation()" tabindex="-1" (keydown.enter)="$event.stopPropagation()">
     <application-basket></application-basket>
   </div>
 </mat-menu>

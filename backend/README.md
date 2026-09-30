@@ -22,6 +22,6 @@ Add `search-service` for good measure.
 Go to the `allu-ui-service-test` directory: `cd backend/allu-ui-service-test/`.
 Directory should have package.json file. Run `npm install`.
 
-To run 10 different applications into the database, run `TEST_TARGET=http://localhost:3000 npm test`.
+To run 12 different applications into the database, run `TEST_TARGET=http://localhost:3000 npm test`.
 To run the massdata test, run `TEST_TARGET=http://localhost:3000 npm test "massdata/*"`. Note that it takes a long time,
 as it inserts 10 000 applications. 

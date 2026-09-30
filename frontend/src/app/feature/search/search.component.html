@@ -1,18 +1,19 @@
 <div class="main-content">
   <div class="search-bar">
-    <h1>HAKU</h1>
+    <h1>{{'common.search' | translation | uppercase}}</h1>
     <form [formGroup]="queryForm" (ngSubmit)="search()">
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="30%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="applicationId"
-                   [placeholder]="'applicationSearch.applicationId' | translation"/>
+            <mat-label>{{'applicationSearch.applicationId' | translation}}</mat-label>
+            <input matInput type="text" formControlName="applicationId"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="type" [multiple]="true"
-                        [placeholder]="'applicationSearch.type' | translation" class="input-full-width">
+            <mat-label>{{'applicationSearch.type' | translation}}</mat-label>
+            <mat-select formControlName="type" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let option of applicationTypeStrings" [value]="option">
                 {{ ['application.type', option] | translation }}
               </mat-option>
@@ -21,8 +22,9 @@
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="status" [multiple]="true"
-                        [placeholder]="'applicationSearch.status' | translation" class="input-full-width">
+            <mat-label>{{'applicationSearch.status' | translation}}</mat-label>
+            <mat-select formControlName="status" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let option of applicationStatusStrings" [value]="option">
                 {{ ['application.status', option] | translation }}
               </mat-option>
@@ -31,8 +33,9 @@
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="districts" [multiple]="true"
-                        [placeholder]="'application.cityDistrict' | translation" class="input-full-width">
+            <mat-label>{{'application.cityDistrict' | translation}}</mat-label>
+            <mat-select formControlName="districts" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
               </mat-option>
             </mat-select>
@@ -40,8 +43,9 @@
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="owner" [multiple]="true"
-                        [placeholder]="'applicationSearch.owner' | translation" class="input-full-width">
+            <mat-label>{{'applicationSearch.owner' | translation}}</mat-label>
+            <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let owner of owners | async" [value]="owner.userName">{{owner.realName}}
               </mat-option>
             </mat-select>
@@ -51,32 +55,32 @@
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="30%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="address"
-                   [placeholder]="'applicationSearch.address' | translation"/>
+            <mat-label>{{'customer.postalAddress' | translation}}</mat-label>
+            <input matInput type="text" formControlName="address"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="applicant"
-                   [placeholder]="'application.applicant' | translation"/>
+            <mat-label>{{'application.applicant' | translation}}</mat-label>
+            <input matInput type="text" formControlName="applicant"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="contact"
-                   [placeholder]="'application.contact' | translation"/>
+            <mat-label>{{'application.contact' | translation}}</mat-label>
+            <input matInput type="text" formControlName="contact"/>
           </mat-form-field>
         </div>
         <div fxFlex="15%">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="freeText"
-                   [placeholder]="'common.freeTextSearch' | translation"/>
+            <mat-label>{{'common.freeTextSearch' | translation}}</mat-label>
+            <input matInput type="text" formControlName="freeText"/>
           </mat-form-field>
         </div>
         <div fxFlex="7%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'applicationSearch.startTime' | translation}}</mat-label>
             <input matInput type="text" formControlName="startTime"
-                   [placeholder]="'applicationSearch.startTime' | translation"
                    [matDatepicker]="startTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #startTimePicker></mat-datepicker>
@@ -84,8 +88,8 @@
         </div>
         <div fxFlex="7%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'applicationSearch.endTime' | translation}}</mat-label>
             <input matInput type="text" formControlName="endTime"
-                   [placeholder]="'applicationSearch.endTime' | translation"
                    [matDatepicker]="endTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #endTimePicker></mat-datepicker>
@@ -97,7 +101,7 @@
           <button mat-raised-button type="submit" color="primary">
             {{'common.button.search' | translation | uppercase}}
           </button>
-          <button mat-raised-button type="button" color="primary" [disabled]="!(someSelected$ | async)"
+          <button mat-raised-button type="button" color="primary" [disabled]="(someSelected$ | async) === false"
                   class="in-front" (click)="addToBasket()"
                   *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
             {{'applicationBasket.addTo' | translation | uppercase}}
@@ -107,108 +111,115 @@
     </form>
   </div>
 </div>
+
 <div fxLayout="row">
-  <div fxFlex>
+  <div fxFlex class="table-flex-container">
     <div class="mat-elevation-z8 data-table data-table-with-paging">
       <div class="loading-shade" *ngIf="dataSource.loading">
         <mat-spinner></mat-spinner>
       </div>
-      <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+      <div class="table-scroll-container">
+        <table mat-table class="application-search-table" #table [dataSource]="dataSource" matSort [trackBy]="trackById">
         <ng-container matColumnDef="selected">
-          <mat-header-cell *matHeaderCellDef>
+          <th mat-header-cell *matHeaderCellDef>
             <div>
               <mat-checkbox
                 [checked]="(someSelected$ | async) && (allSelected$ | async)"
-                [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                [indeterminate]="(someSelected$ | async) && (allSelected$ | async) === false"
                 (change)="checkAll()"></mat-checkbox>
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          </th>
+          <td mat-cell *matCellDef="let row">
             <mat-checkbox
               [checked]="selected(row.id) | async"
               (change)="checkSingle(row.id)"></mat-checkbox>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="owner.realName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.owner?.realName}}</td>
         </ng-container>
 
         <ng-container matColumnDef="applicationId">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
               {{row.applicationId}}
             </a>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.name' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'name' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="type">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ ['application.type', row.type] | translation }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{ ['application.type', row.type] | translation }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ ['application.status', row.status] | translation }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{ ['application.status', row.status] | translation }}</td>
         </ng-container>
 
         <ng-container matColumnDef="project.identifier">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.title' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.title' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <a *ngIf="row.project" class="row-details-link" [routerLink]="['/projects', row.project.id]">
               {{row.project.identifier}}
             </a>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="customers.applicant.customer.name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="locations.address">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.address}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'postalAddress.streetAddress' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.address}}</td>
         </ng-container>
 
         <ng-container matColumnDef="locations.cityDistrictId">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</th>
+           <td mat-cell *matCellDef="let row">
+             <span class="district-name">
+               {{districtName(row.firstLocation.effectiveCityDistrictId) | async | hyphenateDistrict}}
+             </span>
+           </td>
         </ng-container>
 
         <ng-container matColumnDef="receivedTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.receivedTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.receivedTime | date:'shortDate'}}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.receivedTime' | translation}}</th>
+          <td mat-cell *matCellDef="let row">{{row.receivedTime | date:'shortDate'}}</td>
         </ng-container>
 
         <ng-container matColumnDef="startTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.startTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.startTime' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <validity-start-time [startTime]="row.startTime" [recurring]="!!row.recurringEndTime"></validity-start-time>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="endTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.endTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'applicationSearch.endTime' | translation}}</th>
+          <td mat-cell *matCellDef="let row">
             <validity-end-time
               [startTime]="row.startTime"
               [endTime]="row.endTime"
               [recurringEndTime]="row.recurringEndTime"></validity-end-time>
-          </mat-cell>
+          </td>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"
-                 class="row-highlight"></mat-row>
-      </mat-table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="row-highlight"></tr>
+        </table>
+      </div>
 
       <mat-paginator #paginator
                      [pageSizeOptions]="[5, 10, 25, 100]">

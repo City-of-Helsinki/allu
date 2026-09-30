@@ -5,8 +5,7 @@ import {AttachmentInfo} from '../../../model/application/attachment/attachment-i
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class AttachmentHub {

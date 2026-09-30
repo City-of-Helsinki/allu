@@ -11,7 +11,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import {Store} from '@ngrx/store';
 import {NumberUtil} from '@util/number.util';
 import {UserService} from '@service/user/user-service';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 import {RoleType} from '@model/user/role-type';
 import {FormUtil} from '@util/form.util';

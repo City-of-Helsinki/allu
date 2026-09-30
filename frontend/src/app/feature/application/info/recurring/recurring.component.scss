@@ -1,4 +1,16 @@
-.mat-form-field.year-input {
+.horizontal-radio-group {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.recurring-until-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.mat-mdc-form-field.year-input {
   width: 6em;
   text-align: center;
 }

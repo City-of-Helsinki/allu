@@ -49,7 +49,7 @@
       </div>
       <div class="department">
         <p>Kaupunkiympäristö</p>
-        <p>Alueidenkäyttö ja -valvonta</p>
+        <p>Yleisten alueiden valvonta <br/> ja infraluvat -yksikkö</p>
         <p>luvat@hel.fi</p>
       </div>
       <div class="half-right" style="position:relative;left:-20pt;">

@@ -19,7 +19,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {setValidatorsAndValidate} from '@feature/common/validation/validation-util';
 import {TimePeriod} from '@feature/application/info/time-period';
 import {ComplexValidator} from '@util/complex-validator';
@@ -38,6 +38,16 @@ const kindsWithRecurring = [
   ApplicationKind.WINTER_TERRACE,
   ApplicationKind.PARKLET
 ];
+const kindsWithRegistrationNumbers = [
+  ApplicationKind.BENJI,
+  ApplicationKind.SUMMER_THEATER,
+  ApplicationKind.MOBILE_SALES,
+  ApplicationKind.OTHER,
+  ApplicationKind.SMALL_ART_AND_CULTURE,
+  ApplicationKind.SEASON_SALE,
+  ApplicationKind.CIRCUS,
+  ApplicationKind.ART
+];
 
 @Component({
   selector: 'short-term-rental',
@@ -50,6 +60,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   showCommercial = false;
   commercialLabel: string;
   recurringAllowed = false;
+  showRegistrationNumbers = false;
   dateFilter: DateFilter;
   kind$: Observable<ApplicationKind>;
   maxEndDate$: Observable<Date>;
@@ -95,17 +106,17 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
       takeUntil(this.destroy)
     );
 
-    this.maxEndDate$ = combineLatest(
+    this.maxEndDate$ = combineLatest([
       this.applicationForm.get('rentalTimes.startTime').valueChanges,
       this.timePeriod$.pipe(map(period => period ? period.endTime : undefined))
-    ).pipe(
+    ]).pipe(
       map(([startTime, endTime]) => TimeUtil.toTimePeriodEnd(startTime, endTime))
     );
 
-    this.minStartDate$ = combineLatest(
+    this.minStartDate$ = combineLatest([
       this.applicationForm.get('rentalTimes.endTime').valueChanges,
       this.timePeriod$.pipe(map(period => period ? period.startTime : undefined))
-    ).pipe(
+    ]).pipe(
       map(([endTime, startTime]) => TimeUtil.toTimePeriodStart(endTime, startTime))
     );
 
@@ -122,6 +133,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
       : this.fb.group(this.completeFormStructure);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   protected onApplicationChange(application: Application): any {
     super.onApplicationChange(application);
 
@@ -131,6 +143,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.showCommercial = application.kinds.some(kind => ApplicationKind.BRIDGE_BANNER === kind);
     this.updateCommercialLabel(rental.commercial);
     this.recurringAllowed = kindsWithRecurring.indexOf(application.kind) >= 0;
+    this.showRegistrationNumbers = application.kinds.some(kind => kindsWithRegistrationNumbers.includes(kind));
   }
 
   protected update(form: ShortTermRentalForm): Application {

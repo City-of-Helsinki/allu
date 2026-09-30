@@ -33,3 +33,75 @@
   when: "'production' in group_names"
   become: yes
   become_user: root
+
+- name: Create cron job for refreshing materialized view raportointi_laskurivit_al
+  cron:
+    name: Refresh materialized view raportointi_laskurivit_al
+    hour: 22
+    minute: 30
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_laskurivit_al\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view raportointi_laskurivit_kp
+  cron:
+    name: Refresh materialized view raportointi_laskurivit_kp
+    hour: 23
+    minute: 0
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_laskurivit_kp\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view raportointi_laskurivit_sl
+  cron:
+    name: Refresh materialized view raportointi_laskurivit_sl
+    hour: 23
+    minute: 30
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_laskurivit_sl\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view raportointi_laskurivit_tp
+  cron:
+    name: Refresh materialized view raportointi_laskurivit_tp
+    hour: 0
+    minute: 0
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_laskurivit_tp\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view raportointi_laskurivit_vp
+  cron:
+    name: Refresh materialized view raportointi_laskurivit_vp
+    hour: 0
+    minute: 30
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_laskurivit_vp\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root
+
+- name: Create cron job for refreshing materialized view raportointi_asiakastiedot
+  cron:
+    name: Refresh materialized view raportointi_asiakastiedot
+    hour: 1
+    minute: 0
+    user: postgres
+    job: "psql allu_reporting --host localhost -p 5433 -c \"REFRESH MATERIALIZED VIEW allu_report_views.raportointi_asiakastiedot\""
+    cron_file: refresh_postgres_materialized_views
+  when: "'production' in group_names"
+  become: yes
+  become_user: root

@@ -39,6 +39,7 @@ public class JdbcConfiguration {
     SQLTemplates templates = PostGISTemplates.builder().printSchema().build();
     com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
     configuration.setExceptionTranslator(new SpringExceptionTranslator(new FallbackTranslator()));
+    configuration.register(new ZonedDateTimeType());
     configuration.register(new StringToCustomerType());
     configuration.register(new StringToCustomerRoleType());
     configuration.register(new StringToApplicationType());

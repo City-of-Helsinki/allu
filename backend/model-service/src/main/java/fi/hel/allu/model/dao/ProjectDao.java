@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -69,9 +68,10 @@ public class ProjectDao {
   public Page<Project> findAll(Pageable pageRequest) {
     long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    QueryResults<Project> queryResults = queryFactory.select(projectBean).from(project).where(NOT_DELETED).orderBy(project.id.asc())
-        .offset(offset).limit(count).fetchResults();
-    return new PageImpl<>(queryResults.getResults(), pageRequest, queryResults.getTotal());
+    List<Project> results = queryFactory.select(projectBean).from(project).where(NOT_DELETED)
+        .orderBy(project.id.asc()).offset(offset).limit(count).fetch();
+    long total = queryFactory.select(project.id).from(project).where(NOT_DELETED).fetchCount();
+    return new PageImpl<>(results, pageRequest, total);
   }
 
   @Transactional

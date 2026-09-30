@@ -22,9 +22,9 @@ import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {Location} from '@model/common/location';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {User} from '@model/user/user';
-import {EMPTY, Observable, of} from 'rxjs/index';
+import {EMPTY, Observable, of} from 'rxjs';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
 import {NotificationService} from '@feature/notification/notification.service';
@@ -35,13 +35,15 @@ import {AttachmentType} from '@model/application/attachment/attachment-type';
 import {reducers as applicationReducers} from '@feature/application/reducers'
 
 class MatDialogRefMock {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   afterClosed(): Observable<any> {
     return EMPTY;
   }
 }
 
 class MatDialogMock {
-  open(componentOrTemplateRef: any, config?: any): any {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  open(_componentOrTemplateRef: any, _config?: any): any {
     return undefined;
   }
 }

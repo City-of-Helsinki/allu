@@ -45,11 +45,20 @@ export class MapUtil {
     return geometryCollection;
   }
 
-  public createFeatureCollection(geometryCollection?: GeometryCollection, featureInfo?: MapFeatureInfo):
+  public createFeatureCollection(geometryCollection?: GeometryCollection, featureInfo?: MapFeatureInfo,
+                                  onError?: (err: Error) => void):
     FeatureCollection<GeometryObject> {
     const features = Some(geometryCollection)
       .map(gc => gc.geometries)
-      .map(geometries => geometries.map(g => this.createFeature(g, featureInfo)))
+      .map(geometries => geometries.reduce((acc, g) => {
+        try {
+          acc.push(this.createFeature(g, featureInfo));
+        } catch (e) {
+          console.error('Failed to create feature for geometry', g, e);
+          if (onError) { onError(e); }
+        }
+        return acc;
+      }, [] as Feature<GeometryObject>[]))
       .orElse([]);
 
     return this.wrapToFeatureCollection(features);
@@ -85,6 +94,7 @@ export class MapUtil {
     return L.rectangle(bounds);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   public isValidGeometry(layer: any): boolean {
     if (layer instanceof L.Circle || layer instanceof L.Point) {
       return true;
@@ -137,6 +147,7 @@ export class MapUtil {
     return this.project(feature.geometry);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private project(geometry: any): any {
     return {
       type: geometry.type,
@@ -144,6 +155,7 @@ export class MapUtil {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private unproject(geometry: any): any {
     return {
       type: geometry.type,

@@ -3,6 +3,6 @@
   $primary: map-get($theme, primary);
 
   .comment-list li {
-    border-bottom-color: mat.get-color-from-palette($primary, 200);
+    border-bottom-color: mat.m2-get-color-from-palette($primary, 200);
   }
 }

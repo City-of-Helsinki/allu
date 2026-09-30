@@ -10,16 +10,18 @@ export interface ActionWithTarget extends Action {
 }
 
 export function withLatestOfTargetAndType<T extends ActionWithTarget>(targetType: ActionTargetType,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
                                                                       latestTarget: Observable<any>,
                                                                       ...allowedTypes: string[]) {
   return (source: Observable<T>) => latestFromSource<T>(source, targetType, latestTarget, ...allowedTypes);
 }
 
 export function withLatestExistingOfTargetAndType<T extends ActionWithTarget>(targetType: ActionTargetType,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
                                                                               latestTarget: Observable<any>,
                                                                               ...allowedTypes: string[]) {
   return (source: Observable<T>) => latestFromSource<T>(source, targetType, latestTarget, ...allowedTypes).pipe(
-    filter(([action, target]) => NumberUtil.isExisting(target))
+    filter(([_action, target]) => NumberUtil.isExisting(target))
   );
 }
 
@@ -36,6 +38,7 @@ function fromSource<T extends ActionWithTarget>(
 }
 
 function latestFromSource<T extends ActionWithTarget>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   source: Observable<T>, targetType: ActionTargetType, latestTarget: Observable<any>, ...allowedTypes: string[]) {
   return fromSource(source, targetType, ...allowedTypes).pipe(withLatestFrom(latestTarget));
 }

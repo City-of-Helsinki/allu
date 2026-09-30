@@ -4,8 +4,8 @@
     <div fxLayout="row">
       <div fxFlex="30">
         <mat-form-field class="input-full-width">
-          <input matInput type="number" formControlName="amount" required
-                 [placeholder]="'deposit.amount' | translation"/>
+          <mat-label>{{'deposit.amount' | translation}}</mat-label>
+          <input matInput type="number" formControlName="amount" required/>
           <span matSuffix>€</span>
           <mat-error *ngIf="depositForm.get('amount').hasError('required')">
             {{'deposit.field.amountMissing' | translation}}
@@ -16,8 +16,8 @@
     <div fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <textarea matInput cdkTextareaAutosize formControlName="reason"
-                    [placeholder]="'deposit.reason' | translation"></textarea>
+          <mat-label>{{'deposit.reason' | translation}}</mat-label>
+          <textarea matInput cdkTextareaAutosize formControlName="reason"></textarea>
         </mat-form-field>
       </div>
     </div>
@@ -33,10 +33,10 @@
   </div>
   <div mat-dialog-actions>
     <button type="submit" mat-raised-button color="primary" [disabled]="!depositForm.valid">
-      {{'common.button.save' | translation}}
+      {{'common.button.save' | translation | uppercase}}
     </button>
     <button type="button" mat-raised-button color="primary" (click)="cancel()">
-      {{'common.button.cancel' | translation}}
+      {{'common.button.cancel' | translation | uppercase}}
     </button>
   </div>
 </form>

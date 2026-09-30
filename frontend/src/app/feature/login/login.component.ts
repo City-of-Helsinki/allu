@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
     event.preventDefault();
     this.authentication.login(username)
       .subscribe(
-        response => this.router.navigateByUrl('/'),
+        () => this.router.navigateByUrl('/'),
         error => {
           alert(error.text());
           console.log(error.text());

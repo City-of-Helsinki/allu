@@ -24,33 +24,35 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Aluevuokrauksen voimassaolo</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.areaRental.validityTitle' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div class="row form-group">
             <div formGroupName="validityTimes" class="col s6">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput disabled type="text" [value]="startTime | date:'shortDate'"
-                         [placeholder]="'application.common.startTime' | translation"/>
+                  <mat-label>{{'application.common.startTime' | translation}}</mat-label>
+                  <input matInput disabled type="text" [value]="startTime | date:'shortDate'"/>
                 </mat-form-field>
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput disabled type="text" [value]="endTime | date:'shortDate'"
-                         [placeholder]="'application.common.endTime' | translation"/>
+                  <mat-label>{{'application.common.endTime' | translation}}</mat-label>
+                  <input matInput disabled type="text" [value]="endTime | date:'shortDate'"/>
                 </mat-form-field>
               </div>
             </div>
             <div class="col s3">
               <mat-form-field class="input-full-width">
-                <input matInput disabled type="text" [value]="workFinished | date:'shortDate'"
-                       [placeholder]="'application.areaRental.workFinished' | translation"/>
+                <mat-label>{{'application.areaRental.workFinished' | translation}}</mat-label>
+                <input matInput disabled type="text" [value]="workFinished | date:'shortDate'"/>
               </mat-form-field>
             </div>
             <div class="col s3">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.areaRental.customerWorkFinished' | translation}}</mat-label>
                 <input matInput type="text" formControlName="customerWorkFinished"
-                       [placeholder]="'application.areaRental.customerWorkFinished' | translation"
                        [matDatepicker]="customerWorkFinishedPicker"/>
                 <button type="button" mat-icon-button matSuffix
                         *ngIf="showReportCustomerDates; else customerWorkFinishedPickerToggle"
@@ -72,14 +74,16 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Aluevuokrauksen tiedot</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'application.areaRental.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <div class="row">
             <div class="col m12">
               <mat-form-field class="input-full-width">
+                <mat-label>{{'application.common.workPurpose' | translation}}</mat-label>
                 <textarea matInput cdkTextareaAutosize required
-                          formControlName="workPurpose"
-                          [placeholder]="'application.common.workPurpose' | translation"></textarea>
+                          formControlName="workPurpose"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -88,7 +92,7 @@
             <div class="col m2">
               <mat-checkbox formControlName="pksCard">{{'application.common.pksCard' | translation}}</mat-checkbox>
             </div>
-            <div class="col m2">
+            <div class="col m2" *ngIf="showMajorDisturbance">
               <mat-checkbox formControlName="majorDisturbance">{{'application.areaRental.majorDisturbance' | translation}}</mat-checkbox>
             </div>
           </div>
@@ -122,8 +126,8 @@
           <div class="row">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                                <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"
-                                          placeholder="Lisätiedot"></textarea>
+                                <mat-label>{{'application.common.additionalInfo' | translation}}</mat-label>
+                                <textarea matInput cdkTextareaAutosize formControlName="additionalInfo"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -141,7 +145,9 @@
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
       <allu-card>
-        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-header>
+          <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <default-text formControlName="terms"
                         [applicationType]="application.type"

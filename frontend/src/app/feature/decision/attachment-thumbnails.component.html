@@ -2,7 +2,8 @@
   <div fxFlex="128px"
        class="attachment-thumbnail clickable"
        *ngFor="let thumbnail of thumbnails"
-       (click)="download(thumbnail)">
+       tabindex="0"
+       (click)="download(thumbnail)" (keyup.enter)="download(thumbnail)">
     <mat-icon class="mat-icon-36" color="accent">{{thumbnail.icon}}</mat-icon>
     <div class="thumbnail-name">{{thumbnail.name}}</div>
   </div>

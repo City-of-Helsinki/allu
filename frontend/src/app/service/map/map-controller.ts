@@ -23,11 +23,12 @@ import {MapPopupService} from './map-popup.service';
 import {Injectable} from '@angular/core';
 import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {Projection} from '@feature/map/projection';
+import {ScissorsControl} from './scissors-control';
 import GeoJSONOptions = L.GeoJSONOptions;
-import {LatLngBounds} from 'leaflet';
+
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -60,6 +61,7 @@ export class MapController {
   private config: MapControllerConfig;
   private _allLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
   private _selectedLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
+  private scissorsControl: ScissorsControl;
 
   constructor(private mapUtil: MapUtil,
               private projection: Projection,
@@ -167,6 +169,7 @@ export class MapController {
 
     if (layer && featureCollection) {
       style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
         .bindPopup((l: any) => this.popupService.create([l.feature]), {className: 'allu-map-popup'});
       const geoJSON = L.geoJSON(featureCollection, style);
       this.drawGeoJSON(geoJSON, layer);
@@ -174,7 +177,7 @@ export class MapController {
   }
 
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
-                      style?: Object, featureInfo?: MapFeatureInfo) {
+                      style?: object, featureInfo?: MapFeatureInfo) {
     const layer = this.mapLayerService.getContentLayer(layerName);
     if (layer) {
       geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, featureInfo));
@@ -183,22 +186,22 @@ export class MapController {
     }
   }
 
-  public drawFocused(geometries: Array<GeoJSON.GeometryCollection>, style?: Object): void {
+  public drawFocused(geometries: Array<GeoJSON.GeometryCollection>, style?: object): void {
     geometries.forEach(g => this.drawGeometryToLayer(g, this.focusedItems, style));
   }
 
-  public drawFixedGeometries(geometries: Array<GeoJSON.GeometryCollection>, style?: Object) {
+  public drawFixedGeometries(geometries: Array<GeoJSON.GeometryCollection>, style?: object) {
     geometries.forEach(geometry => this.drawEditableGeometry(geometry, style));
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }
 
-  public drawFeatures(featureCollection: FeatureCollection<GeometryObject>, style?: Object): void {
+  public drawFeatures(featureCollection: FeatureCollection<GeometryObject>, style?: object): void {
     this.drawFeaturesToLayer(featureCollection, this.editedItems, style);
     this.showMeasurements(this.editedItems);
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }
 
-  public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: Object) {
+  public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: object) {
     if (geometry) {
       this.drawGeometryToLayer(geometry, this.editedItems, style);
       this.showMeasurements(this.editedItems);
@@ -247,12 +250,14 @@ export class MapController {
                               style?: GeoJSONOptions): void {
     style = style || {};
     style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
       .bindPopup((layer: any) => this.popupService.create([layer.feature]), {className: 'allu-map-popup'});
     const geoJSON = L.geoJSON(featureCollection, style);
     this.drawGeoJSON(geoJSON, drawLayer);
   }
 
   private drawGeoJSON(geoJSON: L.GeoJSON, drawLayer: L.LayerGroup): void {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     geoJSON.eachLayer((l: any) => {
       drawLayer.addLayer(l);
     });
@@ -275,6 +280,28 @@ export class MapController {
       zoomOutTitle: translations.map.zoomOut
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
+
+    if (this.config.edit) {
+      const toggleEventHandlers = (action: 'on' | 'off') => {
+        this.map[action](
+          L.Draw.Event.INTERSECTS,
+          this.intersectEventHandler,
+          this.notification
+        );
+        this.map[action]('click', this.showTooltipOnClick, this);
+      };
+      // Add scissors control
+      this.scissorsControl = new ScissorsControl(
+        { position: 'topright' },
+        this.editedItems,
+        this.notification,
+        this.shapes$,
+        { enable: () => toggleEventHandlers('on'),
+          disable: () => toggleEventHandlers('off') }
+      );
+      this.scissorsControl.addTo(this.map);
+    }
+
     L.Icon.Default['imagePath'] = '/assets/images/';
     this.setDynamicControls(this.mapStore.snapshot.drawingAllowed, editedItems);
   }
@@ -296,55 +323,58 @@ export class MapController {
     return L.map('map', mapOption);
   }
 
+  private intersectEventHandler(this: NotificationService,
+                                _e: L.LeafletEvent): void {
+    this.error(translations.map.areasIntersect, undefined, false);
+  }
+
   private setupEventHandling(editedItems: L.FeatureGroup): void {
-    const self = this;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     this.map.on('draw:created', (e: any) => {
       if (this.mapUtil.isValidGeometry(e.layer)) {
         editedItems.addLayer(e.layer);
-        self.shapes$.next(new ShapeAdded(editedItems));
+        this.shapes$.next(new ShapeAdded(editedItems));
         e.layer.showMeasurements(translations.map.measure);
       } else {
         this.map.removeLayer(e.layer);
       }
     });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     this.map.on('draw:edited', (e: any) => {
       this.removeInvalidLayers(e.layers);
-      self.shapes$.next(new ShapeAdded(editedItems));
+      this.shapes$.next(new ShapeAdded(editedItems));
     });
 
-    this.map.on('draw:deleted', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
+    this.map.on('draw:deleted', () => this.shapes$.next(new ShapeAdded(editedItems)));
 
     this.map.on('draw:drawstart draw:editstart', () => {
-      self.editing = true;
-      self.editedItems.bringToFront();
+      this.editing = true;
+      this.editedItems.bringToFront();
     });
 
-    this.map.on('draw:drawstop draw:editstop', () => self.editing = false);
+    this.map.on('draw:drawstop draw:editstop', () => this.editing = false);
 
     this.map.on('draw:deletestart', () => {
-      self.deleting = true;
-      self.editedItems.bringToFront();
+      this.deleting = true;
+      this.editedItems.bringToFront();
     });
 
-    this.map.on('draw:deletestop', () => self.deleting = false);
+    this.map.on('draw:deletestop', () => this.deleting = false);
 
-    this.map.on('moveend', (e: any) => {
-      if (!self.config.showOnlyApplicationArea) {
-        self.mapStore.mapViewChange(this.map.getBounds(), this.map.getZoom());
+    this.map.on('moveend', () => {
+      if (!this.config.showOnlyApplicationArea) {
+        this.mapStore.mapViewChange(this.map.getBounds(), this.map.getZoom());
       }
     });
 
-    this.map.on(L.Draw.Event.INTERSECTS, (e: any) => {
-      this.notification.error(translations.map.areasIntersect, undefined, false);
-    });
+    this.map.on(
+      L.Draw.Event.INTERSECTS, this.intersectEventHandler, this.notification
+    );
 
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      if (!(this.editing || this.deleting)) {
-        self.showTooltipOnClick(e);
-      }
-    });
+    this.map.on('click', this.showTooltipOnClick, this);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     this.map.on('draw:editvertex ', (e: any) => {
       if (e.poly.intersects()) {
         this.mapStore.invalidGeometryChange(true);
@@ -354,6 +384,7 @@ export class MapController {
       }
     });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     this.mapLayerService.cityDistricts.on('load', (e: any) => this.addCityDistrictLabels(e.layers));
   }
 
@@ -368,6 +399,7 @@ export class MapController {
   private setLocalizations(): void {
     // Need to cast as any since ES6 module declaration exports variables
     // as constants so you cannot assign to them
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     (<any>L).drawLocal = translations.map;
   }
 
@@ -381,6 +413,7 @@ export class MapController {
   }
 
   private showMeasurements(layers: L.FeatureGroup) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
     layers.eachLayer((l: any) => {
       if (l.feature.geometry.type !== 'Point') {
         l.showMeasurements(translations.map.measure);
@@ -389,15 +422,20 @@ export class MapController {
   }
 
   private showTooltipOnClick(e: L.LeafletMouseEvent): void {
-    const intersecting = MapEventHandler.clickIntersects(e, this.map, this.mapLayerService.clickableLayers);
-    if (intersecting.length) {
-      L.popup({className: 'allu-map-popup'})
-        .setLatLng(e.latlng)
-        .setContent(this.popupService.create(intersecting))
-        .openOn(this.map);
+    if (!(this.editing || this.deleting)) {
+      const intersecting = MapEventHandler.clickIntersects(
+        e, this.map, this.mapLayerService.clickableLayers
+      );
+      if (intersecting.length) {
+        L.popup({className: 'allu-map-popup'})
+          .setLatLng(e.latlng)
+          .setContent(this.popupService.create(intersecting))
+          .openOn(this.map);
+      }
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
   private addCityDistrictLabels(layers: any) {
     layers.eachLayer(layer => {
       const props = layer.feature.properties;

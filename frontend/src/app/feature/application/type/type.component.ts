@@ -4,7 +4,7 @@ import {ApplicationType, getAvailableKinds, getAvailableSpecifiers, hasMultipleK
 import {ApplicationStore} from '@service/application/application-store';
 import {ArrayUtil} from '@util/array-util';
 import {Observable, of, Subject} from 'rxjs';
-import {map, take, takeUntil} from 'rxjs/internal/operators';
+import {map, take, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers/index';
 import * as fromAuth from '@feature/auth/reducers';
@@ -56,6 +56,7 @@ export class TypeComponent implements OnInit, OnDestroy {
               private fb: UntypedFormBuilder) {
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   ngOnInit(): any {
     this.store.pipe(
       select(fromApplication.getCurrentApplication),
@@ -97,7 +98,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     }, {emitEvent: false});
   }
 
-  kindSelection(kinds: string | Array<string>) {
+  kindSelection(kinds: string | Array<string>) {
     const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
     const remaining = this.getRemainingKindsWithSpecifiers();
     const selected = this.createSelection(selectedKinds, remaining);
@@ -124,7 +125,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     const selectedSpecifiers = fromKindsWithSpecifiers(app.kindsWithSpecifiers);
 
     const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
-    this.typeCtrl = this.fb.control({ value: app.type, disabled: this.typeChangeDisabled });
+    this.typeCtrl = this.fb.control({ value: app.type, disabled: this.typeChangeDisabled });
     this.kindsCtrl = this.fb.control(kinds, Validators.required);
     this.specifiersCtrl = this.fb.control(selectedSpecifiers);
     this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);

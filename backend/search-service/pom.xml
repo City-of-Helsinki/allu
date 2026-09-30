@@ -11,8 +11,8 @@
 
     <artifactId>search-service</artifactId>
     <properties>
-        <elasticsearch.version>6.8.0</elasticsearch.version>
-        <test.container.version>1.17.3</test.container.version>
+        <elasticsearch.version>6.8.23</elasticsearch.version>
+        <test.container.version>1.19.3</test.container.version>
         <log4j.version>2.17.1</log4j.version>
     </properties>
 
@@ -87,7 +87,7 @@
               <artifactId>xercesImpl</artifactId>
             </exclusion>
           </exclusions>
-      </dependency>
+        </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>

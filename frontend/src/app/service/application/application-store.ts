@@ -14,8 +14,8 @@ import {ApplicationService} from './application.service';
 import {isCommon} from '@model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
-import {catchError, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
-import {Action, select, Store} from '@ngrx/store';
+import {catchError, distinctUntilChanged, filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {Action, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as TagAction from '@feature/application/actions/application-tag-actions';
@@ -164,10 +164,10 @@ export class ApplicationStore {
     }
   }
 
-  removeAttachment(attachmentId: number): Observable<{}> {
+  removeAttachment(attachmentId: number): Observable<unknown> {
     const appId = this.snapshot.application.id;
     return this.attachmentHub.remove(appId, attachmentId).pipe(
-      tap(response => this.loadAttachments(appId).subscribe())
+      tap(() => this.loadAttachments(appId).subscribe())
     );
   }
 
@@ -214,7 +214,7 @@ export class ApplicationStore {
     );
   }
 
-  delete(id: number): Observable<{}> {
+  delete(id: number): Observable<unknown> {
     const response = this.snapshot.draft
       ? this.applicationDraftService.remove(id)
       : this.applicationService.remove(id);
@@ -257,7 +257,7 @@ export class ApplicationStore {
     );
   }
 
-  saveDeposit(deposit: Deposit): Observable<Deposit> {
+  saveDeposit(deposit: Deposit): Observable<Deposit> {
     return this.depositService.save(deposit).pipe(
       tap(saved => {
         this.store.dispatch(new TagAction.Load());
@@ -304,13 +304,13 @@ export class ApplicationStore {
           error => result.error(error),
           () => result.complete());
 
-      return result.pipe(tap(a => this.loadAttachments(applicationId).subscribe()));
+      return result.pipe(tap(() => this.loadAttachments(applicationId).subscribe()));
     }
   }
 
   private updateAttachment(attachment: AttachmentInfo): Observable<AttachmentInfo> {
     return this.attachmentHub.update(attachment).pipe(
-      tap(a => this.loadAttachments(this.snapshot.application.id))
+      tap(() => this.loadAttachments(this.snapshot.application.id))
     );
   }
 
@@ -342,7 +342,7 @@ export class ApplicationStore {
     );
   }
 
-  private saveDraft(application: Application): Observable<Application> {
+  private saveDraft(application: Application): Observable<Application> {
     const newApplication = !NumberUtil.isExisting(application);
     if (newApplication) {
       return this.applicationDraftService.save(application).pipe(
@@ -398,7 +398,7 @@ export class ApplicationStore {
       switchMap(attachments => this.saveAttachments(application.id, attachments))
     ).subscribe(
       () => {},
-      err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+      _err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {

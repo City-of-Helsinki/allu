@@ -39,9 +39,15 @@ export class ExcavationAnnouncement extends ApplicationExtension
     public qualityAssuranceTest?: boolean,
     public cableReports: string[] = [],
     public placementContracts: string[] = [],
+    public noAreaUsageFee?: boolean,
+    public noAreaUsageFeeReason?: string,
   ) {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }
+}
+
+export function isExcavationAnnouncement(extension: ApplicationExtension): extension is ExcavationAnnouncement {
+  return ApplicationType.EXCAVATION_ANNOUNCEMENT === extension.applicationType;
 }

@@ -1,46 +1,48 @@
 <div class="main-content">
   <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
-    <div class="row" formGroupName="customer">
+    <div class="row equal-height-row" formGroupName="customer">
       <div class="col m6">
         <allu-card>
-          <mat-card-title>
-            <div fxLayout="row" fxFlexAlign="space-between">
-              <div fxFlex>
-                {{'customer.registryTitle' | translation}}
+          <mat-card-header>
+            <mat-card-title>
+              <div fxLayout="row" fxFlexAlign="space-between">
+                <div fxFlex>
+                  {{'customer.registryTitle' | translation}}
+                </div>
+                <div fxFlex *ngIf="customerForm.getRawValue().invoicingProhibited" class="align-right">
+                  <mat-icon color="accent" class="align-with-text">
+                    report_problem
+                  </mat-icon>
+                  <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
+                </div>
               </div>
-              <div fxFlex *ngIf="customerForm.getRawValue().invoicingProhibited" class="align-right">
-                <mat-icon color="accent" class="align-with-text">
-                  report_problem
-                </mat-icon>
-                <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
-              </div>
-            </div>
-          </mat-card-title>
+            </mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <customer-info [form]="customerForm" [showInvoicingOnly]="true" [showInvoicingInfo]="true"
               [showInvoicingProhibited]="true"></customer-info>
           </mat-card-content>
         </allu-card>
       </div>
+      <div class="col m6">
+        <history *ngIf="hasCustomerId" [targetType]="customerTargetType"></history>
+      </div>
     </div>
     <div class="row">
-      <customer-contacts [parentForm]="form" [onAddContact]="contactSubject.asObservable()"></customer-contacts>
+      <customer-contacts [parentForm]="form" [addContact$]="contactSubject.asObservable()"></customer-contacts>
     </div>
     <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <div class="col m12">
         <allu-card>
-          <div class="row">
-            <div class="col m4">
-              <button type="submit" mat-raised-button color="primary">{{'common.button.save' | translation}}</button>
-              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation}}</button>
-            </div>
-            <div class="col m8">
-              <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation}}</button>
-              <button type="button" mat-raised-button color="primary"
-                      *ngIf="isRemoveVisible"
-                      (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation}}
-              </button>
-            </div>
+          <div fxLayout="row wrap" fxLayoutGap="8px" fxLayoutAlign="start center" class="customer-actions-row">
+            <button type="submit" mat-raised-button color="primary">{{'common.button.save' | translation | uppercase}}</button>
+            <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation | uppercase}}</button>
+            <span fxFlex></span>
+            <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation | uppercase}}</button>
+            <button type="button" mat-raised-button color="primary"
+                    *ngIf="isRemoveVisible"
+                    (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation | uppercase}}
+            </button>
           </div>
         </allu-card>
       </div>

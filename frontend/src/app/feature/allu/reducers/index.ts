@@ -92,7 +92,7 @@ export const getFixedLocationById = (id: number) => createSelector(
 
 export const getFixedLocationsByIds = (ids: number[] = []) => createSelector(
   getFixedLocationEntities,
-  (fixedLocations) => !!ids ? ids.map(id => fixedLocations[id]).filter(fl => !!fl) : []
+  (fixedLocations) => ids ? ids.map(id => fixedLocations[id]).filter(fl => !!fl) : []
 );
 
 export const getFixedLocationsByKind = (kind: ApplicationKind) => createSelector(

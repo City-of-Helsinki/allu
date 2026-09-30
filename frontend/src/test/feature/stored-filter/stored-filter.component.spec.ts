@@ -10,7 +10,7 @@ import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
 import {StoredFilterStore} from '../../../app/service/stored-filter/stored-filter-store';
 import {NotificationService} from '../../../app/feature/notification/notification.service';
-import {Observable, of, Subject} from 'rxjs/index';
+import {Observable, of, Subject} from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const filters = [
@@ -30,6 +30,7 @@ const filters = [
 })
 class ParentComponent {
   type = StoredFilterType.MAP;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   filter = new Subject<any>();
   selectedFilter: StoredFilter;
   availableFilters = filters;
@@ -47,23 +48,21 @@ class StoredFilterStoreMock {
     return of(filter);
   }
 
-  remove(id: number): Observable<{}> {
+  remove(_id: number): Observable<unknown> {
     return of({});
   }
 
-  currentChange(filter: StoredFilter): void {
+  currentChange(_filter: StoredFilter): void {
   }
 
-  currentMapFilterChange(storedFilter: StoredFilter): void {}
+  currentMapFilterChange(_storedFilter: StoredFilter): void {}
 }
 
 describe('StoredFilterComponent', () => {
   let parentComp: ParentComponent;
   let parentFixture: ComponentFixture<ParentComponent>;
-  let filterComp: StoredFilterComponent;
   let filterStore: StoredFilterStoreMock;
   let de: DebugElement;
-  let userService: UserServiceMock;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -84,12 +83,10 @@ describe('StoredFilterComponent', () => {
 
   beforeEach(() => {
     filterStore = TestBed.inject(StoredFilterStore) as StoredFilterStoreMock;
-    userService = TestBed.inject(UserService) as UserServiceMock;
     parentFixture = TestBed.createComponent(ParentComponent);
     parentComp = parentFixture.componentInstance;
     de = parentFixture.debugElement;
     parentFixture.detectChanges();
-    filterComp = parentComp.storedFilterComponent;
   });
 
   it('throws when init without type', fakeAsync(() => {
@@ -97,7 +94,6 @@ describe('StoredFilterComponent', () => {
       parentFixture = TestBed.createComponent(ParentComponent);
       parentComp = parentFixture.componentInstance;
       parentComp.type = undefined;
-      filterComp = parentComp.storedFilterComponent;
       parentFixture.detectChanges();
       tick();
     };
@@ -115,7 +111,7 @@ describe('StoredFilterComponent', () => {
   it('selects clicked filter and sets selected filter', fakeAsync(() => {
     spyOn(filterStore, 'currentMapFilterChange');
     openFilterMenu();
-    const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
+    const options = de.queryAll(By.css('.allu-menu-item button.mat-mdc-menu-item'));
 
     options[0].nativeElement.click();
     parentFixture.detectChanges();
@@ -130,7 +126,7 @@ describe('StoredFilterComponent', () => {
 
     spyOn(filterStore, 'currentChange');
     openFilterMenu();
-    const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
+    const options = de.queryAll(By.css('.allu-menu-item button.mat-mdc-menu-item'));
 
     options[3].nativeElement.click();
     parentFixture.detectChanges();

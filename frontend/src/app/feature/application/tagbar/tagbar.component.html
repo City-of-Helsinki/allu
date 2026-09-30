@@ -5,25 +5,25 @@
           {{'application.tags' | translation}}:
       </div>
       <div fxFlex="initial">
-        <mat-chip-list>
-          <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of tags | async; let i = index;">
+        <mat-chip-set>
+          <mat-chip
+            highlighted
+            (removed)="remove(tag)"
+            *ngFor="let tag of tags | async; let i = index;">
             {{['application.tag.type', tag.type] | translation}}
-            <button *ngIf="canBeRemoved(tag.type) | async"
-                    type="button"
-                    mat-icon-button
-                    (click)="remove(tag)">
-              <mat-icon>remove_circle_outline</mat-icon>
+            <button matChipRemove type="button" *ngIf="canBeRemoved(tag.type) | async">
+              <mat-icon>cancel</mat-icon>
             </button>
           </mat-chip>
-        </mat-chip-list>
-      </div>
-      <div *availableTo="MODIFY_ROLES" fxFlex="initial">
-        <mat-chip *ngIf="(availableTagCount | async)" class="slim-chip chip-outline" color="primary" selected="true">
-          {{'application.tag.add' | translation}}
-          <button type="button"
-            mat-icon-button
-            [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
-        </mat-chip>
+          <div *availableTo="MODIFY_ROLES" fxFlex="initial">
+            <mat-chip *ngIf="(availableTagCount | async)" [matMenuTriggerFor]="menu">
+              {{'application.tag.add' | translation}}
+              <button matChipRemove type="button" [matMenuTriggerFor]="menu">
+                  <mat-icon>add_circle_outline</mat-icon>
+              </button>
+            </mat-chip>
+          </div>
+        </mat-chip-set>
       </div>
     </div>
   </div>

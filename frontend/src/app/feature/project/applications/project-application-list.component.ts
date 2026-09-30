@@ -1,16 +1,16 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
+import {MatTableDataSource} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {Option, Some} from '../../../util/option';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {Dictionary} from '@ngrx/entity/src/models';
 import {CityDistrict} from '../../../model/common/city-district';
-import {take} from 'rxjs/internal/operators';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'project-application-list',

@@ -27,3 +27,4 @@
     force_tag: true  # As branch may already be present, we need to enable overwriting of existing tags
     name: "allu_external_service:{{ branch }}"
     repository: "{{ github_registry_url }}/city-of-helsinki/allu/allu_external_service:{{ branch }}"
+    timeout: 120

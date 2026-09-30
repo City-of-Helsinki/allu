@@ -23,8 +23,9 @@
       </div>
       <div class="department">
         <p>Kaupunkiympäristö</p>
-        <p>Alueiden käyttö ja -valvontayksikön katutyö- ja </p>
-        <p>sijaintipalveluiden tiimipäällikkö</p>
+        <p>Yleisten alueiden valvonta <br/>
+          ja infraluvat -yksikön yleisten<br/>
+          alueiden rakenteet -tiimin päällikkö</p>
       </div>
       <div class="half-right">
         <h1>Pöytäkirja</h1>
@@ -60,7 +61,7 @@
         <section>
           <h2>Päätös</h2>
           <p class="indented space-above">
-            Alueiden käyttö ja -valvontayksikön katutyö- ja sijaintipalveluiden tiimipäällikkö päätti hyväksyä
+            Yleisten alueiden valvonta ja infraluvat -yksikön yleisten alueiden rakenteet -tiimin päällikkö päätti hyväksyä
             ja allekirjoittaa sopimuksen <xsl:value-of select="data/decisionId"/> koskien
             rakenteiden sijoittamista kaupungin yleiselle alueelle.</p>
           <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
@@ -112,7 +113,7 @@
         <section>
           <h2>Lisätiedot</h2>
           <p class="indented space-above">
-            Katutyö- ja sijaintipalvelut -tiimi<br/>
+            Yleisten alueiden rakenteet -tiimi<br/>
             Työpajankatu 8<br/>
             PL 58231, 00099 Helsingin kaupunki<br/>
             asiakaspalvelu puh. (09) 310 22111<br/>
@@ -121,93 +122,99 @@
         </section>
       </div>
 
-      <h2 class="new-page">MUUTOKSENHAKUOHJEET</h2>
-      <h2>OHJEET OIKAISUVAATIMUKSEN TEKEMISEKSI</h2>
-      <div class="indented">
-        <p class="space-above">Tähän päätökseen tyytymätön voi tehdä kirjallisen oikaisuvaatimuksen.
-        Päätökseen ei saa hakea muutosta valittamalla tuomioistuimeen.</p>
-      </div>
-      <h3>Oikaisuvaatimusoikeus</h3>
-      <div class="indented">
-        <p>Oikaisuvaatimuksen saa tehdä</p>
-        <ul>
-          <li>se, johon päätös on kohdistettu tai jonka oikeuteen, velvollisuuteen tai
+      <section class="new-page justify">
+        <h1>MUUTOKSENHAKUOHJEET</h1>
+        <h2>OHJEET OIKAISUVAATIMUKSEN TEKEMISEKSI</h2>
+        <div class="indented">
+          <p class="space-above">Tähän päätökseen tyytymätön voi tehdä kirjallisen oikaisuvaatimuksen.
+            Päätökseen ei saa hakea muutosta valittamalla tuomioistuimeen.</p>
+        </div>
+        <h3>Oikaisuvaatimusoikeus</h3>
+        <div class="indented">
+          <p>Oikaisuvaatimuksen saa tehdä</p>
+          <ul class="mb-0">
+            <li class="mt-0">se, johon päätös on kohdistettu tai jonka oikeuteen, velvollisuuteen tai
               etuun päätös välittömästi vaikuttaa (asianosainen)</li>
-          <li>kunnan jäsen</li>
-        </ul>
-      </div>
-      <h3>Oikaisuvaatimusaika</h3>
-      <div class="indented">
-        <p>Oikaisuvaatimus on tehtävä 14 päivän kuluessa päätöksen tiedoksisaannista.</p>
-        <p>Oikaisuvaatimuksen on saavuttava Helsingin kaupungin kirjaamoon
-        määräajan viimeisenä päivänä ennen kirjaamon aukioloajan päättymistä.</p>
-        <p>Mikäli päätös on annettu tiedoksi postitse, asianosaisen katsotaan saaneen
-        päätöksestä tiedon, jollei muuta näytetä, seitsemän päivän kuluttua kirjeen
-        lähettämisestä. Kunnan jäsenen katsotaan saaneen päätöksestä tiedon
-        seitsemän päivän kuluttua siitä, kun pöytäkirja on nähtävänä yleisessä
-        tietoverkossa.</p>
-        <p>Mikäli päätös on annettu tiedoksi sähköisenä viestinä, asianosaisen
-        katsotaan saaneen päätöksestä tiedon, jollei muuta näytetä, kolmen päivän
-        kuluttua viestin lähettämisestä.</p>
-        <p>Tiedoksisaantipäivää ei lueta oikaisuvaatimusaikaan. Jos
-        oikaisuvaatimusajan viimeinen päivä on pyhäpäivä, itsenäisyyspäivä,
-        vapunpäivä, joulu- tai juhannusaatto tai arkilauantai, saa
-        oikaisuvaatimuksen tehdä ensimmäisenä arkipäivänä sen jälkeen.</p>
-      </div>
-      <h3>Oikaisuvaatimusviranomainen</h3>
-      <div class="indented">
-        <section>
-          <p>Viranomainen, jolle oikaisuvaatimus tehdään, on Helsingin kaupungin
-          kaupunkiympäristölautakunta.</p>
-          <p>Oikaisuvaatimusviranomaisen asiointiosoite on seuraava:</p>
-          <table style="font-size: 10pt;">
-            <tr>
-              <td>Sähköpostiosoite:</td>
-              <td>helsinki.kirjaamo@hel.fi</td>
-            </tr>
-            <tr>
-              <td>Postiosoite:</td>
-              <td>PL 10</td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>00099 HELSINGIN KAUPUNKI</td>
-            </tr>
-            <tr>
-              <td>Faksinumero:</td>
-              <td>(09) 655 783</td>
-            </tr>
-            <tr>
-              <td>Käyntiosoite:</td>
-              <td>Pohjoisesplanadi 11-13</td>
-            </tr>
-            <tr>
-              <td>Puhelinnumero:</td>
-              <td>(09) 310 13700 (Yleishallinto)</td>
-            </tr>
-          </table>
-          <p>Kirjaamon aukioloaika on maanantaista perjantaihin klo 08.15-16.00.</p>
-        </section>
-      </div>
-      <h3>Oikaisuvaatimuksen muoto ja sisältö</h3>
-      <div class="indented">
-        <p>Oikaisuvaatimus on tehtävä kirjallisena. Myös sähköinen asiakirja täyttää
-        vaatimuksen kirjallisesta muodosta.</p>
-        <p>Oikaisuvaatimuksessa on ilmoitettava</p>
-        <ul>
-          <li>päätös, johon oikaisuvaatimus kohdistuu</li>
-          <li>miten päätöstä halutaan oikaistavaksi</li>
-          <li>millä perusteella päätöstä halutaan oikaistavaksi</li>
-          <li>oikaisuvaatimuksen tekijä</li>
-          <li>millä perusteella oikaisuvaatimuksen tekijä on oikeutettu tekemään vaatimuksen</li>
-          <li>oikaisuvaatimuksen tekijän yhteystiedot</li>
-        </ul>
-      </div>
-      <h3>Pöytäkirja</h3>
-      <div class="indented">
-        <p>Päätöstä koskevia pöytäkirjan otteita ja liitteitä lähetetään pyynnöstä.
-        Asiakirjoja voi tilata Helsingin kaupungin kirjaamosta.</p>
-      </div>
+            <li class="mt-0 mb-0">kunnan jäsen</li>
+          </ul>
+        </div>
+        <h3>Oikaisuvaatimusaika</h3>
+        <div class="indented">
+          <p>Oikaisuvaatimus on tehtävä 14 päivän kuluessa päätöksen tiedoksisaannista.</p>
+          <p>Oikaisuvaatimuksen on saavuttava Helsingin kaupungin kirjaamoon
+            määräajan viimeisenä päivänä ennen kirjaamon aukioloajan päättymistä.</p>
+          <p>Mikäli päätös on annettu tiedoksi postitse, asianosaisen katsotaan saaneen
+            päätöksestä tiedon, jollei muuta näytetä, seitsemän päivän kuluttua kirjeen
+            lähettämisestä. Kunnan jäsenen katsotaan saaneen päätöksestä tiedon
+            seitsemän päivän kuluttua siitä, kun pöytäkirja on nähtävänä yleisessä
+            tietoverkossa.</p>
+          <p>Mikäli päätös on annettu tiedoksi sähköisenä viestinä, asianosaisen
+            katsotaan saaneen päätöksestä tiedon, jollei muuta näytetä, kolmen päivän
+            kuluttua viestin lähettämisestä.</p>
+          <p>Tiedoksisaantipäivää ei lueta oikaisuvaatimusaikaan. Jos
+            oikaisuvaatimusajan viimeinen päivä on pyhäpäivä, itsenäisyyspäivä,
+            vapunpäivä, joulu- tai juhannusaatto tai arkilauantai, saa
+            oikaisuvaatimuksen tehdä ensimmäisenä arkipäivänä sen jälkeen.</p>
+        </div>
+        <h3>Oikaisuvaatimusviranomainen</h3>
+        <div class="indented">
+          <section>
+            <p>Viranomainen, jolle oikaisuvaatimus tehdään, on Helsingin kaupungin
+              kaupunkiympäristölautakunta.</p>
+            <p>Oikaisuvaatimusviranomaisen asiointiosoite on seuraava:</p>
+            <table style="font-size: 10pt;">
+              <tr>
+                <td>Sähköpostiosoite:</td>
+                <td>helsinki.kirjaamo@hel.fi</td>
+              </tr>
+              <tr>
+                <td>Postiosoite:</td>
+                <td>PL 10</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>00099 HELSINGIN KAUPUNKI</td>
+              </tr>
+              <tr>
+                <td>Faksinumero:</td>
+                <td>(09) 655 783</td>
+              </tr>
+              <tr>
+                <td>Käyntiosoite:</td>
+                <td>Pohjoisesplanadi 11-13</td>
+              </tr>
+              <tr>
+                <td>Puhelinnumero:</td>
+                <td>(09) 310 13700 (Yleishallinto)</td>
+              </tr>
+            </table>
+            <p>Kirjaamon aukioloaika on maanantaista perjantaihin klo 08.15-16.00.</p>
+          </section>
+        </div>
+        <div class="avoid-pb">
+          <h3>Oikaisuvaatimuksen muoto ja sisältö</h3>
+          <div class="indented">
+            <p>Oikaisuvaatimus on tehtävä kirjallisena. Myös sähköinen asiakirja täyttää
+              vaatimuksen kirjallisesta muodosta.</p>
+          </div>
+          <div class="indented">
+            <p>Oikaisuvaatimuksessa on ilmoitettava</p>
+            <ul class="mb-0">
+              <li class="mt-0">päätös, johon oikaisuvaatimus kohdistuu</li>
+              <li class="mt-0">miten päätöstä halutaan oikaistavaksi</li>
+              <li class="mt-0">millä perusteella päätöstä halutaan oikaistavaksi</li>
+              <li class="mt-0">oikaisuvaatimuksen tekijä</li>
+              <li class="mt-0">millä perusteella oikaisuvaatimuksen tekijä on oikeutettu tekemään vaatimuksen</li>
+              <li class="mt-0">oikaisuvaatimuksen tekijän yhteystiedot</li>
+            </ul>
+          </div>
+        </div>
+        <h3>Pöytäkirja</h3>
+        <div class="indented">
+          <p>Päätöstä koskevia pöytäkirjan otteita ja liitteitä lähetetään pyynnöstä.
+            Asiakirjoja voi tilata Helsingin kaupungin kirjaamosta.</p>
+        </div>
+      </section>
     </div>
   </body>
   </html>

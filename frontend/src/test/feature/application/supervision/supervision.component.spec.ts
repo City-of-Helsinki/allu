@@ -29,7 +29,7 @@ class MockSupervisionTaskComponent {
   @Input() supervisors: Array<User> = [];
   @Input() application: Application;
   @Input() hasDisablingTags: boolean;
-  @Output() onRemove = new EventEmitter<void>();
+  @Output() removeTask = new EventEmitter<void>();
 }
 
 describe('SupervisionComponent', () => {
@@ -99,7 +99,7 @@ describe('SupervisionComponent', () => {
 
   it('should remove item when onRemove is emitted', fakeAsync(() => {
     const firstTaskElem = <HTMLElement>de.query(By.css('supervision-task')).nativeElement;
-    firstTaskElem.dispatchEvent(new Event('onRemove'));
+    firstTaskElem.dispatchEvent(new Event('removeTask'));
     fixture.detectChanges();
     tick();
     const tasks = de.queryAll(By.css('li'));

@@ -3,7 +3,8 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-table #table [dataSource]="dataSource" matSort>
+  <div class="table-scroll-container">
+    <mat-table #table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="controls">
       <mat-header-cell *matHeaderCellDef>{{'project.applications.removeFromProject' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
@@ -59,11 +60,11 @@
 
     <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
-  </mat-table>
+    </mat-table>
+  </div>
 
   <mat-paginator #paginator
                  [pageSize]="25"
                  [pageSizeOptions]="[5, 10, 25, 100]">
   </mat-paginator>
 </div>
-

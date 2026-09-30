@@ -18,7 +18,7 @@ import {RoleType} from '@model/user/role-type';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromSupervisionWorkQueue from '@feature/supervision-workqueue/reducers';
 import {select, Store} from '@ngrx/store';
-import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/operators';
 import {SetSearchQuery} from '@feature/application/supervision/actions/supervision-task-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
@@ -55,7 +55,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     private fb: UntypedFormBuilder,
     private store: Store<fromRoot.State>,
     private storedFilterStore: StoredFilterStore,
-    private userService: UserService) {
+    private userService: UserService) {
     this.queryForm = this.fb.group({
       taskTypes: [[]],
       applicationId: [undefined],

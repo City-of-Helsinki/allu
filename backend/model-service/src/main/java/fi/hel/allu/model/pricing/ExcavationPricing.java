@@ -2,6 +2,7 @@ package fi.hel.allu.model.pricing;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -14,7 +15,6 @@ import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.PriceUtil;
-import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
 
 public class ExcavationPricing extends Pricing {
@@ -27,17 +27,28 @@ public class ExcavationPricing extends Pricing {
   private final PricingDao pricingDao;
 
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
-  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
+  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu (%s-%s)";
+  private static final String AREA_FEE_EXPLANATION = "Maksuluokka %s, %sm2";
   private static final String SELF_SUPERVISION_TEXT = "Omavalvonta";
+  private static final String HANDLING_FEE_LT_6_MONTHS_TEXT = "Alle kuusi (6) kuukautta kestävä työ";
+  private static final String HANDLING_FEE_GE_6_MONTHS_TEXT = "Vähintään kuusi (6) kuukautta kestävä työ";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
 
   private static final LocalDateTime POST_2025_PAYMENT_DATE = LocalDateTime.of(2025, 3, 1, 0, 0, 0, 0);
+  private static final LocalDateTime POST_2026_PAYMENT_DATE = LocalDateTime.of(2026, 3, 1, 0, 0, 0, 0);
 
-  public ExcavationPricing(Application application,
-      WinterTimeService winterTimeService, PricingExplanator pricingExplanator, PricingDao pricingDao,
-      List<InvoicingPeriod> invoicingPeriods) {
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.uuuu");
+
+
+  public ExcavationPricing(
+    Application application,
+    WinterTimeService winterTimeService,
+    PricingExplanator pricingExplanator,
+    PricingDao pricingDao,
+    List<InvoicingPeriod> invoicingPeriods
+  ) {
     this.application = application;
     this.winterTime = winterTimeService.getWinterTime();
     this.extension = (ExcavationAnnouncement)application.getExtension();
@@ -46,8 +57,16 @@ public class ExcavationPricing extends Pricing {
     this.invoicingPeriods = invoicingPeriods;
     final int handlingFee = getHandlingFee(extension, application.getStartTime());
     setPriceInCents(handlingFee);
-    addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, handlingFee,
-        HANDLING_FEE_TEXT, handlingFee, getHandlingFeeExplanation(extension), getFirstOpenPeriodId());
+    addChargeBasisEntry(
+      ChargeBasisTag.ExcavationAnnonuncementHandlingFee(),
+      ChargeBasisUnit.PIECE,
+      1,
+      handlingFee,
+      HANDLING_FEE_TEXT,
+      handlingFee,
+      getHandlingFeeExplanation(extension),
+      getFirstOpenPeriodId()
+    );
   }
 
   private Integer getFirstOpenPeriodId() {
@@ -74,17 +93,31 @@ public class ExcavationPricing extends Pricing {
 
     final List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
-      addChargeBasisEntryForPeriod(paymentClass, dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
+      addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
     }
     if (pricedPeriods.size() > 1) {
-      addChargeBasisEntryForPeriod(paymentClass, dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
+      addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
     }
   }
 
   protected boolean isPost2025ExcavationPayment(ZonedDateTime startTime) {
-    return startTime == null ?
-      false :
-      !startTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId).isBefore(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+    return startTime != null && !startTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId).isBefore(ZonedDateTime.of(POST_2025_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
+  }
+
+  /**
+   * Determines whether a given excavation payment corresponds to a post-2026 timeline.
+   * This is evaluated based on the start time of the excavation work in the
+   * Helsinki time zone and compared against a predefined post-2026 payment date.
+   *
+   * Currently used only for processing handling fee data inference
+   *
+   * @param startTime The start date and time of the excavation work. Can be null.
+   *                  If null, the method will return false.
+   * @return true if the excavation work starts on or after the predefined post-2026
+   *         payment date, false otherwise, or if the start time is null.
+   */
+  protected boolean isPost2026ExcavationPayment(ZonedDateTime startTime) {
+    return startTime != null && !startTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId).isBefore(ZonedDateTime.of(POST_2026_PAYMENT_DATE, TimeUtil.HelsinkiZoneId));
   }
 
   private int getDailyFee(double LocationArea, String paymentClass, ZonedDateTime startTime) {
@@ -119,15 +152,19 @@ public class ExcavationPricing extends Pricing {
     }
   }
 
-  private void addChargeBasisEntryForPeriod(String paymentClass, int dailyFee,
+  private void addChargeBasisEntryForPeriod(String paymentClass, double area, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
-    String rowText = String.format(AREA_FEE_TEXT, PriceUtil.getPaymentClassText(paymentClass));
+    String rowText = String.format(AREA_FEE_TEXT, formatDate(invoicedPeriod.start), formatDate(invoicedPeriod.end));
+    List<String> explanation = List.of(String.format(AREA_FEE_EXPLANATION,
+        PriceUtil.getPaymentClassText(paymentClass), (int) Math.ceil(area)));
     int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;
     addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
-        dailyFee, rowText, totalPrice,
-        pricingExplanator.getExplanationWithCustomPeriod(
-          application, Printable.forDayPeriod(invoicedPeriod.start, invoicedPeriod.end)), invoicedPeriod.invoicingPeriodId);
+        dailyFee, rowText, totalPrice, explanation, invoicedPeriod.invoicingPeriodId);
     setPriceInCents(totalPrice + getPriceInCents());
+  }
+
+  private String formatDate(ZonedDateTime date) {
+    return date.withZoneSameInstant(TimeUtil.HelsinkiZoneId).format(DATE_FORMATTER);
   }
 
   private List<PricedPeriod> getPricedPeriods() {
@@ -201,19 +238,104 @@ public class ExcavationPricing extends Pricing {
     return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, key, paymentClass, startTime);
   }
 
+  /**
+   * Calculates the handling fee for an excavation announcement based on a supervision type
+   * and the duration of the work.
+   *
+   * @param excavationAnnouncement The excavation announcement object containing details
+   *                               of the excavation, including whether self-supervision
+   *                               is applied.
+   * @param startTime              The start date and time of the excavation work, used for
+   *                               pricing and duration determination.
+   * @return The handling fee as an integer, based on the supervision type and the work
+   *         duration thresholds (e.g., less than 6 months or at least 6 months).
+   */
   private int getHandlingFee(ExcavationAnnouncement excavationAnnouncement, ZonedDateTime startTime) {
     if (Boolean.TRUE.equals(excavationAnnouncement.getSelfSupervision())) {
-      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE_SELF_SUPERVISION, startTime);
-    } else {
-      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE, startTime);
+      return pricingDao.findValue(
+        ApplicationType.EXCAVATION_ANNOUNCEMENT,
+        PricingKey.HANDLING_FEE_SELF_SUPERVISION,
+        startTime);
     }
+
+    PricingKey key = resolveHandlingFeeKey(startTime);
+
+    return pricingDao.findValue(
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      key,
+      startTime);
   }
 
-  private List<String> getHandlingFeeExplanation(ExcavationAnnouncement excavationAnnouncement) {
+  /**
+   * Provides a list of textual explanations for the handling fee of an excavation announcement.
+   * The explanation is derived based on whether self-supervision is applied or the duration
+   * of the excavation work.
+   *
+   * @param excavationAnnouncement The excavation announcement object containing details
+   *                               such as the supervision type and other relevant information
+   *                               for determining the handling fee.
+   * @return A list of strings containing the handling fee explanation. If self-supervision
+   *         is applied, a specific explanation is returned. Otherwise, the explanation is based
+   *         on whether the work duration is less than 6 months, at least 6 months, or before 1.3.2026.
+   */
+  public List<String> getHandlingFeeExplanation(ExcavationAnnouncement excavationAnnouncement) {
     if (Boolean.TRUE.equals(excavationAnnouncement.getSelfSupervision())) {
-      return Arrays.asList(SELF_SUPERVISION_TEXT);
-    } else {
-      return Collections.emptyList();
+      return List.of(SELF_SUPERVISION_TEXT);
     }
+
+    PricingKey key = resolveHandlingFeeKey(application.getStartTime());
+
+    if (key == PricingKey.HANDLING_FEE_GE_6_MONTHS) {
+      return List.of(HANDLING_FEE_GE_6_MONTHS_TEXT);
+    }
+    if (key == PricingKey.HANDLING_FEE_LT_6_MONTHS) {
+      return List.of(HANDLING_FEE_LT_6_MONTHS_TEXT);
+    }
+
+    // Vanha HANDLING_FEE (ennen 1.3.2026)
+    return Collections.emptyList();
+  }
+
+  /**
+   * Resolves the appropriate handling fee pricing key based on the duration of the application.
+   * Determines if the application duration is at least six months or less and returns
+   * the corresponding pricing key.
+   *
+   * @return The pricing key representing the handling fee:
+   *         PricingKey.HANDLING_FEE_GE_6_MONTHS if the duration is six months or more,
+   *         or PricingKey.HANDLING_FEE_LT_6_MONTHS if the duration is less than six months,
+   *         or PricingKey.HANDLING_FEE if the duration is before 1.3.2026.
+   */
+  private PricingKey resolveHandlingFeeKey(ZonedDateTime startTime) {
+    // Vanha hinnasto ennen 1.3.2026
+    if (!isPost2026ExcavationPayment(startTime)) {
+      return PricingKey.HANDLING_FEE;
+    }
+
+    // Uusi hinnasto 1.3.2026 alkaen
+    ZonedDateTime start = application.getStartTime();
+    ZonedDateTime end = getEndTimeForApplication();
+
+    boolean isSixMonthsOrMore = isAtLeastSixMonths(start, end);
+
+    return isSixMonthsOrMore
+      ? PricingKey.HANDLING_FEE_GE_6_MONTHS
+      : PricingKey.HANDLING_FEE_LT_6_MONTHS;
+  }
+
+  /**
+   * Determines if the difference between the given start and end times is at least six months.
+   *
+   * @param start the starting date and time; must not be null.
+   * @param end the ending date and time; must not be null.
+   * @return true if the duration from the start time to the end time is six months or more,
+   *         false if it is less than six months or if either parameter is null.
+   */
+  private boolean isAtLeastSixMonths(ZonedDateTime start, ZonedDateTime end) {
+    if (start == null || end == null) {
+      return false;
+    }
+    ZonedDateTime sixMonthsLater = start.plusMonths(6);
+    return !end.isBefore(sixMonthsLater);
   }
 }

@@ -16,6 +16,7 @@ import {CustomerWithContacts} from '../../model/customer/customer-with-contacts'
 import {ArrayUtil} from '../../util/array-util';
 
 export class ApplicationExtensionMapper {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   public static mapBackend(backendExtension: any): ApplicationExtension {
     const applicationType: string = backendExtension.applicationType;
     switch (ApplicationType[applicationType]) {
@@ -43,7 +44,8 @@ export class ApplicationExtensionMapper {
           backendExtension.description,
           backendExtension.commercial,
           backendExtension.billableSalesArea,
-          backendExtension.terms);
+          backendExtension.terms,
+          backendExtension.registrationNumbers);
       case ApplicationType.CABLE_REPORT:
         return new CableReport(
           TimeUtil.dateFromBackend(backendExtension.validityTime),
@@ -86,7 +88,9 @@ export class ApplicationExtensionMapper {
           backendExtension.compactionAndBearingCapacityMeasurement,
           backendExtension.qualityAssuranceTest,
           backendExtension.cableReports,
-          backendExtension.placementContracts
+          backendExtension.placementContracts,
+          backendExtension.noAreaUsageFee,
+          backendExtension.noAreaUsageFeeReason
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.description);
@@ -123,6 +127,7 @@ export class ApplicationExtensionMapper {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   public static mapFrontend(application: Application): any {
       const applicationType: string = application.type;
       switch (ApplicationType[applicationType]) {
@@ -147,6 +152,7 @@ export class ApplicationExtensionMapper {
       }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendEvent(event: Event): any {
     return {
         applicationType: event.applicationType,
@@ -169,16 +175,19 @@ export class ApplicationExtensionMapper {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendShortTermRental(rental: ShortTermRental): any {
     return {
       applicationType: rental.applicationType,
       description: rental.description,
       commercial: rental.commercial,
       billableSalesArea: rental.billableSalesArea,
-      terms: rental.terms
+      terms: rental.terms,
+      registrationNumbers: rental.registrationNumbers
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendCableReport(application: Application): any {
     const cableReport = <CableReport> application.extension;
     const ordererId = Some(cableReport.ordererId)
@@ -206,6 +215,7 @@ export class ApplicationExtensionMapper {
       .orElse(undefined);
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendExcavationAnnouncement(excavation: ExcavationAnnouncement): any {
     return {
       applicationType: excavation.applicationType,
@@ -235,10 +245,13 @@ export class ApplicationExtensionMapper {
       compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
       qualityAssuranceTest: excavation.qualityAssuranceTest,
       cableReports: excavation.cableReports,
-      placementContracts: excavation.placementContracts
+      placementContracts: excavation.placementContracts,
+      noAreaUsageFee: excavation.noAreaUsageFee,
+      noAreaUsageFeeReason: excavation.noAreaUsageFeeReason
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendNote(note: Note): any {
     return {
       applicationType: note.applicationType,
@@ -246,6 +259,7 @@ export class ApplicationExtensionMapper {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendTrafficArrangement(trafficArrangement: TrafficArrangement): any {
     return {
       applicationType: trafficArrangement.applicationType,
@@ -256,6 +270,7 @@ export class ApplicationExtensionMapper {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendPlacementContract(placementContract: PlacementContract): any {
     return {
       applicationType: placementContract.applicationType,
@@ -267,6 +282,7 @@ export class ApplicationExtensionMapper {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   private static mapFrontendAreaRental(areaRental: AreaRental): any {
     return {
       applicationType: areaRental.applicationType,

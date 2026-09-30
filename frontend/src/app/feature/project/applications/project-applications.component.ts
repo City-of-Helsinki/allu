@@ -8,7 +8,7 @@ import {Application} from '@model/application/application';
 import {Observable} from 'rxjs';
 import {SearchByNameOrId} from '@feature/application/actions/application-search-actions';
 import {Some} from '@util/option';
-import {map, take} from 'rxjs/internal/operators';
+import {map, take} from 'rxjs/operators';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({

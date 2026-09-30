@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.CustomerType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 /**
  * in Finnish: Asiakas (esimerkiksi Hakija, Rakennuttaja, Työn suorittaja ja Asiamies).
@@ -29,6 +30,7 @@ public class Customer implements PostalAddressItem, CustomerInterface {
   @NotNull
   private Integer countryId;
   private String projectIdentifierPrefix;
+  private ZonedDateTime notificationSentAt;
 
   public Integer getId() {
     return id;
@@ -204,6 +206,17 @@ public class Customer implements PostalAddressItem, CustomerInterface {
 
   public void setProjectIdentifierPrefix(String projectIdentifierPrefix) {
     this.projectIdentifierPrefix = projectIdentifierPrefix;
+  }
+
+  /**
+   * The date and time when the notification about the customer being removed from SAP was sent. This is used to avoid sending multiple notifications about the same customer.
+   */
+  public ZonedDateTime getNotificationSentAt() {
+    return notificationSentAt;
+  }
+
+  public void setNotificationSentAt(ZonedDateTime notificationSentAt) {
+    this.notificationSentAt = notificationSentAt;
   }
 
   @Override

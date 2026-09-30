@@ -231,6 +231,38 @@ public class ApplicationReplacementServiceTest {
   }
 
   @Test
+  public void shouldClearWorkFinishedForExcavationAnnouncement() {
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setWorkFinished(ZonedDateTime.now());
+    extension.setCustomerWorkFinished(ZonedDateTime.now());
+    extension.setWorkFinishedReported(ZonedDateTime.now());
+    Application excavation = insertApplication(ApplicationType.EXCAVATION_ANNOUNCEMENT, extension);
+    setToDecisionState(excavation.getId());
+    int replacementId = applicationReplacementService.replaceApplication(excavation.getId(), testUser.getId());
+    Application replacement = applicationService.findById(replacementId);
+    ExcavationAnnouncement replacementExtension = (ExcavationAnnouncement) replacement.getExtension();
+    assertNull(replacementExtension.getWorkFinished());
+    assertNotNull(replacementExtension.getCustomerWorkFinished());
+    assertNotNull(replacementExtension.getWorkFinishedReported());
+  }
+
+  @Test
+  public void shouldClearWorkFinishedForAreaRental() {
+    AreaRental extension = new AreaRental();
+    extension.setWorkFinished(ZonedDateTime.now());
+    extension.setCustomerWorkFinished(ZonedDateTime.now());
+    extension.setWorkFinishedReported(ZonedDateTime.now());
+    Application areaRental = insertApplication(ApplicationType.AREA_RENTAL, extension);
+    setToDecisionState(areaRental.getId());
+    int replacementId = applicationReplacementService.replaceApplication(areaRental.getId(), testUser.getId());
+    Application replacement = applicationService.findById(replacementId);
+    AreaRental replacementExtension = (AreaRental) replacement.getExtension();
+    assertNull(replacementExtension.getWorkFinished());
+    assertNotNull(replacementExtension.getCustomerWorkFinished());
+    assertNotNull(replacementExtension.getWorkFinishedReported());
+  }
+
+  @Test
   public void shouldCreateInvoicingPeriodsForRecurringTerraceShortTermRental() {
     Application shortTermRental = createApplication(ApplicationType.SHORT_TERM_RENTAL, new ShortTermRental());
     shortTermRental.setKind(ApplicationKind.SUMMER_TERRACE);

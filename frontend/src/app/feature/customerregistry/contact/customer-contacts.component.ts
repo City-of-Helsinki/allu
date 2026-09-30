@@ -8,7 +8,7 @@ import {NumberUtil} from '../../../util/number.util';
 import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'customer-contacts',
@@ -17,7 +17,7 @@ import {filter, map, switchMap} from 'rxjs/internal/operators';
 })
 export class CustomerContactsComponent implements OnInit, OnDestroy {
   @Input() parentForm: UntypedFormGroup;
-  @Input() onAddContact: Observable<Contact> = EMPTY;
+  @Input() addContact$: Observable<Contact> = EMPTY;
 
   contacts: UntypedFormArray;
 
@@ -31,7 +31,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.contacts = <UntypedFormArray>this.parentForm.get('contacts');
-    this.contactSubscription = this.onAddContact.subscribe(c => this.addContact(c));
+    this.contactSubscription = this.addContact$.subscribe(c => this.addContact(c));
     this.route.params.pipe(map(p => p['id'])).subscribe(p => this.customerId = p);
 
     this.route.params.pipe(
@@ -45,13 +45,14 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     this.contactSubscription.unsubscribe();
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   removeContact(index: number, contactValue: any): void {
     if (NumberUtil.isDefined(contactValue.id)) {
       this.contacts.at(index).patchValue({active: false});
       this.customerService.saveContactsForCustomer(this.customerId, this.contacts.value)
         .subscribe(
-          result => this.notification.translateSuccess('customers.notifications.contactRemoved'),
-          error => this.notification.translateErrorMessage('customers.notifications.contactRemoveFailed'));
+          () => this.notification.translateSuccess('customers.notifications.contactRemoved'),
+          _error => this.notification.translateErrorMessage('customers.notifications.contactRemoveFailed'));
     } else {
       this.contacts.removeAt(index);
     }

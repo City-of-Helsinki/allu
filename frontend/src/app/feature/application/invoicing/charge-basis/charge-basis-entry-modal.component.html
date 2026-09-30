@@ -4,7 +4,8 @@
     <div fxLayout="row wrap">
       <div fxFlex="50">
         <mat-form-field class="input-full-width">
-          <mat-select [placeholder]="'chargeBasis.type.title' | translation" class="input-full-width"
+          <mat-label>{{'chargeBasis.type.title' | translation}}</mat-label>
+          <mat-select class="input-full-width"
                       formControlName="type" required>
             <mat-option *ngFor="let type of chargeBasisTypes" [value]="type">
               {{['chargeBasis.type', type] | translation}}
@@ -22,10 +23,10 @@
   </div>
   <div mat-dialog-actions>
     <button type="submit" mat-raised-button color="primary" [disabled]="!chargeBasisEntryForm.valid">
-      {{'common.button.save' | translation}}
+      {{'common.button.save' | translation | uppercase}}
     </button>
     <button type="button" mat-raised-button color="primary" (click)="cancel()">
-      {{'common.button.cancel' | translation}}
+      {{'common.button.cancel' | translation | uppercase}}
     </button>
   </div>
 </form>

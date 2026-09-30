@@ -7,7 +7,7 @@ import {filter, map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Store} from '@ngrx/store';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {findTranslation} from '@util/translations';
@@ -52,11 +52,11 @@ export class TerminationModalService {
 
     this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
-      map(config => this.dialog.open<ConfirmDialogComponent>(ConfirmDialogComponent, {data})),
+      map(() => this.dialog.open<ConfirmDialogComponent>(ConfirmDialogComponent, {data})),
       switchMap(modalRef => modalRef.afterClosed()),
       filter(result => !!result), // Ignore no answers
       withLatestFrom(this.store.select(fromDecision.getTermination))
-    ).subscribe(([resultTrue, termination]) => this.store.dispatch(new RemoveTerminationDraft(termination)));
+    ).subscribe(([_resultTrue, termination]) => this.store.dispatch(new RemoveTerminationDraft(termination)));
   }
 
 }

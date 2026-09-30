@@ -14,10 +14,8 @@ package fi.hel.allu.model.querydsl;
  * limitations under the License.
  */
 
-import com.google.common.collect.Maps;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.util.ReflectionUtils;
 import com.querydsl.sql.RelationalPath;
 import com.querydsl.sql.dml.AbstractMapper;
 import com.querydsl.sql.types.Null;
@@ -25,6 +23,7 @@ import com.querydsl.sql.types.Null;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.LinkedHashMap;
 
 /**
  * Creates mapping in the same way as QueryDSL <code>DefaultMapper</code>, but excludes given set of columns in order to allow updates
@@ -61,7 +60,7 @@ public class ExcludingMapper extends AbstractMapper<Object> {
   @Override
   public Map<Path<?>, Object> createMap(RelationalPath<?> entity, Object bean) {
     try {
-      Map<Path<?>, Object> values = Maps.newLinkedHashMap();
+      Map<Path<?>, Object> values = new LinkedHashMap<>();
       Class<?> beanClass = bean.getClass();
       Map<String, Path<?>> columns = getColumns(entity);
       // populate in column order
@@ -70,7 +69,7 @@ public class ExcludingMapper extends AbstractMapper<Object> {
         if (excludedPaths.contains(path)) {
           continue;
         }
-        Field beanField = ReflectionUtils.getFieldOrNull(beanClass, entry.getKey());
+        Field beanField = getFieldOrNull(beanClass, entry.getKey());
         if (beanField != null && !Modifier.isStatic(beanField.getModifiers())) {
           beanField.setAccessible(true);
           Object propertyValue = beanField.get(bean);
@@ -87,6 +86,15 @@ public class ExcludingMapper extends AbstractMapper<Object> {
     }
   }
 
-
+  private static Field getFieldOrNull(Class<?> cls, String fieldName) {
+    while (cls != null && cls != Object.class) {
+      try {
+        return cls.getDeclaredField(fieldName);
+      } catch (NoSuchFieldException e) {
+        cls = cls.getSuperclass();
+      }
+    }
+    return null;
+  }
 
 }

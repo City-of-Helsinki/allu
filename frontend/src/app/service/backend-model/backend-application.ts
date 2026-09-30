@@ -32,6 +32,7 @@ export interface BackendApplication {
   recurringEndTime: string;
   customersWithContacts: Array<BackendCustomerWithContacts>;
   locations: Array<BackendLocation>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   extension: any;
   decisionTime: string;
   decisionMaker: string;

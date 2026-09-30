@@ -6,6 +6,7 @@ export class StoredFilter {
     public type?: StoredFilterType,
     public name?: string,
     public defaultFilter?: boolean,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
     public filter?: any,
     public userId?: number) {
   }

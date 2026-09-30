@@ -1,7 +1,7 @@
 <mat-form-field>
+  <mat-label>{{'invoicing.period.periodSelection' | translation}}</mat-label>
   <mat-select
-    [formControl]="periodCtrl"
-    [placeholder]="'invoicing.period.periodSelection' | translation">
+    [formControl]="periodCtrl">
     <mat-option value="">{{'invoicing.period.noPeriod' | translation}}</mat-option>
     <mat-option *ngFor="let period of periods" [value]="period">
       {{'invoicing.period.name' | translation:{period: period} }}

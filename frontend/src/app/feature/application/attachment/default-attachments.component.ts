@@ -2,20 +2,19 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as filesaver from 'file-saver';
 import {AttachmentHub} from './attachment-hub';
 import {DefaultAttachmentInfo} from '@model/application/attachment/default-attachment-info';
-import {SelectionEvent} from '@feature/common/selection-group/selection-event.service';
 import {ApplicationType} from '@model/application/type/application-type';
 import {AttachmentType} from '@model/application/attachment/attachment-type';
 import {ArrayUtil} from '@util/array-util';
 import {CurrentUser} from '@service/user/current-user';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
-import {Observable} from 'rxjs/internal/Observable';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'default-attachments',
   templateUrl: './default-attachments.component.html',
-  styleUrls: []
+  styleUrls: ['./default-attachments.component.scss']
 })
 export class DefaultAttachmentsComponent implements OnInit {
   @Input() applicationType: ApplicationType;
@@ -44,15 +43,30 @@ export class DefaultAttachmentsComponent implements OnInit {
       .subscribe(hasValidRole => this.isAllowedToEdit = this.isAllowedToEdit && hasValidRole);
   }
 
-  onSelect(event: SelectionEvent): void {
-    const da = event.item;
-    da.file = new Blob(['empty']);
+  isSelected(attachment: DefaultAttachmentInfo): boolean {
+    return this.selectedAttachments.some(
+      selected => this.isSameAttachment(selected, attachment)
+    );
+  }
 
-    if (event.selected) {
+  onToggle(attachment: DefaultAttachmentInfo, checked: boolean): void {
+    const da = attachment;
+    da.file = new Blob(['empty']);
+    if (checked) {
       this.add.emit(da);
     } else {
       this.remove.emit(da);
     }
+  }
+
+  private isSameAttachment(a: DefaultAttachmentInfo, b: DefaultAttachmentInfo): boolean {
+    if (!a || !b) {
+      return false;
+    }
+    if (a.id != null && b.id != null) {
+      return a.id === b.id;
+    }
+    return a.name === b.name && a.type === b.type;
   }
 
   download(attachment: DefaultAttachmentInfo) {

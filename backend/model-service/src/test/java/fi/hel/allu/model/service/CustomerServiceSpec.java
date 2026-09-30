@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.model.dao.*;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -14,10 +15,6 @@ import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ContactDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
@@ -37,6 +34,9 @@ public class CustomerServiceSpec extends SpeccyTestBase {
   private HistoryDao historyDao;
   private UserDao userDao;
   private ApplicationEventPublisher eventPublisher;
+  private ExternalUserDao externalUserDao;
+  private PersonAuditLogDao personAuditLogDao;
+  private CustomerUpdateLogDao customerUpdateLogDao;
 
   {
     beforeEach(() -> {
@@ -45,7 +45,19 @@ public class CustomerServiceSpec extends SpeccyTestBase {
       historyDao = Mockito.mock(HistoryDao.class);
       eventPublisher = Mockito.mock(ApplicationEventPublisher.class);
       userDao = Mockito.mock(UserDao.class);
-      customerService = new CustomerService(customerDao, contactDao, historyDao, userDao, eventPublisher);
+      externalUserDao = Mockito.mock(ExternalUserDao.class);
+      personAuditLogDao = Mockito.mock(PersonAuditLogDao.class);
+      customerUpdateLogDao = Mockito.mock(CustomerUpdateLogDao.class);
+      customerService = new CustomerService(
+        customerDao,
+        contactDao,
+        historyDao,
+        userDao,
+        eventPublisher,
+        externalUserDao,
+        personAuditLogDao,
+        customerUpdateLogDao
+      );
     });
 
     describe("Customer operations", () -> {
@@ -149,9 +161,11 @@ public class CustomerServiceSpec extends SpeccyTestBase {
           ArgumentCaptor<ChangeHistoryItem> captor = ArgumentCaptor.forClass(ChangeHistoryItem.class);
           Mockito.verify(historyDao).addCustomerChange(Mockito.eq(CUSTOMER_ID), captor.capture());
           Set<String> changedFields = captor.getValue().getFieldChanges().stream().map(fc -> fc.getFieldName()).collect(Collectors.toSet());
-          // Check that some known keys were marked as changed:
-          Arrays.asList("/id", "/email", "/name", "/phone", "/id", "/registryKey")
+          // Identity fields are ignored in history diff (see CustomerHistoryMixins),
+          // so verify only business-relevant fields.
+          Arrays.asList("/email", "/name", "/phone", "/registryKey")
               .forEach(key -> assertTrue("key \"" + key + "\" not changed", changedFields.contains(key)));
+          assertTrue("key \"/id\" should not be included in history", !changedFields.contains("/id"));
           // Check that for all keys the previous value was empty string:
           captor.getValue().getFieldChanges().stream()
               .forEach((fc -> assertTrue("key " + fc.getFieldName() + ": old value not empty:" + fc.getOldValue(),
@@ -206,6 +220,62 @@ public class CustomerServiceSpec extends SpeccyTestBase {
       }); // Find by multiple IDs
 
     }); // Contact operations
+
+    describe("purgeCustomersAndRelatedData", () -> {
+
+      beforeEach(() -> {
+        // Default: findDeletableContactIdsByCustomerIds returns empty list to avoid NPEs
+        Mockito.when(contactDao.findDeletableContactIdsByCustomerIds(Mockito.any()))
+          .thenReturn(Collections.emptyList());
+      });
+
+      it("should archive and delete customers that are not linked to any entity", () -> {
+        Mockito.when(customerDao.findNonDeletableCustomerIds(Mockito.anyList()))
+          .thenReturn(Collections.emptyList());
+        Mockito.when(customerDao.deleteCustomers(Mockito.any())).thenReturn(1L);
+
+        customerService.purgeCustomersAndRelatedData(List.of(42));
+
+        Mockito.verify(customerDao, Mockito.times(1)).archiveCustomers(Mockito.any());
+        Mockito.verify(customerDao, Mockito.times(1)).deleteCustomers(Mockito.any());
+      });
+
+      it("should skip customers that are linked and not call delete for them", () -> {
+        Mockito.when(customerDao.findNonDeletableCustomerIds(List.of(1, 2, 3)))
+          .thenReturn(List.of(2));
+        Mockito.when(customerDao.deleteCustomers(Mockito.any())).thenReturn(2L);
+
+        customerService.purgeCustomersAndRelatedData(List.of(1, 2, 3));
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Set<Integer>> captor = ArgumentCaptor.forClass(Set.class);
+        Mockito.verify(customerDao).deleteCustomers(captor.capture());
+        Set<Integer> deletedIds = captor.getValue();
+        assertTrue("ID 1 must be deleted", deletedIds.contains(1));
+        assertTrue("ID 3 must be deleted", deletedIds.contains(3));
+        assertTrue("ID 2 (linked) must NOT be deleted", !deletedIds.contains(2));
+      });
+
+      it("should return 0 and not call any deletion method when all customers are linked", () -> {
+        Mockito.when(customerDao.findNonDeletableCustomerIds(List.of(5, 6)))
+          .thenReturn(List.of(5, 6));
+
+        int result = customerService.purgeCustomersAndRelatedData(List.of(5, 6));
+
+        assertEquals(0, result);
+        Mockito.verify(customerDao, Mockito.never()).archiveCustomers(Mockito.any());
+        Mockito.verify(customerDao, Mockito.never()).deleteCustomers(Mockito.any());
+      });
+
+      it("should return 0 immediately for an empty id list", () -> {
+        int result = customerService.purgeCustomersAndRelatedData(Collections.emptyList());
+
+        assertEquals(0, result);
+        Mockito.verify(customerDao, Mockito.never()).archiveCustomers(Mockito.any());
+        Mockito.verify(customerDao, Mockito.never()).deleteCustomers(Mockito.any());
+      });
+
+    });
   }
 
   private Customer dummyCustomer(int id) {

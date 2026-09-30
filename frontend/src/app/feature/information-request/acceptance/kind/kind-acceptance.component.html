@@ -22,8 +22,8 @@
       <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim" *ngIf="!readonly">
         <div fxFlex="0 1 50%" *ngIf="multipleKinds">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'application.kind.placeholder.multiple' | translation}}</mat-label>
             <mat-select formControlName="kinds" multiple required
-                        [placeholder]="'application.kind.placeholder.multiple' | translation"
                         class="input-full-width">
               <mat-option *ngFor="let kind of availableKinds" [value]="kind">
                 {{['application.kind', kind] | translation}}
@@ -36,8 +36,8 @@
         </div>
         <div fxFlex="0 1 50%" *ngIf="!multipleKinds">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'application.kind.placeholder.single' | translation}}</mat-label>
             <mat-select formControlName="kinds" required
-                        [placeholder]="'application.kind.placeholder.single' | translation"
                         class="input-full-width">
               <mat-option *ngFor="let kind of availableKinds" [value]="kind">
                 {{['application.kind', kind] | translation}}
@@ -50,8 +50,8 @@
         </div>
         <div fxFlex="0 1 50%" *ngIf="showSpecifierSelection()">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'application.specifier.placeholder' | translation}}</mat-label>
             <mat-select formControlName="specifiers" multiple
-                        [placeholder]="'application.specifier.placeholder' | translation"
                         class="input-full-width">
               <mat-optgroup *ngFor="let kind of availableKindsWithSpecifiers | keys"
                             [label]="['application.kind', kind] | translation">

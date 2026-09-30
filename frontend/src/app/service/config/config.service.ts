@@ -4,8 +4,8 @@ import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {UiConfiguration} from '../../model/config/ui-configuration';
 import {EnvironmentType} from '../../model/config/environment-type';
-import {HttpClient} from '@angular/common/http';
-import {catchError, first, map} from 'rxjs/internal/operators';
+import { HttpClient } from '@angular/common/http';
+import {catchError, first, map} from 'rxjs/operators';
 
 export const CONFIG_URL = '/api/uiconfig';
 

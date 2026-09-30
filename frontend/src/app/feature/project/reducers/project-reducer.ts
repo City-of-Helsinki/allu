@@ -19,7 +19,7 @@ const initialState: State = {
   showBasicInfo: true
 };
 
-export function reducer(state: State = initialState, action: ProjectActions | ProjectMetaActions) {
+export function reducer(state: State = initialState, action: ProjectActions | ProjectMetaActions) {
   switch (action.type) {
     case ProjectActionTypes.Load: {
       return {

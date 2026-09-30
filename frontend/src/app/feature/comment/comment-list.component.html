@@ -7,8 +7,8 @@
       <li *ngFor="let comment of comments">
         <comment #commentRef
                  [comment]="comment"
-                 (save)="save($event)"
-                 (remove)="remove($event)"></comment>
+                 (saveComment)="save($event)"
+                 (removeComment)="remove($event)"></comment>
       </li>
     </ul>
   </mat-card-content>

@@ -1,10 +1,10 @@
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {combineLatest} from 'rxjs';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
-import {filter, takeUntil} from 'rxjs/internal/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';

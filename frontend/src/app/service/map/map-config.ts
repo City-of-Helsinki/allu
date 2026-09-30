@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import {pathStyle} from './map-draw-styles';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- leaflet interop
 export function drawOptions(enabled: boolean): any {
   return enabled ? {
     polyline: false,

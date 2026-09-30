@@ -35,6 +35,7 @@ public class ApplicationProperties {
   private final String sapFtpCustomerArchive;
   private final String serviceAuth;
   private final String customerNotificationSubject;
+  private final String removedCustomersNotificationSubject;
   private final String uiBaseUrl;
   private final String invoiceNotificationSubject;
   private final int searchSyncStartupDelay;
@@ -70,6 +71,7 @@ public class ApplicationProperties {
       @Value("${sap.ftp.customer.archive}") @NotEmpty String sapFtpCustomerArchive,
       @Value("${service.authkey}") @NotEmpty String serviceAuth,
       @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
+      @Value("${removed.customers.subject}") @NotEmpty String removedCustomersNotificationSubject,
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
       @Value("${search.sync.startup.delay}") int searchSyncStartupDelay,
@@ -102,6 +104,7 @@ public class ApplicationProperties {
     this.sapFtpCustomerArchive = sapFtpCustomerArchive;
     this.serviceAuth = serviceAuth;
     this.customerNotificationSubject = customerNotificationSubject;
+    this.removedCustomersNotificationSubject = removedCustomersNotificationSubject;
     this.invoiceNotificationSubject = invoiceNotificationSubject;
     this.uiBaseUrl = uiBaseUrl;
     this.searchSyncStartupDelay = searchSyncStartupDelay;
@@ -413,5 +416,41 @@ public class ApplicationProperties {
 
   public int getSftpTimeout() {
     return sftpTimeout;
+  }
+
+  /**
+   * Url for getting a list of 'removed' inactive SAP customers that need to be notified by email
+   */
+  public String getRemovedSapCustomersUrl() {
+    return getModelServiceUrl("/customers/sap/unnotified");
+  }
+
+  /**
+   * Url for marking 'removed' inactive SAP customers as notified by email
+   */
+  public String getMarkRemovedSapCustomersNotifiedUrl() {
+      return getModelServiceUrl("/customers/sap/mark-notified");
+  }
+
+  /**
+   * Get subject for removed SAP customers notification email
+   */
+  public String getRemovedSapCustomersSubject() {
+    return removedCustomersNotificationSubject;
+  }
+
+  /**
+   * Url for fetching customer IDs eligible for permanent deletion (scheduler use).
+   * Accepts pageSize and offset query parameters.
+   */
+  public String getPurgeableCustomersUrl() {
+    return getModelServiceUrl("/customers/purgeable");
+  }
+
+  /**
+   * Url for permanently deleting customers and their related data.
+   */
+  public String getPurgeCustomersUrl() {
+    return getModelServiceUrl("/customers/purge");
   }
 }

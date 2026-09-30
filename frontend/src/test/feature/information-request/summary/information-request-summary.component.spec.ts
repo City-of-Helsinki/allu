@@ -2,7 +2,7 @@ import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {By} from '@angular/platform-browser';
 import {InformationRequestSummary} from '@model/information-request/information-request-summary';
 import {InformationRequestSummaryComponent} from '@feature/information-request/summary/information-request-summary.component';
@@ -12,7 +12,6 @@ import {InformationRequestStatus} from '@model/information-request/information-r
 import {getButtonWithText} from 'test/selector-helpers';
 import {findTranslation} from '@util/translations';
 import {RouterTestingModule} from '@angular/router/testing';
-import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {MockRoutedComponent} from 'test/mocks';
 import * as fromRoot from '@feature/allu/reducers';
@@ -31,8 +30,6 @@ describe('InformationRequestSummary', () => {
   let fixture: ComponentFixture<MockHostComponent>;
   let testHost: MockHostComponent;
   let de: DebugElement;
-  let summaryComponent: InformationRequestSummaryComponent;
-  let router: Router;
   let location: Location;
   let store: Store<fromRoot.State>;
 
@@ -63,8 +60,6 @@ describe('InformationRequestSummary', () => {
     testHost = fixture.componentInstance;
     de = fixture.debugElement;
     fixture.detectChanges();
-    summaryComponent = de.query(By.directive(InformationRequestSummaryComponent)).componentInstance;
-    router = TestBed.inject(Router);
     location = TestBed.inject(Location);
     store = TestBed.inject(Store);
   });
@@ -80,7 +75,7 @@ describe('InformationRequestSummary', () => {
     testHost.summary = summary;
     fixture.detectChanges();
 
-    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-form-field'));
+    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-mdc-form-field'));
     expect(infoFields.length).toEqual(2);
     const requestFields: DebugElement = de.query(By.directive(InformationRequestFieldsComponent));
     expect(requestFields).toBeDefined();
@@ -92,7 +87,7 @@ describe('InformationRequestSummary', () => {
     testHost.summary = summary;
     fixture.detectChanges();
 
-    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-form-field'));
+    const infoFields: DebugElement[] = de.queryAll(By.css('.mat-mdc-form-field'));
     expect(infoFields.length).toEqual(0);
     const requestFields: DebugElement = de.query(By.directive(InformationRequestFieldsComponent));
     expect(requestFields).toBeNull();

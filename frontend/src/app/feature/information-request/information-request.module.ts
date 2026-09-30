@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {EffectsModule} from '@ngrx/effects';
 import {InformationRequestEffects} from './effects/information-request-effects';
 import {InformationRequestService} from '@service/application/information-request.service';
-import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {InformationAcceptanceModalComponent} from './acceptance/information-acceptance-modal.component';
@@ -20,7 +20,10 @@ import {InformationRequestResultService} from '@feature/information-request/acce
 import {InformationRequestModalComponent} from './request/information-request-modal.component';
 import {RequestFieldComponent} from './request/request-field/request-field.component';
 import {FieldSelectComponent} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldDisplayComponent} from '@feature/information-request/acceptance/field-select/field-display.component';
 import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
+import {RemovedContactAcceptanceComponent} from '@feature/information-request/acceptance/contact/removed-contact-acceptance.component';
+import {RemovedCustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/removed-customer-acceptance.component';
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
@@ -36,6 +39,9 @@ import {RouterModule} from '@angular/router';
 import {InformationRequestSummaryModule} from '@feature/information-request/summary/information-request-summary.module';
 import {InformationRequestEntryComponent} from '@feature/information-request/acceptance/information-request-entry.component';
 import {InformationAcceptanceResolve} from '@feature/information-request/acceptance/information-acceptance-resolve';
+import {MAT_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material/autocomplete';
+import {Overlay} from '@angular/cdk/overlay';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
     imports: [
@@ -48,7 +54,8 @@ import {InformationAcceptanceResolve} from '@feature/information-request/accepta
         MapModule,
         CustomerRegistryModule,
         RouterModule.forChild([]),
-        InformationRequestSummaryModule
+        InformationRequestSummaryModule,
+        ScrollingModule
     ],
     declarations: [
         InformationAcceptanceModalComponent,
@@ -59,12 +66,15 @@ import {InformationAcceptanceResolve} from '@feature/information-request/accepta
         ContactsAcceptanceComponent,
         ContactAcceptanceComponent,
         ContactInfoAcceptanceComponent,
+        RemovedContactAcceptanceComponent,
+        RemovedCustomerAcceptanceComponent,
         KindAcceptanceComponent,
         OtherAcceptanceComponent,
         OtherInfoAcceptanceComponent,
         InformationRequestModalComponent,
         RequestFieldComponent,
         FieldSelectComponent,
+        FieldDisplayComponent,
         CustomerModalComponent,
         ContactModalComponent,
         LocationsAcceptanceComponent,
@@ -78,7 +88,12 @@ import {InformationAcceptanceResolve} from '@feature/information-request/accepta
     providers: [
         InformationRequestService,
         InformationRequestResultService,
-        InformationAcceptanceResolve
+        InformationAcceptanceResolve,
+        {
+            provide: MAT_AUTOCOMPLETE_SCROLL_STRATEGY,
+            useFactory: (overlay: Overlay) => () => overlay.scrollStrategies.close(),
+            deps: [Overlay]
+        }
     ],
     exports: [
         InformationAcceptanceModalComponent,

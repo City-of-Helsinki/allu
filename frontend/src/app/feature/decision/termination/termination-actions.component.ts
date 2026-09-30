@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
 
 
@@ -7,17 +7,11 @@ import {TerminationModalService} from '@feature/decision/termination/termination
   templateUrl: './termination-actions.component.html',
   styleUrls: ['./termination-actions.component.scss']
 })
-export class TerminationActionsComponent implements OnInit, OnDestroy {
+export class TerminationActionsComponent {
 
   isWaitingForOrTerminated: boolean;
 
   constructor(private terminationModalService: TerminationModalService) {}
-
-  ngOnInit(): void {
-  }
-
-  ngOnDestroy(): void {
-  }
 
   showTerminationModal(): void {
     this.terminationModalService.showTerminationModal();

@@ -22,7 +22,7 @@ import * as ChildAction from '../actions/child-project-actions';
 import {Router} from '@angular/router';
 import { NumberUtil } from '../../../util/number.util';
 import {META_PROJECT, MetadataService} from '../../../service/meta/metadata.service';
-import {defer, from} from 'rxjs/index';
+import {defer, from} from 'rxjs';
 import * as fromAuth from '../../auth/reducers';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
@@ -65,8 +65,8 @@ export class ProjectEffects {
   delete: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<Delete>(ProjectActionTypes.Delete),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    filter(([action, project]) => NumberUtil.isExisting(project)),
-    switchMap(([action, project])  =>
+    filter(([_action, project]) => NumberUtil.isExisting(project)),
+    switchMap(([_action, project])  =>
       this.projectService.delete(project.id).pipe(
         map(() => new DeleteSuccess()),
         catchError(error => of(new NotifyFailure(error)))
@@ -93,7 +93,7 @@ export class ProjectEffects {
   
   navigateAfterDelete = createEffect(() => this.actions.pipe(
     ofType<DeleteSuccess>(ProjectActionTypes.DeleteSuccess),
-    tap(project => this.router.navigate(['/projects']))
+    tap(() => this.router.navigate(['/projects']))
   ), {dispatch: false});
 
   /**

@@ -5,8 +5,8 @@ import {ApplicationIdentifier} from '@model/application/application-identifier';
 import {ApplicationService} from '@service/application/application.service';
 import {Router} from '@angular/router';
 import {ApplicationStatus} from '@model/application/application-status';
-import {Observable} from 'rxjs/index';
-import {map} from 'rxjs/internal/operators';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import {Add} from '@feature/project/actions/application-basket-actions';
@@ -128,8 +128,7 @@ export class ProgressbarComponent implements OnInit {
       }
 
       case ApplicationStatus.REPLACED:
-      case ApplicationStatus.ARCHIVED:
-      case ApplicationStatus.TERMINATED: {
+      case ApplicationStatus.ARCHIVED: {
         return 'history';
       }
       default:

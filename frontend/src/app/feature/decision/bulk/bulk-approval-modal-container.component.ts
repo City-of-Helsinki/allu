@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as fromDecision from '@feature/decision/reducers';
 import {select, Store} from '@ngrx/store';
 import {filter, switchMap, take, map} from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {BULK_APPROVAL_MODAL_CONFIG, BulkApprovalModalComponent} from './bulk-approval-modal.component';
 import {ActivatedRoute, Router} from '@angular/router';
 

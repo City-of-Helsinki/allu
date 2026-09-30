@@ -1,31 +1,33 @@
 <allu-card>
-  <mat-card-title>
-    <ng-container *ngIf="summary.updateWithoutRequest; else fullRequest">
-      {{'informationRequest.summary.response.changeReport' | translation}}
-    </ng-container>
-    <ng-template #fullRequest>
-      {{'informationRequest.summary.response.title' | translation}}
-    </ng-template>
-  </mat-card-title>
+  <mat-card-header>
+    <mat-card-title>
+      <ng-container *ngIf="summary.updateWithoutRequest; else fullRequest">
+        {{'informationRequest.summary.response.changeReport' | translation}}
+      </ng-container>
+      <ng-template #fullRequest>
+        {{'informationRequest.summary.response.title' | translation}}
+      </ng-template>
+    </mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="18px">
       <div fxFlex>
         <div>
           <mat-form-field class="input-full-width">
+            <mat-label>{{'informationRequest.summary.response.received' | translation}}</mat-label>
             <input
               matInput
               type="text"
               [ngModel]="summary.responseReceived | date: 'short'"
-              [disabled]="true"
-              [placeholder]="'informationRequest.summary.response.received' | translation"/>
+              [disabled]="true"/>
           </mat-form-field>
           <mat-form-field class="input-full-width">
+            <mat-label>{{'informationRequest.summary.response.creator' | translation}}</mat-label>
             <input
               matInput
               type="text"
               [ngModel]="summary.creator"
-              [disabled]="true"
-              [placeholder]="'informationRequest.summary.response.creator' | translation"/>
+              [disabled]="true"/>
           </mat-form-field>
         </div>
         <div></div>

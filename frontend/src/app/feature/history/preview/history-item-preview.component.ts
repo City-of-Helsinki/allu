@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ChangeHistoryItem} from '../../../model/history/change-history-item';
 import {ChangeDescription, ChangeDescriptionType, HistoryFormatter} from '../../../service/history/history-formatter';
 import {ChangeType} from '../../../model/history/change-type';
@@ -9,7 +9,7 @@ import {ChangeType} from '../../../model/history/change-type';
   styleUrls: ['./history-item-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryItemPreviewComponent implements OnInit {
+export class HistoryItemPreviewComponent {
   description: ChangeDescription;
   showFieldChangeCount: boolean;
   fieldChangeCount: number;
@@ -17,9 +17,6 @@ export class HistoryItemPreviewComponent implements OnInit {
   private _change: ChangeHistoryItem;
 
   constructor(private formatter: HistoryFormatter) {}
-
-  ngOnInit(): void {
-  }
 
   @Input() set change(change: ChangeHistoryItem) {
     this._change = change;

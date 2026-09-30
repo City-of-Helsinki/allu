@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AlluCommonModule } from '@app/feature/common/allu-common.module';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ describe('RequestFieldComponent', () => {
   let component: RequestFieldComponent;
   let fixture: ComponentFixture<RequestFieldComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule],
       declarations: [ RequestFieldComponent ]

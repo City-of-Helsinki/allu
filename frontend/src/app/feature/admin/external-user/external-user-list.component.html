@@ -1,7 +1,7 @@
 <div class="main-content">
   <div fxLayout="row" class="action-bar-loose">
     <div fxFlex>
-      <button mat-raised-button type="button" color="primary" (click)="newUser()">Lisää uusi rajapintakäyttäjä</button>
+      <button mat-raised-button type="button" color="primary" (click)="newUser()">{{'externalUser.addNew' | translation}}</button>
     </div>
   </div>
   <div fxLayout="row">
@@ -9,11 +9,11 @@
       <table class="bordered responsive-table">
         <thead>
         <tr>
-          <th>{{'externalUser.username' | translation}}</th>
-          <th>{{'externalUser.name' | translation}}</th>
+          <th>{{'user.username' | translation}}</th>
+          <th>{{'name' | translation}}</th>
           <th>{{'externalUser.email' | translation}}</th>
-          <th>{{'externalUser.lastLogin' | translation}}</th>
-          <th>{{'externalUser.roles' | translation}}</th>
+          <th>{{'user.lastLogin' | translation}}</th>
+          <th>{{'user.roles' | translation}}</th>
           <th>{{'externalUser.expirationTime' | translation}}</th>
         </tr>
         </thead>

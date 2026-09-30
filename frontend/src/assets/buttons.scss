@@ -2,41 +2,25 @@
 
 @mixin buttons-theme($theme) {
   $primary: map-get($theme, primary);
-
   .mat-button-toggle-checked {
-    background: mat.get-color-from-palette($primary, 500) !important;
-    color: rgba(black, 0.87) !important;
+    background: mat.m2-get-color-from-palette($primary, 500) !important;
+    color: white !important;
   }
-
   .mat-button-toggle-disabled.mat-button-toggle-checked {
-    background: mat.get-color-from-palette($primary, 300) !important;
+    background: mat.m2-get-color-from-palette($primary, 300) !important;
 
     & label {
-      color: mat.get-contrast-color-from-palette($primary, 500);
+      color: mat.m2-get-contrast-color-from-palette($primary, 500);
     }
   }
 
   button.button-link {
-    color: mat.get-color-from-palette($primary, 300);
-  }
-}
-
-@mixin toggle-buttons-theme($theme) {
-  .icon-button-toggle-group.mat-button-toggle-group {
-    box-shadow: none;
-
-    .mat-button-toggle-checked {
-      background: none;
-    }
-
-    .mat-button-toggle-checked label {
-      color: black;
-    }
+    color: mat.m2-get-color-from-palette($primary, 300);
   }
 }
 
 
-.mat-icon-button.align-with-text {
+.mat-mdc-icon-button.align-with-text {
   top: -4px;
 }
 
@@ -53,7 +37,7 @@ button > .button-content-clipped {
   overflow: hidden;
 }
 
-.mat-icon-button.mat-icon-button-18 {
+.mat-mdc-icon-button.mat-icon-button-18 {
   width: 24px;
   height: 24px;
   line-height: 24px;
@@ -74,11 +58,5 @@ button.button-link {
 
   &:focus {
     outline: 0;
-  }
-}
-
-.icon-button-toggle-group.mat-button-toggle-group {
-  .mat-button-toggle-checked label .mat-icon {
-    font-weight: bold;
   }
 }

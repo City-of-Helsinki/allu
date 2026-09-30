@@ -21,12 +21,20 @@ import java.util.Map;
 @RequestMapping("/customers")
 public class CustomerController {
 
+  private final CustomerService customerService;
+  private final ApplicationService applicationService;
+  private final CustomerUpdateLogDao customerUpdateLogDao;
+
   @Autowired
-  private CustomerService customerService;
-  @Autowired
-  private ApplicationService applicationService;
-  @Autowired
-  private CustomerUpdateLogDao customerUpdateLogDao;
+  public CustomerController(
+      CustomerService customerService,
+      ApplicationService applicationService,
+      CustomerUpdateLogDao customerUpdateLogDao
+  ) {
+    this.customerService = customerService;
+    this.applicationService = applicationService;
+    this.customerUpdateLogDao = customerUpdateLogDao;
+  }
 
   /**
    * Find a customer by database ID
@@ -162,5 +170,86 @@ public class CustomerController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Retrieves a paginated list of deletable customers.
+   *
+   * Deletable customers are those that are eligible for permanent removal from the system,
+   * typically because they are not referenced by any application or project in the system.
+   *
+   * @param pageable pagination and sorting information for the query, including page number and size
+   * @return a paginated list of deletable customers wrapped in a ResponseEntity
+   */
+  @GetMapping(value = "/deletable")
+  public ResponseEntity<Page<DeletableCustomer>> getDeletableCustomers(
+    @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageable
+  ) {
+    return ResponseEntity.ok(customerService.getDeletableCustomers(pageable));
+  }
 
+  /**
+   * Returns a page of customer IDs that are eligible for permanent (hard) deletion by the scheduler.
+   * Eligible customers are inactive (is_active = false) and have had no changes for at least 5 years.
+   * Uses cursor/keyset pagination: pass the last seen customer ID as {@code afterId}.
+   *
+   * @param pageSize number of IDs to return (default 500)
+   * @param afterId  cursor: return only customers with id greater than this value (default 0 = first page)
+   * @return list of purgeable customer IDs
+   */
+  @GetMapping("/purgeable")
+  public ResponseEntity<List<Integer>> getPurgeableCustomerIds(
+      @RequestParam(defaultValue = "500") int pageSize,
+      @RequestParam(defaultValue = "0") int afterId) {
+    return ResponseEntity.ok(customerService.findPurgeableCustomerIds(pageSize, afterId));
+  }
+
+  /**
+   * Soft deletes customers and their associated contacts from Allu's customer registry.
+   * This operation updates the is_active flag to false for customers and contacts.
+   *
+   * @param ids List of customer IDs to soft delete
+   * @return Result of the deletion operation, including deleted and skipped IDs
+   */
+  @DeleteMapping
+  public ResponseEntity<DeleteIdsResult> softDeleteCustomers(@RequestBody List<Integer> ids) {
+    DeleteIdsResult result = customerService.softDeleteCustomersAndContacts(ids);
+    return ResponseEntity.ok(result);
+  }
+
+  /**
+   * Permanently deletes customers and all their associated data (contacts, history, audit logs, etc.)
+   * from the database. Customer identifying data is archived to customer_archive before deletion.
+   * Intended to be called by the scheduler service for customers whose retention period has elapsed.
+   *
+   * @param ids List of customer IDs to permanently delete
+   * @return Number of permanently deleted customers
+   */
+  @DeleteMapping("/purge")
+  public ResponseEntity<Integer> purgeCustomers(@RequestBody List<Integer> ids) {
+    int deleted = customerService.purgeCustomersAndRelatedData(ids);
+    return ResponseEntity.ok(deleted);
+  }
+
+  /**
+   * This endpoint is used to fetch SAP customers which were removed (marked as inactive)
+   * but has not yet been marked as notified (no email notification sent).
+   *
+   * @return a ResponseEntity containing a list of {@code CustomerSapInfo} objects that represent
+   *         the unnotified inactive SAP customers.
+   */
+  @GetMapping("/sap/unnotified")
+  public ResponseEntity<List<CustomerSapInfo>> getUnnotifiedSapCustomers() {
+    return ResponseEntity.ok(customerService.findUnnotifiedSapCustomers());
+  }
+
+  /**
+   * Marks the specified inactive SAP customers as notified.
+   *
+   * @param ids a list of customer IDs that need to be marked as notified
+   * @return a ResponseEntity with no content indicating the operation was successful
+   */
+  @PostMapping("/sap/mark-notified")
+  public ResponseEntity<Void> markSapCustomersNotified(@RequestBody List<Integer> ids) {
+    customerService.markSapCustomersNotified(ids);
+    return ResponseEntity.ok().build();
+  }
 }

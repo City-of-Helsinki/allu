@@ -1,6 +1,7 @@
 package fi.hel.allu.search.service;
 
 import fi.hel.allu.common.domain.types.CustomerType;
+import java.util.Optional;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameter;
@@ -58,6 +59,8 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
     qb.filter(QueryBuilders.matchQuery("type", type.name()));
     QueryParameter active = queryParameters.remove("active");
     handleActive(qb, active);
+    QueryParameter invoicingOnly = queryParameters.remove("invoicingOnly");
+    handleInvoicingOnly(qb, invoicingOnly);
 
     BoolQueryBuilder fieldQb = QueryBuilders.boolQuery();
     addQueryParameters(queryParameters, matchAny, fieldQb);
@@ -70,5 +73,11 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
                    srBuilder);
     }
     return srBuilder;
+  }
+
+  private void handleInvoicingOnly(BoolQueryBuilder qb, QueryParameter invoicingOnly) {
+    Optional.ofNullable(invoicingOnly)
+        .map(p -> QueryBuilders.termQuery(p.getFieldName(), Boolean.parseBoolean(p.getFieldValue())))
+        .ifPresent(qb::filter);
   }
 }

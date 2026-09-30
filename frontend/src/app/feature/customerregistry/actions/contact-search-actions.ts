@@ -15,7 +15,7 @@ export enum ContactSearchActionType {
   SearchSuccess = '[ContactSearch] Search contacts success'
 }
 
-export interface ContactSearchParameters extends SearchParameters<ContactSearchQuery> {}
+export type ContactSearchParameters = SearchParameters<ContactSearchQuery>;
 
 export class LoadByCustomer implements ActionWithTarget {
   readonly type = ContactSearchActionType.LoadByCustomer;

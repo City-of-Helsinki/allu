@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.chargeBasis;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -200,6 +201,11 @@ public class ChargeBasisService {
   @Transactional(readOnly = true)
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
     return chargeBasisDao.getChargeBasis(applicationId);
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Integer, ZonedDateTime> findModificationTimesByIds(Collection<Integer> chargeBasisIds) {
+    return chargeBasisDao.findModificationTimesByIds(chargeBasisIds);
   }
 
   private void validateModificationsAllowed(ChargeBasisModification modification) {

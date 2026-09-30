@@ -1,18 +1,27 @@
 package fi.hel.allu.model.dao;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import fi.hel.allu.QApplication;
+import fi.hel.allu.QApplicationTag;
+import fi.hel.allu.QPostalAddress;
+import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.model.controller.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
-import com.querydsl.core.QueryResults;
+import com.querydsl.core.QueryFlag;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
@@ -21,9 +30,6 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
-import fi.hel.allu.QApplication;
-import fi.hel.allu.QApplicationTag;
-import fi.hel.allu.QPostalAddress;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -35,18 +41,32 @@ import fi.hel.allu.model.domain.*;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
+import static fi.hel.allu.QChangeHistory.changeHistory;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QCustomer.customer;
+import static fi.hel.allu.QCustomerArchive.customerArchive;
 import static fi.hel.allu.QPostalAddress.postalAddress;
+import static fi.hel.allu.QProject.project;
+import static fi.hel.allu.QCustomerUpdateLog.customerUpdateLog;
+import static fi.hel.allu.QPersonAuditLog.personAuditLog;
 
 @Repository
 public class CustomerDao {
+
+  private final SQLQueryFactory queryFactory;
+  private final PostalAddressDao postalAddressDao;
+
   @Autowired
-  private SQLQueryFactory queryFactory;
-  @Autowired
-  PostalAddressDao postalAddressDao;
+  public CustomerDao(
+    SQLQueryFactory queryFactory,
+    PostalAddressDao postalAddressDao
+  ) {
+    this.queryFactory = queryFactory;
+    this.postalAddressDao = postalAddressDao;
+  }
 
   final QBean<Customer> customerBean = bean(Customer.class, customer.all());
   final QBean<Contact> contactBean = bean(Contact.class, contact.all());
@@ -103,16 +123,20 @@ public class CustomerDao {
   public Page<Customer> findAll(Pageable pageRequest) {
     long offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    QueryResults<Tuple> customerPostalAddress = queryFactory
+    List<Tuple> tuples = queryFactory
         .select(customerBean, postalAddressBean)
         .from(customer)
         .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id))
-        .orderBy(customer.id.asc()).offset(offset).limit(count).fetchResults();
+        .orderBy(customer.id.asc()).offset(offset).limit(count).fetch();
+    long total = queryFactory
+        .select(customerBean)
+        .from(customer)
+        .fetchCount();
 
-    List<Customer> customers = customerPostalAddress.getResults().stream()
+    List<Customer> customers = tuples.stream()
         .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Customer.class))
         .collect(Collectors.toList());
-    return new PageImpl<>(customers, pageRequest, customerPostalAddress.getTotal());
+    return new PageImpl<>(customers, pageRequest, total);
   }
 
   private List<Tuple> getCustomersWithContactsTuples(BooleanExpression whereCondition) {
@@ -279,4 +303,335 @@ public class CustomerDao {
     return findInvoiceRecipientIdsWithoutSapNumber().size();
   }
 
+  /**
+   * Retrieves a paginated list of customers eligible for deletion. A customer is considered eligible for
+   * deletion if it meets specific criteria, such as not being associated with any dependent entities
+   * like applications, projects, or invoice recipients. This method performs a database query to fetch
+   * and construct the list of deletable customers from the deletable_customer table.
+   *
+   * @param pageable the pagination information, including page number, page size, and sorting parameters.
+   *                 If null, default pagination parameters are used.
+   * @return a {@code Page} containing {@code DeletableCustomer} objects that meet the criteria for deletion.
+   *         If no customers meet the criteria, an empty page is returned.
+   */
+  public Page<DeletableCustomer> getDeletableCustomers(Pageable pageable) {
+    if (pageable == null) {
+      pageable = PageRequest.of(Constants.DEFAULT_PAGE_NUMBER, Constants.DEFAULT_PAGE_SIZE);
+    }
+
+    // Used to search for customers which are a day older from creation date
+    Instant cutoff = Instant.now().minus(1, ChronoUnit.DAYS);
+
+    BooleanExpression deletable = isDeletableCustomer(cutoff);
+
+    long totalCount = queryFactory
+      .select(customer.id.count())
+      .from(customer)
+      .where(deletable)
+      .fetchOne();
+
+    List<DeletableCustomer> deletables =
+      queryFactory
+        .select(Projections.constructor(
+          DeletableCustomer.class,
+          customer.id,
+          customer.sapCustomerNumber,
+          customer.name,
+          customer.type
+        ))
+        .from(customer)
+        .where(deletable)
+        .orderBy(toCustomerOrderSpecifier(pageable.getSort()))
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetch();
+
+    return new PageImpl<>(deletables, pageable, totalCount);
+  }
+
+  private BooleanExpression isDeletableCustomer(Instant cutoff) {
+    BooleanExpression notRecentlyCreated = SQLExpressions.selectOne()
+      .from(changeHistory)
+      .where(
+        changeHistory.customerId.eq(customer.id),
+        changeHistory.changeType.eq(ChangeType.CREATED),
+        changeHistory.changeTime.gt(cutoff.atZone(ZoneOffset.UTC))
+      )
+      .notExists();
+
+    return customer.isActive.isTrue()
+      .and(isNotLinkedToAnyEntity())
+      .and(notRecentlyCreated);
+  }
+
+  /**
+   * Returns a combined BooleanExpression that is true when the customer is not linked to any
+   * application (via application_customer), not set as invoice recipient on any application,
+   * and not linked to any project. These three conditions are shared between
+   * {@link #isDeletableCustomer(Instant)} and {@link #findUnnotifiedSapCustomers()}.
+   */
+  private BooleanExpression isNotLinkedToAnyEntity() {
+    BooleanExpression notLinkedToApplication = SQLExpressions.selectOne()
+      .from(applicationCustomer)
+      .where(applicationCustomer.customerId.eq(customer.id))
+      .notExists();
+
+    BooleanExpression notLinkedToProject = SQLExpressions.selectOne()
+      .from(project)
+      .where(project.customerId.eq(customer.id))
+      .notExists();
+
+    BooleanExpression notInvoiceRecipient = SQLExpressions.selectOne()
+      .from(application)
+      .where(application.invoiceRecipientId.eq(customer.id))
+      .notExists();
+
+    return notLinkedToApplication.and(notLinkedToProject).and(notInvoiceRecipient);
+  }
+
+  private OrderSpecifier<?> toCustomerOrderSpecifier(Sort sort) {
+    if (sort == null || sort.isUnsorted()) {
+      return customer.id.asc();
+    }
+
+    Sort.Order order = sort.iterator().next();
+    boolean asc = order.getDirection().isAscending();
+
+    return switch (order.getProperty()) {
+      case "id" -> asc ? customer.id.asc() : customer.id.desc();
+      case "sapCustomerNumber" -> asc ? customer.sapCustomerNumber.asc() : customer.sapCustomerNumber.desc();
+      case "name" -> asc ? customer.name.asc() : customer.name.desc();
+      case "type" -> asc ? customer.type.asc() : customer.type.desc();
+      default -> customer.id.asc();
+    };
+  }
+
+  /**
+   * Finds customer IDs that are eligible for permanent (hard) deletion.
+   * A customer is purgeable when ALL the following conditions are met:
+   * - Is_active = false (already soft-deleted)
+   * - Not linked to any application, project, or as an invoice recipient
+   * - SAP customers (sap_customer_number IS NOT NULL) must have notification_sent_at set
+   * - The data retention period of 5 years has elapsed since the most recent entry across
+   *   ALL history and audit log tables
+   *
+   * Uses cursor/keyset pagination: returns up to {@code pageSize} IDs with id > {@code afterId},
+   * ordered by customer.id ASC. Pass the last seen ID as {@code afterId} for subsequent pages.
+   *
+   * @param pageSize  number of IDs to return
+   * @param afterId   cursor: only return customers with id greater than this value (pass 0 for first page)
+   * @return list of customer IDs eligible for permanent deletion
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findPurgeableCustomerIds(int pageSize, int afterId) {
+    ZonedDateTime retentionCutoff = ZonedDateTime.now().minusYears(5);
+
+    // Subquery expressions for MAX() timestamps across the three log tables.
+    // When a table has no rows for a given customer, MAX() returns NULL.
+    // We treat NULL (= no rows) as satisfying the retention condition.
+    var maxChangeTime = SQLExpressions.select(changeHistory.changeTime.max())
+      .from(changeHistory)
+      .where(changeHistory.customerId.eq(customer.id));
+
+    var maxUpdateTime = SQLExpressions.select(customerUpdateLog.updateTime.max())
+      .from(customerUpdateLog)
+      .where(customerUpdateLog.customerId.eq(customer.id));
+
+    var maxAuditTime = SQLExpressions.select(personAuditLog.creationTime.max())
+      .from(personAuditLog)
+      .where(
+        personAuditLog.customerId.eq(customer.id)
+          .or(
+            personAuditLog.contactId.in(
+              SQLExpressions.select(contact.id)
+                .from(contact)
+                .where(contact.customerId.eq(customer.id))
+            )
+          )
+      );
+
+    return queryFactory
+      .select(customer.id)
+      .from(customer)
+      .where(
+        customer.isActive.isFalse()
+          // Cursor-based pagination: only IDs greater than the last seen ID
+          .and(customer.id.gt(afterId))
+          // Entity-link guard: must not be linked to any application, project, or invoice recipient
+          .and(isNotLinkedToAnyEntity())
+          // change_history: either no rows for this customer or latest entry older than cutoff
+          .and(maxChangeTime.isNull().or(maxChangeTime.lt(retentionCutoff)))
+          // customer_update_log: either no rows for this customer or latest entry older than cutoff
+          .and(maxUpdateTime.isNull().or(maxUpdateTime.lt(retentionCutoff)))
+          // person_audit_log: either no rows for this customer/contacts or latest entry older than cutoff
+          .and(maxAuditTime.isNull().or(maxAuditTime.lt(retentionCutoff)))
+          // SAP customers must have had their removal notification sent before being permanently deleted
+          .and(customer.sapCustomerNumber.isNull().or(customer.notificationSentAt.isNotNull()))
+      )
+      .orderBy(customer.id.asc())
+      .limit(pageSize)
+      .fetch();
+  }
+
+  /**
+   * Retrieves a list of customer IDs from the provided list that is considered non-deletable.
+   * A customer is determined to be non-deletable if it is associated with an application,
+   * project, or designated as an invoice recipient.
+   *
+   * @param ids a list of customer IDs to evaluate for non-deletable status.
+   *            The list must not be null and may contain zero or more IDs.
+   * @return a list of non-deletable customer IDs. If no customers in the input list are
+   *         deemed non-deletable, an empty list is returned.
+   */
+  public List<Integer> findNonDeletableCustomerIds(List<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    BooleanExpression linkedToApplication = SQLExpressions.selectOne()
+      .from(applicationCustomer)
+      .where(applicationCustomer.customerId.eq(customer.id))
+      .exists();
+
+    BooleanExpression linkedToProject = SQLExpressions.selectOne()
+      .from(project)
+      .where(project.customerId.eq(customer.id))
+      .exists();
+
+    BooleanExpression isInvoiceRecipient = SQLExpressions.selectOne()
+      .from(application)
+      .where(application.invoiceRecipientId.eq(customer.id))
+      .exists();
+
+    return queryFactory
+      .select(customer.id)
+      .from(customer)
+      .where(
+        customer.id.in(ids),
+        linkedToApplication.or(linkedToProject).or(isInvoiceRecipient)
+      )
+      .fetch();
+  }
+
+  /**
+   * Archives customers by moving their information into a customer archive table.
+   * The method retrieves the customer data identified by the provided set of IDs
+   * and inserts the relevant fields into the archive.
+   *
+   * @param ids a set of customer IDs to be archived. The set must not be null and
+   *            may contain zero or more IDs. Each ID corresponds to a customer
+   *            whose information will be archived.
+   */
+  public void archiveCustomers(Set<Integer> ids) {
+    queryFactory
+      .insert(customerArchive)
+      .columns(
+        customerArchive.customerId,
+        customerArchive.sapCustomerNumber,
+        customerArchive.deletedAt
+      )
+      .select(
+        queryFactory
+          .select(
+            customer.id,
+            customer.sapCustomerNumber,
+            Expressions.constant(ZonedDateTime.now())
+          )
+          .from(customer)
+          .where(customer.id.in(ids))
+      )
+      .addFlag(QueryFlag.Position.END, " ON CONFLICT (customer_id) DO NOTHING")
+      .execute();
+  }
+
+  /**
+   * Retrieves the total of archived customers from the customer archive table.
+   * @return the total number of archived customers.
+   */
+  public long getArchivedCustomerCount() {
+    return queryFactory
+      .select(customerArchive.customerId.countDistinct())
+      .from(customerArchive)
+      .fetchOne();
+  }
+
+  /**
+   * Performs a soft delete operation on customers by setting their "isActive" attribute to false.
+   * This method updates the status of the customers with the specified IDs in the database.
+   *
+   * @param ids a list of contact IDs to be soft deleted; must not be null or empty
+   * @return the number of customers that were successfully updated as part of the soft delete operation
+   */
+  public long softDeleteCustomers(Set<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return 0;
+    }
+
+    return queryFactory
+      .update(customer)
+      .set(customer.isActive, false)
+      .where(customer.id.in(ids))
+      .execute();
+  }
+
+  /**
+   * Deletes customers from the customer table based on the provided set of IDs.
+   *
+   * @param ids a set of customer IDs to be deleted.
+   * @return the number of customers deleted.
+   */
+  public long deleteCustomers(Set<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return 0;
+    }
+
+    return queryFactory
+      .delete(customer)
+      .where(customer.id.in(ids))
+      .execute();
+  }
+
+  /**
+   * Find 'removed' inactive SAP customers which have not been marked as notified (no email notification sent).
+   * Customers that are still linked to any application (via application_customer), set as invoice recipient
+   * on any application, or linked to any project are excluded from the result.
+   *
+   * @return list of inactive, unnotified, and unlinked SAP customers.
+   */
+  @Transactional(readOnly = true)
+  public List<CustomerSapInfo> findUnnotifiedSapCustomers() {
+    return
+      queryFactory
+        .select(Projections.constructor(
+          CustomerSapInfo.class,
+          customer.id,
+          customer.sapCustomerNumber,
+          customer.notificationSentAt
+        ))
+        .from(customer)
+        .where(
+          customer.sapCustomerNumber.isNotNull(),
+          customer.notificationSentAt.isNull(),
+          customer.isActive.eq(false),
+          isNotLinkedToAnyEntity()
+        )
+        .orderBy(customer.id.asc())
+        .fetch();
+
+  }
+
+  /**
+   * Marks 'removed' inactive SAP customers as notified by updating their notification timestamp
+   * in the database to the current time.
+   *
+   * @param customerIds a list of 'removed' inactive SAP customers IDs to be marked as notified.
+   */
+  @Transactional
+  public void markSapCustomersNotified(List<Integer> customerIds) {
+    queryFactory
+      .update(customer)
+      .set(customer.notificationSentAt, ZonedDateTime.now())
+      .where(customer.id.in(customerIds), customer.notificationSentAt.isNull(), customer.isActive.eq(false))
+      .execute();
+  }
 }

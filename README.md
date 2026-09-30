@@ -16,7 +16,7 @@ Governed public areas include:
 It is recommended to open Allu project into three projects when you develop: backend, frontend and deployment.
 
 ### Requirements
-- Node.js 16 or newer version
+- Node.js 16
 - Java 17
 - Maven 3.9.6 or newer version
   - add settings.xml file to path ~/.m2/. Example and artifactory credentials: https://helsinkisolutionoffice.atlassian.net/wiki/x/BwC72QE
@@ -125,6 +125,36 @@ Optional - if you want hot reload, run: `npm run hmr`
 When you have database, backend and frontend running you can access to site from localhost:3000/login
 
 Username: allute
+
+## Continuous Integration
+
+The frontend is gated by GitHub Actions — see `.github/workflows/frontend-ci.yml` ("Frontend CI"). It runs on every pull request and on pushes to `master` and `release-*` branches, and consists of two parallel jobs:
+
+- **Lint** — `npm ci` + `npm run lint` (must report 0 problems; the ESLint burn-down is complete).
+- **Build & Test** — `npm ci` + `npm run build` + headless unit tests. Chrome is installed from the official Google `.deb` via apt (`apt-get install -y google-chrome-stable deb`, which resolves the runtime shared libraries), `CHROME_BIN` is set from `command -v google-chrome`, and tests run under a `ChromeHeadlessNoSandbox` Karma launcher (`--no-sandbox` — required when running headless Chrome as root, e.g. inside containerized CI like `act`; harmless on GitHub's non-root runners). See `frontend/karma.conf.js`.
+
+Both jobs run on `ubuntu-latest` with Node 22.20.0 (matching the dev environment; npm cache keyed on `frontend/package-lock.json`).
+
+### Running the checks locally
+
+From the `frontend/` directory:
+
+```
+npm ci
+npm run build
+npm run lint
+CHROME_BIN=/path/to/chromium npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+### Branch protection (repository maintainer — UI action, not committed)
+
+To make the CI a merge gate for `master`, configure branch protection in GitHub UI:
+
+1. Repository → **Settings → Branches → Add branch protection rule**.
+2. Branch name pattern: `master` (add a separate rule for `release-*` if desired).
+3. Under "Require status checks to pass before merging", select the checks **Lint** and **Build & Test** (these are the job names in the workflow above) and require them to pass on PRs.
+
+This setting lives in GitHub's UI only — it cannot be committed to the repository.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

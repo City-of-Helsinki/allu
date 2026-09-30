@@ -1,6 +1,5 @@
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {Action} from '@ngrx/store';
-import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {ApplicationStatus} from '@model/application/application-status';
 import {StatusChangeInfo} from '@model/application/status-change-info';
 

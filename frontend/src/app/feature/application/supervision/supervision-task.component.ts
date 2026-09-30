@@ -17,9 +17,9 @@ import {
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
-import {filter, map, take} from 'rxjs/internal/operators';
+import {filter, map, take} from 'rxjs/operators';
 import {Store, select} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
@@ -29,7 +29,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
 import {SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
-import {Observable, Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
 import {CommentType} from '@model/application/comment/comment-type';
@@ -60,7 +60,7 @@ import * as fromSupervisionTask from './reducers';
 export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Input() application: Application;
   @Input() form: UntypedFormGroup;
-  @Output() onRemove = new EventEmitter<void>();
+  @Output() removeTask = new EventEmitter<void>();
 
   taskTypes: string[] = [];
   canEdit = false;
@@ -76,6 +76,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
   private saving$: Observable<boolean>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private loadingDialog: MatDialogRef<LoadingIndicatorComponent, any>;
 
   constructor(private applicationStore: ApplicationStore,
@@ -149,7 +150,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     if (task.id) {
       this.store.dispatch(new Remove(task.id));
     }
-    this.onRemove.emit();
+    this.removeTask.emit();
   }
 
   save(): void {
@@ -173,7 +174,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.form.disable();
       this.editing = false;
     } else {
-      this.onRemove.emit();
+      this.removeTask.emit();
     }
   }
 
@@ -193,7 +194,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       }
     };
     this.saving$.subscribe(value => {
-      value ? this.openGlassDialog() : closeGlassDialog();
+      if (value) {
+        this.openGlassDialog();
+      } else {
+        closeGlassDialog();
+      }
     });
   }
 

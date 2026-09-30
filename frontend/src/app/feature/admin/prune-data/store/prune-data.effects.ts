@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
 import { HttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import * as PruneDataActions from './prune-data.actions';
-import { Store } from '@ngrx/store';
-import { PruneDataItem } from '../models/prude-data-item.model';
+import { Action, Store } from '@ngrx/store';
 import { selectCurrentTab } from './prune-data.selectors';
 
 @Injectable()
 export class PruneDataEffects {
-  private applicationEndPoint = '/api/applications/anonymizable';
-  private userEndpoint = '/api/user/anonymizable';
+  private applicationsAnonymizableEndpoint  = '/api/applications/anonymizable';
+  private applicationsAnonymizeEndpoint  = '/api/applications/anonymize';
+  private customersEndpoint = '/api/customers';
+  private customersDeletableEndpoint = '/api/customers/deletable';
 
   constructor(
     private actions$: Actions,
@@ -24,31 +25,35 @@ export class PruneDataEffects {
       ofType(PruneDataActions.fetchAllData),
       switchMap(action => {
         const endpoint =
-        action.tab === 'user_data' ? this.userEndpoint : this.applicationEndPoint;
-    
+        action.tab === 'user_data' ? this.customersDeletableEndpoint : this.applicationsAnonymizableEndpoint;
+
         // pagination
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
         const params: any = {};
-        if (action.page !== undefined) params.page = action.page;
-        if (action.size !== undefined) params.size = action.size;
-    
+        if (action.page !== undefined) { params.page = action.page; }
+        if (action.size !== undefined) { params.size = action.size; }
+
          // sort
         if (action.sortField && action.sortDirection) {
           params.sort = `${action.sortField},${action.sortDirection}`;
         }
-    
-        params.type = action.tab;
 
+        if (action.tab !== 'user_data') {
+          params.type = action.tab;
+        }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
         return this.http.get<any>(endpoint, { params }).pipe(
           map(response => {
             if (response.content) {
-              return PruneDataActions.fetchAllDataSuccess({ 
-                  data: response.content, 
-                  totalItems: response.totalElements 
+              return PruneDataActions.fetchAllDataSuccess({
+                  data: response.content,
+                  totalItems: response.totalElements
                 });
               } else {
-                  return PruneDataActions.fetchAllDataSuccess({ 
-                    data: response, 
-                    totalItems: response.length 
+                  return PruneDataActions.fetchAllDataSuccess({
+                    data: response,
+                    totalItems: response.length
                   });
                 }
            }),
@@ -58,16 +63,19 @@ export class PruneDataEffects {
     )
   );
 
-  deleteData$ = createEffect(() =>
+  deleteData$ = createEffect((): Observable<Action> =>
     this.actions$.pipe(
       ofType(PruneDataActions.deleteData),
       withLatestFrom(this.store.select(selectCurrentTab)),
       mergeMap(([action, currentTab]) => {
         const endpoint =
-          currentTab === 'user_data' ? this.userEndpoint : this.applicationEndPoint;
-        return this.http.patch<void>(`${endpoint}`, action.ids).pipe(
+          currentTab === 'user_data' ? this.customersEndpoint : this.applicationsAnonymizeEndpoint;
+        const request$: Observable<unknown> = currentTab === 'user_data'
+          ? this.http.delete(endpoint, { body: action.ids })
+          : this.http.patch<void>(endpoint, action.ids);
+        return request$.pipe(
           map(() => PruneDataActions.deleteDataSuccess({ ids: action.ids })),
-          catchError(error => of(PruneDataActions.deleteDataSuccess({ ids: action.ids })))
+          catchError(error => of(PruneDataActions.deleteDataFailure({ ids: action.ids, error })))
         );
       })
     )

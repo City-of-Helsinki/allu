@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Location} from '@model/common/location';
 
@@ -7,7 +7,7 @@ import {Location} from '@model/common/location';
   templateUrl: './location-acceptance.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LocationAcceptanceComponent implements OnInit, OnDestroy {
+export class LocationAcceptanceComponent implements OnInit {
   @Input() id = '';
   @Input() formArray: UntypedFormArray;
   @Input() readonly: boolean;
@@ -24,9 +24,6 @@ export class LocationAcceptanceComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.form = this.fb.group({});
     this.formArray.push(this.form);
-  }
-
-  ngOnDestroy(): void {
   }
 
 }

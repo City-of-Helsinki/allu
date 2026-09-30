@@ -1,6 +1,6 @@
 import {Directive, HostBinding, Input, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControlWarn} from '@util/complex-validator';
-import {Subscription} from 'rxjs/index';
+import {Subscription} from 'rxjs';
 @Directive({
   selector: 'mat-form-field[inputWarning]'
 })

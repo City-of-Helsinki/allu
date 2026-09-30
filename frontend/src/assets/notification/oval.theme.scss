@@ -4,7 +4,7 @@
   $warn: map-get($theme, warn);
 
   .oval-warn {
-    background-color: mat.get-color-from-palette($warn);
+    background-color: mat.m2-get-color-from-palette($warn);
     color: white;
   }
 }

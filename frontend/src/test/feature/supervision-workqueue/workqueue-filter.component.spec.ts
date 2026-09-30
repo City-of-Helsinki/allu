@@ -10,7 +10,7 @@ import {findTranslation} from '@util/translations';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {StoredFilterStoreMock} from 'test/feature/common/stored-filter-store.mock';
 import {UserService} from '@service/user/user-service';
-import {combineReducers, Store, StoreModule} from '@ngrx/store';
+import {combineReducers, StoreModule} from '@ngrx/store';
 import * as fromCityDistricts from '@feature/allu/reducers/city-district-reducer';
 import * as fromSupervisionWorkQueue from '@feature/supervision-workqueue/reducers';
 import * as fromAuth from '@feature/auth/reducers';
@@ -24,6 +24,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 })
 class MockStoredFilterComponent {
   @Input() type: StoredFilterType;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   @Input() filter: any;
   @Input() selectedFilter: StoredFilter;
   @Input() availableFilters: StoredFilter[];
@@ -33,7 +34,6 @@ class MockStoredFilterComponent {
 describe('SupervisionWorkqueueFilterComponent', () => {
   let comp: WorkQueueFilterComponent;
   let fixture: ComponentFixture<WorkQueueFilterComponent>;
-  let store: Store<fromSupervisionWorkQueue.State>;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
@@ -64,7 +64,6 @@ describe('SupervisionWorkqueueFilterComponent', () => {
   }));
 
   beforeEach(() => {
-    store = TestBed.inject(Store);
     fixture = TestBed.createComponent(WorkQueueFilterComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;

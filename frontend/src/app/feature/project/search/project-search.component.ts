@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Project} from '@model/project/project';
 import {fromForm} from '@model/project/project-search-query';
@@ -40,7 +40,7 @@ export class ProjectSearchComponent implements OnInit {
               private projectState: ProjectState,
               private store: Store<fromRoot.State>,
               private notification: NotificationService,
-              fb: UntypedFormBuilder) {
+              fb: UntypedFormBuilder) {
     this.queryForm = fb.group({
       identifier: undefined,
       startTime: undefined,

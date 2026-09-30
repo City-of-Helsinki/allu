@@ -2,12 +2,14 @@ import isEqualWith from 'lodash/isEqualWith';
 import set from 'lodash/set';
 
 export class ObjectUtil {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static filter(source: any, filterFn: (fieldName: string) => any) {
     if (typeof source !== 'object') {
       throw new Error('Filtered object must be object');
     } else {
       return Object.keys(source)
         .filter(key => filterFn(key))
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
         .reduce((prev: any, key: string) => {
           prev[key] = source[key];
           return prev;
@@ -15,6 +17,7 @@ export class ObjectUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static clone(source: any) {
     if (typeof source !== 'object') {
       return source;
@@ -26,7 +29,7 @@ export class ObjectUtil {
       const cloned = Object.create(source);
 
       for (key in source) {
-        if (source.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
           value = source[key];
 
           if (!!value && value instanceof Date) {
@@ -44,6 +47,7 @@ export class ObjectUtil {
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   static set(source: any, path: string | string[], value: any): any {
     const cloned = ObjectUtil.clone(source);
     return set(cloned, path, value);
@@ -72,24 +76,29 @@ export function upsert<T>(dictionary: Dictionary<T>, key: string | number, value
   };
 }
 
-export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
+export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function isNumber(value: any): boolean {
   return typeof value === 'number';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function isString(value: any): boolean {
   return typeof value === 'string';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function isBoolean(value: any): boolean {
   return typeof value === 'boolean';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function isDate(value: any): boolean {
   return value instanceof Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function typeOfValue(value: any): ValueType {
   if (isNumber(value)) {
     return 'number';
@@ -104,10 +113,12 @@ export function typeOfValue(value: any): ValueType {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function isDefined(val: any): boolean {
   return val !== undefined && val !== null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
 export function isEqualWithSkip(left: any, right: any, skippedFields: string[] = []): boolean {
   const skipped = toDictionary(skippedFields, item => item);
   return isEqualWith(left, right, (l, r, key: string) => {

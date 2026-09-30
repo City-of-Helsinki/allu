@@ -11,8 +11,8 @@ import {CommentComponent} from './comment.component';
 export class CommentListComponent {
   @Input() comments: Comment[];
   @Input() loading = false;
-  @Output('save') onSave: EventEmitter<Comment> = new EventEmitter<Comment>();
-  @Output('remove') onRemove: EventEmitter<Comment> = new EventEmitter<Comment>();
+  @Output() saveComment: EventEmitter<Comment> = new EventEmitter<Comment>();
+  @Output() removeComment: EventEmitter<Comment> = new EventEmitter<Comment>();
 
   @ViewChildren('commentRef') children: QueryList<CommentComponent>;
 
@@ -20,11 +20,11 @@ export class CommentListComponent {
   }
 
   save(comment: Comment): void {
-    this.onSave.emit(comment);
+    this.saveComment.emit(comment);
   }
 
   remove(comment: Comment): void {
-    this.onRemove.emit(comment);
+    this.removeComment.emit(comment);
   }
 
   get dirty(): boolean {

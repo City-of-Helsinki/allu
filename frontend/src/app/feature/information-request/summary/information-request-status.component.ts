@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 
 type ProgressColor =
-  | 'active'
+  | 'active'
   | 'closed';
 
 @Component({

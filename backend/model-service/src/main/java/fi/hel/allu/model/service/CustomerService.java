@@ -1,11 +1,15 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -14,15 +18,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.user.Constants;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.CustomerUpdateLogDao;
+import fi.hel.allu.model.dao.ExternalUserDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.PersonAuditLogDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.event.CustomerUpdateEvent;
+import fi.hel.allu.model.service.history.CustomerHistoryMixins;
 
 /**
  * Customer related operations
@@ -30,21 +39,40 @@ import fi.hel.allu.model.service.event.CustomerUpdateEvent;
 @Service
 public class CustomerService {
 
-  private ObjectComparer objectComparer;
-  private CustomerDao customerDao;
-  private ContactDao contactDao;
-  private HistoryDao historyDao;
+  private final ObjectComparer objectComparer;
+  private final CustomerDao customerDao;
+  private final ContactDao contactDao;
+  private final HistoryDao historyDao;
   private final UserDao userDao;
-  private ApplicationEventPublisher customerUpdateEventPublisher;
+  private final ApplicationEventPublisher customerUpdateEventPublisher;
+  private final ExternalUserDao externalUserDao;
+  private final PersonAuditLogDao personAuditLogDao;
+  private final CustomerUpdateLogDao customerUpdateLogDao;
+
+  private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
   @Autowired
-  public CustomerService(CustomerDao customerDao, ContactDao contactDao, HistoryDao historyDao, UserDao userDao, ApplicationEventPublisher customerUpdateEventPublisher) {
+  public CustomerService(
+      CustomerDao customerDao,
+      ContactDao contactDao,
+      HistoryDao historyDao,
+      UserDao userDao,
+      ApplicationEventPublisher customerUpdateEventPublisher,
+      ExternalUserDao externalUserDao,
+      PersonAuditLogDao personAuditLogDao,
+      CustomerUpdateLogDao customerUpdateLogDao) {
     this.customerDao = customerDao;
     this.contactDao = contactDao;
     this.historyDao = historyDao;
     this.userDao = userDao;
     this.customerUpdateEventPublisher = customerUpdateEventPublisher;
+    this.externalUserDao = externalUserDao;
+    this.personAuditLogDao = personAuditLogDao;
+    this.customerUpdateLogDao = customerUpdateLogDao;
     objectComparer = new ObjectComparer();
+    objectComparer.addMixin(Customer.class, CustomerHistoryMixins.CustomerMixin.class);
+    objectComparer.addMixin(Contact.class, CustomerHistoryMixins.ContactMixin.class);
+    objectComparer.addMixin(PostalAddress.class, CustomerHistoryMixins.PostalAddressMixin.class);
   }
 
   /**
@@ -105,8 +133,11 @@ public class CustomerService {
   @Transactional()
   public Customer update(int id, Customer customer, int userId) {
     Customer oldCustomer = customerDao.findById(id).orElseThrow(() -> new NoSuchEntityException("Customer not found", Integer.toString(id)));
+    if (!oldCustomer.isActive() && customer.isActive()) {
+      throw new IllegalOperationException("customer.reactivation.forbidden");
+    }
     Customer newCustomer = customerDao.update(id, customer);
-    addChangeItem(id, userId, oldCustomer, newCustomer, "", false);
+    addChangeItem(id, userId, oldCustomer, newCustomer, "", false, null);
     if (!isExternalUser(userId)) {
       customerUpdateEventPublisher.publishEvent(new CustomerUpdateEvent(this, oldCustomer, newCustomer));
     }
@@ -123,7 +154,7 @@ public class CustomerService {
   @Transactional()
   public Customer insert(Customer customer, int userId) {
     Customer newCustomer = customerDao.insert(customer);
-    addChangeItem(newCustomer.getId(), userId, null, newCustomer, "", true);
+    addChangeItem(newCustomer.getId(), userId, null, newCustomer, "", true, null);
     return newCustomer;
   }
 
@@ -194,7 +225,7 @@ public class CustomerService {
   @Transactional
   public List<Contact> insertContacts(List<Contact> contacts, int userId) {
     List<Contact> inserted = contactDao.insert(contacts);
-    inserted.forEach(c -> addChangeItem(c.getCustomerId(), userId, null, c, "/contacts/" + c.getId(), false));
+    inserted.forEach(c -> addChangeItem(c.getCustomerId(), userId, null, c, "/contacts/" + c.getId(), false, "CONTACT"));
     return inserted;
   }
 
@@ -214,7 +245,7 @@ public class CustomerService {
     newContacts
         .forEach(
             c -> addChangeItem(c.getCustomerId(), userId, oldContactsById.get(c.getId()), c, "/contacts/" + c.getId(),
-                false));
+                false, "CONTACT"));
     return newContacts;
   }
 
@@ -233,19 +264,182 @@ public class CustomerService {
    * otherwise make it CONTENTS_CHANGED.
    */
   private void addChangeItem(int customerId, int userId, Object oldData, Object newData, String pathPrefix,
-      boolean isCreate) {
+      boolean isCreate, String changeSpecifier) {
     List<FieldChange> fieldChanges = objectComparer.compare(oldData, newData).stream()
         .map(d -> new FieldChange(pathPrefix + d.keyName, d.oldValue, d.newValue)).collect(Collectors.toList());
     if (!fieldChanges.isEmpty()) {
       ChangeHistoryItem change = new ChangeHistoryItem(userId, null,
-          isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(), fieldChanges);
+          isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, changeSpecifier, ZonedDateTime.now(), fieldChanges);
       historyDao.addCustomerChange(customerId, change);
     }
-
   }
 
   private boolean isExternalUser(Integer userId) {
     return userDao.findById(userId).map(u -> u.getUserName().equals(Constants.EXTERNAL_USER_USERNAME)).orElse(false);
   }
 
+  /**
+   * Retrieves a paginated list of deletable customers from the database.
+   * The method operates in a read-only transactional context.
+   *
+   * @param pageable the pagination and sorting information
+   * @return a paginated list of deletable customers
+   */
+  @Transactional(readOnly = true)
+  public Page<DeletableCustomer> getDeletableCustomers(Pageable pageable) {
+    Page<DeletableCustomer> page =
+      customerDao.getDeletableCustomers(pageable);
+
+    logger.debug(
+      "Fetched deletable customers from database, totalElements={}",
+      page.getTotalElements()
+    );
+
+    return page;
+  }
+
+  /**
+   * Returns a page of customer IDs eligible for permanent deletion by the scheduler.
+   *
+   * @param pageSize number of IDs to return
+   * @param afterId  cursor: only return customers with id greater than this value (pass 0 for first page)
+   * @return list of purgeable customer IDs
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findPurgeableCustomerIds(int pageSize, int afterId) {
+    List<Integer> ids = customerDao.findPurgeableCustomerIds(pageSize, afterId);
+    logger.debug("Found {} purgeable customer IDs (pageSize={}, afterId={})", ids.size(), pageSize, afterId);
+    return ids;
+  }
+
+  /**
+   * Soft deletes the specified customers and their associated contacts from the system.
+   * This operation updates the is_active flag to false for customers and contacts.
+   * Non-deletable customers are excluded.
+   *
+   * @param ids the list of customer IDs to be soft deleted
+   * @return a DeleteIdsResult object containing the IDs of successfully "deleted" customers
+   *         and the IDs of customers that could not be "deleted"
+   */
+  @Transactional
+  public DeleteIdsResult softDeleteCustomersAndContacts(List<Integer> ids) {
+    // "Security check" to ensure that none of the given customer ids haven't been linked to an application or project since the deletable customers were fetched. If there are any, they will be excluded from deletion.
+    List<Integer> nonDeletableIds = customerDao.findNonDeletableCustomerIds(ids);
+    Set<Integer> deletableIds = new HashSet<>(ids);
+    nonDeletableIds.forEach(deletableIds::remove);
+
+    if (!deletableIds.isEmpty()) {
+      // Get associated contacts
+      List<Integer> contactIds = contactDao.findDeletableContactIdsByCustomerIds(deletableIds);
+
+      // Soft delete associated contacts (FK-safe)
+      if (!contactIds.isEmpty()) {
+        long deletedContacts = contactDao.softDeleteContactsByIds(contactIds);
+        if (deletedContacts != contactIds.size()) {
+          logger.error("Contact deletion mismatch: expected={}, actual={}",
+            contactIds.size(), deletedContacts);
+        }
+        logger.debug("Soft deleted {} contacts", deletedContacts);
+      }
+
+      // Soft delete customers
+      long deletedCustomers = customerDao.softDeleteCustomers(deletableIds);
+      if (deletedCustomers != deletableIds.size()) {
+        logger.error(
+          "Deletion mismatch. Expected={}, actual={}",
+          deletableIds.size(), deletedCustomers
+        );
+      }
+      logger.debug("Soft deleted {} customers table", deletedCustomers);
+    }
+
+    if (!nonDeletableIds.isEmpty()) {
+      logger.warn("Some customers were not soft deleted because they became linked to an application or project: {}", nonDeletableIds);
+    }
+
+    return new DeleteIdsResult(deletableIds, nonDeletableIds);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CustomerSapInfo> findUnnotifiedSapCustomers() {
+    List<CustomerSapInfo> customers = customerDao.findUnnotifiedSapCustomers();
+
+    logger.info(
+      "Fetched {} inactive, unnotified, and unlinked SAP customers",
+      customers.size()
+    );
+
+    return customers;
+  }
+
+  @Transactional
+  public void markSapCustomersNotified(List<Integer> ids) {
+    logger.info(
+      "Marking {} inactive SAP customers as notified",
+      ids.size()
+    );
+
+    customerDao.markSapCustomersNotified(ids);
+  }
+
+  /**
+   * Permanently deletes customers and all their related data in FK-safe order.
+   * Before deletion, customer identifying data is archived in customer_archive.
+   *
+   * Deletion order:
+   * 1. Archive customers (customer_archive)
+   * 2. Remove external_user_customer links (FK to customer)
+   * 3. Fetch contact IDs for these customers (needed for audit log cleanup)
+   * 4. Delete person_audit_log for customers and contacts (FK to both)
+   * 5. Delete change_history + field_change for customers/contacts (FK to customer)
+   * 6. Delete contacts (FK to customer)
+   * 7. Delete customer_update_log (FK to customer)
+   * 8. Delete customers
+   *
+   * @param ids customer IDs to permanently delete
+   * @return number of permanently deleted customers
+   */
+  @Transactional
+  public int purgeCustomersAndRelatedData(List<Integer> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return 0;
+    }
+    Set<Integer> idSet = new HashSet<>(ids);
+
+    // Runtime safety guard: remove any customers that are still linked to applications,
+    // projects, or are invoice recipients. This guards against race conditions where a
+    // customer becomes linked between the time findPurgeableCustomerIds ran and now.
+    List<Integer> nonPurgeableIds = customerDao.findNonDeletableCustomerIds(ids);
+    if (!nonPurgeableIds.isEmpty()) {
+      nonPurgeableIds.forEach(idSet::remove);
+      logger.warn("Skipping {} customers from purge because they are still linked to entities: {}",
+        nonPurgeableIds.size(), nonPurgeableIds);
+    }
+    if (idSet.isEmpty()) {
+      return 0;
+    }
+
+    customerDao.archiveCustomers(idSet);
+    logger.debug("Archived {} customers to customer_archive", idSet.size());
+
+    externalUserDao.deleteCustomerLinksByCustomerIds(idSet);
+
+    List<Integer> contactIds = contactDao.findDeletableContactIdsByCustomerIds(idSet);
+
+    personAuditLogDao.deleteByCustomerIds(idSet);
+
+    historyDao.deleteCustomerAndContactChangeHistory(idSet);
+
+    if (!contactIds.isEmpty()) {
+      long deletedContacts = contactDao.deleteContactsByIds(contactIds);
+      logger.debug("Permanently deleted {} contacts", deletedContacts);
+    }
+
+    customerUpdateLogDao.deleteByCustomerIds(idSet);
+
+    long deletedCustomers = customerDao.deleteCustomers(idSet);
+    logger.info("Permanently deleted {} customers (requested: {})", deletedCustomers, idSet.size());
+
+    return (int) deletedCustomers;
+  }
 }

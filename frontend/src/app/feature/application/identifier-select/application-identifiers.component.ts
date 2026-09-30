@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/internal/Observable';
+import {Observable} from 'rxjs';
 import {IdentifierEntry} from '@feature/application/identifier-select/identifier-entry';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
-import {map, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {map, take, takeUntil} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Subject} from 'rxjs/internal/Subject';
+import {Subject} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {select, Store} from '@ngrx/store';
@@ -78,6 +78,7 @@ export class ApplicationIdentifiersComponent implements OnInit, OnDestroy, Contr
   }
 
   /** Implemented as part of ControlValueAccessor. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: (value: any) => void): void {
     this._onChange = fn;
   }
@@ -105,7 +106,9 @@ export class ApplicationIdentifiersComponent implements OnInit, OnDestroy, Contr
     ).subscribe(next => this.identifiers$.next(next));
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onChange = (_: any) => {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onTouched = (_: any) => {};
 
   private toIdentifierEntry = (application: Application) => ({value: application.applicationId, name: application.name});

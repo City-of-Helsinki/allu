@@ -120,6 +120,22 @@ public class ExternalUserDao {
     queryFactory.update(externalUser).set(externalUser.lastLogin, loginTime).where(externalUser.id.eq(id)).execute();
   }
 
+  /**
+   * Removes all external_user_customer links for the given customer IDs.
+   * Must be called before permanently deleting customers to satisfy FK constraints.
+   *
+   * @param customerIds customer IDs whose external user links should be removed
+   */
+  @Transactional
+  public void deleteCustomerLinksByCustomerIds(Collection<Integer> customerIds) {
+    if (customerIds == null || customerIds.isEmpty()) {
+      return;
+    }
+    queryFactory
+      .delete(externalUserCustomer)
+      .where(externalUserCustomer.customerId.in(customerIds))
+      .execute();
+  }
 
   private void replaceConnectedCustomers(int externalUserId, List<Integer> connectedCustomers) {
     queryFactory.delete(externalUserCustomer).where(externalUserCustomer.externalUserId.eq(externalUserId)).execute();

@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
 import * as fromProject from './reducers';
 import {Store} from '@ngrx/store';
 import {Application} from '../../model/application/application';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'project',

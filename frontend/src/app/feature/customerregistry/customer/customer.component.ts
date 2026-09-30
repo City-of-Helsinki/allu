@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, Subject} from 'rxjs';
+import {lastValueFrom, Observable, Subject} from 'rxjs';
 import {NumberUtil} from '../../../util/number.util';
 import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
@@ -13,11 +13,15 @@ import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {filter, map, switchMap, take} from 'rxjs/internal/operators';
+import {map, take} from 'rxjs/operators';
 import {FormUtil} from '@util/form.util';
 import {createTranslated} from '@service/error/error-info';
 import { CurrentUser } from '@app/service/user/current-user';
 import { RoleType } from '@app/model/user/role-type';
+import {Store} from '@ngrx/store';
+import * as fromCustomer from '@feature/customerregistry/reducers';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {Clear, LoadByTargetId} from '@feature/history/actions/history-actions';
 
 
 @Component({
@@ -29,41 +33,49 @@ import { RoleType } from '@app/model/user/role-type';
 })
 export class CustomerComponent implements OnInit {
   customerTypes = EnumUtil.enumValues(CustomerType);
+  customerTargetType = ActionTargetType.Customer;
   form: UntypedFormGroup;
   customerForm: UntypedFormGroup;
   contactSubject = new Subject<Contact>();
   isRemoveVisible = true;
+  hasCustomerId = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private customerService: CustomerService,
               private fb: UntypedFormBuilder,
               private notification: NotificationService,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private store: Store<fromCustomer.State>) {
     this.form = CustomerWithContactsForm.initialForm(this.fb);
     this.customerForm = <UntypedFormGroup>this.form.get('customer');
   }
 
   ngOnInit(): void {
-    this.route.params.pipe(
-      map(p => p['id']),
-      filter(id => NumberUtil.isDefined(id)),
-      switchMap(id => this.customerService.findCustomerById(id))
-    ).subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
+    this.route.params.pipe(map(p => p['id'])).subscribe(id => {
+      this.hasCustomerId = NumberUtil.isDefined(id);
+      if (this.hasCustomerId) {
+        this.store.dispatch(new LoadByTargetId(ActionTargetType.Customer, +id));
+        this.customerService.findCustomerById(+id)
+          .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
+      } else {
+        this.store.dispatch(new Clear(ActionTargetType.Customer));
+      }
+    });
 
     this.removeButtonVisibilityStatus();
   }
 
   async removeButtonVisibilityStatus(): Promise<void> {
     // ALLU-19 restrict usage to admin and invoicing roles when sap number exists, this hides the remove
-    const userHasRole = await this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])).toPromise();
+    const userHasRole = await lastValueFrom(this.currentUser.hasRole([RoleType.ROLE_INVOICING, RoleType.ROLE_ADMIN].map(role => RoleType[role])));
 
     this.customerForm.get('sapCustomerNumber').valueChanges
       .pipe(take(1))
       .subscribe(value => {
         if (value && !userHasRole) {
           this.isRemoveVisible = false;
-        } 
+        }
     });
   }
 
@@ -75,15 +87,15 @@ export class CustomerComponent implements OnInit {
     const customer = CustomerForm.toCustomer(formValues.customer);
     customer.active = false;
     this.save(customer, this.contactChanges()).subscribe(
-      c => this.notifyAndNavigateToCustomers(findTranslation('customer.action.removeFromRegistry')),
+      () => this.notifyAndNavigateToCustomers(findTranslation('customer.action.removeFromRegistry')),
       error => this.notification.errorInfo(error)
     );
   }
 
-  onSubmit(formValues: CustomerWithContactsForm): void {
+  onSubmit(_formValues: CustomerWithContactsForm): void {
     if (this.form.valid && this.form.dirty) {
       this.save(this.customerChanges(), this.contactChanges()).subscribe(
-        customer => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
+        () => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
         error => this.notification.errorInfo(error)
       );
     } else {

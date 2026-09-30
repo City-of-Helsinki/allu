@@ -5,24 +5,25 @@
       <div fxLayout="row" fxLayoutGap="18px">
         <div fxFlex="20%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'projectSearch.owner' | translation}}</mat-label>
             <input matInput type="text"
-                   formControlName="ownerName"
-                   [placeholder]="'projectSearch.owner' | translation"/>
+                   formControlName="ownerName"/>
           </mat-form-field>
         </div>
         <div fxFlex="20%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'projectSearch.identifier' | translation}}</mat-label>
             <input matInput type="text"
-                   formControlName="identifier"
-                   [placeholder]="'projectSearch.identifier' | translation"/>
+                   formControlName="identifier"/>
           </mat-form-field>
         </div>
         <div fxFlex="20%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'projectSearch.districts' | translation}}</mat-label>
             <mat-select formControlName="districts"
                         [multiple]="true"
-                        [placeholder]="'projectSearch.districts' | translation"
-                        class="input-full-width">
+                        class="input-full-width"
+                        panelClass="filter-select-panel">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
               </mat-option>
             </mat-select>
@@ -30,10 +31,10 @@
         </div>
         <div fxFlex="10%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'projectSearch.startTime' | translation}}</mat-label>
             <input matInput
                    type="text"
                    formControlName="startTime"
-                   [placeholder]="'projectSearch.startTime' | translation"
                    [matDatepicker]="startTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #startTimePicker></mat-datepicker>
@@ -41,9 +42,9 @@
         </div>
         <div fxFlex="10%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'projectSearch.endTime' | translation}}</mat-label>
             <input matInput type="text"
                    formControlName="endTime"
-                   [placeholder]="'projectSearch.endTime' | translation"
                    [matDatepicker]="endTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #endTimePicker></mat-datepicker>
@@ -51,10 +52,10 @@
         </div>
         <div fxFlex="20%">
           <mat-form-field class="input-full-width">
+            <mat-label>{{'projectSearch.creator' | translation}}</mat-label>
             <input matInput
                    type="text"
-                   formControlName="creator"
-                   [placeholder]="'projectSearch.creator' | translation"/>
+                   formControlName="creator"/>
           </mat-form-field>
         </div>
       </div>
@@ -74,12 +75,13 @@
   </div>
 
   <div fxLayout="row">
-    <div fxFlex>
+    <div fxFlex class="table-flex-container">
       <div class="mat-elevation-z8 data-table data-table-with-paging">
         <div class="loading-shade" *ngIf="dataSource.loading">
           <mat-spinner></mat-spinner>
         </div>
-        <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+        <div class="table-scroll-container">
+          <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
           <ng-container matColumnDef="identifier">
             <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.id' | translation}}</mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -117,7 +119,8 @@
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"
                    class="row-highlight"></mat-row>
-        </mat-table>
+          </mat-table>
+        </div>
 
         <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
       </div>

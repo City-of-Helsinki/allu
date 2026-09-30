@@ -22,7 +22,7 @@ export enum SupervisionTaskSearchActionType {
   ClearSelected = '[SupervisionTaskSearch] Clear selected supervision tasks'
 }
 
-export interface SupervisionTaskSearchParams extends SearchParameters<SupervisionTaskSearchCriteria> {}
+export type SupervisionTaskSearchParams = SearchParameters<SupervisionTaskSearchCriteria>;
 
 export class SetSearchQuery implements ActionWithTarget {
   readonly type = SupervisionTaskSearchActionType.SetSearchQuery;

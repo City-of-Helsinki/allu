@@ -7,7 +7,7 @@ export const selectCurrentTab = createSelector(
     selectPruneDataState,
     state => state.currentTab
   );
-  
+
 export const selectPruneData = createSelector(
   selectPruneDataState,
   state => state.allData
@@ -41,44 +41,54 @@ export const selectDeleteModalVisibility = createSelector(
 export const selectDeleteInProgress = createSelector(
   selectPruneDataState,
   state => state.deleteInProgress
-)
+);
 
 export const selectAllSelected = createSelector(
   selectFilteredData,
   selectSelectedIds,
-  (items, selectedIds) => items.length > 0 && items.length === selectedIds.length
+  (items, selectedIds) => {
+    if (items.length === 0) { return false; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+    const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
+    return pageIds.every(id => selectedIds.includes(id));
+  }
 );
 
 export const selectSomeSelected = createSelector(
+  selectFilteredData,
   selectSelectedIds,
-  selectedIds => selectedIds.length > 0
+  (items, selectedIds) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+    const pageIds = items.map(item => (item as any).id ?? (item as any).customerId);
+    return pageIds.some(id => selectedIds.includes(id));
+  }
 );
 
 export const selectTotalItems = createSelector(
   selectPruneDataState,
   state => state.totalItems
 );
-  
-  
+
+
 export const selectPageIndex = createSelector(
   selectPruneDataState,
   state => state.pageIndex
 );
-  
-  
+
+
 export const selectPageSize = createSelector(
   selectPruneDataState,
   state => state.pageSize
 );
-  
-  
+
+
 export const selectSortField = createSelector(
   selectPruneDataState,
   state => state.sortField
 );
-  
-  
+
+
 export const selectSortDirection = createSelector(
   selectPruneDataState,
   state => state.sortDirection
-); 
+);

@@ -10,7 +10,7 @@ import {applicationCanBeEdited} from '@model/application/application-status';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import * as fromRoot from '@feature/allu/reducers';
 import {select, Store} from '@ngrx/store';
-import {map} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
 import * as fromApplication from '@feature/application/reducers';
 import {MapLayer} from '@service/map/map-layer';
@@ -126,7 +126,7 @@ export class LocationDetailsComponent implements OnInit, OnDestroy {
   }
 
   private editLocation(loc: Location): void {
-    if (!!loc) {
+    if (loc) {
       this.location = loc;
     }
   }

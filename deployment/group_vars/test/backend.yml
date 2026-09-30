@@ -18,7 +18,7 @@ mail_server_host: relay@hel.fi
 mail_server_port: 25
 mail_server_auth: false
 email_allowed_addresses: "*@gofore.fi,*@hel.fi"
-email_sender_address: Alueidenkaytto ja -valvonta Test <allu-noreply@hel.fi>
+email_sender_address: Kaupunkitilan lupa- ja asiakaspalvelut Test <allu-noreply@hel.fi>
 
 invoice_sending_enabled: true
 invoice_archivedir: /tmp/allu-invoice-archive
@@ -45,3 +45,10 @@ customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 supervision_api_basepath: /supervision-api
 
 anonymization_update_cronstring: "0 0 3 * * *"
+
+# Cron string for sending notification email about removed SAP customers
+removed_customers_subject: "Allu - asiakasrekisterist\u00E4 poistettu SAP-numerollisia asiakkaita"
+removed_customers_notification_cronstring: "0 15 3 * * *"
+
+# Cron string for permanently deleting inactive customers past their retention period - disable with cron: 0 0 3 31 2 *
+customer_purge_cronstring: "0 0 4 * * *"

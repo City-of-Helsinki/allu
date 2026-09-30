@@ -2,8 +2,8 @@ import {Action, select, Store} from '@ngrx/store';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import * as fromApplication from '../reducers';
 import {MetadataService} from '../../../service/meta/metadata.service';
-import {from, Observable, of} from 'rxjs/index';
-import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
+import {from, Observable, of} from 'rxjs';
+import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
 import {NumberUtil} from '../../../util/number.util';
 import * as MetaAction from '../actions/application-meta-actions';
 import {ApplicationMetaActionType} from '../actions/application-meta-actions';
@@ -61,7 +61,7 @@ export class ApplicationEffects {
   loadMeta: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<MetaAction.Load>(ApplicationMetaActionType.Load),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, application]) => this.metadataService.loadByApplicationType(application.type).pipe(
+    switchMap(([_action, application]) => this.metadataService.loadByApplicationType(application.type).pipe(
       map(meta => new MetaAction.LoadSuccess(meta)),
       catchError(error => of(new MetaAction.LoadFailed(error)))
     ))
@@ -71,8 +71,8 @@ export class ApplicationEffects {
   removeClientApplicationData: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.RemoveClientApplicationData>(ApplicationActionType.RemoveClientApplicationData),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    filter(([action, application]) => !!application.clientApplicationData),
-    switchMap(([action, application]) => this.applicationService.removeClientApplicationData(application.id).pipe(
+    filter(([_action, application]) => !!application.clientApplicationData),
+    switchMap(([_action, application]) => this.applicationService.removeClientApplicationData(application.id).pipe(
       tap(app => this.applicationStore.setApplication(app)), // TODO: Remove when all api calls use ngrx
       map(app => new ApplicationAction.LoadSuccess(app)),
       catchError(error => from([
@@ -135,7 +135,7 @@ export class ApplicationEffects {
   loadDistribution: Observable<Action> = createEffect(() => this.actions.pipe(
     ofType<ApplicationAction.LoadDistribution>(ApplicationActionType.LoadDistribution),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.applicationService.getDistribution(app.id).pipe(
+    switchMap(([_action, app]) => this.applicationService.getDistribution(app.id).pipe(
       map(distribution => new LoadDistributionSuccess(distribution)),
       catchError(error => of(new NotifyFailure(error)))
     ))

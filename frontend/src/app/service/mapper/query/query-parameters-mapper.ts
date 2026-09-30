@@ -2,7 +2,7 @@ import {BackendQueryParameter} from '../../backend-model/backend-query-parameter
 import {Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
 import {PageRequest} from '../../../model/common/page-request';
-import {HttpParams} from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 
 export const enumFields = [
   'status',
@@ -91,11 +91,12 @@ export class QueryParametersMapper {
     let retVal;
     if (str) {
       retVal = str.trim();
-      retVal = retVal.replace('\s+', ' ');
+      retVal = retVal.replace(/\s+/g, ' ');
     }
     return retVal;
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- backend/frontend JSON payload (dynamically typed API contract)
   public static createDateParameter(parameterName: string, startDate: Date, endDate: Date, open: boolean = false): any {
     /**
      * Open allows other date parameter to be undefined, otherwise require both to be defined
@@ -105,8 +106,8 @@ export class QueryParametersMapper {
         fieldName: QueryParametersMapper.getBackendValueField(parameterName),
         fieldValue: undefined,
         fieldMultiValue: undefined,
-        startDateValue: !!startDate ? startDate.toISOString() : undefined,
-        endDateValue: !!endDate ? endDate.toISOString() : undefined
+        startDateValue: startDate ? startDate.toISOString() : undefined,
+        endDateValue: endDate ? endDate.toISOString() : undefined
       };
     } else {
       return undefined;

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
@@ -9,7 +9,7 @@ import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 import {Sort} from '@model/common/sort';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
-import {map, takeUntil} from 'rxjs/internal/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromSupervisionWorkQueue from '@feature/supervision-workqueue/reducers';

@@ -34,11 +34,13 @@ export class DistributionSelectionComponent implements OnInit, OnDestroy, Contro
   }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   registerOnChange(fn: any): void {
     this._onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  registerOnTouched(_fn: any): void {}
 
   setDisabledState(isDisabled: boolean): void {
     if (isDisabled) {
@@ -52,5 +54,6 @@ export class DistributionSelectionComponent implements OnInit, OnDestroy, Contro
     }
   }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   private _onChange = (_: any) => {};
 }

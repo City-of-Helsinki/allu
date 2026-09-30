@@ -5,10 +5,10 @@ import {Observable, Subject} from 'rxjs';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {NotificationService} from '../notification/notification.service';
 import {User} from '../../model/user/user';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {STORED_FILTER_MODAL_CONFIG, StoredFilterModalComponent} from './stored-filter-modal.component';
 import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
-import {catchError, filter, switchMap, takeUntil} from 'rxjs/internal/operators';
+import {catchError, filter, switchMap, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'stored-filter',
@@ -21,6 +21,7 @@ import {catchError, filter, switchMap, takeUntil} from 'rxjs/internal/operators'
 export class StoredFilterComponent implements OnInit, OnDestroy {
 
   @Input() type: StoredFilterType;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
   @Input() filter: any;
   @Input() selectedFilter: StoredFilter;
   @Input() availableFilters: StoredFilter[];

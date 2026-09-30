@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {DefaultRecipient} from '../../../model/common/default-recipient';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {EnumUtil} from '../../../util/enum.util';
 import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
 import {NotificationService} from '../../notification/notification.service';
 
@@ -13,7 +12,7 @@ import {NotificationService} from '../../notification/notification.service';
 })
 export class RecipientsByTypeComponent implements OnInit {
   @Input() type: string;
-  @Output() onItemCountChanged = new EventEmitter<number>();
+  @Output() itemCountChanged = new EventEmitter<number>();
 
   applicationTypes = Object.keys(ApplicationType);
 
@@ -30,14 +29,14 @@ export class RecipientsByTypeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onItemCountChanged.emit(this.recipientRows.length);
+    this.itemCountChanged.emit(this.recipientRows.length);
     this.recipientHub.defaultRecipientsByApplicationType(this.type)
       .subscribe(recipients => this.replaceRecipients(recipients));
   }
 
   add(): void {
     this.recipientRows.push(this.createRecipient());
-    this.onItemCountChanged.emit(this.recipientRows.length);
+    this.itemCountChanged.emit(this.recipientRows.length);
   }
 
   edit(control: UntypedFormControl): void {
@@ -49,7 +48,7 @@ export class RecipientsByTypeComponent implements OnInit {
     const recipient = new DefaultRecipient(value.id, value.email, value.applicationType);
     this.recipientHub.saveDefaultRecipient(recipient)
       .subscribe(
-        saved => { control.disable(); },
+        () => { control.disable(); },
         error => this.notification.errorInfo(error));
   }
 
@@ -57,9 +56,9 @@ export class RecipientsByTypeComponent implements OnInit {
     const recipient = this.recipientRows.at(index).value;
     this.recipientHub.removeDefaultRecipient(recipient.id)
       .subscribe(
-        status => {},
+        () => {},
         error => this.notification.errorInfo(error));
-    this.onItemCountChanged.emit(this.recipientRows.length);
+    this.itemCountChanged.emit(this.recipientRows.length);
   }
 
   private replaceRecipients(newRecipients: Array<DefaultRecipient>) {

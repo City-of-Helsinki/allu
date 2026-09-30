@@ -1,23 +1,22 @@
 @use '@angular/material' as mat;
 @mixin allu-list-theme($theme) {
   $primary: map-get($theme, primary);
-
-  .mat-selection-list:focus,
-  .mat-list-option:focus {
-    outline-color: mat.get-color-from-palette($primary, 100);
+  .mat-mdc-selection-list:focus,
+  .mat-mdc-list-option:focus {
+    outline-color: mat.m2-get-color-from-palette($primary, 100);
   }
 
   ul.striped li:nth-child(odd),
-  .mat-list.striped .mat-list-item:nth-child(odd) {
-    background: mat.get-color-from-palette($primary, 50);
+  .mat-mdc-list.striped .mat-mdc-list-item:nth-child(odd) {
+    background: mat.m2-get-color-from-palette($primary, 50);
   }
 
   .mat-action-list button.selected,
   .mat-action-list button.selected:focus {
-    background-color: mat.get-color-from-palette($primary, 200);
+    background-color: mat.m2-get-color-from-palette($primary, 200);
   }
 
   .mat-action-list button.selected:hover {
-    background-color: mat.get-color-from-palette($primary, 300);
+    background-color: mat.m2-get-color-from-palette($primary, 300);
   }
 }

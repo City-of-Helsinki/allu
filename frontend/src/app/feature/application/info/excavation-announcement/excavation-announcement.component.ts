@@ -1,9 +1,9 @@
-import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, AfterViewInit} from '@angular/core';
 import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
-import {filter, take} from 'rxjs/internal/operators';
+import {filter, take} from 'rxjs/operators';
 import {MatDatepicker} from '@angular/material/datepicker';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Application} from '@model/application/application';
 import {AbstractControlWarn, ComplexValidator} from '@util/complex-validator';
 import {ExcavationAnnouncementForm, from, to} from './excavation-announcement.form';
@@ -43,7 +43,7 @@ import {ArrayUtil} from '@util/array-util';
   templateUrl: './excavation-announcement.component.html',
   styleUrls: []
 })
-export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponent implements OnInit {
+export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponent implements OnInit, AfterViewInit {
   validityEndTimeCtrl: AbstractControlWarn;
   validityEndTimeIcon: IconConfig = new IconConfig(undefined, true, 'today');
   showReportCustomerDates = false;
@@ -139,9 +139,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
     this.winterTimeOperationCtrl = this.applicationForm.controls['winterTimeOperation'];
 
-    combineLatest(
+    combineLatest([
       this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_START),
-      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END))
+      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END)])
         .pipe(take(1)).subscribe(([start, end]) => {
           this.winterTimeStart = start.value;
           this.winterTimeEnd = end.value;
@@ -212,7 +212,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     return application;
   }
 
-  private onValidityEndTimeChange(status: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentionally loose typing in a generic helper / framework edge case
+  private onValidityEndTimeChange(_status: any) {
     if (this.validityEndTimeCtrl.warnings) {
       this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
         ? new IconConfig('accent', false, 'warning')
