@@ -17,7 +17,10 @@
     </div>
   </div>
 
-  <div class="section-container">
+  <div
+    class="section-container paired-field-grid"
+    [class.has-select-all-row]="hasSelectAllRow"
+    [style.--field-row-count]="fieldRowCount">
     <div *ngIf="!hideExisting" class="section-content">
       <field-select
         *ngIf="!nonSelectableFields"
@@ -40,7 +43,7 @@
           [meta]="meta"></field-display>
       </ng-container>
     </div>
-    <div class="section-content">
+    <div class="section-content" [class.provided-only]="hideExisting">
       <field-select
         *ngIf="!nonSelectableFields"
         #newValuesSelect
