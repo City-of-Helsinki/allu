@@ -66,6 +66,15 @@ export abstract class InfoAcceptanceDirective implements OnInit, OnDestroy {
     return !!this.oldDisplayValues && Object.values(this.oldDisplayValues).some(v => v != null);
   }
 
+  get hasSelectAllRow(): boolean {
+    return !this.nonSelectableFields && !this.readonly && (this.fieldDescriptions?.length || 0) > 1;
+  }
+
+  get fieldRowCount(): number {
+    const fieldCount = this.fieldDescriptions?.length || 0;
+    return Math.max(1, fieldCount + Number(this.hasSelectAllRow));
+  }
+
   selectAllOld(): void {
     if (this.oldValues) {
       // Timeout forces selectAll function to be called on next angular update cycle

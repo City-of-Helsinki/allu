@@ -12,7 +12,8 @@
 
     .mdc-list-item__content {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
+      align-self: stretch;
       min-height: 42px;
       padding-left: 8px;
       min-width: 0;
