@@ -15,11 +15,15 @@
       align-items: center;
       min-height: 42px;
       padding-left: 8px;
+      min-width: 0;
+      white-space: normal;
     }
 
     .mat-mdc-list-item-unscoped-content {
       display: block;
       flex: 1 1 auto;
+      min-width: 0;
+      white-space: normal;
     }
   }
   mat-selection-list .mat-mdc-list-option.map-container {
@@ -57,6 +61,9 @@
 
 .value-change {
   font-weight: 500;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 :host ::ng-deep .non-selectable-list {
