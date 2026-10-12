@@ -25,7 +25,47 @@
 
 .section-content {
   flex: 1;
-  // min-width: 0;
+  min-width: 0;
+}
+
+.paired-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--field-row-count), auto);
+  grid-auto-flow: column;
+  align-items: stretch;
+}
+
+.paired-field-grid .section-content {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span var(--field-row-count);
+  min-width: 0;
+}
+
+.paired-field-grid .provided-only {
+  grid-column: 2;
+}
+
+:host ::ng-deep .paired-field-grid field-select,
+:host ::ng-deep .paired-field-grid field-display {
+  display: contents;
+}
+
+:host ::ng-deep .paired-field-grid mat-selection-list {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: 1 / span var(--field-row-count);
+}
+
+:host ::ng-deep .paired-field-grid.has-select-all-row mat-selection-list {
+  grid-row: 2 / span calc(var(--field-row-count) - 1);
+}
+
+:host ::ng-deep .paired-field-grid .non-selectable-list {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span var(--field-row-count);
 }
 
 .section-content-centered {
