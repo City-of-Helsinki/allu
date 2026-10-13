@@ -12,7 +12,7 @@
 
     .mdc-list-item__content {
       display: flex;
-      align-items: flex-start;
+      align-items: stretch;
       align-self: stretch;
       min-height: 42px;
       padding-left: 8px;
@@ -58,6 +58,16 @@
     --mdc-list-list-item-disabled-state-layer-opacity: 0;
     opacity: 1;
   }
+}
+
+:host ::ng-deep .mat-mdc-list-item-unscoped-content > div[fxlayout="row"] {
+  padding-block: 11px 5px;
+  box-sizing: border-box;
+  align-items: flex-start !important;
+}
+
+:host ::ng-deep .non-selectable-item > div[fxlayout="row"] {
+  align-items: flex-start !important;
 }
 
 .value-change {
