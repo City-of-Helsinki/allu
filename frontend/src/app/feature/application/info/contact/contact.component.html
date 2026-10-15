@@ -1,7 +1,7 @@
 <div [formGroup]="form">
-  <div formArrayName="contacts">
+  <div class="contacts-list" formArrayName="contacts">
     <div *ngFor="let contact of contacts.controls; let index=index"
-         class="col m6 contact-card">
+         class="contact-card">
       <div [formGroupName]="index" class="no-border">
         <allu-card>
           <mat-card-header>

@@ -1,7 +1,31 @@
+:host {
+  display: block;
+}
+
+.customer-role {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.customer-form,
+contact {
+  min-width: 0;
+}
+
 .customer-bottom-controls > * {
   min-height: 36px;
 }
 
 .customer-clear-row {
   padding: 0 16px 16px;
+}
+
+@media (max-width: 900px) {
+  .customer-role {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
 }
