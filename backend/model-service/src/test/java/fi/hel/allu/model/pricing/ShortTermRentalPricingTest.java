@@ -89,6 +89,18 @@ public class ShortTermRentalPricingTest {
   }
 
   @Test
+  public void shouldLeaveChristmasTreeSalesPriceToHandler() {
+    application.setKind(ApplicationKind.CHRISTMAS_TREE_SALES);
+    application.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.CHRISTMAS_TREE_SALES, Collections.emptyList()));
+    setShortTermRentalPricing();
+
+    shortTermRentalPricing.calculatePrice();
+
+    verifyNoInteractions(pricingDao);
+    Assertions.assertTrue(shortTermRentalPricing.getChargeBasisEntries().isEmpty());
+  }
+
+  @Test
   public void shouldUpdateNonRecurringTerracePrice() {
     setShortTermRentalPricing();
     shortTermRentalPricing.calculatePrice();

@@ -42,6 +42,7 @@ const kindsWithRegistrationNumbers = [
   ApplicationKind.BENJI,
   ApplicationKind.SUMMER_THEATER,
   ApplicationKind.MOBILE_SALES,
+  ApplicationKind.CHRISTMAS_TREE_SALES,
   ApplicationKind.OTHER,
   ApplicationKind.SMALL_ART_AND_CULTURE,
   ApplicationKind.SEASON_SALE,

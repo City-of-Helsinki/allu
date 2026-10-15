@@ -142,7 +142,7 @@ public class ShortTermRentalPricing extends Pricing {
           priceText(price, InvoiceLines.KESKUSKATU_SALES), null, ChargeBasisTag.ShortTermRentalKeskuskatuSales(), null);
       break;
     }
-      case OTHER, MOBILE_SALES:
+    case OTHER, MOBILE_SALES, CHRISTMAS_TREE_SALES:
       // Handler should set the price override
       break;
     case PROMOTION_OR_SALES:
