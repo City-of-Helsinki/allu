@@ -69,6 +69,7 @@ export const applicationTypeTree: ApplicationTypeTree = {
     WINTER_TERRACE: [],
     PARKLET: [],
     MOBILE_SALES: [],
+    CHRISTMAS_TREE_SALES: [],
     OTHER: []
   },
   NOTE: {
