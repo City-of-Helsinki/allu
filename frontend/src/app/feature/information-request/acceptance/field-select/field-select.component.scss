@@ -77,11 +77,14 @@ button.button-link {
   text-align: left;
 }
 
-.value-change {
-  font-weight: 500;
+.value-cell {
   min-width: 0;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.value-change {
+  font-weight: 500;
 }
 
 :host ::ng-deep .non-selectable-list {
