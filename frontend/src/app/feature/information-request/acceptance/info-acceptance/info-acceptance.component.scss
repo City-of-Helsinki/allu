@@ -44,7 +44,7 @@
 }
 
 .paired-field-grid .provided-only {
-  grid-column: 2;
+  grid-column: 1 / -1;
 }
 
 :host ::ng-deep .paired-field-grid field-select,
