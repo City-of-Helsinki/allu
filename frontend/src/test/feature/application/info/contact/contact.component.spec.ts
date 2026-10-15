@@ -105,6 +105,13 @@ describe('ContactComponent', () => {
     });
   });
 
+  it('should keep multiple contacts together in a grid', () => {
+    const contactsList = de.query(By.css('.contacts-list'));
+
+    expect(contactsList.children.length).toEqual(CONTACTS_ALL.length);
+    expect(getComputedStyle(contactsList.nativeElement).display).toEqual('grid');
+  });
+
   it('should show contact info fields disabled', fakeAsync(() => {
     fixture.detectChanges();
     tick();

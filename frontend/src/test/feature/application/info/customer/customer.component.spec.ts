@@ -125,6 +125,15 @@ describe('CustomerComponent', () => {
     expect(page.cardTitle.textContent).toContain(headerText);
   }));
 
+  it('should group customer details and contacts in a role layout', fakeAsync(() => {
+    fixture.detectChanges();
+
+    const roleLayout = fixture.debugElement.query(By.css('.customer-role'));
+    expect(roleLayout.query(By.css('.customer-form'))).toBeDefined();
+    expect(roleLayout.query(By.css('contact'))).toBeDefined();
+    expect(getComputedStyle(roleLayout.nativeElement).display).toEqual('grid');
+  }));
+
   it('should fill the form with input customer', fakeAsync(() => {
     const customer = new Customer();
     customer.id = 1;

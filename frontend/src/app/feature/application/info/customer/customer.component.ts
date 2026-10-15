@@ -8,7 +8,6 @@ import {CustomerWithContactsForm} from '@feature/customerregistry/customer/custo
 import {ContactComponent} from '../contact/contact.component';
 import {ALWAYS_ENABLED_FIELDS} from '@feature/customerregistry/customer/customer-info.component';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
-import {CustomerType} from '@model/customer/customer-type';
 import {CustomerService} from '@service/customer/customer.service';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
@@ -39,7 +38,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   customerWithContactsForm: UntypedFormGroup;
   customerForm: UntypedFormGroup;
-  customerClass: string[] = [];
   hideClearButton: boolean;
 
   private _customerWithContacts: CustomerWithContacts;
@@ -73,10 +71,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
     }
 
     this.onCustomerWithContactsChange();
-    this.initCustomerType();
-
-    this.customerForm.get('type').valueChanges
-      .subscribe(type => this.onCustomerTypeChange(type));
 
     // show hide clear button when there is something typed in the name field
     this.customerForm.get('name').valueChanges
@@ -160,11 +154,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
     this.parentForm.addControl(CustomerWithContactsForm.formName(roleType), this.customerWithContactsForm);
   }
 
-  private initCustomerType(): void {
-    const customerType = Some(this.customerWithContacts.customer).map(customer => customer.type).orElse(undefined);
-    this.onCustomerTypeChange(customerType);
-  }
-
   private disableEdit(customer: Customer): void {
     if (NumberUtil.isDefined(customer.id)) {
       Object.keys(this.customerForm.controls)
@@ -180,23 +169,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
         .filter(customer => !!customer)
         .do(customer => this.disableEdit(customer))
         .map(customer => CustomerForm.fromCustomer(customer))
-        .do(customer => {
-          this.customerForm.patchValue(customer);
-          this.onCustomerTypeChange(customer.type);
-        });
+        .do(customer => this.customerForm.patchValue(customer));
     }
-  }
-
-  private onCustomerTypeChange(type: CustomerType) {
-    const classes = [];
-    if (type === CustomerType.PERSON) {
-      classes.push('customer-person');
-    }
-
-    if (this.showPropertyDeveloper || this.showRepresentative || this.isNewCustomer) {
-      classes.push('customer-additional-toggle');
-    }
-
-    this.customerClass = classes;
   }
 }
