@@ -1,17 +1,27 @@
+.default-attachments-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 24px;
+}
+
 .default-attachment-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .default-attachment-checkbox {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
   margin: 0;
 }
 
 .default-attachment-label {
   margin-right: 4px;
+  overflow-wrap: anywhere;
 }
 
 .default-attachment-download {

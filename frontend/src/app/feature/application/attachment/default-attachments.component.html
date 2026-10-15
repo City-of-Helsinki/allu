@@ -5,26 +5,23 @@
     </mat-card-header>
     <mat-card-content>
       <div *ngIf="isAllowedToEdit">
-        <div *ngFor="let attachment of defaultAttachments"
-             class="default-attachment-row"
-             fxLayout="row"
-             fxLayoutAlign="start center"
-             fxLayoutGap="8px">
-          <mat-checkbox
-            class="default-attachment-checkbox"
-            fxFlex
-            [checked]="isSelected(attachment)"
-            (change)="onToggle(attachment, $event.checked)"
-            [disabled]="!isAllowedToEdit">
-            <span class="default-attachment-label">{{ attachment.name }}</span>
-            <button
-              mat-icon-button
-              type="button"
-              class="default-attachment-download"
-              (click)="$event.preventDefault(); $event.stopPropagation(); download(attachment)">
-              <mat-icon>file_download</mat-icon>
-            </button>
-          </mat-checkbox>
+        <div class="default-attachments-list">
+          <div *ngFor="let attachment of defaultAttachments" class="default-attachment-row">
+            <mat-checkbox
+              class="default-attachment-checkbox"
+              [checked]="isSelected(attachment)"
+              (change)="onToggle(attachment, $event.checked)"
+              [disabled]="!isAllowedToEdit">
+              <span class="default-attachment-label">{{ attachment.name }}</span>
+              <button
+                mat-icon-button
+                type="button"
+                class="default-attachment-download"
+                (click)="$event.preventDefault(); $event.stopPropagation(); download(attachment)">
+                <mat-icon>file_download</mat-icon>
+              </button>
+            </mat-checkbox>
+          </div>
         </div>
       </div>
     </mat-card-content>
