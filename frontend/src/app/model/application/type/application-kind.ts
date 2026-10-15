@@ -21,6 +21,7 @@ export enum ApplicationKind {
   WINTER_TERRACE = 'WINTER_TERRACE', // Talviterassi
   PARKLET = 'PARKLET', // Parklet
   MOBILE_SALES = 'MOBILE_SALES', // Liikkuva myynti/myyntiautot ja -vaunut
+  CHRISTMAS_TREE_SALES = 'CHRISTMAS_TREE_SALES', // Joulukuusien myyntipaikka
   STREET_AND_GREEN = 'STREET_AND_GREEN', // Katu- ja vihertyöt
   WATER_AND_SEWAGE = 'WATER_AND_SEWAGE', // Vesi / viemäri
   ELECTRICITY = 'ELECTRICITY', // Sähkö

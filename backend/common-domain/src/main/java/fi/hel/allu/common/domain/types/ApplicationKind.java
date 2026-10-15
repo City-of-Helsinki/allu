@@ -28,6 +28,7 @@ public enum ApplicationKind {
   WINTER_TERRACE(ApplicationType.SHORT_TERM_RENTAL), // Talviterassi
   PARKLET(ApplicationType.SHORT_TERM_RENTAL), // Parklet
   MOBILE_SALES(ApplicationType.SHORT_TERM_RENTAL), // Liikkuva myynti/myyntiautot ja -vaunut
+  CHRISTMAS_TREE_SALES(ApplicationType.SHORT_TERM_RENTAL), // Joulukuusien myyntipaikka
   STREET_AND_GREEN(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
       ApplicationType.PLACEMENT_CONTRACT), // Katu- ja vihertyöt
   WATER_AND_SEWAGE(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
