@@ -214,6 +214,7 @@ public class AlluMapper {
   private static String SAP_MATERIAL_TERRACE = "27100052";
   private static String SAP_MATERIAL_PARKLET = "27100129";
   private static String SAP_MATERIAL_MOBILE_SALES = "27100007";
+  private static String SAP_MATERIAL_CHRISTMAS_TREE_SALES = "27100014";
 
   private static String mapToSapMaterial(Application application) {
     if (application.getType() == null) {
@@ -241,6 +242,7 @@ public class AlluMapper {
           case SUMMER_TERRACE, WINTER_TERRACE -> SAP_MATERIAL_TERRACE;
           case PARKLET -> SAP_MATERIAL_PARKLET;
           case MOBILE_SALES ->  SAP_MATERIAL_MOBILE_SALES;
+          case CHRISTMAS_TREE_SALES -> SAP_MATERIAL_CHRISTMAS_TREE_SALES;
           default -> SAP_MATERIAL_OTHER_RENTAL;
         };
     };

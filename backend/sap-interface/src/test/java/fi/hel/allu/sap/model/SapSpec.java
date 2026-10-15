@@ -2,10 +2,12 @@ package fi.hel.allu.sap.model;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.ShortTermRental;
 import fi.hel.allu.sap.mapper.AlluMapper;
 import fi.hel.allu.sap.marshaller.AlluMarshaller;
 
@@ -116,6 +118,19 @@ public class SapSpec {
               });
 
             });
+          });
+        });
+
+        describe("A Christmas tree sales application", () -> {
+          final Application application = new Application();
+          application.setName("Christmas tree sales area");
+          application.setType(ApplicationType.SHORT_TERM_RENTAL);
+          application.setExtension(new ShortTermRental());
+          application.setKind(ApplicationKind.CHRISTMAS_TREE_SALES);
+          final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, dummyInvoiceRecipient(), "sap123", dummyInvoiceRows());
+
+          it("Maps all invoice lines to the Christmas tree sales SAP material", () -> {
+            salesOrder.getLineItems().forEach(lineItem -> assertEquals("27100014", lineItem.getMaterial()));
           });
         });
 
