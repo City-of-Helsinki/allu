@@ -28,7 +28,7 @@
             *ngIf="fieldHasChange(description.field)"
             [matTooltip]="'informationRequest.field.valueDiffers' | translation">warning</mat-icon>
         </div>
-        <div fxFlex [class.value-change]="fieldHasChange(description.field)">
+        <div fxFlex class="value-cell" [class.value-change]="fieldHasChange(description.field)">
           <field-value
             [field]="description.field"
             [value]="fieldValues[description.field]"
