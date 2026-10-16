@@ -61,6 +61,17 @@ public class DecisionJsonMapperShortTermRentalTest {
     assertEquals(REGISTRATION_NUMBERS, result.getRegistrationNumbers());
   }
 
+  @Test
+  public void shouldUseStandardVatForChristmasTreeSalesArea() {
+    ApplicationJson application = createStrApplication(null);
+    application.setKindsWithSpecifiers(
+        Collections.singletonMap(ApplicationKind.CHRISTMAS_TREE_SALES, Collections.emptyList()));
+
+    DecisionJson result = mapper.mapToDocumentJson(application, false);
+
+    assertEquals("25,5", result.getVatPercentage());
+  }
+
   /**
    * Creates a minimal SHORT_TERM_RENTAL ApplicationJson with the given registrationNumbers.
    * Locations and customer contacts are intentionally empty to keep service mocking minimal.
