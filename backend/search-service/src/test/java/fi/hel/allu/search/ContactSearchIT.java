@@ -56,7 +56,7 @@ public class ContactSearchIT extends BaseIntegrationTest {
         ContactES contactES = createContact(id, "goku");
         contactSearchService.insert(contactES);
         contactSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(CONTACT_INDEX_ALIAS, "_doc", id.toString());
+        GetRequest getRequest = new GetRequest(CONTACT_INDEX_ALIAS, id.toString());
         GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
         assertTrue(getResponse.isExists());
         contactSearchService.delete(id.toString());

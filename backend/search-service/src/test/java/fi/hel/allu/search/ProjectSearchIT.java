@@ -87,7 +87,6 @@ class ProjectSearchIT extends BaseIntegrationTest {
     private void assertInsertion(String index, String id) {
         GetRequest getRequest = new GetRequest(
                 index,
-                "_doc",
                 id);
         GetResponse getResponse = null;
         try {

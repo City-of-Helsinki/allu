@@ -58,7 +58,7 @@ class CustomerSearchIT extends BaseIntegrationTest {
         CustomerES customerES = createCustomer(TEST_NAME, customerId);
         customerSearchService.insert(customerES);
         customerSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(CUSTOMER_INDEX_ALIAS, "_doc", customerId.toString());
+        GetRequest getRequest = new GetRequest(CUSTOMER_INDEX_ALIAS, customerId.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
         assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
