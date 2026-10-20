@@ -32,9 +32,9 @@ import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.cluster.metadata.AliasMetaData;
+import org.elasticsearch.cluster.metadata.AliasMetadata;
 import org.elasticsearch.common.unit.ByteSizeValue;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.rest.RestStatus;
@@ -94,7 +94,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     /* Fields that should be sorted ordinally */
     private static final String[] ordinalSortFields = {"status", "type"};
-    private static final String INDEX_TYPE = "_doc";
     protected final ObjectMapper objectMapper;
     private final ElasticSearchMappingConfig elasticSearchMappingConfig;
     private final RestHighLevelClient client;
@@ -199,7 +198,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
                 logger.debug("Inserting new object to search index {}: {}", indexName,
                              objectMapper.writeValueAsString(indexedObject));
             }
-            IndexRequest indexRequest = new IndexRequest(indexName, "_doc", id);
+            IndexRequest indexRequest = new IndexRequest(indexName).id(id);
             indexRequest.source(json, XContentType.JSON);
             IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
             if (response.status() != RestStatus.CREATED) {
@@ -319,7 +318,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
     private void deleteFrom(String indexName, String id) {
         try {
-            DeleteRequest deleteRequest = new DeleteRequest(indexName, INDEX_TYPE, id);
+            DeleteRequest deleteRequest = new DeleteRequest(indexName, id);
             DeleteResponse response = client.delete(deleteRequest, RequestOptions.DEFAULT);
             if (response == null || response.status() != RestStatus.OK) {
                 throw new SearchException("Unable to delete record, id = " + id);
@@ -353,12 +352,24 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     protected Page<Integer> fetchResponse(Pageable pageRequest, SearchSourceBuilder srBuilder) {
         try {
             SearchResponse response = executeSearchRequest(srBuilder);
-            long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
+            long totalHits = totalHitsOf(response);
             List<Integer> results = (totalHits == 0) ? Collections.emptyList() : iterateIntSearchResponse(response);
             return new PageImpl<>(results, pageRequest, totalHits);
         } catch (IOException e) {
             throw new SearchException(e);
         }
+    }
+
+    /**
+     * Extracts the exact total hit count from a search response, defensively defaulting to {@code 0L} when the
+     * response, its hits, or the {@link org.apache.lucene.search.TotalHits} itself are {@code null} (e.g. if
+     * {@code track_total_hits} were ever explicitly disabled).
+     */
+    public static long totalHitsOf(SearchResponse response) {
+        return Optional.ofNullable(response)
+                .map(r -> r.getHits().getTotalHits())
+                .map(th -> th.value)
+                .orElse(0L);
     }
 
     protected SearchResponse executeSearchRequest(SearchSourceBuilder sourceBuilder) {
@@ -412,6 +423,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         searchSourceBuilder.query(qb);
         searchSourceBuilder.from((int) pageRequest.getOffset());
         searchSourceBuilder.size(pageRequest.getPageSize());
+        searchSourceBuilder.trackTotalHits(true);
         return addFieldFilter(searchSourceBuilder);
     }
 
@@ -523,7 +535,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     private String getCurrentIndexName(String indexAliasName) {
         GetAliasesRequest aliasesRequest = new GetAliasesRequest();
         aliasesRequest.aliases(indexAliasName);
-        Map<String, Set<AliasMetaData>> aliases;
+        Map<String, Set<AliasMetadata>> aliases;
 
         try {
             aliases = client.indices()
@@ -609,7 +621,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         }
         if (response != null) {
             SearchHits hits = response.getHits();
-            if (hits.getTotalHits() != 1) {
+            if (totalHitsOf(response) != 1) {
                 return Optional.empty();
             } else {
                 try {
@@ -670,7 +682,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             }
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.index(indexName);
-            updateRequest.type(INDEX_TYPE);
             updateRequest.id(id);
             updateRequest.doc(json, XContentType.JSON);
             return updateRequest;
@@ -688,7 +699,6 @@ public class GenericSearchService<T, Q extends QueryParameters> {
             }
             IndexRequest indexRequest = new IndexRequest();
             indexRequest.index(indexName);
-            indexRequest.type(INDEX_TYPE);
             indexRequest.id(id);
             indexRequest.source(json, XContentType.JSON);
             return indexRequest;

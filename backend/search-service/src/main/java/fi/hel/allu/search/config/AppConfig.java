@@ -3,7 +3,6 @@ package fi.hel.allu.search.config;
 import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -42,7 +41,7 @@ public class AppConfig {
                             .setDefaultIOReactorConfig(IOReactorConfig.custom()
                                 .setSoKeepAlive(true)
                                 .build())
-                        ).setMaxRetryTimeoutMillis(600000)
+                        )
         );
     }
 

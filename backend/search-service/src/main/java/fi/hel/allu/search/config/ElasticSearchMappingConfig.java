@@ -6,20 +6,22 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.Strings;
 
-import org.elasticsearch.common.xcontent.DeprecationHandler;
-import org.elasticsearch.common.xcontent.NamedXContentRegistry;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
+import org.elasticsearch.xcontent.DeprecationHandler;
+import org.elasticsearch.xcontent.NamedXContentRegistry;
+import org.elasticsearch.xcontent.XContentBuilder;
+import org.elasticsearch.xcontent.XContentParser;
+import org.elasticsearch.xcontent.json.JsonXContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static fi.hel.allu.search.util.Constants.*;
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
+import static org.elasticsearch.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * Component for building ElasticSearch mapping configuration i.e. the "schema".
@@ -34,7 +36,6 @@ public class ElasticSearchMappingConfig {
   private static final String FILTER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword_filter";
   private static final String FILTER = "filter";
   private static final String FIELDS = "fields";
-  private static final String MAPPING_TYPE = "_default_";
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private static final String BUILDER_ERROR = "Unexpected exception while creating ElasticSearch mapping builder";
   private final RestHighLevelClient client;
@@ -54,20 +55,16 @@ public class ElasticSearchMappingConfig {
       CreateIndexRequest indexRequest = new CreateIndexRequest(indexName);
       if (indexName.startsWith(APPLICATION_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForApplication());
-        indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
-        indexRequest.mapping(getMappingBuilderForApplication());
+        indexRequest.mapping(mergeMappings(getMappingBuilderForDefaultApplicationsIndex(), getMappingBuilderForApplication()));
       } else if (indexName.startsWith(CUSTOMER_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForCustomer());
-        indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Customer"));
-        indexRequest.mapping(getMappingBuilderForCustomer());
+        indexRequest.mapping(mergeMappings(getMappingBuilderForDefaultNameIndex("Customer"), getMappingBuilderForCustomer()));
       } else if (indexName.startsWith(PROJECT_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForApplication());
-        indexRequest.mapping(getMappingBuilderForDefaultApplicationsIndex());
-        indexRequest.mapping(getMappingBuilderForProject());
+        indexRequest.mapping(mergeMappings(getMappingBuilderForDefaultApplicationsIndex(), getMappingBuilderForProject()));
       } else if (indexName.startsWith(CONTACT_INDEX_ALIAS)) {
         indexRequest.settings(getIndexSettingsForCustomer());
-        indexRequest.mapping(getMappingBuilderForDefaultNameIndex("Contact"));
-        indexRequest.mapping(getMappingBuilderForContact());
+        indexRequest.mapping(mergeMappings(getMappingBuilderForDefaultNameIndex("Contact"), getMappingBuilderForContact()));
       } else {
         logger.error("Unknown ElasticSearch index name {} ", indexName);
         throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
@@ -89,9 +86,7 @@ public class ElasticSearchMappingConfig {
     try {
     XContentBuilder mappingBuilder = jsonBuilder()
         .startObject()
-          .startObject(MAPPING_TYPE)
-            .startObject(PROPERTIES_INDEX_ALIAS)
-            .endObject()
+          .startObject(PROPERTIES_INDEX_ALIAS)
           .endObject()
         .endObject();
     if(logger.isDebugEnabled()) {
@@ -220,11 +215,9 @@ public class ElasticSearchMappingConfig {
     try {
       XContentBuilder mappingBuilder = jsonBuilder()
           .startObject()
-            .startObject(MAPPING_TYPE)
-              .startObject(PROPERTIES_INDEX_ALIAS)
-                // alphabetical sorting with autocomplete for all name-properties in the index
-                .field("name").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
-              .endObject()
+            .startObject(PROPERTIES_INDEX_ALIAS)
+              // alphabetical sorting with autocomplete for all name-properties in the index
+              .field("name").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
             .endObject()
           .endObject();
 
@@ -293,6 +286,45 @@ public class ElasticSearchMappingConfig {
   private XContentParser parser(XContentBuilder xContentBuilder) throws IOException {
     return JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION,
                                                   Strings.toString(xContentBuilder));
+  }
+
+  /**
+   * Merges a "default" mapping document (applicable to all types in an index, a concept that no longer exists as a
+   * dedicated ElasticSearch {@code _default_} mapping type since 7.x) with a domain-specific mapping document into a
+   * single mapping document, suitable for a single {@link CreateIndexRequest#mapping(XContentBuilder)} call.
+   */
+  private XContentBuilder mergeMappings(XContentBuilder defaultMapping, XContentBuilder domainMapping) {
+    try {
+      Map<String, Object> merged = new LinkedHashMap<>();
+      mergeInto(merged, toMap(defaultMapping));
+      mergeInto(merged, toMap(domainMapping));
+      XContentBuilder mergedBuilder = jsonBuilder().map(merged);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Merged mapping: {}", mergedBuilder);
+      }
+      return mergedBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException(BUILDER_ERROR, e);
+    }
+  }
+
+  private Map<String, Object> toMap(XContentBuilder xContentBuilder) throws IOException {
+    try (XContentParser parser = parser(xContentBuilder)) {
+      return parser.map();
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void mergeInto(Map<String, Object> target, Map<String, Object> source) {
+    for (Map.Entry<String, Object> entry : source.entrySet()) {
+      Object existing = target.get(entry.getKey());
+      Object value = entry.getValue();
+      if (existing instanceof Map && value instanceof Map) {
+        mergeInto((Map<String, Object>) existing, (Map<String, Object>) value);
+      } else {
+        target.put(entry.getKey(), value);
+      }
+    }
   }
 
   private XContentBuilder autocompleteSettingsFilter() throws IOException {
