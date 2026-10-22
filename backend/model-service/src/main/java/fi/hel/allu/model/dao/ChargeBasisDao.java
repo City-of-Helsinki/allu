@@ -169,6 +169,15 @@ public class ChargeBasisDao {
       chargeBasis.locked.isTrue()).fetch();
   }
 
+  /**
+   * Returns the ids of charge basis entries of the given period that are locked to an invoice.
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> getLockedEntriesOfPeriod(Integer periodId) {
+    return queryFactory.select(chargeBasis.id).from(chargeBasis)
+        .where(chargeBasis.invoicingPeriodId.eq(periodId), chargeBasis.locked.isTrue()).fetch();
+  }
+
   @Transactional
   public ChargeBasisEntry setInvoicable(int id, boolean invoicable) {
     queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.id.eq(id)).execute();

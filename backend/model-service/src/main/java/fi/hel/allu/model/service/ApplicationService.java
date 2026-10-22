@@ -659,6 +659,9 @@ public class ApplicationService {
   @Transactional
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     Application application = applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+    // Periods are refreshed before charge basis so that the pricing sees up-to-date periods
+    invoicingPeriodService.setExcavationAnnouncementPeriods(id);
+    application = applicationDao.findById(id);
     updateChargeBasis(id, application);
     updateApplicationPricing(id);
   }
@@ -669,6 +672,9 @@ public class ApplicationService {
   @Transactional
   public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
+    // Periods are refreshed before charge basis so that the pricing sees up-to-date periods
+    invoicingPeriodService.setExcavationAnnouncementPeriods(id);
+    application = applicationDao.findById(id);
     updateChargeBasis(id, application);
     updateApplicationPricing(id);
   }
