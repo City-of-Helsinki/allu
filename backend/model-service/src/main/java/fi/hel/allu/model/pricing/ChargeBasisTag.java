@@ -86,13 +86,41 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.EADF, areaId);
   }
 
+  /**
+   * Area usage fee of a single monthly invoicing period. The period id keeps the entry unique per
+   * month, so that rows for different periods do not collapse into one tag.
+   */
+  public static ChargeBasisTag ExcavationAnnouncementDailyFee(String areaId, Integer periodId) {
+    if (periodId == null) {
+      return ExcavationAnnouncementDailyFee(areaId);
+    }
+    return new ChargeBasisTag(TagText.EADF, areaId + "#" + periodId);
+  }
+
   public static ChargeBasisTag ExcavationAnnouncementDailyFeeAdd(String areaId) {
     return new ChargeBasisTag(TagText.EADFADD, areaId);
+  }
+
+  /**
+   * Area usage fee of the work finished phase for a single monthly invoicing period.
+   */
+  public static ChargeBasisTag ExcavationAnnouncementDailyFeeAdd(String areaId, Integer periodId) {
+    if (periodId == null) {
+      return ExcavationAnnouncementDailyFeeAdd(areaId);
+    }
+    return new ChargeBasisTag(TagText.EADFADD, areaId + "#" + periodId);
   }
 
 
   public static ChargeBasisTag ExcavationAnnonuncementHandlingFee() {
     return new ChargeBasisTag(TagText.EAHF);
+  }
+
+  /**
+   * Second part of the handling fee, charged when the work lasts at least six months.
+   */
+  public static ChargeBasisTag ExcavationAnnouncementHandlingFeeAdditional() {
+    return new ChargeBasisTag(TagText.EAHFADD, false);
   }
 
   public static ChargeBasisTag ShortTermRentalArt() {
@@ -221,6 +249,8 @@ private enum TagText {
     EADFADD,
     // Excavation announcement, Handling fee
     EAHF,
+    // Excavation announcement, additional handling fee for work lasting six months or more
+    EAHFADD,
     // Short term rental, Art
     STRA,
     // Short term rental, Small art and culture
