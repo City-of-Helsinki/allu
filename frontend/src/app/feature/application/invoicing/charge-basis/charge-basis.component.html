@@ -30,12 +30,15 @@
       <ng-container *ngIf="periods.length; else noPeriods">
         <ng-container *ngFor="let period of periods">
           <h2 class="invoicing-period">
-            <ng-container *ngIf="period.invoicableStatus; else hasDatePeriod">
+            <ng-container *ngIf="period.invoicableStatus">
               {{['invoicing.period.invoicableStatus', period.invoicableStatus] | translation}}
             </ng-container>
-            <ng-template #hasDatePeriod>
-              {{'invoicing.period.title' | translation}} {{period.startTime | date:'shortDate'}} - {{period.endTime | date:'shortDate'}}
-            </ng-template>
+            <ng-container *ngIf="!period.invoicableStatus">
+              {{'invoicing.period.title' | translation}}
+            </ng-container>
+            <ng-container *ngIf="period.startTime && period.endTime">
+              ({{period.startTime | date:'shortDate'}} - {{period.endTime | date:'shortDate'}})
+            </ng-container>
           </h2>
           <div>
             <ul class="charge-basis-entries">
