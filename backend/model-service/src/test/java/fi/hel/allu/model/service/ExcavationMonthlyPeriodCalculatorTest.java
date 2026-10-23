@@ -181,6 +181,205 @@ public class ExcavationMonthlyPeriodCalculatorTest {
     assertPeriod(periods.get(3), "2027-02-01", "2027-02-02");
   }
 
+  // --- Phase boundary edge cases ---
+
+  @Test
+  public void shouldSwitchPhaseOnFirstDayOfMonth() {
+    // Operational condition on the first day of February: the phase gets a single-day period
+    List<InvoicingPeriod> periods = calculateForExcavation("2026-11-11", "2027-06-06", "2027-02-01");
+
+    assertStatuses(periods,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.FINISHED,
+        StatusType.FINISHED,
+        StatusType.FINISHED,
+        StatusType.FINISHED,
+        StatusType.FINISHED);
+    assertPeriod(periods.get(3), "2027-02-01", "2027-02-01");
+    assertPeriod(periods.get(4), "2027-02-02", "2027-02-28");
+    assertNotOverlapping(periods);
+    assertEquals(List.of("2026-11-11", "2026-12-01", "2027-01-01", "2027-02-01", "2027-02-02", "2027-03-01",
+        "2027-04-01", "2027-05-01", "2027-06-01"), startDates(periods));
+  }
+
+  @Test
+  public void shouldSwitchPhaseOnLastDayOfMonth() {
+    // Operational condition on the last day of February: the whole month stays operational condition
+    List<InvoicingPeriod> periods = calculateForExcavation("2026-11-11", "2027-06-06", "2027-02-28");
+
+    assertStatuses(periods,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.FINISHED,
+        StatusType.FINISHED,
+        StatusType.FINISHED,
+        StatusType.FINISHED);
+    assertPeriod(periods.get(3), "2027-02-01", "2027-02-28");
+    assertPeriod(periods.get(4), "2027-03-01", "2027-03-31");
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldSwitchPhaseOnFirstDayOfMonthWithinSameMonth() {
+    // Both phases start on the first day of a month: operational condition ends on the last day of
+    // the previous month, so no phase split happens inside a month
+    List<InvoicingPeriod> periods = calculateForExcavation("2026-11-11", "2027-06-06", "2027-01-31");
+
+    assertPeriod(periods.get(2), "2027-01-01", "2027-01-31");
+    assertEquals(StatusType.OPERATIONAL_CONDITION, periods.get(2).getInvoicableStatus());
+    assertPeriod(periods.get(3), "2027-02-01", "2027-02-28");
+    assertEquals(StatusType.FINISHED, periods.get(3).getInvoicableStatus());
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldSwitchPhaseWithinSingleMonthApplication() {
+    // The whole application fits in one month, split in the middle by the operational condition date
+    List<InvoicingPeriod> periods = calculateForExcavation("2027-02-01", "2027-02-28", "2027-02-10");
+
+    assertStatuses(periods, StatusType.OPERATIONAL_CONDITION, StatusType.FINISHED);
+    assertPeriod(periods.get(0), "2027-02-01", "2027-02-10");
+    assertPeriod(periods.get(1), "2027-02-11", "2027-02-28");
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldKeepBothPhasesInSameMonthWhenOperationalConditionInAutumn() {
+    // Operational condition on 15.10. is before winter start, so the operational condition phase is
+    // charged until 30.11. The work finished phase starts on 16.10. but overlaps the operational
+    // condition period covering the whole of October, so that period wins and only the uncovered
+    // December remains for the work finished phase.
+    List<InvoicingPeriod> periods = calculateForExcavation("2026-10-01", "2026-12-31", "2026-10-15");
+
+    assertStatuses(periods,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.OPERATIONAL_CONDITION,
+        StatusType.FINISHED);
+    assertPeriod(periods.get(0), "2026-10-01", "2026-10-31");
+    assertPeriod(periods.get(1), "2026-11-01", "2026-11-30");
+    assertPeriod(periods.get(2), "2026-12-01", "2026-12-31");
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldHandleOperationalConditionOnWinterStartDay() {
+    // Operational condition exactly on winter start (1.12.): operational condition ends there and the
+    // work finished phase starts the next day, continuing until winter time ends
+    List<InvoicingPeriod> periods = calculateForExcavation("2026-11-11", "2027-06-06", "2026-12-01");
+
+    assertEquals(StatusType.OPERATIONAL_CONDITION, periods.get(0).getInvoicableStatus());
+    assertPeriod(periods.get(0), "2026-11-11", "2026-11-30");
+    assertEquals(StatusType.OPERATIONAL_CONDITION, periods.get(1).getInvoicableStatus());
+    assertPeriod(periods.get(1), "2026-12-01", "2026-12-01");
+    // Rest of December onwards is work finished time
+    assertEquals(StatusType.FINISHED, periods.get(2).getInvoicableStatus());
+    assertPeriod(periods.get(2), "2026-12-02", "2026-12-31");
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldChargeOperationalConditionOnWinterEndDay() {
+    // Operational condition on the last day of winter time keeps the whole month operational condition
+    List<InvoicingPeriod> periods = calculateForExcavation("2026-11-11", "2027-06-06", "2027-05-14");
+
+    Optional<InvoicingPeriod> mayOperational = periods.stream()
+        .filter(period -> toDate(period.getStartTime()).equals(LocalDate.parse("2027-05-01")))
+        .findFirst();
+    assertTrue("Periods: " + describe(periods), mayOperational.isPresent());
+    assertEquals(StatusType.OPERATIONAL_CONDITION, mayOperational.get().getInvoicableStatus());
+    assertPeriod(mayOperational.get(), "2027-05-01", "2027-05-14");
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldNotCreateWorkFinishedPeriodWhenOperationalConditionOnLastDay() {
+    // Operational condition on the last day of the application leaves no work finished time
+    List<InvoicingPeriod> periods = calculateForExcavation("2027-02-01", "2027-02-10", "2027-02-10");
+
+    assertStatuses(periods, StatusType.OPERATIONAL_CONDITION);
+    assertPeriod(periods.get(0), "2027-02-01", "2027-02-10");
+  }
+
+  // --- Charging must stop at the work finished date ---
+
+  @Test
+  public void shouldStopChargingAtWorkFinishedBeforeWinterStart() {
+    // Operational condition on 15.10. is before winter start, so the phase would normally run until
+    // 30.11. The work was finished on 20.10., so charging stops there and no work finished time is
+    // left over.
+    List<InvoicingPeriod> periods = calculateForExcavationWithWorkFinished(
+        "2026-10-01", "2026-12-31", "2026-10-15", "2026-10-20");
+
+    assertStatuses(periods, StatusType.OPERATIONAL_CONDITION);
+    assertPeriod(periods.get(0), "2026-10-01", "2026-10-20");
+    assertEquals(LocalDate.parse("2026-10-20"), toDate(periods.get(periods.size() - 1).getEndTime()));
+  }
+
+  @Test
+  public void shouldChargeOperationalConditionToWorkFinishedWhenWorkFinishedSameDay() {
+    // Work finished on the operational condition date: whole span is operational condition
+    List<InvoicingPeriod> periods = calculateForExcavationWithWorkFinished(
+        "2026-10-01", "2026-12-31", "2026-10-15", "2026-10-15");
+
+    assertStatuses(periods, StatusType.OPERATIONAL_CONDITION);
+    assertPeriod(periods.get(0), "2026-10-01", "2026-10-15");
+  }
+
+  @Test
+  public void shouldNotChargePastWorkFinishedWithinOperationalConditionPhase() {
+    // The operational condition phase would run until winter start, but work finished limits it
+    List<InvoicingPeriod> periods = calculateForExcavationWithWorkFinished(
+        "2026-11-11", "2027-06-06", "2026-11-20", "2026-11-25");
+
+    assertEquals(LocalDate.parse("2026-11-25"), toDate(periods.get(periods.size() - 1).getEndTime()));
+    assertStatuses(periods, StatusType.OPERATIONAL_CONDITION);
+    assertPeriod(periods.get(0), "2026-11-11", "2026-11-25");
+  }
+
+  @Test
+  public void shouldStopAtWorkFinishedBeforeOperationalConditionDate() {
+    // Work finished before the operational condition date: the operational condition phase is cut at
+    // the work finished date, so nothing is charged past it
+    List<InvoicingPeriod> periods = calculateForExcavationWithWorkFinished(
+        "2026-11-11", "2027-06-06", "2027-02-02", "2027-02-01");
+
+    assertEquals(LocalDate.parse("2027-02-01"), toDate(periods.get(periods.size() - 1).getEndTime()));
+    assertNotOverlapping(periods);
+  }
+
+  @Test
+  public void shouldNotChargePastWorkFinishedWhenNoOperationalCondition() {
+    List<InvoicingPeriod> periods = calculateForExcavationWithWorkFinished(
+        "2026-04-01", "2026-07-31", null, "2026-05-15");
+
+    assertStatuses(periods, StatusType.FINISHED, StatusType.FINISHED);
+    assertPeriod(periods.get(0), "2026-04-01", "2026-04-30");
+    assertPeriod(periods.get(1), "2026-05-01", "2026-05-15");
+    assertEquals(LocalDate.parse("2026-05-15"), toDate(periods.get(periods.size() - 1).getEndTime()));
+  }
+
+  @Test
+  public void shouldKeepApplicationEndWhenWorkFinishedIsLater() {
+    // Work finished after the application end does not extend charging
+    List<InvoicingPeriod> periods = calculateForExcavationWithWorkFinished(
+        "2026-04-01", "2026-05-31", null, "2026-07-31");
+
+    assertEquals(LocalDate.parse("2026-05-31"), toDate(periods.get(periods.size() - 1).getEndTime()));
+    assertStatuses(periods, StatusType.FINISHED, StatusType.FINISHED);
+  }
+
+  private List<InvoicingPeriod> calculateForExcavationWithWorkFinished(String start, String end,
+      String operationalCondition, String workFinished) {
+    return ExcavationMonthlyPeriodCalculator.calculateForExcavation(APPLICATION_ID, date(start), date(end),
+        operationalCondition == null ? null : date(operationalCondition),
+        workFinished == null ? null : date(workFinished), WINTER_TIME, false);
+  }
+
   // --- Second handling fee part ---
 
   @Test

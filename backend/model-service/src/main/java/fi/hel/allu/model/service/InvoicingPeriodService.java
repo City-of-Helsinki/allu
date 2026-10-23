@@ -252,6 +252,7 @@ public class InvoicingPeriodService {
         getPeriodStart(application),
         getPeriodEnd(application),
         getWinterTimeOperation(application),
+        getWorkFinished(application),
         winterTimeService.getWinterTime(),
         isNoAreaUsageFee(application));
 
@@ -301,9 +302,10 @@ public class InvoicingPeriodService {
   }
 
   private ZonedDateTime getPeriodEnd(Application application) {
-    ZonedDateTime workFinished = getWorkFinished(application);
-    ZonedDateTime endTime = workFinished != null ? workFinished : application.getEndTime();
-    return endTime != null ? endTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId) : application.getEndTime();
+    // The application end time; the work finished date is passed separately so that the calculator
+    // can cut charging at the work finished date
+    ZonedDateTime endTime = application.getEndTime();
+    return endTime != null ? endTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId) : null;
   }
 
   private ZonedDateTime getWinterTimeOperation(Application application) {

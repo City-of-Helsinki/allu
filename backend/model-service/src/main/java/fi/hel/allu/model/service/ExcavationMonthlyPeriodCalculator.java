@@ -65,41 +65,71 @@ public final class ExcavationMonthlyPeriodCalculator {
   public static List<InvoicingPeriod> calculateForExcavation(Integer applicationId, ZonedDateTime start,
       ZonedDateTime end, ZonedDateTime winterTimeOperation, AnnualTimePeriod winterTime,
       boolean noAreaUsageFee) {
+    return calculateForExcavation(applicationId, start, end, winterTimeOperation, null, winterTime,
+        noAreaUsageFee);
+  }
+
+  /**
+   * Creates monthly periods for an excavation announcement.
+   *
+   * <p>Charging never continues past the work finished date. When the operational condition date is
+   * before winter time start, the operational condition phase is normally charged until the day
+   * before winter time starts, but it is cut at the work finished date when the work was finished
+   * earlier.</p>
+   *
+   * @param applicationId       application id
+   * @param start               application start time
+   * @param end                 application end time
+   * @param winterTimeOperation operational condition date, or {@code null}
+   * @param workFinished        work finished date, or {@code null} when the work is not finished
+   * @param winterTime          winter time settings of Allu
+   * @param noAreaUsageFee      true when no area usage fee is charged for the application
+   * @return periods ordered by start time
+   */
+  public static List<InvoicingPeriod> calculateForExcavation(Integer applicationId, ZonedDateTime start,
+      ZonedDateTime end, ZonedDateTime winterTimeOperation, ZonedDateTime workFinished,
+      AnnualTimePeriod winterTime, boolean noAreaUsageFee) {
     if (start == null || end == null) {
       return Collections.emptyList();
     }
     LocalDate startDate = toDate(start);
-    LocalDate endDate = toDate(end);
+    LocalDate applicationEndDate = toDate(end);
+    // Charging never continues past the work finished date
+    LocalDate chargeEndDate = getEffectiveEndDate(end, workFinished);
 
     List<InvoicingPeriod> areaUsageFeePeriods = new ArrayList<>();
     if (winterTimeOperation == null) {
-      areaUsageFeePeriods.addAll(calculateDates(applicationId, startDate, endDate, StatusType.FINISHED));
+      areaUsageFeePeriods.addAll(calculateDates(applicationId, startDate, chargeEndDate, StatusType.FINISHED));
     } else {
       if (winterTime == null) {
         throw new IllegalArgumentException("Winter time is required with operational condition date");
       }
-      LocalDate operationalConditionEnd =
-          minDate(getOperationalConditionEndDate(winterTimeOperation, winterTime), endDate);
+      // Operational condition phase ends at the operational condition date, or at the day before
+      // winter time start when the operational condition date is in summer. Charging also stops at
+      // the work finished date when the work was finished earlier.
+      LocalDate operationalConditionEnd = minDate(
+          minDate(getOperationalConditionEndDate(winterTimeOperation, winterTime), applicationEndDate),
+          getWorkFinishedLimit(workFinished));
       areaUsageFeePeriods.addAll(calculateDates(applicationId, startDate, operationalConditionEnd,
           StatusType.OPERATIONAL_CONDITION));
 
-      // Work finished phase starts on the day after the operational condition date so that the
-      // rest of the operational condition month is charged as work finished time
+      // Work finished phase starts on the day after the operational condition phase ends so that
+      // the rest of that month is charged as work finished time
       LocalDate workFinishedStart = maxDate(operationalConditionEnd.plusDays(1), startDate);
-      areaUsageFeePeriods.addAll(calculateDates(applicationId, workFinishedStart, endDate, StatusType.FINISHED));
+      areaUsageFeePeriods.addAll(calculateDates(applicationId, workFinishedStart, chargeEndDate, StatusType.FINISHED));
     }
     areaUsageFeePeriods.sort(Comparator.comparing(InvoicingPeriod::getStartTime));
     areaUsageFeePeriods = withoutOverlappingPeriods(areaUsageFeePeriods);
 
     List<InvoicingPeriod> result = new ArrayList<>(areaUsageFeePeriods);
     Optional<InvoicingPeriod> additionalFeePeriod =
-        calculateAdditionalFeePeriod(applicationId, startDate, endDate, areaUsageFeePeriods);
+        calculateAdditionalFeePeriod(applicationId, startDate, chargeEndDate, areaUsageFeePeriods);
     additionalFeePeriod.ifPresent(result::add);
     result.sort(Comparator.comparing(InvoicingPeriod::getStartTime));
     if (!noAreaUsageFee) {
       return result;
     }
-    return handlingFeePeriods(applicationId, startDate, endDate, result);
+    return handlingFeePeriods(applicationId, startDate, chargeEndDate, result);
   }
 
   /**
@@ -119,6 +149,32 @@ public final class ExcavationMonthlyPeriodCalculator {
     return winterTime.getAnnualPeriodEnd(winterTimeOperation)
         .plusDays(1)
         .atStartOfDay(TimeUtil.HelsinkiZoneId);
+  }
+
+  /**
+   * Returns the last day that may be charged.
+   *
+   * <p>Charging never continues past the work finished date, even when the operational condition
+   * date is before winter time start and the phase would otherwise run until winter time starts.</p>
+   */
+  private static LocalDate getEffectiveEndDate(ZonedDateTime end, ZonedDateTime workFinished) {
+    LocalDate endDate = toDate(end);
+    if (workFinished == null) {
+      return endDate;
+    }
+    return minDate(endDate, toDate(workFinished));
+  }
+
+  /**
+   * Returns the last day the operational condition phase may cover because of the work finished
+   * date, or {@link LocalDate#MAX} when the work is not finished. Charging never continues past the
+   * work finished date.
+   */
+  private static LocalDate getWorkFinishedLimit(ZonedDateTime workFinished) {
+    if (workFinished == null) {
+      return LocalDate.MAX;
+    }
+    return toDate(workFinished);
   }
 
   /**
