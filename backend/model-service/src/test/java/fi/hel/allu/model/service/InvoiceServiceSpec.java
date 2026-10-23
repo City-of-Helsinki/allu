@@ -21,10 +21,12 @@ import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEac
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRecipient;
+import fi.hel.allu.model.domain.InvoicingPeriod;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -90,6 +92,84 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         Mockito.verify(invoiceDao).insert(Mockito.eq(APPLICATION_ID), invoiceCaptor.capture());
         assertEquals(invoiceCaptor.getValue().getRows(), INVOICE_ROWS);
         assertEquals(INVOICE_RECIPIENT_ID, (long)invoiceCaptor.getValue().getRecipientId());
+      });
+
+      it("Leaves the final period of a phase without an invoicing date", () -> {
+        final int APPLICATION_ID = 123;
+        final int INVOICE_RECIPIENT_ID = 33;
+        final Customer customer = new Customer();
+        customer.setType(CustomerType.COMPANY);
+        customer.setName("The Company");
+        Application application = new Application();
+        application.setId(APPLICATION_ID);
+        application.setInvoiceRecipientId(INVOICE_RECIPIENT_ID);
+        InvoicingPeriod finalPeriod = new InvoicingPeriod(APPLICATION_ID,
+            ZonedDateTime.parse("2026-04-01T00:00:00+03:00"), ZonedDateTime.parse("2026-04-30T00:00:00+03:00"));
+        finalPeriod.setId(7);
+        finalPeriod.setInvoicableStatus(StatusType.FINISHED);
+        ChargeBasisEntry entry = new ChargeBasisEntry();
+        entry.setId(99);
+        entry.setInvoicingPeriodId(7);
+        entry.setInvoicable(true);
+        List<ChargeBasisEntry> entries = Collections.singletonList(entry);
+        List<InvoiceRow> rows = Collections.singletonList(new InvoiceRow());
+
+        Mockito.when(invoicingPeriodService.findOpenPeriodsForApplicationId(APPLICATION_ID))
+            .thenReturn(Collections.singletonList(finalPeriod));
+        Mockito.when(invoicingPeriodService.isFinalPeriod(Mockito.any(Application.class),
+            Mockito.any(InvoicingPeriod.class))).thenReturn(true);
+        Mockito.when(chargeBasisService.getChargeBasis(Mockito.eq(APPLICATION_ID))).thenReturn(entries);
+        Mockito.when(pricingService.toSingleInvoice(Mockito.anyList())).thenReturn(rows);
+        Mockito.when(customerDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(customer));
+        Mockito.when(invoiceRecipientDao.insert(Mockito.any())).thenReturn(INVOICE_RECIPIENT_ID);
+        Mockito.when(applicationDao.findById(APPLICATION_ID)).thenReturn(application);
+
+        invoiceService.createInvoices(APPLICATION_ID, false);
+
+        ArgumentCaptor<Invoice> invoiceCaptor = ArgumentCaptor.forClass(Invoice.class);
+        Mockito.verify(invoiceDao).insert(Mockito.eq(APPLICATION_ID), invoiceCaptor.capture());
+        // No invoicing date means the invoice is not sent before the phase decision
+        assertEquals(null, invoiceCaptor.getValue().getInvoicableTime());
+      });
+
+      it("Invoices a non-final period on the date given by the invoicing date service", () -> {
+        final int APPLICATION_ID = 123;
+        final int INVOICE_RECIPIENT_ID = 33;
+        final ZonedDateTime INVOICING_DATE = ZonedDateTime.parse("2026-05-01T00:00:00+03:00");
+        final Customer customer = new Customer();
+        customer.setType(CustomerType.COMPANY);
+        customer.setName("The Company");
+        Application application = new Application();
+        application.setId(APPLICATION_ID);
+        application.setInvoiceRecipientId(INVOICE_RECIPIENT_ID);
+        InvoicingPeriod period = new InvoicingPeriod(APPLICATION_ID,
+            ZonedDateTime.parse("2026-04-01T00:00:00+03:00"), ZonedDateTime.parse("2026-04-30T00:00:00+03:00"));
+        period.setId(8);
+        period.setInvoicableStatus(StatusType.FINISHED);
+        ChargeBasisEntry entry = new ChargeBasisEntry();
+        entry.setId(100);
+        entry.setInvoicingPeriodId(8);
+        entry.setInvoicable(true);
+
+        Mockito.when(invoicingPeriodService.findOpenPeriodsForApplicationId(APPLICATION_ID))
+            .thenReturn(Collections.singletonList(period));
+        Mockito.when(invoicingPeriodService.isFinalPeriod(Mockito.any(Application.class),
+            Mockito.any(InvoicingPeriod.class))).thenReturn(false);
+        Mockito.when(chargeBasisService.getChargeBasis(Mockito.eq(APPLICATION_ID)))
+            .thenReturn(Collections.singletonList(entry));
+        Mockito.when(pricingService.toSingleInvoice(Mockito.anyList()))
+            .thenReturn(Collections.singletonList(new InvoiceRow()));
+        Mockito.when(customerDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(customer));
+        Mockito.when(invoiceRecipientDao.insert(Mockito.any())).thenReturn(INVOICE_RECIPIENT_ID);
+        Mockito.when(applicationDao.findById(APPLICATION_ID)).thenReturn(application);
+        Mockito.when(invoicingDateService.getInvoicingDateForPeriod(Mockito.any(Application.class),
+            Mockito.any(InvoicingPeriod.class))).thenReturn(INVOICING_DATE);
+
+        invoiceService.createInvoices(APPLICATION_ID, false);
+
+        ArgumentCaptor<Invoice> invoiceCaptor = ArgumentCaptor.forClass(Invoice.class);
+        Mockito.verify(invoiceDao).insert(Mockito.eq(APPLICATION_ID), invoiceCaptor.capture());
+        assertEquals(INVOICING_DATE, invoiceCaptor.getValue().getInvoicableTime());
       });
 
       describe("Find pending invoices", () -> {

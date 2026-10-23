@@ -102,10 +102,23 @@ public class InvoiceService {
   private void addInvoiceForPeriod(InvoicingPeriod period, Application application, Integer invoiceRecipientId, boolean sapIdPending) {
     List<InvoiceRow> invoiceRows = createInvoiceRows(application.getId(), period.getId());
     if (!invoiceRows.isEmpty()) {
-      ZonedDateTime invoicingDate = invoicingDateService.getInvoicingDateForPeriod(application, period);
+      ZonedDateTime invoicingDate = getInvoicingDateForPeriod(application, period);
       Invoice invoice = new Invoice(null, application.getId(), invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId, period.getId());
       invoiceDao.insert(application.getId(), invoice);
     }
+  }
+
+  /**
+   * Returns the invoicing date of a period.
+   *
+   * <p>The last period of the operational condition and work finished phases is left without an
+   * invoicing date until the phase decision is made, so that it is not sent before the decision.</p>
+   */
+  private ZonedDateTime getInvoicingDateForPeriod(Application application, InvoicingPeriod period) {
+    if (invoicingPeriodService.isFinalPeriod(application, period)) {
+      return null;
+    }
+    return invoicingDateService.getInvoicingDateForPeriod(application, period);
   }
 
   private List<InvoiceRow> createInvoiceRows(int applicationId, Integer invoicingPeriodId) {

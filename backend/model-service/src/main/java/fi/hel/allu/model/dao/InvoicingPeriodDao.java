@@ -91,6 +91,19 @@ public class InvoicingPeriodDao {
        .execute();
   }
 
+  /**
+   * Detaches charge basis entries of the given period that have not been locked to an invoice yet,
+   * so that they can be re-assigned to a new period. Locked entries keep their period reference.
+   */
+  @Transactional
+  public void removeUnlockedEntriesFromPeriod(Integer periodId) {
+    queryFactory.update(chargeBasis)
+       .setNull(chargeBasis.invoicingPeriodId)
+       .where(chargeBasis.invoicingPeriodId.eq(periodId),
+           chargeBasis.locked.isNull().or(chargeBasis.locked.isFalse()))
+       .execute();
+  }
+
   @Transactional
   public void updateEndTime(Integer periodId, ZonedDateTime endTime) {
     queryFactory.update(invoicingPeriod)

@@ -15,6 +15,7 @@ import fi.hel.allu.common.util.AnnualTimePeriod;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.PriceUtil;
+import fi.hel.allu.model.service.ExcavationMonthlyPeriodCalculator;
 import fi.hel.allu.model.service.WinterTimeService;
 
 public class ExcavationPricing extends Pricing {
@@ -55,6 +56,25 @@ public class ExcavationPricing extends Pricing {
     this.pricingExplanator = pricingExplanator;
     this.pricingDao = pricingDao;
     this.invoicingPeriods = invoicingPeriods;
+    if (usesMonthlyPeriods()) {
+      addMonthlyHandlingFeeEntries();
+    } else {
+      addLegacyHandlingFeeEntry();
+    }
+  }
+
+  /**
+   * Returns true when the application is priced with calendar-month invoicing periods.
+   *
+   * <p>The monthly model applies to applications starting on or after 1.3.2026 that have dated
+   * invoicing periods. Legacy applications keep status-only periods, which have no dates.</p>
+   */
+  private boolean usesMonthlyPeriods() {
+    return isPost2026ExcavationPayment(application.getStartTime())
+        && invoicingPeriods.stream().anyMatch(period -> period.getStartTime() != null);
+  }
+
+  private void addLegacyHandlingFeeEntry() {
     final int handlingFee = getHandlingFee(extension, application.getStartTime());
     setPriceInCents(handlingFee);
     addChargeBasisEntry(
@@ -67,6 +87,78 @@ public class ExcavationPricing extends Pricing {
       getHandlingFeeExplanation(extension),
       getFirstOpenPeriodId()
     );
+  }
+
+  /**
+   * Adds the two parts of the handling fee.
+   *
+   * <p>The first part is always charged on the first period. The second part is charged on the
+   * period where the work reaches six months, and only when the work lasts at least six months.
+   * Self supervision does not affect the fee in the monthly model.</p>
+   */
+  private void addMonthlyHandlingFeeEntries() {
+    final int firstPartFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT,
+        PricingKey.HANDLING_FEE_LT_6_MONTHS, application.getStartTime());
+    addChargeBasisEntry(
+      ChargeBasisTag.ExcavationAnnonuncementHandlingFee(),
+      ChargeBasisUnit.PIECE,
+      1,
+      firstPartFee,
+      HANDLING_FEE_TEXT,
+      firstPartFee,
+      List.of(HANDLING_FEE_LT_6_MONTHS_TEXT),
+      getFirstOpenPeriodId()
+    );
+    setPriceInCents(firstPartFee);
+
+    if (!isAtLeastSixMonths(application.getStartTime(), getEndTimeForApplication())) {
+      return;
+    }
+    final int secondPartFee = getSecondHandlingFeePart();
+    if (secondPartFee <= 0) {
+      return;
+    }
+    addChargeBasisEntry(
+      ChargeBasisTag.ExcavationAnnouncementHandlingFeeAdditional(),
+      ChargeBasisUnit.PIECE,
+      1,
+      secondPartFee,
+      HANDLING_FEE_TEXT,
+      secondPartFee,
+      List.of(HANDLING_FEE_GE_6_MONTHS_TEXT),
+      getAdditionalHandlingFeePeriodId()
+    );
+    setPriceInCents(secondPartFee + getPriceInCents());
+  }
+
+  /**
+   * Returns the second part of the handling fee, derived from the pricing table so that the two
+   * parts together equal the price of work lasting six months or more.
+   */
+  private int getSecondHandlingFeePart() {
+    int sixMonthsFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT,
+        PricingKey.HANDLING_FEE_GE_6_MONTHS, application.getStartTime());
+    int lessThanSixMonthsFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT,
+        PricingKey.HANDLING_FEE_LT_6_MONTHS, application.getStartTime());
+    return sixMonthsFee - lessThanSixMonthsFee;
+  }
+
+  /**
+   * Returns the id of the period containing the date six months after the application start.
+   */
+  private Integer getAdditionalHandlingFeePeriodId() {
+    ZonedDateTime sixMonthsDate = TimeUtil.homeTime(application.getStartTime()).plusMonths(6);
+    ZonedDateTime end = getEndTimeForApplication();
+    if (end == null || sixMonthsDate.isAfter(end)) {
+      return null;
+    }
+    return invoicingPeriods.stream()
+        .filter(period -> period.getStartTime() != null && period.getEndTime() != null)
+        .filter(period -> !TimeUtil.isDateBefore(sixMonthsDate, period.getStartTime()))
+        .filter(period -> !TimeUtil.isDateAfter(sixMonthsDate, period.getEndTime()))
+        .findFirst()
+        .map(InvoicingPeriod::getId)
+        .orElse(null);
   }
 
   private Integer getFirstOpenPeriodId() {
@@ -91,6 +183,11 @@ public class ExcavationPricing extends Pricing {
     final Integer locationKey = location.getLocationKey();
     final int dailyFee = getDailyFee(location.getEffectiveArea(), paymentClass, startTime);
 
+    if (usesMonthlyPeriods()) {
+      addMonthlyLocationPrice(location, paymentClass, locationKey, dailyFee);
+      return;
+    }
+
     final List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
       addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
@@ -98,6 +195,56 @@ public class ExcavationPricing extends Pricing {
     if (pricedPeriods.size() > 1) {
       addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
     }
+  }
+
+  /**
+   * Adds one area usage fee entry per dated invoicing period the location is charged for.
+   *
+   * <p>Phase spans are split at calendar-month boundaries by matching them against the dated
+   * invoicing periods, so every entry belongs to exactly one month and carries the tag of its
+   * period. When no area usage fee is charged for the application, no entries are created.</p>
+   */
+  private void addMonthlyLocationPrice(Location location, String paymentClass, Integer locationKey, int dailyFee) {
+    if (Boolean.TRUE.equals(extension.getNoAreaUsageFee())) {
+      return;
+    }
+    for (MonthlyPricedPeriod pricedPeriod : getMonthlyPricedPeriods()) {
+      if (pricedPeriod.getNumberOfDays() <= 0) {
+        continue;
+      }
+      ChargeBasisTag tag = pricedPeriod.isWorkFinished()
+          ? ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey), pricedPeriod.invoicingPeriodId)
+          : ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey), pricedPeriod.invoicingPeriodId);
+      addChargeBasisEntryForPeriod(paymentClass, location.getEffectiveArea(), dailyFee,
+          pricedPeriod.start, pricedPeriod.end, pricedPeriod.invoicingPeriodId, tag);
+    }
+  }
+
+  /**
+   * Splits the phase spans into the dated invoicing periods the application has.
+   */
+  private List<MonthlyPricedPeriod> getMonthlyPricedPeriods() {
+    List<MonthlyPricedPeriod> result = new ArrayList<>();
+    for (PricedPeriod span : getPricedPeriods()) {
+      if (span.start == null || span.end == null) {
+        continue;
+      }
+      for (InvoicingPeriod period : invoicingPeriods) {
+        if (period.getStartTime() == null || period.getEndTime() == null) {
+          continue;
+        }
+        ZonedDateTime overlapStart = TimeUtil.homeTime(span.start).isAfter(period.getStartTime())
+            ? TimeUtil.homeTime(span.start) : period.getStartTime();
+        ZonedDateTime overlapEnd = TimeUtil.homeTime(span.end).isBefore(period.getEndTime())
+            ? TimeUtil.homeTime(span.end) : period.getEndTime();
+        if (TimeUtil.isDateBefore(overlapEnd, overlapStart)) {
+          continue;
+        }
+        result.add(new MonthlyPricedPeriod(overlapStart, overlapEnd, period.getId(),
+            period.getInvoicableStatus() == StatusType.FINISHED));
+      }
+    }
+    return result;
   }
 
   protected boolean isPost2025ExcavationPayment(ZonedDateTime startTime) {
@@ -154,12 +301,19 @@ public class ExcavationPricing extends Pricing {
 
   private void addChargeBasisEntryForPeriod(String paymentClass, double area, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
-    String rowText = String.format(AREA_FEE_TEXT, formatDate(invoicedPeriod.start), formatDate(invoicedPeriod.end));
+    addChargeBasisEntryForPeriod(paymentClass, area, dailyFee, invoicedPeriod.start, invoicedPeriod.end,
+        invoicedPeriod.invoicingPeriodId, tag);
+  }
+
+  private void addChargeBasisEntryForPeriod(String paymentClass, double area, int dailyFee,
+      ZonedDateTime periodStart, ZonedDateTime periodEnd, Integer invoicingPeriodId, ChargeBasisTag tag) {
+    String rowText = String.format(AREA_FEE_TEXT, formatDate(periodStart), formatDate(periodEnd));
     List<String> explanation = List.of(String.format(AREA_FEE_EXPLANATION,
         PriceUtil.getPaymentClassText(paymentClass), (int) Math.ceil(area)));
-    int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;
-    addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
-        dailyFee, rowText, totalPrice, explanation, invoicedPeriod.invoicingPeriodId);
+    int numberOfDays = (int) CalendarUtil.startingUnitsBetween(periodStart, periodEnd, ChronoUnit.DAYS);
+    int totalPrice = numberOfDays * dailyFee;
+    addChargeBasisEntry(tag, ChargeBasisUnit.DAY, numberOfDays,
+        dailyFee, rowText, totalPrice, explanation, invoicingPeriodId);
     setPriceInCents(totalPrice + getPriceInCents());
   }
 
@@ -169,13 +323,45 @@ public class ExcavationPricing extends Pricing {
 
   private List<PricedPeriod> getPricedPeriods() {
     List<PricedPeriod> result = new ArrayList<>();
-    if (extension.getWinterTimeOperation() != null) {
+    if (usesMonthlyPeriods()) {
+      addMonthlyPhaseSpans(result);
+    } else if (extension.getWinterTimeOperation() != null) {
       addWinterTimePeriod(result);
       addSummerPeriodForWinterTimeOperation(result);
     } else {
       addApplicationPeriod(result);
     }
     return result;
+  }
+
+  /**
+   * Adds the operational condition and work finished spans used by the monthly model.
+   *
+   * <p>These follow the same rules as the invoicing period calculation: the operational condition
+   * phase ends on the operational condition date (or the day before winter time start when the date
+   * is in summer), and the work finished phase starts on the following day so that no days are left
+   * without a charge.</p>
+   */
+  private void addMonthlyPhaseSpans(List<PricedPeriod> result) {
+    ZonedDateTime end = getEndTimeForApplication();
+    if (end == null) {
+      return;
+    }
+    ZonedDateTime winterTimeOperation = extension.getWinterTimeOperation();
+    if (winterTimeOperation == null) {
+      result.add(new PricedPeriod(application.getStartTime(), end, getWorkFinishedPeriodId()));
+      return;
+    }
+    ZonedDateTime operationalConditionEnd = TimeUtil.homeTime(
+        ExcavationMonthlyPeriodCalculator.getOperationalConditionEnd(application.getStartTime(), end,
+            winterTimeOperation, winterTime));
+    result.add(new PricedPeriod(TimeUtil.homeTime(application.getStartTime()), operationalConditionEnd,
+        getFirstOpenPeriodId()));
+
+    ZonedDateTime workFinishedStart = operationalConditionEnd.plusDays(1);
+    if (!workFinishedStart.isAfter(end)) {
+      result.add(new PricedPeriod(workFinishedStart, end, getWorkFinishedPeriodId()));
+    }
   }
 
   // If winter time operation is finished after "summer end" adds additional
@@ -226,6 +412,32 @@ public class ExcavationPricing extends Pricing {
       this.end = end;
       this.invoicingPeriodId = invoicingPeriodId;
     }
+    int getNumberOfDays() {
+      return (int) CalendarUtil.startingUnitsBetween(start, end, ChronoUnit.DAYS);
+    }
+  }
+
+  /**
+   * Overlap of a phase span and a single dated invoicing period.
+   */
+  private static class MonthlyPricedPeriod {
+    ZonedDateTime start;
+    ZonedDateTime end;
+    Integer invoicingPeriodId;
+    boolean workFinished;
+
+    MonthlyPricedPeriod(ZonedDateTime start, ZonedDateTime end, Integer invoicingPeriodId,
+        boolean workFinished) {
+      this.start = start;
+      this.end = end;
+      this.invoicingPeriodId = invoicingPeriodId;
+      this.workFinished = workFinished;
+    }
+
+    boolean isWorkFinished() {
+      return workFinished;
+    }
+
     int getNumberOfDays() {
       return (int) CalendarUtil.startingUnitsBetween(start, end, ChronoUnit.DAYS);
     }

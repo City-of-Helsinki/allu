@@ -44,9 +44,37 @@ public class InvoicingDateService {
   public ZonedDateTime getInvoicingDateForPeriod(Application application, InvoicingPeriod period) {
     if (isTerrace(application)) {
       return getInvoicingDateForTerracePeriod( period.getStartTime(), application.getKind());
+    } else if (isMonthlyExcavationPeriod(application, period)) {
+      return getNextMonthFirstDay(period);
     } else {
       return period.getEndTime();
     }
+  }
+
+  /**
+   * Returns the first day of the calendar month following the period's month.
+   *
+   * <p>For example a period covering 1.2.-28.2. is invoiced on 1.3.</p>
+   */
+  public ZonedDateTime getNextMonthFirstDay(InvoicingPeriod period) {
+    if (period.getEndTime() == null) {
+      return null;
+    }
+    return TimeUtil.homeTime(period.getEndTime())
+        .toLocalDate()
+        .withDayOfMonth(1)
+        .plusMonths(1)
+        .atStartOfDay(TimeUtil.HelsinkiZoneId);
+  }
+
+  /**
+   * Returns true when the application is an excavation announcement invoiced with calendar-month
+   * periods. Legacy applications use status-only periods without dates.
+   */
+  private boolean isMonthlyExcavationPeriod(Application application, InvoicingPeriod period) {
+    return application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT
+        && period.getStartTime() != null
+        && period.getEndTime() != null;
   }
 
   private ZonedDateTime getInvoicingDateForTerracePeriod(ZonedDateTime terracePeriodStartTime, ApplicationKind kind) {

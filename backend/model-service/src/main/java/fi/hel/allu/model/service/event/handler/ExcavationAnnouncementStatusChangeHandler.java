@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import fi.hel.allu.model.service.chargeBasis.ChargeBasisService;
 import org.springframework.stereotype.Service;
@@ -77,14 +78,61 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   @Override
   protected void handleOperationalConditionStatus(Application application) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
-    ZonedDateTime invoicableTime = getInvoicableTimeForOperationalCondition(extension);
 
+    Optional<InvoicingPeriod> monthlyPeriod =
+        getMonthlyFinalPeriod(application, StatusType.OPERATIONAL_CONDITION);
+    if (monthlyPeriod.isPresent()) {
+      releaseMonthlyFinalPeriod(application, monthlyPeriod.get(), extension.getWinterTimeOperation());
+      finishOperationalCondition(application);
+      return;
+    }
+
+    ZonedDateTime invoicableTime = getInvoicableTimeForOperationalCondition(extension);
     Integer operationalConditionPeriodId = getOperationalConditionPeriodId(application.getId());
     if (operationalConditionPeriodId != null) {
       setPeriodInvoicable(application, invoicableTime, operationalConditionPeriodId);
     } else {
       setExcavationAnnouncementInvoicable(application, invoicableTime);
     }
+    finishOperationalCondition(application);
+  }
+
+  /**
+   * Returns the last open period of the given phase when the application uses monthly periods.
+   *
+   * <p>Legacy applications have status-only periods without dates, which are handled separately.</p>
+   */
+  private Optional<InvoicingPeriod> getMonthlyFinalPeriod(Application application, StatusType status) {
+    return invoicingPeriodService.findLastOpenPeriodForStatus(application.getId(), status)
+        .filter(period -> period.getStartTime() != null);
+  }
+
+  /**
+   * Releases the last period of a phase: its end date is moved to the reported phase end date when
+   * that date changed, the period is invoiced on the decision day and closed.
+   */
+  private void releaseMonthlyFinalPeriod(Application application, InvoicingPeriod period,
+      ZonedDateTime reportedEndDate) {
+    updatePeriodEndDate(application, period, reportedEndDate);
+    setPeriodInvoicable(application, ZonedDateTime.now(), period.getId());
+  }
+
+  /**
+   * Moves the end date of the period to the reported phase end date when it differs.
+   */
+  private void updatePeriodEndDate(Application application, InvoicingPeriod period,
+      ZonedDateTime reportedEndDate) {
+    if (reportedEndDate == null || period.getEndTime() == null) {
+      return;
+    }
+    if (TimeUtil.isSameDate(period.getEndTime(), reportedEndDate)) {
+      return;
+    }
+    invoicingPeriodService.updatePeriodEndDate(period.getId(),
+        TimeUtil.startOfDay(reportedEndDate));
+  }
+
+  private void finishOperationalCondition(Application application) {
     removeTag(application.getId(), ApplicationTagType.OPERATIONAL_CONDITION_REPORTED);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
     clearTargetState(application);
@@ -125,7 +173,13 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   protected void handleFinishedStatus(Application application) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
     adjustOperationalConditionPricing(application.getId(), extension);
-    setExcavationAnnouncementInvoicable(application, extension.getWorkFinished());
+
+    Optional<InvoicingPeriod> monthlyPeriod = getMonthlyFinalPeriod(application, StatusType.FINISHED);
+    if (monthlyPeriod.isPresent()) {
+      releaseMonthlyFinalPeriod(application, monthlyPeriod.get(), extension.getWorkFinished());
+    } else {
+      setExcavationAnnouncementInvoicable(application, extension.getWorkFinished());
+    }
     clearTargetState(application);
     clearOwner(application);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
