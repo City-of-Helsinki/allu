@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -205,28 +206,59 @@ public class InvoicingPeriodServiceTest {
     verify(eventPublisher, never()).publishEvent(any());
   }
   @Test
-  public void shouldKeepInvoicedPeriodAndReconcileOtherPeriods() {
+  public void shouldKeepClosedPeriodAndReplaceChangedPeriods() {
     Application application = excavationAnnouncement("2026-04-01", "2026-06-30", null);
     application.setStatus(StatusType.HANDLING);
     mockApplication(application);
     mockWinterTime();
 
-    // Period A is closed (invoice sent), B and C are still open
+    // Period A is closed (invoice sent) and unchanged. B and C no longer match the desired months.
     InvoicingPeriod periodA = datedPeriod("2026-04-01", "2026-04-30", StatusType.FINISHED);
     periodA.setId(1);
     periodA.setClosed(true);
-    InvoicingPeriod periodB = datedPeriod("2026-05-01", "2026-05-31", StatusType.FINISHED);
+    InvoicingPeriod periodB = datedPeriod("2026-05-01", "2026-05-15", StatusType.FINISHED);
     periodB.setId(2);
-    InvoicingPeriod periodC = datedPeriod("2026-06-01", "2026-06-30", StatusType.FINISHED);
+    InvoicingPeriod periodC = datedPeriod("2026-05-16", "2026-06-30", StatusType.FINISHED);
     periodC.setId(3);
     mockExistingPeriods(List.of(periodA, periodB, periodC));
+    when(chargeBasisDao.getLockedEntriesOfPeriod(anyInt())).thenReturn(List.of());
 
     invoicingPeriodService.setExcavationAnnouncementPeriods(APPLICATION_ID);
 
-    // Nothing changed in the desired periods, so no period is touched
-    verify(invoicingPeriodDao, never()).deletePeriod(anyInt());
-    verify(invoicingPeriodDao, never()).insertPeriods(anyList());
-    verify(eventPublisher, never()).publishEvent(any());
+    // The closed period keeps its id and is never touched
+    verify(invoicingPeriodDao, never()).deletePeriod(eq(1));
+    verify(invoicingPeriodDao, never()).removeUnlockedEntriesFromPeriod(eq(1));
+    // The mismatching periods are replaced
+    verify(invoicingPeriodDao).deletePeriod(eq(2));
+    verify(invoicingPeriodDao).deletePeriod(eq(3));
+    List<InvoicingPeriod> inserted = captureInsertedPeriods();
+    assertEquals(2, inserted.size());
+    assertPeriod(inserted.get(0), "2026-05-01", "2026-05-31", StatusType.FINISHED);
+    assertPeriod(inserted.get(1), "2026-06-01", "2026-06-30", StatusType.FINISHED);
+    verify(eventPublisher).publishEvent(any());
+  }
+
+  @Test
+  public void shouldNotDeleteClosedPeriodThatNoLongerMatches() {
+    Application application = excavationAnnouncement("2026-04-01", "2026-06-30", null);
+    application.setStatus(StatusType.HANDLING);
+    mockApplication(application);
+    mockWinterTime();
+
+    // The closed period would be dropped by the desired periods, but invoiced periods are kept
+    InvoicingPeriod closed = datedPeriod("2026-04-01", "2026-04-15", StatusType.FINISHED);
+    closed.setId(1);
+    closed.setClosed(true);
+    mockExistingPeriods(List.of(closed));
+    when(chargeBasisDao.getLockedEntriesOfPeriod(anyInt())).thenReturn(List.of());
+
+    invoicingPeriodService.setExcavationAnnouncementPeriods(APPLICATION_ID);
+
+    verify(invoicingPeriodDao, never()).deletePeriod(eq(1));
+    verify(invoicingPeriodDao, never()).removeUnlockedEntriesFromPeriod(eq(1));
+    // The missing periods are still created
+    List<InvoicingPeriod> inserted = captureInsertedPeriods();
+    assertEquals(3, inserted.size());
   }
 
   @Test
@@ -248,6 +280,26 @@ public class InvoicingPeriodServiceTest {
     // The missing periods are still created
     List<InvoicingPeriod> inserted = captureInsertedPeriods();
     assertTrue(inserted.stream().anyMatch(p -> TimeUtil.isSameDate(p.getStartTime(), date("2026-04-01"))));
+  }
+
+  @Test
+  public void shouldRemoveUnlockedEntriesBeforeDeletingReplacedPeriod() {
+    Application application = excavationAnnouncement("2026-04-01", "2026-06-30", null);
+    application.setStatus(StatusType.HANDLING);
+    mockApplication(application);
+    mockWinterTime();
+
+    InvoicingPeriod stale = datedPeriod("2026-04-01", "2026-04-15", StatusType.FINISHED);
+    stale.setId(5);
+    mockExistingPeriods(List.of(stale));
+    when(chargeBasisDao.getLockedEntriesOfPeriod(anyInt())).thenReturn(List.of());
+
+    invoicingPeriodService.setExcavationAnnouncementPeriods(APPLICATION_ID);
+
+    // Entries must be detached before the period row disappears
+    InOrder inOrder = inOrder(invoicingPeriodDao);
+    inOrder.verify(invoicingPeriodDao).removeUnlockedEntriesFromPeriod(5);
+    inOrder.verify(invoicingPeriodDao).deletePeriod(5);
   }
 
   @Test
