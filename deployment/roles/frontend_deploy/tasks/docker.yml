@@ -39,6 +39,7 @@
       - /home/allu/apache/sites-available:/etc/apache2/sites-available:rw
       - /srv/data/allu/mapproxy:/mapproxy:rw
       - /home/allu/ssl:/etc/ssl/allu:rw
+      - /home/allu/letsencrypt:/etc/letsencrypt:rw
     published_ports:
       - "80:80"
       - "443:443"

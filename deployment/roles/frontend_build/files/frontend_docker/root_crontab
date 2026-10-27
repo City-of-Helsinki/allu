@@ -1,2 +1,4 @@
 # MapProxy seeding / cleanup
 30 00 * * * /usr/local/bin/mapproxy-seed --seed-conf=/home/allu/mapproxy/configuration/seed.yaml --proxy-conf=/home/allu/mapproxy/configuration/mapproxy.yaml --concurrency 16 --reseed-interval 2d --duration 22h --reseed-file /home/allu/mapproxy/configuration/reseed.time > /home/allu/mapproxy/logs/cleanup.log 2>&1
+# Certbot automatic renewals
+0 0,12 * * * /usr/bin/python3 -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew -q
