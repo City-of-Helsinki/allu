@@ -10,11 +10,10 @@ import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.main.MainResponse;
+import org.elasticsearch.client.core.MainResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +25,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import org.geolatte.geom.Geometry;
+
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static fi.hel.allu.common.domain.geometry.Constants.ELASTIC_SEARCH_SRID;
 import static fi.hel.allu.search.util.Constants.APPLICATION_INDEX_ALIAS;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -61,8 +66,8 @@ class ApplicationSearchIT extends BaseIntegrationTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ClusterName clusterName = response.getClusterName();
-        assertEquals(CLUSTER_NAME, clusterName.value());
+        String clusterName = response.getClusterName();
+        assertEquals(CLUSTER_NAME, clusterName);
     }
 
     @Test
@@ -72,7 +77,7 @@ class ApplicationSearchIT extends BaseIntegrationTest {
         applicationES.setName("testi");
         applicationSearchService.insert(applicationES);
         applicationSearchService.refreshIndex();
-        GetRequest getRequest = new GetRequest(APPLICATION_INDEX_ALIAS, "_doc", id.toString());
+        GetRequest getRequest = new GetRequest(APPLICATION_INDEX_ALIAS, id.toString());
         getRequest.fetchSourceContext(new FetchSourceContext(false));
         getRequest.storedFields("_none_");
         assertTrue(client.exists(getRequest, RequestOptions.DEFAULT));
@@ -149,6 +154,68 @@ class ApplicationSearchIT extends BaseIntegrationTest {
         assertEquals(10, appPage.getSize());
         assertEquals(Arrays.asList(30, 31, 32, 33, 34, 35, 36, 37, 38, 39), appPage.getContent());
         assertEquals(89, appPage.getTotalElements());
+    }
+
+    @Test
+    void testExactTotalHitsOverDefaultTrackTotalHitsLimit() {
+        // ElasticSearch's default total-hits tracking cap is 10 000 documents; without trackTotalHits(true) the
+        // reported total would be an approximate lower bound (relation: gte) once that cap is exceeded.
+        int totalDocuments = 10_001;
+        List<ApplicationES> applications = new ArrayList<>(totalDocuments);
+        for (int i = 1; i <= totalDocuments; i++) {
+            ApplicationES applicationES = createApplication(i);
+            applicationES.setName("Application #" + i);
+            applications.add(applicationES);
+        }
+        applicationSearchService.bulkInsert(applications);
+        applicationSearchService.refreshIndex();
+
+        ApplicationQueryParameters parameters = new ApplicationQueryParameters();
+        parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
+        Page<Integer> appPage = applicationSearchService.findByField(parameters,
+                                                                     PageRequest.of(0, 10, Sort.Direction.ASC, "name"));
+        assertEquals(totalDocuments, appPage.getTotalElements());
+    }
+
+    @Test
+    void testGeoShapeIntersectionQuery() {
+        // Validates the ES 7.x geo_shape query rewritten in ApplicationSearchService#addGeometryParameter, which
+        // replaces the removed org.elasticsearch.common.geo.builders.PolygonBuilder with
+        // org.elasticsearch.geometry.Polygon/LinearRing.
+        Integer insideId = 1;
+        ApplicationES insideApplication = createApplication(insideId);
+        insideApplication.setLocations(Collections.singletonList(
+                locationWithSearchGeometry(1, squarePolygon(24.90, 60.15, 24.95, 60.20))));
+
+        Integer outsideId = 2;
+        ApplicationES outsideApplication = createApplication(outsideId);
+        outsideApplication.setLocations(Collections.singletonList(
+                locationWithSearchGeometry(2, squarePolygon(25.50, 60.50, 25.55, 60.55))));
+
+        applicationSearchService.insert(insideApplication);
+        applicationSearchService.insert(outsideApplication);
+        applicationSearchService.refreshIndex();
+
+        ApplicationQueryParameters parameters = new ApplicationQueryParameters();
+        parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
+        parameters.setIntersectingGeometry(squarePolygon(24.80, 60.10, 25.00, 60.30));
+
+        List<Integer> appList = applicationSearchService.findByField(parameters, null).getContent();
+        assertEquals(Collections.singletonList(insideId), appList);
+
+        applicationSearchService.delete(insideId.toString());
+        applicationSearchService.delete(outsideId.toString());
+    }
+
+    private LocationES locationWithSearchGeometry(int locationKey, Geometry geometry) {
+        LocationES locationES = new LocationES(locationKey, "Test street", "00100", "Helsinki", 1, "info");
+        locationES.setSearchGeometry(geometry);
+        return locationES;
+    }
+
+    private Geometry squarePolygon(double minX, double minY, double maxX, double maxY) {
+        return polygon(ELASTIC_SEARCH_SRID,
+                ring(c(minX, minY), c(maxX, minY), c(maxX, maxY), c(minX, maxY), c(minX, minY)));
     }
 
     /**

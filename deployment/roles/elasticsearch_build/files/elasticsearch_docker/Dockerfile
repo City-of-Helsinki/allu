@@ -1,7 +1,7 @@
 ########################################################################################################
 # Modified ElasticSearch Docker image to support change of uid and gid running the ElasticSearch process
 ########################################################################################################
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.17.28
 ARG CUSTOM_UID
 ARG CUSTOM_GID
 USER root
@@ -13,13 +13,8 @@ RUN mv /usr/share/elasticsearch /tmp/silly_aufs_fix && \
     usermod -u $CUSTOM_GID elasticsearch && \
     chown -R elasticsearch:elasticsearch /usr/share/elasticsearch
 
-RUN  rm /usr/share/elasticsearch/lib/log4j-api-2.11.1.jar \
-    && rm /usr/share/elasticsearch/lib/log4j-1.2-api-2.11.1.jar \
-    && rm  /usr/share/elasticsearch/lib/log4j-core-2.11.1.jar
-
-COPY ./lib/log4j-core-2.17.1.jar /usr/share/elasticsearch/lib
-COPY ./lib/log4j-1.2-api-2.17.1.jar /usr/share/elasticsearch/lib
-COPY ./lib/log4j-api-2.17.1.jar /usr/share/elasticsearch/lib
+# log4j-core/api 2.17.1 ship with the base image already (ES 7.16.2+), so the manual
+# log4j jar swap previously needed for the 6.8.0 image (bundled with vulnerable 2.11.1) is removed.
 
 # Remove x-pack since it requires a license
 USER elasticsearch

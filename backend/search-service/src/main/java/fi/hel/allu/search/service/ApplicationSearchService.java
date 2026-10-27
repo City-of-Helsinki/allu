@@ -10,13 +10,13 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.geo.ShapeRelation;
-import org.elasticsearch.common.geo.builders.*;
+import org.elasticsearch.geometry.LinearRing;
+import org.elasticsearch.geometry.Polygon;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.PointCollection;
-import org.locationtech.jts.geom.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -63,7 +63,7 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
   }
 
   protected Page<ApplicationES> createResult(Pageable pageRequest, SearchResponse response, Integer zoom) throws IOException {
-    long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
+    long totalHits = GenericSearchService.totalHitsOf(response);
     List<ApplicationES> results = (totalHits == 0) ? Collections.emptyList() : iterateSearchResponse(response, zoom);
     anonymizeCustomers(results);
     return new PageImpl<>(results, pageRequest, totalHits);
@@ -94,15 +94,26 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
 
   private void addGeometryParameter(Geometry intersectingGeometry, BoolQueryBuilder qb) {
     PointCollection points = intersectingGeometry.getPoints();
-    List<Coordinate> coordinates = new ArrayList<>();
-    for (int i = 0; i < points.size(); i++) {
-      coordinates.add(new Coordinate(points.getX(i), points.getY(i)));
+    int size = points.size();
+    boolean alreadyClosed = size > 0
+        && points.getX(0) == points.getX(size - 1)
+        && points.getY(0) == points.getY(size - 1);
+    // Legacy ElasticSearch 6.x PolygonBuilder (removed in 7.x) automatically closed an open ring; replicate that
+    // behaviour here since PolygonBuilder/CoordinatesBuilder no longer exist as client-usable classes.
+    int ringSize = alreadyClosed ? size : size + 1;
+    double[] x = new double[ringSize];
+    double[] y = new double[ringSize];
+    for (int i = 0; i < size; i++) {
+      x[i] = points.getX(i);
+      y[i] = points.getY(i);
     }
-    CoordinatesBuilder coordinateBuilder = new CoordinatesBuilder();
-    coordinateBuilder.coordinates(coordinates);
-    PolygonBuilder polygonBuilder = new PolygonBuilder(coordinateBuilder);
+    if (!alreadyClosed) {
+      x[size] = points.getX(0);
+      y[size] = points.getY(0);
+    }
+    Polygon polygon = new Polygon(new LinearRing(x, y));
     try {
-      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", polygonBuilder).relation(ShapeRelation.INTERSECTS);
+      QueryBuilder geomQb = QueryBuilders.geoShapeQuery("locations.searchGeometry", polygon).relation(ShapeRelation.INTERSECTS);
       qb.must(geomQb);
     } catch (IOException ex) {
       throw new SearchException(ex);
