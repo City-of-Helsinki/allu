@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.5.16</version>
     </parent>
 
     <properties>
@@ -21,7 +21,6 @@
         <skip.frontend>true</skip.frontend>
         <node.version>v5.5.0</node.version>
         <npm.version>3.3.12</npm.version>
-        <spring-security.version>5.8.16</spring-security.version>
     </properties>
 
     <modules>
@@ -164,13 +163,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- junit-vintage-engine must be retained (not removed): 40 files use
+             @RunWith(Spectrum.class) and ~97 more use plain JUnit-4-style tests. -->
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

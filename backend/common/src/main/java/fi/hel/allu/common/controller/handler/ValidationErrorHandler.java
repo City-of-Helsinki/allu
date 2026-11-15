@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -23,7 +24,7 @@ public class ValidationErrorHandler extends ResponseEntityExceptionHandler {
   @Override
   protected ResponseEntity<Object>
   handleMethodArgumentNotValid(MethodArgumentNotValidException e,
-                               HttpHeaders headers, HttpStatus status,
+                               HttpHeaders headers, HttpStatusCode status,
                                WebRequest request) {
     BindingResult bindingResult = e.getBindingResult();
     List<ErrorInfo> errorInfoList = new ArrayList<>();
