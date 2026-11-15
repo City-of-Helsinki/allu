@@ -4,12 +4,12 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.validation.groups.Default;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.util.TimeUtil;

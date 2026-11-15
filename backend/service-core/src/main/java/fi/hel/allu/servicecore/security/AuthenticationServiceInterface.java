@@ -2,7 +2,7 @@ package fi.hel.allu.servicecore.security;
 
 import org.springframework.security.core.Authentication;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Authentication service interface allowing different kinds of authentication implementations.

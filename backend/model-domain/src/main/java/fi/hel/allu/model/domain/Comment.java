@@ -2,8 +2,8 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.CommentType;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**

@@ -3,7 +3,6 @@ package fi.hel.allu.external.service;
 import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.external.config.ApplicationProperties;
-import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.servicecore.domain.ExternalUserJson;
 import fi.hel.allu.servicecore.security.AuthenticationServiceInterface;
 import fi.hel.allu.servicecore.security.TokenUtil;
@@ -18,7 +17,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;

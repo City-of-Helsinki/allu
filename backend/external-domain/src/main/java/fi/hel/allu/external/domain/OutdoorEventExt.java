@@ -6,7 +6,7 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.validator.NotFalse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Schema(description ="Outdoor event (Ulkoilmatapahtuma) input model.")

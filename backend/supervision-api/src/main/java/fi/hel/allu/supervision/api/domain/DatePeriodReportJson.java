@@ -2,7 +2,7 @@ package fi.hel.allu.supervision.api.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

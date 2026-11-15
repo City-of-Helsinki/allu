@@ -3,7 +3,7 @@ package fi.hel.allu.model.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.hel.allu.common.types.AttachmentType;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true) // without this DefaultAttachmentInfo fields would mess JSON deserialization

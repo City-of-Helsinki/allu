@@ -2,14 +2,12 @@ package fi.hel.allu.servicecore.domain;
 
 import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.servicecore.domain.DistributionEntryJson;
-import fi.hel.allu.servicecore.domain.PostalAddressJson;
 import org.junit.runner.RunWith;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import java.util.Set;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;

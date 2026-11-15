@@ -1,6 +1,6 @@
 package fi.hel.allu.external.domain;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
 

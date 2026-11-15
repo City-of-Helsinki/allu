@@ -2,10 +2,10 @@ package fi.hel.allu.external.domain;
 
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import io.swagger.v3.oas.annotations.media.Schema;

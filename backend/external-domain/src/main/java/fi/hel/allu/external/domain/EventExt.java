@@ -5,7 +5,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.validator.NotFalse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @NotFalse(rules = {

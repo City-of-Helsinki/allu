@@ -14,7 +14,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.util.StreamUtils;
 
-import javax.activation.FileTypeMap;
+import jakarta.activation.FileTypeMap;
 
 import java.nio.charset.Charset;
 import java.util.*;

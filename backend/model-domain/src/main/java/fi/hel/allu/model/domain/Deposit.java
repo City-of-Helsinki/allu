@@ -2,7 +2,7 @@ package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import fi.hel.allu.common.domain.types.DepositStatusType;
 
 /**

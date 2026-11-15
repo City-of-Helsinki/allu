@@ -5,7 +5,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class Event extends ApplicationExtension {
   @NotNull(groups = Application.Complete.class)

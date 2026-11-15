@@ -2,7 +2,7 @@ package fi.hel.allu.supervision.api.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.supervision.api.mapper.ApplicationMapperCollector;

@@ -1,8 +1,6 @@
 package fi.hel.allu.servicecore.validation;
 
-import java.util.Locale;
-
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;

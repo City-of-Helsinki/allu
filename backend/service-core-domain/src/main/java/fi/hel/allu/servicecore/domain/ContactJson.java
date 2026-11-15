@@ -3,7 +3,7 @@ package fi.hel.allu.servicecore.domain;
 import fi.hel.allu.model.domain.ContactInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Contact person")
 public class ContactJson implements ContactInterface {

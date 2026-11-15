@@ -2,11 +2,11 @@ package fi.hel.allu.mail.service;
 
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * A MimeMessageHelper that adds attachments without encoding the filename.

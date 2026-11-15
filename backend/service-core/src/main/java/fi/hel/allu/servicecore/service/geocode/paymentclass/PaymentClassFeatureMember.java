@@ -1,9 +1,8 @@
 package fi.hel.allu.servicecore.service.geocode.paymentclass;
 
-import fi.hel.allu.servicecore.service.geocode.paymentclass.PaymentClass;
 import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
 
 public class PaymentClassFeatureMember {
 

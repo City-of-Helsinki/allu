@@ -14,8 +14,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import javax.mail.Multipart;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeMessage;
 
 import java.util.Arrays;
 import java.util.function.Supplier;

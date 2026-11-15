@@ -1,10 +1,9 @@
 package fi.hel.allu.servicecore.service.geocode.paymentzone;
 
 
-import fi.hel.allu.servicecore.service.geocode.paymentzone.PaymentZone;
 import fi.hel.allu.servicecore.service.geocode.VariablesUtils;
 
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 public class PaymentZoneFeatureMember {
 

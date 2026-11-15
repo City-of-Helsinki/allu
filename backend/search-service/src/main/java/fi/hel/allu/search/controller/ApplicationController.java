@@ -3,7 +3,7 @@ package fi.hel.allu.search.controller;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.domain.CustomerWithContactsES;

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 

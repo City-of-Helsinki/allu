@@ -1,6 +1,6 @@
 package fi.hel.allu.common.validator;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 @NotFalse(rules = {"value, valuesAreEqual, values must match"})
 public class NotFalseTestClass {

@@ -1,6 +1,6 @@
 package fi.hel.allu.model.domain;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * in Finnish: Yhteyshenkilö

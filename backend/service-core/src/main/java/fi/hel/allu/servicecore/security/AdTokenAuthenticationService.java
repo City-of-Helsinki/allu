@@ -3,7 +3,7 @@ package fi.hel.allu.servicecore.security;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

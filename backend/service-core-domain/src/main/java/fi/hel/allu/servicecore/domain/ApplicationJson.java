@@ -6,8 +6,8 @@ import fi.hel.allu.model.domain.ApplicationInterface;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import java.time.ZonedDateTime;
 import java.util.List;
 

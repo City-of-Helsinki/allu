@@ -10,10 +10,10 @@ import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import org.junit.runner.RunWith;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;

@@ -2,8 +2,8 @@ package fi.hel.allu.ui.geocode;
 
 import org.junit.Test;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;

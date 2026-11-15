@@ -10,8 +10,8 @@ import fi.hel.allu.model.domain.LocationInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.geolatte.geom.Geometry;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.List;
 

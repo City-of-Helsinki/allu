@@ -6,13 +6,12 @@ import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;

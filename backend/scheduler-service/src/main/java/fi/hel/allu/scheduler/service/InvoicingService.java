@@ -21,8 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.PostConstruct;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;

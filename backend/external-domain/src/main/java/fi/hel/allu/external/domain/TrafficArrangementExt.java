@@ -7,8 +7,8 @@ import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import fi.hel.allu.common.validator.NotFalse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @NotFalse(rules = {
     "applicationKind, kindMatchType, {trafficarrangements.kind}"

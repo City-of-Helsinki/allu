@@ -2,7 +2,7 @@ package fi.hel.allu.common.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Class to hold application dates reported by customer.

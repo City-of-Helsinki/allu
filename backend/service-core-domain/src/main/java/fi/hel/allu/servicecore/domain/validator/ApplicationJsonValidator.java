@@ -2,12 +2,11 @@ package fi.hel.allu.servicecore.domain.validator;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.BaseApplicationJson;
 import fi.hel.allu.servicecore.domain.EventJson;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Validates that if ApplicationJson contains an OUTDOOREVENT then nature must not be null.

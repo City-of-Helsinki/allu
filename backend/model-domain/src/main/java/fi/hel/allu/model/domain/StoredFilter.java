@@ -1,7 +1,7 @@
 package fi.hel.allu.model.domain;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import fi.hel.allu.common.domain.types.StoredFilterType;
 
 /**

@@ -2,7 +2,7 @@ package fi.hel.allu.servicecore.domain;
 
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 public class DecisionDetailsJson {
   @NotEmpty(message = "{decision.distribution}")

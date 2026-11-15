@@ -1,6 +1,6 @@
 package fi.hel.allu.supervision.api.domain;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Sort.Direction;
 

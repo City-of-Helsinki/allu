@@ -3,7 +3,7 @@ package fi.hel.allu.servicecore.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;

@@ -2,7 +2,7 @@ package fi.hel.allu.external.domain;
 
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import io.swagger.v3.oas.annotations.media.Schema;

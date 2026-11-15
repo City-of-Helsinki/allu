@@ -2,7 +2,7 @@ package fi.hel.allu.servicecore.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import fi.hel.allu.common.types.AttachmentType;
 import io.swagger.v3.oas.annotations.media.Schema;

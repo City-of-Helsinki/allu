@@ -3,7 +3,7 @@ package fi.hel.allu.servicecore.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

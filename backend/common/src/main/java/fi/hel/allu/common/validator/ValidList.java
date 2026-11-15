@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * A wrapper type around Java.util.List that is also a bean, so that Spring's

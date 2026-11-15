@@ -5,7 +5,7 @@ import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**

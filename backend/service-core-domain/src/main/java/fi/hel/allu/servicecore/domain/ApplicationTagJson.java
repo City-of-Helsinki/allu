@@ -6,7 +6,7 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.domain.ApplicationTagInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Schema(description = "Application tag")
