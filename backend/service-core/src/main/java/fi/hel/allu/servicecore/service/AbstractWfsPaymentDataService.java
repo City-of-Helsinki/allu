@@ -13,21 +13,20 @@ import org.geolatte.geom.GeometryType;
 import org.geolatte.geom.PointCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.concurrent.ListenableFuture;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 public abstract class AbstractWfsPaymentDataService {
@@ -66,10 +65,13 @@ public abstract class AbstractWfsPaymentDataService {
   protected static final LocalDateTime POST_2026_PAYMENT_DATE = LocalDateTime.of(2026, 2, 28, 23, 59, 0, 0);
   private final ApplicationProperties applicationProperties;
   private final AsyncWfsRestTemplate restTemplate;
+  private final Executor executor;
 
-  protected AbstractWfsPaymentDataService(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
+  protected AbstractWfsPaymentDataService(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate,
+      @Qualifier("wfsTaskExecutor") Executor executor) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.executor = executor;
   }
 
   protected abstract String parseResult(List<String> responses, ApplicationJson applicationJson, LocationJson location);
@@ -90,7 +92,7 @@ public abstract class AbstractWfsPaymentDataService {
       .map(c -> getRequest(applicationJson).replaceFirst(COORDINATES, c)).collect(Collectors.toList());
     for (int retry = 0; retry < WFS_QUERY_RETRIES; retry++){
       try {
-        final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
+        final List<CompletableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
         final List<String> responses = collectResponses(responseFutures);
         return parseResult(responses, applicationJson, location);
       } catch (Exception e) {
@@ -119,24 +121,24 @@ public abstract class AbstractWfsPaymentDataService {
     return getFeatureTypeNamePre2022();
   }
 
-  private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
+  private List<CompletableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
     final HttpHeaders headers = WfsUtil.createAuthHeaders(
       applicationProperties.getPaymentClassUsername(),
       applicationProperties.getPaymentClassPassword());
-    final List<ListenableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
+    final List<CompletableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
     requests.stream().map(request -> new HttpEntity<>(request, headers))
-      .map(requestEntity -> restTemplate.exchange(
+      .map(requestEntity -> CompletableFuture.supplyAsync(() -> restTemplate.exchange(
         applicationProperties.getPaymentClassUrl(),
         HttpMethod.POST,
         requestEntity,
-        String.class)).forEachOrdered(responseFutures::add);
+        String.class), executor)).forEachOrdered(responseFutures::add);
     return responseFutures;
   }
 
-  private List<String> collectResponses(List<ListenableFuture<ResponseEntity<String>>> responses)
+  private List<String> collectResponses(List<CompletableFuture<ResponseEntity<String>>> responses)
     throws InterruptedException, ExecutionException {
     final List<String> listOfResponses = new ArrayList<>();
-    for (ListenableFuture<ResponseEntity<String>> future : responses) {
+    for (CompletableFuture<ResponseEntity<String>> future : responses) {
       final String respBody = future.get().getBody();
       listOfResponses.add(respBody);
     }

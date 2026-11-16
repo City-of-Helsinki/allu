@@ -15,6 +15,7 @@ import org.geolatte.geom.crs.CrsId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
+
+import java.util.concurrent.Executor;
 
 import static java.lang.Math.max;
 
@@ -35,8 +38,9 @@ public class PaymentClassServiceImpl extends AbstractWfsPaymentDataService imple
   private static final String FEATURE_PROPERTY_NAME = "maksuluokka";
 
   @Autowired
-  public PaymentClassServiceImpl(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
-    super(applicationProperties, restTemplate);
+  public PaymentClassServiceImpl(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate,
+      @Qualifier("wfsTaskExecutor") Executor executor) {
+    super(applicationProperties, restTemplate, executor);
   }
 
   @Override

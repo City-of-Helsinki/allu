@@ -96,12 +96,12 @@
           <artifactId>jwks-rsa</artifactId>
           <version>0.21.1</version>
         </dependency>
-        <!-- TEMP: explicit version pin needed because Spring Boot 3.5's BOM no longer
-             manages httpclient v4; actual removal is Plan Step 4. -->
+        <!-- HttpComponentsClientHttpRequestFactory (used in ApplicationService for PATCH
+             support) requires Apache HttpClient 5 under Spring Framework 6; the removed
+             httpclient v4 dependency did not satisfy this, version managed by Boot 3.5 BOM. -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
         <!-- Mock web server dependencies -->
         <dependency>

@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.concurrent.SettableListenableFuture;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
@@ -68,7 +67,7 @@ public class PaymentZoneServiceTest {
   @BeforeAll
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    paymentZoneService = new PaymentZoneServiceImpl(applicationProperties, restTemplate);
+    paymentZoneService = new PaymentZoneServiceImpl(applicationProperties, restTemplate, Runnable::run);
     Mockito.when(applicationProperties.getPaymentClassUrl()).thenReturn(URL);
   }
 
@@ -86,10 +85,8 @@ public class PaymentZoneServiceTest {
   }
 
   private void setResponse(String response) {
-    SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-    future.set(ResponseEntity.ok(response));
     Mockito.when(restTemplate.exchange(Mockito.eq(URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
-        Mockito.eq(String.class))).thenReturn(future);
+        Mockito.eq(String.class))).thenReturn(ResponseEntity.ok(response));
   }
 
 

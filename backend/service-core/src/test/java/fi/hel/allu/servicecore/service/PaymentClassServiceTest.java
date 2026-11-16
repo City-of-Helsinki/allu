@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.concurrent.SettableListenableFuture;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -86,7 +85,7 @@ class PaymentClassServiceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getPaymentClassUrl()).thenReturn("paymentclass");
-    paymentClassService = new PaymentClassServiceImpl(applicationProperties, restTemplate);
+    paymentClassService = new PaymentClassServiceImpl(applicationProperties, restTemplate, Runnable::run);
   }
 
   @Test
@@ -94,10 +93,8 @@ class PaymentClassServiceTest {
     final List<String> paymentClasses = Arrays.asList("3", "3", "2", "3", "4a");
 
     final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER));
-    final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-    future.set(response);
     Mockito.when(restTemplate.exchange(
-      Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+      Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(response);
 
     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
     assertEquals("2", paymentClass);
@@ -108,10 +105,8 @@ class PaymentClassServiceTest {
      final List<String> paymentClasses = Arrays.asList("4", "3", "4", "4", "5a");
 
      final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER_2022));
-     final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-     future.set(response);
      Mockito.when(restTemplate.exchange(
-       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+       Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(response);
 
      final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, NEW_PAYMENT_DATE), createApplication(NEW_PAYMENT_DATE));
      assertEquals("3", paymentClass);
@@ -126,10 +121,8 @@ class PaymentClassServiceTest {
       final ZonedDateTime TEST_DATE_PRE_2026 = ZonedDateTime.now().withYear(2024).withMonth(1).withDayOfMonth(1);
 
       final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER_2022));
-      final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-      future.set(response);
       Mockito.when(restTemplate.exchange(
-        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(response);
 
       // This test verifies the routing logic works. The actual 2026 WFS layer will be called
       // for dates >= 2026-03-01, and it will use the same parseResultPost2025 logic
@@ -143,10 +136,8 @@ class PaymentClassServiceTest {
       final ZonedDateTime TEST_DATE_2026 = ZonedDateTime.now().withYear(2026).withMonth(3).withDayOfMonth(1);
 
       final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER_WITH_GEOM));
-      final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-      future.set(response);
       Mockito.when(restTemplate.exchange(
-        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(response);
 
       final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, TEST_DATE_2026), createApplication(TEST_DATE_2026));
       assertEquals("2", paymentClass);
@@ -159,14 +150,10 @@ class PaymentClassServiceTest {
 
     final ResponseEntity<String> response1 = ResponseEntity.ok(createResponse(paymentClasses1, MEMBER));
     final ResponseEntity<String> response2 = ResponseEntity.ok(createResponse(paymentClasses2, MEMBER));
-    SettableListenableFuture<ResponseEntity<String>> future1 = new SettableListenableFuture<>();
-    future1.set(response1);
-    SettableListenableFuture<ResponseEntity<String>> future2 = new SettableListenableFuture<>();
-    future2.set(response2);
     Mockito.when(restTemplate.exchange(
         Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class)))
-      .thenReturn(future1)
-      .thenReturn(future2);
+      .thenReturn(response1)
+      .thenReturn(response2);
 
     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY_COLLETION, OLD_PAYMENT_DATE), createApplication(OLD_PAYMENT_DATE));
     assertEquals("1", paymentClass);
@@ -177,10 +164,8 @@ class PaymentClassServiceTest {
     final List<String> paymentClasses = Collections.emptyList();
 
     final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses, MEMBER));
-    final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
-    future.set(response);
     Mockito.when(restTemplate.exchange(
-      Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(future);
+      Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class))).thenReturn(response);
 
     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY, OLD_PAYMENT_DATE),createApplication(OLD_PAYMENT_DATE));
     assertEquals("undefined", paymentClass);

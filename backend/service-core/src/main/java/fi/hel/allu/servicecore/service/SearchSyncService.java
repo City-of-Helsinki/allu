@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -226,8 +226,8 @@ public class SearchSyncService {
       super(message, cause);
     }
 
-    public SyncFailedException(String message, HttpStatus statusCode) {
-      super(message + "(status=" + statusCode.value() + ", " + statusCode.name() + ")");
+    public SyncFailedException(String message, HttpStatusCode statusCode) {
+      super(message + "(status=" + statusCode.value() + ")");
       initCause(null);
     }
   }

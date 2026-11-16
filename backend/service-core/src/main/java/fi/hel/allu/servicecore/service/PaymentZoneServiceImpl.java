@@ -5,6 +5,7 @@ import java.util.List;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.service.geocode.paymentzone.PaymentZoneFeatureCollection;
 import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
 
+import java.util.concurrent.Executor;
 
 @Profile("!DEV")
 @Service
@@ -24,8 +26,9 @@ public class PaymentZoneServiceImpl extends AbstractWfsPaymentDataService implem
   private static final String FEATURE_PROPERTY_NAME = "maksuvyohyke";
 
   @Autowired
-  public PaymentZoneServiceImpl(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
-    super(applicationProperties, restTemplate);
+  public PaymentZoneServiceImpl(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate,
+      @Qualifier("wfsTaskExecutor") Executor executor) {
+    super(applicationProperties, restTemplate, executor);
   }
 
   @Override
