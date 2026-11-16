@@ -15,12 +15,22 @@
       <database.uri>jdbc:postgresql:///${database.db}</database.uri>
       <spring.flyway.baselineOnMigrate>true</spring.flyway.baselineOnMigrate>
       <table>schema_version</table>
-      <flyway.version>8.5.0</flyway.version>
+      <!-- Flyway 11's flyway-database-postgresql module defaults to a
+           transactional advisory lock, which would block non-transactional
+           statements (e.g. CREATE INDEX CONCURRENTLY) for the entire migrate
+           run. Use a session-level lock instead, kept in lock-step with
+           model-service. Read directly by the flyway-maven-plugin from
+           Maven project properties (see AbstractFlywayMojo#execute). -->
+      <flyway.postgresql.transactional.lock>false</flyway.postgresql.transactional.lock>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +61,6 @@
         <plugin>
           <groupId>org.flywaydb</groupId>
           <artifactId>flyway-maven-plugin</artifactId>
-          <version>${flyway.version}</version>
           <configuration>
             <locations>
               <location>filesystem:src/main/resources/db/migration</location>
@@ -77,6 +86,14 @@
               <groupId>org.postgresql</groupId>
               <artifactId>postgresql</artifactId>
               <version>${postgresql.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.flywaydb</groupId>
+              <artifactId>flyway-database-postgresql</artifactId>
+              <!-- Boot 3.5's BOM manages flyway-core/flyway-maven-plugin via its own
+                   flyway.version property (11.7.2); plugin-scoped <dependencies> aren't
+                   covered by <dependencyManagement>, so pin this to the same value. -->
+              <version>11.7.2</version>
             </dependency>
           </dependencies>
         </plugin>
