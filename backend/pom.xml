@@ -51,9 +51,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <!-- Version intentionally unpinned (was 3.8.1): that old version
+                     silently drops the <parameters> compiler argument (confirmed
+                     via -X debug output omitting "-parameters" from the actual
+                     javac command line despite logging parameters=true), while
+                     Boot 3.5's BOM-managed version (3.14.1) honors it correctly. -->
                 <configuration>
                     <release>17</release>
+                    <!-- Required so Spring can disambiguate same-type beans by
+                         matching a constructor/field parameter name to the bean
+                         name (e.g. multiple RestTemplate or interface-implementation
+                         beans) when no @Qualifier/@Primary is present. Without this,
+                         full application-context boot fails with
+                         "No qualifying bean ... expected single matching bean". -->
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>

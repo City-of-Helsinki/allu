@@ -51,13 +51,6 @@
       <artifactId>jsch</artifactId>
       <version>0.2.9</version>
     </dependency>
-    <!-- TEMP: explicit version pin needed because Spring Boot 3.5's BOM no longer
-         manages httpclient v4; actual removal is Plan Step 7. -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.14</version>
-  </dependency>
   </dependencies>
   <build>
     <plugins>

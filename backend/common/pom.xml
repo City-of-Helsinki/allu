@@ -34,10 +34,14 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
+    <!-- Version aligned with swagger-annotations-jakarta pulled in transitively by
+         springdoc-openapi-starter-webmvc-ui (2.8.6) in external-service/supervision-api:
+         a mismatched older version here causes NoSuchMethodError at runtime (duplicate
+         io.swagger.v3.oas.annotations.media.Schema class on the classpath). -->
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-annotations</artifactId>
-      <version>2.2.7</version>
+      <version>2.2.29</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>

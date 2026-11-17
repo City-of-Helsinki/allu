@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -30,6 +31,7 @@ public class AppConfig implements WebMvcConfigurer {
   }
 
   @Bean
+  @Primary
   public RestTemplate restTemplate() {
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.setErrorHandler(new ServiceResponseErrorHandler());
